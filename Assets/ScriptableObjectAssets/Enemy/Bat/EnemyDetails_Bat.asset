@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
+  m_Name: EnemyDetails_Bat
+  m_EditorClassIdentifier: 
+  enemyName: Bat
+  enemyPrefab: {fileID: 7183228443647751644, guid: 5b47e0efa440e0443a327bd01a1d9035, type: 3}
+  chaseDistance: 30
+  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  enemyMaterializeTime: 2
+  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
+  enemyMaterializeColor: {r: 3.987934, g: 0, b: 0.07809851, a: 0}
+  enemyWeapon: {fileID: 0}
+  firingIntervalMin: 0.1
+  firingIntervalMax: 1
+  firingDurationMin: 1
+  firingDurationMax: 2
+  firingLineOfSightRequired: 0
+  enemyHealthDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    enemyHealthAmount: 5
+  isImmuneAfterHit: 1
+  hitImmunityTime: 1.5
+  isHealthBarDisplayed: 0

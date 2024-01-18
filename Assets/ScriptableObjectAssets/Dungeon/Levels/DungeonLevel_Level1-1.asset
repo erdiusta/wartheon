@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22943cb44bb6d5e4cbb81f6f6c20488d, type: 3}
+  m_Name: DungeonLevel_Level1-1
+  m_EditorClassIdentifier: 
+  levelName: Hades's Outer Walls
+  roomTemplateList:
+  - {fileID: 11400000, guid: 2bf236b951afe5c4eb1ec3d048a53256, type: 2}
+  - {fileID: 11400000, guid: aade02a20938c7241824e006dad8b4d3, type: 2}
+  - {fileID: 11400000, guid: fbe123a28aca03848be2a535a7e7e14e, type: 2}
+  - {fileID: 11400000, guid: d941aee5dda5941488b8a1034174f78d, type: 2}
+  - {fileID: 11400000, guid: 20d71ef19b30a7540ac7520bdfd8a04a, type: 2}
+  - {fileID: 11400000, guid: b0a4abad9251ba54183b7f495fbb4b0f, type: 2}
+  - {fileID: 11400000, guid: a43a451ef9de87f4fb43af570bf7393c, type: 2}
+  - {fileID: 11400000, guid: 66569f01b51dbb742af36040defaa02b, type: 2}
+  roomNodeGraphList:
+  - {fileID: 11400000, guid: 5e2c46cfe5bf65b4cbd16f9a4b95ab3a, type: 2}

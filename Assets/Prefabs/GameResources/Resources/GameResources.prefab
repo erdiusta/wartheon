@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &9031294546444041579
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5460132797945585147}
+  - component: {fileID: 6087289635227365384}
+  m_Layer: 0
+  m_Name: GameResources
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5460132797945585147
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9031294546444041579}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6087289635227365384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9031294546444041579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fc1e0209d2ac364ca0288b63ebcb0b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomNodeTypeList: {fileID: 11400000, guid: 9b6ce2f11d8d4d546a3fefba4b866ddd, type: 2}
+  currentPlayer: {fileID: 11400000, guid: bdc48d7a1898cca47b62df50366f8c9a, type: 2}
+  soundMasterMixerGroup: {fileID: -1070493446473311056, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
+  doorOpenCloseSoundEffect: {fileID: 11400000, guid: 58ec3915700e1db40b117db8be25656d, type: 2}
+  chestOpen: {fileID: 11400000, guid: 5521acb02156e2d4c968c446b47c06f7, type: 2}
+  healthPickup: {fileID: 11400000, guid: 4638ce053d31bdd4595c3991e645fac9, type: 2}
+  weaponPickup: {fileID: 11400000, guid: 89c2519ed7c7c0546a8b53183833b881, type: 2}
+  ammoPickup: {fileID: 11400000, guid: ac672474329ba2c44bac9040ffa01664, type: 2}
+  dimmedMaterial: {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
+  litMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  variableLitShader: {fileID: -6465566751694194690, guid: 8b29df74515c0774885e41dce7f3e546, type: 3}
+  materializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
+  enemyUnwalkableCollisionTilesArray:
+  - {fileID: 11400000, guid: 4cce22a4fe6f5544090b52d309c31b6c, type: 2}
+  - {fileID: 11400000, guid: fcd4dbd05c2c2654b9e8f028d291ff6a, type: 2}
+  preferredEnemyPathTile: {fileID: 11400000, guid: 96830d941b7a32243aa31da37595d0ef, type: 2}
+  heartPrefab: {fileID: 7585392605064363868, guid: becfc86faf78d674f92971eda671b95a, type: 3}
+  projectileIconPrefab: {fileID: 3767299040992984232, guid: 13d7dc9c29e09c54089f573a4705eaaa, type: 3}
+  chestItemPrefab: {fileID: 6166831115549756087, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
+  heartIcon: {fileID: -1216308913, guid: f9ee2bab07942d7449d2d3b8d49d5d85, type: 3}
+  bulletIcon: {fileID: 21300000, guid: 74e9889e4ca672f47a1de063aeee1613, type: 3}
+  minimapBossPrefab: {fileID: 668306937615276397, guid: a6f6cb3ad6450194983577547ff3e678, type: 3}
