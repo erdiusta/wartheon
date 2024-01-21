@@ -94,20 +94,20 @@ public class FireWeapon : MonoBehaviour
     private bool IsWeaponReadyToFire()
     {
         // If there is no projectile and weapon doesn't have infinite projectile then return false
-        if (!activeWeapon.GetCurrentWeapon().weaponDetails.hasInfiniteProjectile && activeWeapon.GetCurrentWeapon().weaponRemainingProjectile <= 0)
+        if (!activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteProjectile && activeWeapon.GetCurrentRightHandWeapon().weaponRemainingProjectile <= 0)
             return false;
 
         // If no projectile in the clip and the weapon doesn't have infinite clip capacity then return false
-        if (!activeWeapon.GetCurrentWeapon().weaponDetails.hasInfiniteClipCapacity && activeWeapon.GetCurrentWeapon().weaponClipRemainingProjectile <= 0)
+        if (!activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteClipCapacity && activeWeapon.GetCurrentRightHandWeapon().weaponClipRemainingProjectile <= 0)
         {
             // Trigger a reload weapon event
-            reloadWeaponEvent.CallReloadWeaponEvent(activeWeapon.GetCurrentWeapon(), 0);
+            reloadWeaponEvent.CallReloadWeaponEvent(activeWeapon.GetCurrentRightHandWeapon(), 0);
 
             return false;
         }
 
         // If the weapon is reloading then return false
-        if (activeWeapon.GetCurrentWeapon().isWeaponReloading)
+        if (activeWeapon.GetCurrentRightHandWeapon().isWeaponReloading)
             return false;
 
         // If the weapon isn't precharged or is cooling down then return false.
@@ -166,7 +166,7 @@ public class FireWeapon : MonoBehaviour
             float projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin, currentProjectile.projectileSpeedMax);
 
             // Get Gameobject with IFireable component
-            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetShootPosition(), Quaternion.identity);
+            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetRightHandShootPosition(), Quaternion.identity);
 
             // Initialize projectile
             projectile.InitializeProjectile(currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector);
@@ -176,14 +176,14 @@ public class FireWeapon : MonoBehaviour
         }
 
         // Reduce projectile clip count if not infinite clip capacity
-        if (!activeWeapon.GetCurrentWeapon().weaponDetails.hasInfiniteClipCapacity)
+        if (!activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteClipCapacity)
         {
-            activeWeapon.GetCurrentWeapon().weaponClipRemainingProjectile--;
-            activeWeapon.GetCurrentWeapon().weaponRemainingProjectile--;
+            activeWeapon.GetCurrentRightHandWeapon().weaponClipRemainingProjectile--;
+            activeWeapon.GetCurrentRightHandWeapon().weaponRemainingProjectile--;
         }
 
         // Call weapon fired event
-        weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentWeapon());
+        weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentRightHandWeapon());
 
         // Display weapon shoot effect
         DoWeaponShootEffect(aimAngle);
@@ -198,7 +198,7 @@ public class FireWeapon : MonoBehaviour
     private void ResetCooldownTimer()
     {
         // Reset cooldown timer
-        fireRateCooldownTimer = activeWeapon.GetCurrentWeapon().weaponDetails.weaponFireRate;
+        fireRateCooldownTimer = activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFireRate;
     }
 
     /// <summary>
@@ -207,7 +207,7 @@ public class FireWeapon : MonoBehaviour
     private void ResetPrechargeTimer()
     {
         // Reset precharge timer
-        firePrechargeTimer = activeWeapon.GetCurrentWeapon().weaponDetails.weaponPrechargeTime;
+        firePrechargeTimer = activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime;
     }
 
     /// <summary>
@@ -216,15 +216,15 @@ public class FireWeapon : MonoBehaviour
     private void DoWeaponShootEffect(float aimAngle)
     {
         // Process if there is a shoot effect & prefab
-        if (activeWeapon.GetCurrentWeapon().weaponDetails.weaponShootEffect != null && activeWeapon.GetCurrentWeapon().
+        if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponShootEffect != null && activeWeapon.GetCurrentRightHandWeapon().
             weaponDetails.weaponShootEffect.weaponShootEffectPrefab != null)
         {
             // Get weapon shoot effect gameobject from the pool with particle system component
-            WeaponShootEffect weaponShootEffect = (WeaponShootEffect)PoolManager.Instance.ReuseComponent(activeWeapon.GetCurrentWeapon().
-                weaponDetails.weaponShootEffect.weaponShootEffectPrefab, activeWeapon.GetShootEffectPosition(), Quaternion.identity);
+            WeaponShootEffect weaponShootEffect = (WeaponShootEffect)PoolManager.Instance.ReuseComponent(activeWeapon.GetCurrentRightHandWeapon().
+                weaponDetails.weaponShootEffect.weaponShootEffectPrefab, activeWeapon.GetRightHandShootEffectPosition(), Quaternion.identity);
 
             // Set shoot effect
-            weaponShootEffect.SetShootEffect(activeWeapon.GetCurrentWeapon().weaponDetails.weaponShootEffect, aimAngle);
+            weaponShootEffect.SetShootEffect(activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponShootEffect, aimAngle);
 
             // Set gameobject active (the particle system is set to automatically disable the
             // gameobject once finished)
@@ -237,9 +237,9 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     private void WeaponSoundEffect()
     {
-        if (activeWeapon.GetCurrentWeapon().weaponDetails.weaponFiringSoundEffect != null)
+        if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect != null)
         {
-            SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentWeapon().weaponDetails.weaponFiringSoundEffect);
+            SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect);
         }
     }
 }

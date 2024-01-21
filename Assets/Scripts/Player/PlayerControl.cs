@@ -13,7 +13,9 @@ public class PlayerControl : MonoBehaviour
 
     Player player;
     bool leftMouseDownPreviousFrame = false;
-    int currentWeaponIndex = 1;
+    bool rightMouseDownPreviousFrame = false;
+    int currentRightHandWeaponIndex = 1;
+    int currentLeftHandWeaponIndex = 0;
     float moveSpeed;
     bool isPlayerMovementDisabled = false;
 
@@ -40,11 +42,11 @@ public class PlayerControl : MonoBehaviour
     {
         int index = 1;
 
-        foreach (Weapon weapon in player.weaponList)
+        foreach (Weapon weapon in player.weaponRightHandList)
         {
             if (weapon.weaponDetails == player.playerDetails.startingWeapon)
             {
-                SetWeaponByIndex(index);
+                SetRightHandWeaponByIndex(index);
                 break;
             }
 
@@ -82,7 +84,6 @@ public class PlayerControl : MonoBehaviour
         // Get movement input
         float horizontalMovement = Input.GetAxisRaw("Horizontal");
         float verticalMovement = Input.GetAxisRaw("Vertical");
-        bool rightMouseButtonDown = Input.GetMouseButtonDown(1);
 
         // Create a direction vector based on the input
         Vector2 direction = new Vector2(horizontalMovement, verticalMovement);
@@ -134,7 +135,7 @@ public class PlayerControl : MonoBehaviour
         Vector3 mouseWorldPosition = HelperUtilities.GetMouseWorldPosition();
 
         // Calculate direction vector of mouse cursor from weapon shoot position
-        weaponDirection = (mouseWorldPosition - player.activeWeapon.GetShootPosition());
+        weaponDirection = (mouseWorldPosition - player.activeWeapon.GetRightHandShootPosition());
 
         // Calculate direction vector of mouse cursor from player transform position
         Vector3 playerDirection = (mouseWorldPosition - transform.position);
@@ -155,16 +156,49 @@ public class PlayerControl : MonoBehaviour
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
         // Fire when left mouse button is clicked
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
-            // Trigger fire weapon event
-            player.fireWeaponEvent.CallFireWeaponEvent(true, leftMouseDownPreviousFrame, playerAimDirection, playerAngleDegrees, 
-                weaponAngleDegrees, weaponDirection);
-            leftMouseDownPreviousFrame = true;
+            if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
+            {
+                player.meleeAttackEvent.CallRightHandMeleeAttackEvent(playerAimDirection, 
+                    player.activeWeapon.GetCurrentRightHandWeapon());
+            }
+            else
+            {
+                // Trigger fire weapon event
+                player.fireWeaponEvent.CallFireWeaponEvent(true, leftMouseDownPreviousFrame, playerAimDirection, playerAngleDegrees,
+                    weaponAngleDegrees, weaponDirection);
+                leftMouseDownPreviousFrame = true;
+            }
         }
         else
         {
             leftMouseDownPreviousFrame = false;
+        }
+
+        // Fire when right mouse button is clicked
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (player.activeWeapon.GetCurrentLeftHandWeapon() == null)
+                return;
+
+            if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponClass != WeaponClass.Shield ||
+                player.activeWeapon.GetCurrentLeftHandWeapon() != null)
+            {
+                if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.isMeleeWeapon)
+                {
+                    player.meleeAttackEvent.CallLeftHandMeleeAttackEvent(playerAimDirection,
+                        player.activeWeapon.GetCurrentLeftHandWeapon());
+                }
+                else
+                {
+                    rightMouseDownPreviousFrame = true;
+                }
+            }
+        }
+        else
+        {
+            rightMouseDownPreviousFrame = false;
         }
     }
 
@@ -173,62 +207,62 @@ public class PlayerControl : MonoBehaviour
         // Switch weapon if mouse scroll wheel selecetd
         if (Input.mouseScrollDelta.y < 0f)
         {
-            PreviousWeapon();
+            LeftHandWeaponCheck();
         }
 
         if (Input.mouseScrollDelta.y > 0f)
         {
-            NextWeapon();
+            NextRightHandWeapon();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            SetWeaponByIndex(1);
+            SetRightHandWeaponByIndex(1);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            SetWeaponByIndex(2);
+            SetRightHandWeaponByIndex(2);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            SetWeaponByIndex(3);
+            SetRightHandWeaponByIndex(3);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            SetWeaponByIndex(4);
+            SetRightHandWeaponByIndex(4);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            SetWeaponByIndex(5);
+            SetRightHandWeaponByIndex(5);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha6))
         {
-            SetWeaponByIndex(6);
+            SetRightHandWeaponByIndex(6);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
-            SetWeaponByIndex(7);
+            SetRightHandWeaponByIndex(7);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
-            SetWeaponByIndex(8);
+            SetRightHandWeaponByIndex(8);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            SetWeaponByIndex(9);
+            SetRightHandWeaponByIndex(9);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            SetWeaponByIndex(10);
+            SetRightHandWeaponByIndex(10);
         }
 
         if (Input.GetKeyDown(KeyCode.Minus))
@@ -237,52 +271,64 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    private void NextWeapon()
+    private void NextRightHandWeapon()
     {
-        currentWeaponIndex++;
-
-        if (currentWeaponIndex > player.weaponList.Count)
+        if (player.activeWeapon.GetCurrentLeftHandWeapon() == null)
         {
-            currentWeaponIndex = 1;
+            currentRightHandWeaponIndex++;
+
+            if (currentRightHandWeaponIndex > player.weaponRightHandList.Count)
+            {
+                currentRightHandWeaponIndex = 1;
+            }
+
+            SetRightHandWeaponByIndex(currentRightHandWeaponIndex);
         }
-
-        SetWeaponByIndex(currentWeaponIndex);
-
     }
 
-    private void PreviousWeapon()
+    private void LeftHandWeaponCheck()
     {
-        currentWeaponIndex--;
-
-        if (currentWeaponIndex < 1)
+        if (player.activeWeapon.GetCurrentLeftHandWeapon() == null && 
+            player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
         {
-            currentWeaponIndex = player.weaponList.Count;
-        }
+            currentLeftHandWeaponIndex++;
 
-        SetWeaponByIndex(currentWeaponIndex);
+            if (currentLeftHandWeaponIndex > player.weaponLeftHandList.Count)
+            {
+                currentLeftHandWeaponIndex = 1;
+            }
+
+            SetLeftHandWeaponByIndex(currentLeftHandWeaponIndex);
+        }
+        else
+        {
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtLeftHandEvent();
+        }
     }
 
-    private void SetWeaponByIndex(int weaponIndex)
+    private void SetRightHandWeaponByIndex(int weaponIndex)
     {
-        if (weaponIndex - 1 < player.weaponList.Count)
+        if (weaponIndex - 1 < player.weaponRightHandList.Count)
         {
-            currentWeaponIndex = weaponIndex;
+            currentRightHandWeaponIndex = weaponIndex;
 
-            if (player.weaponList[weaponIndex - 1].weaponDetails.isMeleeWeapon)
-            {
-                player.setActiveWeaponEvent.CallSetActiveWeaponEvent(player.weaponList[weaponIndex - 1], 
-                    player.weaponList[weaponIndex - 1].weaponDetails.weaponAnimatorController);
-            }
-            else
-            {
-                player.setActiveWeaponEvent.CallSetActiveWeaponEvent(player.weaponList[weaponIndex - 1], null);
-            }
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtRightHandEvent(player.weaponRightHandList[weaponIndex - 1]);
+        }
+    }
+
+    private void SetLeftHandWeaponByIndex(int weaponIndex)
+    {
+        if (weaponIndex - 1 < player.weaponLeftHandList.Count)
+        {
+            currentLeftHandWeaponIndex = weaponIndex;
+
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtLeftHandEvent(player.weaponLeftHandList[weaponIndex - 1]);
         }
     }
 
     private void ReloadWeaponInput()
     {
-        Weapon currentWeapon = player.activeWeapon.GetCurrentWeapon();
+        Weapon currentWeapon = player.activeWeapon.GetCurrentRightHandWeapon();
 
         // If current weapon is reloading return
         if (currentWeapon.isWeaponReloading) 
@@ -300,7 +346,7 @@ public class PlayerControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             // Call the reload weapon event
-            player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentWeapon(), 0);
+            player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), 0);
         }
     }
 
@@ -330,29 +376,29 @@ public class PlayerControl : MonoBehaviour
         List<Weapon> tempWeaponList = new List<Weapon>();
 
         // Add the current weapon to first in the temp list
-        Weapon currentWeapon = player.weaponList[currentWeaponIndex - 1];
-        currentWeapon.weaponListPosition = 1;
+        Weapon currentWeapon = player.weaponRightHandList[currentRightHandWeaponIndex - 1];
+        currentWeapon.weaponRightHandListPosition = 1;
         tempWeaponList.Add(currentWeapon);
 
         // Loop through existing weapon list and add - skipping current weapon
         int index = 2;
 
-        foreach (Weapon weapon in player.weaponList)
+        foreach (Weapon weapon in player.weaponRightHandList)
         {
             if (weapon == currentWeapon) continue;
 
             tempWeaponList.Add(weapon);
-            weapon.weaponListPosition = index;
+            weapon.weaponRightHandListPosition = index;
             index++;
         }
 
         // Assign new list
-        player.weaponList = tempWeaponList;
+        player.weaponRightHandList = tempWeaponList;
 
-        currentWeaponIndex = 1;
+        currentRightHandWeaponIndex = 1;
 
         // Set current weapon
-        SetWeaponByIndex(currentWeaponIndex);
+        SetRightHandWeaponByIndex(currentRightHandWeaponIndex);
     }
 
     #region Validation

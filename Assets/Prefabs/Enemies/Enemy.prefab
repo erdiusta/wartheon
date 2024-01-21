@@ -317,6 +317,37 @@ Transform:
   - {fileID: 8845574466449883188}
   m_Father: {fileID: 933830336492734321}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5127565597451272407
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8688368594907213520}
+  m_Layer: 19
+  m_Name: WeaponRotationPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8688368594907213520
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5127565597451272407}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8668691372778860321}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5208273166273714487
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,7 +408,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8688368594907213520}
   m_Father: {fileID: 3146469945750014307}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8724249606337226725
@@ -471,6 +503,8 @@ GameObject:
   - component: {fileID: 4717152845412961844}
   - component: {fileID: 7720192735042268283}
   - component: {fileID: 8497238629979407875}
+  - component: {fileID: 4991714623183925850}
+  - component: {fileID: 8901436270454263267}
   m_Layer: 16
   m_Name: Enemy
   m_TagString: Untagged
@@ -515,6 +549,7 @@ MonoBehaviour:
   idleEvent: {fileID: 0}
   spriteRendererArray: []
   animator: {fileID: 0}
+  rb2D: {fileID: 0}
 --- !u!210 &5050891164117682802
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -591,7 +626,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 400
+  m_Mass: 10
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 0
@@ -842,7 +877,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9312f500e87ee1b41b3e7d65979ce365, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponRotationPointTransform: {fileID: 933830336492734321}
+  rightHandWeaponRotationPointTransform: {fileID: 933830336492734321}
+  leftHandWeaponRotationPointTransform: {fileID: 8688368594907213520}
 --- !u!114 &866988234407021245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -879,10 +915,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1682e1c2af18de4fb0c220139511f11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponSpriteRenderer: {fileID: 7625487225184071592}
-  weaponPolygonCollider2D: {fileID: 6872100053539618354}
-  weaponShootPositionTransform: {fileID: 2812488011572122476}
-  weaponEffectPositionTransform: {fileID: 8845574466449883188}
+  weaponRightHandSpriteRenderer: {fileID: 7625487225184071592}
+  weaponRightHandPolygonCollider2D: {fileID: 6872100053539618354}
+  weaponRightHandShootPositionTransform: {fileID: 2812488011572122476}
+  weaponRightHandEffectPositionTransform: {fileID: 8845574466449883188}
+  weaponLeftHandSpriteRenderer: {fileID: 0}
+  weaponLeftHandPolygonCollider2D: {fileID: 0}
 --- !u!114 &7401260523369827967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1010,6 +1048,36 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 1050624
+--- !u!114 &4991714623183925850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7736189416814370986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cbec4e7370a3514699ac90a2591fab4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  whiteFlashMaterial: {fileID: 2100000, guid: f90902be942d00545bb9f5c0998434cd, type: 2}
+  redFlashMaterial: {fileID: 2100000, guid: 789c835ce053eff46aa9989263c4fd54, type: 2}
+  poisonMaterial: {fileID: 2100000, guid: 47b23f7f76393a546845286a46da1b7c, type: 2}
+--- !u!114 &8901436270454263267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7736189416814370986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad9b2ed813db9ba4ead2574d93f6db80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  knockbackForce: 2
+  knockbackTimeWeight: 1
 --- !u!1001 &945976474652821064
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -44,6 +44,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public IdleEvent idleEvent;
     [HideInInspector] public SpriteRenderer[] spriteRendererArray;
     [HideInInspector] public Animator animator;
+    [HideInInspector] public Rigidbody2D rb2D;
 
     private HealthEvent healthEvent;
     private Health health;
@@ -70,6 +71,7 @@ public class Enemy : MonoBehaviour
         polygonCollider2D = GetComponent<PolygonCollider2D>();
         spriteRendererArray = GetComponentsInChildren<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        rb2D = GetComponent<Rigidbody2D>();
     }
 
     private void OnEnable()
@@ -155,7 +157,7 @@ public class Enemy : MonoBehaviour
                 isWeaponReloading = false };
 
             //Set weapon for enemy
-            setActiveWeaponEvent.CallSetActiveWeaponEvent(weapon, null);
+            setActiveWeaponEvent.CallSetActiveWeaponAtRightHandEvent(weapon);
         }
     }
 

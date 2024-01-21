@@ -14,16 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Staff
   weaponSprite: {fileID: -110142417, guid: cd389daac55ac044bb6c47bc5c3f407a, type: 3}
+  weaponAnimatorController: {fileID: 0}
+  weaponClass: 4
+  wieldType: 1
   weaponShootPosition: {x: 0, y: 1.18, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 07792028ffe74674b9f070484b18710a, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponFiringSoundEffect: {fileID: 11400000, guid: e1c8591c71ab89d448879b0d39d25d09, type: 2}
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
+  circleRadius: 0.8
+  meleeDamageMin: 4
+  meleeDamageMax: 7
   hasInfiniteProjectile: 1
   hasInfiniteClipCapacity: 1
   weaponClipProjectileCapacity: 0
   weaponProjectileCapacity: 0
   weaponFireRate: 0.6
-  weaponPrechargeTime: 0.5
+  weaponPrechargeTime: 0
   weaponReloadTime: 0

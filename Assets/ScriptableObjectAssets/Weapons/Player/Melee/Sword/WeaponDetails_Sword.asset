@@ -14,13 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Sword
   weaponSprite: {fileID: -1467170279, guid: 30623926a5371224296808a731a096c8, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: 90e8e3e5a94c721449705634bf9e09d8, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: 4d6238627c4ee314e8a1a4fec3ad65d4, type: 2}
+  weaponClass: 0
+  wieldType: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
-  weaponFiringSoundEffect: {fileID: 0}
+  weaponFiringSoundEffect: {fileID: 11400000, guid: 3900fd10105b8fc4eb3ceacea2a5cc5b, type: 2}
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 1
+  circleRadius: 0.8
+  meleeDamageMin: 4
+  meleeDamageMax: 7
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0

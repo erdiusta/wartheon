@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WeaponStatusUI : MonoBehaviour
+public class RightWeaponStatusUI : MonoBehaviour
 {
     #region Header OBJECT REFERENCES
     [Space(10)]
@@ -51,7 +51,7 @@ public class WeaponStatusUI : MonoBehaviour
 
     private void OnEnable()
     {
-        player.setActiveWeaponEvent.OnSetActiveWeapon += SetActiveWeaponEvent_OnSetActiveWeapon;
+        player.setActiveWeaponEvent.OnSetActiveRightHandWeapon += SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
         player.weaponFiredEvent.OnWeaponFired += WeaponFiredEvent_OnWeaponFired;
         player.reloadWeaponEvent.OnReloadWeapon += ReloadWeaponEvent_OnWeaponReload;
         player.weaponReloadedEvent.OnWeaponReloaded += WeaponReloadedEvent_OnWeaponReloaded;
@@ -59,7 +59,7 @@ public class WeaponStatusUI : MonoBehaviour
 
     private void OnDisable()
     {
-        player.setActiveWeaponEvent.OnSetActiveWeapon -= SetActiveWeaponEvent_OnSetActiveWeapon;
+        player.setActiveWeaponEvent.OnSetActiveRightHandWeapon -= SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
         player.weaponFiredEvent.OnWeaponFired -= WeaponFiredEvent_OnWeaponFired;
         player.reloadWeaponEvent.OnReloadWeapon -= ReloadWeaponEvent_OnWeaponReload;
         player.weaponReloadedEvent.OnWeaponReloaded -= WeaponReloadedEvent_OnWeaponReloaded;
@@ -68,13 +68,13 @@ public class WeaponStatusUI : MonoBehaviour
     private void Start()
     {
         // Update active weapon status on the UI
-        SetActiveWeapon(player.activeWeapon.GetCurrentWeapon());
+        SetActiveWeapon(player.activeWeapon.GetCurrentRightHandWeapon());
     }
 
     /// <summary>
     /// Handle set active weapon event on the UI
     /// </summary>
-    private void SetActiveWeaponEvent_OnSetActiveWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    private void SetActiveWeaponEvent_OnSetActiveRightHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
         SetActiveWeapon(setActiveWeaponEventArgs.weapon);
     }
@@ -119,7 +119,7 @@ public class WeaponStatusUI : MonoBehaviour
     private void WeaponReloaded(Weapon weapon)
     {
         // if weapon reloaded is the current weapon
-        if (player.activeWeapon.GetCurrentWeapon() == weapon)
+        if (player.activeWeapon.GetCurrentRightHandWeapon() == weapon)
         {
             UpdateReloadText(weapon);
             UpdateProjectileText(weapon);
@@ -163,7 +163,7 @@ public class WeaponStatusUI : MonoBehaviour
     /// Populate active weapon name
     private void UpdateActiveWeaponName(Weapon weapon)
     {
-        weaponNameText.text = "(" + weapon.weaponListPosition + ") " + weapon.weaponDetails.weaponName;
+        weaponNameText.text = weapon.weaponDetails.weaponName;
     }
 
     /// <summary>
@@ -171,13 +171,16 @@ public class WeaponStatusUI : MonoBehaviour
     /// </summary>
     private void UpdateProjectileText(Weapon weapon)
     {
-        if (weapon.weaponDetails.hasInfiniteProjectile)
+        if (!weapon.weaponDetails.isMeleeWeapon)
         {
-            projectileRemainingText.text = "Infinite";
-        }
-        else
-        {
-            projectileRemainingText.text = weapon.weaponRemainingProjectile.ToString() + " / " + weapon.weaponDetails.weaponProjectileCapacity.ToString();
+            if (weapon.weaponDetails.hasInfiniteProjectile)
+            {
+                projectileRemainingText.text = "";
+            }
+            else
+            {
+                projectileRemainingText.text = weapon.weaponRemainingProjectile.ToString() + " / " + weapon.weaponDetails.weaponProjectileCapacity.ToString();
+            }
         }
     }
 
@@ -277,7 +280,8 @@ public class WeaponStatusUI : MonoBehaviour
     /// </summary>
     private void UpdateReloadText(Weapon weapon)
     {
-        if ((!weapon.weaponDetails.hasInfiniteClipCapacity) && (weapon.weaponClipRemainingProjectile <= 0 || weapon.isWeaponReloading))
+        if ((!weapon.weaponDetails.hasInfiniteClipCapacity && !weapon.weaponDetails.isMeleeWeapon) && 
+            (weapon.weaponClipRemainingProjectile <= 0 || weapon.isWeaponReloading))
         {
             // set the reload bar to red
             barImage.color = Color.red;

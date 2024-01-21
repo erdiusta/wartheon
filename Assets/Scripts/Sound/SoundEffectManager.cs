@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [DisallowMultipleComponent]
 public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
@@ -21,7 +22,8 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
         SoundEffect sound = (SoundEffect)PoolManager.Instance.ReuseComponent(soundEffect.soundPrefab, Vector3.zero, Quaternion.identity);
         sound.SetSound(soundEffect);
         sound.gameObject.SetActive(true);
-        StartCoroutine(DisableSound(sound, soundEffect.soundEffectClip.length));
+        AudioClip selectedClip = soundEffect.soundEffectClips[Random.Range(0, soundEffect.soundEffectClips.Length)];
+        StartCoroutine(DisableSound(sound, selectedClip.length));
     }
 
     /// <summary>

@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AimWeaponEvent))]
@@ -8,11 +5,16 @@ using UnityEngine;
 public class AimWeapon : MonoBehaviour
 {
     #region Tooltip
-    [Tooltip("Populate with the Transform from the child WeaponRotationPoint gameobject")]
+    [Tooltip("Populate with the Transform from the child RightHandWeaponRotationPoint gameobject")]
     #endregion
-    [SerializeField] Transform weaponRotationPointTransform;
+    [SerializeField] Transform rightHandWeaponRotationPointTransform;
+    #region Tooltip
+    [Tooltip("Populate with the Transform from the child LeftHandWeaponRotationPoint gameobject")]
+    #endregion
+    [SerializeField] Transform leftHandWeaponRotationPointTransform;
 
     AimWeaponEvent aimWeaponEvent;
+    Player player;
 
     private void Awake()
     {
@@ -29,6 +31,11 @@ public class AimWeapon : MonoBehaviour
         aimWeaponEvent.OnWeaponAim -= AimWeaponEvent_OnWeaponAim;
     }
 
+    private void Start()
+    {
+        player = GetComponent<Player>();
+    }
+
     /// <summary>
     /// Aim weapon event handler
     /// </summary>
@@ -42,8 +49,12 @@ public class AimWeapon : MonoBehaviour
     /// </summary>
     private void Aim(AimDirection aimDirection, float aimAngle)
     {
+        if (gameObject.tag == "Player" && (player.meleeAttack.IsAttackingAtRightHand || player.meleeAttack.IsAttackingAtLeftHand))
+            return;
+
         // Set angle of the weapon transform
-        weaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
+        rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
+        leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
 
         // Flip weapon transform based on player direction
         switch (aimDirection)
@@ -51,7 +62,8 @@ public class AimWeapon : MonoBehaviour
             case AimDirection.Left:
             case AimDirection.UpLeft:
 
-                weaponRotationPointTransform.localScale = new Vector3(1f, -1f, 0f);
+                rightHandWeaponRotationPointTransform.localScale = new Vector3(1f, -1f, 0f);
+                leftHandWeaponRotationPointTransform.localScale = new Vector3(1f, -1f, 0f);
                 break;
 
             case AimDirection.Up:
@@ -59,7 +71,8 @@ public class AimWeapon : MonoBehaviour
             case AimDirection.Right:
             case AimDirection.Down:
 
-                weaponRotationPointTransform.localScale = new Vector3(1f, 1f, 0f);
+                rightHandWeaponRotationPointTransform.localScale = new Vector3(1f, 1f, 0f);
+                leftHandWeaponRotationPointTransform.localScale = new Vector3(1f, 1f, 0f);
                 break;
         }
     }
@@ -68,7 +81,8 @@ public class AimWeapon : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponRotationPointTransform), weaponRotationPointTransform);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(rightHandWeaponRotationPointTransform), rightHandWeaponRotationPointTransform);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(leftHandWeaponRotationPointTransform), leftHandWeaponRotationPointTransform);
     }
 #endif
     #endregion

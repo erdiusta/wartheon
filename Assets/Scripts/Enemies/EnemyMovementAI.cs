@@ -20,6 +20,11 @@ public class EnemyMovementAI : MonoBehaviour
     WaitForFixedUpdate waitForFixedUpdate;
     bool chasePlayer = false;
 
+    Vector3 knockbackVector;
+    float knockbackForce;
+    float knockbackTimeWeight;
+    Status status = Status.Idle;
+
     [HideInInspector] public float moveSpeed;
     [HideInInspector] public int updateFrameNumber = 1; // default value.  This is set by the enemy spawner
 
@@ -40,7 +45,10 @@ public class EnemyMovementAI : MonoBehaviour
 
     private void Update()
     {
-        MoveEnemy();
+        if (status != Status.Stagger)
+        {
+            MoveEnemy();
+        }
     }
 
     /// <summary>
@@ -206,6 +214,36 @@ public class EnemyMovementAI : MonoBehaviour
             // No non-obstacle cells surrounding the player so just return the player position
             return playerCellPosition;
         }
+    }
+
+    public void Knockback(Vector3 vector, float force, float timeWeight)
+    {
+        knockbackVector = vector;
+        knockbackForce = force;
+        knockbackTimeWeight = timeWeight;
+        StartCoroutine(Stagger());
+    }
+
+    IEnumerator Stagger()
+    {
+        status = Status.Stagger;
+        float staggerTime = knockbackTimeWeight;
+        moveSpeed = 0f;
+        enemy.rb2D.velocity += CalculateKnockback();
+        yield return new WaitForSeconds(staggerTime);
+
+        moveSpeed = movementDetails.GetMoveSpeed();
+        status = Status.Idle;
+    }
+
+    private Vector2 CalculateKnockback()
+    {
+        if (knockbackTimeWeight > 0f)
+        {
+            knockbackTimeWeight -= Time.fixedDeltaTime;
+        }
+
+        return knockbackVector * knockbackForce * (knockbackTimeWeight > 0f ? 1f : 0f);
     }
 
     #region Validation

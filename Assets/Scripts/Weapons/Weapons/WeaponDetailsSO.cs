@@ -19,6 +19,14 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("The animator controller for the weapon - weapon should be a melee weapon")]
     #endregion Tooltip
     public RuntimeAnimatorController weaponAnimatorController;
+    #region Tooltip
+    [Tooltip("Weapon class for the weapon")]
+    #endregion Tooltip
+    public WeaponClass weaponClass;
+    #region Tooltip
+    [Tooltip("Weapon wield type")]
+    #endregion Tooltip
+    public WieldType wieldType;
 
     #region Header WEAPON CONFIGURATION
     [Space(10)]
@@ -53,6 +61,22 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Select if the weapon is a melee weapon")]
     #endregion Tooltip
     public bool isMeleeWeapon = false;
+    #region Tooltip
+    [Tooltip("Select radius amount if weapon is a melee weapon")]
+    #endregion Tooltip
+    public float circleRadius = 0.8f;
+    #region Tooltip
+    [Tooltip("Min melee damage of the weapon")]
+    #endregion
+    public int meleeDamageMin = 4;
+    #region Tooltip
+    [Tooltip("Max melee damage of the weapon")]
+    #endregion
+    public int meleeDamageMax = 7;
+    #region Tooltip
+    [Tooltip("Melee weapon attack cooldown duration")]
+    #endregion
+    public float meleeAttackCooldown = 0.3f;
     #region Tooltip
     [Tooltip("Select if the weapon has infinite projectile")]
     #endregion Tooltip
@@ -89,6 +113,8 @@ public class WeaponDetailsSO : ScriptableObject
         if (isMeleeWeapon)
         {
             HelperUtilities.ValidateCheckNullValue(this, nameof(weaponAnimatorController), weaponAnimatorController);
+            HelperUtilities.ValidateCheckPositiveValue(this, nameof(circleRadius), circleRadius, true);
+            HelperUtilities.ValidateCheckPositiveValue(this, nameof(meleeAttackCooldown), meleeAttackCooldown, true);
         }
         else
         {
