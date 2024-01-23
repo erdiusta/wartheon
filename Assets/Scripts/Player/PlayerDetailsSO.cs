@@ -38,6 +38,14 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Immunity time in seconds after being hit")]
     #endregion
     public float hitImmunityTime;
+    #region Tooltip
+    [Tooltip("Get hit sound effect")]
+    #endregion
+    public SoundEffectSO getHitSoundEffect;
+    #region Tooltip
+    [Tooltip("Death sound effect")]
+    #endregion
+    public SoundEffectSO deathSoundEffect;
 
     #region Header WEAPON
     [Space(10)]

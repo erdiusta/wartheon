@@ -14,7 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soundEffectName: Door Open Close
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
-  soundEffectClip: {fileID: 8300000, guid: cdcb52c5b4b6eac4fbf1acc76ea26aba, type: 3}
+  soundEffectClips:
+  - {fileID: 8300000, guid: cdcb52c5b4b6eac4fbf1acc76ea26aba, type: 3}
+  - {fileID: 8300000, guid: 1bcf13f695f6d974b9c136d738d5304b, type: 3}
+  - {fileID: 8300000, guid: e7c8f692303865f45bdef7704df97c77, type: 3}
+  - {fileID: 8300000, guid: aa8f35226bb78684ba92a04daece3c89, type: 3}
+  - {fileID: 8300000, guid: 66ad36e578cff3d489ab1452e7a30b60, type: 3}
+  - {fileID: 8300000, guid: ed929c8dc279d7045ac0b8c795e5f298, type: 3}
+  - {fileID: 8300000, guid: c5e9a1e1b1c4c204693a3965139c0fa8, type: 3}
+  - {fileID: 8300000, guid: 1b36907c559586c499b8bbb9f8e3422c, type: 3}
+  - {fileID: 8300000, guid: 97c8ab447cac7cc47ab1a4a368d1adf2, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 0.6

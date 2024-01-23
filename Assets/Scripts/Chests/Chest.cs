@@ -125,7 +125,7 @@ public class Chest : MonoBehaviour
         // chest open sound effect
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.chestOpen);
 
-        // Check if player alreay has the weapon - if so set weapon to null
+        // Check if player already has the weapon - if so set weapon to null
         if (weaponDetails != null)
         {
             if (GameManager.Instance.GetPlayer().IsWeaponHeldByPlayer(weaponDetails))
@@ -223,7 +223,7 @@ public class Chest : MonoBehaviour
         Player player = GameManager.Instance.GetPlayer();
 
         // Update ammo for current weapon
-        player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentWeapon(), ammoPercent);
+        player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), ammoPercent);
 
         // Play pickup sound effect
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
@@ -258,7 +258,7 @@ public class Chest : MonoBehaviour
         if (!GameManager.Instance.GetPlayer().IsWeaponHeldByPlayer(weaponDetails))
         {
             // Add weapon to player
-            GameManager.Instance.GetPlayer().AddWeaponToPlayer(weaponDetails);
+            GameManager.Instance.GetPlayer().AddRightHandWeaponToPlayer(weaponDetails);
 
             // Play pickup sound effect
             SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);

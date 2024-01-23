@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -19,11 +20,12 @@ public class Health : MonoBehaviour
     HealthEvent healthEvent;
     Player player;
     Coroutine immunityCoroutine;
-    bool isImmuneAfterHit = false;
+    bool isImmuneAfterHit;
     float immunityTime = 0f;
-    SpriteRenderer spriteRenderer = null;
-    const float spriteFlashInterval = 0.2f;
+    SpriteRenderer spriteRenderer;
+    const float spriteFlashInterval = 0.1f;
     WaitForSeconds waitForSecondsSpriteFlashInterval = new WaitForSeconds(spriteFlashInterval);
+    FlashManager flashManager;
 
     [HideInInspector] public bool isDamageable = true;
     [HideInInspector] public Enemy enemy;
@@ -31,6 +33,7 @@ public class Health : MonoBehaviour
     private void Awake()
     {
         healthEvent = GetComponent<HealthEvent>();
+        flashManager = GetComponent<FlashManager>();
     }
 
     private void Start()
@@ -82,8 +85,16 @@ public class Health : MonoBehaviour
         {
             currentHealth -= damageAmount;
             CallHealthEvent(damageAmount);
-
             PostHitImmunity();
+
+            if(tag == "Player")
+            {
+                SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
+            }
+            else if (tag == "Enemy")
+            {
+                SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
+            }
 
             // Set health bar as the percentage of health remaining
             if (healthBar != null)
@@ -108,7 +119,7 @@ public class Health : MonoBehaviour
             if (immunityCoroutine != null)
                 StopCoroutine(immunityCoroutine);
 
-            // Flash red and give period of immunity
+            // Flash red&white and give period of immunity
             immunityCoroutine = StartCoroutine(PostHitImmunityRoutine(immunityTime, spriteRenderer));
         }
     }
@@ -118,16 +129,23 @@ public class Health : MonoBehaviour
     /// </summary>
     IEnumerator PostHitImmunityRoutine(float immunityTime, SpriteRenderer spriteRenderer)
     {
-        int iterations = Mathf.RoundToInt(immunityTime / spriteFlashInterval / 2f);
+        int iterations = Mathf.RoundToInt(immunityTime / spriteFlashInterval / 4);
 
         isDamageable = false;
 
+        // Flash effect
         while (iterations > 0)
         {
-            spriteRenderer.color = Color.red;
+            flashManager.RedFlashCharacter(spriteRenderer);
             yield return waitForSecondsSpriteFlashInterval;
 
-            spriteRenderer.color = Color.white;
+            flashManager.UnflashCharacter(spriteRenderer);
+            yield return waitForSecondsSpriteFlashInterval;
+
+            flashManager.WhiteFlashCharacter(spriteRenderer);
+            yield return waitForSecondsSpriteFlashInterval;
+
+            flashManager.UnflashCharacter(spriteRenderer);
             yield return waitForSecondsSpriteFlashInterval;
 
             iterations--;

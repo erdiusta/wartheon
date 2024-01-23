@@ -22,6 +22,13 @@ public enum GameState
     restartGame
 }
 
+public enum Status
+{
+    Idle,
+    Stagger,
+    Poisoned
+}
+
 public enum AimDirection
 {
     Up,
@@ -30,6 +37,23 @@ public enum AimDirection
     Right,
     Left,
     Down
+}
+
+public enum WeaponClass
+{
+    Sword,
+    Axe,
+    Shield,
+    Spear,
+    Staff,
+    Bow,
+    Dagger
+}
+
+public enum WieldType
+{
+    OneHanded,
+    TwoHanded
 }
 
 public enum ChestSpawnEvent

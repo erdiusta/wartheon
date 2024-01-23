@@ -34,6 +34,14 @@ public static class Settings
     public static int use = Animator.StringToHash("use");
     public const float baseSpeedForPlayerAnimations = 8f;
 
+    // Animator parameters - Damage
+    public static int death = Animator.StringToHash("death");
+
+    // Animator parameters - MeleeAttack
+    public static int meleeAttackAtRightHand = Animator.StringToHash("AttackAtRightHand");
+    public static int meleeAttackAtLeftHand = Animator.StringToHash("AttackAtLeftHand");
+    public static int isLeft = Animator.StringToHash("isLeft");
+
     // Animator parameters - Enemy
     public const float baseSpeedForEnemyAnimations = 3f;
 
@@ -60,8 +68,8 @@ public static class Settings
     public const int defaultAStarMovementPenalty = 40;
     public const int preferredPathAStarMovementPenalty = 1;
     public const int targetFrameRateToSpreadPathfindingOver = 60;
-    public const float playerMoveDistanceToRebuildPath = 3f;
-    public const float enemyPathRebuildCooldown = 2f;
+    public const float playerMoveDistanceToRebuildPath = 2f;
+    public const float enemyPathRebuildCooldown = 1f;
     #endregion
 
     #region ENEMY PARAMETERS

@@ -46,6 +46,14 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     [ColorUsage(true, true)]
     public Color enemyMaterializeColor;
+    #region Tooltip
+    [Tooltip("The sound effect for this enemy to get git")]
+    #endregion
+    public SoundEffectSO getHitSoundEffect;
+    #region Tooltip
+    [Tooltip("The sound effect for this enemy to be killed")]
+    #endregion
+    public SoundEffectSO deathSoundEffect;
 
     #region Header ENEMY WEAPON SETTINGS
     [Space(10)]
