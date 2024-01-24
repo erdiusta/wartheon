@@ -42,6 +42,9 @@ public static class Settings
     public static int meleeAttackAtLeftHand = Animator.StringToHash("AttackAtLeftHand");
     public static int isLeft = Animator.StringToHash("isLeft");
 
+    // Animator parameters - Shield
+    public static int block = Animator.StringToHash("block");
+
     // Animator parameters - Enemy
     public const float baseSpeedForEnemyAnimations = 3f;
 

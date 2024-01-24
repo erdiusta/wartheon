@@ -53,14 +53,32 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public SoundEffectSO weaponReloadingSoundEffect;
 
-    #region Header WEAPON OPERATING VALUES
+    #region Header WEAPON RANGED/MELEE/SHIELD CHECK
     [Space(10)]
-    [Header("WEAPON OPERATING VALUES")]
-    #endregion Header WEAPON OPERATING VALUES
+    [Header("WEAPON RANGED/MELEE/SHIELD CHECK")]
+    #endregion
     #region Tooltip
     [Tooltip("Select if the weapon is a melee weapon")]
     #endregion Tooltip
     public bool isMeleeWeapon = false;
+    #region Tooltip
+    [Tooltip("Select if the weapon is a shield")]
+    #endregion Tooltip
+    public bool isShield = false;
+
+    #region Header SHIELD OPERATING VALUES
+    [Space(10)]
+    [Header("SHIELD OPERATING VALUES")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Probability of deflecting projectiles")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float projectileDeflectChance = 0.4f;
+
+    #region Header MELEE WEAPON OPERATING VALUES
+    [Space(10)]
+    [Header("MELEE WEAPON OPERATING VALUES")]
+    #endregion
     #region Tooltip
     [Tooltip("Select radius amount if weapon is a melee weapon")]
     #endregion Tooltip
@@ -77,6 +95,11 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Melee weapon attack cooldown duration")]
     #endregion
     public float meleeAttackCooldown = 0.3f;
+
+    #region Header RANGED WEAPON OPERATING VALUES
+    [Space(10)]
+    [Header("RANGED WEAPON OPERATING VALUES")]
+    #endregion
     #region Tooltip
     [Tooltip("Select if the weapon has infinite projectile")]
     #endregion Tooltip
@@ -116,6 +139,10 @@ public class WeaponDetailsSO : ScriptableObject
             HelperUtilities.ValidateCheckPositiveValue(this, nameof(circleRadius), circleRadius, true);
             HelperUtilities.ValidateCheckPositiveValue(this, nameof(meleeAttackCooldown), meleeAttackCooldown, true);
         }
+        else if (isShield)
+        {
+            HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDeflectChance), projectileDeflectChance, true);
+        }
         else
         {
             HelperUtilities.ValidateCheckEmptyString(this, nameof(weaponName), weaponName);
@@ -137,3 +164,4 @@ public class WeaponDetailsSO : ScriptableObject
 #endif
     #endregion Validation
 }
+

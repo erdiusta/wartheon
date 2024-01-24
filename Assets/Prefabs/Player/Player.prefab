@@ -67,13 +67,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a4c8aaa134783643a1904b40ca17fbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnAnimationRightHandEventTriggered:
-    m_PersistentCalls:
-      m_Calls: []
   OnAnimationLeftHandEventTriggered:
     m_PersistentCalls:
       m_Calls: []
-  OnAttackPerformed:
+  OnAttackLeftHandPerformed:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &338371118052753355
@@ -503,10 +500,7 @@ MonoBehaviour:
   OnAnimationRightHandEventTriggered:
     m_PersistentCalls:
       m_Calls: []
-  OnAnimationLeftHandEventTriggered:
-    m_PersistentCalls:
-      m_Calls: []
-  OnAttackPerformed:
+  OnAttackRightHandPerformed:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &2434299033552300049
@@ -704,13 +698,10 @@ GameObject:
   - component: {fileID: -3717498421023012475}
   - component: {fileID: 6350093367968429045}
   - component: {fileID: -983905956611885164}
-  - component: {fileID: 8376196354753528461}
   - component: {fileID: 3362413763628156882}
-  - component: {fileID: 7242920860653856590}
   - component: {fileID: 5447108085347080104}
   - component: {fileID: 3495262142536431903}
   - component: {fileID: 867631875859887099}
-  - component: {fileID: 8596987065985328077}
   - component: {fileID: 8675837940116119588}
   - component: {fileID: 1795854068962728802}
   - component: {fileID: 8453197941048184293}
@@ -719,6 +710,7 @@ GameObject:
   - component: {fileID: 2155673874964534661}
   - component: {fileID: 7401228462962825218}
   - component: {fileID: 6404704124105479618}
+  - component: {fileID: 6621874370917847932}
   - component: {fileID: 8530009645545276676}
   - component: {fileID: 8928293940557649478}
   - component: {fileID: 5752187408601037149}
@@ -1001,33 +993,26 @@ MonoBehaviour:
   playerDetails: {fileID: 0}
   healthEvent: {fileID: 0}
   health: {fileID: 0}
+  playerStatus: 0
   destroyedEvent: {fileID: 0}
   playerControl: {fileID: 0}
-  movementByVelocityEvent: {fileID: 0}
-  idleEvent: {fileID: 0}
-  aimWeaponEvent: {fileID: 0}
   fireWeaponEvent: {fileID: 0}
   meleeAttackEvent: {fileID: 0}
-  meleeAttack: {fileID: 0}
+  meleeAttackRightHand: {fileID: 0}
+  meleeAttackLeftHand: {fileID: 0}
   setActiveWeaponEvent: {fileID: 0}
+  aimWeapon: {fileID: 0}
   activeWeapon: {fileID: 0}
   weaponFiredEvent: {fileID: 0}
   reloadWeaponEvent: {fileID: 0}
   weaponReloadedEvent: {fileID: 0}
   spriteRenderer: {fileID: 0}
+  polygonCollider2D: {fileID: 0}
   animator: {fileID: 0}
---- !u!114 &8376196354753528461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4770697194666701406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53d6d86b78e2adf459c5d1bf0016ecc8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  animatePlayer: {fileID: 0}
+  knockback: {fileID: 0}
+  idle: {fileID: 0}
+  movementByVelocity: {fileID: 0}
 --- !u!114 &3362413763628156882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1038,18 +1023,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1280fdf98a129046a7732dfea63dc19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7242920860653856590
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4770697194666701406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79bce8ff81d3c0a48ba158112e8d6d6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &5447108085347080104
@@ -1090,19 +1063,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e310c4644cec5c4ca3f442586358113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementDetails: {fileID: 11400000, guid: 137b2ddd790c33142b041db2f92880a6, type: 2}
---- !u!114 &8596987065985328077
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4770697194666701406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b35a764df09b73d4da862c54299ac03b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8675837940116119588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1115,6 +1075,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12cc535e79b17844a9684985f3c96d23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movementDetails: {fileID: 11400000, guid: 137b2ddd790c33142b041db2f92880a6, type: 2}
+  moveSpeed: 0
 --- !u!114 &1795854068962728802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1203,6 +1165,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 238cc74e4f487404f8abe1fccccd591c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6621874370917847932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e452e2362da48c4b93d8f6d988a61f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &8530009645545276676
@@ -1334,8 +1308,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad9b2ed813db9ba4ead2574d93f6db80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockbackForce: 2
-  knockbackTimeWeight: 1
+  knockbackForce: 5
+  knockbackTimeWeight: 1.5
 --- !u!1 &4966358325702215446
 GameObject:
   m_ObjectHideFlags: 0

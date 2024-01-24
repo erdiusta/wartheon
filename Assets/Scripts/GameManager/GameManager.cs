@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
@@ -33,6 +34,20 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Tooltip("Populate with the starting dungeon level for testing , first level = 0")]
     #endregion Tooltip
     [SerializeField] int currentDungeonLevelListIndex = 0;
+
+    #region INPUT ACTION REFERENCES
+    [Space(10)]
+    [Header("INPUT ACTION REFERENCES")]
+    #endregion
+    public InputActionReference pointerPosition;
+    public InputActionReference movement;
+    public InputActionReference attack;
+    public InputActionReference attackLeftHand;
+    public InputActionReference switchWeapon;
+    public InputActionReference overviewMapFullView;
+    public InputActionReference reload;
+    public InputActionReference resetWeaponIndex;
+    public InputActionReference nextLevel;
 
     Room currentRoom;
     Room previousRoom;
@@ -72,12 +87,18 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
         player.destroyedEvent.OnDestroyed += Player_OnDestroyed;
+
+        overviewMapFullView.action.started += ControlDisplayDungeonOverviewMap;
+        overviewMapFullView.action.canceled += ControlClearDungeonOverviewMap;
     }
 
     private void OnDisable()
     {
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
         player.destroyedEvent.OnDestroyed -= Player_OnDestroyed;
+
+        overviewMapFullView.action.started -= ControlDisplayDungeonOverviewMap;
+        overviewMapFullView.action.canceled -= ControlClearDungeonOverviewMap;
     }
 
     /// <summary>
@@ -125,35 +146,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 gameState = GameState.playingLevel;
                 break;
 
-            // While playing the level handle the tab key for the dungeon overview map.
-            case GameState.playingLevel:
-
-                if (Input.GetKeyDown(KeyCode.Tab))
-                {
-                    DisplayDungeonOverviewMap();
-                }
-                break;
-
-            // if in the dungeon overview map handle the release of the tab key to clear the map
-            case GameState.dungeonOverviewMap:
-
-                // Key released
-                if (Input.GetKeyUp(KeyCode.Tab))
-                {
-                    // Clear dungeonOverviewMap
-                    DungeonMap.Instance.ClearDungeonOverViewMap();
-                }
-                break;
-
-            // While playing the level and before the boss is engaged, handle the tab key for the dungeon overview map.
-            case GameState.bossStage:
-
-                if (Input.GetKeyDown(KeyCode.Tab))
-                {
-                    DisplayDungeonOverviewMap();
-                }
-                break;
-
             // Handle the level being completed
             case GameState.levelCompleted:
                 // Display level completed text
@@ -189,6 +181,29 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         previousRoom = currentRoom;
         currentRoom = room;
+    }
+
+    private void ControlDisplayDungeonOverviewMap(InputAction.CallbackContext context)
+    {
+        // While playing the level handle the tab key for the dungeon overview map.
+        if (gameState == GameState.playingLevel)
+        {
+            DisplayDungeonOverviewMap();
+        }
+        if (gameState == GameState.bossStage)
+        {
+            DisplayDungeonOverviewMap();
+        }
+    }
+
+    private void ControlClearDungeonOverviewMap(InputAction.CallbackContext context)
+    {
+        // If in the dungeon overview map handle the release of the tab key to clear the map
+        if (gameState == GameState.dungeonOverviewMap)
+        {
+            // Clear dungeonOverviewMap
+            DungeonMap.Instance.ClearDungeonOverViewMap();
+        }
     }
 
     /// <summary>
@@ -264,7 +279,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             float timer = displaySeconds;
 
-            while (timer > 0f && !Input.GetKeyDown(KeyCode.Return))
+            while (timer > 0f && !nextLevel.action.IsPressed())
             {
                 timer -= Time.deltaTime;
                 yield return null;
@@ -273,7 +288,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         else
         // else display the message until the return button is pressed
         {
-            while (!Input.GetKeyDown(KeyCode.Return))
+            while (!nextLevel.action.IsPressed())
             {
                 yield return null;
             }
@@ -299,7 +314,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         Debug.Log("Level Completed - Press Return To Progress To The Next Level");
 
         // When player presses the return key proceed to the next level
-        while (!Input.GetKeyDown(KeyCode.Return))
+        while (!nextLevel.action.IsPressed())
         {
             yield return null;
         }

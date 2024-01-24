@@ -93,7 +93,8 @@ public class EnemyMovementAI : MonoBehaviour
                 if (moveEnemyRoutine != null)
                 {
                     // Trigger idle event
-                    enemy.idleEvent.CallIdleEvent();
+                    enemy.idle.StopVelocity();
+                    enemy.animateEnemy.SetIdleAnimationParameters();
                     StopCoroutine(moveEnemyRoutine);
                 }
 
@@ -127,7 +128,8 @@ public class EnemyMovementAI : MonoBehaviour
         }
 
         // End of path steps - trigger the enemy idle event
-        enemy.idleEvent.CallIdleEvent();
+        enemy.idle.StopVelocity();
+        enemy.animateEnemy.SetIdleAnimationParameters();
     }
 
     /// <summary>
@@ -156,7 +158,8 @@ public class EnemyMovementAI : MonoBehaviour
         else
         {
             // Trigger idle event - no path
-            enemy.idleEvent.CallIdleEvent();
+            enemy.idle.StopVelocity();
+            enemy.animateEnemy.SetIdleAnimationParameters();
         }
     }
 

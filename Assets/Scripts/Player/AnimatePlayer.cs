@@ -11,47 +11,10 @@ public class AnimatePlayer : MonoBehaviour
         player = GetComponent<Player>();
     }
 
-    private void OnEnable()
-    {
-        player.movementByVelocityEvent.OnMovementByVelocity += MovementByVelocityEvent_OnMovementByVelocity;
-        player.idleEvent.OnIdle += IdleEvent_OnIdle;
-        player.aimWeaponEvent.OnWeaponAim += AimWeaponEvent_OnWeaponAim;
-    }
-
-    private void OnDisable()
-    {
-        player.movementByVelocityEvent.OnMovementByVelocity -= MovementByVelocityEvent_OnMovementByVelocity;
-        player.idleEvent.OnIdle -= IdleEvent_OnIdle;
-        player.aimWeaponEvent.OnWeaponAim -= AimWeaponEvent_OnWeaponAim;
-    }
-
-    private void MovementByVelocityEvent_OnMovementByVelocity(MovementByVelocityEvent movementByVelocityEvent, 
-        MovementByVelocityArgs movementByVelocityArgs)
-    {
-        SetMovementAnimationParameters();
-    }
-
-    /// <summary>
-    /// On idle event handler
-    /// </summary>
-    private void IdleEvent_OnIdle(IdleEvent idleEvent)
-    {
-        SetIdleAnimationParameters();
-    }
-
-    /// <summary>
-    /// On weapon aim event handler
-    /// </summary>
-    private void AimWeaponEvent_OnWeaponAim(AimWeaponEvent aimWeaponEvent, AimWeaponEventArgs aimWeaponEventArgs)
-    {
-        InitializeAimAnimationParameters();
-        SetAimWeaponAnimationParameters(aimWeaponEventArgs.aimDirection);
-    }
-
     /// <summary>
     /// Initialise aim animation parameters
     /// </summary>
-    private void InitializeAimAnimationParameters()
+    public void InitializeAimAnimationParameters()
     {
         player.animator.SetBool(Settings.aimUp, false);
         player.animator.SetBool(Settings.aimUpRight, false);
@@ -64,7 +27,7 @@ public class AnimatePlayer : MonoBehaviour
     /// <summary>
     /// Set movement animation parameters
     /// </summary>
-    private void SetMovementAnimationParameters()
+    public void SetMovementAnimationParameters()
     {
         player.animator.SetBool(Settings.isMoving, true);
         player.animator.SetBool(Settings.isIdle, false);
@@ -73,7 +36,7 @@ public class AnimatePlayer : MonoBehaviour
     /// <summary>
     /// Set movement animation parameters
     /// </summary>
-    private void SetIdleAnimationParameters()
+    public void SetIdleAnimationParameters()
     {
         player.animator.SetBool(Settings.isMoving, false);
         player.animator.SetBool(Settings.isIdle, true);
@@ -82,7 +45,7 @@ public class AnimatePlayer : MonoBehaviour
     /// <summary>
     /// Set aim animation parameters
     /// </summary>
-    private void SetAimWeaponAnimationParameters(AimDirection aimDirection)
+    public void SetAimWeaponAnimationParameters(AimDirection aimDirection)
     {
         // Set aim direction
         switch (aimDirection)

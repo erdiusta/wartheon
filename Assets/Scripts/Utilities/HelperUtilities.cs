@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class HelperUtilities
@@ -14,7 +13,7 @@ public static class HelperUtilities
         if (mainCamera == null)
             mainCamera = Camera.main;
 
-        Vector3 mouseScreenPosition = Input.mousePosition;
+        Vector2 mouseScreenPosition = GameManager.Instance.pointerPosition.action.ReadValue<Vector2>();
 
         // Clamp mouse position to screen size
         mouseScreenPosition.x = Mathf.Clamp(mouseScreenPosition.x, 0f, Screen.width);

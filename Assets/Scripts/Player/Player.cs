@@ -12,11 +12,8 @@ using System.Linq;
 [RequireComponent(typeof(DestroyedEvent))]
 [RequireComponent(typeof(Destroyed))]
 [RequireComponent(typeof(PlayerControl))]
-[RequireComponent(typeof(MovementByVelocityEvent))]
 [RequireComponent(typeof(MovementByVelocity))]
-[RequireComponent(typeof(IdleEvent))]
 [RequireComponent(typeof(Idle))]
-[RequireComponent(typeof(AimWeaponEvent))]
 [RequireComponent(typeof(AimWeapon))]
 [RequireComponent(typeof(FireWeaponEvent))]
 [RequireComponent(typeof(FireWeapon))]
@@ -36,6 +33,7 @@ using System.Linq;
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(PolygonCollider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Knockback))]
 #endregion
 [DisallowMultipleComponent]
 public class Player : MonoBehaviour
@@ -43,22 +41,26 @@ public class Player : MonoBehaviour
     [HideInInspector] public PlayerDetailsSO playerDetails;
     [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public Health health;
+    [HideInInspector] public Status playerStatus = Status.Idle;
     [HideInInspector] public DestroyedEvent destroyedEvent;
     [HideInInspector] public PlayerControl playerControl;
-    [HideInInspector] public MovementByVelocityEvent movementByVelocityEvent;
-    [HideInInspector] public IdleEvent idleEvent;
-    [HideInInspector] public AimWeaponEvent aimWeaponEvent;
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
     [HideInInspector] public MeleeAttackEvent meleeAttackEvent;
     [HideInInspector] public MeleeAttackRightHand meleeAttackRightHand;
     [HideInInspector] public MeleeAttackLeftHand meleeAttackLeftHand;
     [HideInInspector] public SetActiveWeaponEvent setActiveWeaponEvent;
+    [HideInInspector] public AimWeapon aimWeapon;
     [HideInInspector] public ActiveWeapon activeWeapon;
     [HideInInspector] public WeaponFiredEvent weaponFiredEvent;
     [HideInInspector] public ReloadWeaponEvent reloadWeaponEvent;
     [HideInInspector] public WeaponReloadedEvent weaponReloadedEvent;
     [HideInInspector] public SpriteRenderer spriteRenderer;
+    [HideInInspector] public PolygonCollider2D polygonCollider2D;
     [HideInInspector] public Animator animator;
+    [HideInInspector] public AnimatePlayer animatePlayer;
+    [HideInInspector] public Knockback knockback;
+    [HideInInspector] public Idle idle;
+    [HideInInspector] public MovementByVelocity movementByVelocity;
 
     public List<Weapon> weaponRightHandList = new List<Weapon>();
     public List<Weapon> weaponLeftHandList = new List<Weapon>();
@@ -69,20 +71,23 @@ public class Player : MonoBehaviour
         health = GetComponent<Health>();
         destroyedEvent = GetComponent<DestroyedEvent>();
         playerControl = GetComponent<PlayerControl>();
-        movementByVelocityEvent = GetComponent<MovementByVelocityEvent>();
-        idleEvent = GetComponent<IdleEvent>();
-        aimWeaponEvent = GetComponent<AimWeaponEvent>();
         fireWeaponEvent = GetComponent<FireWeaponEvent>();
         meleeAttackEvent = GetComponent<MeleeAttackEvent>();
         meleeAttackRightHand = GetComponent<MeleeAttackRightHand>();
         meleeAttackLeftHand = GetComponent<MeleeAttackLeftHand>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
+        aimWeapon = GetComponent<AimWeapon>();
         activeWeapon = GetComponent<ActiveWeapon>();
         weaponFiredEvent = GetComponent<WeaponFiredEvent>();
         reloadWeaponEvent = GetComponent<ReloadWeaponEvent>();
         weaponReloadedEvent = GetComponent<WeaponReloadedEvent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        polygonCollider2D = GetComponent<PolygonCollider2D>();
         animator = GetComponent<Animator>();
+        animatePlayer = GetComponent<AnimatePlayer>();
+        knockback = GetComponent<Knockback>();
+        idle = GetComponent<Idle>();
+        movementByVelocity = GetComponent<MovementByVelocity>();
     }
 
     /// <summary>
@@ -189,9 +194,6 @@ public class Player : MonoBehaviour
 
             // Set weapon position in list
             weapon.weaponLeftHandListPosition = weaponLeftHandList.Count;
-
-            // Set the added weapon as active
-            setActiveWeaponEvent.CallSetActiveWeaponAtLeftHandEvent(weapon);
         }
     }
 

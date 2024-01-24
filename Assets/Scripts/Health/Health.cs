@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -79,7 +78,7 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Public method called when damage is taken
     /// </summary>
-    public void TakeDamage(int damageAmount)
+    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition)
     {
         if (isDamageable)
         {
@@ -90,6 +89,10 @@ public class Health : MonoBehaviour
             if(tag == "Player")
             {
                 SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
+
+                // Apply knockback
+                Knockback knockback = player.GetComponent<Knockback>();
+                player.movementByVelocity.Knockback((dealerPosition - receiverPosition).normalized, knockback.knockbackForce, knockback.knockbackTimeWeight);
             }
             else if (tag == "Enemy")
             {

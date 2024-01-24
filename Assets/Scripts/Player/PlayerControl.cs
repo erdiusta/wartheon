@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,11 +6,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class PlayerControl : MonoBehaviour
 {
-    #region Tooltip
-    [Tooltip("MovementDetailsSO scriptable object containing movement details such as speed")]
-    #endregion Tooltip
-    [SerializeField] private MovementDetailsSO movementDetails;
-
+    Vector2 movementInput;
     Player player;
     bool leftMouseDownPreviousFrame = false;
     bool rightMouseDownPreviousFrame = false;
@@ -22,8 +18,6 @@ public class PlayerControl : MonoBehaviour
     private void Awake()
     {
         player = GetComponent<Player>();
-
-        moveSpeed = movementDetails.GetMoveSpeed();
     }
 
     private void Start()
@@ -60,7 +54,7 @@ public class PlayerControl : MonoBehaviour
     private void SetPlayerAnimationSpeed()
     {
         // Set animator speed to match movement speed
-        player.animator.speed = moveSpeed / Settings.baseSpeedForPlayerAnimations;
+        player.animator.speed = player.movementByVelocity.moveSpeed / Settings.baseSpeedForPlayerAnimations;
     }
 
     private void Update()
@@ -69,11 +63,23 @@ public class PlayerControl : MonoBehaviour
         if (isPlayerMovementDisabled)
             return;
 
-        // Process the player movement input
-        MovementInput();
-
-        // Process the player weapon input
-        WeaponInput();
+        switch (player.playerStatus)
+        {
+            case Status.Idle:
+                // Process the player weapon input
+                WeaponInput();
+                // Process the player movement input
+                MovementInput();
+                break;
+            case Status.Stagger:
+                player.polygonCollider2D.enabled = false;
+                StartCoroutine(Stagger());
+                break;
+            case Status.Poisoned:
+                break;
+            default:
+                break;
+        }
     }
 
     /// <summary>
@@ -82,8 +88,12 @@ public class PlayerControl : MonoBehaviour
     private void MovementInput()
     {
         // Get movement input
-        float horizontalMovement = Input.GetAxisRaw("Horizontal");
-        float verticalMovement = Input.GetAxisRaw("Vertical");
+        movementInput = GameManager.Instance.movement.action.ReadValue<Vector2>().normalized;
+
+        float horizontalMovement = movementInput.x;
+        float verticalMovement = movementInput.y;
+
+        player.movementByVelocity.MovementInput = movementInput;
 
         // Create a direction vector based on the input
         Vector2 direction = new Vector2(horizontalMovement, verticalMovement);
@@ -98,13 +108,25 @@ public class PlayerControl : MonoBehaviour
         if (direction != Vector2.zero)
         {
             // Trigger movement event
-            player.movementByVelocityEvent.CallMovementByVelocityEvent(direction, moveSpeed);
+            player.movementByVelocity.MoveRigidbody(direction, player.movementByVelocity.moveSpeed);
+
+            // Trigger move animations
+            player.animatePlayer.SetMovementAnimationParameters();
         }
         // Else trigger idle event
         else
         {
-            player.idleEvent.CallIdleEvent();
+            player.idle.StopVelocity();
+            player.animatePlayer.SetIdleAnimationParameters();
         }
+    }
+
+    IEnumerator Stagger()
+    {
+        yield return new WaitForSeconds(player.knockback.knockbackTimeWeight);
+
+        player.playerStatus = Status.Idle;
+        player.polygonCollider2D.enabled = true;
     }
 
     /// <summary>
@@ -149,14 +171,16 @@ public class PlayerControl : MonoBehaviour
         // Set player aim direction
         playerAimDirection = HelperUtilities.GetAimDirection(playerAngleDegrees);
 
-        // Trigger weapon aim event
-        player.aimWeaponEvent.CallAimWeaponEvent(playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection);
+        // Trigger weapon aim methods
+        player.aimWeapon.Aim(playerAimDirection, playerAngleDegrees);
+        player.animatePlayer.InitializeAimAnimationParameters();
+        player.animatePlayer.SetAimWeaponAnimationParameters(playerAimDirection);
     }
 
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
         // Fire when left mouse button is clicked
-        if (Input.GetMouseButtonDown(0))
+        if (GameManager.Instance.attack.action.IsPressed())
         {
             if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
             {
@@ -177,7 +201,7 @@ public class PlayerControl : MonoBehaviour
         }
 
         // Fire when right mouse button is clicked
-        if (Input.GetMouseButtonDown(1))
+        if (GameManager.Instance.attackLeftHand.action.IsPressed())
         {
             if (player.activeWeapon.GetCurrentLeftHandWeapon() == null)
                 return;
@@ -204,68 +228,20 @@ public class PlayerControl : MonoBehaviour
 
     private void SwitchWeaponInput()
     {
+        float scrollValue = (GameManager.Instance.switchWeapon.action.ReadValue<Vector2>().normalized).y;
+
         // Switch weapon if mouse scroll wheel selecetd
-        if (Input.mouseScrollDelta.y < 0f)
+        if (scrollValue < 0f)
         {
             LeftHandWeaponCheck();
         }
 
-        if (Input.mouseScrollDelta.y > 0f)
+        if (scrollValue > 0f)
         {
             NextRightHandWeapon();
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SetRightHandWeaponByIndex(1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SetRightHandWeaponByIndex(2);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SetRightHandWeaponByIndex(3);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            SetRightHandWeaponByIndex(4);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            SetRightHandWeaponByIndex(5);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            SetRightHandWeaponByIndex(6);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            SetRightHandWeaponByIndex(7);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            SetRightHandWeaponByIndex(8);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            SetRightHandWeaponByIndex(9);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            SetRightHandWeaponByIndex(10);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Minus))
+        if (GameManager.Instance.resetWeaponIndex.action.IsPressed())
         {
             SetCurrentWeaponToFirstInTheList();
         }
@@ -343,7 +319,7 @@ public class PlayerControl : MonoBehaviour
         if (currentWeapon.weaponClipRemainingProjectile == currentWeapon.weaponDetails.weaponClipProjectileCapacity) 
             return;
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (GameManager.Instance.reload.action.IsPressed())
         {
             // Call the reload weapon event
             player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), 0);
@@ -364,7 +340,8 @@ public class PlayerControl : MonoBehaviour
     public void DisablePlayer()
     {
         isPlayerMovementDisabled = true;
-        player.idleEvent.CallIdleEvent();
+        player.idle.StopVelocity();
+        player.animatePlayer.SetIdleAnimationParameters();
     }
 
     /// <summary>
@@ -400,13 +377,4 @@ public class PlayerControl : MonoBehaviour
         // Set current weapon
         SetRightHandWeaponByIndex(currentRightHandWeaponIndex);
     }
-
-    #region Validation
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(movementDetails), movementDetails);
-    }
-#endif
-    #endregion
 }
