@@ -163,6 +163,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_SortingOrder
     path: LeftWeaponAnchorPosition/LeftWeaponRotationPoint/Weapon
+<<<<<<< Updated upstream
     classID: 212
     script: {fileID: 0}
     flags: 0
@@ -184,6 +185,8 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_SortingOrder
     path: LeftWeaponAnchorPosition/LeftWeaponRotationPoint/Hand
+=======
+>>>>>>> Stashed changes
     classID: 212
     script: {fileID: 0}
     flags: 0
@@ -257,6 +260,7 @@ AnimationClip:
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
       path: 3750460141
+<<<<<<< Updated upstream
       attribute: 3762991556
       script: {fileID: 0}
       typeID: 212
@@ -266,6 +270,8 @@ AnimationClip:
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
       path: 1825224802
+=======
+>>>>>>> Stashed changes
       attribute: 3762991556
       script: {fileID: 0}
       typeID: 212
@@ -611,6 +617,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_SortingOrder
     path: LeftWeaponAnchorPosition/LeftWeaponRotationPoint/Weapon
+<<<<<<< Updated upstream
     classID: 212
     script: {fileID: 0}
     flags: 0
@@ -632,6 +639,8 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_SortingOrder
     path: LeftWeaponAnchorPosition/LeftWeaponRotationPoint/Hand
+=======
+>>>>>>> Stashed changes
     classID: 212
     script: {fileID: 0}
     flags: 0

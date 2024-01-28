@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(AimWeaponEvent))]
 [DisallowMultipleComponent]
 public class AimWeapon : MonoBehaviour
 {
@@ -13,11 +12,15 @@ public class AimWeapon : MonoBehaviour
     #endregion
     [SerializeField] Transform leftHandWeaponRotationPointTransform;
 
+<<<<<<< Updated upstream
     AimWeaponEvent aimWeaponEvent;
+=======
+>>>>>>> Stashed changes
     Player player;
 
-    private void Awake()
+    private void Start()
     {
+<<<<<<< Updated upstream
         aimWeaponEvent = GetComponent<AimWeaponEvent>();
     }
 
@@ -42,19 +45,54 @@ public class AimWeapon : MonoBehaviour
     private void AimWeaponEvent_OnWeaponAim(AimWeaponEvent aimWeaponEvent, AimWeaponEventArgs aimWeaponEventArgs)
     {
         Aim(aimWeaponEventArgs.aimDirection, aimWeaponEventArgs.aimAngle);
+=======
+        player = GetComponent<Player>();
+>>>>>>> Stashed changes
     }
 
     /// <summary>
     /// Aim the weapon
     /// </summary>
-    private void Aim(AimDirection aimDirection, float aimAngle)
+    public void Aim(AimDirection aimDirection, float aimAngle)
     {
+<<<<<<< Updated upstream
         if (gameObject.tag == "Player" && (player.meleeAttack.IsAttackingAtRightHand || player.meleeAttack.IsAttackingAtLeftHand))
+=======
+        if (gameObject.tag == "Player" && (player.meleeAttackRightHand.IsAttackingAtRightHand || player.meleeAttackLeftHand.IsAttackingAtLeftHand))
+>>>>>>> Stashed changes
             return;
 
         // Set angle of the weapon transform
         rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
         leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
+<<<<<<< Updated upstream
+=======
+
+        // If left hand has a shield, fix the shield position
+        if (tag == "Player")
+        {
+            if (player.activeWeapon.GetCurrentLeftHandWeapon() != null &&
+                player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+            {
+                switch (aimDirection)
+                {
+                    case AimDirection.Left:
+                    case AimDirection.UpLeft:
+
+                        leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 180f);
+                        break;
+
+                    case AimDirection.Up:
+                    case AimDirection.UpRight:
+                    case AimDirection.Right:
+                    case AimDirection.Down:
+
+                        leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 0f);
+                        break;
+                }
+            }
+        }
+>>>>>>> Stashed changes
 
         // Flip weapon transform based on player direction
         switch (aimDirection)

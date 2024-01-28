@@ -80,7 +80,7 @@ public class Projectile : MonoBehaviour, IFireable
             // Set isColliding to prevent ammo dealing damage multiple times
             isColliding = true;
 
-            health.TakeDamage(projectileDetails.projectileDamage);
+            health.TakeDamage(projectileDetails.projectileDamage, transform.position, health.transform.position);
         }
     }
 

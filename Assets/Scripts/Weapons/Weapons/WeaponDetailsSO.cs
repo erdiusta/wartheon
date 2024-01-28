@@ -53,15 +53,40 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public SoundEffectSO weaponReloadingSoundEffect;
 
-    #region Header WEAPON OPERATING VALUES
+    #region Header WEAPON RANGED/MELEE/SHIELD CHECK
     [Space(10)]
-    [Header("WEAPON OPERATING VALUES")]
-    #endregion Header WEAPON OPERATING VALUES
+    [Header("WEAPON RANGED/MELEE/SHIELD CHECK")]
+    #endregion
     #region Tooltip
     [Tooltip("Select if the weapon is a melee weapon")]
     #endregion Tooltip
     public bool isMeleeWeapon = false;
     #region Tooltip
+<<<<<<< Updated upstream
+=======
+    [Tooltip("Select if the weapon is a shield")]
+    #endregion Tooltip
+    public bool isShield = false;
+    #region Tooltip
+    [Tooltip("Weapon Fire Rate - 0.2 means 5 shots a second")]
+    #endregion Tooltip
+    public float weaponFireRate = 0.2f;
+
+    #region Header SHIELD OPERATING VALUES
+    [Space(10)]
+    [Header("SHIELD OPERATING VALUES")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Probability of deflecting projectiles")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float projectileDeflectChance = 0.4f;
+
+    #region Header MELEE WEAPON OPERATING VALUES
+    [Space(10)]
+    [Header("MELEE WEAPON OPERATING VALUES")]
+    #endregion
+    #region Tooltip
+>>>>>>> Stashed changes
     [Tooltip("Select radius amount if weapon is a melee weapon")]
     #endregion Tooltip
     public float circleRadius = 0.8f;
@@ -73,10 +98,18 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Max melee damage of the weapon")]
     #endregion
     public int meleeDamageMax = 7;
+<<<<<<< Updated upstream
     #region Tooltip
     [Tooltip("Melee weapon attack cooldown duration")]
     #endregion
     public float meleeAttackCooldown = 0.3f;
+=======
+
+    #region Header RANGED WEAPON OPERATING VALUES
+    [Space(10)]
+    [Header("RANGED WEAPON OPERATING VALUES")]
+    #endregion
+>>>>>>> Stashed changes
     #region Tooltip
     [Tooltip("Select if the weapon has infinite projectile")]
     #endregion Tooltip
@@ -93,10 +126,7 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Weapon ammo capacity - the maximum number of rounds at that can be held for this weapon")]
     #endregion Tooltip
     public int weaponProjectileCapacity = 100;
-    #region Tooltip
-    [Tooltip("Weapon Fire Rate - 0.2 means 5 shots a second")]
-    #endregion Tooltip
-    public float weaponFireRate = 0.2f;
+
     #region Tooltip
     [Tooltip("Weapon Precharge Time - time in seconds to hold fire button down before firing")]
     #endregion Tooltip
@@ -114,7 +144,14 @@ public class WeaponDetailsSO : ScriptableObject
         {
             HelperUtilities.ValidateCheckNullValue(this, nameof(weaponAnimatorController), weaponAnimatorController);
             HelperUtilities.ValidateCheckPositiveValue(this, nameof(circleRadius), circleRadius, true);
+<<<<<<< Updated upstream
             HelperUtilities.ValidateCheckPositiveValue(this, nameof(meleeAttackCooldown), meleeAttackCooldown, true);
+=======
+        }
+        else if (isShield)
+        {
+            HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDeflectChance), projectileDeflectChance, true);
+>>>>>>> Stashed changes
         }
         else
         {
@@ -137,3 +174,4 @@ public class WeaponDetailsSO : ScriptableObject
 #endif
     #endregion Validation
 }
+

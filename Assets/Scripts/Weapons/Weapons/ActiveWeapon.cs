@@ -68,12 +68,20 @@ public class ActiveWeapon : MonoBehaviour
         SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
         SetRightHandWeapon(setActiveWeaponEventArgs.weapon);
+<<<<<<< Updated upstream
+=======
+        weaponRightHandAnimator.SetBool(Settings.isLeft, false);
+>>>>>>> Stashed changes
     }
 
     private void SetActiveLeftWeaponEvent_OnSetActiveLeftHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
         SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
         SetLeftHandWeapon(setActiveWeaponEventArgs.weapon);
+<<<<<<< Updated upstream
+=======
+        weaponLeftHandAnimator.SetBool(Settings.isLeft, true);
+>>>>>>> Stashed changes
     }
 
     private void SetInactiveLeftWeaponEvent_OnSetInactiveLeftWeapon(SetActiveWeaponEvent setActiveWeaponEvent)

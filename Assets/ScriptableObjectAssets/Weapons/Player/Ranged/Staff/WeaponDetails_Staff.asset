@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Staff
   weaponSprite: {fileID: -110142417, guid: cd389daac55ac044bb6c47bc5c3f407a, type: 3}
+<<<<<<< Updated upstream
   weaponAnimatorController: {fileID: 0}
+=======
+  weaponAnimatorController: {fileID: 9100000, guid: a9f6b3580707cd749861dcb2fc4d7f34, type: 2}
+>>>>>>> Stashed changes
   weaponClass: 4
   wieldType: 1
   weaponShootPosition: {x: 0, y: 1.18, z: 0}
@@ -23,13 +27,26 @@ MonoBehaviour:
   weaponFiringSoundEffect: {fileID: 11400000, guid: e1c8591c71ab89d448879b0d39d25d09, type: 2}
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
+<<<<<<< Updated upstream
   circleRadius: 0.8
   meleeDamageMin: 4
   meleeDamageMax: 7
+=======
+  isShield: 0
+  weaponFireRate: 0.6
+  projectileDeflectChance: 0
+  circleRadius: 0
+  meleeDamageMin: 0
+  meleeDamageMax: 0
+>>>>>>> Stashed changes
   hasInfiniteProjectile: 1
   hasInfiniteClipCapacity: 1
   weaponClipProjectileCapacity: 0
   weaponProjectileCapacity: 0
+<<<<<<< Updated upstream
   weaponFireRate: 0.6
   weaponPrechargeTime: 0
+=======
+  weaponPrechargeTime: 0.5
+>>>>>>> Stashed changes
   weaponReloadTime: 0

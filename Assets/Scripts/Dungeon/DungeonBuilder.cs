@@ -459,7 +459,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             return null;
 
         // Select random room template from list and return
-        return matchingRoomTemplateList[UnityEngine.Random.Range(0, matchingRoomTemplateList.Count)];
+        return matchingRoomTemplateList[Random.Range(0, matchingRoomTemplateList.Count)];
     }
 
     /// <summary>

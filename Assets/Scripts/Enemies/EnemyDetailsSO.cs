@@ -16,9 +16,21 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public GameObject enemyPrefab;
     #region Tooltip
+    [Tooltip("Movement details of enemy")]
+    #endregion
+    public MovementDetailsSO movementDetails;
+    #region Tooltip
     [Tooltip("Distance to the player before enemy starts chasing")]
     #endregion
     public float chaseDistance = 50f;
+    #region Tooltip
+    [Tooltip("Enemy behaviour type")]
+    #endregion
+    public EnemyBehaviour enemyBehaviour;
+    #region Tooltip
+    [Tooltip("Check if enemy is a boss")]
+    #endregion
+    public bool isEnemyBoss = false;
 
     #region Header ENEMY MATERIAL
     [Space(10)]
@@ -50,6 +62,23 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("The sound effect for this enemy to get git")]
     #endregion
     public SoundEffectSO getHitSoundEffect;
+
+    #region Header ENEMY SOUND SETTINGS
+    [Space(10)]
+    [Header("ENEMY SOUND SETTINGS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The sound effect for this enemy to get git")]
+    #endregion
+    public SoundEffectSO getHitSoundEffect;
+    #region Tooltip
+    [Tooltip("The sound effect for this enemy to be killed")]
+    #endregion
+    public SoundEffectSO deathSoundEffect;
+    #region Tooltip
+    [Tooltip("The sound effect for this enemy to attack")]
+    #endregion
+    public SoundEffectSO attackSoundEffect;
 
     #region Header ENEMY WEAPON SETTINGS
     [Space(10)]
@@ -105,6 +134,10 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Select to display a health bar for the enemy")]
     #endregion
     public bool isHealthBarDisplayed = false;
+    #region Tooltip
+    [Tooltip("Select if the enemy is resistant to knockback")]
+    #endregion
+    public bool hasKnockbackResistance = false;
 
     #region Validation
 #if UNITY_EDITOR

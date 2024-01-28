@@ -8,9 +8,13 @@ using UnityEngine;
 public class EnemyMovementAI : MonoBehaviour
 {
     #region Tooltip
-    [Tooltip("MovementDetailsSO scriptable object containing movement details such as speed")]
+    [Tooltip("EnemyDetailsSO scriptable object")]
     #endregion
-    [SerializeField] MovementDetailsSO movementDetails;
+    public EnemyDetailsSO enemyDetails;
+
+    [HideInInspector] public Status status = Status.Idle;
+    [HideInInspector] public float moveSpeed;
+    [HideInInspector] public int updateFrameNumber = 1; // default value.  This is set by the enemy spawner
 
     Enemy enemy;
     Stack<Vector3> movementSteps = new Stack<Vector3>();
@@ -19,6 +23,7 @@ public class EnemyMovementAI : MonoBehaviour
     float currentEnemyPathRebuildCooldown;
     WaitForFixedUpdate waitForFixedUpdate;
     bool chasePlayer = false;
+<<<<<<< Updated upstream
 
     Vector3 knockbackVector;
     float knockbackForce;
@@ -27,11 +32,26 @@ public class EnemyMovementAI : MonoBehaviour
 
     [HideInInspector] public float moveSpeed;
     [HideInInspector] public int updateFrameNumber = 1; // default value.  This is set by the enemy spawner
+=======
+    Vector3 knockbackVector;
+    float knockbackForce;
+    float knockbackTimeWeight;
+>>>>>>> Stashed changes
 
     private void Awake()
     {
         enemy = GetComponent<Enemy>();
-        moveSpeed = movementDetails.GetMoveSpeed();
+        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+    }
+
+    private void OnEnable()
+    {
+        enemy.weaponFiredEvent.OnWeaponFired += OnWeaponFire_WeaponFiredEvent; 
+    }
+
+    private void OnDisable()
+    {
+        enemy.weaponFiredEvent.OnWeaponFired -= OnWeaponFire_WeaponFiredEvent;
     }
 
     private void Start()
@@ -45,60 +65,79 @@ public class EnemyMovementAI : MonoBehaviour
 
     private void Update()
     {
+<<<<<<< Updated upstream
         if (status != Status.Stagger)
         {
             MoveEnemy();
         }
+=======
+        Move();
+>>>>>>> Stashed changes
     }
 
+    #region Pathfind Move
     /// <summary>
     /// Use AStar pathfinding to build a path to the player - and then move the enemy to each grid location on the path
     /// </summary>
-    private void MoveEnemy()
+    private void Move()
     {
-        // Movement cooldown timer
-        currentEnemyPathRebuildCooldown -= Time.deltaTime;
-
-        // Check distance to player to see if enemy should start chasing
-        if (!chasePlayer && Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) <
-            enemy.enemyDetails.chaseDistance)
+        if (enemy.isDead)
         {
-            chasePlayer = true;
+            StartCoroutine(NullifySpeedForDeathRoutine());
         }
-
-        // If not close enough to chase player then return
-        if (!chasePlayer)
-            return;
-
-        // Only process A Star path rebuild on certain frames to spread the load between enemies
-        if (Time.frameCount % Settings.targetFrameRateToSpreadPathfindingOver != updateFrameNumber) 
-            return;
-
-        // If the movement cooldown timer reached or player has moved more than required distance then rebuild the enemy path and move the enemy
-        if (currentEnemyPathRebuildCooldown <= 0f || (Vector3.Distance(playerReferencePosition, GameManager.Instance.GetPlayer().GetPlayerPosition()) > 
-            Settings.playerMoveDistanceToRebuildPath))
+        else if (status == Status.Stagger)
         {
-            // Reset path rebuild cooldown timer
-            currentEnemyPathRebuildCooldown = Settings.enemyPathRebuildCooldown;
+            StartCoroutine(KnockbackRoutine());
+        }
+        else
+        {
+            if (enemy.isFiring) return;
 
-            // Reset player reference position
-            playerReferencePosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
+            // Movement cooldown timer
+            currentEnemyPathRebuildCooldown -= Time.deltaTime;
 
-            // Move the enemy using AStar pathfinding - Trigger rebuild of path to player
-            CreatePath();
-
-            // If a path has been found move the enemy
-            if (movementSteps != null)
+            // Check distance to player to see if enemy should start chasing
+            if (!chasePlayer && Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) <
+                enemy.enemyDetails.chaseDistance)
             {
-                if (moveEnemyRoutine != null)
-                {
-                    // Trigger idle event
-                    enemy.idleEvent.CallIdleEvent();
-                    StopCoroutine(moveEnemyRoutine);
-                }
+                chasePlayer = true;
+            }
 
-                // Move enemy along the path using a coroutine
-                moveEnemyRoutine = StartCoroutine(MoveEnemyRoutine(movementSteps)); 
+            // If not close enough to chase player then return
+            if (!chasePlayer)
+                return;
+
+            // Only process A Star path rebuild on certain frames to spread the load between enemies
+            if (Time.frameCount % Settings.targetFrameRateToSpreadPathfindingOver != updateFrameNumber)
+                return;
+
+            // If the movement cooldown timer reached or player has moved more than required distance then rebuild the enemy path and move the enemy
+            if (currentEnemyPathRebuildCooldown <= 0f || (Vector3.Distance(playerReferencePosition, GameManager.Instance.GetPlayer().GetPlayerPosition()) >
+                Settings.playerMoveDistanceToRebuildPath))
+            {
+                // Reset path rebuild cooldown timer
+                currentEnemyPathRebuildCooldown = Settings.enemyPathRebuildCooldown;
+
+                // Reset player reference position
+                playerReferencePosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
+
+                // Move the enemy using AStar pathfinding - Trigger rebuild of path to player
+                CreatePath();
+
+                // If a path has been found move the enemy
+                if (movementSteps != null)
+                {
+                    if (moveEnemyRoutine != null)
+                    {
+                        // Trigger idle event
+                        enemy.idle.StopVelocity();
+                        enemy.animateEnemy.SetIdleAnimationParameters();
+                        StopCoroutine(moveEnemyRoutine);
+                    }
+
+                    // Move enemy along the path using a coroutine
+                    moveEnemyRoutine = StartCoroutine(MoveEnemyRoutine(movementSteps));
+                }
             }
         }
     }
@@ -115,9 +154,9 @@ public class EnemyMovementAI : MonoBehaviour
             // while not very close continue to move - when close move onto the next step
             while (Vector3.Distance(nextPosition, transform.position) > 0.2f)
             {
-                // Trigger movement event
-                enemy.movementToPositionEvent.CallMovementToPositionEvent(nextPosition, transform.position, moveSpeed,
-                    (nextPosition - transform.position).normalized);
+                // Trigger movement and animations
+                enemy.movementToPosition.MoveRigidbodyByPosition(nextPosition, transform.position, moveSpeed);
+                enemy.animateEnemy.SetMovementAnimationParameters();
 
                 // Moving the enemy using 2D physics so wait until the next fixed update
                 yield return waitForFixedUpdate; 
@@ -127,7 +166,8 @@ public class EnemyMovementAI : MonoBehaviour
         }
 
         // End of path steps - trigger the enemy idle event
-        enemy.idleEvent.CallIdleEvent();
+        enemy.idle.StopVelocity();
+        enemy.animateEnemy.SetIdleAnimationParameters();
     }
 
     /// <summary>
@@ -156,7 +196,8 @@ public class EnemyMovementAI : MonoBehaviour
         else
         {
             // Trigger idle event - no path
-            enemy.idleEvent.CallIdleEvent();
+            enemy.idle.StopVelocity();
+            enemy.animateEnemy.SetIdleAnimationParameters();
         }
     }
 
@@ -215,6 +256,80 @@ public class EnemyMovementAI : MonoBehaviour
             return playerCellPosition;
         }
     }
+    #endregion
+
+    IEnumerator KnockbackRoutine()
+    {
+        enemy.movementToPosition.MoveRigidbodyByPosition(playerReferencePosition, transform.position, moveSpeed);
+        enemy.animateEnemy.SetMovementAnimationParameters();
+        enemy.rb2D.velocity += CalculateKnockback();
+
+        yield return waitForFixedUpdate;
+    }
+
+    public void Knockback(Vector3 vector, float force, float timeWeight)
+    {
+        knockbackVector = vector;
+        knockbackForce = force;
+        knockbackTimeWeight = timeWeight;
+        StartCoroutine(Stagger());
+    }
+
+    IEnumerator Stagger()
+    {
+        status = Status.Stagger;
+        moveSpeed = 0f;
+        yield return new WaitForSeconds(knockbackTimeWeight);
+
+        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+        status = Status.Idle;
+    }
+
+    private Vector2 CalculateKnockback()
+    {
+        if (knockbackTimeWeight > 0f)
+        {
+            knockbackTimeWeight -= Time.fixedDeltaTime;
+        }
+
+        return knockbackVector * knockbackForce * (knockbackTimeWeight > 0f ? knockbackTimeWeight : 0f);
+    }
+
+    private void OnWeaponFire_WeaponFiredEvent(WeaponFiredEvent weaponFiredEvent, WeaponFiredEventArgs weaponFiredEventArgs)
+    {
+        if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
+        {
+            StartCoroutine(WeaponFiredRoutine());
+        }
+        else
+        {
+            WeaponFiredWithoutRoutine();
+        }
+    }
+
+    private void WeaponFiredWithoutRoutine()
+    {
+        enemy.isFiring = false;
+    }
+
+    IEnumerator WeaponFiredRoutine()
+    {
+        moveSpeed = 0f;
+
+        yield return new WaitForSeconds(enemy.enemyDetails.enemyWeapon.weaponFireRate / 4f);
+
+        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+        enemy.isFiring = false;
+    }
+
+    IEnumerator NullifySpeedForDeathRoutine()
+    {
+        moveSpeed = 0f;
+        enemy.rb2D.velocity = new Vector2(0f, 0f);
+
+        yield return waitForFixedUpdate;
+    }
+
 
     public void Knockback(Vector3 vector, float force, float timeWeight)
     {
@@ -250,7 +365,7 @@ public class EnemyMovementAI : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(movementDetails), movementDetails);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(enemyDetails), enemyDetails);
     }
 #endif
     #endregion Validation

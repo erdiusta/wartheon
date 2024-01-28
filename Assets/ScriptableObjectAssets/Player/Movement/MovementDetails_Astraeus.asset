@@ -12,5 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be803c3d22954c743afeeadf2eb708fd, type: 3}
   m_Name: MovementDetails_Astraeus
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream
   minMoveSpeed: 6
   maxMoveSpeed: 6
+=======
+  minMoveSpeed: 7
+  maxMoveSpeed: 8
+>>>>>>> Stashed changes

@@ -54,7 +54,7 @@ public class DealContactDamage : MonoBehaviour
             // Reset the contact collision after set time
             Invoke("ResetContactCollision", Settings.contactDamageCollisionResetDelay);
 
-            receiveContactDamage.TakeContactDamage(contactDamageAmount);
+            receiveContactDamage.TakeContactDamage(contactDamageAmount, receiveContactDamage.transform.position, transform.position);
         }
     }
 

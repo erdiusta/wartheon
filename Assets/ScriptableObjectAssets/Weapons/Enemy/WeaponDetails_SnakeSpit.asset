@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_SnakeSpit
+  m_EditorClassIdentifier: 
+  weaponName: Snake Spit
+  weaponSprite: {fileID: 0}
+  weaponAnimatorController: {fileID: 0}
+  weaponClass: 4
+  wieldType: 0
+  weaponShootPosition: {x: -0.63, y: 0.666, z: 0}
+  weaponCurrentProjectile: {fileID: 11400000, guid: 08a15f768e14d714b824d38be840f8e3, type: 2}
+  weaponShootEffect: {fileID: 0}
+  weaponFiringSoundEffect: {fileID: 0}
+  weaponReloadingSoundEffect: {fileID: 0}
+  isMeleeWeapon: 0
+  isShield: 0
+  projectileDeflectChance: 0
+  circleRadius: 0
+  meleeDamageMin: 0
+  meleeDamageMax: 0
+  meleeAttackCooldown: 0
+  hasInfiniteProjectile: 1
+  hasInfiniteClipCapacity: 1
+  weaponClipProjectileCapacity: 0
+  weaponProjectileCapacity: 0
+  weaponFireRate: 1.5
+  weaponPrechargeTime: 0
+  weaponReloadTime: 0

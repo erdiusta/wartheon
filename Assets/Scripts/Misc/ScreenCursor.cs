@@ -10,6 +10,7 @@ public class ScreenCursor : MonoBehaviour
 
     private void Update()
     {
-        transform.position = Input.mousePosition;
+        Vector2 cursorPosition = GameManager.Instance.pointerPosition.action.ReadValue<Vector2>();
+        transform.position = new Vector3(cursorPosition.x, cursorPosition.y, 0f);
     }
 }

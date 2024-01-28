@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
+  m_Name: EnemyDetails_Snake
+  m_EditorClassIdentifier: 
+  enemyName: Snake
+  enemyPrefab: {fileID: 7183228443647751644, guid: 904881d400f1631449a2d444c2338eb7, type: 3}
+  movementDetails: {fileID: 11400000, guid: c1cd655cbba76594ca00f689668e9744, type: 2}
+  chaseDistance: 15
+  enemyBehaviour: 1
+  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  enemyMaterializeTime: 2
+  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
+  enemyMaterializeColor: {r: 1.8195332, g: 4.358822, b: 0.06168133, a: 0}
+  getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: 36fd7981b2c14794796cd69ffa707648, type: 2}
+  attackSoundEffect: {fileID: 11400000, guid: 49b9c611a31cfaa4fb504722dc0a02e2, type: 2}
+  enemyWeapon: {fileID: 11400000, guid: a164b16c09631d245afc9d8c4d571b3f, type: 2}
+  firingIntervalMin: 0.1
+  firingIntervalMax: 1
+  firingDurationMin: 1
+  firingDurationMax: 2
+  firingLineOfSightRequired: 0
+  enemyHealthDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    enemyHealthAmount: 20
+  isImmuneAfterHit: 1
+  hitImmunityTime: 0.7
+  isHealthBarDisplayed: 0

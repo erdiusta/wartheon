@@ -34,9 +34,22 @@ public static class Settings
     public static int use = Animator.StringToHash("use");
     public const float baseSpeedForPlayerAnimations = 8f;
 
+<<<<<<< Updated upstream
     // Animator parameters - MeleeAttack
     public static int meleeAttackAtRightHand = Animator.StringToHash("Attack");
     public static int meleeAttackAtLeftHand = Animator.StringToHash("AttackAtLeftHand");
+=======
+    // Animator parameters - Damage
+    public static int death = Animator.StringToHash("death");
+
+    // Animator parameters - MeleeAttack
+    public static int meleeAttackAtRightHand = Animator.StringToHash("AttackAtRightHand");
+    public static int meleeAttackAtLeftHand = Animator.StringToHash("AttackAtLeftHand");
+    public static int isLeft = Animator.StringToHash("isLeft");
+
+    // Animator parameters - Shield
+    public static int block = Animator.StringToHash("block");
+>>>>>>> Stashed changes
 
     // Animator parameters - Enemy
     public const float baseSpeedForEnemyAnimations = 3f;
