@@ -1,4 +1,8 @@
+using System;
+using System.Collections;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
+using Random = UnityEngine.Random;
 
 [DisallowMultipleComponent]
 public class Projectile : MonoBehaviour, IFireable
@@ -62,13 +66,100 @@ public class Projectile : MonoBehaviour, IFireable
         if (isColliding) 
             return;
 
-        // Deal Damage To Collision Object
-        DealDamage(collision);
+        // Block process if shield equipped
+        if (collision.tag == "Player")
+        {
+            if (collision.GetComponent<Player>().activeWeapon.GetCurrentLeftHandWeapon() != null && 
+                collision.GetComponent<Player>().activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+            {
+                // Get enemy projectile direction
+                Vector2 enemyProjectileDirection = (collision.transform.position - transform.position).normalized;
 
+                // Get weapon pointer direction
+                Vector2 cursorPosition = GameManager.Instance.pointerPosition.action.ReadValue<Vector2>();
+                Vector2 cursorWorldPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
+
+                Vector2 pointerDirection = (cursorWorldPosition - new Vector2(collision.transform.position.x, collision.transform.position.y)).normalized;
+
+                // Calculate the dot product between the shield's forward direction and the projectile direction
+                float dotProduct = Vector2.Dot(pointerDirection, enemyProjectileDirection);
+
+                float blockingThreshold = collision.GetComponent<Player>().activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.projectileDeflectRatio;
+
+                // Check if the dot product is greater than the threshold, deflection fails
+                if (dotProduct > blockingThreshold - 1f)
+                {
+                    // Deal Damage To Collision Object
+                    DealDamage(collision);
+                }
+                else
+                {
+                    // If the player is attacking, guard is down so block is disabled
+                    if (collision.GetComponent<Player>().GetComponent<MeleeAttackRightHand>().IsAttackingAtRightHand)
+                    {
+                        // Deal Damage To Collision Object
+                        DealDamage(collision);
+                    }
+                    else
+                    {
+                        // The projectile is within the blocking angle
+                        SoundEffectManager.Instance.PlaySoundEffect(collision.GetComponent<Player>().activeWeapon.GetCurrentLeftHandWeapon().
+                            weaponDetails.weaponFiringSoundEffect);
+                        collision.transform.GetChild(1).GetComponent<Animator>().SetTrigger(Settings.block);
+                    }
+                }
+            }
+            else
+            {
+                // Deal Damage To Collision Object
+                DealDamage(collision);
+            }
+        }
+        else
+        {
+            if (collision.GetComponent<Enemy>() != null)
+            {
+                if (collision.GetComponent<Enemy>().enemyDetails.hasShield)
+                {
+                    StartCoroutine(EnemyBlockAnimRoutine(collision));
+                }
+                else
+                {
+                    // Deal Damage To Collision Object
+                    DealDamage(collision);
+                }
+            }
+            else
+            {
+                // Deal Damage To Collision Object
+                DealDamage(collision);
+            }
+        }
+   
         // Show ammo hit effect
         DoProjectileHitEffect();
 
         DisableProjectile();
+    }
+
+    IEnumerator EnemyBlockAnimRoutine(Collider2D collision)
+    {
+        Enemy enemy = collision.GetComponent<Enemy>();
+
+        // Adjust animator layer weights
+        enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0.5f);
+        enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+        enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 1f);
+        enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
+
+        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.deflectSoundEffect);
+        enemy.animator.SetTrigger(Settings.block);
+        yield return new WaitForSeconds(1f);
+
+        enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 1f);
+        enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+        enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
+        enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
     }
 
     private void DealDamage(Collider2D collision)
@@ -80,7 +171,7 @@ public class Projectile : MonoBehaviour, IFireable
             // Set isColliding to prevent ammo dealing damage multiple times
             isColliding = true;
 
-            health.TakeDamage(projectileDetails.projectileDamage);
+            health.TakeDamage(projectileDetails.projectileDamage, transform.position, health.transform.position);
         }
     }
 

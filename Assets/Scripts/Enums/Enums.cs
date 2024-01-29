@@ -43,6 +43,7 @@ public enum WeaponClass
 {
     Sword,
     Axe,
+    Hammer,
     Shield,
     Spear,
     Staff,
@@ -75,4 +76,12 @@ public enum ChestState
     ammoItem,
     weaponItem,
     empty
+}
+
+public enum EnemyBehaviour
+{
+    Pursuit,
+    AimAndShoot,
+    NonStopShoot,
+    Independent
 }

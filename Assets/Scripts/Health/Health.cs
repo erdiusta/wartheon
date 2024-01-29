@@ -79,7 +79,7 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Public method called when damage is taken
     /// </summary>
-    public void TakeDamage(int damageAmount)
+    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition)
     {
         if (isDamageable)
         {
@@ -90,10 +90,14 @@ public class Health : MonoBehaviour
             if(tag == "Player")
             {
                 SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
+
+                // Apply knockback
+                Knockback knockback = player.GetComponent<Knockback>();
+                player.movementByVelocity.Knockback((dealerPosition - receiverPosition).normalized, knockback.knockbackForce, knockback.knockbackTimeWeight);
             }
             else if (tag == "Enemy")
             {
-                SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
+                StartCoroutine(EnemyGetHitAnimRoutine());
             }
 
             // Set health bar as the percentage of health remaining
@@ -101,6 +105,35 @@ public class Health : MonoBehaviour
             {
                 healthBar.SetHealthBarValue((float)currentHealth / (float)startingHealth);
             }
+        }
+    }
+
+    IEnumerator EnemyGetHitAnimRoutine()
+    {
+        if (!enemy.isDead)
+        {
+            // Adjust animator layer weights
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0.5f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 1f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
+
+            SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
+            enemy.animator.SetTrigger(Settings.getHit);
+
+            yield return new WaitForSeconds(1f);
+
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 1f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
+        }
+        else
+        {
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 1f);
         }
     }
 

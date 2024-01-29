@@ -16,12 +16,12 @@ public class ReceiveContactDamage : MonoBehaviour
         health = GetComponent<Health>();
     }
 
-    public void TakeContactDamage(int damageAmount = 0)
+    public void TakeContactDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition)
     {
         if (contactDamageAmount > 0)
             damageAmount = contactDamageAmount;
 
-        health.TakeDamage(damageAmount);
+        health.TakeDamage(damageAmount, dealerPosition, receiverPosition);
     }
 
     #region Validation

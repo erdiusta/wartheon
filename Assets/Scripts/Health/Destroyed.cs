@@ -26,20 +26,21 @@ public class Destroyed : MonoBehaviour
         if (destroyedEventArgs.playerDied)
         {
             gameObject.SetActive(false);
+            SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.deathSoundEffect);
         }
         else
         {
-            if (gameObject.tag == "Player")
-            {
-                SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.deathSoundEffect);
-            }
-            else
+            if (gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect != null)
             {
                 SoundEffectManager.Instance.PlaySoundEffect(gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect);
-                GetComponent<PolygonCollider2D>().enabled = false;
-                GetComponent<EnemyMovementAI>().enabled = false;
-                Destroy(gameObject, 1f);
             }
+
+            GetComponent<Enemy>().isDead = true;
+            GetComponent<FireWeapon>().enabled = false;
+            GetComponent<Rigidbody2D>().velocity = new Vector2(0f, 0f);
+            GetComponent<PolygonCollider2D>().enabled = false;
+            GetComponent<EnemyMovementAI>().enabled = false;
+            Destroy(gameObject, 1f);    
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Enemy))]
@@ -7,9 +6,10 @@ public class AnimateEnemy : MonoBehaviour
 {
     Enemy enemy;
 
-    int baseLayerIndex;
-    int attackLayerIndex;
-    int deathLayerIndex;
+    [HideInInspector] public int baseLayerIndex;
+    [HideInInspector] public int attackLayerIndex;
+    [HideInInspector] public int getHitLayerIndex;
+    [HideInInspector] public int deathLayerIndex;
 
     private void Awake()
     {
@@ -19,17 +19,11 @@ public class AnimateEnemy : MonoBehaviour
 
     private void OnEnable()
     {
-        enemy.movementToPositionEvent.OnMovementToPosition += MovementToPositionEvent_OnMovementToPosition;
-        enemy.idleEvent.OnIdle += IdleEvent_OnIdle;
-        enemy.aimWeaponEvent.OnWeaponAim += AimWeaponEvent_OnWeaponAim;
         enemy.destroyedEvent.OnDestroyed += DestroyedEvent_OnDestroyed;
     }
 
     private void OnDisable()
     {
-        enemy.movementToPositionEvent.OnMovementToPosition -= MovementToPositionEvent_OnMovementToPosition;
-        enemy.idleEvent.OnIdle -= IdleEvent_OnIdle;
-        enemy.aimWeaponEvent.OnWeaponAim -= AimWeaponEvent_OnWeaponAim;
         enemy.destroyedEvent.OnDestroyed -= DestroyedEvent_OnDestroyed;
     }
 
@@ -37,39 +31,14 @@ public class AnimateEnemy : MonoBehaviour
     {
         baseLayerIndex = enemy.animator.GetLayerIndex("Base Layer");
         attackLayerIndex = enemy.animator.GetLayerIndex("Attack Layer");
-        //int getHitLayerIndex = animator.GetLayerIndex("Get Hit Layer");
+        getHitLayerIndex = enemy.animator.GetLayerIndex("Get Hit Layer");
         deathLayerIndex = enemy.animator.GetLayerIndex("Death Layer");
 
         // Adjust animator layer weights
         enemy.animator.SetLayerWeight(baseLayerIndex, 1f);
+        enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
         enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
         enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
-    }
-
-    /// <summary>
-    /// On weapon aim event handler
-    /// </summary>
-    private void AimWeaponEvent_OnWeaponAim(AimWeaponEvent aimWeaponEvent, AimWeaponEventArgs aimWeaponEventArgs)
-    {
-        InitializeAimAnimationParameters();
-        SetAimWeaponAnimationParameters(aimWeaponEventArgs.aimDirection);
-    }
-
-    /// <summary>
-    /// On movement event handler
-    /// </summary>
-    private void MovementToPositionEvent_OnMovementToPosition(MovementToPositionEvent movementToPositionEvent, 
-        MovementToPositionArgs movementToPositionArgs)
-    {
-        SetMovementAnimationParameters();
-    }
-
-    /// <summary>
-    /// On idle event handler
-    /// </summary>
-    private void IdleEvent_OnIdle(IdleEvent idleEvent)
-    {
-        SetIdleAnimationParameters();
     }
 
     /// <summary>
@@ -83,7 +52,7 @@ public class AnimateEnemy : MonoBehaviour
     /// <summary>
     /// Initialise aim animation parameters
     /// </summary>
-    private void InitializeAimAnimationParameters()
+    public void InitializeAimAnimationParameters()
     {
         enemy.animator.SetBool(Settings.aimUp, false);
         enemy.animator.SetBool(Settings.aimUpRight, false);
@@ -96,7 +65,7 @@ public class AnimateEnemy : MonoBehaviour
     /// <summary>
     /// Set movement animation parameters
     /// </summary>
-    private void SetMovementAnimationParameters()
+    public void SetMovementAnimationParameters()
     {
         // Set Moving
         enemy.animator.SetBool(Settings.isIdle, false);
@@ -106,7 +75,7 @@ public class AnimateEnemy : MonoBehaviour
     /// <summary>
     /// Set idle animation parameters
     /// </summary>
-    private void SetIdleAnimationParameters()
+    public void SetIdleAnimationParameters()
     {
         // Set idle
         enemy.animator.SetBool(Settings.isMoving, false);
@@ -121,6 +90,7 @@ public class AnimateEnemy : MonoBehaviour
         // Adjust animator layer weights
         enemy.animator.SetLayerWeight(baseLayerIndex, 0f);
         enemy.animator.SetLayerWeight(attackLayerIndex, 0.1f);
+        enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
         enemy.animator.SetLayerWeight(deathLayerIndex, 1f);
 
         enemy.animator.SetBool(Settings.isMoving, false);
@@ -131,7 +101,7 @@ public class AnimateEnemy : MonoBehaviour
     /// <summary>
     /// Set aim animation parameters
     /// </summary>
-    private void SetAimWeaponAnimationParameters(AimDirection aimDirection)
+    public void SetAimWeaponAnimationParameters(AimDirection aimDirection)
     {
         // Set aim direction
         switch (aimDirection)

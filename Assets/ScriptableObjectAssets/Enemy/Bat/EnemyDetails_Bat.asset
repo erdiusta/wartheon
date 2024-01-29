@@ -14,13 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Bat
   enemyPrefab: {fileID: 7183228443647751644, guid: 5b47e0efa440e0443a327bd01a1d9035, type: 3}
+  movementDetails: {fileID: 11400000, guid: 0fec25a507abd7d44965f2276a63e9fe, type: 2}
   chaseDistance: 30
+  enemyBehaviour: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 3.987934, g: 0, b: 0.07809851, a: 0}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 8520316363d6f1f459f854b545c0ab3f, type: 2}
+  attackSoundEffect: {fileID: 0}
   enemyWeapon: {fileID: 0}
   firingIntervalMin: 0.1
   firingIntervalMax: 1

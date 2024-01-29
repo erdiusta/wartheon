@@ -91,8 +91,10 @@ public class EnemyWeaponAI : MonoBehaviour
         // Set enemy aim direction
         AimDirection enemyAimDirection = HelperUtilities.GetAimDirection(enemyAngleDegrees);
 
-        // Trigger weapon aim event
-        enemy.aimWeaponEvent.CallAimWeaponEvent(enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection);
+        // Trigger weapon aim methods
+        enemy.aimWeapon.Aim(enemyAimDirection, enemyAngleDegrees);
+        enemy.animateEnemy.InitializeAimAnimationParameters();
+        enemy.animateEnemy.SetAimWeaponAnimationParameters(enemyAimDirection);
 
         // Only fire if enemy has a weapon
         if (enemyDetails.enemyWeapon != null)

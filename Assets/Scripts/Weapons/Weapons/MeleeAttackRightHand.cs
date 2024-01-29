@@ -75,11 +75,16 @@ public class MeleeAttackRightHand : MonoBehaviour
 
                 if (enemyHealth = collider.GetComponent<Health>())
                 {
-                    enemyHealth.TakeDamage(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMax);
+                    enemyHealth.TakeDamage(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMax,
+                        transform.position, collider.transform.position);
                     SoundEffect(enemyHealth.GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
 
-                    collider.GetComponent<EnemyMovementAI>().Knockback((collider.transform.position - transform.position).normalized,
-                        knockback.knockbackForce, knockback.knockbackTimeWeight);
+                    if (!enemyHealth.GetComponent<Enemy>().enemyDetails.hasKnockbackResistance)
+                    {
+                        Knockback enemyKnockback = collider.GetComponent<Enemy>().GetComponent<Knockback>();
+                        collider.GetComponent<EnemyMovementAI>().Knockback((collider.transform.position - transform.position).normalized,
+                            enemyKnockback.knockbackForce, enemyKnockback.knockbackTimeWeight);
+                    }
                 }
             }
         }
@@ -103,12 +108,15 @@ public class MeleeAttackRightHand : MonoBehaviour
         StartCoroutine(DelayAttackRightHand(weapon));
 
         // Melee attack sound effect
-        SoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect);
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
+        {
+            SoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect);
+        }
     }
 
     IEnumerator DelayAttackRightHand(Weapon weapon)
     {
-        yield return new WaitForSeconds(weapon.weaponDetails.meleeAttackCooldown);
+        yield return new WaitForSeconds(weapon.weaponDetails.weaponFireRate);
 
         rightHandAttackBlocked = false;
     }

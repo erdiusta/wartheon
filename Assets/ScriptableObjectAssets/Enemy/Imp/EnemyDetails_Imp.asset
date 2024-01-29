@@ -14,13 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Imp
   enemyPrefab: {fileID: 7183228443647751644, guid: 60bff836939d1b14cb479b0ad4493652, type: 3}
+  movementDetails: {fileID: 11400000, guid: 83dbceefafb85d548a043660c57a38ce, type: 2}
   chaseDistance: 20
+  enemyBehaviour: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2.5
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 3.264843, g: 0, b: 2.1138165, a: 0}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 88c84bb85bc16ff47bf83c6ed6d9b4af, type: 2}
+  attackSoundEffect: {fileID: 0}
   enemyWeapon: {fileID: 0}
   firingIntervalMin: 0.1
   firingIntervalMax: 1

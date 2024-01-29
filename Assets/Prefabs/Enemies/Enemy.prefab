@@ -262,6 +262,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4239920569477357429}
+  - component: {fileID: 44892018135717442}
   m_Layer: 19
   m_Name: WeaponAnchorPosition
   m_TagString: Untagged
@@ -285,6 +286,27 @@ Transform:
   - {fileID: 933830336492734321}
   m_Father: {fileID: 3146469945750014307}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &44892018135717442
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3791151353030601834}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4451039035051001256
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,6 +411,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8668691372778860321}
   - component: {fileID: 8724249606337226725}
+  - component: {fileID: 1473841332294187630}
   m_Layer: 19
   m_Name: HandNoWeapon
   m_TagString: Untagged
@@ -464,6 +487,52 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!60 &1473841332294187630
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5837434398401512141}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - []
+  m_UseDelaunayMesh: 0
 --- !u!1 &7736189416814370986
 GameObject:
   m_ObjectHideFlags: 0
@@ -481,21 +550,19 @@ GameObject:
   - component: {fileID: -5271647833751286019}
   - component: {fileID: 9053816728829046246}
   - component: {fileID: 6671259502560293248}
-  - component: {fileID: 4900793660674259024}
   - component: {fileID: 2505844984895068139}
   - component: {fileID: 4333467657531261351}
   - component: {fileID: 6469867774053438732}
   - component: {fileID: 8600245504153706327}
   - component: {fileID: 4963464358191190218}
   - component: {fileID: -5620220587519452500}
-  - component: {fileID: 8369293147300603568}
   - component: {fileID: 4690488104011515082}
   - component: {fileID: 866988234407021245}
+  - component: {fileID: 1340765205548594155}
   - component: {fileID: 9094195984216574951}
   - component: {fileID: 8877724645936405539}
   - component: {fileID: 7401260523369827967}
   - component: {fileID: 7339013686256109617}
-  - component: {fileID: 1340765205548594155}
   - component: {fileID: 2058154315832034504}
   - component: {fileID: 4931633708532830608}
   - component: {fileID: 8075968585769763752}
@@ -507,7 +574,7 @@ GameObject:
   - component: {fileID: 8901436270454263267}
   m_Layer: 16
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -543,13 +610,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyDetails: {fileID: 0}
-  aimWeaponEvent: {fileID: 0}
   fireWeaponEvent: {fileID: 0}
-  movementToPositionEvent: {fileID: 0}
-  idleEvent: {fileID: 0}
+  destroyedEvent: {fileID: 0}
   spriteRendererArray: []
+  aimWeapon: {fileID: 0}
+  animateEnemy: {fileID: 0}
+  idle: {fileID: 0}
   animator: {fileID: 0}
   rb2D: {fileID: 0}
+  movementToPosition: {fileID: 0}
+  enemyMovementAI: {fileID: 0}
+  knockback: {fileID: 0}
+  isDead: 0
 --- !u!210 &5050891164117682802
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -626,7 +698,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 10
+  m_Mass: 400
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 0
@@ -762,21 +834,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 442de4cb95a762a4f88879f87d0022d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementDetails: {fileID: 11400000, guid: 5a56dd72579a5f94b89d9ab1df21d6d5, type: 2}
+  enemyDetails: {fileID: 0}
+  status: 0
   moveSpeed: 0
   updateFrameNumber: 1
---- !u!114 &4900793660674259024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7736189416814370986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c2ed32ad203fff4393d6798838cf04f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2505844984895068139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -853,18 +914,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 18432
   weaponShootPosition: {fileID: 2812488011572122476}
---- !u!114 &8369293147300603568
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7736189416814370986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79bce8ff81d3c0a48ba158112e8d6d6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4690488104011515082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -889,6 +938,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e118875089d462458e46d896d30af9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1340765205548594155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7736189416814370986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3abedd71dc775e649afa3cd3c5004e67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &9094195984216574951
@@ -919,8 +980,8 @@ MonoBehaviour:
   weaponRightHandPolygonCollider2D: {fileID: 6872100053539618354}
   weaponRightHandShootPositionTransform: {fileID: 2812488011572122476}
   weaponRightHandEffectPositionTransform: {fileID: 8845574466449883188}
-  weaponLeftHandSpriteRenderer: {fileID: 0}
-  weaponLeftHandPolygonCollider2D: {fileID: 0}
+  weaponLeftHandSpriteRenderer: {fileID: 8724249606337226725}
+  weaponLeftHandPolygonCollider2D: {fileID: 1473841332294187630}
 --- !u!114 &7401260523369827967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -943,18 +1004,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a512456ceb4df34ba7723a5e0bfe308, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1340765205548594155
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7736189416814370986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3abedd71dc775e649afa3cd3c5004e67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &2058154315832034504
@@ -1076,8 +1125,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad9b2ed813db9ba4ead2574d93f6db80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockbackForce: 2
-  knockbackTimeWeight: 1
+  knockbackForce: 5
+  knockbackTimeWeight: 1.5
 --- !u!1001 &945976474652821064
 PrefabInstance:
   m_ObjectHideFlags: 0
