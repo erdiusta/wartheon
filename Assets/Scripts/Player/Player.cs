@@ -3,6 +3,7 @@ using UnityEngine.Rendering;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using UnityEngine.Tilemaps;
 
 #region REQUIRE COMPONENTS
 [RequireComponent(typeof(HealthEvent))]
@@ -65,6 +66,7 @@ public class Player : MonoBehaviour
 
     public List<Weapon> weaponRightHandList = new List<Weapon>();
     public List<Weapon> weaponLeftHandList = new List<Weapon>();
+   
 
     private void Awake()
     {
@@ -90,6 +92,7 @@ public class Player : MonoBehaviour
         idle = GetComponent<Idle>();
         movementByVelocity = GetComponent<MovementByVelocity>();
     }
+
 
     /// <summary>
     /// Initialize the player

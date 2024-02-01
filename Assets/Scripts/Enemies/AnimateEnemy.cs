@@ -18,13 +18,11 @@ public class AnimateEnemy : MonoBehaviour
 
     private void OnEnable()
     {
-        enemy.movementToPositionEvent.OnMovementToPosition += MovementToPositionEvent_OnMovementToPosition;
         enemy.destroyedEvent.OnDestroyed += DestroyedEvent_OnDestroyed;
     }
 
     private void OnDisable()
     {
-        enemy.movementToPositionEvent.OnMovementToPosition -= MovementToPositionEvent_OnMovementToPosition;
         enemy.destroyedEvent.OnDestroyed -= DestroyedEvent_OnDestroyed;
     }
 
@@ -39,15 +37,6 @@ public class AnimateEnemy : MonoBehaviour
         enemy.animator.SetLayerWeight(baseLayerIndex, 1f);
         enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
         enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
-    }
-
-    /// <summary>
-    /// On movement event handler
-    /// </summary>
-    private void MovementToPositionEvent_OnMovementToPosition(MovementToPositionEvent movementToPositionEvent, 
-        MovementToPositionArgs movementToPositionArgs)
-    {
-        SetMovementAnimationParameters();
     }
 
     /// <summary>
@@ -74,7 +63,7 @@ public class AnimateEnemy : MonoBehaviour
     /// <summary>
     /// Set movement animation parameters
     /// </summary>
-    private void SetMovementAnimationParameters()
+    public void SetMovementAnimationParameters()
     {
         // Set Moving
         enemy.animator.SetBool(Settings.isIdle, false);

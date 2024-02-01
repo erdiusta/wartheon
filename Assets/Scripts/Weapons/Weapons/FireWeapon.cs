@@ -10,6 +10,7 @@ using System.Collections;
 [DisallowMultipleComponent]
 public class FireWeapon : MonoBehaviour
 {
+    Enemy enemy;
     float firePrechargeTimer = 0f;
     float fireRateCooldownTimer = 0f;
     ActiveWeapon activeWeapon;
@@ -19,6 +20,7 @@ public class FireWeapon : MonoBehaviour
 
     private void Awake()
     {
+        enemy = GetComponent<Enemy>();
         activeWeapon = GetComponent<ActiveWeapon>();
         fireWeaponEvent = GetComponent<FireWeaponEvent>();
         reloadWeaponEvent = GetComponent<ReloadWeaponEvent>();
@@ -54,6 +56,9 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     private void WeaponFire(FireWeaponEventArgs fireWeaponEventArgs)
     {
+        // Flag firing
+        enemy.isFiring = true;
+
         // Handle weapon precharge timer
         WeaponPrecharge(fireWeaponEventArgs);
 
@@ -137,6 +142,8 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     IEnumerator FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector)
     {
+        
+
         int projectileCounter = 0;
 
         // Get random projectile per shot

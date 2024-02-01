@@ -79,8 +79,12 @@ public class MeleeAttackRightHand : MonoBehaviour
                     enemyHealth.TakeDamage(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMax,
                         transform.position, collider.transform.position);
 
-                    collider.GetComponent<EnemyMovementAI>().Knockback((collider.transform.position - transform.position).normalized,
-                        knockback.knockbackForce, knockback.knockbackTimeWeight);
+                    if (!enemyHealth.GetComponent<Enemy>().enemyDetails.hasKnockbackResistance)
+                    {
+                        Knockback enemyKnockback = collider.GetComponent<Enemy>().GetComponent<Knockback>();
+                        collider.GetComponent<EnemyMovementAI>().Knockback((collider.transform.position - transform.position).normalized,
+                            enemyKnockback.knockbackForce, enemyKnockback.knockbackTimeWeight);
+                    }
                 }
             }
         }

@@ -23,9 +23,12 @@ MonoBehaviour:
   weaponFiringSoundEffect: {fileID: 11400000, guid: e1c8591c71ab89d448879b0d39d25d09, type: 2}
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
+  isShield: 0
+  projectileDeflectChance: 0.4
   circleRadius: 0.8
   meleeDamageMin: 4
   meleeDamageMax: 7
+  meleeAttackCooldown: 0.3
   hasInfiniteProjectile: 1
   hasInfiniteClipCapacity: 1
   weaponClipProjectileCapacity: 0

@@ -15,8 +15,13 @@ MonoBehaviour:
   weaponName: Basilisk Fire
   weaponSprite: {fileID: 0}
   weaponAnimatorController: {fileID: 0}
+<<<<<<< Updated upstream
   weaponClass: 5
   wieldType: 1
+=======
+  weaponClass: 4
+  wieldType: 0
+>>>>>>> Stashed changes
   weaponShootPosition: {x: 1.8, y: 1, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 7d219b64b9aa9ab46839075b51a349bd, type: 2}
   weaponShootEffect: {fileID: 0}
@@ -24,14 +29,26 @@ MonoBehaviour:
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 0
+<<<<<<< Updated upstream
   weaponFireRate: 1.2
   projectileDeflectRatio: 0.4
   circleRadius: 0
   meleeDamageMin: 0
   meleeDamageMax: 0
+=======
+  projectileDeflectChance: 0
+  circleRadius: 0
+  meleeDamageMin: 0
+  meleeDamageMax: 0
+  meleeAttackCooldown: 0
+>>>>>>> Stashed changes
   hasInfiniteProjectile: 1
   hasInfiniteClipCapacity: 1
   weaponClipProjectileCapacity: 0
   weaponProjectileCapacity: 0
+<<<<<<< Updated upstream
+=======
+  weaponFireRate: 1.2
+>>>>>>> Stashed changes
   weaponPrechargeTime: 0
   weaponReloadTime: 0

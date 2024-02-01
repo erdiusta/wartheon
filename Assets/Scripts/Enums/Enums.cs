@@ -74,3 +74,11 @@ public enum ChestState
     weaponItem,
     empty
 }
+
+public enum EnemyBehaviour
+{
+    Pursuit,
+    AimAndShoot,
+    NonStopShoot,
+    Independent
+}

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Security.Permissions;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -18,7 +19,6 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(ReloadWeaponEvent))]
 [RequireComponent(typeof(ReloadWeapon))]
 [RequireComponent(typeof(WeaponReloadedEvent))]
-[RequireComponent(typeof(MovementToPositionEvent))]
 [RequireComponent(typeof(MovementToPosition))]
 [RequireComponent(typeof(Idle))]
 [RequireComponent(typeof(AnimateEnemy))]
@@ -36,14 +36,15 @@ public class Enemy : MonoBehaviour
 {
     [HideInInspector] public EnemyDetailsSO enemyDetails;
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
+    [HideInInspector] public WeaponFiredEvent weaponFiredEvent;
     [HideInInspector] public DestroyedEvent destroyedEvent;
-    [HideInInspector] public MovementToPositionEvent movementToPositionEvent;
     [HideInInspector] public SpriteRenderer[] spriteRendererArray;
     [HideInInspector] public AimWeapon aimWeapon;
     [HideInInspector] public AnimateEnemy animateEnemy;
     [HideInInspector] public Idle idle;
     [HideInInspector] public Animator animator;
     [HideInInspector] public Rigidbody2D rb2D;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 =======
     [HideInInspector] public MovementToPosition movementToPosition;
@@ -54,12 +55,18 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool isFiring;
     [HideInInspector] public Health health;
 >>>>>>> Stashed changes
+=======
+    [HideInInspector] public MovementToPosition movementToPosition;
+    [HideInInspector] public EnemyMovementAI enemyMovementAI;
+    [HideInInspector] public Knockback knockback;
+    [HideInInspector] public bool isDead;
+    [HideInInspector] public bool isFiring;
+>>>>>>> Stashed changes
 
     HealthEvent healthEvent;
     FireWeapon fireWeapon;
     SetActiveWeaponEvent setActiveWeaponEvent;
     MaterializeEffect materializeEffect;
-    EnemyMovementAI enemyMovementAI;
     CircleCollider2D circleCollider2D;
     PolygonCollider2D polygonCollider2D;
 
@@ -69,13 +76,17 @@ public class Enemy : MonoBehaviour
         health = GetComponent<Health>();
         fireWeaponEvent = GetComponent<FireWeaponEvent>();
         fireWeapon = GetComponent<FireWeapon>();
+        weaponFiredEvent = GetComponent<WeaponFiredEvent>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
         destroyedEvent = GetComponent<DestroyedEvent>();
         enemyMovementAI = GetComponent<EnemyMovementAI>();
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         movementToPositionEvent = GetComponent<MovementToPositionEvent>();
 =======
         enemyWeaponAI = GetComponent<EnemyWeaponAI>();
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         materializeEffect = GetComponent<MaterializeEffect>();
         circleCollider2D = GetComponent<CircleCollider2D>();
@@ -86,6 +97,8 @@ public class Enemy : MonoBehaviour
         idle = GetComponent<Idle>();
         animator = GetComponent<Animator>();
         rb2D = GetComponent<Rigidbody2D>();
+        movementToPosition = GetComponent<MovementToPosition>();
+        knockback = GetComponent<Knockback>();
     }
 
     private void OnEnable()
@@ -106,6 +119,7 @@ public class Enemy : MonoBehaviour
         if (healthEventArgs.healthAmount <= 0)
         {
             EnemyDestroyed();
+            isDead = true;
         }
     }
 

@@ -64,21 +64,29 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: d9310b552f23add4ba3fc5d78262c472, type: 2}
       ratio: 7
     - dungeonObject: {fileID: 11400000, guid: 6098d0e1bb28a2d4cb8eac180f67d17a, type: 2}
+      ratio: 4
+    - dungeonObject: {fileID: 11400000, guid: a1b9c68ed342cdc4b95427441b677f96, type: 2}
       ratio: 5
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
     - dungeonObject: {fileID: 11400000, guid: ed3cbae0dbf241a43bed7f179097efe3, type: 2}
       ratio: 3
     - dungeonObject: {fileID: 11400000, guid: 6bf0ddf131d80cb4fab6782b836cf701, type: 2}
       ratio: 3
+<<<<<<< Updated upstream
     - dungeonObject: {fileID: 11400000, guid: a37b2f82156e3984490019f57e56e9a9, type: 2}
       ratio: 3
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
   roomEnemySpawnParametersList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    minTotalEnemiesToSpawn: 9
-    maxTotalEnemiesToSpawn: 15
-    minConcurrentEnemies: 5
-    maxConcurrentEnemies: 12
+    minTotalEnemiesToSpawn: 8
+    maxTotalEnemiesToSpawn: 12
+    minConcurrentEnemies: 3
+    maxConcurrentEnemies: 5
     minSpawnInterval: 1
     maxSpawnInterval: 3

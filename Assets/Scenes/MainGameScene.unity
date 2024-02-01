@@ -1005,9 +1005,13 @@ Camera:
     x: 0
     y: 0
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     width: 0.9992862
 =======
     width: 0.9996779
+>>>>>>> Stashed changes
+=======
+    width: 1
 >>>>>>> Stashed changes
     height: 1
   near clip plane: 0.3
@@ -1357,7 +1361,10 @@ MonoBehaviour:
     prefab: {fileID: 9215254846020591270, guid: 134f30ac9663ee04b96c23e8b7f6d55e, type: 3}
     componentType: ProjectileHitEffect
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   - poolSize: 200
     prefab: {fileID: 2585463276777236944, guid: 6a5368c795ec3214a9c5205ac2869442, type: 3}
     componentType: IFireable
@@ -1367,12 +1374,15 @@ MonoBehaviour:
   - poolSize: 200
     prefab: {fileID: 2585463276777236944, guid: 0837635750a5d484dadeea0297a3d18f, type: 3}
     componentType: IFireable
+<<<<<<< Updated upstream
   - poolSize: 20
     prefab: {fileID: 3547249067481803369, guid: 8fe1786649bf05c44b43dab6fda52c63, type: 3}
     componentType: IFireable
   - poolSize: 200
     prefab: {fileID: 2585463276777236944, guid: d8bd167913a4cee4bbfe853eeb811a56, type: 3}
     componentType: IFireable
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 --- !u!4 &673935430
 Transform:

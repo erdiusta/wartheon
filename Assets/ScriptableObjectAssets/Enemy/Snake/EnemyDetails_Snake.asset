@@ -15,10 +15,15 @@ MonoBehaviour:
   enemyName: Snake
   enemyPrefab: {fileID: 7183228443647751644, guid: 904881d400f1631449a2d444c2338eb7, type: 3}
   movementDetails: {fileID: 11400000, guid: c1cd655cbba76594ca00f689668e9744, type: 2}
+<<<<<<< Updated upstream
   chaseDistance: 12
   enemyBehaviour: 1
   isEnemyBoss: 0
   hasShield: 0
+=======
+  chaseDistance: 15
+  enemyBehaviour: 1
+>>>>>>> Stashed changes
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -26,7 +31,10 @@ MonoBehaviour:
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 36fd7981b2c14794796cd69ffa707648, type: 2}
   attackSoundEffect: {fileID: 11400000, guid: 49b9c611a31cfaa4fb504722dc0a02e2, type: 2}
+<<<<<<< Updated upstream
   deflectSoundEffect: {fileID: 0}
+=======
+>>>>>>> Stashed changes
   enemyWeapon: {fileID: 11400000, guid: a164b16c09631d245afc9d8c4d571b3f, type: 2}
   firingIntervalMin: 0.1
   firingIntervalMax: 1
@@ -39,4 +47,7 @@ MonoBehaviour:
   isImmuneAfterHit: 1
   hitImmunityTime: 0.7
   isHealthBarDisplayed: 0
+<<<<<<< Updated upstream
   hasKnockbackResistance: 0
+=======
+>>>>>>> Stashed changes

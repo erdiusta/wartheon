@@ -75,8 +75,12 @@ public class MeleeAttackLeftHand : MonoBehaviour
                     continue;
 
                 if (enemyHealth = collider.GetComponent<Health>())
+<<<<<<< Updated upstream
                 {
 <<<<<<< Updated upstream
+=======
+                {                   
+>>>>>>> Stashed changes
                     enemyHealth.TakeDamage(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMax,
 =======
                     PlayerAttackAnimation();
@@ -84,8 +88,12 @@ public class MeleeAttackLeftHand : MonoBehaviour
 >>>>>>> Stashed changes
                         transform.position, collider.transform.position);
 
-                    collider.GetComponent<EnemyMovementAI>().Knockback((collider.transform.position - transform.position).normalized,
-                        knockback.knockbackForce, knockback.knockbackTimeWeight);
+                    if (!enemyHealth.GetComponent<Enemy>().enemyDetails.hasKnockbackResistance)
+                    {
+                        Knockback enemyKnockback = collider.GetComponent<Enemy>().GetComponent<Knockback>();
+                        collider.GetComponent<EnemyMovementAI>().Knockback((collider.transform.position - transform.position).normalized,
+                            enemyKnockback.knockbackForce, enemyKnockback.knockbackTimeWeight);
+                    }
                 }
             }
         }

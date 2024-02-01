@@ -12,7 +12,6 @@ public class PlayerControl : MonoBehaviour
     bool rightMouseDownPreviousFrame = false;
     int currentRightHandWeaponIndex = 1;
     int currentLeftHandWeaponIndex = 0;
-    float moveSpeed;
     bool isPlayerMovementDisabled = false;
 
     private void Awake()
@@ -183,6 +182,7 @@ public class PlayerControl : MonoBehaviour
     {
         // Fire when left mouse button is clicked
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
         if (GameManager.Instance.attack.action.WasPerformedThisFrame())
         {
@@ -208,6 +208,9 @@ public class PlayerControl : MonoBehaviour
         // Fire for precharge weapons
 >>>>>>> Stashed changes
         if (GameManager.Instance.attack.action.IsPressed())
+=======
+        if (GameManager.Instance.attack.action.triggered)
+>>>>>>> Stashed changes
         {
             if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
             {
@@ -228,7 +231,7 @@ public class PlayerControl : MonoBehaviour
         }
 
         // Fire when right mouse button is clicked
-        if (GameManager.Instance.attackLeftHand.action.IsPressed())
+        if (GameManager.Instance.attackLeftHand.action.triggered)
         {
             if (player.activeWeapon.GetCurrentLeftHandWeapon() == null)
                 return;
@@ -289,7 +292,7 @@ public class PlayerControl : MonoBehaviour
             NextRightHandWeapon();
         }
 
-        if (GameManager.Instance.resetWeaponIndex.action.IsPressed())
+        if (GameManager.Instance.resetWeaponIndex.action.triggered)
         {
             SetCurrentWeaponToFirstInTheList();
         }
@@ -367,7 +370,7 @@ public class PlayerControl : MonoBehaviour
         if (currentWeapon.weaponClipRemainingProjectile == currentWeapon.weaponDetails.weaponClipProjectileCapacity) 
             return;
 
-        if (GameManager.Instance.reload.action.IsPressed())
+        if (GameManager.Instance.reload.action.triggered)
         {
             // Call the reload weapon event
             player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), 0);

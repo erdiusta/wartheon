@@ -11,6 +11,7 @@ TagManager:
   - groundTilemap
   - collisionTilemap
   - playerWeapon
+  - Enemy
   layers:
   - Default
   - TransparentFX

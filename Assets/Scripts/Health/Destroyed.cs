@@ -35,7 +35,13 @@ public class Destroyed : MonoBehaviour
             }
             else
             {
-                SoundEffectManager.Instance.PlaySoundEffect(gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect);
+                if (gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect != null)
+                {
+                    SoundEffectManager.Instance.PlaySoundEffect(gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect);
+                }
+
+                GetComponent<FireWeapon>().enabled = false;
+                GetComponent<Rigidbody2D>().velocity = new Vector2(0f, 0f);
                 GetComponent<PolygonCollider2D>().enabled = false;
                 GetComponent<EnemyMovementAI>().enabled = false;
                 Destroy(gameObject, 1f);
