@@ -21,7 +21,7 @@ public class RandomSpawnableObject<T>
     }
 
     public T GetItem()
-    {
+    {   
         int upperBoundary = -1;
         ratioValueTotal = 0;
         chanceBoundariesList.Clear();

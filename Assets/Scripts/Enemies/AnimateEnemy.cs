@@ -98,12 +98,17 @@ public class AnimateEnemy : MonoBehaviour
     {
         // Adjust animator layer weights
         enemy.animator.SetLayerWeight(baseLayerIndex, 0f);
+<<<<<<< Updated upstream
         enemy.animator.SetLayerWeight(attackLayerIndex, 0.1f);
+=======
+        enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
+        enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
+>>>>>>> Stashed changes
         enemy.animator.SetLayerWeight(deathLayerIndex, 1f);
 
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, false);
-        enemy.animator.SetTrigger(Settings.death);
+        enemy.animator.SetBool(Settings.death, true);
     }
 
     /// <summary>

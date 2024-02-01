@@ -70,6 +70,8 @@ public class PlayerControl : MonoBehaviour
                 WeaponInput();
                 // Process the player movement input
                 MovementInput();
+                // Process the player use item input
+                UseItemInput();
                 break;
             case Status.Stagger:
                 player.polygonCollider2D.enabled = false;
@@ -180,6 +182,31 @@ public class PlayerControl : MonoBehaviour
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
         // Fire when left mouse button is clicked
+<<<<<<< Updated upstream
+=======
+        if (GameManager.Instance.attack.action.WasPerformedThisFrame())
+        {
+            StartCoroutine(PlayerAttackAnimRoutine());
+
+            //Reset precharge for loading again
+            fireCompletedDuringPressed = false;
+            isSoundPlayed = false;
+
+            if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f) return;
+
+            if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon || player.activeWeapon.GetCurrentRightHandWeapon().
+                weaponDetails.weaponClass == WeaponClass.Bow)
+            {
+                player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon());
+            }
+
+            // Trigger fire weapon event
+            player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees,
+                weaponAngleDegrees, weaponDirection);
+        }
+
+        // Fire for precharge weapons
+>>>>>>> Stashed changes
         if (GameManager.Instance.attack.action.IsPressed())
         {
             if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
@@ -224,6 +251,27 @@ public class PlayerControl : MonoBehaviour
         {
             rightMouseDownPreviousFrame = false;
         }
+    }
+
+    /// <summary>
+    /// Player character attack motivation
+    /// </summary>
+    IEnumerator PlayerAttackAnimRoutine()
+    {
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 1f);
+        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
+
+        player.animator.SetTrigger(Settings.attackMotion);
+
+        yield return new WaitForSeconds(1f);
+
+        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
+        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
     }
 
     private void SwitchWeaponInput()
@@ -323,6 +371,48 @@ public class PlayerControl : MonoBehaviour
         {
             // Call the reload weapon event
             player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), 0);
+        }
+    }
+
+    /// <summary>
+    /// Use the nearest item within 2 unity units from the player
+    /// </summary>
+    private void UseItemInput()
+    {
+        if (GameManager.Instance.interaction.action.WasPerformedThisFrame())
+        {
+            float useItemRadius = 2f;
+
+            // Get any 'Usable' item near the player
+            Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(player.GetPlayerPosition(), useItemRadius);
+
+            // Loop through detected items to see if any are 'usable'
+            foreach (Collider2D collider2D in collider2DArray)
+            {
+                IUsable iusable = collider2D.GetComponent<IUsable>();
+
+                if (iusable != null)
+                {
+                    Chest chest = collider2D.GetComponent<Chest>();
+
+                    if (chest.chestState == ChestState.closed && !chest.dropCompleted)
+                    {
+                        iusable.UseItem();
+                    }
+
+                    if (chest.dropCompleted)
+                    {
+                        iusable.UseItem();
+                    }
+                }
+
+                // Only interactable objects have capsule colliders. So if it's nut null, it means collider is an interactable (like NPC)
+                if (collider2D.GetComponent<CapsuleCollider2D>() != null)
+                {
+                    Interaction interaction = collider2D.GetComponent<Interaction>();
+                    interaction.TriggerDialogue();
+                }
+            }
         }
     }
 

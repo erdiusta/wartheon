@@ -1,4 +1,4 @@
-    using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
@@ -49,9 +49,9 @@ public class RoomTemplateSO : ScriptableObject
     #endregion Tooltip
     public Vector2Int[] spawnPositionArray;
 
-    #region Header ENEMY DETAILS
+    #region Header SPAWN DETAILS
     [Space(10)]
-    [Header("ENEMY DETAILS")]
+    [Header("SPAWN DETAILS")]
     #endregion
     #region Tooltip
     [Tooltip("Populate the list with all the enemies that can be spawned in this room by dungeon level, including the ratio " +

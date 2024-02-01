@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
+  m_Name: EnemyDetails_FireElemental
+  m_EditorClassIdentifier: 
+  enemyName: Fire Elemental
+  enemyPrefab: {fileID: 7183228443647751644, guid: 8fea7a9db8fde704dab71124ec6d56b5, type: 3}
+  movementDetails: {fileID: 11400000, guid: 006bc7b24d185b148a452111f4c05600, type: 2}
+  chaseDistance: 15
+  enemyBehaviour: 1
+  isEnemyBoss: 0
+  hasShield: 0
+  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  enemyMaterializeTime: 2.5
+  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
+  enemyMaterializeColor: {r: 7.0334396, g: 0.44082278, b: 0, a: 0}
+  getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: 7dc4ed292175f0446af2d154c13685b2, type: 2}
+  attackSoundEffect: {fileID: 0}
+  deflectSoundEffect: {fileID: 0}
+  enemyWeapon: {fileID: 11400000, guid: 751ee812038719b41b9c9b5cb3a80218, type: 2}
+  firingIntervalMin: 0.1
+  firingIntervalMax: 1
+  firingDurationMin: 1
+  firingDurationMax: 2
+  firingLineOfSightRequired: 0
+  enemyHealthDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    enemyHealthAmount: 30
+  isImmuneAfterHit: 1
+  hitImmunityTime: 0.7
+  isHealthBarDisplayed: 0
+  hasKnockbackResistance: 0

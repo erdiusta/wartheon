@@ -32,6 +32,7 @@ public static class Settings
     public static int isIdle = Animator.StringToHash("isIdle");
     public static int isMoving = Animator.StringToHash("isMoving");
     public static int use = Animator.StringToHash("use");
+    public static int attackMotion = Animator.StringToHash("attack");
     public const float baseSpeedForPlayerAnimations = 8f;
 
     // Animator parameters - Damage

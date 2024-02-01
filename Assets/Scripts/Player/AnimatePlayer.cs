@@ -6,9 +6,28 @@ public class AnimatePlayer : MonoBehaviour
 {
     Player player;
 
+    [HideInInspector] public int baseLayerIndex;
+    [HideInInspector] public int attackLayerIndex;
+    [HideInInspector] public int getHitLayerIndex;
+    [HideInInspector] public int deathLayerIndex;
+
     private void Awake()
     {
         player = GetComponent<Player>();
+    }
+
+    private void Start()
+    {
+        baseLayerIndex = player.animator.GetLayerIndex("Base Layer");
+        attackLayerIndex = player.animator.GetLayerIndex("Attack Layer");
+        getHitLayerIndex = player.animator.GetLayerIndex("Get Hit Layer");
+        deathLayerIndex = player.animator.GetLayerIndex("Death Layer");
+
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(baseLayerIndex, 1f);
+        player.animator.SetLayerWeight(getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(deathLayerIndex, 0f);
     }
 
     /// <summary>

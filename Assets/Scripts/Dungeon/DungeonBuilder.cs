@@ -521,7 +521,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     {
         if (roomNodeGraphList.Count > 0)
         {
-            return roomNodeGraphList[UnityEngine.Random.Range(0, roomNodeGraphList.Count)];
+            return roomNodeGraphList[Random.Range(0, roomNodeGraphList.Count)];
         }
         else
         {

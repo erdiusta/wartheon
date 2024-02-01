@@ -264,7 +264,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7438787049702821162}
-  - component: {fileID: 1862369180065763206}
   - component: {fileID: 6074870274028270621}
   m_Layer: 0
   m_Name: ChestItem
@@ -290,18 +289,6 @@ Transform:
   - {fileID: 1223623311296940178}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1862369180065763206
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6166831115549756087}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a96ea73794322894c8cea1aa7fbed839, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6074870274028270621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,4 +301,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 326b6a0221b1bf641ba808b6662c9afb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isItemMaterialized: 0

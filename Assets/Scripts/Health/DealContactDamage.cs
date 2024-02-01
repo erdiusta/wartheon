@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [DisallowMultipleComponent]
 public class DealContactDamage : MonoBehaviour
@@ -15,7 +16,14 @@ public class DealContactDamage : MonoBehaviour
     [Tooltip("Specify what layers objects should be on to receive contact damage")]
     #endregion
     [SerializeField] private LayerMask layerMask;
+
+    Enemy enemy;
     bool isColliding = false;
+
+    private void Awake()
+    {
+        enemy = GetComponent<Enemy>();
+    }
 
     // Trigger contact damage when enter a collider
     private void OnTriggerEnter2D(Collider2D collision)
@@ -23,6 +31,11 @@ public class DealContactDamage : MonoBehaviour
         // If already colliding with something return
         if (isColliding)
             return;
+
+        if (tag == "Enemy")
+        {
+            EnemyAttackAnimRoutine();
+        }
 
         ContactDamage(collision);
     }
@@ -55,6 +68,30 @@ public class DealContactDamage : MonoBehaviour
             Invoke("ResetContactCollision", Settings.contactDamageCollisionResetDelay);
 
             receiveContactDamage.TakeContactDamage(contactDamageAmount, receiveContactDamage.transform.position, transform.position);
+        }
+    }
+
+    /// <summary>
+    /// Enemy character attack motion
+    /// </summary>
+    private void EnemyAttackAnimRoutine()
+    {
+        if (enemy.health.currentHealth > 0f)
+        {
+            // Adjust animator layer weights
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 1f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
+
+            enemy.animator.SetTrigger(Settings.attackMotion);
+        }
+        else
+        {
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 1f);
         }
     }
 

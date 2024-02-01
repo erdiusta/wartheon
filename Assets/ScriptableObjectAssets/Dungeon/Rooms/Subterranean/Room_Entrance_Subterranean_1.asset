@@ -53,3 +53,9 @@ MonoBehaviour:
     isUnavailable: 0
   spawnPositionArray:
   - {x: 2, y: 10}
+<<<<<<< Updated upstream
+=======
+  enemiesByLevelList: []
+  roomEnemySpawnParametersList: []
+  npcList: []
+>>>>>>> Stashed changes

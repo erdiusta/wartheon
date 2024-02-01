@@ -71,8 +71,6 @@ public enum ChestSpawnPosition
 public enum ChestState
 {
     closed,
-    healthItem,
-    ammoItem,
     weaponItem,
     empty
 }

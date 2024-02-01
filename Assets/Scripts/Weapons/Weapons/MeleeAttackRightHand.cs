@@ -75,15 +75,26 @@ public class MeleeAttackRightHand : MonoBehaviour
 
                 if (enemyHealth = collider.GetComponent<Health>())
                 {
+                    PlayerAttackAnimation();
                     enemyHealth.TakeDamage(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMax,
                         transform.position, collider.transform.position);
-                    SoundEffect(enemyHealth.GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
 
                     collider.GetComponent<EnemyMovementAI>().Knockback((collider.transform.position - transform.position).normalized,
                         knockback.knockbackForce, knockback.knockbackTimeWeight);
                 }
             }
         }
+    }
+
+    private void PlayerAttackAnimation()
+    {
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 1f);
+        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
+
+        player.animator.SetTrigger(Settings.attackMotion);
     }
 
     public void ResetIsAttackingRightHand()
@@ -93,8 +104,7 @@ public class MeleeAttackRightHand : MonoBehaviour
 
     void AttackAtRightHand(Weapon weapon)
     {
-        if (rightHandAttackBlocked)
-            return;
+        if (rightHandAttackBlocked) return;
 
         // Trigger the attack animation
         rightHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtRightHand);

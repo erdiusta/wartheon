@@ -61,6 +61,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public Knockback knockback;
     [HideInInspector] public Idle idle;
     [HideInInspector] public MovementByVelocity movementByVelocity;
+    [HideInInspector] public bool isDead;
 
     public List<Weapon> weaponRightHandList = new List<Weapon>();
     public List<Weapon> weaponLeftHandList = new List<Weapon>();

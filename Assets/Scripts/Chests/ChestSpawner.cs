@@ -37,21 +37,6 @@ public class ChestSpawner : MonoBehaviour
     #endregion Tooltip
     [SerializeField] List<RangeByLevel> chestSpawnChanceByLevelList;
 
-    #region Header CHEST SPAWN DETAILS
-    [Space(10)]
-    [Header("CHEST SPAWN DETAILS")]
-    #endregion Header CHEST SPAWN DETAILS
-    [SerializeField] ChestSpawnEvent chestSpawnEvent;
-    [SerializeField] ChestSpawnPosition chestSpawnPosition;
-    #region Tooltip
-    [Tooltip("The minimum number of items to spawn (note that a maximum of 1 of each type of ammo, health, and weapon will be spawned")]
-    #endregion Tooltip
-    [SerializeField][Range(0, 3)] int numberOfItemsToSpawnMin;
-    #region Tooltip
-    [Tooltip("The maximum number of items to spawn (note that a maximum of 1 of each type of ammo, health, and weapon will be spawned")]
-    #endregion Tooltip
-    [SerializeField][Range(0, 3)] int numberOfItemsToSpawnMax;
-
     #region Header CHEST CONTENT DETAILS
     [Space(10)]
     [Header("CHEST CONTENT DETAILS")]
@@ -60,21 +45,13 @@ public class ChestSpawner : MonoBehaviour
     [Tooltip("The weapons to spawn for each dungeon level and their spawn ratios")]
     #endregion Tooltip
     [SerializeField] List<SpawnableObjectsByLevel<WeaponDetailsSO>> weaponSpawnByLevelList;
-    #region Tooltip
-    [Tooltip("The range of health to spawn for each level")]
-    #endregion Tooltip
-    [SerializeField] List<RangeByLevel> healthSpawnByLevelList;
-    #region Tooltip
-    [Tooltip("The range of ammo to spawn for each level")]
-    #endregion Tooltip
-    [SerializeField] List<RangeByLevel> ammoSpawnByLevelList;
 
     bool chestSpawned = false;
     Room chestRoom;
 
     private void OnEnable()
     {
-     StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
+        StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
         StaticEventHandler.OnRoomEnemiesDefeated += StaticEventHandler_OnRoomEnemiesDefeated;
     }
 
@@ -96,7 +73,7 @@ public class ChestSpawner : MonoBehaviour
         }
 
         // If the chest is spawned on room entry then spawn chest
-        if (!chestSpawned && chestSpawnEvent == ChestSpawnEvent.onRoomEntry && chestRoom == roomChangedEventArgs.room)
+        if (!chestSpawned && chestRoom == roomChangedEventArgs.room)
         {
             SpawnChest();
         }
@@ -115,7 +92,7 @@ public class ChestSpawner : MonoBehaviour
 
         // If the chest is spawned when enemies are defeated and the chest is in the room that the
         // enemies have been defeated
-        if (!chestSpawned && chestSpawnEvent == ChestSpawnEvent.onEnemiesDefeated && chestRoom == roomEnemiesDefeatedArgs.room)
+        if (!chestSpawned && chestRoom == roomEnemiesDefeatedArgs.room)
         {
             SpawnChest();
         }
@@ -131,42 +108,20 @@ public class ChestSpawner : MonoBehaviour
         // Should chest be spawned based on specified chance? If not return.
         if (!RandomSpawnChest()) return;
 
-        // Get Number Of Ammo,Health, & Weapon Items To Spawn (max 1 of each)
-        GetItemsToSpawn(out int ammoNum, out int healthNum, out int weaponNum);
+        // Get Weapon Item To Spawn
+        GetItemsToSpawn(out int weaponNum);
 
         // Instantiate chest
-        GameObject chestGameObject = Instantiate(chestPrefab, this.transform);
+        GameObject chestGameObject = Instantiate(chestPrefab, transform);
 
         // Position chest
-        if (chestSpawnPosition == ChestSpawnPosition.atSpawnerPosition)
-        {
-            chestGameObject.transform.position = this.transform.position;
-        }
-        else if (chestSpawnPosition == ChestSpawnPosition.atPlayerPosition)
-        {
-            // Get nearest spawn position to player
-            Vector3 spawnPosition = HelperUtilities.GetSpawnPositionNearestToPlayer(GameManager.Instance.GetPlayer().transform.position);
-
-            // Calculate some random variation
-            Vector3 variation = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
-
-            chestGameObject.transform.position = spawnPosition + variation;
-        }
+        chestGameObject.transform.position = transform.position;
 
         // Get Chest component
         Chest chest = chestGameObject.GetComponent<Chest>();
-
-        // Initialize chest
-        if (chestSpawnEvent == ChestSpawnEvent.onRoomEntry)
-        {
-            // Don't use materialize effect
-            chest.Initialize(false, GetHealthPercentToSpawn(healthNum), GetWeaponDetailsToSpawn(weaponNum), GetAmmoPercentToSpawn(ammoNum));
-        }
-        else
-        {
-            // use materialize effect
-            chest.Initialize(true, GetHealthPercentToSpawn(healthNum), GetWeaponDetailsToSpawn(weaponNum), GetAmmoPercentToSpawn(ammoNum));
-        }
+   
+        // Initialize items
+        chest.Initialize(GetWeaponDetailsToSpawn(weaponNum));     
     }
 
     /// <summary>
@@ -202,76 +157,12 @@ public class ChestSpawner : MonoBehaviour
     /// <summary>
     /// Get the number of items to spawn - max 1 of each - max 3 in total
     /// </summary>
-    private void GetItemsToSpawn(out int ammo, out int health, out int weapons)
+    private void GetItemsToSpawn(out int weapons)
     {
-        ammo = 0;
-        health = 0;
         weapons = 0;
 
-        int numberOfItemsToSpawn = Random.Range(numberOfItemsToSpawnMin, numberOfItemsToSpawnMax + 1);
-
-        int choice;
-
-        if (numberOfItemsToSpawn == 1)
-        {
-            choice = Random.Range(0, 3);
-            if (choice == 0) { weapons++; return; }
-            if (choice == 1) { ammo++; return; }
-            if (choice == 2) { health++; return; }
-            return;
-        }
-        else if (numberOfItemsToSpawn == 2)
-        {
-            choice = Random.Range(0, 3);
-            if (choice == 0) { weapons++; ammo++; return; }
-            if (choice == 1) { ammo++; health++; return; }
-            if (choice == 2) { health++; weapons++; return; }
-        }
-        else if (numberOfItemsToSpawn >= 3)
-        {
-            weapons++;
-            ammo++;
-            health++;
-            return;
-        }
-    }
-
-    /// <summary>
-    /// Get ammo percent to spawn
-    /// </summary>
-    private int GetAmmoPercentToSpawn(int ammoNumber)
-    {
-        if (ammoNumber == 0) return 0;
-
-        // Get ammo spawn percent range for level
-        foreach (RangeByLevel spawnPercentByLevel in ammoSpawnByLevelList)
-        {
-            if (spawnPercentByLevel.dungeonLevel == GameManager.Instance.GetCurrentDungeonLevel())
-            {
-                return Random.Range(spawnPercentByLevel.min, spawnPercentByLevel.max);
-            }
-        }
-
-        return 0;
-    }
-
-    /// <summary>
-    /// Get health percent to spawn
-    /// </summary>
-    private int GetHealthPercentToSpawn(int healthNumber)
-    {
-        if (healthNumber == 0) return 0;
-
-        // Get ammo spawn percent range for level
-        foreach (RangeByLevel spawnPercentByLevel in healthSpawnByLevelList)
-        {
-            if (spawnPercentByLevel.dungeonLevel == GameManager.Instance.GetCurrentDungeonLevel())
-            {
-                return Random.Range(spawnPercentByLevel.min, spawnPercentByLevel.max);
-            }
-        }
-
-        return 0;
+        weapons++;
+        return;       
     }
 
     /// <summary>
@@ -310,9 +201,6 @@ public class ChestSpawner : MonoBehaviour
             }
         }
 
-        HelperUtilities.ValidateCheckPositiveRange(this, nameof(numberOfItemsToSpawnMin), numberOfItemsToSpawnMin, nameof(numberOfItemsToSpawnMax), 
-            numberOfItemsToSpawnMax, true);
-
         if (weaponSpawnByLevelList != null && weaponSpawnByLevelList.Count > 0)
         {
             foreach (SpawnableObjectsByLevel<WeaponDetailsSO> weaponDetailsByLevel in weaponSpawnByLevelList)
@@ -327,30 +215,7 @@ public class ChestSpawner : MonoBehaviour
                 }
             }
         }
-
-        if (healthSpawnByLevelList != null && healthSpawnByLevelList.Count > 0)
-        {
-            HelperUtilities.ValidateCheckEnumerableValues(this, nameof(healthSpawnByLevelList), healthSpawnByLevelList);
-
-            foreach (RangeByLevel rangeByLevel in healthSpawnByLevelList)
-            {
-                HelperUtilities.ValidateCheckNullValue(this, nameof(rangeByLevel.dungeonLevel), rangeByLevel.dungeonLevel);
-                HelperUtilities.ValidateCheckPositiveRange(this, nameof(rangeByLevel.min), rangeByLevel.min, nameof(rangeByLevel.max), rangeByLevel.max, true);
-            }
-        }
-
-        if (ammoSpawnByLevelList != null && ammoSpawnByLevelList.Count > 0)
-        {
-            HelperUtilities.ValidateCheckEnumerableValues(this, nameof(ammoSpawnByLevelList), ammoSpawnByLevelList);
-            foreach (RangeByLevel rangeByLevel in ammoSpawnByLevelList)
-            {
-                HelperUtilities.ValidateCheckNullValue(this, nameof(rangeByLevel.dungeonLevel), rangeByLevel.dungeonLevel);
-                HelperUtilities.ValidateCheckPositiveRange(this, nameof(rangeByLevel.min), rangeByLevel.min, nameof(rangeByLevel.max), rangeByLevel.max, true);
-            }
-        }
-
     }
 #endif
     #endregion
-
 }

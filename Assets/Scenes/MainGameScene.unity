@@ -813,6 +813,7 @@ MonoBehaviour:
   reload: {fileID: -6482433486226854903, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   resetWeaponIndex: {fileID: 2391305962996221522, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   nextLevel: {fileID: -2122744234832147839, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  interaction: {fileID: -3128664531634483429, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   gameState: 0
   previousGameState: 0
 --- !u!4 &343683749
@@ -1003,7 +1004,11 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
+<<<<<<< Updated upstream
     width: 0.9992862
+=======
+    width: 0.9996779
+>>>>>>> Stashed changes
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -1351,6 +1356,24 @@ MonoBehaviour:
   - poolSize: 20
     prefab: {fileID: 9215254846020591270, guid: 134f30ac9663ee04b96c23e8b7f6d55e, type: 3}
     componentType: ProjectileHitEffect
+<<<<<<< Updated upstream
+=======
+  - poolSize: 200
+    prefab: {fileID: 2585463276777236944, guid: 6a5368c795ec3214a9c5205ac2869442, type: 3}
+    componentType: IFireable
+  - poolSize: 200
+    prefab: {fileID: 2585463276777236944, guid: be71dc8921bf9184c8fab4ceb76b5878, type: 3}
+    componentType: IFireable
+  - poolSize: 200
+    prefab: {fileID: 2585463276777236944, guid: 0837635750a5d484dadeea0297a3d18f, type: 3}
+    componentType: IFireable
+  - poolSize: 20
+    prefab: {fileID: 3547249067481803369, guid: 8fe1786649bf05c44b43dab6fda52c63, type: 3}
+    componentType: IFireable
+  - poolSize: 200
+    prefab: {fileID: 2585463276777236944, guid: d8bd167913a4cee4bbfe853eeb811a56, type: 3}
+    componentType: IFireable
+>>>>>>> Stashed changes
 --- !u!4 &673935430
 Transform:
   m_ObjectHideFlags: 0

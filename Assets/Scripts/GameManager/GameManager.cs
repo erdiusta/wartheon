@@ -48,6 +48,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public InputActionReference reload;
     public InputActionReference resetWeaponIndex;
     public InputActionReference nextLevel;
+    public InputActionReference interaction;
 
     Room currentRoom;
     Room previousRoom;

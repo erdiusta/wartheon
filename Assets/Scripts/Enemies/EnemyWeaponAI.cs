@@ -1,4 +1,5 @@
-using UnityEngine;  
+using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(Enemy))]
 [DisallowMultipleComponent]
@@ -76,25 +77,11 @@ public class EnemyWeaponAI : MonoBehaviour
     /// </summary>
     private void DoFireWeapon()
     {
-        // Player distance
-        Vector3 playerDirectionVector = GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position;
+        Vector3 playerDirectionVector, weaponDirection;
+        float weaponAngleDegrees, enemyAngleDegrees;
+        AimDirection enemyAimDirection;
 
-        // Calculate direction vector of player from weapon shoot position
-        Vector3 weaponDirection = GameManager.Instance.GetPlayer().GetPlayerPosition() - weaponShootPosition.position;
-
-        // Get weapon to player angle
-        float weaponAngleDegrees = HelperUtilities.GetAngleFromVector(weaponDirection);
-
-        // Get enemy to player angle
-        float enemyAngleDegrees = HelperUtilities.GetAngleFromVector(playerDirectionVector);
-
-        // Set enemy aim direction
-        AimDirection enemyAimDirection = HelperUtilities.GetAimDirection(enemyAngleDegrees);
-
-        // Trigger weapon aim methods
-        enemy.aimWeapon.Aim(enemyAimDirection, enemyAngleDegrees);
-        enemy.animateEnemy.InitializeAimAnimationParameters();
-        enemy.animateEnemy.SetAimWeaponAnimationParameters(enemyAimDirection);
+        Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection);
 
         // Only fire if enemy has a weapon
         if (enemyDetails.enemyWeapon != null)
@@ -110,9 +97,34 @@ public class EnemyWeaponAI : MonoBehaviour
                     return;
 
                 // Trigger fire weapon event
+                EnemyAttackAnimation();
                 enemy.fireWeaponEvent.CallFireWeaponEvent(true, true, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection);
             }
         }
+    }
+
+    public void Aim(out Vector3 playerDirectionVector, out Vector3 weaponDirection, out float weaponAngleDegrees, out float enemyAngleDegrees, 
+        out AimDirection enemyAimDirection)
+    {
+        // Player distance
+        playerDirectionVector = GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position;
+
+        // Calculate direction vector of player from weapon shoot position
+        weaponDirection = GameManager.Instance.GetPlayer().GetPlayerPosition() - weaponShootPosition.position;
+
+        // Get weapon to player angle
+        weaponAngleDegrees = HelperUtilities.GetAngleFromVector(weaponDirection);
+
+        // Get enemy to player angle
+        enemyAngleDegrees = HelperUtilities.GetAngleFromVector(playerDirectionVector);
+
+        // Set enemy aim direction
+        enemyAimDirection = HelperUtilities.GetAimDirection(enemyAngleDegrees);
+
+        // Trigger weapon aim methods
+        enemy.aimWeapon.Aim(enemyAimDirection, enemyAngleDegrees);
+        enemy.animateEnemy.InitializeAimAnimationParameters();
+        enemy.animateEnemy.SetAimWeaponAnimationParameters(enemyAimDirection);
     }
 
     private bool IsPlayerInLineOfSight(Vector3 weaponDirection, float enemyProjectileRange)
@@ -125,6 +137,26 @@ public class EnemyWeaponAI : MonoBehaviour
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Enemy character attack motion
+    /// </summary>
+    private void EnemyAttackAnimation()
+    {
+        if (enemy.health.currentHealth > 0f)
+        {
+            // Adjust animator layer weights
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 1f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
+
+            enemy.animator.SetTrigger(Settings.attackMotion);
+
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 1f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+        }
     }
 
     #region Validation

@@ -107,6 +107,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interaction"",
+                    ""type"": ""Button"",
+                    ""id"": ""f6a57153-f43f-49a1-a783-3142b3dcd37d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -307,6 +316,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Next Level"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""244ce1a2-fb9e-4bab-b713-3dd66aa7e4c3"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interaction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -324,6 +344,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_Reload = m_PlayerInput.FindAction("Reload", throwIfNotFound: true);
         m_PlayerInput_ResetWeaponIndex = m_PlayerInput.FindAction("Reset Weapon Index", throwIfNotFound: true);
         m_PlayerInput_NextLevel = m_PlayerInput.FindAction("Next Level", throwIfNotFound: true);
+        m_PlayerInput_Interaction = m_PlayerInput.FindAction("Interaction", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -394,6 +415,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_Reload;
     private readonly InputAction m_PlayerInput_ResetWeaponIndex;
     private readonly InputAction m_PlayerInput_NextLevel;
+    private readonly InputAction m_PlayerInput_Interaction;
     public struct PlayerInputActions
     {
         private @Controls m_Wrapper;
@@ -407,6 +429,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @Reload => m_Wrapper.m_PlayerInput_Reload;
         public InputAction @ResetWeaponIndex => m_Wrapper.m_PlayerInput_ResetWeaponIndex;
         public InputAction @NextLevel => m_Wrapper.m_PlayerInput_NextLevel;
+        public InputAction @Interaction => m_Wrapper.m_PlayerInput_Interaction;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -443,6 +466,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @NextLevel.started += instance.OnNextLevel;
             @NextLevel.performed += instance.OnNextLevel;
             @NextLevel.canceled += instance.OnNextLevel;
+            @Interaction.started += instance.OnInteraction;
+            @Interaction.performed += instance.OnInteraction;
+            @Interaction.canceled += instance.OnInteraction;
         }
 
         private void UnregisterCallbacks(IPlayerInputActions instance)
@@ -474,6 +500,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @NextLevel.started -= instance.OnNextLevel;
             @NextLevel.performed -= instance.OnNextLevel;
             @NextLevel.canceled -= instance.OnNextLevel;
+            @Interaction.started -= instance.OnInteraction;
+            @Interaction.performed -= instance.OnInteraction;
+            @Interaction.canceled -= instance.OnInteraction;
         }
 
         public void RemoveCallbacks(IPlayerInputActions instance)
@@ -502,5 +531,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnReload(InputAction.CallbackContext context);
         void OnResetWeaponIndex(InputAction.CallbackContext context);
         void OnNextLevel(InputAction.CallbackContext context);
+        void OnInteraction(InputAction.CallbackContext context);
     }
 }

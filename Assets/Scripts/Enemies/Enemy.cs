@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -45,9 +44,18 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public Idle idle;
     [HideInInspector] public Animator animator;
     [HideInInspector] public Rigidbody2D rb2D;
+<<<<<<< Updated upstream
+=======
+    [HideInInspector] public MovementToPosition movementToPosition;
+    [HideInInspector] public EnemyMovementAI enemyMovementAI;
+    [HideInInspector] public EnemyWeaponAI enemyWeaponAI;
+    [HideInInspector] public Knockback knockback;
+    [HideInInspector] public bool isDead;
+    [HideInInspector] public bool isFiring;
+    [HideInInspector] public Health health;
+>>>>>>> Stashed changes
 
-    private HealthEvent healthEvent;
-    private Health health;
+    HealthEvent healthEvent;
     FireWeapon fireWeapon;
     SetActiveWeaponEvent setActiveWeaponEvent;
     MaterializeEffect materializeEffect;
@@ -64,7 +72,11 @@ public class Enemy : MonoBehaviour
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
         destroyedEvent = GetComponent<DestroyedEvent>();
         enemyMovementAI = GetComponent<EnemyMovementAI>();
+<<<<<<< Updated upstream
         movementToPositionEvent = GetComponent<MovementToPositionEvent>();
+=======
+        enemyWeaponAI = GetComponent<EnemyWeaponAI>();
+>>>>>>> Stashed changes
         materializeEffect = GetComponent<MaterializeEffect>();
         circleCollider2D = GetComponent<CircleCollider2D>();
         polygonCollider2D = GetComponent<PolygonCollider2D>();

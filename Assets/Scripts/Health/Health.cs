@@ -15,7 +15,6 @@ public class Health : MonoBehaviour
     [SerializeField] HealthBar healthBar;
 
     int startingHealth;
-    int currentHealth;
     HealthEvent healthEvent;
     Player player;
     Coroutine immunityCoroutine;
@@ -26,6 +25,7 @@ public class Health : MonoBehaviour
     WaitForSeconds waitForSecondsSpriteFlashInterval = new WaitForSeconds(spriteFlashInterval);
     FlashManager flashManager;
 
+    [HideInInspector] public int currentHealth;
     [HideInInspector] public bool isDamageable = true;
     [HideInInspector] public Enemy enemy;
 
@@ -88,7 +88,7 @@ public class Health : MonoBehaviour
 
             if(tag == "Player")
             {
-                SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
+                PlayerGetHitAnimation();
 
                 // Apply knockback
                 Knockback knockback = player.GetComponent<Knockback>();
@@ -96,7 +96,11 @@ public class Health : MonoBehaviour
             }
             else if (tag == "Enemy")
             {
+<<<<<<< Updated upstream
                 SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
+=======
+                EnemyGetHitAnimation();
+>>>>>>> Stashed changes
             }
 
             // Set health bar as the percentage of health remaining
@@ -107,6 +111,71 @@ public class Health : MonoBehaviour
         }
     }
 
+<<<<<<< Updated upstream
+=======
+    private void PlayerGetHitAnimation()
+    {
+        if (player.health.currentHealth > 0f)
+        {
+            // Adjust animator layer weights
+            player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
+            player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
+            player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 1f);
+            player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
+
+            SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
+            player.animator.SetTrigger(Settings.getHit);
+
+            //yield return null;
+
+            //player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
+            //player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
+            //player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
+            //player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
+        }
+        else
+        {
+            player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
+            player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
+            player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
+            player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 1f);
+
+            //yield return null;
+        }
+    }
+
+    private void EnemyGetHitAnimation()
+    {
+        if (enemy.health.currentHealth > 0f)
+        {
+            // Adjust animator layer weights
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 1f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
+
+            SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
+            enemy.animator.SetTrigger(Settings.getHit);
+
+            //yield return null;
+
+            //enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 1f);
+            //enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+            //enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
+            //enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
+        }
+        else
+        {
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 1f);
+
+            //yield return null;
+        }
+    }
+
+>>>>>>> Stashed changes
     /// <summary>
     /// Indicate a hit and give some post hit immunity
     /// </summary>
