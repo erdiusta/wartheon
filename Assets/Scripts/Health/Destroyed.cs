@@ -26,28 +26,14 @@ public class Destroyed : MonoBehaviour
         if (destroyedEventArgs.playerDied)
         {
             gameObject.SetActive(false);
+            SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.deathSoundEffect);
         }
         else
         {
-            if (gameObject.tag == "Player")
+            if (gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect != null)
             {
-                SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.deathSoundEffect);
+                SoundEffectManager.Instance.PlaySoundEffect(gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect);
             }
-            else
-            {
-                if (gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect != null)
-                {
-                    SoundEffectManager.Instance.PlaySoundEffect(gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect);
-                }
-
-                GetComponent<FireWeapon>().enabled = false;
-                GetComponent<Rigidbody2D>().velocity = new Vector2(0f, 0f);
-                GetComponent<PolygonCollider2D>().enabled = false;
-                GetComponent<EnemyMovementAI>().enabled = false;
-                Destroy(gameObject, 1f);
-            }
-<<<<<<< Updated upstream
-=======
 
             GetComponent<Enemy>().isDead = true;
             GetComponent<FireWeapon>().enabled = false;
@@ -55,9 +41,9 @@ public class Destroyed : MonoBehaviour
             GetComponent<Rigidbody2D>().velocity = new Vector2(0f, 0f);
             GetComponent<PolygonCollider2D>().enabled = false;
             GetComponent<EnemyMovementAI>().enabled = false;
+            GetComponent<EnemyWeaponAI>().enabled = false;
             GetComponent<AnimateEnemy>().attackLayerIndex = 0;
             Destroy(gameObject, 0.6f);
->>>>>>> Stashed changes
         }
     }
 }

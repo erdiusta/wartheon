@@ -118,12 +118,15 @@ public class MeleeAttackRightHand : MonoBehaviour
         StartCoroutine(DelayAttackRightHand(weapon));
 
         // Melee attack sound effect
-        SoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect);
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
+        {
+            SoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect);
+        }
     }
 
     IEnumerator DelayAttackRightHand(Weapon weapon)
     {
-        yield return new WaitForSeconds(weapon.weaponDetails.meleeAttackCooldown);
+        yield return new WaitForSeconds(weapon.weaponDetails.weaponFireRate);
 
         rightHandAttackBlocked = false;
     }

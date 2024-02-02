@@ -38,17 +38,17 @@ MonoBehaviour:
   - position: {x: 20, y: 9}
     orientation: 1
     doorPrefab: {fileID: 7526115427054233115, guid: 5951fca1c9ad64c4c9f1cc14420eda79, type: 3}
-    doorwayStartCopyPosition: {x: 18, y: 13}
+    doorwayStartCopyPosition: {x: 18, y: 14}
     doorwayCopyTileWidth: 3
-    doorwayCopyTileHeight: 6
+    doorwayCopyTileHeight: 7
     isConnected: 0
     isUnavailable: 0
   - position: {x: -10, y: 4}
     orientation: 3
     doorPrefab: {fileID: 7526115427054233115, guid: 5951fca1c9ad64c4c9f1cc14420eda79, type: 3}
-    doorwayStartCopyPosition: {x: -10, y: 8}
+    doorwayStartCopyPosition: {x: -10, y: 9}
     doorwayCopyTileWidth: 3
-    doorwayCopyTileHeight: 6
+    doorwayCopyTileHeight: 7
     isConnected: 0
     isUnavailable: 0
   spawnPositionArray:
@@ -67,21 +67,12 @@ MonoBehaviour:
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: a1b9c68ed342cdc4b95427441b677f96, type: 2}
       ratio: 5
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
     - dungeonObject: {fileID: 11400000, guid: ed3cbae0dbf241a43bed7f179097efe3, type: 2}
       ratio: 3
     - dungeonObject: {fileID: 11400000, guid: 6bf0ddf131d80cb4fab6782b836cf701, type: 2}
       ratio: 3
-<<<<<<< Updated upstream
     - dungeonObject: {fileID: 11400000, guid: a37b2f82156e3984490019f57e56e9a9, type: 2}
       ratio: 3
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   roomEnemySpawnParametersList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     minTotalEnemiesToSpawn: 8

@@ -68,6 +68,14 @@ public class DealContactDamage : MonoBehaviour
             Invoke("ResetContactCollision", Settings.contactDamageCollisionResetDelay);
 
             receiveContactDamage.TakeContactDamage(contactDamageAmount, receiveContactDamage.transform.position, transform.position);
+
+            if (collision.tag == "Player")
+            {
+                // Apply knockback
+                Knockback knockback = collision.GetComponent<Player>().GetComponent<Knockback>();
+                collision.GetComponent<Player>().movementByVelocity.Knockback((transform.position - collision.transform.position).normalized,
+                    knockback.knockbackForce, knockback.knockbackTimeWeight);
+            }
         }
     }
 

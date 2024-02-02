@@ -26,15 +26,15 @@ MonoBehaviour:
   deathSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
   enemyWeapon: {fileID: 11400000, guid: 8d46dabb7015c9a4e98cea0e63186f7c, type: 2}
-  firingIntervalMin: 0.1
-  firingIntervalMax: 1
+  firingIntervalMin: 0.8
+  firingIntervalMax: 1.5
   firingDurationMin: 1
   firingDurationMax: 2
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    enemyHealthAmount: 200
+    enemyHealthAmount: 150
   isImmuneAfterHit: 1
-  hitImmunityTime: 3
+  hitImmunityTime: 2
   isHealthBarDisplayed: 1
   hasKnockbackResistance: 1

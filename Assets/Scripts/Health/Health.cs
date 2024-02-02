@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -89,18 +90,15 @@ public class Health : MonoBehaviour
             if(tag == "Player")
             {
                 PlayerGetHitAnimation();
-
-                // Apply knockback
-                Knockback knockback = player.GetComponent<Knockback>();
-                player.movementByVelocity.Knockback((dealerPosition - receiverPosition).normalized, knockback.knockbackForce, knockback.knockbackTimeWeight);
             }
             else if (tag == "Enemy")
             {
-<<<<<<< Updated upstream
-                SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
-=======
                 EnemyGetHitAnimation();
->>>>>>> Stashed changes
+
+                if (currentHealth <= 0)
+                {
+                    enemy.dropOnDestroy.DropProcess();
+                }
             }
 
             // Set health bar as the percentage of health remaining
@@ -111,8 +109,6 @@ public class Health : MonoBehaviour
         }
     }
 
-<<<<<<< Updated upstream
-=======
     private void PlayerGetHitAnimation()
     {
         if (player.health.currentHealth > 0f)
@@ -125,13 +121,6 @@ public class Health : MonoBehaviour
 
             SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
             player.animator.SetTrigger(Settings.getHit);
-
-            //yield return null;
-
-            //player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
-            //player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
-            //player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
-            //player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
         }
         else
         {
@@ -175,7 +164,6 @@ public class Health : MonoBehaviour
         }
     }
 
->>>>>>> Stashed changes
     /// <summary>
     /// Indicate a hit and give some post hit immunity
     /// </summary>

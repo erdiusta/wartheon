@@ -316,7 +316,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         Debug.Log("Level Completed - Press Return To Progress To The Next Level");
 
         // When player presses the return key proceed to the next level
-        while (!nextLevel.action.IsPressed())
+        while (!nextLevel.action.WasPerformedThisFrame())
         {
             yield return null;
         }
@@ -444,6 +444,17 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public DungeonLevelSO GetCurrentDungeonLevel()
     {
         return dungeonLevelList[currentDungeonLevelListIndex];
+    }
+
+    /// <summary>
+    /// Spawn object
+    /// </summary>
+    public Transform SpawnObject(Vector3 position, GameObject toDrop)
+    {
+        Transform t = Instantiate(toDrop, transform).transform;
+        t.position = position;
+
+        return t;
     }
 
     #region Validation

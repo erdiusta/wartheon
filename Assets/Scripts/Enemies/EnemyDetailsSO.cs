@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "EnemyDetails_", menuName = "Scriptable Objects/Enemy/Enemy Details")]
@@ -31,6 +32,10 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check if enemy is a boss")]
     #endregion
     public bool isEnemyBoss = false;
+    #region Tooltip
+    [Tooltip("Check if enemy has a shield")]
+    #endregion
+    public bool hasShield = false;
 
     #region Header ENEMY MATERIAL
     [Space(10)]
@@ -75,6 +80,10 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("The sound effect for this enemy to attack")]
     #endregion
     public SoundEffectSO attackSoundEffect;
+    #region Tooltip
+    [Tooltip("The sound effect for this enemy to deflect")]
+    #endregion
+    public SoundEffectSO deflectSoundEffect;
 
     #region Header ENEMY WEAPON SETTINGS
     [Space(10)]
@@ -134,6 +143,49 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Select if the enemy is resistant to knockback")]
     #endregion
     public bool hasKnockbackResistance = false;
+
+    #region Header ENEMY DROP SETTINGS
+    [Space(10)]
+    [Header("ENEMY DROP SETTINGS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The enemy weapon drops list")]
+    #endregion
+    public List<SpawnableObjectsByLevel<WeaponDetailsSO>> weaponsByLevelList;
+    #region Tooltip
+    [Tooltip("The enemy passive drops list")]
+    #endregion
+    public List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> passiveItemsByLevelList;
+    #region Tooltip
+    [Tooltip("The range of ammo to spawn for each level")]
+    #endregion
+    public int ammoPercent;
+
+    #region Header DROP SPAWN CHANCE
+    [Space(10)]
+    [Header("DROP SPAWN CHANCE")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The minimum probability for spawning a drop")]
+    #endregion Tooltip
+    [Range(0, 100)] public int dropSpawnChanceMin;
+    #region Tooltip
+    [Tooltip("The maximum probability for spawning a drop")]
+    #endregion Tooltip
+    [Range(0, 100)] public int dropSpawnChanceMax;
+
+    #region Header DROP SPAWN DETAILS
+    [Space(10)]
+    [Header("DROP SPAWN DETAILS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The minimum number of items to spawn (note that a maximum of 1 of each type of ammo, health, and weapon will be spawned")]
+    #endregion
+    [Range(0, 3)] public int numberOfItemsToSpawnMin;
+    #region Tooltip
+    [Tooltip("The maximum number of items to spawn (note that a maximum of 1 of each type of ammo, health, and weapon will be spawned")]
+    #endregion
+    [Range(0, 3)] public int numberOfItemsToSpawnMax;
 
     #region Validation
 #if UNITY_EDITOR

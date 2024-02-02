@@ -6,14 +6,16 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class PlayerControl : MonoBehaviour
 {
+    [HideInInspector] public bool fireCompletedDuringPressed = false;
+    [HideInInspector] public bool isSoundPlayed = false;
+
     Vector2 movementInput;
     Player player;
     bool leftMouseDownPreviousFrame = false;
-    bool rightMouseDownPreviousFrame = false;
+    bool rightMouseDownPreviousFrame = false;  
     int currentRightHandWeaponIndex = 1;
     int currentLeftHandWeaponIndex = 0;
     bool isPlayerMovementDisabled = false;
-
     private void Awake()
     {
         player = GetComponent<Player>();
@@ -181,9 +183,6 @@ public class PlayerControl : MonoBehaviour
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
         // Fire when left mouse button is clicked
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
         if (GameManager.Instance.attack.action.WasPerformedThisFrame())
         {
             StartCoroutine(PlayerAttackAnimRoutine());
@@ -206,32 +205,35 @@ public class PlayerControl : MonoBehaviour
         }
 
         // Fire for precharge weapons
->>>>>>> Stashed changes
         if (GameManager.Instance.attack.action.IsPressed())
-=======
-        if (GameManager.Instance.attack.action.triggered)
->>>>>>> Stashed changes
         {
-            if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
+            if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f && !fireCompletedDuringPressed)
             {
-                player.meleeAttackEvent.CallRightHandMeleeAttackEvent(playerAimDirection, 
-                    player.activeWeapon.GetCurrentRightHandWeapon());
-            }
-            else
-            {
-                // Trigger fire weapon event
+                leftMouseDownPreviousFrame = true;
+
+                if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                {
+                    player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection,player.activeWeapon.GetCurrentRightHandWeapon());
+                }
+
+                // Trigger fire weapon event for precharge weapons
                 player.fireWeaponEvent.CallFireWeaponEvent(true, leftMouseDownPreviousFrame, playerAimDirection, playerAngleDegrees,
                     weaponAngleDegrees, weaponDirection);
-                leftMouseDownPreviousFrame = true;
+            }
+
+            if (fireCompletedDuringPressed)
+            {
+                return;
             }
         }
         else
         {
+            // Reset hasFired when the mouse button is released
             leftMouseDownPreviousFrame = false;
         }
 
         // Fire when right mouse button is clicked
-        if (GameManager.Instance.attackLeftHand.action.triggered)
+        if (GameManager.Instance.attackLeftHand.action.WasPerformedThisFrame())
         {
             if (player.activeWeapon.GetCurrentLeftHandWeapon() == null)
                 return;
@@ -241,7 +243,7 @@ public class PlayerControl : MonoBehaviour
             {
                 if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.isMeleeWeapon)
                 {
-                    player.meleeAttackEvent.CallLeftHandMeleeAttackEvent(playerAimDirection,
+                    player.meleeAttackEvent.CallLeftHandWeaponAnimEvent(playerAimDirection,
                         player.activeWeapon.GetCurrentLeftHandWeapon());
                 }
                 else
@@ -396,6 +398,7 @@ public class PlayerControl : MonoBehaviour
 
                 if (iusable != null)
                 {
+                    // Chest collectible
                     Chest chest = collider2D.GetComponent<Chest>();
 
                     if (chest.chestState == ChestState.closed && !chest.dropCompleted)

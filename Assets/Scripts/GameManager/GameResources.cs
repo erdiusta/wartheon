@@ -109,6 +109,10 @@ public class GameResources : MonoBehaviour
     #endregion
     public GameObject heartPrefab;
     #region Tooltip
+    [Tooltip("Populate with half heart image prefab")]
+    #endregion
+    public GameObject halfHeartPrefab;
+    #region Tooltip
     [Tooltip("Populate with projectile icon prefab")]
     #endregion
     public GameObject projectileIconPrefab;
@@ -129,6 +133,10 @@ public class GameResources : MonoBehaviour
     [Tooltip("Populate with bullet icon sprite")]
     #endregion
     public Sprite bulletIcon;
+    #region Tooltip
+    [Tooltip("Populate with bullet icon ammo drop sprite")]
+    #endregion
+    public Sprite ammoDropIcon;
 
     #region Header MINIMAP
     [Space(10)]
@@ -158,6 +166,7 @@ public class GameResources : MonoBehaviour
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(enemyUnwalkableCollisionTilesArray), enemyUnwalkableCollisionTilesArray);
         HelperUtilities.ValidateCheckNullValue(this, nameof(preferredEnemyPathTile), preferredEnemyPathTile);
         HelperUtilities.ValidateCheckNullValue(this, nameof(heartPrefab), heartPrefab);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(halfHeartPrefab), halfHeartPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(projectileIconPrefab), projectileIconPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(chestItemPrefab), chestItemPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(heartIcon), heartIcon);

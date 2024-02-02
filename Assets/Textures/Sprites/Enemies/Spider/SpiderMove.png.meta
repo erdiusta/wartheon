@@ -155,11 +155,7 @@ TextureImporter:
         x: 0
         y: 2
         width: 32
-<<<<<<< Updated upstream
         height: 25
-=======
-        height: 24
->>>>>>> Stashed changes
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,7 +190,6 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-<<<<<<< Updated upstream
     - serializedVersion: 2
       name: SpiderMove_2
       rect:
@@ -237,8 +232,6 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-=======
->>>>>>> Stashed changes
     outline: []
     physicsShape: []
     bones: []
@@ -252,11 +245,8 @@ TextureImporter:
     nameFileIdTable:
       SpiderMove_0: 2026834323
       SpiderMove_1: -805457760
-<<<<<<< Updated upstream
       SpiderMove_2: -678134823
       SpiderMove_3: 124443352
-=======
->>>>>>> Stashed changes
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

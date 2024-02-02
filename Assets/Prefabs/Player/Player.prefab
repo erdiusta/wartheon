@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6607506224730912274}
   m_Layer: 18
   m_Name: LeftWeaponAnchorPosition
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -721,6 +721,7 @@ GameObject:
   - component: {fileID: 305337201806947726}
   - component: {fileID: 337600116752569046}
   - component: {fileID: 6156243514526406718}
+  - component: {fileID: 9050973798060747845}
   m_Layer: 11
   m_Name: Player
   m_TagString: Player
@@ -758,6 +759,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 0}
+  currentHealth: 0
   isDamageable: 1
   enemy: {fileID: 0}
 --- !u!210 &-7498249286699695665
@@ -1011,8 +1013,10 @@ MonoBehaviour:
   animator: {fileID: 0}
   animatePlayer: {fileID: 0}
   knockback: {fileID: 0}
+  coins: {fileID: 0}
   idle: {fileID: 0}
   movementByVelocity: {fileID: 0}
+  isDead: 0
 --- !u!114 &3362413763628156882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1051,6 +1055,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe26e6b096ea44c4594901d59584052b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseLayerIndex: 0
+  attackLayerIndex: 0
+  getHitLayerIndex: 0
+  deathLayerIndex: 0
 --- !u!114 &867631875859887099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1063,6 +1071,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e310c4644cec5c4ca3f442586358113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fireCompletedDuringPressed: 0
+  isSoundPlayed: 0
 --- !u!114 &8675837940116119588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1308,8 +1318,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad9b2ed813db9ba4ead2574d93f6db80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockbackForce: 5
-  knockbackTimeWeight: 1.5
+  knockbackForce: 3
+  knockbackTimeWeight: 1
+--- !u!114 &9050973798060747845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb5df6a702759df4baaf0aab72659115, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinAmount: 0
 --- !u!1 &4966358325702215446
 GameObject:
   m_ObjectHideFlags: 0

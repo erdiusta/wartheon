@@ -37,6 +37,7 @@ public static class Settings
 
     // Animator parameters - Damage
     public static int death = Animator.StringToHash("death");
+    public static int getHit = Animator.StringToHash("getHit");
 
     // Animator parameters - MeleeAttack
     public static int meleeAttackAtRightHand = Animator.StringToHash("AttackAtRightHand");

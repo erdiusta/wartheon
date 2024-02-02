@@ -43,6 +43,7 @@ public enum WeaponClass
 {
     Sword,
     Axe,
+    Hammer,
     Shield,
     Spear,
     Staff,

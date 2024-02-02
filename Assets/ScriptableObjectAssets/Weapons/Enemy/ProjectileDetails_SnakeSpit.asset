@@ -21,13 +21,8 @@ MonoBehaviour:
   projectileChargeTime: 0
   projectileChargeMaterial: {fileID: 0}
   projectileHitEffect: {fileID: 0}
-<<<<<<< Updated upstream
   projectileDamage: 8
   projectileSpeedMin: 7
-=======
-  projectileDamage: 10
-  projectileSpeedMin: 8
->>>>>>> Stashed changes
   projectileSpeedMax: 10
   projectileRange: 10
   projectileRotationSpeed: 1

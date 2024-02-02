@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Security.Permissions;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -29,6 +28,7 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CircleCollider2D))]
 [RequireComponent(typeof(PolygonCollider2D))]
+[RequireComponent(typeof(DropOnDestroy))]
 #endregion
 
 [DisallowMultipleComponent]
@@ -44,9 +44,6 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public Idle idle;
     [HideInInspector] public Animator animator;
     [HideInInspector] public Rigidbody2D rb2D;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
     [HideInInspector] public MovementToPosition movementToPosition;
     [HideInInspector] public EnemyMovementAI enemyMovementAI;
     [HideInInspector] public EnemyWeaponAI enemyWeaponAI;
@@ -54,14 +51,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool isDead;
     [HideInInspector] public bool isFiring;
     [HideInInspector] public Health health;
->>>>>>> Stashed changes
-=======
-    [HideInInspector] public MovementToPosition movementToPosition;
-    [HideInInspector] public EnemyMovementAI enemyMovementAI;
-    [HideInInspector] public Knockback knockback;
-    [HideInInspector] public bool isDead;
-    [HideInInspector] public bool isFiring;
->>>>>>> Stashed changes
+    [HideInInspector] public DropOnDestroy dropOnDestroy;
 
     HealthEvent healthEvent;
     FireWeapon fireWeapon;
@@ -80,14 +70,7 @@ public class Enemy : MonoBehaviour
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
         destroyedEvent = GetComponent<DestroyedEvent>();
         enemyMovementAI = GetComponent<EnemyMovementAI>();
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        movementToPositionEvent = GetComponent<MovementToPositionEvent>();
-=======
         enemyWeaponAI = GetComponent<EnemyWeaponAI>();
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         materializeEffect = GetComponent<MaterializeEffect>();
         circleCollider2D = GetComponent<CircleCollider2D>();
         polygonCollider2D = GetComponent<PolygonCollider2D>();
@@ -99,6 +82,7 @@ public class Enemy : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         movementToPosition = GetComponent<MovementToPosition>();
         knockback = GetComponent<Knockback>();
+        dropOnDestroy = GetComponent<DropOnDestroy>();
     }
 
     private void OnEnable()
@@ -119,7 +103,6 @@ public class Enemy : MonoBehaviour
         if (healthEventArgs.healthAmount <= 0)
         {
             EnemyDestroyed();
-            isDead = true;
         }
     }
 

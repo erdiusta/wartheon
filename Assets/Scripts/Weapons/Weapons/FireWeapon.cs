@@ -1,4 +1,3 @@
-using System;
 using Random = UnityEngine.Random;
 using UnityEngine;
 using System.Collections;
@@ -56,8 +55,11 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     private void WeaponFire(FireWeaponEventArgs fireWeaponEventArgs)
     {
-        // Flag firing
-        enemy.isFiring = true;
+        if (tag == "Enemy")
+        {
+            // Flag firing
+            enemy.isFiring = true;
+        }
 
         // Handle weapon precharge timer
         WeaponPrecharge(fireWeaponEventArgs);
@@ -70,7 +72,7 @@ public class FireWeapon : MonoBehaviour
             {
                 FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector);
                 ResetCooldownTimer();
-                ResetPrechargeTimer();
+                ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
             }
         }
     }
@@ -89,7 +91,7 @@ public class FireWeapon : MonoBehaviour
         else
         {
             // Else reset the precharge timer
-            ResetPrechargeTimer();
+            ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
         }
     }
 
@@ -99,11 +101,13 @@ public class FireWeapon : MonoBehaviour
     private bool IsWeaponReadyToFire()
     {
         // If there is no projectile and weapon doesn't have infinite projectile then return false
-        if (!activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteProjectile && activeWeapon.GetCurrentRightHandWeapon().weaponRemainingProjectile <= 0)
+        if (!activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteProjectile && activeWeapon.GetCurrentRightHandWeapon().
+            weaponRemainingProjectile <= 0)
             return false;
 
         // If no projectile in the clip and the weapon doesn't have infinite clip capacity then return false
-        if (!activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteClipCapacity && activeWeapon.GetCurrentRightHandWeapon().weaponClipRemainingProjectile <= 0)
+        if (!activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteClipCapacity && activeWeapon.GetCurrentRightHandWeapon().
+            weaponClipRemainingProjectile <= 0)
         {
             // Trigger a reload weapon event
             reloadWeaponEvent.CallReloadWeaponEvent(activeWeapon.GetCurrentRightHandWeapon(), 0);
@@ -143,7 +147,6 @@ public class FireWeapon : MonoBehaviour
     IEnumerator FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector)
     {
         
-
         int projectileCounter = 0;
 
         // Get random projectile per shot
@@ -173,7 +176,8 @@ public class FireWeapon : MonoBehaviour
             float projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin, currentProjectile.projectileSpeedMax);
 
             // Get Gameobject with IFireable component
-            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetRightHandShootPosition(), Quaternion.identity);
+            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetRightHandShootPosition(), 
+                Quaternion.identity);
 
             // Initialize projectile
             projectile.InitializeProjectile(currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector);
@@ -211,10 +215,19 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Reset precharge timer
     /// </summary>
-    private void ResetPrechargeTimer()
+    private void ResetPrechargeTimer(bool firePreviousFrame)
     {
         // Reset precharge timer
         firePrechargeTimer = activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime;
+
+        if (tag == "Player" && GetComponent<Player>().activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
+        {
+            // Check for first frame for not jumping to fire completed
+            if (firePreviousFrame == true)
+            {
+                GetComponent<PlayerControl>().fireCompletedDuringPressed = true;
+            }
+        }
     }
 
     /// <summary>
@@ -244,8 +257,10 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     private void WeaponSoundEffect()
     {
-        if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect != null)
-        {
+        if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect != null &&
+            GetComponent<PlayerControl>().isSoundPlayed == false)
+        {           
+            GetComponent<PlayerControl>().isSoundPlayed = true;
             SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect);
         }
     }

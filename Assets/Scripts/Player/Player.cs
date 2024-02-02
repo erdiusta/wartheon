@@ -3,7 +3,6 @@ using UnityEngine.Rendering;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using UnityEngine.Tilemaps;
 
 #region REQUIRE COMPONENTS
 [RequireComponent(typeof(HealthEvent))]
@@ -35,6 +34,7 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(PolygonCollider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Knockback))]
+[RequireComponent(typeof(Coins))]
 #endregion
 [DisallowMultipleComponent]
 public class Player : MonoBehaviour
@@ -60,6 +60,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public Animator animator;
     [HideInInspector] public AnimatePlayer animatePlayer;
     [HideInInspector] public Knockback knockback;
+    [HideInInspector] public Coins coins;
     [HideInInspector] public Idle idle;
     [HideInInspector] public MovementByVelocity movementByVelocity;
     [HideInInspector] public bool isDead;
@@ -89,6 +90,7 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         animatePlayer = GetComponent<AnimatePlayer>();
         knockback = GetComponent<Knockback>();
+        coins = GetComponent<Coins>();
         idle = GetComponent<Idle>();
         movementByVelocity = GetComponent<MovementByVelocity>();
     }
@@ -151,6 +153,37 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
+    /// Update weapons list if a new one acquired
+    /// </summary>
+    public void UpdateWieldedWeapons(WeaponDetailsSO weaponDetails)
+    {
+        List<WeaponDetailsSO> allEquippedWeaponsList = new List<WeaponDetailsSO> { weaponDetails };
+
+        foreach (Weapon rightHandWeapon in weaponRightHandList)
+        {
+            allEquippedWeaponsList.Add(rightHandWeapon.weaponDetails);
+        }
+
+        foreach (Weapon leftHandWeapon in weaponLeftHandList)
+        {
+            allEquippedWeaponsList.Add(leftHandWeapon.weaponDetails);
+        }
+
+        weaponRightHandList = new List<Weapon>();
+        weaponLeftHandList = new List<Weapon>();
+
+        // Populate weapon list from starting weapons for right hand and shield for left hand if have any
+        foreach (WeaponDetailsSO weapon in allEquippedWeaponsList)
+        {
+            // Add weapon to right hand list of player
+            AddRightHandWeaponToPlayer(weapon);
+            AddShieldToLeftHandIfHave(weapon);
+        }
+
+        AddLeftHandWeaponForSameOneHandedTypesWithRightHand();
+    }
+
+    /// <summary>
     /// Add a weapon to the right hand of player weapon list
     /// </summary>
     public Weapon AddRightHandWeaponToPlayer(WeaponDetailsSO weaponDetails)
@@ -180,7 +213,7 @@ public class Player : MonoBehaviour
         return weapon;
     }
 
-    private void AddShieldToLeftHandIfHave(WeaponDetailsSO weaponDetails)
+    public void AddShieldToLeftHandIfHave(WeaponDetailsSO weaponDetails)
     {
         if (weaponDetails.weaponClass == WeaponClass.Shield)
         {
@@ -201,7 +234,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void AddLeftHandWeaponForSameOneHandedTypesWithRightHand()
+    public void AddLeftHandWeaponForSameOneHandedTypesWithRightHand()
     {
         List<Weapon> uniqueWeapons = new List<Weapon>();
 
@@ -227,8 +260,11 @@ public class Player : MonoBehaviour
             // Check if the weapon name is a duplicate
             if (!encounteredWeaponNames.Add(weapon.weaponDetails.weaponName))
             {
-                // If it's a duplicate, add it to the left hand list
-                weaponLeftHandList.Add(weapon);
+                if (weapon.weaponDetails.weaponClass != WeaponClass.Spear)
+                {
+                    // If it's a duplicate, add it to the left hand list
+                    weaponLeftHandList.Add(weapon);
+                }
             }
         }
 
@@ -252,11 +288,24 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns true if the weapon is held by the player - otherwise returns false
+    /// Returns true if the weapon is held by the player right hand - otherwise returns false
     /// </summary>
-    public bool IsWeaponHeldByPlayer(WeaponDetailsSO weaponDetails)
+    public bool IsWeaponHeldByPlayerRightHand(WeaponDetailsSO weaponDetails)
     {
         foreach (Weapon weapon in weaponRightHandList)
+        {
+            if (weapon.weaponDetails == weaponDetails) return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Returns true if the weapon is held by the player left hand- otherwise returns false
+    /// </summary>
+    public bool IsWeaponHeldByPlayerLeftHand(WeaponDetailsSO weaponDetails)
+    {
+        foreach (Weapon weapon in weaponLeftHandList)
         {
             if (weapon.weaponDetails == weaponDetails) return true;
         }

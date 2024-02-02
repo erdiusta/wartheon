@@ -17,45 +17,41 @@ MonoBehaviour:
   previousPrefab: {fileID: 2121098485114120195, guid: 6ebfd4d963b134a40aaf5812fd259264, type: 3}
   roomNodeType: {fileID: 11400000, guid: 79a849a0c5a432347a7ff12ad36982f8, type: 2}
   lowerBounds: {x: -10, y: -1}
-  upperBounds: {x: 14, y: 21}
+  upperBounds: {x: 14, y: 22}
   doorwayList:
-  - position: {x: 2, y: 21}
+  - position: {x: 2, y: 22}
     orientation: 0
     doorPrefab: {fileID: 1115459866753101013, guid: 90fd445a63dfd3f40b89a3a33ecc6f57, type: 3}
-    doorwayStartCopyPosition: {x: -1, y: 21}
+    doorwayStartCopyPosition: {x: -1, y: 22}
     doorwayCopyTileWidth: 5
-    doorwayCopyTileHeight: 4
+    doorwayCopyTileHeight: 5
     isConnected: 0
     isUnavailable: 0
   - position: {x: 2, y: -1}
     orientation: 2
     doorPrefab: {fileID: 1115459866753101013, guid: 90fd445a63dfd3f40b89a3a33ecc6f57, type: 3}
-    doorwayStartCopyPosition: {x: -1, y: 0}
+    doorwayStartCopyPosition: {x: -1, y: 1}
     doorwayCopyTileWidth: 5
-    doorwayCopyTileHeight: 2
+    doorwayCopyTileHeight: 3
     isConnected: 0
     isUnavailable: 0
   - position: {x: 14, y: 9}
     orientation: 1
     doorPrefab: {fileID: 7526115427054233115, guid: 5951fca1c9ad64c4c9f1cc14420eda79, type: 3}
-    doorwayStartCopyPosition: {x: 12, y: 13}
+    doorwayStartCopyPosition: {x: 12, y: 14}
     doorwayCopyTileWidth: 3
-    doorwayCopyTileHeight: 6
+    doorwayCopyTileHeight: 7
     isConnected: 0
     isUnavailable: 0
   - position: {x: -10, y: 9}
     orientation: 3
     doorPrefab: {fileID: 7526115427054233115, guid: 5951fca1c9ad64c4c9f1cc14420eda79, type: 3}
-    doorwayStartCopyPosition: {x: -10, y: 13}
+    doorwayStartCopyPosition: {x: -10, y: 14}
     doorwayCopyTileWidth: 3
-    doorwayCopyTileHeight: 6
+    doorwayCopyTileHeight: 7
     isConnected: 0
     isUnavailable: 0
   spawnPositionArray:
   - {x: 2, y: 10}
-<<<<<<< Updated upstream
-=======
   enemiesByLevelList: []
   roomEnemySpawnParametersList: []
-  npcList: []
->>>>>>> Stashed changes

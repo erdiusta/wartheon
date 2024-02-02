@@ -24,15 +24,14 @@ MonoBehaviour:
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 1
   isShield: 0
-  projectileDeflectChance: 0.4
+  weaponFireRate: 0.5
+  projectileDeflectRatio: 0
   circleRadius: 0.65
   meleeDamageMin: 4
   meleeDamageMax: 7
-  meleeAttackCooldown: 0.3
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0
   weaponProjectileCapacity: 0
-  weaponFireRate: 0.2
   weaponPrechargeTime: 0
   weaponReloadTime: 0

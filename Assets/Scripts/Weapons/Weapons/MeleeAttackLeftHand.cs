@@ -75,17 +75,9 @@ public class MeleeAttackLeftHand : MonoBehaviour
                     continue;
 
                 if (enemyHealth = collider.GetComponent<Health>())
-<<<<<<< Updated upstream
                 {
-<<<<<<< Updated upstream
-=======
-                {                   
->>>>>>> Stashed changes
-                    enemyHealth.TakeDamage(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMax,
-=======
                     PlayerAttackAnimation();
                     enemyHealth.TakeDamage(player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.meleeDamageMax,
->>>>>>> Stashed changes
                         transform.position, collider.transform.position);
 
                     if (!enemyHealth.GetComponent<Enemy>().enemyDetails.hasKnockbackResistance)
@@ -133,7 +125,7 @@ public class MeleeAttackLeftHand : MonoBehaviour
 
     IEnumerator DelayAttackLeftHand(Weapon weapon)
     {
-        yield return new WaitForSeconds(weapon.weaponDetails.meleeAttackCooldown);
+        yield return new WaitForSeconds(weapon.weaponDetails.weaponFireRate);
 
         leftHandAttackBlocked = false;
     }

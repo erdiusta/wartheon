@@ -6,9 +6,10 @@ public class AnimateEnemy : MonoBehaviour
 {
     Enemy enemy;
 
-    int baseLayerIndex;
-    int attackLayerIndex;
-    int deathLayerIndex;
+    [HideInInspector] public int baseLayerIndex;
+    [HideInInspector] public int attackLayerIndex;
+    [HideInInspector] public int getHitLayerIndex;
+    [HideInInspector] public int deathLayerIndex;
 
     private void Awake()
     {
@@ -30,11 +31,12 @@ public class AnimateEnemy : MonoBehaviour
     {
         baseLayerIndex = enemy.animator.GetLayerIndex("Base Layer");
         attackLayerIndex = enemy.animator.GetLayerIndex("Attack Layer");
-        //int getHitLayerIndex = animator.GetLayerIndex("Get Hit Layer");
+        getHitLayerIndex = enemy.animator.GetLayerIndex("Get Hit Layer");
         deathLayerIndex = enemy.animator.GetLayerIndex("Death Layer");
 
         // Adjust animator layer weights
         enemy.animator.SetLayerWeight(baseLayerIndex, 1f);
+        enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
         enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
         enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
     }
@@ -83,16 +85,12 @@ public class AnimateEnemy : MonoBehaviour
     /// <summary>
     /// Play death animation
     /// </summary>
-    private void DeathAnimation()
+    public void DeathAnimation()
     {
         // Adjust animator layer weights
         enemy.animator.SetLayerWeight(baseLayerIndex, 0f);
-<<<<<<< Updated upstream
-        enemy.animator.SetLayerWeight(attackLayerIndex, 0.1f);
-=======
         enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
         enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
->>>>>>> Stashed changes
         enemy.animator.SetLayerWeight(deathLayerIndex, 1f);
 
         enemy.animator.SetBool(Settings.isMoving, false);

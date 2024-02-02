@@ -17,6 +17,8 @@ MonoBehaviour:
   movementDetails: {fileID: 11400000, guid: 6f633f705e9bde84ba5ee31559f34b80, type: 2}
   chaseDistance: 25
   enemyBehaviour: 0
+  isEnemyBoss: 0
+  hasShield: 1
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2.5
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -24,6 +26,7 @@ MonoBehaviour:
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   deathSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
+  deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   enemyWeapon: {fileID: 0}
   firingIntervalMin: 0.1
   firingIntervalMax: 1
@@ -36,3 +39,29 @@ MonoBehaviour:
   isImmuneAfterHit: 1
   hitImmunityTime: 0.7
   isHealthBarDisplayed: 0
+  hasKnockbackResistance: 0
+  weaponsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
+      ratio: 3
+    - dungeonObject: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: f452683b8567bc84d8dc35c734b37e7c, type: 2}
+      ratio: 2
+  passiveItemsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
+      ratio: 5
+  ammoPercent: 60
+  dropSpawnChanceMin: 30
+  dropSpawnChanceMax: 50
+  numberOfItemsToSpawnMin: 1
+  numberOfItemsToSpawnMax: 2

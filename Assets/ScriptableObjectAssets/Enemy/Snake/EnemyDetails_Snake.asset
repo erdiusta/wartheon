@@ -15,15 +15,10 @@ MonoBehaviour:
   enemyName: Snake
   enemyPrefab: {fileID: 7183228443647751644, guid: 904881d400f1631449a2d444c2338eb7, type: 3}
   movementDetails: {fileID: 11400000, guid: c1cd655cbba76594ca00f689668e9744, type: 2}
-<<<<<<< Updated upstream
   chaseDistance: 12
   enemyBehaviour: 1
   isEnemyBoss: 0
   hasShield: 0
-=======
-  chaseDistance: 15
-  enemyBehaviour: 1
->>>>>>> Stashed changes
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -31,10 +26,7 @@ MonoBehaviour:
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 36fd7981b2c14794796cd69ffa707648, type: 2}
   attackSoundEffect: {fileID: 11400000, guid: 49b9c611a31cfaa4fb504722dc0a02e2, type: 2}
-<<<<<<< Updated upstream
   deflectSoundEffect: {fileID: 0}
-=======
->>>>>>> Stashed changes
   enemyWeapon: {fileID: 11400000, guid: a164b16c09631d245afc9d8c4d571b3f, type: 2}
   firingIntervalMin: 0.1
   firingIntervalMax: 1
@@ -47,7 +39,29 @@ MonoBehaviour:
   isImmuneAfterHit: 1
   hitImmunityTime: 0.7
   isHealthBarDisplayed: 0
-<<<<<<< Updated upstream
   hasKnockbackResistance: 0
-=======
->>>>>>> Stashed changes
+  weaponsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 107b06428c3ac0746aa44728b775af01, type: 2}
+      ratio: 2
+  passiveItemsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
+      ratio: 5
+  ammoPercent: 50
+  dropSpawnChanceMin: 20
+  dropSpawnChanceMax: 40
+  numberOfItemsToSpawnMin: 1
+  numberOfItemsToSpawnMax: 1

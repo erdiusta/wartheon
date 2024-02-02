@@ -182,6 +182,10 @@ public class RightWeaponStatusUI : MonoBehaviour
                 projectileRemainingText.text = weapon.weaponRemainingProjectile.ToString() + " / " + weapon.weaponDetails.weaponProjectileCapacity.ToString();
             }
         }
+        else
+        {
+            projectileRemainingText.text = "";
+        }
     }
 
     /// <summary>

@@ -89,7 +89,7 @@ public class Chest : MonoBehaviour, IUsable
         // Check if player already has the weapon - if so set weapon to null
         if (weaponDetails != null)
         {
-            if (GameManager.Instance.GetPlayer().IsWeaponHeldByPlayer(weaponDetails))
+            if (GameManager.Instance.GetPlayer().weaponRightHandList.Contains(weaponDetails.GetWeapon()))
                 weaponDetails = null;
         }
 
@@ -117,7 +117,7 @@ public class Chest : MonoBehaviour, IUsable
     /// </summary>
     private void InstantiateItem()
     {
-        chestItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, this.transform);
+        chestItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
 
         chestItem = chestItemGameObject.GetComponent<ChestItem>();
     }
@@ -160,7 +160,7 @@ public class Chest : MonoBehaviour, IUsable
     {
         InstantiateItem();
 
-        chestItem.Initialize(GameResources.Instance.bulletIcon, ammoPercent.ToString() + "%", itemSpawnPoint.position);
+        chestItem.Initialize(GameResources.Instance.ammoDropIcon, ammoPercent.ToString() + "%", itemSpawnPoint.position);
     }
 
     /// <summary>
@@ -227,26 +227,14 @@ public class Chest : MonoBehaviour, IUsable
         // Check item exists and has been materialized
         if (chestItem == null) return;
 
-        // If the player doesn't already have the weapon, then add to player
-        if (!GameManager.Instance.GetPlayer().IsWeaponHeldByPlayer(weaponDetails))
-        {
-            // Add weapon to player
-            GameManager.Instance.GetPlayer().AddRightHandWeaponToPlayer(weaponDetails);
+        // Add weapon to player
+        GameManager.Instance.GetPlayer().UpdateWieldedWeapons(weaponDetails);
 
-            // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
-        }
-        else
-        {
-            // display message saying you already have the weapon
-            StartCoroutine(DisplayMessage("WEAPON\nALREADY\nEQUIPPED", 5f));
-
-        }
+        // Play pickup sound effect
+        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
 
         weaponDetails = null;
-
         Destroy(chestItemGameObject);
-
         UpdateChestState();
     }
 

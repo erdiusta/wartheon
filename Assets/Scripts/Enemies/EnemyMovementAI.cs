@@ -29,25 +29,7 @@ public class EnemyMovementAI : MonoBehaviour
     private void Awake()
     {
         enemy = GetComponent<Enemy>();
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        moveSpeed = movementDetails.GetMoveSpeed();
-=======
         moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
->>>>>>> Stashed changes
-=======
-        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
-    }
-
-    private void OnEnable()
-    {
-        enemy.weaponFiredEvent.OnWeaponFired += OnWeaponFire_WeaponFiredEvent; 
-    }
-
-    private void OnDisable()
-    {
-        enemy.weaponFiredEvent.OnWeaponFired -= OnWeaponFire_WeaponFiredEvent;
->>>>>>> Stashed changes
     }
 
     private void Start()
@@ -70,33 +52,6 @@ public class EnemyMovementAI : MonoBehaviour
     /// </summary>
     private void Move()
     {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        // Movement cooldown timer
-        currentEnemyPathRebuildCooldown -= Time.deltaTime;
-
-        // Check distance to player to see if enemy should start chasing
-        if (!chasePlayer && Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) <
-            enemy.enemyDetails.chaseDistance)
-=======
-        if (status == Status.Stagger)
->>>>>>> Stashed changes
-        {
-            StartCoroutine(KnockbackRoutine());
-        }
-        else
-        {
-            if (enemy.isFiring) return;
-
-            // Movement cooldown timer
-            currentEnemyPathRebuildCooldown -= Time.deltaTime;
-
-            // Check distance to player to see if enemy should start chasing
-            if (!chasePlayer && Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) <
-                enemy.enemyDetails.chaseDistance)
-            {
-<<<<<<< Updated upstream
-=======
         // First check if enemy is dead
         if (enemy.health.currentHealth <= 0f)
         {
@@ -162,7 +117,6 @@ public class EnemyMovementAI : MonoBehaviour
             // If a path has been found move the enemy
             if (movementSteps != null)
             {
->>>>>>> Stashed changes
                 if (moveEnemyRoutine != null)
                 {
                     // Trigger idle event
@@ -172,51 +126,7 @@ public class EnemyMovementAI : MonoBehaviour
                 }
 
                 // Move enemy along the path using a coroutine
-<<<<<<< Updated upstream
-                moveEnemyRoutine = StartCoroutine(MoveEnemyRoutine(movementSteps)); 
-=======
                 moveEnemyRoutine = StartCoroutine(MoveEnemyRoutine(movementSteps));
->>>>>>> Stashed changes
-=======
-                chasePlayer = true;
-            }
-
-            // If not close enough to chase player then return
-            if (!chasePlayer)
-                return;
-
-            // Only process A Star path rebuild on certain frames to spread the load between enemies
-            if (Time.frameCount % Settings.targetFrameRateToSpreadPathfindingOver != updateFrameNumber)
-                return;
-
-            // If the movement cooldown timer reached or player has moved more than required distance then rebuild the enemy path and move the enemy
-            if (currentEnemyPathRebuildCooldown <= 0f || (Vector3.Distance(playerReferencePosition, GameManager.Instance.GetPlayer().GetPlayerPosition()) >
-                Settings.playerMoveDistanceToRebuildPath))
-            {
-                // Reset path rebuild cooldown timer
-                currentEnemyPathRebuildCooldown = Settings.enemyPathRebuildCooldown;
-
-                // Reset player reference position
-                playerReferencePosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
-
-                // Move the enemy using AStar pathfinding - Trigger rebuild of path to player
-                CreatePath();
-
-                // If a path has been found move the enemy
-                if (movementSteps != null)
-                {
-                    if (moveEnemyRoutine != null)
-                    {
-                        // Trigger idle event
-                        enemy.idle.StopVelocity();
-                        enemy.animateEnemy.SetIdleAnimationParameters();
-                        StopCoroutine(moveEnemyRoutine);
-                    }
-
-                    // Move enemy along the path using a coroutine
-                    moveEnemyRoutine = StartCoroutine(MoveEnemyRoutine(movementSteps));
-                }
->>>>>>> Stashed changes
             }
         }
     }
@@ -335,18 +245,12 @@ public class EnemyMovementAI : MonoBehaviour
             return playerCellPosition;
         }
     }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
     #endregion
 
     IEnumerator KnockbackRoutine()
     {
         enemy.movementToPosition.MoveRigidbodyByPosition(playerReferencePosition, transform.position, moveSpeed);
         enemy.animateEnemy.SetMovementAnimationParameters();
-<<<<<<< Updated upstream
 
         if (enemy.health.currentHealth > 0f)
         {
@@ -359,13 +263,6 @@ public class EnemyMovementAI : MonoBehaviour
 
         yield return waitForFixedUpdate;
     }
->>>>>>> Stashed changes
-=======
-        enemy.rb2D.velocity += CalculateKnockback();
-
-        yield return waitForFixedUpdate;
-    }
->>>>>>> Stashed changes
 
     public void Knockback(Vector3 vector, float force, float timeWeight)
     {
@@ -381,16 +278,8 @@ public class EnemyMovementAI : MonoBehaviour
         moveSpeed = 0f;
         yield return new WaitForSeconds(knockbackTimeWeight);
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        moveSpeed = movementDetails.GetMoveSpeed();
-=======
         knockbackTimeWeight = 0f;
         moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
->>>>>>> Stashed changes
-=======
-        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
->>>>>>> Stashed changes
         status = Status.Idle;
     }
 
@@ -403,42 +292,6 @@ public class EnemyMovementAI : MonoBehaviour
             knockbackTimeWeight -= Time.fixedDeltaTime;
             updatedKnockbackVector = knockbackVector * knockbackForce * (knockbackTimeWeight > 0f ? knockbackTimeWeight : 0f);
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        return knockbackVector * knockbackForce * (knockbackTimeWeight > 0f ? 1f : 0f);
-=======
-        return knockbackVector * knockbackForce * (knockbackTimeWeight > 0f ? knockbackTimeWeight : 0f);
-    }
-
-    private void OnWeaponFire_WeaponFiredEvent(WeaponFiredEvent weaponFiredEvent, WeaponFiredEventArgs weaponFiredEventArgs)
-    {
-        if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
-        {
-            StartCoroutine(WeaponFiredRoutine());
-        }
-        else
-        {
-            WeaponFiredWithoutRoutine();
-        }
-    }
-
-    private void WeaponFiredWithoutRoutine()
-    {
-        enemy.isFiring = false;
-    }
-
-    IEnumerator WeaponFiredRoutine()
-    {
-        moveSpeed = 0f;
-
-        yield return new WaitForSeconds(enemy.enemyDetails.enemyWeapon.weaponFireRate / 4f);
-
-        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
-        enemy.isFiring = false;
->>>>>>> Stashed changes
-    }
-
-=======
         }
         else
         {
@@ -473,7 +326,6 @@ public class EnemyMovementAI : MonoBehaviour
     }
 
 
->>>>>>> Stashed changes
     #region Validation
 #if UNITY_EDITOR
     private void OnValidate()
