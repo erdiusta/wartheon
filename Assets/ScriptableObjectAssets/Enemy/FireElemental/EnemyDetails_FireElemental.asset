@@ -43,14 +43,14 @@ MonoBehaviour:
   weaponsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     spawnableObjectRatioList:
-    - dungeonObject: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
-      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: f452683b8567bc84d8dc35c734b37e7c, type: 2}
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
-      ratio: 2
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
+      ratio: 1
   passiveItemsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     spawnableObjectRatioList:

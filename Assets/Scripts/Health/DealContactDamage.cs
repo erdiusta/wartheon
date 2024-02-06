@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UIElements.Experimental;
 
 [DisallowMultipleComponent]
 public class DealContactDamage : MonoBehaviour
@@ -32,6 +33,8 @@ public class DealContactDamage : MonoBehaviour
         if (isColliding)
             return;
 
+        if (tag == "Chest Item") return;
+
         if (tag == "Enemy")
         {
             EnemyAttackAnimRoutine();
@@ -45,6 +48,13 @@ public class DealContactDamage : MonoBehaviour
     {
         // If already colliding with something return
         if (isColliding) return;
+
+        if (tag == "Chest Item") return;
+
+        if (tag == "Enemy")
+        {
+            EnemyAttackAnimRoutine();
+        }
 
         ContactDamage(collision);
     }
@@ -73,7 +83,7 @@ public class DealContactDamage : MonoBehaviour
             {
                 // Apply knockback
                 Knockback knockback = collision.GetComponent<Player>().GetComponent<Knockback>();
-                collision.GetComponent<Player>().movementByVelocity.Knockback((transform.position - collision.transform.position).normalized,
+                collision.GetComponent<Player>().movementByVelocity.Knockback((collision.transform.position - transform.position).normalized,
                     knockback.knockbackForce, knockback.knockbackTimeWeight);
             }
         }

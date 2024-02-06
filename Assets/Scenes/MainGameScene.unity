@@ -1139,9 +1139,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.031695724
-    width: 1
-    height: 0.9360143
+    y: 0.10600707
+    width: 0.68157613
+    height: 0.6360424
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1577,6 +1577,12 @@ MonoBehaviour:
     componentType: IFireable
   - poolSize: 200
     prefab: {fileID: 2585463276777236944, guid: d8bd167913a4cee4bbfe853eeb811a56, type: 3}
+    componentType: IFireable
+  - poolSize: 40
+    prefab: {fileID: 5263536334675765252, guid: de090ebe75096d14698c8aaff77bf6e6, type: 3}
+    componentType: IFireable
+  - poolSize: 40
+    prefab: {fileID: 5263536334675765252, guid: 339536103c4f7b74995fd50408768bc1, type: 3}
     componentType: IFireable
 --- !u!4 &673935430
 Transform:

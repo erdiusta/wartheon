@@ -16,38 +16,38 @@ MonoBehaviour:
   prefab: {fileID: 2121098485114120195, guid: 70a5af06b35cb0f49af57d141799ed8e, type: 3}
   previousPrefab: {fileID: 2121098485114120195, guid: 70a5af06b35cb0f49af57d141799ed8e, type: 3}
   roomNodeType: {fileID: 11400000, guid: 39c4a81be9f7df14f8a1a86d83b2742f, type: 2}
-  lowerBounds: {x: -10, y: -1}
-  upperBounds: {x: 16, y: 22}
+  lowerBounds: {x: -12, y: -3}
+  upperBounds: {x: 18, y: 24}
   doorwayList:
-  - position: {x: 2, y: 22}
+  - position: {x: -1, y: 24}
     orientation: 0
     doorPrefab: {fileID: 1115459866753101013, guid: 90fd445a63dfd3f40b89a3a33ecc6f57, type: 3}
     doorwayStartCopyPosition: {x: -1, y: 22}
     doorwayCopyTileWidth: 5
-    doorwayCopyTileHeight: 5
+    doorwayCopyTileHeight: 7
     isConnected: 0
     isUnavailable: 0
-  - position: {x: 2, y: -1}
+  - position: {x: 2, y: -3}
     orientation: 2
     doorPrefab: {fileID: 1115459866753101013, guid: 90fd445a63dfd3f40b89a3a33ecc6f57, type: 3}
     doorwayStartCopyPosition: {x: -1, y: 0}
     doorwayCopyTileWidth: 5
-    doorwayCopyTileHeight: 2
+    doorwayCopyTileHeight: 4
     isConnected: 0
     isUnavailable: 0
-  - position: {x: 16, y: 9}
+  - position: {x: 18, y: 9}
     orientation: 1
     doorPrefab: {fileID: 7526115427054233115, guid: 5951fca1c9ad64c4c9f1cc14420eda79, type: 3}
     doorwayStartCopyPosition: {x: 14, y: 14}
-    doorwayCopyTileWidth: 3
+    doorwayCopyTileWidth: 5
     doorwayCopyTileHeight: 7
     isConnected: 0
     isUnavailable: 0
-  - position: {x: -10, y: 9}
+  - position: {x: -12, y: 9}
     orientation: 3
     doorPrefab: {fileID: 7526115427054233115, guid: 5951fca1c9ad64c4c9f1cc14420eda79, type: 3}
-    doorwayStartCopyPosition: {x: -10, y: 14}
-    doorwayCopyTileWidth: 3
+    doorwayStartCopyPosition: {x: -12, y: 14}
+    doorwayCopyTileWidth: 5
     doorwayCopyTileHeight: 7
     isConnected: 0
     isUnavailable: 0

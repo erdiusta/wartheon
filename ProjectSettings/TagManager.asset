@@ -12,6 +12,7 @@ TagManager:
   - collisionTilemap
   - playerWeapon
   - Enemy
+  - Chest Item
   layers:
   - Default
   - TransparentFX

@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
+  m_Name: EnemyDetails_Nexarion
+  m_EditorClassIdentifier: 
+  enemyName: Nexarion
+  enemyPrefab: {fileID: 7183228443647751644, guid: 3d2778eb92f63c542b2252f7e2d1fb72, type: 3}
+  movementDetails: {fileID: 11400000, guid: 8b22ae23de373844fa6c1e4254d92275, type: 2}
+  chaseDistance: 10
+  enemyBehaviour: 1
+  isEnemyBoss: 0
+  hasShield: 0
+  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  enemyMaterializeTime: 2.5
+  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
+  enemyMaterializeColor: {r: 2.8784673, g: 0.2579758, b: 0.39025292, a: 0}
+  getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: 88c84bb85bc16ff47bf83c6ed6d9b4af, type: 2}
+  attackSoundEffect: {fileID: 0}
+  deflectSoundEffect: {fileID: 0}
+  enemyWeapon: {fileID: 11400000, guid: 2333f40d8a2278b40a32c8995a4247af, type: 2}
+  firingIntervalMin: 0.1
+  firingIntervalMax: 1
+  firingDurationMin: 1
+  firingDurationMax: 2
+  firingLineOfSightRequired: 0
+  enemyHealthDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    enemyHealthAmount: 30
+  isImmuneAfterHit: 1
+  hitImmunityTime: 0.7
+  isHealthBarDisplayed: 0
+  hasKnockbackResistance: 0
+  weaponsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+      ratio: 3
+    - dungeonObject: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 2709e31502b5c5d45a59d45fc94517bf, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 9926f985354b71a4690cb034e554c091, type: 2}
+      ratio: 1
+  passiveItemsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
+      ratio: 2
+  ammoPercent: 50
+  dropSpawnChanceMin: 30
+  dropSpawnChanceMax: 50
+  numberOfItemsToSpawnMin: 1
+  numberOfItemsToSpawnMax: 1

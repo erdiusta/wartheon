@@ -16,38 +16,38 @@ MonoBehaviour:
   prefab: {fileID: 2121098485114120195, guid: 6ebfd4d963b134a40aaf5812fd259264, type: 3}
   previousPrefab: {fileID: 2121098485114120195, guid: 6ebfd4d963b134a40aaf5812fd259264, type: 3}
   roomNodeType: {fileID: 11400000, guid: 79a849a0c5a432347a7ff12ad36982f8, type: 2}
-  lowerBounds: {x: -10, y: -1}
-  upperBounds: {x: 14, y: 22}
+  lowerBounds: {x: -12, y: -3}
+  upperBounds: {x: 16, y: 24}
   doorwayList:
-  - position: {x: 2, y: 22}
+  - position: {x: 2, y: 24}
     orientation: 0
     doorPrefab: {fileID: 1115459866753101013, guid: 90fd445a63dfd3f40b89a3a33ecc6f57, type: 3}
-    doorwayStartCopyPosition: {x: -1, y: 22}
+    doorwayStartCopyPosition: {x: -1, y: 24}
     doorwayCopyTileWidth: 5
-    doorwayCopyTileHeight: 5
-    isConnected: 0
-    isUnavailable: 0
-  - position: {x: 2, y: -1}
-    orientation: 2
-    doorPrefab: {fileID: 1115459866753101013, guid: 90fd445a63dfd3f40b89a3a33ecc6f57, type: 3}
-    doorwayStartCopyPosition: {x: -1, y: 1}
-    doorwayCopyTileWidth: 5
-    doorwayCopyTileHeight: 3
-    isConnected: 0
-    isUnavailable: 0
-  - position: {x: 14, y: 9}
-    orientation: 1
-    doorPrefab: {fileID: 7526115427054233115, guid: 5951fca1c9ad64c4c9f1cc14420eda79, type: 3}
-    doorwayStartCopyPosition: {x: 12, y: 14}
-    doorwayCopyTileWidth: 3
     doorwayCopyTileHeight: 7
     isConnected: 0
     isUnavailable: 0
-  - position: {x: -10, y: 9}
+  - position: {x: 2, y: -3}
+    orientation: 2
+    doorPrefab: {fileID: 1115459866753101013, guid: 90fd445a63dfd3f40b89a3a33ecc6f57, type: 3}
+    doorwayStartCopyPosition: {x: -1, y: 0}
+    doorwayCopyTileWidth: 5
+    doorwayCopyTileHeight: 4
+    isConnected: 0
+    isUnavailable: 0
+  - position: {x: 16, y: 9}
+    orientation: 1
+    doorPrefab: {fileID: 7526115427054233115, guid: 5951fca1c9ad64c4c9f1cc14420eda79, type: 3}
+    doorwayStartCopyPosition: {x: 12, y: 14}
+    doorwayCopyTileWidth: 5
+    doorwayCopyTileHeight: 7
+    isConnected: 0
+    isUnavailable: 0
+  - position: {x: -12, y: 9}
     orientation: 3
     doorPrefab: {fileID: 7526115427054233115, guid: 5951fca1c9ad64c4c9f1cc14420eda79, type: 3}
-    doorwayStartCopyPosition: {x: -10, y: 14}
-    doorwayCopyTileWidth: 3
+    doorwayStartCopyPosition: {x: -12, y: 14}
+    doorwayCopyTileWidth: 5
     doorwayCopyTileHeight: 7
     isConnected: 0
     isUnavailable: 0

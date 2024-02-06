@@ -236,7 +236,8 @@ public class Player : MonoBehaviour
 
     public void AddLeftHandWeaponForSameOneHandedTypesWithRightHand()
     {
-        List<Weapon> uniqueWeapons = new List<Weapon>();
+        List<Weapon> uniqueRightHandWeapons = new List<Weapon>();
+        List<Weapon> uniqueLeftHandWeapons = weaponLeftHandList;
 
         for (int i = 0; i < weaponRightHandList.Count; i++)
         {
@@ -248,7 +249,33 @@ public class Player : MonoBehaviour
                 weaponRightHandList.Sort((i, j) => string.Compare(i.weaponDetails.weaponName, j.weaponDetails.weaponName, StringComparison.Ordinal));
 
                 // Remove duplicates based on weapon names
-                uniqueWeapons = weaponRightHandList.Distinct(new WeaponNameComparer()).ToList();
+                uniqueRightHandWeapons = weaponRightHandList.Distinct(new WeaponNameComparer()).ToList();
+            }
+        }
+
+        // Correct duplicated left hand weapons
+        for (int i = 0; i < weaponLeftHandList.Count; i++)
+        {
+            for (int j = 0; j < weaponLeftHandList.Count; j++)
+            {
+                if (i == j) continue;
+
+                // Sort hand weapons based on weapon names
+                weaponLeftHandList.Sort((i, j) => string.Compare(i.weaponDetails.weaponName, j.weaponDetails.weaponName, StringComparison.Ordinal));
+
+                // Remove duplicates based on weapon names
+                uniqueLeftHandWeapons = weaponLeftHandList.Distinct(new WeaponNameComparer()).ToList();
+            }
+        }
+
+        weaponLeftHandList = uniqueLeftHandWeapons;
+
+        // Correct if there is a two-handed weapon at left hand
+        foreach (Weapon weapon in weaponLeftHandList)
+        {
+            if (weapon.weaponDetails.wieldType == WieldType.TwoHanded && weapon.weaponDetails.weaponClass != WeaponClass.Shield)
+            {
+                weaponLeftHandList.Remove(weapon);
             }
         }
 
@@ -268,7 +295,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        weaponRightHandList = uniqueWeapons;
+        weaponRightHandList = uniqueRightHandWeapons;
     }
 
     /// <summary>

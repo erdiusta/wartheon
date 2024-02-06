@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ProjectilePattern : MonoBehaviour
+public class ProjectilePattern : MonoBehaviour, IFireable
 {
     #region Tooltip
     [Tooltip("Populate the array with the child ammo gameobjects")]

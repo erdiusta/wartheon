@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_HolySword
+  m_EditorClassIdentifier: 
+  weaponName: Holy Sword
+  weaponSprite: {fileID: 735104743, guid: f53b0475c86f95141910cb247770d70f, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: 3e72a90825dad85449d7cd5a6e086ecb, type: 2}
+  weaponClass: 0
+  wieldType: 1
+  weaponShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponFiringSoundEffect: {fileID: 11400000, guid: 3900fd10105b8fc4eb3ceacea2a5cc5b, type: 2}
+  weaponReloadingSoundEffect: {fileID: 0}
+  isMeleeWeapon: 1
+  isShield: 0
+  weaponFireRate: 1.2
+  projectileDeflectRatio: 0
+  circleRadius: 0.9
+  meleeDamageMin: 10
+  meleeDamageMax: 15
+  hasInfiniteProjectile: 0
+  hasInfiniteClipCapacity: 0
+  weaponClipProjectileCapacity: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0
+  weaponReloadTime: 0
