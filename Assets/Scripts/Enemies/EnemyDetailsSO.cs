@@ -36,6 +36,10 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check if enemy has a shield")]
     #endregion
     public bool hasShield = false;
+    #region Tooltip
+    [Tooltip("Check if enemy is a poisonous")]
+    #endregion
+    public bool isPoisonous = false;
 
     #region Header ENEMY MATERIAL
     [Space(10)]

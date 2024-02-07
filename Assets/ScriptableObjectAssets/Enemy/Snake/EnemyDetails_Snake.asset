@@ -19,6 +19,7 @@ MonoBehaviour:
   enemyBehaviour: 1
   isEnemyBoss: 0
   hasShield: 0
+  isPoisonous: 1
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}

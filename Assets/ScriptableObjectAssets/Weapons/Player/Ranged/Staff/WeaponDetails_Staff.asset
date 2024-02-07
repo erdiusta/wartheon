@@ -17,7 +17,7 @@ MonoBehaviour:
   weaponAnimatorController: {fileID: 9100000, guid: a9f6b3580707cd749861dcb2fc4d7f34, type: 2}
   weaponClass: 5
   wieldType: 1
-  weaponShootPosition: {x: 0, y: 1.18, z: 0}
+  weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 07792028ffe74674b9f070484b18710a, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponFiringSoundEffect: {fileID: 11400000, guid: e1c8591c71ab89d448879b0d39d25d09, type: 2}

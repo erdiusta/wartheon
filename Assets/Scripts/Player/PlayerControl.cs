@@ -78,8 +78,6 @@ public class PlayerControl : MonoBehaviour
                 player.polygonCollider2D.enabled = false;
                 StartCoroutine(Stagger());
                 break;
-            case Status.Poisoned:
-                break;
             default:
                 break;
         }
@@ -196,6 +194,7 @@ public class PlayerControl : MonoBehaviour
             if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon || player.activeWeapon.GetCurrentRightHandWeapon().
                 weaponDetails.weaponClass == WeaponClass.Bow)
             {
+                player.meleeAttackRightHand.IsAttackingAtRightHand = true;
                 player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon());
             }
 

@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SkeletonAttack
+  m_Name: SkeletonAttackRight
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -22,28 +22,28 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: -784781005, guid: 3a49070eb2e2b884290a76c4c3ae1d9b, type: 3}
-    - time: 0.083333336
+    - time: 0.0625
       value: {fileID: -1068386151, guid: 3a49070eb2e2b884290a76c4c3ae1d9b, type: 3}
-    - time: 0.16666667
+    - time: 0.125
       value: {fileID: -2069088067, guid: 3a49070eb2e2b884290a76c4c3ae1d9b, type: 3}
-    - time: 0.25
+    - time: 0.1875
       value: {fileID: -1941206086, guid: 3a49070eb2e2b884290a76c4c3ae1d9b, type: 3}
-    - time: 0.33333334
+    - time: 0.25
       value: {fileID: -1086639489, guid: 3a49070eb2e2b884290a76c4c3ae1d9b, type: 3}
-    - time: 0.41666666
+    - time: 0.3125
       value: {fileID: -900942562, guid: 3a49070eb2e2b884290a76c4c3ae1d9b, type: 3}
-    - time: 0.5
+    - time: 0.375
       value: {fileID: 236391852, guid: 3a49070eb2e2b884290a76c4c3ae1d9b, type: 3}
-    - time: 0.5833333
+    - time: 0.4375
       value: {fileID: -1582745796, guid: 3a49070eb2e2b884290a76c4c3ae1d9b, type: 3}
-    - time: 0.6666667
+    - time: 0.5
       value: {fileID: 2074434319, guid: 3a49070eb2e2b884290a76c4c3ae1d9b, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
     flags: 2
-  m_SampleRate: 12
+  m_SampleRate: 16
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -74,7 +74,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.75
+    m_StopTime: 0.5625
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(HealthEvent))]
 [DisallowMultipleComponent]
@@ -25,6 +26,8 @@ public class Health : MonoBehaviour
     const float spriteFlashInterval = 0.1f;
     WaitForSeconds waitForSecondsSpriteFlashInterval = new WaitForSeconds(spriteFlashInterval);
     FlashManager flashManager;
+    Coroutine poisonCoroutine;
+    int poisonPeriodCount = 0;
 
     [HideInInspector] public int currentHealth;
     [HideInInspector] public bool isDamageable = true;
@@ -74,6 +77,31 @@ public class Health : MonoBehaviour
         {
             healthBar.DisableHealthBar();
         }
+    }
+
+    private void Update()
+    {
+        if (player != null)
+        {
+            if (player.healthStatus == HealthStatus.Poisoned)
+            {
+                if (poisonCoroutine == null)
+                {
+                    poisonCoroutine = StartCoroutine(GraduallyHealthReduce());
+                }
+            }
+        }
+        else if (enemy != null)
+        {
+            if (enemy.healthStatus == HealthStatus.Poisoned)
+            {
+                if (poisonCoroutine == null)
+                {
+                    poisonCoroutine = StartCoroutine(GraduallyHealthReduce());
+                }
+            }
+        }
+
     }
 
     /// <summary>
@@ -185,6 +213,41 @@ public class Health : MonoBehaviour
     }
 
     /// <summary>
+    /// Gradually reduce health
+    /// </summary>
+    IEnumerator GraduallyHealthReduce()
+    {
+        poisonPeriodCount++;
+
+        int damageAmount = 10;
+        // Trigger health event
+        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)startingHealth), currentHealth, damageAmount);
+        TakeDamage(damageAmount, Vector2.zero, transform.position);
+
+        float rndNumber = Random.Range(0f, 1f);
+
+        if (rndNumber > 0.5f && poisonPeriodCount > 2)
+        {
+            if (player != null)
+            {
+                player.healthStatus = HealthStatus.Normal;
+                player.healthEvent.CallPoisonCuredEvent();
+            }
+            if (enemy != null)
+            {
+                enemy.healthStatus = HealthStatus.Normal;
+                enemy.healthEvent.CallPoisonCuredEvent();
+            }
+
+            poisonPeriodCount = 0;
+        }
+
+        yield return new WaitForSeconds(2.5f);
+
+        poisonCoroutine = null; // Reset the coroutine reference when it's finished
+    }
+
+    /// <summary>
     /// Coroutine to indicate a hit and give some post hit immunity
     /// </summary>
     IEnumerator PostHitImmunityRoutine(float immunityTime, SpriteRenderer spriteRenderer)
@@ -202,11 +265,22 @@ public class Health : MonoBehaviour
             flashManager.UnflashCharacter(spriteRenderer);
             yield return waitForSecondsSpriteFlashInterval;
 
-            flashManager.WhiteFlashCharacter(spriteRenderer);
-            yield return waitForSecondsSpriteFlashInterval;
+            if (player != null && player.healthStatus == HealthStatus.Poisoned)
+            {
+                flashManager.PoisonFlashCharacter(spriteRenderer);
+                yield return waitForSecondsSpriteFlashInterval;
 
-            flashManager.UnflashCharacter(spriteRenderer);
-            yield return waitForSecondsSpriteFlashInterval;
+                flashManager.UnflashCharacter(spriteRenderer);
+                yield return waitForSecondsSpriteFlashInterval;
+            }
+            else
+            {
+                flashManager.WhiteFlashCharacter(spriteRenderer);
+                yield return waitForSecondsSpriteFlashInterval;
+
+                flashManager.UnflashCharacter(spriteRenderer);
+                yield return waitForSecondsSpriteFlashInterval;
+            }
 
             iterations--;
 

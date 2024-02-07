@@ -35,6 +35,7 @@ using System.Linq;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Knockback))]
 [RequireComponent(typeof(Coins))]
+[RequireComponent(typeof(StatusManager))]
 #endregion
 [DisallowMultipleComponent]
 public class Player : MonoBehaviour
@@ -43,6 +44,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public Health health;
     [HideInInspector] public Status playerStatus = Status.Idle;
+    [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
     [HideInInspector] public DestroyedEvent destroyedEvent;
     [HideInInspector] public PlayerControl playerControl;
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
@@ -64,10 +66,10 @@ public class Player : MonoBehaviour
     [HideInInspector] public Idle idle;
     [HideInInspector] public MovementByVelocity movementByVelocity;
     [HideInInspector] public bool isDead;
+    [HideInInspector] public StatusManager statusManager;
 
     public List<Weapon> weaponRightHandList = new List<Weapon>();
-    public List<Weapon> weaponLeftHandList = new List<Weapon>();
-   
+    public List<Weapon> weaponLeftHandList = new List<Weapon>(); 
 
     private void Awake()
     {
@@ -94,7 +96,6 @@ public class Player : MonoBehaviour
         idle = GetComponent<Idle>();
         movementByVelocity = GetComponent<MovementByVelocity>();
     }
-
 
     /// <summary>
     /// Initialize the player
@@ -253,6 +254,24 @@ public class Player : MonoBehaviour
             }
         }
 
+        // Keep track of encountered weapon names
+        HashSet<string> encounteredWeaponNames = new HashSet<string>();
+
+        foreach (Weapon weapon in weaponRightHandList)
+        {
+            // Check if the weapon name is a duplicate
+            if (!encounteredWeaponNames.Add(weapon.weaponDetails.weaponName))
+            {
+                if (weapon.weaponDetails.weaponClass != WeaponClass.Spear)
+                {
+                    // If it's a duplicate, add it to the left hand list
+                    weaponLeftHandList.Add(weapon);
+                }
+            }
+        }
+
+        weaponRightHandList = uniqueRightHandWeapons;
+
         // Correct duplicated left hand weapons
         for (int i = 0; i < weaponLeftHandList.Count; i++)
         {
@@ -278,24 +297,6 @@ public class Player : MonoBehaviour
                 weaponLeftHandList.Remove(weapon);
             }
         }
-
-        // Keep track of encountered weapon names
-        HashSet<string> encounteredWeaponNames = new HashSet<string>();
-
-        foreach (Weapon weapon in weaponRightHandList)
-        {
-            // Check if the weapon name is a duplicate
-            if (!encounteredWeaponNames.Add(weapon.weaponDetails.weaponName))
-            {
-                if (weapon.weaponDetails.weaponClass != WeaponClass.Spear)
-                {
-                    // If it's a duplicate, add it to the left hand list
-                    weaponLeftHandList.Add(weapon);
-                }
-            }
-        }
-
-        weaponRightHandList = uniqueRightHandWeapons;
     }
 
     /// <summary>

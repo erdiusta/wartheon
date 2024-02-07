@@ -10,6 +10,8 @@ public class AnimateEnemy : MonoBehaviour
     [HideInInspector] public int attackLayerIndex;
     [HideInInspector] public int getHitLayerIndex;
     [HideInInspector] public int deathLayerIndex;
+    [HideInInspector] public bool isAttacking = false;
+    [HideInInspector] public bool isDying = false;
 
     private void Awake()
     {
@@ -67,9 +69,23 @@ public class AnimateEnemy : MonoBehaviour
     /// </summary>
     public void SetMovementAnimationParameters()
     {
-        // Set Moving
-        enemy.animator.SetBool(Settings.isIdle, false);
-        enemy.animator.SetBool(Settings.isMoving, true);
+        if (!isAttacking && !isDying)
+        {
+            // Set Moving
+            enemy.animator.SetLayerWeight(baseLayerIndex, 1f);
+            enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
+
+            enemy.animator.SetBool(Settings.isIdle, false);
+            enemy.animator.SetBool(Settings.isMoving, true);
+            enemy.animator.SetBool(Settings.attackMotion, false);
+        }
+        else
+        {
+            enemy.animator.SetBool(Settings.isIdle, false);
+            enemy.animator.SetBool(Settings.isMoving, false);
+        }
     }
 
     /// <summary>
@@ -77,9 +93,23 @@ public class AnimateEnemy : MonoBehaviour
     /// </summary>
     public void SetIdleAnimationParameters()
     {
-        // Set idle
-        enemy.animator.SetBool(Settings.isMoving, false);
-        enemy.animator.SetBool(Settings.isIdle, true);
+        if (!isAttacking && !isDying)
+        {
+            // Set idle
+            enemy.animator.SetLayerWeight(baseLayerIndex, 1f);
+            enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
+            enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
+
+            enemy.animator.SetBool(Settings.isMoving, false);
+            enemy.animator.SetBool(Settings.isIdle, true);
+            enemy.animator.SetBool(Settings.attackMotion, false);
+        }
+        else
+        {
+            enemy.animator.SetBool(Settings.isIdle, false);
+            enemy.animator.SetBool(Settings.isMoving, false);
+        }
     }
 
     /// <summary>
@@ -93,6 +123,9 @@ public class AnimateEnemy : MonoBehaviour
         enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
         enemy.animator.SetLayerWeight(deathLayerIndex, 1f);
 
+        isDying = true;
+
+        enemy.animator.SetBool(Settings.attackMotion, false);
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, false);
         enemy.animator.SetBool(Settings.death, true);

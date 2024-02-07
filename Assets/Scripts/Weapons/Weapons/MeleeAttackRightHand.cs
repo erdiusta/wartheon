@@ -5,7 +5,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class MeleeAttackRightHand : MonoBehaviour
 {
-    public bool IsAttackingAtRightHand { get; private set; }
+    public bool IsAttackingAtRightHand { get; set; }
 
     MeleeAttackEvent meleeAttackEvent;
     Animator rightHandMeleeAnimator;
@@ -65,6 +65,8 @@ public class MeleeAttackRightHand : MonoBehaviour
     /// </summary>
     public void DetectColliders()
     {
+        if (!IsAttackingAtRightHand) return;
+
         foreach (Collider2D collider in Physics2D.OverlapCircleAll(circleOriginTransform.position, circleOrigin.circleRadius))
         {
             if (collider.GetType() == typeof(PolygonCollider2D))

@@ -29,6 +29,7 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(CircleCollider2D))]
 [RequireComponent(typeof(PolygonCollider2D))]
 [RequireComponent(typeof(DropOnDestroy))]
+[RequireComponent(typeof(StatusManager))]
 #endregion
 
 [DisallowMultipleComponent]
@@ -51,9 +52,11 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool isDead;
     [HideInInspector] public bool isFiring;
     [HideInInspector] public Health health;
+    [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public DropOnDestroy dropOnDestroy;
+    [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
+    [HideInInspector] public StatusManager statusManager;
 
-    HealthEvent healthEvent;
     FireWeapon fireWeapon;
     SetActiveWeaponEvent setActiveWeaponEvent;
     MaterializeEffect materializeEffect;
@@ -83,6 +86,7 @@ public class Enemy : MonoBehaviour
         movementToPosition = GetComponent<MovementToPosition>();
         knockback = GetComponent<Knockback>();
         dropOnDestroy = GetComponent<DropOnDestroy>();
+        statusManager = GetComponent<StatusManager>();
     }
 
     private void OnEnable()

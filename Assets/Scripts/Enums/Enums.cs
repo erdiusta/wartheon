@@ -26,6 +26,11 @@ public enum Status
 {
     Idle,
     Stagger,
+}
+
+public enum HealthStatus
+{
+    Normal,
     Poisoned
 }
 

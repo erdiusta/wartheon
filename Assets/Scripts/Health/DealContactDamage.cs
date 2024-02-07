@@ -1,6 +1,7 @@
 using UnityEngine;
+using Random = UnityEngine.Random;
+using System;
 using System.Collections;
-using UnityEngine.UIElements.Experimental;
 
 [DisallowMultipleComponent]
 public class DealContactDamage : MonoBehaviour
@@ -37,7 +38,7 @@ public class DealContactDamage : MonoBehaviour
 
         if (tag == "Enemy")
         {
-            EnemyAttackAnimRoutine();
+            EnemyAttack();
         }
 
         ContactDamage(collision);
@@ -53,7 +54,7 @@ public class DealContactDamage : MonoBehaviour
 
         if (tag == "Enemy")
         {
-            EnemyAttackAnimRoutine();
+            EnemyAttack();
         }
 
         ContactDamage(collision);
@@ -85,6 +86,17 @@ public class DealContactDamage : MonoBehaviour
                 Knockback knockback = collision.GetComponent<Player>().GetComponent<Knockback>();
                 collision.GetComponent<Player>().movementByVelocity.Knockback((collision.transform.position - transform.position).normalized,
                     knockback.knockbackForce, knockback.knockbackTimeWeight);
+
+                if (enemy != null && enemy.enemyDetails.isPoisonous)
+                {
+                    // Check get poisoned
+                    float randomPoisonNum = Random.Range(0f, 1f);
+                    if (randomPoisonNum > 0.7f)
+                    {
+                        collision.GetComponent<Player>().healthEvent.CallGetPosionedEvent();
+                        collision.GetComponent<Player>().healthStatus = HealthStatus.Poisoned;
+                    }
+                }
             }
         }
     }
@@ -92,17 +104,21 @@ public class DealContactDamage : MonoBehaviour
     /// <summary>
     /// Enemy character attack motion
     /// </summary>
-    private void EnemyAttackAnimRoutine()
+    private void EnemyAttack()
     {
         if (enemy.health.currentHealth > 0f)
         {
+            enemy.animator.SetBool(Settings.isIdle, false);
+            enemy.animator.SetBool(Settings.isMoving, false);
+
             // Adjust animator layer weights
             enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
             enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 1f);
             enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
             enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
 
-            enemy.animator.SetTrigger(Settings.attackMotion);
+            enemy.animator.SetBool(Settings.attackMotion, true);
+            StartCoroutine(EnemyAttackRoutine());
         }
         else
         {
@@ -112,6 +128,17 @@ public class DealContactDamage : MonoBehaviour
             enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 1f);
         }
     }
+
+    IEnumerator EnemyAttackRoutine()
+    {
+        enemy.animateEnemy.isAttacking = true;
+
+        yield return new WaitForSeconds(0.2f);
+
+        enemy.animateEnemy.isAttacking = false;
+    }
+
+
 
     /// <summary>
     /// Reset the isColliding bool
