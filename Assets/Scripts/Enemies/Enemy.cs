@@ -30,6 +30,7 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(PolygonCollider2D))]
 [RequireComponent(typeof(DropOnDestroy))]
 [RequireComponent(typeof(StatusManager))]
+[RequireComponent(typeof(DamageDisplay))]
 #endregion
 
 [DisallowMultipleComponent]
@@ -56,6 +57,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public DropOnDestroy dropOnDestroy;
     [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
     [HideInInspector] public StatusManager statusManager;
+    [HideInInspector] public DamageDisplay damageDisplay;
 
     FireWeapon fireWeapon;
     SetActiveWeaponEvent setActiveWeaponEvent;
@@ -87,6 +89,7 @@ public class Enemy : MonoBehaviour
         knockback = GetComponent<Knockback>();
         dropOnDestroy = GetComponent<DropOnDestroy>();
         statusManager = GetComponent<StatusManager>();
+        damageDisplay = GetComponent<DamageDisplay>();
     }
 
     private void OnEnable()

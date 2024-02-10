@@ -1,7 +1,7 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
-using System;
 using System.Collections;
+using UnityEngine.Tilemaps;
 
 [DisallowMultipleComponent]
 public class DealContactDamage : MonoBehaviour
@@ -50,14 +50,18 @@ public class DealContactDamage : MonoBehaviour
         // If already colliding with something return
         if (isColliding) return;
 
-        if (tag == "Chest Item") return;
-
-        if (tag == "Enemy")
+        // Exclude wall collision
+        if (collision.GetComponent<TilemapCollider2D>() == null)
         {
-            EnemyAttack();
-        }
+            if (tag == "Chest Item") return;
 
-        ContactDamage(collision);
+            if (tag == "Enemy")
+            {
+                EnemyAttack();
+            }
+
+            ContactDamage(collision);
+        }
     }
 
     private void ContactDamage(Collider2D collision)

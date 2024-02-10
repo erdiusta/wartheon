@@ -13,6 +13,7 @@ TagManager:
   - playerWeapon
   - Enemy
   - Chest Item
+  - poolTilemap
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Pool
   - Ignore Ammo
   - Camera1
   - Camera2

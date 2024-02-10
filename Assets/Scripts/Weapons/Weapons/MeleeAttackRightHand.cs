@@ -77,9 +77,11 @@ public class MeleeAttackRightHand : MonoBehaviour
 
                 if (enemyHealth = collider.GetComponent<Health>())
                 {
+                    int damageDone = Random.Range(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMin,
+                        player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMax);
+
                     PlayerAttackAnimation();
-                    enemyHealth.TakeDamage(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMax,
-                        transform.position, collider.transform.position);
+                    enemyHealth.TakeDamage(damageDone,transform.position, collider.transform.position);
 
                     if (!enemyHealth.GetComponent<Enemy>().enemyDetails.hasKnockbackResistance)
                     {

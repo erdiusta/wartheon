@@ -20,7 +20,7 @@ MonoBehaviour:
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
-  weaponFiringSoundEffect: {fileID: 11400000, guid: 725854e135951404ba8a84c0a0ca4735, type: 2}
+  weaponFiringSoundEffect: {fileID: 11400000, guid: 3176c80157244664fab59f1b8d558b48, type: 2}
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 1
   isShield: 0

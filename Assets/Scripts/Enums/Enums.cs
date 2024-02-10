@@ -62,6 +62,19 @@ public enum WieldType
     TwoHanded
 }
 
+public enum DamageType
+{
+    Slashing,
+    Piercing,
+    Crushing,
+    Fire,
+    Water,
+    Earth,
+    Air,
+    Dark,
+    Light
+}
+
 public enum ChestSpawnEvent
 {
     onRoomEntry,
