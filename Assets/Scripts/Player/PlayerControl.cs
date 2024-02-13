@@ -64,9 +64,9 @@ public class PlayerControl : MonoBehaviour
         if (isPlayerMovementDisabled)
             return;
 
-        switch (player.playerStatus)
+        switch (player.moveStatus)
         {
-            case Status.Idle:
+            case MoveStatus.Idle:
                 // Process the player weapon input
                 WeaponInput();
                 // Process the player movement input
@@ -74,9 +74,12 @@ public class PlayerControl : MonoBehaviour
                 // Process the player use item input
                 UseItemInput();
                 break;
-            case Status.Stagger:
+            case MoveStatus.Stagger:
                 player.polygonCollider2D.enabled = false;
                 StartCoroutine(Stagger());
+                break;
+            case MoveStatus.Stun:
+                StartCoroutine(StunRoutine());
                 break;
             default:
                 break;
@@ -126,7 +129,7 @@ public class PlayerControl : MonoBehaviour
     {
         yield return new WaitForSeconds(player.knockback.knockbackTimeWeight);
 
-        player.playerStatus = Status.Idle;
+        player.moveStatus = MoveStatus.Idle;
         player.polygonCollider2D.enabled = true;
     }
 
@@ -376,6 +379,23 @@ public class PlayerControl : MonoBehaviour
             // Call the reload weapon event
             player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), 0);
         }
+    }
+
+    /// <summary>
+    /// Stun routine
+    /// </summary>
+    IEnumerator StunRoutine()
+    {
+        player.movementByVelocity.moveSpeed = 0f;
+
+        yield return new WaitForSeconds(3f);
+
+        yield return new WaitForFixedUpdate();
+
+        player.moveStatus = MoveStatus.Idle;
+        player.healthEvent.CallStunCuredEvent();
+        player.animator.SetBool(Settings.isStunned, false);
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetMoveSpeed();
     }
 
     /// <summary>

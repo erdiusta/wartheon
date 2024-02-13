@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: MovementDetails_Skeleton
   m_EditorClassIdentifier: 
   minMoveSpeed: 3
-  maxMoveSpeed: 4
+  maxMoveSpeed: 3

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: MovementDetails_Nexarion
   m_EditorClassIdentifier: 
   minMoveSpeed: 2
-  maxMoveSpeed: 4
+  maxMoveSpeed: 2

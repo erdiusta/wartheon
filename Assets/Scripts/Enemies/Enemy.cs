@@ -56,6 +56,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public DropOnDestroy dropOnDestroy;
     [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
+    [HideInInspector] public ArmorStatus armorStatus = ArmorStatus.Normal;
     [HideInInspector] public StatusManager statusManager;
     [HideInInspector] public DamageDisplay damageDisplay;
 

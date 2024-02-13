@@ -43,8 +43,9 @@ public class Player : MonoBehaviour
     [HideInInspector] public PlayerDetailsSO playerDetails;
     [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public Health health;
-    [HideInInspector] public Status playerStatus = Status.Idle;
+    [HideInInspector] public MoveStatus moveStatus = MoveStatus.Idle;
     [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
+    [HideInInspector] public ArmorStatus armorStatus = ArmorStatus.Normal;
     [HideInInspector] public DestroyedEvent destroyedEvent;
     [HideInInspector] public PlayerControl playerControl;
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
@@ -59,6 +60,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public WeaponReloadedEvent weaponReloadedEvent;
     [HideInInspector] public SpriteRenderer spriteRenderer;
     [HideInInspector] public PolygonCollider2D polygonCollider2D;
+    [HideInInspector] public Rigidbody2D rb2D;
     [HideInInspector] public Animator animator;
     [HideInInspector] public AnimatePlayer animatePlayer;
     [HideInInspector] public Knockback knockback;
@@ -89,6 +91,7 @@ public class Player : MonoBehaviour
         weaponReloadedEvent = GetComponent<WeaponReloadedEvent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         polygonCollider2D = GetComponent<PolygonCollider2D>();
+        rb2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         animatePlayer = GetComponent<AnimatePlayer>();
         knockback = GetComponent<Knockback>();

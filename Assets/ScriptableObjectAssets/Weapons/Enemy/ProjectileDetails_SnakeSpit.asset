@@ -21,7 +21,8 @@ MonoBehaviour:
   projectileChargeTime: 0
   projectileChargeMaterial: {fileID: 0}
   projectileHitEffect: {fileID: 0}
-  projectileDamage: 8
+  projectileDamageMin: 6
+  projectileDamageMax: 12
   projectileSpeedMin: 7
   projectileSpeedMax: 10
   projectileRange: 10

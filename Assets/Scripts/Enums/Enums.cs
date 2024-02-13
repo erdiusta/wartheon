@@ -22,16 +22,23 @@ public enum GameState
     restartGame
 }
 
-public enum Status
+public enum MoveStatus
 {
     Idle,
     Stagger,
+    Stun
 }
 
 public enum HealthStatus
 {
     Normal,
-    Poisoned
+    Poisoned,
+}
+
+public enum ArmorStatus
+{
+    Normal,
+    Acid
 }
 
 public enum AimDirection

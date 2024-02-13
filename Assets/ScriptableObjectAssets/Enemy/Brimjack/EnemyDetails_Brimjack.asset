@@ -18,8 +18,11 @@ MonoBehaviour:
   chaseDistance: 12
   enemyBehaviour: 0
   isEnemyBoss: 0
+  enemyArmorValue: 3
   hasShield: 0
-  isPoisonous: 1
+  isPoisonous: 0
+  hasAcid: 1
+  acidEfficiency: 0.4
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -36,7 +39,7 @@ MonoBehaviour:
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    enemyHealthAmount: 20
+    enemyHealthAmount: 40
   isImmuneAfterHit: 1
   hitImmunityTime: 0.7
   isHealthBarDisplayed: 0

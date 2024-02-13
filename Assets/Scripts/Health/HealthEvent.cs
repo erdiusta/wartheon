@@ -18,11 +18,39 @@ public class HealthEvent : MonoBehaviour
         GetPoisoned?.Invoke(this);
     }
 
+    public event Action<HealthEvent> GetAcid;
+
+    public void CallGetAcidEvent()
+    {
+        GetAcid?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetStun;
+
+    public void CallGetStunEvent()
+    {
+        GetStun?.Invoke(this);
+    }
+
     public event Action<HealthEvent> PoisonCured;
 
     public void CallPoisonCuredEvent()
     {
         PoisonCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> AcidCured;
+
+    public void CallAcidCuredEvent()
+    {
+        AcidCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> StunCured;
+
+    public void CallStunCuredEvent()
+    {
+        StunCured?.Invoke(this);
     }
 }
 

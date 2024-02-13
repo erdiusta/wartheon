@@ -28,6 +28,23 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public WieldType wieldType;
 
+    #region Header PASSIVE
+    [Space(10)]
+    [Header("WEAPON PASSIVE EFFECT")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Check if weapon has acid")]
+    #endregion Tooltip
+    public bool hasAcid;
+    #region Tooltip
+    [Tooltip("The efficiency of weapon's acid")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float acidEfficiency = 0.4f;
+    #region Tooltip
+    [Tooltip("Check if weapon has stun damage")]
+    #endregion Tooltip
+    public bool hasStunDamage;
+
     #region Header WEAPON CONFIGURATION
     [Space(10)]
     [Header("WEAPON CONFIGURATION")]

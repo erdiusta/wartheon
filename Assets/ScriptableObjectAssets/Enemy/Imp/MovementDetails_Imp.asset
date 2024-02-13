@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: MovementDetails_Imp
   m_EditorClassIdentifier: 
   minMoveSpeed: 4
-  maxMoveSpeed: 5
+  maxMoveSpeed: 4

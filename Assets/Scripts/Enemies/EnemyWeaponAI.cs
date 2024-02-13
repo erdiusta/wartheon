@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 [RequireComponent(typeof(Enemy))]
 [DisallowMultipleComponent]
@@ -34,22 +33,25 @@ public class EnemyWeaponAI : MonoBehaviour
 
     private void Update()
     {
-        // Update timers
-        firingIntervalTimer -= Time.deltaTime;
-
-        // Interval Timer
-        if (firingIntervalTimer < 0f)
+        if (enemy.GetComponent<EnemyMovementAI>().moveStatus != MoveStatus.Stun)
         {
-            if (firingDurationTimer >= 0)
+            // Update timers
+            firingIntervalTimer -= Time.deltaTime;
+
+            // Interval Timer
+            if (firingIntervalTimer < 0f)
             {
-                firingDurationTimer -= Time.deltaTime;
-                DoFireWeapon();
-            }
-            else
-            {
-                // Reset timers
-                firingIntervalTimer = WeaponShootInterval();
-                firingDurationTimer = WeaponShootDuration();
+                if (firingDurationTimer >= 0)
+                {
+                    firingDurationTimer -= Time.deltaTime;
+                    DoFireWeapon();
+                }
+                else
+                {
+                    // Reset timers
+                    firingIntervalTimer = WeaponShootInterval();
+                    firingDurationTimer = WeaponShootDuration();
+                }
             }
         }
     }

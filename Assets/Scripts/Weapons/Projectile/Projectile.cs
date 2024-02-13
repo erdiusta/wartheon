@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
 [DisallowMultipleComponent]
@@ -171,7 +170,25 @@ public class Projectile : MonoBehaviour, IFireable
             // Set isColliding to prevent ammo dealing damage multiple times
             isColliding = true;
 
-            health.TakeDamage(projectileDetails.projectileDamage, transform.position, health.transform.position);
+            // Damage produced by player
+            int damageDone = Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+
+            int inflictedDamage = 0;
+
+            if (collision != null && collision.GetComponent<Enemy>() != null)
+            {
+                // Damage inflicted to enemy after deducting enemy armor
+                inflictedDamage = damageDone > health.GetArmorValue() ?
+                    damageDone - health.GetArmorValue() : 1;
+            }
+            else if (collision != null && collision.GetComponent<Player>() != null)
+            {
+                // Damage inflicted to enemy after deducting enemy armor
+                inflictedDamage = damageDone > health.GetArmorValue() ?
+                    damageDone - health.GetArmorValue() : 1;
+            }
+
+            health.TakeDamage(inflictedDamage, transform.position, health.transform.position);
         }
     }
 

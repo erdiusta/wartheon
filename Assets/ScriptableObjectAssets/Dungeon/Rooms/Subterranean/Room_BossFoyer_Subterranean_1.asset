@@ -51,6 +51,7 @@ MonoBehaviour:
     doorwayCopyTileHeight: 7
     isConnected: 0
     isUnavailable: 0
-  spawnPositionArray: []
+  spawnPositionArray:
+  - {x: 2, y: 10}
   enemiesByLevelList: []
   roomEnemySpawnParametersList: []

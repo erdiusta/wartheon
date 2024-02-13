@@ -55,9 +55,13 @@ public class ProjectileDetailsSO : ScriptableObject
     [Header("PROJECTILE BASE PARAMETERS")]
     #endregion
     #region Tooltip
-    [Tooltip("The damage each projectile deals")]
+    [Tooltip("The min damage each projectile deals")]
     #endregion
-    public int projectileDamage = 1;
+    public int projectileDamageMin = 0;
+    #region Tooltip
+    [Tooltip("The max damage each projectile deals")]
+    #endregion
+    public int projectileDamageMax = 1;
     #region Tooltip
     [Tooltip("The minimum speed of the projectile - the speed will be a random value between the min and max")]
     #endregion
@@ -145,7 +149,8 @@ public class ProjectileDetailsSO : ScriptableObject
         HelperUtilities.ValidateCheckNullValue(this, nameof(projectileMaterial), projectileMaterial);
         if (projectileChargeTime > 0)
             HelperUtilities.ValidateCheckNullValue(this, nameof(projectileChargeMaterial), projectileChargeMaterial);
-        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamage), projectileDamage, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamageMin), projectileDamageMin, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamageMax), projectileDamageMax, false);
         HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpeedMin), projectileSpeedMin, nameof(projectileSpeedMax), projectileSpeedMax, false);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileRange), projectileRange, false);
         HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpreadMin), projectileSpreadMin, nameof(projectileSpreadMax), projectileSpreadMax, true);

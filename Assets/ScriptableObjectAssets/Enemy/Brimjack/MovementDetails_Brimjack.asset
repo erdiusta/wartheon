@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: MovementDetails_Brimjack
   m_EditorClassIdentifier: 
   minMoveSpeed: 4
-  maxMoveSpeed: 6
+  maxMoveSpeed: 4

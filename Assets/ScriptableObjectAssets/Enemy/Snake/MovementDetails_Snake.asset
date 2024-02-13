@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: MovementDetails_Snake
   m_EditorClassIdentifier: 
   minMoveSpeed: 2
-  maxMoveSpeed: 3
+  maxMoveSpeed: 2

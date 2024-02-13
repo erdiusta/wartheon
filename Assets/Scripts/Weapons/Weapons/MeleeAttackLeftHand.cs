@@ -16,7 +16,6 @@ public class MeleeAttackLeftHand : MonoBehaviour
     float radius = 0.2f;
     Health enemyHealth;
     Player player;
-    Knockback knockback;
     bool leftHandAttackBlocked;
 
     private void Awake()
@@ -26,7 +25,6 @@ public class MeleeAttackLeftHand : MonoBehaviour
         leftHandMeleeAnimator = transform.GetChild(1).GetComponent<Animator>();
         leftHandAnimationEventHelper = leftHandMeleeAnimator.GetComponent<AnimationEventHelperLeft>();
         circleOrigin = GetComponentInChildren<CircleOrigin>();
-        knockback = GetComponent<Knockback>();
     }
 
     private void OnEnable()
@@ -76,19 +74,74 @@ public class MeleeAttackLeftHand : MonoBehaviour
 
                 if (enemyHealth = collider.GetComponent<Health>())
                 {
-                    int damageDone = Random.Range(player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.meleeDamageMin,
-                        player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.meleeDamageMax);
+                    Enemy enemy = collider.GetComponent<Enemy>();
+
+                    CheckAcidStatus(enemy);
+                    CheckStunStatus(enemy);
+
+                    int inflictedDamage = CalculateDamageAmount();
 
                     PlayerAttackAnimation();
-                    enemyHealth.TakeDamage(damageDone, transform.position, collider.transform.position);
+                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position);
 
-                    if (!enemyHealth.GetComponent<Enemy>().enemyDetails.hasKnockbackResistance)
+                    if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
                     {
-                        Knockback enemyKnockback = collider.GetComponent<Enemy>().GetComponent<Knockback>();
-                        collider.GetComponent<EnemyMovementAI>().Knockback((collider.transform.position - transform.position).normalized,
-                            enemyKnockback.knockbackForce, enemyKnockback.knockbackTimeWeight);
+                        enemy.GetComponent<EnemyMovementAI>().TriggerKnockback((enemy.transform.position - transform.position).normalized);
                     }
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Calculate damage amount
+    /// </summary>
+    private int CalculateDamageAmount()
+    {
+        // Damage produced by player
+        int damageDone = Random.Range(player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.meleeDamageMin,
+            player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.meleeDamageMax);
+
+        // Damage inflicted to enemy after deducting enemy armor
+        int inflictedDamage = damageDone > enemyHealth.GetArmorValue() ? damageDone - enemyHealth.GetArmorValue() : 1;
+        return inflictedDamage;
+    }
+
+    /// <summary>
+    /// Check acid status
+    /// </summary>
+    private void CheckAcidStatus(Enemy enemy)
+    {
+        if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid)
+        {
+            // Check get acid
+            float randomAcidNum = Random.Range(0f, 1f);
+            if (randomAcidNum > 0.6f)
+            {
+                enemy.armorStatus = ArmorStatus.Acid;
+                enemyHealth.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue *
+                    (1 - player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.acidEfficiency)));
+
+                enemy.GetComponent<HealthEvent>().CallGetAcidEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check stun status
+    /// </summary>
+    private void CheckStunStatus(Enemy enemy)
+    {
+        EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
+
+        if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun)
+        {
+            float randomStunNum = Random.Range(0f, 1f);
+            if (randomStunNum > 0.6f)
+            {
+                enemyMovementAI.moveStatus = MoveStatus.Stun;
+                enemy.healthEvent.CallGetStunEvent();
+                enemy.animator.SetBool(Settings.isStunned, true);
             }
         }
     }

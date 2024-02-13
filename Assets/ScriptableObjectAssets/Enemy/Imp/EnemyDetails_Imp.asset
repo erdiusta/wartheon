@@ -15,10 +15,15 @@ MonoBehaviour:
   enemyName: Imp
   enemyPrefab: {fileID: 7183228443647751644, guid: 60bff836939d1b14cb479b0ad4493652, type: 3}
   movementDetails: {fileID: 11400000, guid: 83dbceefafb85d548a043660c57a38ce, type: 2}
-  chaseDistance: 20
+  chaseDistance: 10
   enemyBehaviour: 0
   isEnemyBoss: 0
+  enemyArmorValue: 2
   hasShield: 0
+  isPoisonous: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 1
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2.5
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}

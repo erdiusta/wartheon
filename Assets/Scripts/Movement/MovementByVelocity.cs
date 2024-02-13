@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -7,7 +8,7 @@ public class MovementByVelocity : MonoBehaviour
     #region Tooltip
     [Tooltip("MovementDetailsSO scriptable object containing movement details such as speed")]
     #endregion Tooltip
-    [SerializeField] MovementDetailsSO movementDetails;
+    public MovementDetailsSO movementDetails;
 
     public Vector2 MovementInput { get; set; }
     public float moveSpeed;
@@ -32,7 +33,18 @@ public class MovementByVelocity : MonoBehaviour
 
     private void Move()
     {
-        rb2D.velocity = MovementInput * moveSpeed + CalculateKnockback();
+        if (player.moveStatus == MoveStatus.Stun)
+        {
+            StartCoroutine(StunRoutine());
+        }
+        else if (player.moveStatus == MoveStatus.Stagger)
+        {
+            rb2D.velocity = CalculateKnockback();
+        }
+        else
+        {
+            rb2D.velocity = MovementInput * moveSpeed;
+        }
     }
 
     /// <summary>
@@ -44,12 +56,41 @@ public class MovementByVelocity : MonoBehaviour
         rb2D.velocity = moveDirection * moveSpeed;
     }
 
-    public void Knockback(Vector3 vector, float force, float timeWeight)
+    /// <summary>
+    /// Stun routine
+    /// </summary>
+    IEnumerator StunRoutine()
     {
-        player.playerStatus = Status.Stagger;
+        moveSpeed = 0f;
+
+        yield return new WaitForSeconds(3f);
+
+        player.healthEvent.CallStunCuredEvent();
+        player.animator.SetBool(Settings.isStunned, false);
+        moveSpeed = movementDetails.GetMoveSpeed();
+        player.moveStatus = MoveStatus.Idle;
+    }
+
+    public void TriggerKnockback(Vector3 vector)
+    {
+        if (player.moveStatus == MoveStatus.Idle)
+        {
+            StartCoroutine(Stagger(vector));
+        }
+    }
+
+    IEnumerator Stagger(Vector3 vector)
+    {
+        player.moveStatus = MoveStatus.Stagger;
+
         knockbackVector = vector;
-        knockbackForce = force;
-        knockbackTimeWeight = timeWeight;
+        knockbackForce = player.knockback.knockbackForce;
+        knockbackTimeWeight = player.knockback.knockbackTimeWeight;
+
+        yield return new WaitForSeconds(knockbackTimeWeight);
+
+        moveSpeed = movementDetails.GetMoveSpeed();
+        player.moveStatus = MoveStatus.Idle;
     }
 
     private Vector2 CalculateKnockback()

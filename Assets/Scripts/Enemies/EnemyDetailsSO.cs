@@ -32,6 +32,15 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check if enemy is a boss")]
     #endregion
     public bool isEnemyBoss = false;
+
+    #region Header PASSIVE
+    [Space(10)]
+    [Header("PASSIVE")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Enemy starting armor amount")]
+    #endregion
+    public int enemyArmorValue = 0;
     #region Tooltip
     [Tooltip("Check if enemy has a shield")]
     #endregion
@@ -40,6 +49,19 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check if enemy is a poisonous")]
     #endregion
     public bool isPoisonous = false;
+    #region Tooltip
+    [Tooltip("Check if enemy has acid")]
+    #endregion
+    public bool hasAcid = false;
+    #region Tooltip
+    [Tooltip("Check acid efficiency which absorbes enemy defense")]
+    #endregion
+    [Range(0f, 1f)] public float acidEfficiency = 0.4f;
+    #region Tooltip
+    [Tooltip("Check if enemy has stun damage")]
+    #endregion
+    public bool hasStunDamage = false;
+
 
     #region Header ENEMY MATERIAL
     [Space(10)]
@@ -198,6 +220,7 @@ public class EnemyDetailsSO : ScriptableObject
         HelperUtilities.ValidateCheckEmptyString(this, nameof(enemyName), enemyName);
         HelperUtilities.ValidateCheckNullValue(this, nameof(enemyPrefab), enemyPrefab);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(chaseDistance), chaseDistance, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(enemyArmorValue), enemyArmorValue, true);
         HelperUtilities.ValidateCheckNullValue(this, nameof(enemyStandardMaterial), enemyStandardMaterial);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(enemyMaterializeTime), enemyMaterializeTime, true);
         HelperUtilities.ValidateCheckNullValue(this, nameof(enemyMaterializeShader), enemyMaterializeShader);

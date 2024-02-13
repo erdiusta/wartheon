@@ -15,11 +15,14 @@ MonoBehaviour:
   enemyName: Spider
   enemyPrefab: {fileID: 7183228443647751644, guid: 6e739ab4ccc3c494eaba2e414a0151b4, type: 3}
   movementDetails: {fileID: 11400000, guid: 355c7e033e92d284b98a59710ec9735e, type: 2}
-  chaseDistance: 15
+  chaseDistance: 12
   enemyBehaviour: 0
   isEnemyBoss: 0
+  enemyArmorValue: 2
   hasShield: 0
   isPoisonous: 1
+  hasAcid: 0
+  acidEfficiency: 0.4
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}

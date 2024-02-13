@@ -47,6 +47,15 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public SoundEffectSO deathSoundEffect;
 
+    #region Header PASSIVE
+    [Space(10)]
+    [Header("PASSIVE")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Player starting armor amount")]
+    #endregion
+    public int playerArmorValue = 0;
+
     #region Header WEAPON
     [Space(10)]
     [Header("WEAPON")]
@@ -84,6 +93,7 @@ public class PlayerDetailsSO : ScriptableObject
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerMiniMapIcon), playerMiniMapIcon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerHandSprite), playerHandSprite);
         HelperUtilities.ValidateCheckNullValue(this, nameof(runtimeAnimatorController), runtimeAnimatorController);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(playerArmorValue), playerArmorValue, true);
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(startingWeaponList), startingWeaponList);
 
         if (isImmuneAfterHit)

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -32,6 +31,7 @@ public class Health : MonoBehaviour
     [HideInInspector] public int currentHealth;
     [HideInInspector] public bool isDamageable = true;
     [HideInInspector] public Enemy enemy;
+    [HideInInspector] public int currentArmorValue;
 
     private void Awake()
     {
@@ -47,10 +47,12 @@ public class Health : MonoBehaviour
         // Attempt to load enemy / player components
         player = GetComponent<Player>();
         enemy = GetComponent<Enemy>();
-
+       
         // Get player / enemy hit immunity details
         if (player != null)
         {
+            currentArmorValue = player.playerDetails.playerArmorValue;
+
             if (player.playerDetails.isImmuneAfterHit)
             {
                 isImmuneAfterHit = true;
@@ -60,6 +62,8 @@ public class Health : MonoBehaviour
         }
         else if (enemy != null)
         {
+            currentArmorValue = enemy.enemyDetails.enemyArmorValue;
+
             if (enemy.enemyDetails.isImmuneAfterHit)
             {
                 isImmuneAfterHit = true;
@@ -101,7 +105,6 @@ public class Health : MonoBehaviour
                 }
             }
         }
-
     }
 
     /// <summary>
@@ -113,9 +116,13 @@ public class Health : MonoBehaviour
         {
             currentHealth -= damageAmount;
             CallHealthEvent(damageAmount);
-            PostHitImmunity();
 
-            if(tag == "Player")
+            if (currentHealth > 0)
+            {
+                PostHitImmunity();
+            }
+
+            if (tag == "Player")
             {
                 PlayerGetHitAnimation();
             }
@@ -253,7 +260,6 @@ public class Health : MonoBehaviour
     IEnumerator PostHitImmunityRoutine(float immunityTime, SpriteRenderer spriteRenderer)
     {
         int iterations = Mathf.RoundToInt(immunityTime / spriteFlashInterval / 4);
-
         isDamageable = false;
 
         // Flash effect
@@ -332,5 +338,21 @@ public class Health : MonoBehaviour
         }
 
         CallHealthEvent(0);
+    }
+
+    /// <summary>
+    /// Set current armor value
+    /// </summary>
+    public void SetArmorValue(int armorValue)
+    {
+        currentArmorValue = armorValue;
+    }
+
+    /// <summary>
+    /// Get current armor value
+    /// </summary>
+    public int GetArmorValue()
+    {
+        return currentArmorValue;
     }
 }

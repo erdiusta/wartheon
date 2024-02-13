@@ -21,7 +21,8 @@ MonoBehaviour:
   projectileChargeTime: 0.05
   projectileChargeMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   projectileHitEffect: {fileID: 0}
-  projectileDamage: 5
+  projectileDamageMin: 6
+  projectileDamageMax: 10
   projectileSpeedMin: 18
   projectileSpeedMax: 22
   projectileRange: 12

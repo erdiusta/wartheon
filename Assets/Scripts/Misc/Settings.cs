@@ -35,6 +35,9 @@ public static class Settings
     public static int attackMotion = Animator.StringToHash("attack");
     public const float baseSpeedForPlayerAnimations = 6f;
 
+    // Animator parameters - Status
+    public static int isStunned = Animator.StringToHash("isStunned");
+
     // Animator parameters - Damage
     public static int death = Animator.StringToHash("death");
     public static int getHit = Animator.StringToHash("getHit");
@@ -48,7 +51,7 @@ public static class Settings
     public static int block = Animator.StringToHash("block");
 
     // Animator parameters - Enemy
-    public const float baseSpeedForEnemyAnimations = 3f;
+    public const float baseSpeedForEnemyAnimations = 2f;
 
     // Animator parameters - Door
     public static int open = Animator.StringToHash("open");

@@ -20,13 +20,12 @@ MonoBehaviour:
   hitImmunityTime: 2
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
+  playerArmorValue: 0
   startingWeapon: {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
   startingWeaponList:
   - {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
   - {fileID: 11400000, guid: 2709e31502b5c5d45a59d45fc94517bf, type: 2}
-  - {fileID: 11400000, guid: dc70bba435344054aa98ff671fae1024, type: 2}
-  - {fileID: 11400000, guid: 9926f985354b71a4690cb034e554c091, type: 2}
+  - {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
   - {fileID: 11400000, guid: a310b80193e93084c9fde37c6fc1bb61, type: 2}
-  - {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: 3640f47ca78384741a1cfa06c932e212, type: 3}
   playerHandSprite: {fileID: 1585005775, guid: 1ccdf010dd5235241a18978e1a326c1d, type: 3}

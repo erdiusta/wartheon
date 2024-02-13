@@ -11,7 +11,7 @@ public class EnemyMovementAI : MonoBehaviour
     #endregion
     public EnemyDetailsSO enemyDetails;
 
-    [HideInInspector] public Status status = Status.Idle;
+    [HideInInspector] public MoveStatus moveStatus = MoveStatus.Idle;
     [HideInInspector] public float moveSpeed;
     [HideInInspector] public int updateFrameNumber = 1; // default value.  This is set by the enemy spawner
 
@@ -19,6 +19,7 @@ public class EnemyMovementAI : MonoBehaviour
     Stack<Vector3> movementSteps = new Stack<Vector3>();
     Vector3 playerReferencePosition;
     Coroutine moveEnemyRoutine;
+    Coroutine stunEnemyRoutine;
     float currentEnemyPathRebuildCooldown;
     WaitForFixedUpdate waitForFixedUpdate;
     bool chasePlayer = false;
@@ -52,31 +53,43 @@ public class EnemyMovementAI : MonoBehaviour
     /// </summary>
     private void Move()
     {
+        // If stun coroutine is already running, do not start another one
+        if (stunEnemyRoutine != null) return;
+
         // First check if enemy is dead
         if (enemy.health.currentHealth <= 0f)
         {
             StopAllCoroutines();
             StartCoroutine(NullifySpeedForDeathRoutine());
+            return;
         }
-        // Second check if enemy is on knockback status
-        else if (status == Status.Stagger)
-        {
 
+        // Second check if enemy is on stun status
+        if (moveStatus == MoveStatus.Stun)
+        {
+            stunEnemyRoutine = StartCoroutine(StunRoutine());
+            return;
+        }
+
+        // Third check if enemy is on knockback status
+        if (moveStatus == MoveStatus.Stagger)
+        {
             StartCoroutine(KnockbackRoutine());
+            return;
         }
-        // If enemy is neither dead or knockedback, start move process based on enemy's move behaviour
-        else
-        {
-            if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
-            {
-                if (enemy.isFiring)
-                {
-                    StartCoroutine(WeaponFiredRoutine());
-                }
-            }
 
-            PathfindMove();
+        // If enemy is neither dead or knockedback, start move process based on enemy's move behaviour
+        if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
+        {
+            if (enemy.isFiring)
+            {
+                StartCoroutine(WeaponFiredRoutine());
+                return;
+            }
         }
+
+        // If none of the above conditions are met, perform regular pathfinding move
+        PathfindMove();
     }
 
     private void PathfindMove()
@@ -94,12 +107,10 @@ public class EnemyMovementAI : MonoBehaviour
         }
 
         // If not close enough to chase player then return
-        if (!chasePlayer)
-            return;
+        if (!chasePlayer) return;
 
         // Only process A Star path rebuild on certain frames to spread the load between enemies
-        if (Time.frameCount % Settings.targetFrameRateToSpreadPathfindingOver != updateFrameNumber)
-            return;
+        if (Time.frameCount % Settings.targetFrameRateToSpreadPathfindingOver != updateFrameNumber) return;
 
         // If the movement cooldown timer reached or player has moved more than required distance then rebuild the enemy path and move the enemy
         if (currentEnemyPathRebuildCooldown <= 0f || (Vector3.Distance(playerReferencePosition, GameManager.Instance.GetPlayer().GetPlayerPosition()) >
@@ -148,7 +159,7 @@ public class EnemyMovementAI : MonoBehaviour
                 enemy.animateEnemy.SetMovementAnimationParameters();
 
                 // Moving the enemy using 2D physics so wait until the next fixed update
-                yield return waitForFixedUpdate; 
+                yield return waitForFixedUpdate;
             }
 
             yield return waitForFixedUpdate;
@@ -213,8 +224,7 @@ public class EnemyMovementAI : MonoBehaviour
         int obstacle = currentRoom.instantiatedRoom.aStarMovementPenalty[adjustedPlayerCellPosition.x, adjustedPlayerCellPosition.y];
 
         // If the player isn't on a cell square marked as an obstacle then return that position
-        if (obstacle != 0)
-            return playerCellPosition;
+        if (obstacle != 0) return playerCellPosition;
 
         // Find a surrounding cell that isn't an obstacle - required because with the 'half collision' tiles the player can be on a grid
         // square that is marked as an obstacle
@@ -224,8 +234,7 @@ public class EnemyMovementAI : MonoBehaviour
             {
                 for (int j = -1; j <= 1; j++)
                 {
-                    if (j == 0 && i == 0) 
-                        continue;
+                    if (j == 0 && i == 0) continue;
 
                     try
                     {
@@ -247,40 +256,52 @@ public class EnemyMovementAI : MonoBehaviour
     }
     #endregion
 
-    IEnumerator KnockbackRoutine()
+    IEnumerator StunRoutine()
     {
-        enemy.movementToPosition.MoveRigidbodyByPosition(playerReferencePosition, transform.position, moveSpeed);
-        enemy.animateEnemy.SetMovementAnimationParameters();
+        moveSpeed = 0f;
 
-        if (enemy.health.currentHealth > 0f)
-        {
-            enemy.rb2D.velocity += CalculateKnockback();
-        }
-        else
-        {
-            enemy.rb2D.velocity = new Vector2(0f, 0f);
-        }
+        yield return new WaitForSeconds(3f);
 
         yield return waitForFixedUpdate;
+
+        enemy.healthEvent.CallStunCuredEvent();
+        enemy.animator.SetBool(Settings.isStunned, false);
+
+        // Reset stun status and allow other stun coroutines to be started
+        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+        moveStatus = MoveStatus.Idle;
+        stunEnemyRoutine = null;
     }
 
-    public void Knockback(Vector3 vector, float force, float timeWeight)
+    IEnumerator KnockbackRoutine()
     {
+        yield return waitForFixedUpdate;
+
+        enemy.rb2D.velocity = CalculateKnockback();
+    }
+
+    public void TriggerKnockback(Vector3 vector)
+    {
+        if (moveStatus == MoveStatus.Idle)
+        {
+            StartCoroutine(Stagger(vector));
+        }
+    }
+
+    IEnumerator Stagger(Vector3 vector)
+    {
+        moveStatus = MoveStatus.Stagger;
+
         knockbackVector = vector;
-        knockbackForce = force;
-        knockbackTimeWeight = timeWeight;
-        StartCoroutine(Stagger());
-    }
+        knockbackForce = enemy.knockback.knockbackForce;
+        knockbackTimeWeight = enemy.knockback.knockbackTimeWeight;
 
-    IEnumerator Stagger()
-    {
-        status = Status.Stagger;
-        moveSpeed = 0f;
         yield return new WaitForSeconds(knockbackTimeWeight);
 
-        knockbackTimeWeight = 0f;
+        yield return waitForFixedUpdate;
+
         moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
-        status = Status.Idle;
+        moveStatus = MoveStatus.Idle;
     }
 
     private Vector2 CalculateKnockback()
@@ -289,9 +310,8 @@ public class EnemyMovementAI : MonoBehaviour
 
         if (knockbackTimeWeight > 0f)
         {
-            knockbackTimeWeight -= Time.fixedDeltaTime;
+            knockbackTimeWeight -= Time.deltaTime;
             updatedKnockbackVector = knockbackVector * knockbackForce * (knockbackTimeWeight > 0f ? knockbackTimeWeight : 0f);
-
         }
         else
         {
@@ -299,11 +319,6 @@ public class EnemyMovementAI : MonoBehaviour
         }
 
         return updatedKnockbackVector;
-    }
-
-    private void WeaponFiredWithoutRoutine()
-    {
-        enemy.isFiring = false;
     }
 
     IEnumerator WeaponFiredRoutine()
@@ -318,11 +333,10 @@ public class EnemyMovementAI : MonoBehaviour
 
     IEnumerator NullifySpeedForDeathRoutine()
     {
-        moveSpeed = 0f;
-        enemy.knockback.knockbackForce = 0f;
-        enemy.rb2D.velocity = new Vector2(0f, 0f);
+        yield return waitForFixedUpdate;
 
-        yield return null;
+        moveSpeed = 0f;
+        knockbackForce = 0f;
     }
 
 
