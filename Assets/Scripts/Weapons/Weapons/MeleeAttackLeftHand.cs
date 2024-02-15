@@ -139,11 +139,20 @@ public class MeleeAttackLeftHand : MonoBehaviour
             float randomStunNum = Random.Range(0f, 1f);
             if (randomStunNum > 0.6f)
             {
-                enemyMovementAI.moveStatus = MoveStatus.Stun;
-                enemy.healthEvent.CallGetStunEvent();
-                enemy.animator.SetBool(Settings.isStunned, true);
+                StartCoroutine(StunRoutine(enemy));
             }
         }
+    }
+
+    IEnumerator StunRoutine(Enemy enemy)
+    {
+        enemy.enemyMovementAI.moveStatus = MoveStatus.Stun;
+        enemy.healthEvent.CallGetStunEvent();
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezePosition;
+        enemy.animator.SetBool(Settings.isStunned, true);
+        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
+
+        yield return new WaitForFixedUpdate();
     }
 
     private void PlayerAttackAnimation()

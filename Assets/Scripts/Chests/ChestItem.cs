@@ -38,7 +38,15 @@ public class ChestItem : MonoBehaviour
         if (collision.tag == "Player")
         {
             Player player = collision.GetComponent<Player>();
-            CollectItem(player);
+
+            try
+            {
+                CollectItem(player);
+            }
+            catch (InvalidOperationException)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 

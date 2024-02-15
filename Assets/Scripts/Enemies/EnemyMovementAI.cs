@@ -67,6 +67,7 @@ public class EnemyMovementAI : MonoBehaviour
         // Second check if enemy is on stun status
         if (moveStatus == MoveStatus.Stun)
         {
+            enemy.animateEnemy.SetIdleAnimationParameters();
             stunEnemyRoutine = StartCoroutine(StunRoutine());
             return;
         }
@@ -266,6 +267,7 @@ public class EnemyMovementAI : MonoBehaviour
 
         enemy.healthEvent.CallStunCuredEvent();
         enemy.animator.SetBool(Settings.isStunned, false);
+        enemy.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
 
         // Reset stun status and allow other stun coroutines to be started
         moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();

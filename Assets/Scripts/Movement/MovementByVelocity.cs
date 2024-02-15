@@ -18,6 +18,10 @@ public class MovementByVelocity : MonoBehaviour
     Vector3 knockbackVector;
     float knockbackForce;
     float knockbackTimeWeight;
+    Coroutine stunPlayerRoutine;
+
+    Coroutine trailParticlesCoroutine;
+    float trailParticlesDuration = 1f;
 
     private void Awake()
     {
@@ -33,18 +37,40 @@ public class MovementByVelocity : MonoBehaviour
 
     private void Move()
     {
-        if (player.moveStatus == MoveStatus.Stun)
+        // Check trail dust emittance based on move condition
+        if (moveSpeed < 0.5f || (Mathf.Abs(MovementInput.x) < 0.1f && Mathf.Abs(MovementInput.y) < 0.1f))
         {
-            StartCoroutine(StunRoutine());
-        }
-        else if (player.moveStatus == MoveStatus.Stagger)
-        {
-            rb2D.velocity = CalculateKnockback();
+            StopTrailParticles();
         }
         else
         {
-            rb2D.velocity = MovementInput * moveSpeed;
+            if (trailParticlesCoroutine == null)
+            {
+                // If coroutine isn't running, start it to emit particles for a certain duration
+                trailParticlesCoroutine = StartCoroutine(PlayTrailParticlesForDuration());
+            }
         }
+
+        // If stun coroutine is already running, do not start another one
+        if (stunPlayerRoutine != null) return;
+
+        // Second check if player is on stun status
+        if (player.moveStatus == MoveStatus.Stun)
+        {
+            StopTrailParticles();
+            stunPlayerRoutine = StartCoroutine(StunRoutine());
+            return;
+        }
+
+        // Third check if enemy is on knockback status
+        if (player.moveStatus == MoveStatus.Stagger)
+        {
+            rb2D.velocity = CalculateKnockback();
+            return;
+        }
+
+        // If none of the above conditions are met, perform regular move
+        rb2D.velocity = MovementInput * moveSpeed;
     }
 
     /// <summary>
@@ -67,8 +93,11 @@ public class MovementByVelocity : MonoBehaviour
 
         player.healthEvent.CallStunCuredEvent();
         player.animator.SetBool(Settings.isStunned, false);
+
+        // Reset stun status and allow other stun coroutines to be started
         moveSpeed = movementDetails.GetMoveSpeed();
         player.moveStatus = MoveStatus.Idle;
+        stunPlayerRoutine = null;
     }
 
     public void TriggerKnockback(Vector3 vector)
@@ -77,6 +106,36 @@ public class MovementByVelocity : MonoBehaviour
         {
             StartCoroutine(Stagger(vector));
         }
+    }
+
+    // Coroutine to play trail particles for a certain duration
+    private IEnumerator PlayTrailParticlesForDuration()
+    {
+        PlayTrailParticles(); // Start trail particles emission
+        yield return new WaitForSeconds(trailParticlesDuration); // Wait for specified duration
+
+        StopTrailParticles(); // Stop trail particles emission
+        trailParticlesCoroutine = null; // Reset coroutine reference
+    }
+
+    private void PlayTrailParticles()
+    {
+        // Calculate player direction
+        Vector3 playerDirection = MovementInput;
+
+        // Convert direction to rotation
+        Quaternion rotation = Quaternion.LookRotation(playerDirection, Vector3.up);
+
+        // Set start rotation of the particle system
+        ParticleSystem.MainModule mainModule = player.particlesSystem.main;
+        mainModule.startRotation = (rotation.eulerAngles.y * Mathf.Deg2Rad) - (90 * Mathf.Deg2Rad);
+
+        player.particlesSystem.Play();
+    }
+
+    private void StopTrailParticles()
+    {
+        player.particlesSystem.Stop();
     }
 
     IEnumerator Stagger(Vector3 vector)

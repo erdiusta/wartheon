@@ -19,6 +19,7 @@ public class Health : MonoBehaviour
     HealthEvent healthEvent;
     Player player;
     Coroutine immunityCoroutine;
+    Coroutine getHitFxCoroutine;
     bool isImmuneAfterHit;
     float immunityTime = 0f;
     SpriteRenderer spriteRenderer;
@@ -130,6 +131,11 @@ public class Health : MonoBehaviour
             {
                 EnemyGetHitAnimation();
 
+                if (getHitFxCoroutine == null)
+                {
+                    getHitFxCoroutine = StartCoroutine(EnemyGetHitFxRoutine());
+                }
+
                 if (currentHealth <= 0)
                 {
                     enemy.dropOnDestroy.DropProcess();
@@ -180,13 +186,6 @@ public class Health : MonoBehaviour
 
             SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
             enemy.animator.SetTrigger(Settings.getHit);
-
-            //yield return null;
-
-            //enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 1f);
-            //enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
-            //enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
-            //enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
         }
         else
         {
@@ -194,9 +193,17 @@ public class Health : MonoBehaviour
             enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
             enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
             enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 1f);
-
-            //yield return null;
         }
+    }
+
+    IEnumerator EnemyGetHitFxRoutine()
+    {
+        enemy.particlesSystem.Play();
+
+        yield return new WaitForSeconds(1f);
+
+        enemy.particlesSystem.Stop();
+        getHitFxCoroutine = null;
     }
 
     /// <summary>

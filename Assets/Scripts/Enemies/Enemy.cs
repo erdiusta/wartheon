@@ -60,6 +60,8 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public StatusManager statusManager;
     [HideInInspector] public DamageDisplay damageDisplay;
 
+    public ParticleSystem particlesSystem;
+
     FireWeapon fireWeapon;
     SetActiveWeaponEvent setActiveWeaponEvent;
     MaterializeEffect materializeEffect;

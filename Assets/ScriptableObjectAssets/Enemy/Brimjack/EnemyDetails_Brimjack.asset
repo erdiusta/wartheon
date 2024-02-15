@@ -23,6 +23,7 @@ MonoBehaviour:
   isPoisonous: 0
   hasAcid: 1
   acidEfficiency: 0.4
+  hasStunDamage: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -31,6 +32,8 @@ MonoBehaviour:
   deathSoundEffect: {fileID: 11400000, guid: bb4cdfaa3e5c20b4d87687e7b68870c7, type: 2}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 0}
+  stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
+  poisonSoundEffect: {fileID: 0}
   enemyWeapon: {fileID: 0}
   firingIntervalMin: 0.1
   firingIntervalMax: 1

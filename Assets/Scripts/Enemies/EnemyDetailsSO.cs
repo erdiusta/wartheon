@@ -110,6 +110,15 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("The sound effect for this enemy to deflect")]
     #endregion
     public SoundEffectSO deflectSoundEffect;
+    #region Tooltip
+    [Tooltip("The sound effect for this enemy to be stunned")]
+    #endregion
+    public SoundEffectSO stunSoundEffect;
+    #region Tooltip
+    [Tooltip("The sound effect for this enemy to be poisoned")]
+    #endregion
+    public SoundEffectSO poisonSoundEffect;
+
 
     #region Header ENEMY WEAPON SETTINGS
     [Space(10)]

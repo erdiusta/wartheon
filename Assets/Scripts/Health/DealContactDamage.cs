@@ -58,6 +58,8 @@ public class DealContactDamage : MonoBehaviour
 
         if ((layerMask.value & collisionObjectLayerMask) == 0) return;
 
+        if (tag == "Chest Item") return;
+
         if (tag == "Enemy")
         {
             EnemyAttack();

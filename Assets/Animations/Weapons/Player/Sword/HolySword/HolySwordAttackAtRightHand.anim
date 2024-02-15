@@ -242,6 +242,19 @@ AnimationClip:
     classID: 212
     script: {fileID: 0}
     flags: 2
+  - serializedVersion: 2
+    curve:
+    - time: 0
+      value: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+    - time: 0.06666667
+      value: {fileID: 2100000, guid: 7250dc13c7f24a4449c612f48de0589e, type: 2}
+    - time: 0.25
+      value: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+    attribute: m_Materials.Array.data[0]
+    path: RightWeaponRotationPoint/Weapon
+    classID: 212
+    script: {fileID: 0}
+    flags: 2
   m_SampleRate: 60
   m_WrapMode: 0
   m_Bounds:
@@ -264,6 +277,15 @@ AnimationClip:
       script: {fileID: 0}
       typeID: 212
       customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    - serializedVersion: 2
+      path: 1203281921
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 21
       isPPtrCurve: 1
       isIntCurve: 0
       isSerializeReferenceCurve: 0
@@ -306,6 +328,9 @@ AnimationClip:
     - {fileID: -1908614874, guid: f53b0475c86f95141910cb247770d70f, type: 3}
     - {fileID: 1847559946, guid: f53b0475c86f95141910cb247770d70f, type: 3}
     - {fileID: 735104743, guid: f53b0475c86f95141910cb247770d70f, type: 3}
+    - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+    - {fileID: 2100000, guid: 7250dc13c7f24a4449c612f48de0589e, type: 2}
+    - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

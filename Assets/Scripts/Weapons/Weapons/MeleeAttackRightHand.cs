@@ -17,6 +17,7 @@ public class MeleeAttackRightHand : MonoBehaviour
     Health enemyHealth;
     Player player;
     bool rightHandAttackBlocked;
+    int attackOrderNum = 0;
 
     private void Awake()
     {
@@ -148,7 +149,9 @@ public class MeleeAttackRightHand : MonoBehaviour
     {
         enemy.enemyMovementAI.moveStatus = MoveStatus.Stun;
         enemy.healthEvent.CallGetStunEvent();
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezePosition;
         enemy.animator.SetBool(Settings.isStunned, true);
+        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
 
         yield return new WaitForFixedUpdate();
     }
@@ -173,7 +176,6 @@ public class MeleeAttackRightHand : MonoBehaviour
     {
         if (rightHandAttackBlocked) return;
 
-        // Trigger the attack animation
         rightHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtRightHand);
 
         IsAttackingAtRightHand = true;

@@ -70,6 +70,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool isDead;
     [HideInInspector] public StatusManager statusManager;
 
+    public ParticleSystem particlesSystem;
     public List<Weapon> weaponRightHandList = new List<Weapon>();
     public List<Weapon> weaponLeftHandList = new List<Weapon>(); 
 
