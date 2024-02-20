@@ -48,6 +48,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public Rigidbody2D rb2D;
     [HideInInspector] public MovementToPosition movementToPosition;
     [HideInInspector] public EnemyMovementAI enemyMovementAI;
+    [HideInInspector] public DealContactDamage dealContactDamage;
     [HideInInspector] public EnemyWeaponAI enemyWeaponAI;
     [HideInInspector] public Knockback knockback;
     [HideInInspector] public bool isDead;
@@ -78,6 +79,7 @@ public class Enemy : MonoBehaviour
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
         destroyedEvent = GetComponent<DestroyedEvent>();
         enemyMovementAI = GetComponent<EnemyMovementAI>();
+        dealContactDamage = GetComponent<DealContactDamage>();
         enemyWeaponAI = GetComponent<EnemyWeaponAI>();
         materializeEffect = GetComponent<MaterializeEffect>();
         circleCollider2D = GetComponent<CircleCollider2D>();

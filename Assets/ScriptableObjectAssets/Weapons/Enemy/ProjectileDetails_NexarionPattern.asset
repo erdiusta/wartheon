@@ -23,9 +23,9 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 0}
   projectileDamageMin: 7
   projectileDamageMax: 12
-  projectileSpeedMin: 6
-  projectileSpeedMax: 9
-  projectileRange: 25
+  projectileSpeedMin: 5
+  projectileSpeedMax: 7
+  projectileRange: 8
   projectileRotationSpeed: 120
   projectileSpreadMin: 1
   projectileSpreadMax: 3

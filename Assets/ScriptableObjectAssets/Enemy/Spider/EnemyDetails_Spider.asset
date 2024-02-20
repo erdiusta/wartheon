@@ -15,7 +15,11 @@ MonoBehaviour:
   enemyName: Spider
   enemyPrefab: {fileID: 7183228443647751644, guid: 6e739ab4ccc3c494eaba2e414a0151b4, type: 3}
   movementDetails: {fileID: 11400000, guid: 355c7e033e92d284b98a59710ec9735e, type: 2}
-  chaseDistance: 12
+  chaseDistance: 8
+  hasAttackMove: 0
+  attackMoveTriggerDistance: 0
+  attackMoveEfficentDistance: 0
+  attackMoveCooldown: 0
   enemyBehaviour: 0
   isEnemyBoss: 0
   enemyArmorValue: 2

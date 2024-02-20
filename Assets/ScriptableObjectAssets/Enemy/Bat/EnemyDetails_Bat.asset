@@ -15,7 +15,11 @@ MonoBehaviour:
   enemyName: Bat
   enemyPrefab: {fileID: 7183228443647751644, guid: 5b47e0efa440e0443a327bd01a1d9035, type: 3}
   movementDetails: {fileID: 11400000, guid: 0fec25a507abd7d44965f2276a63e9fe, type: 2}
-  chaseDistance: 15
+  chaseDistance: 9
+  hasAttackMove: 0
+  attackMoveTriggerDistance: 0
+  attackMoveEfficentDistance: 0
+  attackMoveCooldown: 0
   enemyBehaviour: 0
   isEnemyBoss: 0
   enemyArmorValue: 2

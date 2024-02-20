@@ -16,13 +16,17 @@ MonoBehaviour:
   enemyPrefab: {fileID: 7183228443647751644, guid: 904881d400f1631449a2d444c2338eb7, type: 3}
   movementDetails: {fileID: 11400000, guid: c1cd655cbba76594ca00f689668e9744, type: 2}
   chaseDistance: 4
+  hasAttackMove: 0
+  attackMoveTriggerDistance: 0
+  attackMoveEfficentDistance: 0
+  attackMoveCooldown: 0
   enemyBehaviour: 1
   isEnemyBoss: 0
   enemyArmorValue: 1
   hasShield: 0
   isPoisonous: 1
   hasAcid: 0
-  acidEfficiency: 0.4
+  acidEfficiency: 0
   hasStunDamage: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
@@ -39,7 +43,7 @@ MonoBehaviour:
   firingIntervalMax: 1
   firingDurationMin: 1
   firingDurationMax: 2
-  firingLineOfSightRequired: 0
+  firingLineOfSightRequired: 1
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     enemyHealthAmount: 20

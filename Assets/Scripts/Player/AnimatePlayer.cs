@@ -48,8 +48,17 @@ public class AnimatePlayer : MonoBehaviour
     /// </summary>
     public void SetMovementAnimationParameters()
     {
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
+        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
+
+        player.animator.SetBool(Settings.attackMotion, false);
         player.animator.SetBool(Settings.isMoving, true);
         player.animator.SetBool(Settings.isIdle, false);
+        player.animator.SetBool(Settings.getHit, false);
+        player.animator.SetBool(Settings.death, false);
     }
 
     /// <summary>
@@ -57,8 +66,53 @@ public class AnimatePlayer : MonoBehaviour
     /// </summary>
     public void SetIdleAnimationParameters()
     {
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
+        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
+
+        player.animator.SetBool(Settings.attackMotion, false);
         player.animator.SetBool(Settings.isMoving, false);
         player.animator.SetBool(Settings.isIdle, true);
+        player.animator.SetBool(Settings.getHit, false);
+        player.animator.SetBool(Settings.death, false);
+    }
+
+    /// <summary>
+    /// Play get hit animation
+    /// </summary>
+    public void SetGetHitAnimationParameters()
+    {
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(baseLayerIndex, 0f);
+        player.animator.SetLayerWeight(attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(getHitLayerIndex, 1f);
+        player.animator.SetLayerWeight(deathLayerIndex, 0f);
+
+        player.animator.SetBool(Settings.attackMotion, false);
+        player.animator.SetBool(Settings.isMoving, false);
+        player.animator.SetBool(Settings.isIdle, false);
+        player.animator.SetBool(Settings.getHit, true);
+        player.animator.SetBool(Settings.death, false);
+    }
+
+    /// <summary>
+    /// Play death animation
+    /// </summary>
+    public void SetDeathAnimationParameters()
+    {
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(baseLayerIndex, 0f);
+        player.animator.SetLayerWeight(attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(deathLayerIndex, 1f);
+
+        player.animator.SetBool(Settings.attackMotion, false);
+        player.animator.SetBool(Settings.isMoving, false);
+        player.animator.SetBool(Settings.isIdle, false);
+        player.animator.SetBool(Settings.getHit, false);
+        player.animator.SetBool(Settings.death, true);
     }
 
     /// <summary>

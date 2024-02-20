@@ -22,15 +22,12 @@ public class DealContactDamage : MonoBehaviour
     #endregion
     [SerializeField] private LayerMask layerMask;
 
-    Enemy enemy;
-    Player player;
-    ChestItem chestItem;    
+    Enemy enemy; 
     bool isColliding = false;
 
     private void Awake()
     {
         enemy = GetComponent<Enemy>();
-        player = GetComponent<Player>();
     }
 
     // Trigger contact damage when enter a collider
@@ -60,11 +57,6 @@ public class DealContactDamage : MonoBehaviour
 
         if (tag == "Chest Item") return;
 
-        if (tag == "Enemy")
-        {
-            EnemyAttack();
-        }
-
         // Check to see if the colliding object should take contact damage
         ReceiveContactDamage receiveContactDamage = collision.GetComponent<ReceiveContactDamage>();
 
@@ -75,7 +67,7 @@ public class DealContactDamage : MonoBehaviour
             // Reset the contact collision after set time
             Invoke("ResetContactCollision", Settings.contactDamageCollisionResetDelay);
 
-            if (collision.tag == "Player")
+            if (collision.tag == Settings.playerTag)
             {
                 Player player = collision.GetComponent<Player>();
 
@@ -86,7 +78,6 @@ public class DealContactDamage : MonoBehaviour
                     CheckStunStatus(player);
 
                     // Apply knockback
-                    Knockback knockback = player.knockback;
                     player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
                 }
 
@@ -103,34 +94,6 @@ public class DealContactDamage : MonoBehaviour
             {
                 receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
             }
-        }
-    }
-
-    /// <summary>
-    /// Enemy character attack motion
-    /// </summary>
-    private void EnemyAttack()
-    {
-        if (enemy.health.currentHealth > 0f)
-        {
-            enemy.animator.SetBool(Settings.isIdle, false);
-            enemy.animator.SetBool(Settings.isMoving, false);
-
-            // Adjust animator layer weights
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 1f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
-
-            enemy.animator.SetBool(Settings.attackMotion, true);
-            StartCoroutine(EnemyAttackRoutine());
-        }
-        else
-        {
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 1f);
         }
     }
 
@@ -182,18 +145,10 @@ public class DealContactDamage : MonoBehaviour
             {
                 player.moveStatus = MoveStatus.Stun;
                 player.healthEvent.CallGetStunEvent();
+                player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
                 player.animator.SetBool(Settings.isStunned, true);
             }
         }
-    }
-
-    IEnumerator EnemyAttackRoutine()
-    {
-        enemy.animateEnemy.isAttacking = true;
-
-        yield return new WaitForSeconds(0.2f);
-
-        enemy.animateEnemy.isAttacking = false;
     }
 
     /// <summary>

@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 8020798874596859608}
     - target: {fileID: 3042279324210234784, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: contactDamageAmount
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5693136729584463025, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: m_Name

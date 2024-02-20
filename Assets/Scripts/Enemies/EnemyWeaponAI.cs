@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Enemy))]
@@ -12,6 +13,8 @@ public class EnemyWeaponAI : MonoBehaviour
     [Tooltip("Populate this with the WeaponShootPosition child gameobject transform")]
     #endregion Tooltip
     [SerializeField] private Transform weaponShootPosition;
+
+    [HideInInspector] public Coroutine enemyAttackCoroutine;
 
     Enemy enemy;
     EnemyDetailsSO enemyDetails;
@@ -33,25 +36,28 @@ public class EnemyWeaponAI : MonoBehaviour
 
     private void Update()
     {
-        if (enemy.GetComponent<EnemyMovementAI>().moveStatus != MoveStatus.Stun)
-        {
-            // Update timers
-            firingIntervalTimer -= Time.deltaTime;
+        if (enemy.enemyMovementAI.moveStatus == MoveStatus.Stun) return;
 
-            // Interval Timer
-            if (firingIntervalTimer < 0f)
+        if (enemy.enemyMovementAI.moveStatus == MoveStatus.Stagger) return;
+
+        if (enemy.enemyMovementAI.attackMoveEnemyRoutine != null) return;
+
+        // Update timers
+        firingIntervalTimer -= Time.deltaTime;
+
+        // Interval Timer
+        if (firingIntervalTimer < 0f)
+        {
+            if (firingDurationTimer >= 0)
             {
-                if (firingDurationTimer >= 0)
-                {
-                    firingDurationTimer -= Time.deltaTime;
-                    DoFireWeapon();
-                }
-                else
-                {
-                    // Reset timers
-                    firingIntervalTimer = WeaponShootInterval();
-                    firingDurationTimer = WeaponShootDuration();
-                }
+                firingDurationTimer -= Time.deltaTime;
+                DoFireWeapon();
+            }
+            else
+            {
+                // Reset timers
+                firingIntervalTimer = WeaponShootInterval();
+                firingDurationTimer = WeaponShootDuration();
             }
         }
     }
@@ -99,8 +105,11 @@ public class EnemyWeaponAI : MonoBehaviour
                     return;
 
                 // Trigger fire weapon event
-                EnemyAttackAnimation();
-                enemy.fireWeaponEvent.CallFireWeaponEvent(true, true, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection);
+                if (enemyAttackCoroutine == null)
+                {
+                    enemyAttackCoroutine = StartCoroutine(EnemyAttackAnimRoutine());
+                    enemy.fireWeaponEvent.CallFireWeaponEvent(true, true, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection);
+                }
             }
         }
     }
@@ -144,21 +153,16 @@ public class EnemyWeaponAI : MonoBehaviour
     /// <summary>
     /// Enemy character attack motion
     /// </summary>
-    private void EnemyAttackAnimation()
+    IEnumerator EnemyAttackAnimRoutine()
     {
         if (enemy.health.currentHealth > 0f)
         {
-            // Adjust animator layer weights
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 1f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
+            enemy.animateEnemy.SetAttackAnimationParameters();
 
-            enemy.animator.SetTrigger(Settings.attackMotion);
-
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 1f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
+            yield return new WaitForSeconds(1f);
         }
+
+        enemyAttackCoroutine = null;
     }
 
     #region Validation

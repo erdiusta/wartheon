@@ -17,6 +17,9 @@ MonoBehaviour:
   weaponAnimatorController: {fileID: 0}
   weaponClass: 5
   wieldType: 1
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
   weaponShootPosition: {x: -0.63, y: 0.666, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 08a15f768e14d714b824d38be840f8e3, type: 2}
   weaponShootEffect: {fileID: 0}

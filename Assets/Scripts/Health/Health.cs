@@ -19,7 +19,6 @@ public class Health : MonoBehaviour
     HealthEvent healthEvent;
     Player player;
     Coroutine immunityCoroutine;
-    Coroutine getHitFxCoroutine;
     bool isImmuneAfterHit;
     float immunityTime = 0f;
     SpriteRenderer spriteRenderer;
@@ -33,6 +32,7 @@ public class Health : MonoBehaviour
     [HideInInspector] public bool isDamageable = true;
     [HideInInspector] public Enemy enemy;
     [HideInInspector] public int currentArmorValue;
+    [HideInInspector] public Coroutine getHitCoroutine;
 
     private void Awake()
     {
@@ -123,17 +123,21 @@ public class Health : MonoBehaviour
                 PostHitImmunity();
             }
 
-            if (tag == "Player")
+            if (tag == Settings.playerTag)
             {
-                PlayerGetHitAnimation();
-            }
-            else if (tag == "Enemy")
-            {
-                EnemyGetHitAnimation();
-
-                if (getHitFxCoroutine == null)
+                if (getHitCoroutine == null)
                 {
-                    getHitFxCoroutine = StartCoroutine(EnemyGetHitFxRoutine());
+                    if (currentHealth > 0)
+                    {
+                        getHitCoroutine = StartCoroutine(PlayerGetHitRoutine());
+                    }
+                }
+            }
+            if (tag == Settings.enemyTag)
+            {
+                if (getHitCoroutine == null)
+                {
+                    getHitCoroutine = StartCoroutine(EnemyGetHitRoutine());
                 }
 
                 if (currentHealth <= 0)
@@ -150,60 +154,42 @@ public class Health : MonoBehaviour
         }
     }
 
-    private void PlayerGetHitAnimation()
+    IEnumerator PlayerGetHitRoutine()
     {
         if (player.health.currentHealth > 0f)
         {
-            // Adjust animator layer weights
-            player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
-            player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
-            player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 1f);
-            player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
-
+            player.animatePlayer.SetGetHitAnimationParameters();
             SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
-            player.animator.SetTrigger(Settings.getHit);
         }
         else
         {
-            player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
-            player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
-            player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
-            player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 1f);
-
-            //yield return null;
+            player.animatePlayer.SetDeathAnimationParameters();
         }
+
+        yield return new WaitForSeconds(0.5f);
+
+        getHitCoroutine = null;
     }
 
-    private void EnemyGetHitAnimation()
+    IEnumerator EnemyGetHitRoutine()
     {
         if (enemy.health.currentHealth > 0f)
         {
-            // Adjust animator layer weights
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 1f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
-
+            enemy.animateEnemy.SetGetHitAnimationParameters();
             SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
-            enemy.animator.SetTrigger(Settings.getHit);
         }
         else
         {
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
-            enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 1f);
+            enemy.animateEnemy.SetDeathAnimationParameters();
         }
-    }
 
-    IEnumerator EnemyGetHitFxRoutine()
-    {
         enemy.particlesSystem.Play();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.7f);
 
         enemy.particlesSystem.Stop();
-        getHitFxCoroutine = null;
+        enemy.animator.SetBool(Settings.getHit, false);
+        getHitCoroutine = null;
     }
 
     /// <summary>
@@ -219,7 +205,9 @@ public class Health : MonoBehaviour
         if (isImmuneAfterHit)
         {
             if (immunityCoroutine != null)
+            {
                 StopCoroutine(immunityCoroutine);
+            }
 
             // Flash red&white and give period of immunity
             immunityCoroutine = StartCoroutine(PostHitImmunityRoutine(immunityTime, spriteRenderer));
@@ -301,6 +289,7 @@ public class Health : MonoBehaviour
         }
 
         isDamageable = true;
+        immunityCoroutine = null;
     }
 
     private void CallHealthEvent(int damageAmount)

@@ -25,6 +25,22 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public float chaseDistance = 50f;
     #region Tooltip
+    [Tooltip("Check if enemy has an attack move in a certain distance")]
+    #endregion
+    public bool hasAttackMove;
+    #region Tooltip
+    [Tooltip("Distance to the player for attack triggering")]
+    #endregion
+    public float attackMoveTriggerDistance = 3f;
+    #region Tooltip
+    [Tooltip("Efficient distance of attack move performed")]
+    #endregion
+    public float attackMoveEfficentDistance = 8f;
+    #region Tooltip
+    [Tooltip("Cooldown duration after special attack performed")]
+    #endregion
+    public float attackMoveCooldown = 8f;
+    #region Tooltip
     [Tooltip("Enemy behaviour type")]
     #endregion
     public EnemyBehaviour enemyBehaviour;

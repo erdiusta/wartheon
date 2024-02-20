@@ -7,6 +7,8 @@ public class MeleeAttackRightHand : MonoBehaviour
 {
     public bool IsAttackingAtRightHand { get; set; }
 
+    [HideInInspector] public Coroutine playerAttackRightHandRoutine;
+
     MeleeAttackEvent meleeAttackEvent;
     Animator rightHandMeleeAnimator;
     SpriteRenderer weaponSpriteRenderer;
@@ -17,7 +19,6 @@ public class MeleeAttackRightHand : MonoBehaviour
     Health enemyHealth;
     Player player;
     bool rightHandAttackBlocked;
-    int attackOrderNum = 0;
 
     private void Awake()
     {
@@ -71,24 +72,27 @@ public class MeleeAttackRightHand : MonoBehaviour
             if (collider.GetType() == typeof(PolygonCollider2D))
             {
                 // Don't hit yourself if player is also in the collider list
-                if (collider.tag == "Player")
+                if (collider.tag == Settings.playerTag)
                     continue;
 
                 if (enemyHealth = collider.GetComponent<Health>())
                 {
                     Enemy enemy = collider.GetComponent<Enemy>();
 
+                    int inflictedDamage = CalculateDamageAmount();
+                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position);
+
                     CheckAcidStatus(enemy);
                     CheckStunStatus(enemy);
-
-                    int inflictedDamage = CalculateDamageAmount();
-
-                    PlayerAttackAnimation();
-                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position);
 
                     if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
                     {
                         enemy.GetComponent<EnemyMovementAI>().TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                    }
+
+                    if (playerAttackRightHandRoutine == null)
+                    {
+                        playerAttackRightHandRoutine = StartCoroutine(PlayerAttackAnimRoutine());
                     }
                 }
             }
@@ -114,7 +118,8 @@ public class MeleeAttackRightHand : MonoBehaviour
     /// </summary>
     private void CheckAcidStatus(Enemy enemy)
     {
-        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid)
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid & 
+            enemy.health.currentHealth > 0)
         {
             float randomAcidNum = Random.Range(0f, 1f);
             if (randomAcidNum > 0.6f)
@@ -135,7 +140,8 @@ public class MeleeAttackRightHand : MonoBehaviour
     {
         EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
 
-        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun)
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun 
+            && enemy.health.currentHealth > 0)
         {
             float randomStunNum = Random.Range(0f, 1f);
             if (randomStunNum > 0.6f)
@@ -149,14 +155,14 @@ public class MeleeAttackRightHand : MonoBehaviour
     {
         enemy.enemyMovementAI.moveStatus = MoveStatus.Stun;
         enemy.healthEvent.CallGetStunEvent();
-        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezePosition;
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         enemy.animator.SetBool(Settings.isStunned, true);
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
 
         yield return new WaitForFixedUpdate();
     }
 
-    private void PlayerAttackAnimation()
+    IEnumerator PlayerAttackAnimRoutine()
     {
         // Adjust animator layer weights
         player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
@@ -164,7 +170,11 @@ public class MeleeAttackRightHand : MonoBehaviour
         player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
         player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
 
-        player.animator.SetTrigger(Settings.attackMotion);
+        player.animator.SetBool(Settings.attackMotion, true);
+
+        yield return new WaitForSeconds(0.3f);
+
+        playerAttackRightHandRoutine = null;
     }
 
     public void ResetIsAttackingRightHand()
@@ -207,5 +217,3 @@ public class MeleeAttackRightHand : MonoBehaviour
         }
     }
 }
-
-

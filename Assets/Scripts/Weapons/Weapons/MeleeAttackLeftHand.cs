@@ -7,6 +7,8 @@ public class MeleeAttackLeftHand : MonoBehaviour
 {
     public bool IsAttackingAtLeftHand { get; private set; }
 
+    [HideInInspector] public Coroutine playerAttackLeftHandRoutine;
+
     MeleeAttackEvent meleeAttackEvent;
     Animator leftHandMeleeAnimator;
     SpriteRenderer weaponSpriteRenderer;
@@ -76,17 +78,20 @@ public class MeleeAttackLeftHand : MonoBehaviour
                 {
                     Enemy enemy = collider.GetComponent<Enemy>();
 
+                    int inflictedDamage = CalculateDamageAmount();
+                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position);
+
                     CheckAcidStatus(enemy);
                     CheckStunStatus(enemy);
-
-                    int inflictedDamage = CalculateDamageAmount();
-
-                    PlayerAttackAnimation();
-                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position);
 
                     if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
                     {
                         enemy.GetComponent<EnemyMovementAI>().TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                    }
+
+                    if (playerAttackLeftHandRoutine == null)
+                    {
+                        playerAttackLeftHandRoutine = StartCoroutine(PlayerAttackAnimRoutine());
                     }
                 }
             }
@@ -112,7 +117,8 @@ public class MeleeAttackLeftHand : MonoBehaviour
     /// </summary>
     private void CheckAcidStatus(Enemy enemy)
     {
-        if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid)
+        if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid &
+            enemy.health.currentHealth > 0)
         {
             // Check get acid
             float randomAcidNum = Random.Range(0f, 1f);
@@ -134,7 +140,8 @@ public class MeleeAttackLeftHand : MonoBehaviour
     {
         EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
 
-        if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun)
+        if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun
+            && enemy.health.currentHealth > 0)
         {
             float randomStunNum = Random.Range(0f, 1f);
             if (randomStunNum > 0.6f)
@@ -148,14 +155,14 @@ public class MeleeAttackLeftHand : MonoBehaviour
     {
         enemy.enemyMovementAI.moveStatus = MoveStatus.Stun;
         enemy.healthEvent.CallGetStunEvent();
-        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezePosition;
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         enemy.animator.SetBool(Settings.isStunned, true);
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
 
         yield return new WaitForFixedUpdate();
     }
 
-    private void PlayerAttackAnimation()
+    IEnumerator PlayerAttackAnimRoutine()
     {
         // Adjust animator layer weights
         player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
@@ -163,7 +170,12 @@ public class MeleeAttackLeftHand : MonoBehaviour
         player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
         player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
 
-        player.animator.SetTrigger(Settings.attackMotion);
+        player.animator.SetBool(Settings.attackMotion, true);
+
+        yield return new WaitForSeconds(0.3f);
+
+        playerAttackLeftHandRoutine = null;
+        player.animatePlayer.SetIdleAnimationParameters();
     }
 
     public void ResetIsAttackingLeftHand()

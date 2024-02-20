@@ -390,9 +390,8 @@ public class PlayerControl : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
 
-        yield return new WaitForFixedUpdate();
-
         player.moveStatus = MoveStatus.Idle;
+        player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallStunCuredEvent();
         player.animator.SetBool(Settings.isStunned, false);
         player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetMoveSpeed();

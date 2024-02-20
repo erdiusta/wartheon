@@ -15,7 +15,11 @@ MonoBehaviour:
   enemyName: Brimjack
   enemyPrefab: {fileID: 7183228443647751644, guid: b71a5b0dce9a0b042b1ef8ea565684a4, type: 3}
   movementDetails: {fileID: 11400000, guid: cb827ce3833474742a106c63af6e31b4, type: 2}
-  chaseDistance: 12
+  chaseDistance: 10
+  hasAttackMove: 0
+  attackMoveTriggerDistance: 0
+  attackMoveEfficentDistance: 0
+  attackMoveCooldown: 0
   enemyBehaviour: 0
   isEnemyBoss: 0
   enemyArmorValue: 3

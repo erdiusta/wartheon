@@ -15,7 +15,11 @@ MonoBehaviour:
   enemyName: Skeleton
   enemyPrefab: {fileID: 7183228443647751644, guid: fb4b93be95ba7c8469687f705f0f473f, type: 3}
   movementDetails: {fileID: 11400000, guid: 6f633f705e9bde84ba5ee31559f34b80, type: 2}
-  chaseDistance: 10
+  chaseDistance: 7
+  hasAttackMove: 0
+  attackMoveTriggerDistance: 0
+  attackMoveEfficentDistance: 0
+  attackMoveCooldown: 0
   enemyBehaviour: 0
   isEnemyBoss: 0
   enemyArmorValue: 5

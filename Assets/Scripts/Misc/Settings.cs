@@ -65,6 +65,7 @@ public static class Settings
     #region GAMEOBJECT TAGS
     public const string playerTag = "Player";
     public const string playerWeapon = "playerWeapon";
+    public const string enemyTag = "Enemy";
     #endregion
 
     #region FIRING CONTROL
@@ -78,7 +79,7 @@ public static class Settings
     public const int preferredPathAStarMovementPenalty = 1;
     public const int targetFrameRateToSpreadPathfindingOver = 60;
     public const float playerMoveDistanceToRebuildPath = 2f;
-    public const float enemyPathRebuildCooldown = 1f;
+    public const float enemyPathRebuildCooldown = 2f;
     #endregion
 
     #region ENEMY PARAMETERS

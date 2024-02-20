@@ -201,6 +201,11 @@ public class FireWeapon : MonoBehaviour
 
         // Weapon fired sound effect
         WeaponSoundEffect();
+
+        if (enemy != null)
+        {
+            enemy.isFiring = false;
+        }
     }
 
     /// <summary>
@@ -220,7 +225,7 @@ public class FireWeapon : MonoBehaviour
         // Reset precharge timer
         firePrechargeTimer = activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime;
 
-        if (tag == "Player" && GetComponent<Player>().activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
+        if (tag == Settings.playerTag && GetComponent<Player>().activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
         {
             // Check for first frame for not jumping to fire completed
             if (firePreviousFrame == true)
