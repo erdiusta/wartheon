@@ -79,11 +79,16 @@ public class MeleeAttackRightHand : MonoBehaviour
                 {
                     Enemy enemy = collider.GetComponent<Enemy>();
 
-                    int inflictedDamage = CalculateDamageAmount();
+                    int inflictedDamage = CalculateDamageAmount(enemy);
                     enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position);
 
                     CheckAcidStatus(enemy);
                     CheckStunStatus(enemy);
+
+                    if (player.playerDetails.playerCharacterName == Settings.erebus && player.playerDetails.onStealth)
+                    {
+                        player.playerControl.Unstealth();
+                    }
 
                     if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
                     {
@@ -102,11 +107,25 @@ public class MeleeAttackRightHand : MonoBehaviour
     /// <summary>
     /// Calculate damage amount
     /// </summary>
-    private int CalculateDamageAmount()
+    private int CalculateDamageAmount(Enemy enemy)
     {
         // Damage produced by player
         int damageDone = Random.Range(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMin,
             player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMax);
+
+        // Critical hit check
+        float randomCriticalDice = Random.Range(0f, 1f);
+        bool criticalHitHappened = randomCriticalDice < player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.criticalHitChance ?
+            true : false;
+
+        if (criticalHitHappened)
+        {
+            enemy.healthEvent.CallCriticalHitEvent();
+            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.criticalHitSoundEffect);
+        } 
+
+        damageDone = criticalHitHappened == true ? (int)(damageDone * player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.
+            criticalHitDamageMultiplier) : damageDone;
 
         // Damage inflicted to enemy after deducting enemy armor
         int inflictedDamage = damageDone > enemyHealth.GetArmorValue() ? damageDone - enemyHealth.GetArmorValue() : 1;
@@ -162,7 +181,7 @@ public class MeleeAttackRightHand : MonoBehaviour
         yield return new WaitForFixedUpdate();
     }
 
-    IEnumerator PlayerAttackAnimRoutine()
+    public IEnumerator PlayerAttackAnimRoutine()
     {
         // Adjust animator layer weights
         player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);

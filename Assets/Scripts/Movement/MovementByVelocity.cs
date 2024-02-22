@@ -127,15 +127,15 @@ public class MovementByVelocity : MonoBehaviour
         Quaternion rotation = Quaternion.LookRotation(playerDirection, Vector3.up);
 
         // Set start rotation of the particle system
-        ParticleSystem.MainModule mainModule = player.particlesSystem.main;
+        ParticleSystem.MainModule mainModule = player.dustParticlesSystem.main;
         mainModule.startRotation = (rotation.eulerAngles.y * Mathf.Deg2Rad) - (90 * Mathf.Deg2Rad);
 
-        player.particlesSystem.Play();
+        player.dustParticlesSystem.Play();
     }
 
     private void StopTrailParticles()
     {
-        player.particlesSystem.Stop();
+        player.dustParticlesSystem.Stop();
     }
 
     IEnumerator Stagger(Vector3 vector)

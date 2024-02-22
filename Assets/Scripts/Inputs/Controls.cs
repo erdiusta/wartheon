@@ -116,6 +116,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Special Move"",
+                    ""type"": ""Button"",
+                    ""id"": ""18d82115-ffab-441e-8d09-3ba1ec79990b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -327,6 +336,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Interaction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e9ef3500-fe44-49cb-82f5-869a154baee1"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Special Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -345,6 +365,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_ResetWeaponIndex = m_PlayerInput.FindAction("Reset Weapon Index", throwIfNotFound: true);
         m_PlayerInput_NextLevel = m_PlayerInput.FindAction("Next Level", throwIfNotFound: true);
         m_PlayerInput_Interaction = m_PlayerInput.FindAction("Interaction", throwIfNotFound: true);
+        m_PlayerInput_SpecialMove = m_PlayerInput.FindAction("Special Move", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -416,6 +437,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_ResetWeaponIndex;
     private readonly InputAction m_PlayerInput_NextLevel;
     private readonly InputAction m_PlayerInput_Interaction;
+    private readonly InputAction m_PlayerInput_SpecialMove;
     public struct PlayerInputActions
     {
         private @Controls m_Wrapper;
@@ -430,6 +452,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @ResetWeaponIndex => m_Wrapper.m_PlayerInput_ResetWeaponIndex;
         public InputAction @NextLevel => m_Wrapper.m_PlayerInput_NextLevel;
         public InputAction @Interaction => m_Wrapper.m_PlayerInput_Interaction;
+        public InputAction @SpecialMove => m_Wrapper.m_PlayerInput_SpecialMove;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -469,6 +492,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Interaction.started += instance.OnInteraction;
             @Interaction.performed += instance.OnInteraction;
             @Interaction.canceled += instance.OnInteraction;
+            @SpecialMove.started += instance.OnSpecialMove;
+            @SpecialMove.performed += instance.OnSpecialMove;
+            @SpecialMove.canceled += instance.OnSpecialMove;
         }
 
         private void UnregisterCallbacks(IPlayerInputActions instance)
@@ -503,6 +529,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Interaction.started -= instance.OnInteraction;
             @Interaction.performed -= instance.OnInteraction;
             @Interaction.canceled -= instance.OnInteraction;
+            @SpecialMove.started -= instance.OnSpecialMove;
+            @SpecialMove.performed -= instance.OnSpecialMove;
+            @SpecialMove.canceled -= instance.OnSpecialMove;
         }
 
         public void RemoveCallbacks(IPlayerInputActions instance)
@@ -532,5 +561,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnResetWeaponIndex(InputAction.CallbackContext context);
         void OnNextLevel(InputAction.CallbackContext context);
         void OnInteraction(InputAction.CallbackContext context);
+        void OnSpecialMove(InputAction.CallbackContext context);
     }
 }

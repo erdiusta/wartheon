@@ -5834,6 +5834,7 @@ GameObject:
   - component: {fileID: 6156243514526406718}
   - component: {fileID: 9050973798060747845}
   - component: {fileID: 3760601999533703318}
+  - component: {fileID: -7766726267448648419}
   m_Layer: 11
   m_Name: Player
   m_TagString: Player
@@ -6136,7 +6137,11 @@ MonoBehaviour:
   movementByVelocity: {fileID: 0}
   isDead: 0
   statusManager: {fileID: 0}
-  particlesSystem: {fileID: 4106009469383456593}
+  specialMoveEvent: {fileID: 0}
+  specialMoveOnCooldown: 0
+  specialMoveTimer: 0
+  dustParticlesSystem: {fileID: 0}
+  seismicSlamParticlesSystem: {fileID: 0}
 --- !u!114 &3362413763628156882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6191,6 +6196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e310c4644cec5c4ca3f442586358113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  seismicSlamCircleRadius: 5
   fireCompletedDuringPressed: 0
   isSoundPlayed: 0
 --- !u!114 &8675837940116119588
@@ -6469,6 +6475,18 @@ MonoBehaviour:
   poisonImage: {fileID: 2500326158488082647}
   acidImage: {fileID: 3878516794255212751}
   stunImage: {fileID: 1188941767910138742}
+--- !u!114 &-7766726267448648419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 464ba421347284e4dae41c0475660f7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4966358325702215446
 GameObject:
   m_ObjectHideFlags: 0

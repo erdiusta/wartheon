@@ -52,6 +52,13 @@ public class HealthEvent : MonoBehaviour
     {
         StunCured?.Invoke(this);
     }
+
+    public event Action<HealthEvent> OnCriticalHit;
+
+    public void CallCriticalHitEvent()
+    {
+        OnCriticalHit?.Invoke(this);
+    }
 }
 
 public class HealthEventArgs : EventArgs

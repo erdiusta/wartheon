@@ -36,6 +36,8 @@ public class EnemyWeaponAI : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.GetPlayer().playerDetails.onStealth) return;
+
         if (enemy.enemyMovementAI.moveStatus == MoveStatus.Stun) return;
 
         if (enemy.enemyMovementAI.moveStatus == MoveStatus.Stagger) return;

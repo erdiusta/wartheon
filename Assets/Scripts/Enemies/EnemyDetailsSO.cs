@@ -115,6 +115,10 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public SoundEffectSO getHitSoundEffect;
     #region Tooltip
+    [Tooltip("The sound effect for this enemy to get critical hit")]
+    #endregion
+    public SoundEffectSO criticalHitSoundEffect;
+    #region Tooltip
     [Tooltip("The sound effect for this enemy to be killed")]
     #endregion
     public SoundEffectSO deathSoundEffect;

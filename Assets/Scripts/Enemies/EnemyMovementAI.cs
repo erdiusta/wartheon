@@ -141,7 +141,14 @@ public class EnemyMovementAI : MonoBehaviour
         if (!chasePlayer && Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) <
             enemy.enemyDetails.chaseDistance)
         {
-            chasePlayer = true;
+            if (!GameManager.Instance.GetPlayer().playerDetails.onStealth)
+            {
+                chasePlayer = true;
+            }
+            else
+            {
+                chasePlayer = false;
+            }
         }
 
         // If not close enough to chase player then patrol and disable firing if it is true

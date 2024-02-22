@@ -36,6 +36,7 @@ using System.Linq;
 [RequireComponent(typeof(Knockback))]
 [RequireComponent(typeof(Coins))]
 [RequireComponent(typeof(StatusManager))]
+[RequireComponent(typeof(SpecialMoveEvent))]
 #endregion
 [DisallowMultipleComponent]
 public class Player : MonoBehaviour
@@ -69,8 +70,12 @@ public class Player : MonoBehaviour
     [HideInInspector] public MovementByVelocity movementByVelocity;
     [HideInInspector] public bool isDead;
     [HideInInspector] public StatusManager statusManager;
+    [HideInInspector] public SpecialMoveEvent specialMoveEvent;
+    [HideInInspector] public bool specialMoveOnCooldown = false;
+    [HideInInspector] public float specialMoveTimer;
 
-    public ParticleSystem particlesSystem;
+    public ParticleSystem dustParticlesSystem;
+    public ParticleSystem seismicSlamParticlesSystem;
     public List<Weapon> weaponRightHandList = new List<Weapon>();
     public List<Weapon> weaponLeftHandList = new List<Weapon>(); 
 
@@ -99,6 +104,7 @@ public class Player : MonoBehaviour
         coins = GetComponent<Coins>();
         idle = GetComponent<Idle>();
         movementByVelocity = GetComponent<MovementByVelocity>();
+        specialMoveEvent = GetComponent<SpecialMoveEvent>();
     }
 
     /// <summary>
@@ -123,6 +129,11 @@ public class Player : MonoBehaviour
     private void OnDisable()
     {
         healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
+    }
+
+    private void Start()
+    {
+        specialMoveTimer = 0;
     }
 
     /// <summary>

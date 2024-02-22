@@ -86,6 +86,11 @@ public static class Settings
     public const int defaultEnemyHealth = 20;
     #endregion
 
+    #region CHARACTER NAMES
+    public const string astraeus = "Astraeus";
+    public const string erebus = "Erebus";
+    #endregion
+
     #region UI PARAMETERS
     public const float uiHeartSpacing = 16f;
     public const float uiProjectileIconSpacing = 4f;

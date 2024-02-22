@@ -17,6 +17,14 @@ public static class StaticEventHandler
     {
         OnRoomEnemiesDefeated?.Invoke(new RoomEnemiesDefeatedArgs { room = room });
     }
+
+    // Camera shaken event
+    public static event Action<CameraShakeArgs> OnCameraShaken;
+
+    public static void CallCameraShakeEvent(float shakeIntensity, float shakeDuration)
+    {
+        OnCameraShaken?.Invoke(new CameraShakeArgs { shakeIntensity = shakeIntensity, shakeDuration = shakeDuration });
+    }
 }
 
 public class RoomChangedEventArgs : EventArgs
@@ -27,4 +35,10 @@ public class RoomChangedEventArgs : EventArgs
 public class RoomEnemiesDefeatedArgs : EventArgs
 {
     public Room room;
+}
+
+public class CameraShakeArgs : EventArgs
+{
+    public float shakeIntensity;
+    public float shakeDuration;
 }

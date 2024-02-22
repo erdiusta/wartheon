@@ -17,6 +17,9 @@ MonoBehaviour:
   weaponAnimatorController: {fileID: 9100000, guid: cb0f526e13a38884a9daa6f2c6f07419, type: 2}
   weaponClass: 1
   wieldType: 1
+  hasAcid: 0
+  acidEfficiency: 0.4
+  hasStunDamage: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -27,7 +30,7 @@ MonoBehaviour:
   weaponFireRate: 1
   projectileDeflectRatio: 0
   circleRadius: 0.95
-  meleeDamageMin: 7
+  meleeDamageMin: 8
   meleeDamageMax: 12
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0

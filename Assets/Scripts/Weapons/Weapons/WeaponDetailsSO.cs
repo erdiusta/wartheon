@@ -112,6 +112,14 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Max melee damage of the weapon")]
     #endregion
     public int meleeDamageMax = 7;
+    #region Tooltip
+    [Tooltip("Critical hit chance of the weapon")]
+    #endregion
+    public float criticalHitChance = 0.1f;
+    #region Tooltip
+    [Tooltip("Critical hit damage multiplier")]
+    #endregion
+    public float criticalHitDamageMultiplier = 2f;
 
     #region Header RANGED WEAPON OPERATING VALUES
     [Space(10)]

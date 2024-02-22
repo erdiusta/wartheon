@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -46,6 +45,45 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Death sound effect")]
     #endregion
     public SoundEffectSO deathSoundEffect;
+
+
+    #region SPECIAL MOVE SETTINGS
+    [Space(10)]
+    [Header("Special Move Settings")]
+    #endregion
+    #region
+    [Tooltip("Spacial move name")]
+    #endregion
+    public string specialMoveName = "SEISMIC SLAM";
+    #region Tooltip
+    [Tooltip("Special move sound effect")]
+    #endregion
+    public SoundEffectSO specialMoveSoundEffect;
+    #region
+    [Tooltip("Spacial move duration")]
+    #endregion
+    public float specialMoveDuration = 20f;
+    #region
+    [Tooltip("Check if on stealth mode")]
+    #endregion
+    public bool onStealth = false;
+
+    #region SCREEN SHAKE SETTINGS
+    [Space(10)]
+    [Header("Screen Shake Settings")]
+    #endregion
+    #region
+    [Tooltip("Check if player can shake the camera")]
+    #endregion
+    public bool applyScreenShake;
+    #region
+    [Tooltip("Camera shake intenstiy")]
+    #endregion
+    public float shakeIntensity = 1f;
+    #region
+    [Tooltip("Camera shake duration")]
+    #endregion
+    public float shakeDuration = 0.5f;
 
     #region Header PASSIVE
     [Space(10)]

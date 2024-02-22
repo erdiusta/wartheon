@@ -153,9 +153,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 24
-        y: 12
+        y: 11
         width: 6
-        height: 18
+        height: 19
       alignment: 9
       pivot: {x: 0.49999967, y: 0.18530825}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -174,9 +174,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 48
-        y: 12
+        y: 11
         width: 14
-        height: 19
+        height: 20
       alignment: 9
       pivot: {x: 0.7883876, y: 0.16698356}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -195,9 +195,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 78
-        y: 12
+        y: 11
         width: 16
-        height: 20
+        height: 21
       alignment: 9
       pivot: {x: 0.8163657, y: 0.15651731}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -216,9 +216,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 107
-        y: 12
+        y: 11
         width: 19
-        height: 20
+        height: 21
       alignment: 9
       pivot: {x: 0.84169006, y: 0.15256977}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -237,9 +237,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 136
-        y: 12
+        y: 11
         width: 22
-        height: 20
+        height: 21
       alignment: 9
       pivot: {x: 0.8616798, y: 0.14635782}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -279,9 +279,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 200
-        y: 12
+        y: 11
         width: 22
-        height: 20
+        height: 21
       alignment: 9
       pivot: {x: 0.86494863, y: 0.14164086}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -300,9 +300,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 235
-        y: 12
+        y: 11
         width: 19
-        height: 20
+        height: 21
       alignment: 9
       pivot: {x: 0.8435227, y: 0.14563337}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -321,9 +321,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 272
-        y: 12
+        y: 11
         width: 14
-        height: 19
+        height: 20
       alignment: 9
       pivot: {x: 0.78725976, y: 0.1304523}
       border: {x: 0, y: 0, z: 0, w: 0}

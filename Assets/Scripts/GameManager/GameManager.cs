@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using UnityEngine.Tilemaps;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
@@ -35,7 +34,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Tooltip("Populate with the starting dungeon level for testing , first level = 0")]
     #endregion Tooltip
     [SerializeField] int currentDungeonLevelListIndex = 0;
-
     #region INPUT ACTION REFERENCES
     [Space(10)]
     [Header("INPUT ACTION REFERENCES")]
@@ -50,15 +48,16 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public InputActionReference resetWeaponIndex;
     public InputActionReference nextLevel;
     public InputActionReference interaction;
+    public InputActionReference specialMove;
+
+    [HideInInspector] public GameState gameState;
+    [HideInInspector] public GameState previousGameState;
 
     Room currentRoom;
     Room previousRoom;
     PlayerDetailsSO playerDetails;
     Player player;
     bool isFading = false;
-
-    [HideInInspector] public GameState gameState;
-    [HideInInspector] public GameState previousGameState;
 
     protected override void Awake()
     {
@@ -455,6 +454,14 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         t.position = position;
 
         return t;
+    }
+
+    /// <summary>
+    /// Set camera shake
+    /// </summary>
+    private void SetCameraShake()
+    {
+
     }
 
     #region Validation

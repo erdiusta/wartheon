@@ -30,8 +30,8 @@ MonoBehaviour:
   weaponFireRate: 0.6
   projectileDeflectRatio: 0
   circleRadius: 0.65
-  meleeDamageMin: 3
-  meleeDamageMax: 10
+  meleeDamageMin: 7
+  meleeDamageMax: 11
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0

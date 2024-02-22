@@ -15,6 +15,12 @@ public class Health : MonoBehaviour
     #endregion
     [SerializeField] HealthBar healthBar;
 
+    [HideInInspector] public int currentHealth;
+    [HideInInspector] public bool isDamageable = true;
+    [HideInInspector] public Enemy enemy;
+    [HideInInspector] public int currentArmorValue;
+    [HideInInspector] public Coroutine getHitCoroutine;
+
     int startingHealth;
     HealthEvent healthEvent;
     Player player;
@@ -27,12 +33,6 @@ public class Health : MonoBehaviour
     FlashManager flashManager;
     Coroutine poisonCoroutine;
     int poisonPeriodCount = 0;
-
-    [HideInInspector] public int currentHealth;
-    [HideInInspector] public bool isDamageable = true;
-    [HideInInspector] public Enemy enemy;
-    [HideInInspector] public int currentArmorValue;
-    [HideInInspector] public Coroutine getHitCoroutine;
 
     private void Awake()
     {

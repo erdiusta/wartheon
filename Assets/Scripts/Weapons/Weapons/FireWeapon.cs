@@ -55,10 +55,20 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     private void WeaponFire(FireWeaponEventArgs fireWeaponEventArgs)
     {
-        if (tag == "Enemy")
+        if (tag == Settings.enemyTag)
         {
             // Flag firing
             enemy.isFiring = true;
+        }
+
+        if (tag == Settings.playerTag)
+        {
+            Player player = GetComponent<Player>();
+
+            if (player.playerDetails.playerCharacterName == Settings.erebus && player.playerDetails.onStealth)
+            {
+                player.playerControl.Unstealth();
+            }
         }
 
         // Handle weapon precharge timer

@@ -19,6 +19,7 @@ MonoBehaviour:
   wieldType: 0
   hasAcid: 0
   acidEfficiency: 0.4
+  hasStunDamage: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -29,8 +30,8 @@ MonoBehaviour:
   weaponFireRate: 0.5
   projectileDeflectRatio: 0
   circleRadius: 0.65
-  meleeDamageMin: 6
-  meleeDamageMax: 9
+  meleeDamageMin: 7
+  meleeDamageMax: 11
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0

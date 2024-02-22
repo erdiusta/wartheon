@@ -33,6 +33,7 @@ MonoBehaviour:
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 7.0334396, g: 0.44082278, b: 0, a: 0}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
+  criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 7dc4ed292175f0446af2d154c13685b2, type: 2}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 0}

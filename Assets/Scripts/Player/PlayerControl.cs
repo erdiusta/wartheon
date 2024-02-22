@@ -1,11 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 [RequireComponent(typeof(Player))]
 [DisallowMultipleComponent]
 public class PlayerControl : MonoBehaviour
 {
+    [SerializeField] float seismicSlamCircleRadius = 5f;
+    int seismicSlamDamage = 10;
+
     [HideInInspector] public bool fireCompletedDuringPressed = false;
     [HideInInspector] public bool isSoundPlayed = false;
 
@@ -16,6 +22,7 @@ public class PlayerControl : MonoBehaviour
     int currentRightHandWeaponIndex = 1;
     int currentLeftHandWeaponIndex = 0;
     bool isPlayerMovementDisabled = false;
+
     private void Awake()
     {
         player = GetComponent<Player>();
@@ -73,6 +80,8 @@ public class PlayerControl : MonoBehaviour
                 MovementInput();
                 // Process the player use item input
                 UseItemInput();
+                // Process the player use special move input
+                SpecialMoveInput();
                 break;
             case MoveStatus.Stagger:
                 player.polygonCollider2D.enabled = false;
@@ -398,6 +407,115 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
+    /// Use special move of the selected character
+    /// </summary>
+    private void SpecialMoveInput()
+    {
+        if (GameManager.Instance.specialMove.action.WasPressedThisFrame() && !player.specialMoveOnCooldown)
+        {
+            switch (player.playerDetails.playerCharacterName)
+            {
+                case Settings.astraeus:
+                    SeismicSlam();
+                    player.specialMoveOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent();
+                    break;
+
+                case Settings.erebus:
+                    Stealth();
+                    player.specialMoveOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Execute Stealth special move
+    /// </summary>
+    private void Stealth()
+    {
+        // Get the current color of the sprite renderer
+        Color currentColor = player.spriteRenderer.color;
+        SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveSoundEffect);
+
+        // Set the alpha value to 0.3 (30% opacity)
+        currentColor.a = 0.3f;
+
+        // Apply the modified color back to the sprite renderer
+        player.spriteRenderer.color = currentColor;
+
+        // Set player's stealth status to true
+        player.playerDetails.onStealth = true;
+    }
+
+    /// <summary>
+    /// Unstealth from special move
+    /// </summary>
+    public void Unstealth()
+    {
+        // Get the current color of the sprite renderer
+        Color currentColor = player.spriteRenderer.color;
+
+        // Set the alpha value back to 1 (100% opacity)
+        currentColor.a = 1f;
+
+        // Apply the modified color back to the sprite renderer
+        player.spriteRenderer.color = currentColor;
+
+        // Set player's stealth status to false
+        player.playerDetails.onStealth = false;
+    }
+
+    /// <summary>
+    /// Execute Seismic Slam special move
+    /// </summary>
+    private void SeismicSlam()
+    {
+        // Get all colliders within the radius of the seismic slam
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, seismicSlamCircleRadius);
+
+        if (player.seismicSlamParticlesSystem != null)
+        {
+            player.seismicSlamParticlesSystem.Play();
+            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveSoundEffect);
+        }
+
+        if (player.playerDetails.applyScreenShake)
+        {
+            StaticEventHandler.CallCameraShakeEvent(player.playerDetails.shakeIntensity, player.playerDetails.shakeDuration);
+        }
+
+        foreach (Collider2D col in colliders)
+        {
+            // Check if the collider belongs to an enemy or any other object you want to affect
+            if (col.CompareTag(Settings.enemyTag))
+            {
+                // Apply damage to the enemy
+                Enemy enemy = col.GetComponent<Enemy>();
+
+                if (!enemy.enemyDetails.hasKnockbackResistance && enemy.health.currentHealth > 0)
+                {
+                    enemy.GetComponent<EnemyMovementAI>().TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                }
+
+                if (GetComponent<MeleeAttackRightHand>().playerAttackRightHandRoutine == null)
+                {
+                    GetComponent<MeleeAttackRightHand>().playerAttackRightHandRoutine = StartCoroutine(PlayerAttackAnimRoutine());
+                }
+
+                if (enemy.health != null)
+                {
+                    enemy.health.TakeDamage(seismicSlamDamage, transform.position, enemy.health.transform.position);
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Use the nearest item within 2 unity units from the player
     /// </summary>
     private void UseItemInput()
@@ -490,5 +608,12 @@ public class PlayerControl : MonoBehaviour
 
         // Set current weapon
         SetRightHandWeaponByIndex(currentRightHandWeaponIndex);
+    }
+
+    // This method visualizes the radius of the seismic slam for debugging purposes.
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, seismicSlamCircleRadius);
     }
 }
