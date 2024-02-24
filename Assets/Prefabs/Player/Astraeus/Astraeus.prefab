@@ -14836,6 +14836,10 @@ PrefabInstance:
       propertyPath: seismicSlamParticlesSystem
       value: 
       objectReference: {fileID: 230205208766943395}
+    - target: {fileID: -983905956611885164, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
+      propertyPath: specialMoveParticlesSystem
+      value: 
+      objectReference: {fileID: 230205208766943395}
     - target: {fileID: 96723439451589857, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.4803552

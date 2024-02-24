@@ -26,7 +26,7 @@ public class ChestItem : MonoBehaviour
     {
         if (transform.parent != null)
         {
-            if (transform.parent.tag == "Enemy")
+            if (transform.parent.tag == Settings.enemyTag)
             {
                 enemy = GetComponentInParent<Enemy>();
             }
@@ -35,7 +35,7 @@ public class ChestItem : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if (collision.tag == Settings.playerTag)
         {
             Player player = collision.GetComponent<Player>();
 
@@ -89,6 +89,7 @@ public class ChestItem : MonoBehaviour
             // Play pickup sound effect
             SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
 
+            // Pick up item and update equipped weapon list
             player.UpdateWieldedWeapons(weaponDetails);
         }
         else

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -10,6 +9,9 @@ public class Projectile : MonoBehaviour, IFireable
     [Tooltip("Populate with child TrailRenderer component")]
     #endregion Tooltip
     [SerializeField] TrailRenderer trailRenderer;
+
+    [HideInInspector] public Coroutine playerBlockCoroutine;
+    [HideInInspector] public Coroutine enemyBlockCoroutine;
 
     float projectileRange = 0f;
     float projectileSpeed;
@@ -58,7 +60,6 @@ public class Projectile : MonoBehaviour, IFireable
             }
         }
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // If already colliding with something return
@@ -66,24 +67,27 @@ public class Projectile : MonoBehaviour, IFireable
             return;
 
         // Block process if shield equipped
-        if (collision.tag == "Player")
+        if (collision.tag == Settings.playerTag)
         {
-            if (collision.GetComponent<Player>().activeWeapon.GetCurrentLeftHandWeapon() != null && 
-                collision.GetComponent<Player>().activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+            Player player = collision.GetComponent<Player>();
+
+            if (player.activeWeapon.GetCurrentLeftHandWeapon() != null && player.activeWeapon.GetCurrentLeftHandWeapon().
+                weaponDetails.weaponClass == WeaponClass.Shield)
             {
                 // Get enemy projectile direction
-                Vector2 enemyProjectileDirection = (collision.transform.position - transform.position).normalized;
+                Vector2 enemyProjectileDirection = (player.transform.position - transform.position).normalized;
 
                 // Get weapon pointer direction
                 Vector2 cursorPosition = GameManager.Instance.pointerPosition.action.ReadValue<Vector2>();
                 Vector2 cursorWorldPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
 
-                Vector2 pointerDirection = (cursorWorldPosition - new Vector2(collision.transform.position.x, collision.transform.position.y)).normalized;
+                Vector2 pointerDirection = (cursorWorldPosition - new Vector2(player.transform.position.x, player.transform.position.y)).
+                    normalized;
 
                 // Calculate the dot product between the shield's forward direction and the projectile direction
                 float dotProduct = Vector2.Dot(pointerDirection, enemyProjectileDirection);
 
-                float blockingThreshold = collision.GetComponent<Player>().activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.projectileDeflectRatio;
+                float blockingThreshold = player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.projectileDeflectRatio;
 
                 // Check if the dot product is greater than the threshold, deflection fails
                 if (dotProduct > blockingThreshold - 1f)
@@ -94,17 +98,18 @@ public class Projectile : MonoBehaviour, IFireable
                 else
                 {
                     // If the player is attacking, guard is down so block is disabled
-                    if (collision.GetComponent<Player>().GetComponent<MeleeAttackRightHand>().IsAttackingAtRightHand)
+                    if (player.meleeAttackRightHand.IsAttackingAtRightHand)
                     {
                         // Deal Damage To Collision Object
                         DealDamage(collision);
                     }
                     else
                     {
-                        // The projectile is within the blocking angle
-                        SoundEffectManager.Instance.PlaySoundEffect(collision.GetComponent<Player>().activeWeapon.GetCurrentLeftHandWeapon().
-                            weaponDetails.weaponFiringSoundEffect);
-                        collision.transform.GetChild(1).GetComponent<Animator>().SetTrigger(Settings.block);
+                        if (playerBlockCoroutine == null)
+                        {
+                            // The projectile is within the blocking angle
+                            playerBlockCoroutine = StartCoroutine(PlayerBlockAnimRoutine(collision));
+                        }
                     }
                 }
             }
@@ -118,9 +123,21 @@ public class Projectile : MonoBehaviour, IFireable
         {
             if (collision.GetComponent<Enemy>() != null)
             {
-                if (collision.GetComponent<Enemy>().enemyDetails.hasShield)
+                Enemy enemy = collision.GetComponent<Enemy>();
+
+                if (enemy.enemyDetails.hasShield)
                 {
-                    StartCoroutine(EnemyBlockAnimRoutine(collision));
+                    if (enemyBlockCoroutine == null)
+                    {
+                        float diceRoll = Random.Range(0f, 1f);
+                        bool deflectHapped = diceRoll < enemy.enemyDetails.deflectChance ? true : false;
+
+                        if (deflectHapped)
+                            enemyBlockCoroutine = StartCoroutine(EnemyBlockAnimRoutine(collision));
+                        else
+                            // Deal Damage To Collision Object
+                            DealDamage(collision);
+                    }
                 }
                 else
                 {
@@ -141,24 +158,35 @@ public class Projectile : MonoBehaviour, IFireable
         DisableProjectile();
     }
 
+    IEnumerator PlayerBlockAnimRoutine(Collider2D collision)
+    {
+        Player player = collision.GetComponent<Player>();
+
+        // Adjust animator layer weights
+        player.animatePlayer.SetGetHitAnimationParameters();
+        player.transform.GetChild(1).GetComponent<Animator>().SetTrigger(Settings.block);
+        SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponFiringSoundEffect);
+
+        yield return new WaitForSeconds(0.6f);
+
+        playerBlockCoroutine = null;
+        player.animatePlayer.SetIdleAnimationParameters();
+    }
+
     IEnumerator EnemyBlockAnimRoutine(Collider2D collision)
     {
         Enemy enemy = collision.GetComponent<Enemy>();
 
         // Adjust animator layer weights
-        enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 0.5f);
-        enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 1f);
-        enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
-
+        enemy.animateEnemy.SetGetHitAnimationParameters();
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.deflectSoundEffect);
-        enemy.animator.SetTrigger(Settings.block);
-        yield return new WaitForSeconds(1f);
+        enemy.animator.SetBool(Settings.getHit, false);
+        enemy.animator.SetBool(Settings.block, true);
+        yield return new WaitForSeconds(0.2f);
 
-        enemy.animator.SetLayerWeight(enemy.animateEnemy.baseLayerIndex, 1f);
-        enemy.animator.SetLayerWeight(enemy.animateEnemy.attackLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(enemy.animateEnemy.getHitLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(enemy.animateEnemy.deathLayerIndex, 0f);
+        enemyBlockCoroutine = null;
+        enemy.animator.SetBool(Settings.block, false);
+        enemy.animateEnemy.SetIdleAnimationParameters();
     }
 
     private void DealDamage(Collider2D collision)

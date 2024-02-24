@@ -75,7 +75,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public float specialMoveTimer;
 
     public ParticleSystem dustParticlesSystem;
-    public ParticleSystem seismicSlamParticlesSystem;
+    public ParticleSystem specialMoveParticlesSystem;
     public List<Weapon> weaponRightHandList = new List<Weapon>();
     public List<Weapon> weaponLeftHandList = new List<Weapon>(); 
 
@@ -262,12 +262,13 @@ public class Player : MonoBehaviour
                 if (i == j) continue;
 
                 // Sort right hand weapons based on weapon names
-                weaponRightHandList.Sort((i, j) => string.Compare(i.weaponDetails.weaponName, j.weaponDetails.weaponName, StringComparison.Ordinal));
-
-                // Remove duplicates based on weapon names
-                uniqueRightHandWeapons = weaponRightHandList.Distinct(new WeaponNameComparer()).ToList();
+                weaponRightHandList.Sort((i, j) => string.Compare(i.weaponDetails.weaponName, j.weaponDetails.weaponName, 
+                    StringComparison.Ordinal));
             }
         }
+
+        // Remove duplicates based on weapon names
+        uniqueRightHandWeapons = weaponRightHandList.Distinct(new WeaponNameComparer()).ToList();
 
         // Keep track of encountered weapon names
         HashSet<string> encounteredWeaponNames = new HashSet<string>();
@@ -295,7 +296,8 @@ public class Player : MonoBehaviour
                 if (i == j) continue;
 
                 // Sort hand weapons based on weapon names
-                weaponLeftHandList.Sort((i, j) => string.Compare(i.weaponDetails.weaponName, j.weaponDetails.weaponName, StringComparison.Ordinal));
+                weaponLeftHandList.Sort((i, j) => string.Compare(i.weaponDetails.weaponName, j.weaponDetails.weaponName, 
+                    StringComparison.Ordinal));
 
                 // Remove duplicates based on weapon names
                 uniqueLeftHandWeapons = weaponLeftHandList.Distinct(new WeaponNameComparer()).ToList();

@@ -4,17 +4,24 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class HealthUI : MonoBehaviour
 {
+    Player player;
+
     List<GameObject> healthHeartsList = new List<GameObject>();
     List<GameObject> healthHalfHeartsList = new List<GameObject>();
 
+    private void Awake()
+    {
+        player = GameManager.Instance.GetPlayer();
+    }
+
     private void OnEnable()
     {
-        GameManager.Instance.GetPlayer().healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
+        player.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
     }
 
     private void OnDisable()
     {
-        GameManager.Instance.GetPlayer().healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
+        player.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
     }
 
 
@@ -29,15 +36,16 @@ public class HealthUI : MonoBehaviour
         ClearHealthBar();
 
         // Instantiate heart image prefabs
-        int healthHeartCount = healthEventArgs.healthPercent * 100f % 20f > 10 ? 
-            Mathf.CeilToInt(healthEventArgs.healthPercent * 100f / 20f) : Mathf.FloorToInt(healthEventArgs.healthPercent * 100f / 20f);
+        int healthHeartCount = healthEventArgs.healthPercent * player.playerDetails.playerHealthAmount % 20f > 10 ? 
+            Mathf.CeilToInt(healthEventArgs.healthPercent * player.playerDetails.playerHealthAmount / 20f) : 
+            Mathf.FloorToInt(healthEventArgs.healthPercent * player.playerDetails.playerHealthAmount / 20f);
 
         int halfHeartCount;
 
         // Instantiate half heart image prefabs
         if (healthEventArgs.healthAmount >= 0f)
         {
-            halfHeartCount = healthEventArgs.healthPercent * 100f % 20f <= 10 ? 1 : 0;
+            halfHeartCount = healthEventArgs.healthPercent * player.playerDetails.playerHealthAmount % 20f <= 10 ? 1 : 0;
         }
         else
         {
@@ -57,7 +65,7 @@ public class HealthUI : MonoBehaviour
 
         if (halfHeartCount > 0)
         {
-            if (Mathf.FloorToInt(healthEventArgs.healthPercent * 100f % 20f) != 0)
+            if (Mathf.FloorToInt(healthEventArgs.healthPercent * player.playerDetails.playerHealthAmount % 20f) != 0)
             {
                 // Instantiate half heart prefab if exists
                 GameObject halfHeart = Instantiate(GameResources.Instance.halfHeartPrefab, transform);

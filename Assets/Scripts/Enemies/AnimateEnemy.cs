@@ -153,7 +153,6 @@ public class AnimateEnemy : MonoBehaviour
         enemy.animator.SetBool(Settings.attackMotion, false);
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, false);
-        enemy.animator.SetBool(Settings.getHit, true);
         enemy.animator.SetBool(Settings.death, false);
     }
 

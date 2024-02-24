@@ -487,7 +487,7 @@ PrefabInstance:
     - target: {fileID: 7089998605978601817, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 4c02187a09eabde4dba23544bdf50f8e, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
       value: 0.49999967
@@ -571,7 +571,7 @@ PrefabInstance:
     - target: {fileID: 8213552445980175040, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 4c02187a09eabde4dba23544bdf50f8e, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 8213552445980175040, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_CullingMode
       value: 0

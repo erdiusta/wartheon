@@ -62,6 +62,10 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public bool hasShield = false;
     #region Tooltip
+    [Tooltip("Check enemy's deflect chance")]
+    #endregion
+    [Range(0f, 1f)] public float deflectChance = 0f;
+    #region Tooltip
     [Tooltip("Check if enemy is a poisonous")]
     #endregion
     public bool isPoisonous = false;

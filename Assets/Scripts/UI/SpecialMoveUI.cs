@@ -51,6 +51,10 @@ public class SpecialMoveUI : MonoBehaviour
                 // Set the reload bar to red
                 barImage.color = Color.cyan;
                 break;
+            case Settings.lyrisa:
+                // Set the reload bar to red
+                barImage.color = Color.yellow;
+                break;
             default:
                 break;
         }
@@ -149,6 +153,10 @@ public class SpecialMoveUI : MonoBehaviour
             case Settings.erebus:
                 // Set the reload bar to red
                 barImage.color = Color.cyan;
+                break;
+            case Settings.lyrisa:
+                // Set the reload bar to red
+                barImage.color = Color.yellow;
                 break;
             default:
                 break;

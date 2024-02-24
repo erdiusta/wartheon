@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+using System.Diagnostics.Eventing.Reader;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Player))]
 [DisallowMultipleComponent]
@@ -22,6 +21,7 @@ public class PlayerControl : MonoBehaviour
     int currentRightHandWeaponIndex = 1;
     int currentLeftHandWeaponIndex = 0;
     bool isPlayerMovementDisabled = false;
+    bool isTeleporting;
 
     private void Awake()
     {
@@ -193,7 +193,7 @@ public class PlayerControl : MonoBehaviour
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
         // Fire when left mouse button is clicked
-        if (GameManager.Instance.attack.action.WasPerformedThisFrame())
+        if (GameManager.Instance.attack.action.WasPerformedThisFrame() && !isTeleporting)
         {
             StartCoroutine(PlayerAttackAnimRoutine());
 
@@ -280,10 +280,11 @@ public class PlayerControl : MonoBehaviour
         player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
         player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
 
-        player.animator.SetTrigger(Settings.attackMotion);
+        player.animator.SetBool(Settings.attackMotion, true);
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.6f);
 
+        player.animator.SetBool(Settings.attackMotion, false);
         player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
         player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
         player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
@@ -427,10 +428,79 @@ public class PlayerControl : MonoBehaviour
                     player.specialMoveEvent.CallSpecialMoveUsedEvent();
                     break;
 
+                case Settings.lyrisa:
+                    Teleport();
+                    player.specialMoveOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent();
+                    break;
+
                 default:
                     break;
             }
         }
+    }
+
+    /// <summary>
+    /// Execute Teleport special move
+    /// </summary>
+    private void Teleport()
+    {
+        if (player.specialMoveOnCooldown == false)
+        {
+            // Set teleporting status true to make firing inactive
+            isTeleporting = true;
+
+            // Start playing teleport particle system
+            player.specialMoveParticlesSystem.Play();
+
+            // Wait for mouse click to teleport the character
+            GameManager.Instance.attack.action.performed += OnTeleportInput;
+
+            // Play special move sound effect
+            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveSoundEffect);
+        }
+    }
+
+    private void OnTeleportInput(InputAction.CallbackContext context)
+    {
+        // Get current room and its bounds
+        Room room = GameManager.Instance.GetCurrentRoom();
+
+        // Get mouse world position and teleport the character
+        Vector3 pointerWorldPosition = HelperUtilities.GetMouseWorldPosition();
+        Vector3Int pointerCellPosition = room.instantiatedRoom.grid.WorldToCell(pointerWorldPosition);
+
+        // Check if the clicked tile is not marked as an obstacle
+        if (!IsObstacleTile(room, pointerCellPosition))
+        {
+            // Teleport the character to the clicked tile
+            transform.position = pointerWorldPosition;
+
+            // Stop playing teleport particle system
+            player.specialMoveParticlesSystem.Stop();
+
+            // Unsubscribe from the event to prevent multiple teleports
+            GameManager.Instance.attack.action.performed -= OnTeleportInput;
+            isTeleporting = false;
+        }
+    }
+
+    private bool IsObstacleTile(Room room, Vector3Int cellPosition)
+    {
+        // Convert cell position to adjusted position relative to room bounds
+        Vector2Int adjustedCellPosition = new Vector2Int(cellPosition.x - room.templateLowerBounds.x, 
+            cellPosition.y - room.templateLowerBounds.y);
+
+        // Check if the adjusted cell position is within the valid range
+        if (adjustedCellPosition.x < 0 || adjustedCellPosition.y < 0 || adjustedCellPosition.x >= room.instantiatedRoom.
+            aStarMovementPenalty.GetLength(0) || adjustedCellPosition.y >= room.instantiatedRoom.aStarMovementPenalty.GetLength(1))
+        {
+            // Cell position is outside the valid range (out of bounds)
+            return true; // Treat it as an obstacle
+        }
+
+        // Check if the cell is marked as an obstacle
+        return room.instantiatedRoom.aStarMovementPenalty[adjustedCellPosition.x, adjustedCellPosition.y] == 0;
     }
 
     /// <summary>
@@ -478,9 +548,9 @@ public class PlayerControl : MonoBehaviour
         // Get all colliders within the radius of the seismic slam
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, seismicSlamCircleRadius);
 
-        if (player.seismicSlamParticlesSystem != null)
+        if (player.specialMoveParticlesSystem != null)
         {
-            player.seismicSlamParticlesSystem.Play();
+            player.specialMoveParticlesSystem.Play();
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveSoundEffect);
         }
 

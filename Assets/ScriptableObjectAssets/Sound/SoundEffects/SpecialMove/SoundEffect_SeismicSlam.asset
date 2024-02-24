@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d6199204684cd648b889173cefd23c8, type: 3}
-  m_Name: SoundEffect_GroundSlam
+  m_Name: SoundEffect_SeismicSlam
   m_EditorClassIdentifier: 
-  soundEffectName: Ground Slam
+  soundEffectName: Seismic Slam
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
   - {fileID: 8300000, guid: 6f253a71adc23e0449255b85675a093e, type: 3}

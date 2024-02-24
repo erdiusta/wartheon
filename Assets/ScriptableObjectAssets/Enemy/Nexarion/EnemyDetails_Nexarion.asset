@@ -24,6 +24,7 @@ MonoBehaviour:
   isEnemyBoss: 0
   enemyArmorValue: 1
   hasShield: 0
+  deflectChance: 0
   isPoisonous: 0
   hasAcid: 0
   acidEfficiency: 0
@@ -47,7 +48,7 @@ MonoBehaviour:
   firingLineOfSightRequired: 1
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    enemyHealthAmount: 30
+    enemyHealthAmount: 15
   isImmuneAfterHit: 1
   hitImmunityTime: 0.7
   isHealthBarDisplayed: 0
@@ -73,7 +74,7 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
       ratio: 2
   ammoPercent: 50
-  dropSpawnChanceMin: 30
-  dropSpawnChanceMax: 50
+  dropSpawnChanceMin: 50
+  dropSpawnChanceMax: 70
   numberOfItemsToSpawnMin: 1
   numberOfItemsToSpawnMax: 1

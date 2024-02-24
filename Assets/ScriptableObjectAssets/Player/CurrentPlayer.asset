@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: CurrentPlayer
   m_EditorClassIdentifier: 
   playerName: ASILPENA
-  playerDetails: {fileID: 11400000, guid: 9013cd574cdf7844a9daf890dad068b3, type: 2}
+  playerDetails: {fileID: 11400000, guid: 3c718eafb0e25534e830534a8fb1e2dc, type: 2}

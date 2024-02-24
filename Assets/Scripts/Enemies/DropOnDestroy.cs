@@ -110,18 +110,20 @@ public class DropOnDestroy : MonoBehaviour
 
         if (numberofItemsToSpawn == 1)
         {
-            choice = Random.Range(0, 3);
-            if (choice == 0) { weapons++; return; }
-            if (choice == 1) { ammo++; return; }
-            if (choice == 2) { passives++; return; }
+            choice = Random.Range(0, 10);
+
+            if (choice >= 0 && choice <= 2) { weapons++; return; }
+            if (choice == 3) { ammo++; return; }
+            if (choice > 3 && choice <= 9) { passives++; return; }
+
             return;
         }
         else if (numberofItemsToSpawn == 2)
         {
-            choice = Random.Range(0, 3);
-            if (choice == 0) { weapons++; return; }
-            if (choice == 1) { ammo++; return; }
-            if (choice == 2) { passives++; return; }
+            choice = Random.Range(0, 10);
+            if (choice >= 0 && choice <= 2) { weapons++; return; }
+            if (choice == 3) { ammo++; return; }
+            if (choice > 3 && choice <= 9) { passives++; return; }
         }
         else if (numberofItemsToSpawn >= 3)
         {

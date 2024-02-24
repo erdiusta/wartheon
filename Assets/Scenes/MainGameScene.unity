@@ -1269,9 +1269,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.083552286
     y: 0
-    width: 1
+    width: 0.8323699
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -1786,6 +1786,9 @@ MonoBehaviour:
     componentType: IFireable
   - poolSize: 40
     prefab: {fileID: 5263536334675765252, guid: de090ebe75096d14698c8aaff77bf6e6, type: 3}
+    componentType: IFireable
+  - poolSize: 40
+    prefab: {fileID: 2585463276777236944, guid: 33414805508ae3942a13657ed0b87cd2, type: 3}
     componentType: IFireable
   - poolSize: 40
     prefab: {fileID: 5263536334675765252, guid: 339536103c4f7b74995fd50408768bc1, type: 3}

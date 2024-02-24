@@ -59,6 +59,7 @@ MonoBehaviour:
   enemyUnwalkableCollisionTilesArray:
   - {fileID: 11400000, guid: 8520e5e88b4f58642b99b0c400d336f0, type: 2}
   - {fileID: 11400000, guid: 2b105dd9937088a408df34b6f771aaa9, type: 2}
+  - {fileID: 11400000, guid: 902803a8e0c14114596584de9600dc6b, type: 2}
   preferredEnemyPathTile: {fileID: 11400000, guid: a8f63dbc7bc1f46479620586f36f00e0, type: 2}
   heartPrefab: {fileID: 7585392605064363868, guid: becfc86faf78d674f92971eda671b95a, type: 3}
   halfHeartPrefab: {fileID: 7585392605064363868, guid: 8386f841730857947b3db24aa3a75bbe, type: 3}
