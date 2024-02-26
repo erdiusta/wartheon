@@ -20,6 +20,11 @@ MonoBehaviour:
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 0
+  stunChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
   weaponShootPosition: {x: 1.425, y: 1.65625, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: f9fb64df6ca344f4888dbe48b062e22f, type: 2}
   weaponShootEffect: {fileID: 0}

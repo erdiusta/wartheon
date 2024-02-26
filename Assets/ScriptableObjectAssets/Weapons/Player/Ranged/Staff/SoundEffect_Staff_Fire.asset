@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Staff Fire
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 17dd971b255adae4fa18c8d5028d06c5, type: 3}
+  - {fileID: 8300000, guid: c54a3cf0f1a13db4fbf50c3084b1ff2a, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
-  soundEffectVolume: 1
+  soundEffectVolume: 0.7

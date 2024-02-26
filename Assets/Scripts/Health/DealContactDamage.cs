@@ -75,7 +75,9 @@ public class DealContactDamage : MonoBehaviour
                 {
                     CheckPoisonStatus(player);
                     CheckAcidStatus(player);
+                    CheckBleedingStatus(player);
                     CheckStunStatus(player);
+                    CheckSlowStatus(player);
 
                     // Apply knockback
                     player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
@@ -105,11 +107,28 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.isPoisonous)
         {
             // Check get poisoned
-            float randomPoisonNum = Random.Range(0f, 1f);
-            if (randomPoisonNum > 0.6f)
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.poisonChance)
             {
-                player.healthEvent.CallGetPosionedEvent();
+                player.healthEvent.CallGetPoisonedEvent();
                 player.healthStatus = HealthStatus.Poisoned;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check bleeding status
+    /// </summary>
+    private void CheckBleedingStatus(Player player)
+    {
+        if (enemy.enemyDetails.hasBleedingDamage)
+        {
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.bleedingChance)
+            {
+                player.healthEvent.CallGetBleedingEvent();
+                player.healthStatus = HealthStatus.Bleeding;
             }
         }
     }
@@ -122,13 +141,17 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasAcid && player.armorStatus != ArmorStatus.Acid)
         {
             // Check get acid
-            float randomAcidNum = Random.Range(0f, 1f);
-            if (randomAcidNum > 0.6f)
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.acidEfficiency)
             {
-                player.GetComponent<Health>().SetArmorValue((int)(player.playerDetails.playerArmorValue *
-                    (1 - enemy.enemyDetails.acidEfficiency)));
-                player.healthEvent.CallGetAcidEvent();
+                if (player.armorStatus == ArmorStatus.SilverArmor || player.armorStatus == ArmorStatus.GoldenArmor)
+                {
+                    player.healthEvent.CallArmorWoreOffEvent();
+                }
+
                 player.armorStatus = ArmorStatus.Acid;
+                player.health.SetArmorValue((int)(player.playerDetails.playerArmorValue * (1 - enemy.enemyDetails.acidEfficiency)));
+                player.healthEvent.CallGetAcidEvent();
             }
         }
     }
@@ -138,10 +161,10 @@ public class DealContactDamage : MonoBehaviour
     /// </summary>
     private void CheckStunStatus(Player player)
     {
-        if (enemy.enemyDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun)
+        if (enemy.enemyDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun && player.moveStatus != MoveStatus.Slow)
         {
-            float randomStunNum = Random.Range(0f, 1f);
-            if (randomStunNum > 0.6f)
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.stunChance)
             {
                 player.moveStatus = MoveStatus.Stun;
                 player.healthEvent.CallGetStunEvent();
@@ -149,6 +172,30 @@ public class DealContactDamage : MonoBehaviour
                 player.animator.SetBool(Settings.isStunned, true);
             }
         }
+    }
+
+    /// <summary>
+    /// Check slow status
+    /// </summary>
+    private void CheckSlowStatus(Player player)
+    {
+        if (enemy.enemyDetails.hasSlowDamage && player.moveStatus != MoveStatus.Stun && player.moveStatus != MoveStatus.Slow)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.slowChance)
+            {
+                SlowPlayerSpeed(player);
+            }
+        }
+    }
+
+    private void SlowPlayerSpeed(Player player)
+    {
+        float slowedMinMoveSpeed = player.movementByVelocity.movementDetails.minMoveSpeed * 0.6f;
+        float slowedMaxMoveSpeed = player.movementByVelocity.movementDetails.maxMoveSpeed * 0.6f;
+        player.movementByVelocity.moveSpeed = Random.Range(slowedMinMoveSpeed, slowedMaxMoveSpeed);
+        player.moveStatus = MoveStatus.Slow;
+        player.healthEvent.CallGetSlowEvent();
     }
 
     /// <summary>

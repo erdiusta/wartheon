@@ -46,7 +46,6 @@ public static class Settings
     public static int meleeAttackAtRightHand = Animator.StringToHash("AttackAtRightHand");
     public static int meleeAttackAtLeftHand = Animator.StringToHash("AttackAtLeftHand");
     public static int isLeft = Animator.StringToHash("isLeft");
-    public static int attackOrder = Animator.StringToHash("attackOrder");
 
     // Animator parameters - Shield
     public static int block = Animator.StringToHash("block");

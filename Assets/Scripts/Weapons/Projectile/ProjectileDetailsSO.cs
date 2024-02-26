@@ -79,10 +79,59 @@ public class ProjectileDetailsSO : ScriptableObject
     #endregion
     public float projectileRotationSpeed = 1f;
 
+    #region Header PASSIVE
+    [Space(10)]
+    [Header("PROJECTILE PASSIVE EFFECT")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Check if projectile has acid")]
+    #endregion Tooltip
+    public bool hasAcid;
+    #region Tooltip
+    [Tooltip("The efficiency of projectile's acid")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float acidEfficiency = 0.4f;
+    #region Tooltip
+    [Tooltip("Check if projectile has poison damage")]
+    #endregion Tooltip
+    public bool isPoisonous;
+    #region Tooltip
+    [Tooltip("The chance of projectile's poison damage")]
+    #endregion
+    [Range(0f, 1f)] public float poisonChance = 0.2f;
+    #region Tooltip
+    [Tooltip("Check if projectile has bleeding damage")]
+    #endregion Tooltip
+    public bool hasBleedingDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's bleeding damage")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float bleedingChance = 0.2f;
+    #region Tooltip
+    [Tooltip("Check if projectile has stun damage")]
+    #endregion Tooltip
+    public bool hasStunDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's stun")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float stunChance = 0.2f;
+    #region Tooltip
+    [Tooltip("Check if projectile has slow damage")]
+    #endregion Tooltip
+    public bool hasSlowDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's slow damage")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float slowChance = 0.2f;
+
     #region Header PROJECTILE SPREAD DETAILS
     [Space(10)]
     [Header("PROJECTILE SPREAD DETAILS")]
     #endregion
+    #region Tooltip
+    [Tooltip("This modifier affects how much projectile's affected by gravity so that it becomes more arc shape trajectory")]
+    #endregion
+    public float gravity = 0f;
     #region Tooltip
     [Tooltip("This is the minimum spread angle of the projectile. A higher spread means less accuracy. A random spread is calculated between the min and max values")]
     #endregion

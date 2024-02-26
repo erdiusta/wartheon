@@ -26,9 +26,13 @@ MonoBehaviour:
   hasShield: 0
   deflectChance: 0
   isPoisonous: 0
+  poisonChance: 0
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 1
+  stunChance: 0.3
+  hasBleedingDamage: 0
+  bleedingChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2.5
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -40,6 +44,7 @@ MonoBehaviour:
   deflectSoundEffect: {fileID: 0}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
   poisonSoundEffect: {fileID: 0}
+  bleedingSoundEffect: {fileID: 0}
   enemyWeapon: {fileID: 0}
   firingIntervalMin: 0.1
   firingIntervalMax: 1
@@ -73,6 +78,12 @@ MonoBehaviour:
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
       ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: f793c8e0100ca3e40bc4b1e0becfa2e1, type: 2}
+      ratio: 2
   ammoPercent: 50
   dropSpawnChanceMin: 50
   dropSpawnChanceMax: 70

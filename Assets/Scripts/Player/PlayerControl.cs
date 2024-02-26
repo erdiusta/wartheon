@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -74,6 +73,7 @@ public class PlayerControl : MonoBehaviour
         switch (player.moveStatus)
         {
             case MoveStatus.Idle:
+            case MoveStatus.Slow:
                 // Process the player weapon input
                 WeaponInput();
                 // Process the player movement input

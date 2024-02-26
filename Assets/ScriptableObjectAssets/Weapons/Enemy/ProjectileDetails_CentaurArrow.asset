@@ -23,10 +23,21 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 0}
   projectileDamageMin: 10
   projectileDamageMax: 15
-  projectileSpeedMin: 10
-  projectileSpeedMax: 14
+  projectileSpeedMin: 12
+  projectileSpeedMax: 16
   projectileRange: 25
   projectileRotationSpeed: 1
+  hasAcid: 0
+  acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasSlowDamage: 1
+  slowChance: 0.3
+  gravity: 3
   projectileSpreadMin: 0
   projectileSpreadMax: 0
   projectileSpawnAmountMin: 1

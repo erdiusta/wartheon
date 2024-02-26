@@ -19,10 +19,10 @@ MonoBehaviour:
   lowerBounds: {x: -12, y: -3}
   upperBounds: {x: 18, y: 24}
   doorwayList:
-  - position: {x: -1, y: 24}
+  - position: {x: 2, y: 24}
     orientation: 0
     doorPrefab: {fileID: 1115459866753101013, guid: 90fd445a63dfd3f40b89a3a33ecc6f57, type: 3}
-    doorwayStartCopyPosition: {x: -1, y: 22}
+    doorwayStartCopyPosition: {x: -1, y: 24}
     doorwayCopyTileWidth: 5
     doorwayCopyTileHeight: 7
     isConnected: 0

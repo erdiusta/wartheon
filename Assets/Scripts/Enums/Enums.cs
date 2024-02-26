@@ -26,18 +26,22 @@ public enum MoveStatus
 {
     Idle,
     Stagger,
-    Stun
+    Stun,
+    Slow
 }
 
 public enum HealthStatus
 {
     Normal,
     Poisoned,
+    Bleeding
 }
 
 public enum ArmorStatus
 {
     Normal,
+    SilverArmor,
+    GoldenArmor,
     Acid
 }
 

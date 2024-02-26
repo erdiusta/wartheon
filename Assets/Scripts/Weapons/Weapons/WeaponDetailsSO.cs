@@ -44,6 +44,26 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Check if weapon has stun damage")]
     #endregion Tooltip
     public bool hasStunDamage;
+    #region Tooltip
+    [Tooltip("The chance of weapon's stun")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float stunChance = 0.2f;
+    #region Tooltip
+    [Tooltip("Check if weapon has bleeding damage")]
+    #endregion Tooltip
+    public bool hasBleedingDamage;
+    #region Tooltip
+    [Tooltip("The chance of weapon's bleeding")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float bleedingChance= 0.2f;
+    #region Tooltip
+    [Tooltip("Check if weapon has slow damage")]
+    #endregion Tooltip
+    public bool hasSlowDamage;
+    #region Tooltip
+    [Tooltip("The chance of weapon's slow damage")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float slowChance = 0.2f;
 
     #region Header WEAPON CONFIGURATION
     [Space(10)]
@@ -62,9 +82,13 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public WeaponShootEffectSO weaponShootEffect;
     #region Tooltip
-    [Tooltip("The firing sound effect SO for the weapon")]
+    [Tooltip("The swing/fire sound effect SO for the weapon")]
     #endregion Tooltip
-    public SoundEffectSO weaponFiringSoundEffect;
+    public SoundEffectSO weaponSwingSoundEffect;
+    #region Tooltip
+    [Tooltip("The impact sound effect SO for the weapon")]
+    #endregion Tooltip
+    public SoundEffectSO weaponImpactSoundEffect;
     #region Tooltip
     [Tooltip("The reloading sound effect SO for the weapon")]
     #endregion Tooltip

@@ -272,11 +272,11 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     private void WeaponSoundEffect()
     {
-        if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect != null &&
+        if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponSwingSoundEffect != null &&
             GetComponent<PlayerControl>().isSoundPlayed == false)
         {           
             GetComponent<PlayerControl>().isSoundPlayed = true;
-            SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect);
+            SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponSwingSoundEffect);
         }
     }
 }

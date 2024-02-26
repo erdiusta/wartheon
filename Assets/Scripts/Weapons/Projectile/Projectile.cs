@@ -11,7 +11,6 @@ public class Projectile : MonoBehaviour, IFireable
     [SerializeField] TrailRenderer trailRenderer;
 
     [HideInInspector] public Coroutine playerBlockCoroutine;
-    [HideInInspector] public Coroutine enemyBlockCoroutine;
 
     float projectileRange = 0f;
     float projectileSpeed;
@@ -23,10 +22,16 @@ public class Projectile : MonoBehaviour, IFireable
     bool isProjectileMaterialSet;
     bool overrideProjectileMovement;
     bool isColliding;
+    Vector3 velocity;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void OnEnable()
+    {
+        velocity = fireDirectionVector.normalized * projectileSpeed;
     }
 
     private void Update()
@@ -46,13 +51,14 @@ public class Projectile : MonoBehaviour, IFireable
         // Don't move projectile if movement has been overriden - e.g. this projectile is part of an ammo pattern
         if (!overrideProjectileMovement)
         {
-            // Calculate distance vector to move projectile
-            Vector3 distanceVector = fireDirectionVector * projectileSpeed * Time.deltaTime;
+            // Apply gravity
+            velocity += Vector3.down * projectileDetails.gravity * Time.deltaTime;
 
-            transform.position += distanceVector;
+            // Move the projectile based on its velocity
+            transform.position += velocity * Time.deltaTime;
 
             // Disable after max range reached
-            projectileRange -= distanceVector.magnitude;
+            projectileRange -= velocity.magnitude * Time.deltaTime;
 
             if (projectileRange < 0f)
             {
@@ -60,6 +66,7 @@ public class Projectile : MonoBehaviour, IFireable
             }
         }
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // If already colliding with something return
@@ -92,6 +99,13 @@ public class Projectile : MonoBehaviour, IFireable
                 // Check if the dot product is greater than the threshold, deflection fails
                 if (dotProduct > blockingThreshold - 1f)
                 {
+                    // Status checks
+                    CheckPoisonStatus(player);
+                    CheckBleedingStatus(player);
+                    CheckAcidStatus(player);
+                    CheckStunStatus(player);
+                    CheckSlowStatus(player);
+
                     // Deal Damage To Collision Object
                     DealDamage(collision);
                 }
@@ -100,6 +114,13 @@ public class Projectile : MonoBehaviour, IFireable
                     // If the player is attacking, guard is down so block is disabled
                     if (player.meleeAttackRightHand.IsAttackingAtRightHand)
                     {
+                        // Status checks
+                        CheckPoisonStatus(player);
+                        CheckBleedingStatus(player);
+                        CheckAcidStatus(player);
+                        CheckStunStatus(player);
+                        CheckSlowStatus(player);
+
                         // Deal Damage To Collision Object
                         DealDamage(collision);
                     }
@@ -115,38 +136,68 @@ public class Projectile : MonoBehaviour, IFireable
             }
             else
             {
+                // Status checks
+                CheckPoisonStatus(player);
+                CheckBleedingStatus(player);
+                CheckAcidStatus(player);
+                CheckStunStatus(player);
+                CheckSlowStatus(player);
+
                 // Deal Damage To Collision Object
                 DealDamage(collision);
             }
         }
-        else
+        else if(collision.tag == Settings.enemyTag)
         {
+            Enemy enemy = collision.GetComponent<Enemy>();
+
             if (collision.GetComponent<Enemy>() != null)
             {
-                Enemy enemy = collision.GetComponent<Enemy>();
-
                 if (enemy.enemyDetails.hasShield)
                 {
-                    if (enemyBlockCoroutine == null)
-                    {
-                        float diceRoll = Random.Range(0f, 1f);
-                        bool deflectHapped = diceRoll < enemy.enemyDetails.deflectChance ? true : false;
+                    float diceRoll = Random.Range(0f, 1f);
+                    bool deflectHappened = diceRoll < enemy.enemyDetails.deflectChance ? true : false;
 
-                        if (deflectHapped)
-                            enemyBlockCoroutine = StartCoroutine(EnemyBlockAnimRoutine(collision));
-                        else
-                            // Deal Damage To Collision Object
-                            DealDamage(collision);
+                    if (deflectHappened)
+                    {
+                        enemy.health.isBlocking = true;
+                        enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position);
+                    }
+                    else
+                    {
+                        // Status checks
+                        CheckPoisonStatus(enemy);
+                        CheckBleedingStatus(enemy);
+                        CheckAcidStatus(enemy);
+                        CheckStunStatus(enemy);
+                        CheckSlowStatus(enemy);
+
+                        // Deal Damage To Collision Object
+                        DealDamage(collision);
                     }
                 }
                 else
                 {
+                    // Status checks
+                    CheckPoisonStatus(enemy);
+                    CheckBleedingStatus(enemy);
+                    CheckAcidStatus(enemy);
+                    CheckStunStatus(enemy);
+                    CheckSlowStatus(enemy);
+
                     // Deal Damage To Collision Object
                     DealDamage(collision);
                 }
             }
             else
             {
+                // Status checks
+                CheckPoisonStatus(enemy);
+                CheckBleedingStatus(enemy);
+                CheckAcidStatus(enemy);
+                CheckStunStatus(enemy);
+                CheckSlowStatus(enemy);
+
                 // Deal Damage To Collision Object
                 DealDamage(collision);
             }
@@ -165,28 +216,12 @@ public class Projectile : MonoBehaviour, IFireable
         // Adjust animator layer weights
         player.animatePlayer.SetGetHitAnimationParameters();
         player.transform.GetChild(1).GetComponent<Animator>().SetTrigger(Settings.block);
-        SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponFiringSoundEffect);
+        SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponSwingSoundEffect);
 
         yield return new WaitForSeconds(0.6f);
 
         playerBlockCoroutine = null;
         player.animatePlayer.SetIdleAnimationParameters();
-    }
-
-    IEnumerator EnemyBlockAnimRoutine(Collider2D collision)
-    {
-        Enemy enemy = collision.GetComponent<Enemy>();
-
-        // Adjust animator layer weights
-        enemy.animateEnemy.SetGetHitAnimationParameters();
-        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.deflectSoundEffect);
-        enemy.animator.SetBool(Settings.getHit, false);
-        enemy.animator.SetBool(Settings.block, true);
-        yield return new WaitForSeconds(0.2f);
-
-        enemyBlockCoroutine = null;
-        enemy.animator.SetBool(Settings.block, false);
-        enemy.animateEnemy.SetIdleAnimationParameters();
     }
 
     private void DealDamage(Collider2D collision)
@@ -345,6 +380,212 @@ public class Projectile : MonoBehaviour, IFireable
             // Set gameobject active (the particle system is set to automatically disable the gameobject once finished)
             projectileHitEffect.gameObject.SetActive(true);
         }
+    }
+
+    /// <summary>
+    /// Check poison status - Player
+    /// </summary>
+    private void CheckPoisonStatus(Player player)
+    {
+        if (projectileDetails.isPoisonous)
+        {
+            // Check get poisoned
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.poisonChance)
+            {
+                player.healthEvent.CallGetPoisonedEvent();
+                player.healthStatus = HealthStatus.Poisoned;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check poison status - Enemy
+    /// </summary>
+    private void CheckPoisonStatus(Enemy enemy)
+    {
+        if (projectileDetails.isPoisonous)
+        {
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.poisonChance)
+            {
+                enemy.healthEvent.CallGetPoisonedEvent();
+                enemy.healthStatus = HealthStatus.Poisoned;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check bleeding status
+    /// </summary>
+    private void CheckBleedingStatus(Player player)
+    {
+        if (projectileDetails.hasBleedingDamage)
+        {
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.bleedingChance)
+            {
+                player.healthEvent.CallGetBleedingEvent();
+                player.healthStatus = HealthStatus.Bleeding;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check bleed status
+    /// </summary>
+    private void CheckBleedingStatus(Enemy enemy)
+    {
+        if (projectileDetails.hasBleedingDamage)
+        {
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.bleedingChance)
+            {
+                enemy.healthEvent.CallGetBleedingEvent();
+                enemy.healthStatus = HealthStatus.Bleeding;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check acid status - Player
+    /// </summary>
+    private void CheckAcidStatus(Player player)
+    {
+        if (projectileDetails.hasAcid && player.armorStatus != ArmorStatus.Acid)
+        {
+            // Check get acid
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.acidEfficiency)
+            {
+                if (player.armorStatus == ArmorStatus.SilverArmor || player.armorStatus == ArmorStatus.GoldenArmor)
+                {
+                    player.healthEvent.CallArmorWoreOffEvent();
+                }
+
+                player.armorStatus = ArmorStatus.Acid;
+                player.health.SetArmorValue((int)(player.playerDetails.playerArmorValue * (1 - projectileDetails.acidEfficiency)));
+                player.healthEvent.CallGetAcidEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check stun status - Enemy
+    /// </summary>
+    private void CheckAcidStatus(Enemy enemy)
+    {
+        if (projectileDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid && enemy.health.currentHealth > 0)
+        {
+            float randomAcidNum = Random.Range(0f, 1f);
+            if (randomAcidNum < projectileDetails.acidEfficiency)
+            {
+                enemy.armorStatus = ArmorStatus.Acid;
+                enemy.health.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue * (1 - projectileDetails.acidEfficiency)));
+                enemy.healthEvent.CallGetAcidEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check stun status - Player
+    /// </summary>
+    private void CheckStunStatus(Player player)
+    {
+        if (projectileDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun && player.moveStatus != MoveStatus.Slow)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.stunChance)
+            {
+                player.moveStatus = MoveStatus.Stun;
+                player.healthEvent.CallGetStunEvent();
+                player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+                player.animator.SetBool(Settings.isStunned, true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check stun status - Enemy
+    /// </summary>
+    private void CheckStunStatus(Enemy enemy)
+    {
+        EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
+
+        if (projectileDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun &&  enemyMovementAI.moveStatus != MoveStatus.Slow 
+            && enemy.health.currentHealth > 0)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.stunChance)
+            {
+                StartCoroutine(StunRoutine(enemy));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check slow status - Player
+    /// </summary>
+    private void CheckSlowStatus(Player player)
+    {
+        if (projectileDetails.hasSlowDamage && player.moveStatus != MoveStatus.Stun && player.moveStatus != MoveStatus.Slow)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.slowChance)
+            {
+                SlowPlayerSpeed(player);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check slow status - Enemy
+    /// </summary>
+    private void CheckSlowStatus(Enemy enemy)
+    {
+        EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
+
+        if (projectileDetails.hasSlowDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemyMovementAI.moveStatus != MoveStatus.Slow && 
+            enemy.health.currentHealth > 0)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.slowChance)
+            {
+                SlowEnemySpeed(enemy);
+            }
+        }
+    }
+
+    IEnumerator StunRoutine(Enemy enemy)
+    {
+        enemy.enemyMovementAI.moveStatus = MoveStatus.Stun;
+        enemy.healthEvent.CallGetStunEvent();
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+        enemy.animator.SetBool(Settings.isStunned, true);
+        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
+
+        yield return new WaitForFixedUpdate();
+    }
+
+    private void SlowPlayerSpeed(Player player)
+    {
+        float slowedMinMoveSpeed = player.movementByVelocity.movementDetails.minMoveSpeed * 0.6f;
+        float slowedMaxMoveSpeed = player.movementByVelocity.movementDetails.maxMoveSpeed * 0.6f;
+        player.movementByVelocity.moveSpeed = Random.Range(slowedMinMoveSpeed, slowedMaxMoveSpeed);
+        player.moveStatus = MoveStatus.Slow;
+        player.healthEvent.CallGetSlowEvent();
+    }
+
+    private void SlowEnemySpeed(Enemy enemy)
+    {
+        float slowedMinMoveSpeed = enemy.enemyDetails.movementDetails.minMoveSpeed * 0.6f;
+        float slowedMaxMoveSpeed = enemy.enemyDetails.movementDetails.maxMoveSpeed * 0.6f;
+        enemy.enemyMovementAI.moveSpeed = Random.Range(slowedMinMoveSpeed, slowedMaxMoveSpeed);
+        enemy.enemyMovementAI.moveStatus = MoveStatus.Slow;
+        enemy.healthEvent.CallGetSlowEvent();
     }
 
     public void SetProjectileMaterial(Material material)

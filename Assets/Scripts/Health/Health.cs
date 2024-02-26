@@ -20,6 +20,7 @@ public class Health : MonoBehaviour
     [HideInInspector] public Enemy enemy;
     [HideInInspector] public int currentArmorValue;
     [HideInInspector] public Coroutine getHitCoroutine;
+    [HideInInspector] public bool isBlocking;
 
     int startingHealth;
     HealthEvent healthEvent;
@@ -32,6 +33,7 @@ public class Health : MonoBehaviour
     WaitForSeconds waitForSecondsSpriteFlashInterval = new WaitForSeconds(spriteFlashInterval);
     FlashManager flashManager;
     Coroutine poisonCoroutine;
+    Coroutine bleedingCoroutine;
     int poisonPeriodCount = 0;
 
     private void Awake()
@@ -92,7 +94,15 @@ public class Health : MonoBehaviour
             {
                 if (poisonCoroutine == null)
                 {
-                    poisonCoroutine = StartCoroutine(GraduallyHealthReduce());
+                    poisonCoroutine = StartCoroutine(GraduallyHealthReduceDuetoPoison());
+                }
+            }
+
+            if (player.healthStatus == HealthStatus.Bleeding)
+            {
+                if (bleedingCoroutine == null)
+                {
+                    bleedingCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBleeding());
                 }
             }
         }
@@ -102,7 +112,15 @@ public class Health : MonoBehaviour
             {
                 if (poisonCoroutine == null)
                 {
-                    poisonCoroutine = StartCoroutine(GraduallyHealthReduce());
+                    poisonCoroutine = StartCoroutine(GraduallyHealthReduceDuetoPoison());
+                }
+            }
+
+            if (enemy.healthStatus == HealthStatus.Bleeding)
+            {
+                if (bleedingCoroutine == null)
+                {
+                    bleedingCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBleeding());
                 }
             }
         }
@@ -118,25 +136,26 @@ public class Health : MonoBehaviour
             currentHealth -= damageAmount;
             CallHealthEvent(damageAmount);
 
-            if (currentHealth > 0)
-            {
-                PostHitImmunity();
-            }
-
-            if (tag == Settings.playerTag)
+            if (player != null)
             {
                 if (getHitCoroutine == null)
                 {
                     if (currentHealth > 0)
                     {
                         getHitCoroutine = StartCoroutine(PlayerGetHitRoutine());
+                        PostHitImmunity();
                     }
                 }
             }
-            if (tag == Settings.enemyTag)
+            if (enemy != null)
             {
                 if (getHitCoroutine == null)
                 {
+                    if (!isBlocking)
+                    {
+                        PostHitImmunity();
+                    }
+
                     getHitCoroutine = StartCoroutine(EnemyGetHitRoutine());
                 }
 
@@ -159,6 +178,7 @@ public class Health : MonoBehaviour
         if (player.health.currentHealth > 0f)
         {
             player.animatePlayer.SetGetHitAnimationParameters();
+            player.animator.SetBool(Settings.getHit, true);
             SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
         }
         else
@@ -166,29 +186,47 @@ public class Health : MonoBehaviour
             player.animatePlayer.SetDeathAnimationParameters();
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.4f);
 
+        player.animator.SetBool(Settings.getHit, false);
         getHitCoroutine = null;
     }
 
     IEnumerator EnemyGetHitRoutine()
     {
-        if (enemy.health.currentHealth > 0f)
+        if (!isBlocking)
         {
-            enemy.animateEnemy.SetGetHitAnimationParameters();
-            SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
+            if (enemy.health.currentHealth > 0f)
+            {
+                enemy.animateEnemy.ResetAnimatonParameters();
+                enemy.animateEnemy.SetGetHitAnimationParameters();
+                enemy.animator.SetBool(Settings.getHit, true);
+                enemy.animator.SetBool(Settings.block, false);
+                SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
+            }
+            else
+            {
+                enemy.animateEnemy.ResetAnimatonParameters();
+                enemy.animateEnemy.SetDeathAnimationParameters();
+            }
+
+            enemy.particlesSystem.Play();
         }
         else
         {
-            enemy.animateEnemy.SetDeathAnimationParameters();
+            enemy.animateEnemy.ResetAnimatonParameters();
+            enemy.animateEnemy.SetGetHitAnimationParameters();
+            enemy.animator.SetBool(Settings.getHit, false);
+            enemy.animator.SetBool(Settings.block, true);
+            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.deflectSoundEffect);
         }
 
-        enemy.particlesSystem.Play();
-
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.6f);
 
         enemy.particlesSystem.Stop();
         enemy.animator.SetBool(Settings.getHit, false);
+        enemy.animator.SetBool(Settings.block, false);
+        isBlocking = false;
         getHitCoroutine = null;
     }
 
@@ -212,41 +250,6 @@ public class Health : MonoBehaviour
             // Flash red&white and give period of immunity
             immunityCoroutine = StartCoroutine(PostHitImmunityRoutine(immunityTime, spriteRenderer));
         }
-    }
-
-    /// <summary>
-    /// Gradually reduce health
-    /// </summary>
-    IEnumerator GraduallyHealthReduce()
-    {
-        poisonPeriodCount++;
-
-        int damageAmount = 10;
-        // Trigger health event
-        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)startingHealth), currentHealth, damageAmount);
-        TakeDamage(damageAmount, Vector2.zero, transform.position);
-
-        float rndNumber = Random.Range(0f, 1f);
-
-        if (rndNumber > 0.5f && poisonPeriodCount > 2)
-        {
-            if (player != null)
-            {
-                player.healthStatus = HealthStatus.Normal;
-                player.healthEvent.CallPoisonCuredEvent();
-            }
-            if (enemy != null)
-            {
-                enemy.healthStatus = HealthStatus.Normal;
-                enemy.healthEvent.CallPoisonCuredEvent();
-            }
-
-            poisonPeriodCount = 0;
-        }
-
-        yield return new WaitForSeconds(2.5f);
-
-        poisonCoroutine = null; // Reset the coroutine reference when it's finished
     }
 
     /// <summary>
@@ -290,6 +293,75 @@ public class Health : MonoBehaviour
 
         isDamageable = true;
         immunityCoroutine = null;
+    }
+
+    /// <summary>
+    /// Gradually reduce health - Poison
+    /// </summary>
+    IEnumerator GraduallyHealthReduceDuetoPoison()
+    {
+        poisonPeriodCount++;
+
+        int damageAmount = 7;
+        // Trigger health event
+        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)startingHealth), currentHealth, damageAmount);
+        TakeDamage(damageAmount, Vector2.zero, transform.position);
+
+        float rndNumber = Random.Range(0f, 1f);
+
+        if (rndNumber > 0.5f && poisonPeriodCount > 2)
+        {
+            if (player != null)
+            {
+                player.healthStatus = HealthStatus.Normal;
+                player.healthEvent.CallPoisonCuredEvent();
+            }
+            if (enemy != null)
+            {
+                enemy.healthStatus = HealthStatus.Normal;
+                enemy.healthEvent.CallPoisonCuredEvent();
+            }
+
+            poisonPeriodCount = 0;
+        }
+
+        yield return new WaitForSeconds(2.5f);
+
+        poisonCoroutine = null; // Reset the coroutine reference when it's finished
+    }
+
+    /// <summary>
+    /// Gradually reduce health - Bleeding
+    /// </summary>
+    IEnumerator GraduallyHealthReduceDuetoBleeding()
+    {
+        int damageAmount = 1;
+        // Trigger health event
+        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)startingHealth), currentHealth, damageAmount);
+        TakeDamage(damageAmount, Vector2.zero, transform.position);
+
+        float randomDice = Random.Range(0f, 1f);
+
+        if (randomDice > 0.9f)
+        {
+            if (player != null)
+            {
+                player.healthStatus = HealthStatus.Normal;
+                player.healthEvent.CallBleedingCuredEvent();
+                damageAmount = 0;
+            }
+            if (enemy != null)
+            {
+                enemy.healthStatus = HealthStatus.Normal;
+                enemy.healthEvent.CallBleedingCuredEvent();
+                damageAmount = 0;
+            }
+        }
+
+        yield return new WaitForSeconds(2.5f);
+
+        damageAmount++;
+        bleedingCoroutine = null; // Reset the coroutine reference when it's finished
     }
 
     private void CallHealthEvent(int damageAmount)
@@ -336,12 +408,61 @@ public class Health : MonoBehaviour
         CallHealthEvent(0);
     }
 
+
     /// <summary>
-    /// Set current armor value
+    /// Set current armor value - Silver or Golden Armors
+    /// </summary>
+    public void SetArmorValue()
+    {
+        if (player != null)
+        {
+            if (player.armorStatus == ArmorStatus.SilverArmor)
+            {
+                currentArmorValue = 5 + (int)(player.playerDetails.playerArmorValue * 1.5f);
+            }
+            else if (player.armorStatus == ArmorStatus.GoldenArmor)
+            {
+                currentArmorValue = 10 + player.playerDetails.playerArmorValue * 2;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Set current armor value - Acid
     /// </summary>
     public void SetArmorValue(int armorValue)
     {
-        currentArmorValue = armorValue;
+        if (player != null)
+        {
+            if (player.armorStatus == ArmorStatus.Acid)
+            {
+                currentArmorValue = armorValue;
+            }
+            else if (player.armorStatus == ArmorStatus.SilverArmor)
+            {
+                currentArmorValue = 5 + (int) (player.playerDetails.playerArmorValue * 1.5f);
+            }
+            else if (player.armorStatus == ArmorStatus.GoldenArmor)
+            {
+                currentArmorValue = 10 + player.playerDetails.playerArmorValue * 2;
+            }
+        }
+
+        if (enemy != null)
+        {
+            currentArmorValue = armorValue;
+        }
+    }
+
+    /// <summary>
+    /// Reset armor value
+    /// </summary>
+    public void ResetArmorValue()
+    {
+        if (player != null)
+        {
+            currentArmorValue = player.playerDetails.playerArmorValue;
+        }
     }
 
     /// <summary>

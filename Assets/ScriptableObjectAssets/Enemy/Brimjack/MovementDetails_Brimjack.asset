@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be803c3d22954c743afeeadf2eb708fd, type: 3}
   m_Name: MovementDetails_Brimjack
   m_EditorClassIdentifier: 
-  minMoveSpeed: 4
+  minMoveSpeed: 3
   maxMoveSpeed: 4

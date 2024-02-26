@@ -18,12 +18,18 @@ MonoBehaviour:
   weaponClass: 4
   wieldType: 0
   hasAcid: 0
-  acidEfficiency: 0.4
+  acidEfficiency: 0
   hasStunDamage: 0
+  stunChance: 0
+  hasBleedingDamage: 1
+  bleedingChance: 0.1
+  hasSlowDamage: 0
+  slowChance: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
-  weaponFiringSoundEffect: {fileID: 11400000, guid: 725854e135951404ba8a84c0a0ca4735, type: 2}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 725854e135951404ba8a84c0a0ca4735, type: 2}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: 05f4834c93baa084aa8d96b1654caa0e, type: 2}
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 1
   isShield: 0
@@ -32,6 +38,8 @@ MonoBehaviour:
   circleRadius: 0.95
   meleeDamageMin: 7
   meleeDamageMax: 11
+  criticalHitChance: 0.1
+  criticalHitDamageMultiplier: 2
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0

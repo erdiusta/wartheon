@@ -44,6 +44,8 @@ public class EnemyWeaponAI : MonoBehaviour
 
         if (enemy.enemyMovementAI.attackMoveEnemyRoutine != null) return;
 
+        if (enemy.health.getHitCoroutine != null) return;
+
         // Update timers
         firingIntervalTimer -= Time.deltaTime;
 

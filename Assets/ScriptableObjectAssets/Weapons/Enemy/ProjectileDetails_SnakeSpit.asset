@@ -23,16 +23,27 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 0}
   projectileDamageMin: 6
   projectileDamageMax: 12
-  projectileSpeedMin: 7
-  projectileSpeedMax: 10
-  projectileRange: 10
+  projectileSpeedMin: 5
+  projectileSpeedMax: 8
+  projectileRange: 8
   projectileRotationSpeed: 1
-  projectileSpreadMin: 2
-  projectileSpreadMax: 5
+  hasAcid: 0
+  acidEfficiency: 0
+  isPoisonous: 1
+  poisonChance: 0.2
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
+  gravity: 6
+  projectileSpreadMin: 4
+  projectileSpreadMax: 10
   projectileSpawnAmountMin: 1
-  projectileSpawnAmountMax: 1
-  projectileSpawnIntervalMin: 0
-  projectileSpawnIntervalMax: 0
+  projectileSpawnAmountMax: 2
+  projectileSpawnIntervalMin: 2
+  projectileSpawnIntervalMax: 5
   isProjectileTrail: 0
   projectileTrailTime: 0
   projectileTrailMaterial: {fileID: 0}

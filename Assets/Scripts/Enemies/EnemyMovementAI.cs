@@ -18,6 +18,8 @@ public class EnemyMovementAI : MonoBehaviour
     [HideInInspector] public Coroutine attackMoveEnemyRoutine;
     [HideInInspector] public Coroutine chaseMoveEnemyRoutine;
     [HideInInspector] public Coroutine patrolMoveEnemyRoutine;
+    [HideInInspector] public float enemyStartingMinSpeed;
+    [HideInInspector] public float enemyStartingMaxSpeed;
 
     Enemy enemy;
     Stack<Vector3> movementSteps = new Stack<Vector3>();
@@ -40,6 +42,8 @@ public class EnemyMovementAI : MonoBehaviour
     {
         enemy = GetComponent<Enemy>();
         moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+        enemyStartingMinSpeed = enemyDetails.movementDetails.minMoveSpeed;
+        enemyStartingMaxSpeed = enemyDetails.movementDetails.maxMoveSpeed;
     }
 
     private void OnEnable()
@@ -89,10 +93,21 @@ public class EnemyMovementAI : MonoBehaviour
         }
 
         // If enemy is at the time of other animations, don't move
-        if (enemy.enemyWeaponAI.enemyAttackCoroutine != null || enemy.health.getHitCoroutine != null || attackMoveEnemyRoutine != null || 
-            idleRoutine != null)
+        if (enemy.health.getHitCoroutine != null)
         {
-            Debug.Log(enemyDetails.name.ToString() + " CAN'T MOVE");
+            if (attackMoveEnemyRoutine != null)
+            {
+                StopCoroutine(attackMoveEnemyRoutine);
+            }
+            if (chaseMoveEnemyRoutine != null)
+            {
+                StopCoroutine(chaseMoveEnemyRoutine);
+            }
+            if (idleRoutine != null)
+            {
+                StopCoroutine(idleRoutine);
+            }
+
             return;
         }
         else
@@ -165,7 +180,6 @@ public class EnemyMovementAI : MonoBehaviour
             {
                 enemy.isFiring = false;
                 Patrol();
-                Debug.Log(enemy.enemyDetails.name.ToString() + " IS PATROLLING!");
             }
 
             return;
@@ -192,7 +206,6 @@ public class EnemyMovementAI : MonoBehaviour
             }
 
             Chase();
-            Debug.Log(enemy.enemyDetails.name.ToString() + " IS CHASING! and IsFiring " + enemy.isFiring.ToString());
         }
         else
         {

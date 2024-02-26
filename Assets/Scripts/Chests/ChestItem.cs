@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ChestItem : MonoBehaviour
 {
@@ -115,15 +116,70 @@ public class ChestItem : MonoBehaviour
         // Play pickup sound effect
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
 
-        if (textTMP.text == "Coin")
+        if (textTMP.text == "Silver Coin")
         {
             player.GetComponent<Coins>().Add(1);
+            isColliding = true;
+        }
+
+        if (textTMP.text == "Gold Coin")
+        {
+            player.GetComponent<Coins>().Add(5);
             isColliding = true;
         }
 
         if (textTMP.text == "Health")
         {
             player.health.AddHealth((int)(20f / player.health.GetStartingHealth() * 100));
+            isColliding = true;
+        }
+
+        if (textTMP.text == "Status Cure")
+        {
+            // HEALTH STATUS CHECKS
+            if (player.healthStatus == HealthStatus.Bleeding)
+            {
+                player.healthEvent.CallBleedingCuredEvent();
+            }
+            if (player.healthStatus == HealthStatus.Poisoned)
+            {
+                player.healthEvent.CallPoisonCuredEvent();
+            }
+
+            player.healthStatus = HealthStatus.Normal;
+
+            // MOVE STATUS CHECKS
+            if (player.moveStatus == MoveStatus.Slow)
+            {
+                player.movementByVelocity.moveSpeed = Random.Range(player.movementByVelocity.playerStartingMinSpeed, 
+                    player.movementByVelocity.playerStartingMaxSpeed);
+                player.healthEvent.CallSlowCuredEvent();
+            }
+
+            player.moveStatus = MoveStatus.Idle;
+
+            // ARMOR STATUS CHECKS
+            if (player.armorStatus == ArmorStatus.Acid)
+            {
+                player.healthEvent.CallAcidCuredEvent();
+            }
+
+            player.armorStatus = ArmorStatus.Normal;
+
+            isColliding = true;
+        }
+
+        if (textTMP.text == "Silver Armor")
+        {
+            if (player.armorStatus == ArmorStatus.Acid)
+            {
+                player.healthEvent.CallAcidCuredEvent();
+            }
+
+            player.armorStatus = ArmorStatus.SilverArmor;
+            player.health.SetArmorValue();
+            player.healthEvent.CallGetSilverArmorEvent();
+            Debug.Log("Player's current armor value is " + player.health.currentArmorValue);
             isColliding = true;
         }
 

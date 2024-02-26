@@ -20,6 +20,11 @@ MonoBehaviour:
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 0
+  stunChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
   weaponShootPosition: {x: 0.125, y: 0.9375, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: fcd5dc80321781b4ebeed460c7b2f4fb, type: 2}
   weaponShootEffect: {fileID: 0}
@@ -32,6 +37,8 @@ MonoBehaviour:
   circleRadius: 0
   meleeDamageMin: 0
   meleeDamageMax: 0
+  criticalHitChance: 0.1
+  criticalHitDamageMultiplier: 2
   hasInfiniteProjectile: 1
   hasInfiniteClipCapacity: 1
   weaponClipProjectileCapacity: 0

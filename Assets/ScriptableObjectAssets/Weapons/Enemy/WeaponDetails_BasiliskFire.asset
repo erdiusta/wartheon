@@ -17,6 +17,14 @@ MonoBehaviour:
   weaponAnimatorController: {fileID: 0}
   weaponClass: 5
   wieldType: 1
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
   weaponShootPosition: {x: 1.8, y: 1, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 7d219b64b9aa9ab46839075b51a349bd, type: 2}
   weaponShootEffect: {fileID: 0}
@@ -29,6 +37,8 @@ MonoBehaviour:
   circleRadius: 0
   meleeDamageMin: 0
   meleeDamageMax: 0
+  criticalHitChance: 0.1
+  criticalHitDamageMultiplier: 2
   hasInfiniteProjectile: 1
   hasInfiniteClipCapacity: 1
   weaponClipProjectileCapacity: 0

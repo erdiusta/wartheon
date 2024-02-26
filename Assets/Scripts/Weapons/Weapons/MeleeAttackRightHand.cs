@@ -81,9 +81,13 @@ public class MeleeAttackRightHand : MonoBehaviour
 
                     int inflictedDamage = CalculateDamageAmount(enemy);
                     enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position);
+                    SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponImpactSoundEffect);
+
 
                     CheckAcidStatus(enemy);
+                    CheckBleedingStatus(enemy);
                     CheckStunStatus(enemy);
+                    CheckSlowStatus(enemy);
 
                     if (player.playerDetails.playerCharacterName == Settings.erebus && player.playerDetails.onStealth)
                     {
@@ -92,7 +96,7 @@ public class MeleeAttackRightHand : MonoBehaviour
 
                     if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
                     {
-                        enemy.GetComponent<EnemyMovementAI>().TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                        enemy.enemyMovementAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
                     }
 
                     if (playerAttackRightHandRoutine == null)
@@ -140,14 +144,31 @@ public class MeleeAttackRightHand : MonoBehaviour
         if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid & 
             enemy.health.currentHealth > 0)
         {
-            float randomAcidNum = Random.Range(0f, 1f);
-            if (randomAcidNum > 0.6f)
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice > 0.6f)
             {
                 enemy.armorStatus = ArmorStatus.Acid;
                 enemyHealth.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue *
                     (1 - player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.acidEfficiency)));
 
                 enemy.GetComponent<HealthEvent>().CallGetAcidEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check bleed status
+    /// </summary>
+    private void CheckBleedingStatus(Enemy enemy)
+    {
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasBleedingDamage)
+        {
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.bleedingChance)
+            {
+                enemy.healthEvent.CallGetBleedingEvent();
+                enemy.healthStatus = HealthStatus.Bleeding;
             }
         }
     }
@@ -160,12 +181,30 @@ public class MeleeAttackRightHand : MonoBehaviour
         EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
 
         if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun 
-            && enemy.health.currentHealth > 0)
+            && enemyMovementAI.moveStatus != MoveStatus.Slow && enemy.health.currentHealth > 0)
         {
-            float randomStunNum = Random.Range(0f, 1f);
-            if (randomStunNum > 0.6f)
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.stunChance)
             {
                 StartCoroutine(StunRoutine(enemy));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check slow status
+    /// </summary>
+    private void CheckSlowStatus(Enemy enemy)
+    {
+        EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
+
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasSlowDamage && enemyMovementAI.moveStatus != MoveStatus.Stun
+            && enemyMovementAI.moveStatus != MoveStatus.Slow && enemy.health.currentHealth > 0)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.slowChance)
+            {
+                SlowEnemySpeed(enemy);
             }
         }
     }
@@ -179,6 +218,15 @@ public class MeleeAttackRightHand : MonoBehaviour
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
 
         yield return new WaitForFixedUpdate();
+    }
+
+    private void SlowEnemySpeed(Enemy enemy)
+    {
+        float slowedMinMoveSpeed = enemy.enemyDetails.movementDetails.minMoveSpeed * 0.6f;
+        float slowedMaxMoveSpeed = enemy.enemyDetails.movementDetails.maxMoveSpeed * 0.6f;
+        enemy.enemyMovementAI.moveSpeed = Random.Range(slowedMinMoveSpeed, slowedMaxMoveSpeed);
+        enemy.enemyMovementAI.moveStatus = MoveStatus.Slow;
+        enemy.healthEvent.CallGetSlowEvent();
     }
 
     public IEnumerator PlayerAttackAnimRoutine()
@@ -214,7 +262,7 @@ public class MeleeAttackRightHand : MonoBehaviour
         // Melee attack sound effect
         if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
         {
-            SoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect);
+            SoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponSwingSoundEffect);
         }
     }
 
@@ -230,7 +278,7 @@ public class MeleeAttackRightHand : MonoBehaviour
     /// </summary>
     private void SoundEffect(SoundEffectSO soundEffect)
     {
-        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFiringSoundEffect != null)
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponSwingSoundEffect != null)
         {
             SoundEffectManager.Instance.PlaySoundEffect(soundEffect);
         }

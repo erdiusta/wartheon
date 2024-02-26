@@ -27,6 +27,17 @@ MonoBehaviour:
   projectileSpeedMax: 22
   projectileRange: 12
   projectileRotationSpeed: 1
+  hasAcid: 0
+  acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasSlowDamage: 1
+  slowChance: 0.05
+  gravity: 6
   projectileSpreadMin: 1.2
   projectileSpreadMax: 2
   projectileSpawnAmountMin: 1

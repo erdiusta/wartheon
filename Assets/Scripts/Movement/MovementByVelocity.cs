@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [DisallowMultipleComponent]
@@ -9,6 +10,9 @@ public class MovementByVelocity : MonoBehaviour
     [Tooltip("MovementDetailsSO scriptable object containing movement details such as speed")]
     #endregion Tooltip
     public MovementDetailsSO movementDetails;
+
+    [HideInInspector] public float playerStartingMinSpeed;
+    [HideInInspector] public float playerStartingMaxSpeed;
 
     public Vector2 MovementInput { get; set; }
     public float moveSpeed;
@@ -30,10 +34,27 @@ public class MovementByVelocity : MonoBehaviour
         moveSpeed = movementDetails.GetMoveSpeed();
     }
 
+    private void OnEnable()
+    {
+        StaticEventHandler.OnRoomChanged += NeutralizeStatus;
+    }
+
+    private void OnDisable()
+    {
+        StaticEventHandler.OnRoomChanged -= NeutralizeStatus;
+    }
+
+    private void Start()
+    {
+        playerStartingMinSpeed = movementDetails.minMoveSpeed;
+        playerStartingMaxSpeed = movementDetails.maxMoveSpeed;
+    }
+
     private void FixedUpdate()
     {
         Move();
     }
+
 
     private void Move()
     {
@@ -69,6 +90,11 @@ public class MovementByVelocity : MonoBehaviour
             return;
         }
 
+        if (player.moveStatus == MoveStatus.Slow)
+        {
+            rb2D.velocity = MovementInput * moveSpeed;
+        }
+
         // If none of the above conditions are met, perform regular move
         rb2D.velocity = MovementInput * moveSpeed;
     }
@@ -80,6 +106,39 @@ public class MovementByVelocity : MonoBehaviour
     {
         // Ensure the rb collision detection is set to continuous
         rb2D.velocity = moveDirection * moveSpeed;
+    }
+
+    /// <summary>
+    /// Neutralize Status on room changed
+    /// </summary>
+    private void NeutralizeStatus(RoomChangedEventArgs roomChangedEventArgs)
+    {
+        // MOVE STATUS CHECKS
+        if (player.moveStatus == MoveStatus.Slow)
+        {
+            player.movementByVelocity.moveSpeed = Random.Range(player.movementByVelocity.playerStartingMinSpeed,
+                player.movementByVelocity.playerStartingMaxSpeed);
+            player.healthEvent.CallSlowCuredEvent();
+        }
+
+        player.moveStatus = MoveStatus.Idle;
+
+        // ARMOR STATUS CHECKS
+        if (player.armorStatus == ArmorStatus.Acid)
+        {
+            player.health.ResetArmorValue();
+            player.healthEvent.CallAcidCuredEvent();
+            Debug.Log("Player's current armor value is " + player.health.currentArmorValue);
+        }
+
+        if (player.armorStatus == ArmorStatus.SilverArmor || player.armorStatus == ArmorStatus.GoldenArmor)
+        {
+            player.health.ResetArmorValue();
+            player.healthEvent.CallArmorWoreOffEvent();
+            Debug.Log("Player's current armor value is " + player.health.currentArmorValue);
+        }
+
+        player.armorStatus = ArmorStatus.Normal;
     }
 
     /// <summary>

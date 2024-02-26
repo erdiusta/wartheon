@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad0d48074276e0640b14ec3640a668d8, type: 3}
-  m_Name: ProjectileDetails_HeavensGale
+  m_Name: ProjectileDetails_HeavensGaleProjectile
   m_EditorClassIdentifier: 
   projectileName: Heavens Gale Projectile
   isPlayerProjectile: 1
@@ -27,6 +27,16 @@ MonoBehaviour:
   projectileSpeedMax: 20
   projectileRange: 30
   projectileRotationSpeed: 90
+  hasAcid: 0
+  acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasSlowDamage: 1
+  slowChance: 0.1
   projectileSpreadMin: 0
   projectileSpreadMax: 0
   projectileSpawnAmountMin: 1

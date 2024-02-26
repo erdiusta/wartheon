@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: MovementDetails_FireElemental
   m_EditorClassIdentifier: 
   minMoveSpeed: 3
-  maxMoveSpeed: 3
+  maxMoveSpeed: 4
