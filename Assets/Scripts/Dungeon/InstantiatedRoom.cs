@@ -13,6 +13,7 @@ public class InstantiatedRoom : MonoBehaviour
     [HideInInspector] public Tilemap decoration2Tilemap;
     [HideInInspector] public Tilemap frontTilemap;
     [HideInInspector] public Tilemap collisionTilemap;
+    [HideInInspector] public Tilemap poolTilemap;
     [HideInInspector] public Tilemap minimapTilemap;
     [HideInInspector] public int[,] aStarMovementPenalty; // use this 2d array to store movement penalties from the tilemaps to be used in AStar pathfinding
     [HideInInspector] public Bounds roomColliderBounds;
@@ -95,6 +96,10 @@ public class InstantiatedRoom : MonoBehaviour
             {
                 collisionTilemap = tilemap;
             }
+            else if (tilemap.gameObject.tag == "poolTilemap")
+            {
+                poolTilemap = tilemap;
+            }
             else if (tilemap.gameObject.tag == "minimapTilemap")
             {
                 minimapTilemap = tilemap;
@@ -117,6 +122,11 @@ public class InstantiatedRoom : MonoBehaviour
             if (collisionTilemap != null)
             {
                 BlockADoorwayOnTilemapLayer(collisionTilemap, doorway);
+            }
+
+            if (poolTilemap != null)
+            {
+                BlockADoorwayOnTilemapLayer(poolTilemap, doorway);
             }
 
             if (minimapTilemap != null)
@@ -310,7 +320,7 @@ public class InstantiatedRoom : MonoBehaviour
                 {
                     doorComponent.isBossRoomDoor = true;
 
-                    // Instantiate skull icon for minimap by door
+                    // Instantiate boss icon for minimap by door
                     GameObject bossIcon = Instantiate(GameResources.Instance.minimapBossPrefab, gameObject.transform);
                     bossIcon.transform.localPosition = door.transform.localPosition;
                 }

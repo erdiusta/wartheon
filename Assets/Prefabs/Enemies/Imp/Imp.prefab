@@ -202,7 +202,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4214307536645877505, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 2.75
+      value: 2.6875
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589956830810753142, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 3.15625
       objectReference: {fileID: 0}
     - target: {fileID: 6671259502560293248, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: enemyDetails
@@ -214,11 +218,11 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 83dbceefafb85d548a043660c57a38ce, type: 2}
     - target: {fileID: 6689813577759810905, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Offset.x
-      value: 0.24
+      value: 0.26
       objectReference: {fileID: 0}
     - target: {fileID: 6689813577759810905, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Offset.y
-      value: 0.27
+      value: 0.42
       objectReference: {fileID: 0}
     - target: {fileID: 6872100053539618354, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size

@@ -173,10 +173,10 @@ TextureImporter:
       name: Shield-Sheet_1
       rect:
         serializedVersion: 2
-        x: 43
-        y: 7
-        width: 18
-        height: 19
+        x: 41
+        y: 8
+        width: 15
+        height: 17
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -186,6 +186,27 @@ TextureImporter:
       bones: []
       spriteID: da6ab80956566d949bb12ada8281671c
       internalID: -1497517463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shield-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 7
+        width: 18
+        height: 19
+      alignment: 9
+      pivot: {x: 0.5404608, y: 0.49705133}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1269b1ee28771f24789e77e4113fbdf6
+      internalID: -748022139
       vertices: []
       indices: 
       edges: []
@@ -203,6 +224,7 @@ TextureImporter:
     nameFileIdTable:
       Shield-Sheet_0: -1551370753
       Shield-Sheet_1: -1497517463
+      Shield-Sheet_2: -748022139
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

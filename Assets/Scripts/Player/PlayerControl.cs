@@ -20,7 +20,8 @@ public class PlayerControl : MonoBehaviour
     int currentRightHandWeaponIndex = 1;
     int currentLeftHandWeaponIndex = 0;
     bool isPlayerMovementDisabled = false;
-    bool isTeleporting;
+    Coroutine teleportParticleRoutine;
+    bool particlePlayed;
 
     private void Awake()
     {
@@ -101,7 +102,7 @@ public class PlayerControl : MonoBehaviour
     private void MovementInput()
     {
         // Get movement input
-        movementInput = GameManager.Instance.movement.action.ReadValue<Vector2>().normalized;
+        movementInput = InputManager.Instance.movement.action.ReadValue<Vector2>().normalized;
 
         float horizontalMovement = movementInput.x;
         float verticalMovement = movementInput.y;
@@ -193,7 +194,7 @@ public class PlayerControl : MonoBehaviour
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
         // Fire when left mouse button is clicked
-        if (GameManager.Instance.attack.action.WasPerformedThisFrame() && !isTeleporting)
+        if (InputManager.Instance.attack.action.WasPerformedThisFrame())
         {
             StartCoroutine(PlayerAttackAnimRoutine());
 
@@ -216,7 +217,7 @@ public class PlayerControl : MonoBehaviour
         }
 
         // Fire for precharge weapons
-        if (GameManager.Instance.attack.action.IsPressed())
+        if (InputManager.Instance.attack.action.IsPressed())
         {
             if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f && !fireCompletedDuringPressed)
             {
@@ -244,7 +245,7 @@ public class PlayerControl : MonoBehaviour
         }
 
         // Fire when right mouse button is clicked
-        if (GameManager.Instance.attackLeftHand.action.WasPerformedThisFrame())
+        if (InputManager.Instance.attackLeftHand.action.WasPerformedThisFrame())
         {
             if (player.activeWeapon.GetCurrentLeftHandWeapon() == null)
                 return;
@@ -293,7 +294,7 @@ public class PlayerControl : MonoBehaviour
 
     private void SwitchWeaponInput()
     {
-        float scrollValue = (GameManager.Instance.switchWeapon.action.ReadValue<Vector2>().normalized).y;
+        float scrollValue = (InputManager.Instance.switchWeapon.action.ReadValue<Vector2>().normalized).y;
 
         // Switch weapon if mouse scroll wheel selecetd
         if (scrollValue < 0f)
@@ -306,7 +307,7 @@ public class PlayerControl : MonoBehaviour
             NextRightHandWeapon();
         }
 
-        if (GameManager.Instance.resetWeaponIndex.action.triggered)
+        if (InputManager.Instance.resetWeaponIndex.action.triggered)
         {
             SetCurrentWeaponToFirstInTheList();
         }
@@ -384,7 +385,7 @@ public class PlayerControl : MonoBehaviour
         if (currentWeapon.weaponClipRemainingProjectile == currentWeapon.weaponDetails.weaponClipProjectileCapacity) 
             return;
 
-        if (GameManager.Instance.reload.action.triggered)
+        if (InputManager.Instance.reload.action.triggered)
         {
             // Call the reload weapon event
             player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), 0);
@@ -412,7 +413,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void SpecialMoveInput()
     {
-        if (GameManager.Instance.specialMove.action.WasPressedThisFrame() && !player.specialMoveOnCooldown)
+        if (InputManager.Instance.specialMove.action.WasPressedThisFrame() && !player.specialMoveOnCooldown)
         {
             switch (player.playerDetails.playerCharacterName)
             {
@@ -447,14 +448,15 @@ public class PlayerControl : MonoBehaviour
     {
         if (player.specialMoveOnCooldown == false)
         {
-            // Set teleporting status true to make firing inactive
-            isTeleporting = true;
-
             // Start playing teleport particle system
-            player.specialMoveParticlesSystem.Play();
+            if (teleportParticleRoutine != null)
+            {
+                StopCoroutine(teleportParticleRoutine);
+            }
+            teleportParticleRoutine = StartCoroutine(ParticleSystemRoutine());
 
             // Wait for mouse click to teleport the character
-            GameManager.Instance.attack.action.performed += OnTeleportInput;
+            InputManager.Instance.pointerPosition.action.performed += OnTeleportInput;
 
             // Play special move sound effect
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveSoundEffect);
@@ -463,26 +465,38 @@ public class PlayerControl : MonoBehaviour
 
     private void OnTeleportInput(InputAction.CallbackContext context)
     {
-        // Get current room and its bounds
-        Room room = GameManager.Instance.GetCurrentRoom();
-
-        // Get mouse world position and teleport the character
-        Vector3 pointerWorldPosition = HelperUtilities.GetMouseWorldPosition();
-        Vector3Int pointerCellPosition = room.instantiatedRoom.grid.WorldToCell(pointerWorldPosition);
-
-        // Check if the clicked tile is not marked as an obstacle
-        if (!IsObstacleTile(room, pointerCellPosition))
+        if (particlePlayed)
         {
-            // Teleport the character to the clicked tile
-            transform.position = pointerWorldPosition;
+            // Get current room and its bounds
+            Room room = GameManager.Instance.GetCurrentRoom();
 
-            // Stop playing teleport particle system
-            player.specialMoveParticlesSystem.Stop();
+            // Get mouse world position and teleport the character
+            Vector3 pointerWorldPosition = HelperUtilities.GetMouseWorldPosition();
+            Vector3Int pointerCellPosition = room.instantiatedRoom.grid.WorldToCell(pointerWorldPosition);
 
-            // Unsubscribe from the event to prevent multiple teleports
-            GameManager.Instance.attack.action.performed -= OnTeleportInput;
-            isTeleporting = false;
+            // Check if the clicked tile is not marked as an obstacle
+            if (!IsObstacleTile(room, pointerCellPosition))
+            {
+                // Teleport the character to the clicked tile
+                transform.position = pointerWorldPosition;
+
+                // Stop playing teleport particle system
+                player.specialMoveParticlesSystem.Stop();
+                particlePlayed = false;
+
+                // Unsubscribe from the event to prevent multiple teleports
+                InputManager.Instance.pointerPosition.action.performed -= OnTeleportInput;
+            }
         }
+    }
+
+    IEnumerator ParticleSystemRoutine()
+    {
+        player.specialMoveParticlesSystem.Play();
+
+        yield return new WaitForSeconds(0.3f);
+
+        particlePlayed = true;
     }
 
     private bool IsObstacleTile(Room room, Vector3Int cellPosition)
@@ -590,7 +604,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void UseItemInput()
     {
-        if (GameManager.Instance.interaction.action.WasPerformedThisFrame())
+        if (InputManager.Instance.interaction.action.WasPerformedThisFrame())
         {
             float useItemRadius = 2f;
 

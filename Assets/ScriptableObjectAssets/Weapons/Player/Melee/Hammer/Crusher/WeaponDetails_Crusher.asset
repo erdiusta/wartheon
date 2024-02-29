@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: WeaponDetails_Crusher
   m_EditorClassIdentifier: 
   weaponName: Crusher
-  weaponSprite: {fileID: 1640763228, guid: 994ac388b6578fa459c83299ecded184, type: 3}
+  weaponFrontSprite: {fileID: 1640763228, guid: 994ac388b6578fa459c83299ecded184, type: 3}
+  weaponRearSprite: {fileID: 1640763228, guid: 994ac388b6578fa459c83299ecded184, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: bafa055c47abaf141ab4253f1b81ada9, type: 2}
   weaponClass: 2
   wieldType: 1
@@ -39,7 +40,7 @@ MonoBehaviour:
   meleeDamageMin: 8
   meleeDamageMax: 15
   criticalHitChance: 0.1
-  criticalHitDamageMultiplier: 2
+  criticalHitDamageMultiplier: 1.5
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0

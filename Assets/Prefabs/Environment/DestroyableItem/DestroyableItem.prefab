@@ -196,8 +196,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 0}
+  currentHealth: 0
   isDamageable: 1
   enemy: {fileID: 0}
+  currentArmorValue: 0
+  isBlocking: 0
 --- !u!114 &3042279324210234784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,7 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30a58b7ce59699041a54f6450093f3fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  contactDamageAmount: 0
+  contactDamageAmount: 5
 --- !u!114 &2879659695578517348
 MonoBehaviour:
   m_ObjectHideFlags: 0

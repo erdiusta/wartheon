@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: WeaponDetails_HolySword
   m_EditorClassIdentifier: 
   weaponName: Holy Sword
-  weaponSprite: {fileID: 735104743, guid: f53b0475c86f95141910cb247770d70f, type: 3}
+  weaponFrontSprite: {fileID: 735104743, guid: f53b0475c86f95141910cb247770d70f, type: 3}
+  weaponRearSprite: {fileID: 735104743, guid: f53b0475c86f95141910cb247770d70f, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 3e72a90825dad85449d7cd5a6e086ecb, type: 2}
   weaponClass: 0
   wieldType: 1
@@ -39,7 +40,7 @@ MonoBehaviour:
   meleeDamageMin: 12
   meleeDamageMax: 12
   criticalHitChance: 0.1
-  criticalHitDamageMultiplier: 2
+  criticalHitDamageMultiplier: 1.5
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0

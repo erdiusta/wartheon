@@ -13,7 +13,7 @@ public static class HelperUtilities
         if (mainCamera == null)
             mainCamera = Camera.main;
 
-        Vector2 mouseScreenPosition = GameManager.Instance.pointerPosition.action.ReadValue<Vector2>();
+        Vector2 mouseScreenPosition = InputManager.Instance.pointerPosition.action.ReadValue<Vector2>();
 
         // Clamp mouse position to screen size
         mouseScreenPosition.x = Mathf.Clamp(mouseScreenPosition.x, 0f, Screen.width);

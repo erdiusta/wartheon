@@ -35,6 +35,7 @@ public class Health : MonoBehaviour
     Coroutine poisonCoroutine;
     Coroutine bleedingCoroutine;
     int poisonPeriodCount = 0;
+    bool isProjectileHit = false;
 
     private void Awake()
     {
@@ -122,6 +123,64 @@ public class Health : MonoBehaviour
                 {
                     bleedingCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBleeding());
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Public method called when damage is taken
+    /// </summary>
+    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, Collider2D collider)
+    {
+        // Check if the collider is a projectile
+        bool isProjectile = collider.CompareTag("playerProjectile");
+
+        if (isProjectile)
+        {
+            // If hit by a projectile, set the projectile hit flag
+            isProjectileHit = true;
+        }
+
+        if (isDamageable)
+        {
+            currentHealth -= damageAmount;
+            CallHealthEvent(damageAmount);
+
+            Debug.Log("Received damage is: " + damageAmount);
+
+            if (player != null)
+            {
+                if (getHitCoroutine == null)
+                {
+                    if (currentHealth > 0)
+                    {
+                        getHitCoroutine = StartCoroutine(PlayerGetHitRoutine());
+                        PostHitImmunity();
+                    }
+                }
+            }
+            if (enemy != null)
+            {
+                if (getHitCoroutine == null)
+                {
+                    if (!isBlocking)
+                    {
+                        PostHitImmunity();
+                    }
+
+                    getHitCoroutine = StartCoroutine(EnemyGetHitRoutine());
+                }
+
+                if (currentHealth <= 0)
+                {
+                    enemy.dropOnDestroy.DropProcess();
+                }
+            }
+
+            // Set health bar as the percentage of health remaining
+            if (healthBar != null)
+            {
+                healthBar.SetHealthBarValue((float)currentHealth / (float)startingHealth);
             }
         }
     }
@@ -236,8 +295,7 @@ public class Health : MonoBehaviour
     private void PostHitImmunity()
     {
         // Check if gameobject is active - if not return
-        if (gameObject.activeSelf == false)
-            return;
+        if (gameObject.activeSelf == false) return;
 
         // If there is post hit immunity then
         if (isImmuneAfterHit)
@@ -258,7 +316,8 @@ public class Health : MonoBehaviour
     IEnumerator PostHitImmunityRoutine(float immunityTime, SpriteRenderer spriteRenderer)
     {
         int iterations = Mathf.RoundToInt(immunityTime / spriteFlashInterval / 4);
-        isDamageable = false;
+
+        isDamageable = isProjectileHit;
 
         // Flash effect
         while (iterations > 0)
@@ -291,7 +350,10 @@ public class Health : MonoBehaviour
             yield return null;
         }
 
+        // If not hit by a projectile, re-enable damageability
         isDamageable = true;
+
+        isProjectileHit = false; // Reset the projectile hit flag
         immunityCoroutine = null;
     }
 

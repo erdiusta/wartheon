@@ -29,7 +29,7 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
         CinemachineVirtualCamera cinemachineVirtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
         cinemachineVirtualCamera.Follow = playerTransform;
 
-        // get dungeonmap camera
+        // Get dungeonmap camera
         dungeonMapCamera = GetComponentInChildren<Camera>();
         dungeonMapCamera.gameObject.SetActive(false);
     }
@@ -37,7 +37,7 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
     private void Update()
     {
         // If mouse button pressed and gamestate is dungeon overview map then get the room clicked
-        if (Input.GetMouseButtonDown(0) && GameManager.Instance.gameState == GameState.dungeonOverviewMap)
+        if (InputManager.Instance.attack.action.WasPerformedThisFrame() && GameManager.Instance.gameState == GameState.dungeonOverviewMap)
         {
             GetRoomClicked();
         }

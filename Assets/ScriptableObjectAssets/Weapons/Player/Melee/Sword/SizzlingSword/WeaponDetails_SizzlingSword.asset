@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: WeaponDetails_SizzlingSword
   m_EditorClassIdentifier: 
   weaponName: Sizzling Sword
-  weaponSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
+  weaponFrontSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
+  weaponRearSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 68b9352f59d71994fa46248dd50aabfc, type: 2}
   weaponClass: 0
   wieldType: 0
@@ -39,7 +40,7 @@ MonoBehaviour:
   meleeDamageMin: 8
   meleeDamageMax: 11
   criticalHitChance: 0.1
-  criticalHitDamageMultiplier: 2
+  criticalHitDamageMultiplier: 1.5
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0

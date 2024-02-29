@@ -77,6 +77,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerProjectile7x7 (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
+      propertyPath: m_TagString
+      value: playerProjectile
+      objectReference: {fileID: 0}
     - target: {fileID: 5333712125487162851, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -161,6 +165,10 @@ PrefabInstance:
     - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_Name
       value: PlayerProjectile7x7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
+      propertyPath: m_TagString
+      value: playerProjectile
       objectReference: {fileID: 0}
     - target: {fileID: 5333712125487162851, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_LocalScale.x
@@ -247,6 +255,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerProjectile7x7 (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
+      propertyPath: m_TagString
+      value: playerProjectile
+      objectReference: {fileID: 0}
     - target: {fileID: 5333712125487162851, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -331,6 +343,10 @@ PrefabInstance:
     - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_Name
       value: PlayerProjectile7x7 (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
+      propertyPath: m_TagString
+      value: playerProjectile
       objectReference: {fileID: 0}
     - target: {fileID: 5333712125487162851, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_LocalScale.x
@@ -417,6 +433,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerProjectile7x7 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
+      propertyPath: m_TagString
+      value: playerProjectile
+      objectReference: {fileID: 0}
     - target: {fileID: 5333712125487162851, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -501,6 +521,10 @@ PrefabInstance:
     - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_Name
       value: PlayerProjectile7x7 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
+      propertyPath: m_TagString
+      value: playerProjectile
       objectReference: {fileID: 0}
     - target: {fileID: 5333712125487162851, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_LocalScale.x
@@ -587,6 +611,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerProjectile7x7 (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
+      propertyPath: m_TagString
+      value: playerProjectile
+      objectReference: {fileID: 0}
     - target: {fileID: 5333712125487162851, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -671,6 +699,10 @@ PrefabInstance:
     - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_Name
       value: PlayerProjectile7x7 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
+      propertyPath: m_TagString
+      value: playerProjectile
       objectReference: {fileID: 0}
     - target: {fileID: 5333712125487162851, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_LocalScale.x
@@ -757,6 +789,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerProjectile7x7 (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
+      propertyPath: m_TagString
+      value: playerProjectile
+      objectReference: {fileID: 0}
     - target: {fileID: 5333712125487162851, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -841,6 +877,10 @@ PrefabInstance:
     - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_Name
       value: PlayerProjectile7x7 (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3547249067481803369, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
+      propertyPath: m_TagString
+      value: playerProjectile
       objectReference: {fileID: 0}
     - target: {fileID: 5333712125487162851, guid: ab83f11cecda6ca46b6cc5da4e3ff73e, type: 3}
       propertyPath: m_LocalScale.x

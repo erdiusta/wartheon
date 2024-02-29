@@ -149,7 +149,7 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails)
     {
-        chestItem.Initialize(weaponDetails, weaponDetails.weaponSprite, weaponDetails.weaponName, transform.position);
+        chestItem.Initialize(weaponDetails, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, transform.position);
         chestItem.hasWeaponDrop = true;
     }
 

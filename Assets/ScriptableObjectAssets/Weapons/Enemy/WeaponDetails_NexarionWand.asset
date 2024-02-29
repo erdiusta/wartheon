@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: WeaponDetails_NexarionWand
   m_EditorClassIdentifier: 
   weaponName: Nexarion Wand
-  weaponSprite: {fileID: 117954792, guid: 1e9c950e1e772ea49823f2f971e19594, type: 3}
+  weaponFrontSprite: {fileID: 117954792, guid: 1e9c950e1e772ea49823f2f971e19594, type: 3}
+  weaponRearSprite: {fileID: 117954792, guid: 1e9c950e1e772ea49823f2f971e19594, type: 3}
   weaponAnimatorController: {fileID: 0}
   weaponClass: 5
   wieldType: 1
@@ -28,7 +29,8 @@ MonoBehaviour:
   weaponShootPosition: {x: 0.125, y: 0.9375, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: fcd5dc80321781b4ebeed460c7b2f4fb, type: 2}
   weaponShootEffect: {fileID: 0}
-  weaponFiringSoundEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 0}
+  weaponImpactSoundEffect: {fileID: 0}
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 0

@@ -34,21 +34,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Tooltip("Populate with the starting dungeon level for testing , first level = 0")]
     #endregion Tooltip
     [SerializeField] int currentDungeonLevelListIndex = 0;
-    #region INPUT ACTION REFERENCES
-    [Space(10)]
-    [Header("INPUT ACTION REFERENCES")]
-    #endregion
-    public InputActionReference pointerPosition;
-    public InputActionReference movement;
-    public InputActionReference attack;
-    public InputActionReference attackLeftHand;
-    public InputActionReference switchWeapon;
-    public InputActionReference overviewMapFullView;
-    public InputActionReference reload;
-    public InputActionReference resetWeaponIndex;
-    public InputActionReference nextLevel;
-    public InputActionReference interaction;
-    public InputActionReference specialMove;
 
     [HideInInspector] public GameState gameState;
     [HideInInspector] public GameState previousGameState;
@@ -89,8 +74,12 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
         player.destroyedEvent.OnDestroyed += Player_OnDestroyed;
 
-        overviewMapFullView.action.started += ControlDisplayDungeonOverviewMap;
-        overviewMapFullView.action.canceled += ControlClearDungeonOverviewMap;
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.overviewMapFullView.action.started += ControlDisplayDungeonOverviewMap;
+            InputManager.Instance.overviewMapFullView.action.canceled += ControlClearDungeonOverviewMap;
+
+        }
     }
 
     private void OnDisable()
@@ -98,8 +87,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
         player.destroyedEvent.OnDestroyed -= Player_OnDestroyed;
 
-        overviewMapFullView.action.started -= ControlDisplayDungeonOverviewMap;
-        overviewMapFullView.action.canceled -= ControlClearDungeonOverviewMap;
+        if (InputManager.Instance  != null)
+        {
+            InputManager.Instance.overviewMapFullView.action.started -= ControlDisplayDungeonOverviewMap;
+            InputManager.Instance.overviewMapFullView.action.canceled -= ControlClearDungeonOverviewMap;
+        }
     }
 
     /// <summary>
@@ -145,6 +137,32 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 // Play first level
                 PlayDungeonLevel(currentDungeonLevelListIndex);
                 gameState = GameState.playingLevel;
+                break;
+
+            // While playing the level handle the tab key for the dungeon overview map
+            case GameState.playingLevel:
+                if (InputManager.Instance.overviewMapFullView.action.WasPressedThisFrame())
+                {
+                    DisplayDungeonOverviewMap();
+                }
+                break;
+
+            // If in the dungeon overview map handle the release of the tab key to clear the map
+            case GameState.dungeonOverviewMap:
+                // Key released
+                if (InputManager.Instance.overviewMapFullView.action.WasReleasedThisFrame())
+                {
+                    // Clear dungeonOverviewMap
+                    DungeonMap.Instance.ClearDungeonOverViewMap();
+                }
+                break;
+
+            // While playing the level and before the boss is engaged, handle the tab key for the dungeon overview map
+            case GameState.bossStage:
+                if (InputManager.Instance.overviewMapFullView.action.WasPressedThisFrame())
+                {
+                    DisplayDungeonOverviewMap();
+                }
                 break;
 
             // Handle the level being completed
@@ -213,8 +231,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void DisplayDungeonOverviewMap()
     {
         // return if fading
-        if (isFading)
-            return;
+        if (isFading) return;
 
         // Display dungeonOverviewMap
         DungeonMap.Instance.DisplayDungeonOverViewMap();
@@ -280,7 +297,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             float timer = displaySeconds;
 
-            while (timer > 0f && !nextLevel.action.IsPressed())
+            while (timer > 0f && !InputManager.Instance.nextLevel.action.IsPressed())
             {
                 timer -= Time.deltaTime;
                 yield return null;
@@ -289,7 +306,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         else
         // else display the message until the return button is pressed
         {
-            while (!nextLevel.action.IsPressed())
+            while (!InputManager.Instance.nextLevel.action.IsPressed())
             {
                 yield return null;
             }
@@ -315,7 +332,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         Debug.Log("Level Completed - Press Return To Progress To The Next Level");
 
         // When player presses the return key proceed to the next level
-        while (!nextLevel.action.WasPerformedThisFrame())
+        while (!InputManager.Instance.nextLevel.action.WasPerformedThisFrame())
         {
             yield return null;
         }
@@ -396,8 +413,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
 
         // Display game lost
-        yield return StartCoroutine(DisplayMessageRoutine("BAD LUCK " + GameResources.Instance.currentPlayer.playerName + "! YOU HAVE SUCCUMBED TO THE DUNGEON", 
-            Color.white, 2f));
+        yield return StartCoroutine(DisplayMessageRoutine("BAD LUCK " + GameResources.Instance.currentPlayer.playerName + 
+            "! YOU HAVE SUCCUMBED TO THE DUNGEON", Color.white, 2f));
 
         yield return StartCoroutine(DisplayMessageRoutine("PRESS RETURN TO RESTART THE GAME", Color.white, 0f));
 
@@ -454,14 +471,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         t.position = position;
 
         return t;
-    }
-
-    /// <summary>
-    /// Set camera shake
-    /// </summary>
-    private void SetCameraShake()
-    {
-
     }
 
     #region Validation

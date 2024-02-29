@@ -10,10 +10,6 @@ public class SpecialMoveUI : MonoBehaviour
     [Header("OBJECT REFERENCES")]
     #endregion Header OBJECT REFERENCES
     #region Tooltip
-    [Tooltip("Populate with the TextMeshPro-Text component on the child moveReadyText gameobject")]
-    #endregion Tooltip
-    [SerializeField] TextMeshProUGUI specialMoveReadyText;
-    #region Tooltip
     [Tooltip("Populate with the TextMeshPro-Text component on the child specialMoveNameText gameobject")]
     #endregion Tooltip
     [SerializeField] TextMeshProUGUI specialMoveNameText;
@@ -82,7 +78,6 @@ public class SpecialMoveUI : MonoBehaviour
             player.specialMoveTimer += Time.deltaTime;
 
             containerBar.gameObject.SetActive(true);
-            StopBlinkingMoveReadyTextCoroutine();
 
             if (player.specialMoveTimer > player.playerDetails.specialMoveDuration)
             {
@@ -101,10 +96,6 @@ public class SpecialMoveUI : MonoBehaviour
             }
 
             containerBar.gameObject.SetActive(false);
-            if (blinkingReloadTextCoroutine == null)
-            {
-                blinkingReloadTextCoroutine = StartCoroutine(StartBlinkingMoveReadyTextRoutine());
-            }
         }
     }
 
@@ -135,8 +126,6 @@ public class SpecialMoveUI : MonoBehaviour
     {
         // set the reload bar to red
         barImage.color = Color.red;
-
-        StopBlinkingMoveReadyTextCoroutine();
     }
 
     /// <summary>
@@ -173,33 +162,6 @@ public class SpecialMoveUI : MonoBehaviour
 
             blinkingReloadTextCoroutine = null;
             yield return null;
-        }
-    }
-
-    /// <summary>
-    /// Start the coroutine to blink the special move text
-    /// </summary>
-    private IEnumerator StartBlinkingMoveReadyTextRoutine()
-    {
-        while (!player.specialMoveOnCooldown)
-        {
-            specialMoveReadyText.text = "SPECIAL MOVE READY";
-            yield return new WaitForSeconds(0.3f);
-            specialMoveReadyText.text = "";
-            yield return new WaitForSeconds(0.3f);
-        }
-    }
-
-    /// <summary>
-    /// Stop the blinking reload special move text coroutine
-    /// </summary>
-    private void StopBlinkingMoveReadyTextCoroutine()
-    {
-        if (blinkingReloadTextCoroutine != null)
-        {
-            specialMoveReadyText.text = "";
-            StopCoroutine(blinkingReloadTextCoroutine);
-            blinkingReloadTextCoroutine = null;
         }
     }
 }

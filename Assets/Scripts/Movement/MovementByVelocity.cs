@@ -114,13 +114,11 @@ public class MovementByVelocity : MonoBehaviour
     private void NeutralizeStatus(RoomChangedEventArgs roomChangedEventArgs)
     {
         // MOVE STATUS CHECKS
-        if (player.moveStatus == MoveStatus.Slow)
-        {
-            player.movementByVelocity.moveSpeed = Random.Range(player.movementByVelocity.playerStartingMinSpeed,
-                player.movementByVelocity.playerStartingMaxSpeed);
-            player.healthEvent.CallSlowCuredEvent();
-        }
 
+        player.movementByVelocity.moveSpeed = Random.Range(player.movementByVelocity.playerStartingMinSpeed,
+            player.movementByVelocity.playerStartingMaxSpeed);
+        
+        player.healthEvent.CallSlowCuredEvent();
         player.moveStatus = MoveStatus.Idle;
 
         // ARMOR STATUS CHECKS

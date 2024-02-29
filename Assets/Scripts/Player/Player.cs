@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
     public ParticleSystem dustParticlesSystem;
     public ParticleSystem specialMoveParticlesSystem;
     public List<Weapon> weaponRightHandList = new List<Weapon>();
-    public List<Weapon> weaponLeftHandList = new List<Weapon>(); 
+    public List<Weapon> weaponLeftHandList = new List<Weapon>();
 
     private void Awake()
     {
@@ -247,6 +247,9 @@ public class Player : MonoBehaviour
 
             // Set weapon position in list
             weapon.weaponLeftHandListPosition = weaponLeftHandList.Count;
+
+
+
         }
     }
 

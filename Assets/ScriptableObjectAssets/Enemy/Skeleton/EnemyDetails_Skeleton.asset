@@ -65,8 +65,6 @@ MonoBehaviour:
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
       ratio: 3
-    - dungeonObject: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
-      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: f452683b8567bc84d8dc35c734b37e7c, type: 2}
@@ -74,6 +72,8 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: dc70bba435344054aa98ff671fae1024, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: bba05607ec78139438ec83b847d254ee, type: 2}
       ratio: 1
   passiveItemsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}

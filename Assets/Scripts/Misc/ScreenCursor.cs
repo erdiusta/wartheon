@@ -12,7 +12,7 @@ public class ScreenCursor : MonoBehaviour
 
     private void Update()
     {
-        cursorPosition = GameManager.Instance.pointerPosition.action.ReadValue<Vector2>();
+        cursorPosition = InputManager.Instance.pointerPosition.action.ReadValue<Vector2>();
         transform.position = new Vector3(cursorPosition.x, cursorPosition.y, 0f);
     }
 }

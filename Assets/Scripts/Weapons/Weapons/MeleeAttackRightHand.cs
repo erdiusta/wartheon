@@ -83,7 +83,6 @@ public class MeleeAttackRightHand : MonoBehaviour
                     enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position);
                     SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
-
                     CheckAcidStatus(enemy);
                     CheckBleedingStatus(enemy);
                     CheckStunStatus(enemy);

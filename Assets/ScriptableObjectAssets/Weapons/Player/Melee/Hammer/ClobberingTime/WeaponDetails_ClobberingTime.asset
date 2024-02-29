@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: WeaponDetails_ClobberingTime
   m_EditorClassIdentifier: 
   weaponName: Clobbering Time
-  weaponSprite: {fileID: 1259814964, guid: 77be0b9347560c84ca598d345eebca8e, type: 3}
+  weaponFrontSprite: {fileID: 1259814964, guid: 77be0b9347560c84ca598d345eebca8e, type: 3}
+  weaponRearSprite: {fileID: 1259814964, guid: 77be0b9347560c84ca598d345eebca8e, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: c76eb2906eb286b4f8db54db6947509b, type: 2}
   weaponClass: 2
   wieldType: 0
@@ -39,7 +40,7 @@ MonoBehaviour:
   meleeDamageMin: 7
   meleeDamageMax: 11
   criticalHitChance: 0.1
-  criticalHitDamageMultiplier: 2
+  criticalHitDamageMultiplier: 1.5
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0

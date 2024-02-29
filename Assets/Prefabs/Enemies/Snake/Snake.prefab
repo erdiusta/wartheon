@@ -177,6 +177,10 @@ PrefabInstance:
       value: 1.7343162
       objectReference: {fileID: 0}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Size.x
       value: 1.2916666
       objectReference: {fileID: 0}
@@ -206,11 +210,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2812488011572122476, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.63
+      value: 0.40125
       objectReference: {fileID: 0}
     - target: {fileID: 2812488011572122476, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.666
+      value: 0.791
       objectReference: {fileID: 0}
     - target: {fileID: 3146469945750014307, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -266,11 +270,11 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: c1cd655cbba76594ca00f689668e9744, type: 2}
     - target: {fileID: 6689813577759810905, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Offset.x
-      value: 0.24
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 6689813577759810905, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Offset.y
-      value: 0.27
+      value: 0.42
       objectReference: {fileID: 0}
     - target: {fileID: 6872100053539618354, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Points.m_Paths.Array.size
@@ -327,6 +331,14 @@ PrefabInstance:
     - target: {fileID: 6872100053539618354, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[5].y
       value: 0.2703578
+      objectReference: {fileID: 0}
+    - target: {fileID: 7625487225184071592, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7625487225184071592, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_FlipY
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7736189416814370986, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Name

@@ -152,10 +152,10 @@ TextureImporter:
       name: apollo_shield-Sheet_0
       rect:
         serializedVersion: 2
-        x: 1
-        y: 1
-        width: 30
-        height: 30
+        x: 2
+        y: 2
+        width: 28
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -173,12 +173,12 @@ TextureImporter:
       name: apollo_shield-Sheet_1
       rect:
         serializedVersion: 2
-        x: 32
+        x: 34
         y: 1
-        width: 32
+        width: 28
         height: 30
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.530012, y: 0.49999997}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -186,6 +186,27 @@ TextureImporter:
       bones: []
       spriteID: f914d5ac839ef554a80dcf0ff5f9cce9
       internalID: -1089363522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apollo_shield-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 2
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b04c07947b1120b4cb1a633d9b82247e
+      internalID: -608057043
       vertices: []
       indices: 
       edges: []
@@ -203,6 +224,7 @@ TextureImporter:
     nameFileIdTable:
       apollo_shield-Sheet_0: -835678534
       apollo_shield-Sheet_1: -1089363522
+      apollo_shield-Sheet_2: -608057043
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

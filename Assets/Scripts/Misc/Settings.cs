@@ -21,6 +21,11 @@ public static class Settings
     public const float doorUnlockDelay = 1f;
     #endregion
 
+    #region AUDIO
+    public const float musicFadeOutTime = 0.5f; // Default music fade out transition
+    public const float musicFadeInTime = 0.5f; // Default music fade in transition
+    #endregion
+
     #region ANIMATOR PARAMETERS
     // Animator parameters - Player
     public static int aimUp = Animator.StringToHash("aimUp");

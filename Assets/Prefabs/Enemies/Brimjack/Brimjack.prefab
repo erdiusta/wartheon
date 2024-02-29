@@ -178,7 +178,7 @@ PrefabInstance:
       objectReference: {fileID: 1795172814, guid: 480a0feac7e02134991e13934ca7b23f, type: 3}
     - target: {fileID: 1273379931405193202, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 2.40625
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 2515402824410474405, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -242,7 +242,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4589956830810753142, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 2.9375
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6671259502560293248, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: enemyDetails
@@ -254,11 +254,11 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 355c7e033e92d284b98a59710ec9735e, type: 2}
     - target: {fileID: 6689813577759810905, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Offset.x
-      value: 0.24
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 6689813577759810905, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Offset.y
-      value: 0.27
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 6872100053539618354, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size

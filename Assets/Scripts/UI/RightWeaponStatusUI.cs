@@ -156,7 +156,7 @@ public class RightWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void UpdateActiveWeaponImage(WeaponDetailsSO weaponDetails)
     {
-        weaponImage.sprite = weaponDetails.weaponSprite;
+        weaponImage.sprite = weaponDetails.weaponFrontSprite;
     }
 
     /// <summary>

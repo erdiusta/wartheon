@@ -1,6 +1,5 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
-using System.Collections;
 
 [DisallowMultipleComponent]
 public class DealContactDamage : MonoBehaviour

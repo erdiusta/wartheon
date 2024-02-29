@@ -18,7 +18,7 @@ MonoBehaviour:
   projectilePrefabArray:
   - {fileID: 5263536334675765252, guid: 339536103c4f7b74995fd50408768bc1, type: 3}
   projectileMaterial: {fileID: 2100000, guid: a561bba8f1360ee44898565d925c537c, type: 2}
-  projectileChargeTime: 0.5
+  projectileChargeTime: 0.3
   projectileChargeMaterial: {fileID: 2100000, guid: a17dad796d5f693419e97628b3b559f4, type: 2}
   projectileHitEffect: {fileID: 0}
   projectileDamageMin: 7
@@ -37,6 +37,7 @@ MonoBehaviour:
   stunChance: 0.2
   hasSlowDamage: 0
   slowChance: 0
+  gravity: 0
   projectileSpreadMin: 1
   projectileSpreadMax: 3
   projectileSpawnAmountMin: 1

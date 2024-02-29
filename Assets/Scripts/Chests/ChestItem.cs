@@ -161,10 +161,9 @@ public class ChestItem : MonoBehaviour
             // ARMOR STATUS CHECKS
             if (player.armorStatus == ArmorStatus.Acid)
             {
+                player.armorStatus = ArmorStatus.Normal;
                 player.healthEvent.CallAcidCuredEvent();
             }
-
-            player.armorStatus = ArmorStatus.Normal;
 
             isColliding = true;
         }

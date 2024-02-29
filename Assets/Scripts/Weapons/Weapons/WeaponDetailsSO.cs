@@ -12,9 +12,13 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public string weaponName;
     #region Tooltip
-    [Tooltip("The sprite for the weapon - the sprite should have the 'generate physics shape' option selected ")]
+    [Tooltip("The front sprite for the weapon - the sprite should have the 'generate physics shape' option selected ")]
     #endregion Tooltip
-    public Sprite weaponSprite;
+    public Sprite weaponFrontSprite;
+    #region Tooltip
+    [Tooltip("The rear sprite for the weapon - the sprite should have the 'generate physics shape' option selected ")]
+    #endregion Tooltip
+    public Sprite weaponRearSprite;
     #region Tooltip
     [Tooltip("The animator controller for the weapon - weapon should be a melee weapon")]
     #endregion Tooltip

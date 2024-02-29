@@ -24,35 +24,74 @@ public class AimWeapon : MonoBehaviour
     /// </summary>
     public void Aim(AimDirection aimDirection, float aimAngle)
     {
-        if (gameObject.tag == "Player" && (player.meleeAttackRightHand.IsAttackingAtRightHand || player.meleeAttackLeftHand.IsAttackingAtLeftHand))
-            return;
+        if (gameObject.tag == Settings.playerTag && (player.meleeAttackRightHand.IsAttackingAtRightHand || 
+            player.meleeAttackLeftHand.IsAttackingAtLeftHand)) return;
 
         // Set angle of the weapon transform
         rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
         leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
 
         // If left hand has a shield, fix the shield position
-        if (tag == "Player")
+        if (tag == Settings.playerTag)
         {
+            Animator shieldAnimator = player.transform.GetChild(1).GetComponent<Animator>();
+            SpriteRenderer shieldSpriteRenderer = player.transform.GetChild(1).GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
+
+            if (player.activeWeapon.GetCurrentLeftHandWeapon() == null)
+            {
+                shieldAnimator.runtimeAnimatorController = null;
+                shieldSpriteRenderer.sprite = null;
+            }
+
             if (player.activeWeapon.GetCurrentLeftHandWeapon() != null &&
                 player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
             {
+
                 switch (aimDirection)
                 {
                     case AimDirection.Left:
+
+                        // Flip rear face if equipped weapon is a shield
+                        shieldSpriteRenderer.sprite = player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponFrontSprite;
+                        // Re-enable child weapon animator
+                        shieldAnimator.runtimeAnimatorController = player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponAnimatorController;
+
+                        leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 180f);
+                        break;
+
                     case AimDirection.UpLeft:
+
+                        // Disable child weapon animator
+                        shieldAnimator.runtimeAnimatorController = null;
+                        // Flip rear face if equipped weapon is a shield
+                        shieldSpriteRenderer.sprite = player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponRearSprite;
 
                         leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 180f);
                         break;
 
                     case AimDirection.Up:
                     case AimDirection.UpRight:
+
+                        // Disable child weapon animator
+                        shieldAnimator.runtimeAnimatorController = null;
+                        // Flip rear face if equipped weapon is a shield
+                        shieldSpriteRenderer.sprite = player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponRearSprite;
+
+                        leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 0f);
+                        break;
+
                     case AimDirection.Right:
                     case AimDirection.Down:
+
+                        // Flip rear face if equipped weapon is a shield
+                        shieldSpriteRenderer.sprite = player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponFrontSprite;
+                        // Re-enable child weapon animator
+                        shieldAnimator.runtimeAnimatorController = player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponAnimatorController;
 
                         leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 0f);
                         break;
                 }
+
             }
         }
 

@@ -193,7 +193,7 @@ public class Chest : MonoBehaviour, IUsable
     {
         InstantiateItem();
 
-        chestItemGameObject.GetComponent<ChestItem>().Initialize(weaponDetails.weaponSprite, weaponDetails.weaponName, itemSpawnPoint.position);
+        chestItemGameObject.GetComponent<ChestItem>().Initialize(weaponDetails.weaponFrontSprite, weaponDetails.weaponName, itemSpawnPoint.position);
     }
 
     /// <summary>

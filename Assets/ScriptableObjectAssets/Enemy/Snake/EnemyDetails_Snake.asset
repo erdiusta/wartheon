@@ -33,6 +33,8 @@ MonoBehaviour:
   stunChance: 0
   hasBleedingDamage: 0
   bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -61,16 +63,18 @@ MonoBehaviour:
   weaponsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     spawnableObjectRatioList:
-    - dungeonObject: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
-      ratio: 1
     - dungeonObject: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 107b06428c3ac0746aa44728b775af01, type: 2}
       ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 6cb3c4a1b97dd484a8e9af133ff54615, type: 2}
+      ratio: 1
   passiveItemsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     spawnableObjectRatioList:

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: WeaponDetails_Dagger
   m_EditorClassIdentifier: 
   weaponName: Dagger
-  weaponSprite: {fileID: 1869581405, guid: b172dd0603818d44d9b9900f3e400991, type: 3}
+  weaponFrontSprite: {fileID: 1869581405, guid: b172dd0603818d44d9b9900f3e400991, type: 3}
+  weaponRearSprite: {fileID: 1869581405, guid: b172dd0603818d44d9b9900f3e400991, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 4c02187a09eabde4dba23544bdf50f8e, type: 2}
   weaponClass: 7
   wieldType: 0
@@ -39,7 +40,7 @@ MonoBehaviour:
   meleeDamageMin: 4
   meleeDamageMax: 8
   criticalHitChance: 0.2
-  criticalHitDamageMultiplier: 2
+  criticalHitDamageMultiplier: 1.75
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0

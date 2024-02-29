@@ -33,6 +33,8 @@ MonoBehaviour:
   stunChance: 0
   hasBleedingDamage: 0
   bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2.5
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -70,6 +72,8 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: 2709e31502b5c5d45a59d45fc94517bf, type: 2}
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: 9926f985354b71a4690cb034e554c091, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: b415640f0d1ca4d41b24898c8eab10bd, type: 2}
       ratio: 1
   passiveItemsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}

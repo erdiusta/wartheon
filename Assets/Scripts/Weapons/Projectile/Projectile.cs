@@ -23,10 +23,13 @@ public class Projectile : MonoBehaviour, IFireable
     bool overrideProjectileMovement;
     bool isColliding;
     Vector3 velocity;
+    bool isProjectile = true;
+    PolygonCollider2D polygonCollider2D;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        polygonCollider2D = GetComponent<PolygonCollider2D>();
     }
 
     private void OnEnable()
@@ -70,8 +73,7 @@ public class Projectile : MonoBehaviour, IFireable
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // If already colliding with something return
-        if (isColliding) 
-            return;
+        if (isColliding) return;
 
         // Block process if shield equipped
         if (collision.tag == Settings.playerTag)
@@ -85,7 +87,7 @@ public class Projectile : MonoBehaviour, IFireable
                 Vector2 enemyProjectileDirection = (player.transform.position - transform.position).normalized;
 
                 // Get weapon pointer direction
-                Vector2 cursorPosition = GameManager.Instance.pointerPosition.action.ReadValue<Vector2>();
+                Vector2 cursorPosition = InputManager.Instance.pointerPosition.action.ReadValue<Vector2>();
                 Vector2 cursorWorldPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
 
                 Vector2 pointerDirection = (cursorWorldPosition - new Vector2(player.transform.position.x, player.transform.position.y)).
@@ -202,6 +204,11 @@ public class Projectile : MonoBehaviour, IFireable
                 DealDamage(collision);
             }
         }
+        else
+        {
+            // Deal Damage To Collision Object
+            DealDamage(collision);
+        }
    
         // Show ammo hit effect
         DoProjectileHitEffect();
@@ -250,8 +257,13 @@ public class Projectile : MonoBehaviour, IFireable
                 inflictedDamage = damageDone > health.GetArmorValue() ?
                     damageDone - health.GetArmorValue() : 1;
             }
+            else if (collision != null && collision.GetComponent<Environment>() != null)
+            {
+                // Damage inflicted equals damage done for environment objects
+                inflictedDamage = damageDone;
+            }
 
-            health.TakeDamage(inflictedDamage, transform.position, health.transform.position);
+            health.TakeDamage(inflictedDamage, transform.position, health.transform.position, polygonCollider2D);
         }
     }
 

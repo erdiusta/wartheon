@@ -25,10 +25,11 @@ MonoBehaviour:
   bleedingChance: 0
   hasSlowDamage: 0
   slowChance: 0
-  weaponShootPosition: {x: -0.63, y: 0.666, z: 0}
+  weaponShootPosition: {x: 0.40125, y: 0.791, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 08a15f768e14d714b824d38be840f8e3, type: 2}
   weaponShootEffect: {fileID: 0}
-  weaponFiringSoundEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 0}
+  weaponImpactSoundEffect: {fileID: 0}
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 0
