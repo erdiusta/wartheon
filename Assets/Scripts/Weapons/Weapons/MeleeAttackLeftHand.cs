@@ -78,8 +78,18 @@ public class MeleeAttackLeftHand : MonoBehaviour
                 {
                     Enemy enemy = collider.GetComponent<Enemy>();
 
-                    int inflictedDamage = CalculateDamageAmount(enemy);
-                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position);
+                    CheckSuddenDeathStatus(enemy);
+
+                    if (enemyHealth.suddenDeathHappened)
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
+                        enemyHealth.TakeDamage(enemy.health.currentHealth, transform.position, enemy.transform.position, false);
+                    }
+                    else
+                    {
+                        int inflictedDamage = CalculateDamageAmount(enemy);
+                        enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+                    }
                     SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
                     CheckAcidStatus(enemy);
@@ -135,6 +145,22 @@ public class MeleeAttackLeftHand : MonoBehaviour
     }
 
     /// <summary>
+    /// Check sudden death status
+    /// </summary>
+    private void CheckSuddenDeathStatus(Enemy enemy)
+    {
+        if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.canKillSuddenly && enemy.health.currentHealth > 0)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.suddenKillChance)
+            {
+                enemyHealth.suddenDeathHappened = true;
+                enemy.healthEvent.CallGetDeathEvent();
+            }
+        }
+    }
+
+    /// <summary>
     /// Check acid status
     /// </summary>
     private void CheckAcidStatus(Enemy enemy)
@@ -143,14 +169,14 @@ public class MeleeAttackLeftHand : MonoBehaviour
             enemy.health.currentHealth > 0)
         {
             // Check get acid
-            float randomAcidNum = Random.Range(0f, 1f);
-            if (randomAcidNum > 0.6f)
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.acidEfficiency)
             {
                 enemy.armorStatus = ArmorStatus.Acid;
                 enemyHealth.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue *
                     (1 - player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.acidEfficiency)));
 
-                enemy.GetComponent<HealthEvent>().CallGetAcidEvent();
+                enemy.healthEvent.CallGetAcidEvent();
             }
         }
     }

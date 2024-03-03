@@ -204,16 +204,24 @@ public class PlayerControl : MonoBehaviour
 
             if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f) return;
 
-            if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon || player.activeWeapon.GetCurrentRightHandWeapon().
-                weaponDetails.weaponClass == WeaponClass.Bow)
+            if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
             {
                 player.meleeAttackRightHand.IsAttackingAtRightHand = true;
                 player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon());
             }
 
-            // Trigger fire weapon event
-            player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees,
-                weaponAngleDegrees, weaponDirection);
+            if (player.activeWeapon.GetCurrentRightHandWeapon().weaponClipRemainingProjectile > 0)
+            {
+                if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
+                {
+                    player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+                    player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon());
+                }
+
+                // Trigger fire weapon event
+                player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees,
+                    weaponAngleDegrees, weaponDirection, false);
+            }
         }
 
         // Fire for precharge weapons
@@ -230,7 +238,7 @@ public class PlayerControl : MonoBehaviour
 
                 // Trigger fire weapon event for precharge weapons
                 player.fireWeaponEvent.CallFireWeaponEvent(true, leftMouseDownPreviousFrame, playerAimDirection, playerAngleDegrees,
-                    weaponAngleDegrees, weaponDirection);
+                    weaponAngleDegrees, weaponDirection, false);
             }
 
             if (fireCompletedDuringPressed)
@@ -373,8 +381,7 @@ public class PlayerControl : MonoBehaviour
         Weapon currentWeapon = player.activeWeapon.GetCurrentRightHandWeapon();
 
         // If current weapon is reloading return
-        if (currentWeapon.isWeaponReloading) 
-            return;
+        if (currentWeapon.isWeaponReloading) return;
 
         // If remaining projectile is less than clip capacity then return and not infinite projectile then return
         if (currentWeapon.weaponRemainingProjectile < currentWeapon.weaponDetails.weaponClipProjectileCapacity && 
@@ -421,6 +428,16 @@ public class PlayerControl : MonoBehaviour
                     SeismicSlam();
                     player.specialMoveOnCooldown = true;
                     player.specialMoveEvent.CallSpecialMoveUsedEvent();
+                    break;
+
+                case Settings.orion:
+                    if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow &&
+                        player.activeWeapon.GetCurrentRightHandWeapon().weaponClipRemainingProjectile > 0)
+                    {
+                        HeadShot();
+                        player.specialMoveOnCooldown = true;
+                        player.specialMoveEvent.CallSpecialMoveUsedEvent();
+                    }
                     break;
 
                 case Settings.erebus:
@@ -593,10 +610,35 @@ public class PlayerControl : MonoBehaviour
 
                 if (enemy.health != null)
                 {
-                    enemy.health.TakeDamage(seismicSlamDamage, transform.position, enemy.health.transform.position);
+                    enemy.health.TakeDamage(seismicSlamDamage, transform.position, enemy.health.transform.position, false);
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Execute Head Shot special move
+    /// </summary>
+    private void HeadShot()
+    {
+        StartCoroutine(PlayerAttackAnimRoutine());
+
+        Vector3 weaponDirection;
+        float weaponAngleDegrees, playerAngleDegrees;
+        AimDirection playerAimDirection;
+
+        // Aim weapon input
+        AimWeaponInput(out weaponDirection, out weaponAngleDegrees, out playerAngleDegrees, out playerAimDirection);
+
+        //Reset precharge for loading again
+        fireCompletedDuringPressed = false;
+        isSoundPlayed = false;
+
+        player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+        player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon());
+
+        // Trigger fire weapon event
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, true);
     }
 
     /// <summary>

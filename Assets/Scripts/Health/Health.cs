@@ -21,6 +21,7 @@ public class Health : MonoBehaviour
     [HideInInspector] public int currentArmorValue;
     [HideInInspector] public Coroutine getHitCoroutine;
     [HideInInspector] public bool isBlocking;
+    [HideInInspector] public bool suddenDeathHappened;
 
     int startingHealth;
     HealthEvent healthEvent;
@@ -130,7 +131,7 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Public method called when damage is taken
     /// </summary>
-    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, Collider2D collider)
+    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, Collider2D collider, bool headShotHappened)
     {
         // Check if the collider is a projectile
         bool isProjectile = collider.CompareTag("playerProjectile");
@@ -144,7 +145,6 @@ public class Health : MonoBehaviour
         if (isDamageable)
         {
             currentHealth -= damageAmount;
-            CallHealthEvent(damageAmount);
 
             Debug.Log("Received damage is: " + damageAmount);
 
@@ -168,7 +168,7 @@ public class Health : MonoBehaviour
                         PostHitImmunity();
                     }
 
-                    getHitCoroutine = StartCoroutine(EnemyGetHitRoutine());
+                    getHitCoroutine = StartCoroutine(EnemyGetHitRoutine(headShotHappened));
                 }
 
                 if (currentHealth <= 0)
@@ -182,18 +182,19 @@ public class Health : MonoBehaviour
             {
                 healthBar.SetHealthBarValue((float)currentHealth / (float)startingHealth);
             }
+
+            CallHealthEvent(damageAmount);
         }
     }
 
     /// <summary>
     /// Public method called when damage is taken
     /// </summary>
-    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition)
+    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, bool headShotHappened)
     {
         if (isDamageable)
         {
             currentHealth -= damageAmount;
-            CallHealthEvent(damageAmount);
 
             if (player != null)
             {
@@ -215,7 +216,7 @@ public class Health : MonoBehaviour
                         PostHitImmunity();
                     }
 
-                    getHitCoroutine = StartCoroutine(EnemyGetHitRoutine());
+                    getHitCoroutine = StartCoroutine(EnemyGetHitRoutine(headShotHappened));
                 }
 
                 if (currentHealth <= 0)
@@ -229,6 +230,8 @@ public class Health : MonoBehaviour
             {
                 healthBar.SetHealthBarValue((float)currentHealth / (float)startingHealth);
             }
+
+            CallHealthEvent(damageAmount);
         }
     }
 
@@ -251,7 +254,7 @@ public class Health : MonoBehaviour
         getHitCoroutine = null;
     }
 
-    IEnumerator EnemyGetHitRoutine()
+    IEnumerator EnemyGetHitRoutine(bool headShotHappened)
     {
         if (!isBlocking)
         {
@@ -269,7 +272,16 @@ public class Health : MonoBehaviour
                 enemy.animateEnemy.SetDeathAnimationParameters();
             }
 
-            enemy.particlesSystem.Play();
+            if (headShotHappened)
+            {
+                enemy.headShotFxParticles.Play();
+                enemy.healthEvent.CallHeadShotEvent();
+                SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.specialMoveSoundEffect);
+            }
+            else
+            {
+                enemy.hitFxParticles.Play();
+            }
         }
         else
         {
@@ -282,11 +294,13 @@ public class Health : MonoBehaviour
 
         yield return new WaitForSeconds(0.6f);
 
-        enemy.particlesSystem.Stop();
+        enemy.hitFxParticles.Stop();
+        enemy.headShotFxParticles.Stop();
         enemy.animator.SetBool(Settings.getHit, false);
         enemy.animator.SetBool(Settings.block, false);
         isBlocking = false;
         getHitCoroutine = null;
+
     }
 
     /// <summary>
@@ -367,7 +381,7 @@ public class Health : MonoBehaviour
         int damageAmount = 7;
         // Trigger health event
         healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)startingHealth), currentHealth, damageAmount);
-        TakeDamage(damageAmount, Vector2.zero, transform.position);
+        TakeDamage(damageAmount, Vector2.zero, transform.position, false);
 
         float rndNumber = Random.Range(0f, 1f);
 
@@ -400,7 +414,7 @@ public class Health : MonoBehaviour
         int damageAmount = 1;
         // Trigger health event
         healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)startingHealth), currentHealth, damageAmount);
-        TakeDamage(damageAmount, Vector2.zero, transform.position);
+        TakeDamage(damageAmount, Vector2.zero, transform.position, false);
 
         float randomDice = Random.Range(0f, 1f);
 

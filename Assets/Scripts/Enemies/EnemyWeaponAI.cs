@@ -105,14 +105,13 @@ public class EnemyWeaponAI : MonoBehaviour
             if (playerDirectionVector.magnitude <= enemyProjectileRange)
             {
                 // Does this enemy require line of sight to the player before firing?
-                if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange))
-                    return;
+                if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
 
                 // Trigger fire weapon event
                 if (enemyAttackCoroutine == null)
                 {
                     enemyAttackCoroutine = StartCoroutine(EnemyAttackAnimRoutine());
-                    enemy.fireWeaponEvent.CallFireWeaponEvent(true, true, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection);
+                    enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false);
                 }
             }
         }

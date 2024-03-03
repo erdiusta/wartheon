@@ -53,6 +53,13 @@ public class HealthEvent : MonoBehaviour
         GetSilverArmor?.Invoke(this);
     }
 
+    public event Action<HealthEvent> GetDeath;
+
+    public void CallGetDeathEvent()
+    {
+        GetDeath?.Invoke(this);
+    }
+
     public event Action<HealthEvent> PoisonCured;
 
     public void CallPoisonCuredEvent()
@@ -100,6 +107,13 @@ public class HealthEvent : MonoBehaviour
     public void CallCriticalHitEvent()
     {
         OnCriticalHit?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnHeadShot;
+
+    public void CallHeadShotEvent()
+    {
+        OnHeadShot?.Invoke(this);
     }
 }
 

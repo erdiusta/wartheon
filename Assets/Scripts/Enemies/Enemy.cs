@@ -61,7 +61,8 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public StatusManager statusManager;
     [HideInInspector] public DamageDisplay damageDisplay;
 
-    public ParticleSystem particlesSystem;
+    public ParticleSystem hitFxParticles;
+    public ParticleSystem headShotFxParticles;
 
     FireWeapon fireWeapon;
     SetActiveWeaponEvent setActiveWeaponEvent;

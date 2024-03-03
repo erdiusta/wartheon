@@ -9,6 +9,9 @@ using System.Collections;
 [DisallowMultipleComponent]
 public class FireWeapon : MonoBehaviour
 {
+    public Transform prechargeBarContainer;
+    public RectTransform prechargeBar;
+
     Enemy enemy;
     float firePrechargeTimer = 0f;
     float fireRateCooldownTimer = 0f;
@@ -80,7 +83,8 @@ public class FireWeapon : MonoBehaviour
             // Test if weapon is ready to fire
             if (IsWeaponReadyToFire())
             {
-                FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector);
+                FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
+                    fireWeaponEventArgs.headShotHappened);
                 ResetCooldownTimer();
                 ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
             }
@@ -95,8 +99,22 @@ public class FireWeapon : MonoBehaviour
         // Weapon precharge 
         if (fireWeaponEventArgs.firePreviousFrame)
         {
+            if (!prechargeBarContainer.gameObject.activeSelf)
+            {
+                // Activate precharge bar container
+                firePrechargeTimer = activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime;
+                prechargeBarContainer.gameObject.SetActive(true);
+            }
+
             // Decrease precharge timer if fire button held previous frame
             firePrechargeTimer -= Time.deltaTime;
+
+            // Update precharge bar
+            float barFill = firePrechargeTimer / GameManager.Instance.GetPlayer().activeWeapon.GetCurrentRightHandWeapon().weaponDetails.
+                weaponPrechargeTime;
+
+            // update bar fill
+            prechargeBar.transform.localScale = new Vector3(barFill, 1f, 1f);
         }
         else
         {
@@ -140,23 +158,23 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Set up ammo using an ammo gameObject and component from the object pool.
     /// </summary>
-    private void FireProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector)
+    private void FireProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool headShotHappened)
     {
         ProjectileDetailsSO currentProjectile = activeWeapon.GetCurrentProjectile();
 
         if (currentProjectile != null)
         {
             // Fire projectile routine
-            StartCoroutine(FireProjectileRoutine(currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector));
+            StartCoroutine(FireProjectileRoutine(currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, headShotHappened));
         }
     }
 
     /// <summary>
     /// Coroutine to spawn multiple ammo per shot if specified in the ammo details
     /// </summary>
-    IEnumerator FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector)
-    {
-        
+    IEnumerator FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, 
+        Vector3 weaponAimDirectionVector, bool headShotHappened)
+    {      
         int projectileCounter = 0;
 
         // Get random projectile per shot
@@ -190,7 +208,7 @@ public class FireWeapon : MonoBehaviour
                 Quaternion.identity);
 
             // Initialize projectile
-            projectile.InitializeProjectile(currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector);
+            projectile.InitializeProjectile(headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector);
 
             // Wait for projectile per shot timegap
             yield return new WaitForSeconds(projectileSpawnInterval);
@@ -234,6 +252,7 @@ public class FireWeapon : MonoBehaviour
     {
         // Reset precharge timer
         firePrechargeTimer = activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime;
+        prechargeBarContainer.gameObject.SetActive(false);
 
         if (tag == Settings.playerTag && GetComponent<Player>().activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
         {

@@ -1330,7 +1330,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BackGroundColor: {r: 0.10980392, g: 0.10980392, b: 0.10980392, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1348,9 +1348,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.7392996
-    width: 0.347207
-    height: 0.3469115
+    y: 0.6974638
+    width: 0.29051986
+    height: 0.2904212
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -3578,7 +3578,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f0dea1bfe7a83744af2260236616f06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  specialMoveReadyText: {fileID: 964768239}
   specialMoveNameText: {fileID: 1228073866}
   containerBar: {fileID: 325646899}
   moveReadyBar: {fileID: 1726805809}
@@ -3732,7 +3731,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1838912663
-  m_SortingLayer: 7
+  m_SortingLayer: 8
   m_SortingOrder: 20
   m_Sprite: {fileID: 21300000, guid: 3640f47ca78384741a1cfa06c932e212, type: 3}
   m_Color: {r: 0.7254902, g: 0.7254902, b: 0.7254902, a: 1}
@@ -4152,7 +4151,7 @@ MonoBehaviour:
   m_Intensity: 0.8
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 6513db15f502b286a761f190615bacf0a9752681
+  m_ApplyToSortingLayers: 6513db15f502b286a761f190615bacf0a97526810384a13d
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0

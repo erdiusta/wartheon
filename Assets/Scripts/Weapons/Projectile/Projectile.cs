@@ -25,6 +25,7 @@ public class Projectile : MonoBehaviour, IFireable
     Vector3 velocity;
     bool isProjectile = true;
     PolygonCollider2D polygonCollider2D;
+    bool headShotHappened;
 
     private void Awake()
     {
@@ -155,7 +156,7 @@ public class Projectile : MonoBehaviour, IFireable
 
             if (collision.GetComponent<Enemy>() != null)
             {
-                if (enemy.enemyDetails.hasShield)
+                if (enemy.enemyDetails.hasShield && !headShotHappened)
                 {
                     float diceRoll = Random.Range(0f, 1f);
                     bool deflectHappened = diceRoll < enemy.enemyDetails.deflectChance ? true : false;
@@ -163,7 +164,7 @@ public class Projectile : MonoBehaviour, IFireable
                     if (deflectHappened)
                     {
                         enemy.health.isBlocking = true;
-                        enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position);
+                        enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
                     }
                     else
                     {
@@ -248,14 +249,18 @@ public class Projectile : MonoBehaviour, IFireable
             if (collision != null && collision.GetComponent<Enemy>() != null)
             {
                 // Damage inflicted to enemy after deducting enemy armor
-                inflictedDamage = damageDone > health.GetArmorValue() ?
-                    damageDone - health.GetArmorValue() : 1;
+                inflictedDamage = damageDone > health.GetArmorValue() ? damageDone - health.GetArmorValue() : 1;
+
+                if (headShotHappened)
+                {
+                    // x3 damage if used headshot
+                    inflictedDamage *= 3;
+                }
             }
             else if (collision != null && collision.GetComponent<Player>() != null)
             {
                 // Damage inflicted to enemy after deducting enemy armor
-                inflictedDamage = damageDone > health.GetArmorValue() ?
-                    damageDone - health.GetArmorValue() : 1;
+                inflictedDamage = damageDone > health.GetArmorValue() ? damageDone - health.GetArmorValue() : 1;
             }
             else if (collision != null && collision.GetComponent<Environment>() != null)
             {
@@ -263,7 +268,7 @@ public class Projectile : MonoBehaviour, IFireable
                 inflictedDamage = damageDone;
             }
 
-            health.TakeDamage(inflictedDamage, transform.position, health.transform.position, polygonCollider2D);
+            health.TakeDamage(inflictedDamage, transform.position, health.transform.position, polygonCollider2D, headShotHappened);
         }
     }
 
@@ -271,12 +276,15 @@ public class Projectile : MonoBehaviour, IFireable
     /// Initialize the projectile being fired - using the projectileDetails, the aimangle, weaponAngle, and weaponAimDirectionVector. If this 
     /// projectile is part of a pattern the projectile movement can be overriden by setting overrideAmmoMovement to true
     /// </summary>
-    public void InitializeProjectile(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, float projectileSpeed, 
-        Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false)
+    public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, 
+        float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false)
     {
         #region Projectile
 
         this.projectileDetails = projectileDetails;
+
+        // Set head shot bool
+        this.headShotHappened = headShotHappened;
 
         // Initialize isColliding
         isColliding = false;

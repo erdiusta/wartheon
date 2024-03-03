@@ -223,8 +223,7 @@ public class RightWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void UpdateWeaponReloadBar(Weapon weapon)
     {
-        if (weapon.weaponDetails.hasInfiniteClipCapacity)
-            return;
+        if (weapon.weaponDetails.hasInfiniteClipCapacity) return;
 
         StopReloadWeaponCoroutine();
         UpdateReloadText(weapon);

@@ -19,8 +19,8 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         return gameObject;
     }
 
-    public void InitializeProjectile(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, float projectileSpeed, 
-        Vector3 weaponAimDirectionVector, bool overrideProjectileMovement)
+    public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, 
+        float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement)
     {
         this.projectileDetails = projectileDetails;
         this.projectileSpeed = projectileSpeed;
@@ -37,7 +37,7 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         // Loop through all child ammo and initialise it
         foreach (Projectile projectile in projectileArray)
         {
-            projectile.InitializeProjectile(projectileDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true);
+            projectile.InitializeProjectile(false, projectileDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true);
         }
 
         // Set ammo charge timer - this will hold the ammo briefly

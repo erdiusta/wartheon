@@ -18,6 +18,8 @@ MonoBehaviour:
   weaponAnimatorController: {fileID: 9100000, guid: cb0f526e13a38884a9daa6f2c6f07419, type: 2}
   weaponClass: 1
   wieldType: 1
+  canKillSuddenly: 0
+  suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 0

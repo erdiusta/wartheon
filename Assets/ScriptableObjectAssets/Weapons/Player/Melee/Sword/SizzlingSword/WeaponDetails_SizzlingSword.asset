@@ -18,6 +18,8 @@ MonoBehaviour:
   weaponAnimatorController: {fileID: 9100000, guid: 68b9352f59d71994fa46248dd50aabfc, type: 2}
   weaponClass: 0
   wieldType: 0
+  canKillSuddenly: 0
+  suddenKillChance: 0
   hasAcid: 1
   acidEfficiency: 0.6
   hasStunDamage: 0
@@ -34,11 +36,11 @@ MonoBehaviour:
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 1
   isShield: 0
-  weaponFireRate: 0.45
+  weaponFireRate: 0.55
   projectileDeflectRatio: 0
   circleRadius: 0.65
-  meleeDamageMin: 8
-  meleeDamageMax: 11
+  meleeDamageMin: 7
+  meleeDamageMax: 10
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 1.5
   hasInfiniteProjectile: 0

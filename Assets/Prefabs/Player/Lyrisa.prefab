@@ -9930,7 +9930,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 867631875859887099, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: seismicSlamCircleRadius
-      value: 2.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1201756707024009298, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.x
@@ -10159,7 +10159,7 @@ PrefabInstance:
     - target: {fileID: 7089998605978601817, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: a8b1afc85b8001746872cd67709aef9b, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
       value: 0.53447527
@@ -10198,11 +10198,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8023689875600209427, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.478
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8023689875600209427, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.395
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8023689875600209427, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_LocalPosition.z

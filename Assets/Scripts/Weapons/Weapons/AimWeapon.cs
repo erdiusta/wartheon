@@ -91,8 +91,16 @@ public class AimWeapon : MonoBehaviour
                         leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 0f);
                         break;
                 }
-
             }
+
+            //if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponName == "Bow" && aimDirection == AimDirection.Down)
+            //{
+            //    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.5f, -0.2f, 0f);
+            //}
+            //else
+            //{
+            //    rightHandWeaponRotationPointTransform.localPosition = new Vector3(0f, 0f, 0f);
+            //}
         }
 
         // Flip weapon transform based on player direction

@@ -92,6 +92,7 @@ public static class Settings
 
     #region CHARACTER NAMES
     public const string astraeus = "Astraeus";
+    public const string orion = "Orion";
     public const string erebus = "Erebus";
     public const string lyrisa = "Lyrisa";
     #endregion

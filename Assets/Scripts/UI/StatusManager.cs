@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class StatusManager : MonoBehaviour
@@ -8,6 +9,7 @@ public class StatusManager : MonoBehaviour
     public GameObject stunImage;
     public GameObject slowImage;
     public GameObject silverArmorImage;
+    public GameObject deathImage;
 
     Player player;
     Enemy enemy;
@@ -28,6 +30,7 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetStun += EnableStunImage;
             player.healthEvent.GetSlow += EnableSlowImage;
             player.healthEvent.GetSilverArmor += EnableSilverArmorImage;
+            player.healthEvent.GetDeath += EnableDeathImage;
 
             player.healthEvent.PoisonCured += DisablePoisonImage;
             player.healthEvent.BleedingCured += DisableBleedingImage;
@@ -45,6 +48,7 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetStun += EnableStunImage;
             enemy.healthEvent.GetSlow += EnableSlowImage;
             enemy.healthEvent.GetSilverArmor += EnableSilverArmorImage;
+            enemy.healthEvent.GetDeath += EnableDeathImage;
 
             enemy.healthEvent.PoisonCured += DisablePoisonImage;
             enemy.healthEvent.BleedingCured += DisableBleedingImage;
@@ -65,6 +69,7 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetStun -= EnableStunImage;
             player.healthEvent.GetSlow -= EnableSlowImage;
             player.healthEvent.GetSilverArmor -= EnableSilverArmorImage;
+            player.healthEvent.GetDeath -= EnableDeathImage;
 
             player.healthEvent.PoisonCured -= DisablePoisonImage;
             player.healthEvent.BleedingCured -= DisableBleedingImage;
@@ -82,6 +87,7 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetStun -= EnableStunImage;
             enemy.healthEvent.GetSlow -= EnableSlowImage;
             enemy.healthEvent.GetSilverArmor -= EnableSilverArmorImage;
+            enemy.healthEvent.GetDeath -= EnableDeathImage;
 
             enemy.healthEvent.PoisonCured -= DisablePoisonImage;
             enemy.healthEvent.BleedingCured -= DisableBleedingImage;
@@ -120,6 +126,11 @@ public class StatusManager : MonoBehaviour
     private void EnableSlowImage(HealthEvent healthEvent)
     {
         slowImage.SetActive(true);
+    }
+
+    private void EnableDeathImage(HealthEvent @event)
+    {
+        deathImage.SetActive(true);
     }
 
     private void DisableArmorImage(HealthEvent healthEvent)

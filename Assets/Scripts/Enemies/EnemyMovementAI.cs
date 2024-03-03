@@ -292,7 +292,7 @@ public class EnemyMovementAI : MonoBehaviour
         patrolSteps = AStar.BuildPath(currentRoom, enemyGridPosition, currentPatrolledSpawnPoint);
 
         // Take off first step on path - this is the grid square the enemy is already on
-        if (patrolSteps != null || patrolSteps.Count > 0)
+        if (patrolSteps != null)
         {
             patrolSteps.Pop();
         }

@@ -23,8 +23,8 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 0}
   projectileDamageMin: 6
   projectileDamageMax: 10
-  projectileSpeedMin: 18
-  projectileSpeedMax: 22
+  projectileSpeedMin: 15
+  projectileSpeedMax: 20
   projectileRange: 12
   projectileRotationSpeed: 1
   hasAcid: 0
@@ -37,8 +37,8 @@ MonoBehaviour:
   stunChance: 0
   hasSlowDamage: 1
   slowChance: 0.05
-  gravity: 6
-  projectileSpreadMin: 1.2
+  gravity: 0
+  projectileSpreadMin: 1.4
   projectileSpreadMax: 2
   projectileSpawnAmountMin: 1
   projectileSpawnAmountMax: 1

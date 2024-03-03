@@ -15,6 +15,7 @@ TagManager:
   - Chest Item
   - poolTilemap
   - playerProjectile
+  - sideTilemap
   layers:
   - Default
   - TransparentFX
@@ -60,6 +61,9 @@ TagManager:
     locked: 0
   - name: Instances
     uniqueID: 4037827425
+    locked: 0
+  - name: Side
+    uniqueID: 1033995267
     locked: 0
   - name: Front
     uniqueID: 2431738279

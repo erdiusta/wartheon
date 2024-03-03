@@ -21,7 +21,7 @@ public class ReceiveContactDamage : MonoBehaviour
         if (contactDamageAmount > 0)
             damageAmount = contactDamageAmount;
 
-        health.TakeDamage(damageAmount, dealerPosition, receiverPosition);
+        health.TakeDamage(damageAmount, dealerPosition, receiverPosition, false);
     }
 
     #region Validation

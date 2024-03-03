@@ -85,8 +85,7 @@ public class CharacterSelectorUI : MonoBehaviour
     /// </summary>
     public void PreviousCharacter()
     {
-        if (selectedPlayerIndex == 0)
-            return;
+        if (selectedPlayerIndex == 0) return;
 
         selectedPlayerIndex--;
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];

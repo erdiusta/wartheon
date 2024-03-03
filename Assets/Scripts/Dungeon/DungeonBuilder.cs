@@ -209,7 +209,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 return false;
             }
 
-            Doorway doorwayParent = unconnectedAvailableParentDoorways[UnityEngine.Random.Range(0, unconnectedAvailableParentDoorways.Count)];
+            Doorway doorwayParent = unconnectedAvailableParentDoorways[Random.Range(0, unconnectedAvailableParentDoorways.Count)];
 
             // Get a random room template for room node that is consistent with the parent door orientation
             RoomTemplateSO roomTemplate = GetRandomTemplateForRoomConsistentWithParent(roomNode, doorwayParent);

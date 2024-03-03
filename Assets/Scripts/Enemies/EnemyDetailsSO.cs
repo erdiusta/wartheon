@@ -138,6 +138,10 @@ public class EnemyDetailsSO : ScriptableObject
     [Header("ENEMY SOUND SETTINGS")]
     #endregion
     #region Tooltip
+    [Tooltip("The sound effect for this enemy to be sudden dead")]
+    #endregion
+    public SoundEffectSO suddenDeathSoundEffect;
+    #region Tooltip
     [Tooltip("The sound effect for this enemy to get git")]
     #endregion
     public SoundEffectSO getHitSoundEffect;

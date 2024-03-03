@@ -37,6 +37,14 @@ public class WeaponDetailsSO : ScriptableObject
     [Header("WEAPON PASSIVE EFFECT")]
     #endregion
     #region Tooltip
+    [Tooltip("Check if weapon has sudden death chance")]
+    #endregion Tooltip
+    public bool canKillSuddenly;
+    #region Tooltip
+    [Tooltip("The chance of weapon's sudden death")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float suddenKillChance = 0.1f;
+    #region Tooltip
     [Tooltip("Check if weapon has acid")]
     #endregion Tooltip
     public bool hasAcid;

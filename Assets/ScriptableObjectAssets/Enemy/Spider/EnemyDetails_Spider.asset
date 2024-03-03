@@ -33,10 +33,13 @@ MonoBehaviour:
   stunChance: 0
   hasBleedingDamage: 0
   bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 1.8584491, g: 0.02629876, b: 0.9415037, a: 0}
+  suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: bb4cdfaa3e5c20b4d87687e7b68870c7, type: 2}

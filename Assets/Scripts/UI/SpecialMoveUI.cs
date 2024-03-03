@@ -28,7 +28,6 @@ public class SpecialMoveUI : MonoBehaviour
 
     Player player;
     Coroutine reloadSpecialMoveCoroutine;
-    Coroutine blinkingReloadTextCoroutine;
 
     private void Awake()
     {
@@ -42,6 +41,10 @@ public class SpecialMoveUI : MonoBehaviour
             case Settings.astraeus:
                 // Set the reload bar to red
                 barImage.color = Color.magenta;
+                break;
+            case Settings.orion:
+                // Set the reload bar to red
+                barImage.color = Color.green;
                 break;
             case Settings.erebus:
                 // Set the reload bar to red
@@ -139,6 +142,10 @@ public class SpecialMoveUI : MonoBehaviour
                 // Set the reload bar to red
                 barImage.color = Color.magenta;
                 break;
+            case Settings.orion:
+                // Set the reload bar to red
+                barImage.color = Color.green;
+                break;
             case Settings.erebus:
                 // Set the reload bar to red
                 barImage.color = Color.cyan;
@@ -160,7 +167,6 @@ public class SpecialMoveUI : MonoBehaviour
             // update bar fill
             moveReadyBar.transform.localScale = new Vector3(barFill, 1f, 1f);
 
-            blinkingReloadTextCoroutine = null;
             yield return null;
         }
     }

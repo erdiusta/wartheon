@@ -79,8 +79,19 @@ public class MeleeAttackRightHand : MonoBehaviour
                 {
                     Enemy enemy = collider.GetComponent<Enemy>();
 
-                    int inflictedDamage = CalculateDamageAmount(enemy);
-                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position);
+                    CheckSuddenDeathStatus(enemy);
+
+                    if (enemyHealth.suddenDeathHappened)
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
+                        enemyHealth.TakeDamage(enemy.health.currentHealth, transform.position, enemy.transform.position, false);
+                    }
+                    else
+                    {
+                        int inflictedDamage = CalculateDamageAmount(enemy);
+                        enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+                    }
+
                     SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
                     CheckAcidStatus(enemy);
@@ -136,15 +147,31 @@ public class MeleeAttackRightHand : MonoBehaviour
     }
 
     /// <summary>
+    /// Check sudden death status
+    /// </summary>
+    private void CheckSuddenDeathStatus(Enemy enemy)
+    {
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.canKillSuddenly && enemy.health.currentHealth > 0)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.suddenKillChance)
+            {
+                enemyHealth.suddenDeathHappened = true;
+                enemy.healthEvent.CallGetDeathEvent();
+            }
+        }
+    }
+
+    /// <summary>
     /// Check stun status
     /// </summary>
     private void CheckAcidStatus(Enemy enemy)
     {
-        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid & 
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid && 
             enemy.health.currentHealth > 0)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice > 0.6f)
+            if (randomDice < player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.acidEfficiency)
             {
                 enemy.armorStatus = ArmorStatus.Acid;
                 enemyHealth.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue *
