@@ -38,7 +38,7 @@ MonoBehaviour:
   isShield: 0
   weaponFireRate: 0.25
   projectileDeflectRatio: 0
-  circleRadius: 0.5
+  circleRadius: 0.55
   meleeDamageMin: 6
   meleeDamageMax: 10
   criticalHitChance: 0.35

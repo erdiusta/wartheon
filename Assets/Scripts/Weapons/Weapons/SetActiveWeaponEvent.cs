@@ -7,6 +7,18 @@ public class SetActiveWeaponEvent : MonoBehaviour
     public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnSetActiveRightHandWeapon;
     public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnSetActiveLeftHandWeapon;
     public event Action<SetActiveWeaponEvent> OnSetInactiveLeftHandWeapon;
+    public event Action<SetActiveWeaponEvent> OnTwoHandWeaponEquipped;
+    public event Action<SetActiveWeaponEvent> OnOneHandWeaponEquipped;
+
+    public void CallTwoHandWeaponEquipEvent()
+    {
+        OnTwoHandWeaponEquipped?.Invoke(this);
+    }
+
+    public void CallOneHandWeaponEquipEvent()
+    {
+        OnOneHandWeaponEquipped?.Invoke(this);
+    }
 
     public void CallSetActiveWeaponAtRightHandEvent(Weapon weapon)
     {

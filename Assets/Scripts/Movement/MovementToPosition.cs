@@ -46,15 +46,7 @@ public class MovementToPosition : MonoBehaviour
     {
         Vector2 unitVector2D = new Vector2(unitVector.x, unitVector.y);
 
-        // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(unitVector);
-        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-        enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
-        enemy.animateEnemy.InitializeAimAnimationParameters();
-        enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
-        enemy.animateEnemy.SetAttackAnimationParameters();
-
-        rb2D.MovePosition(rb2D.position + (unitVector2D * moveSpeed * Time.fixedDeltaTime));
+        rb2D.MovePosition(rb2D.position + (unitVector2D * moveSpeed * Time.deltaTime));
         rb2D.velocity = unitVector * moveSpeed;
     }
 }

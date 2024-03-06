@@ -91,7 +91,7 @@ public class ChestItem : MonoBehaviour
             SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
 
             // Pick up item and update equipped weapon list
-            player.UpdateWieldedWeapons(weaponDetails);
+            player.UpdateWieldedWeapons(weaponDetails, true);
         }
         else
         {

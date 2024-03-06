@@ -300,4 +300,24 @@ public static class HelperUtilities
 
         return nearestSpawnPosition;
     }
+
+    /// <summary>
+    /// Check if related animator has specific parameter or not
+    /// </summary>
+    public static bool AnimatorHasParameter(Animator animator, string paramName)
+    {
+        // Get the parameters list from the animator controller
+        AnimatorControllerParameter[] parameters = animator.parameters;
+
+        // Check if the parameter with the given name exists
+        foreach (AnimatorControllerParameter parameter in parameters)
+        {
+            if (parameter.name == paramName)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

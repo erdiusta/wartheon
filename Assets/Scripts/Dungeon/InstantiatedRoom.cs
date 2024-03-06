@@ -298,9 +298,18 @@ public class InstantiatedRoom : MonoBehaviour
                 // Add obstacles for collision tiles the enemy can't walk on
                 TileBase tile = collisionTilemap.GetTile(new Vector3Int(x + room.templateLowerBounds.x, y + room.templateLowerBounds.y, 0));
 
+                // Add obstacles for pool tiles the enemy can't walk on
+                TileBase checkedPoolTile = poolTilemap.GetTile(new Vector3Int(x + room.templateLowerBounds.x, y + room.templateLowerBounds.y, 0));
+
                 foreach (TileBase collisionTile in GameResources.Instance.enemyUnwalkableCollisionTilesArray)
                 {
                     if (tile == collisionTile)
+                    {
+                        aStarMovementPenalty[x, y] = 0;
+                        break;
+                    }
+
+                    if (checkedPoolTile == collisionTile)
                     {
                         aStarMovementPenalty[x, y] = 0;
                         break;
@@ -456,6 +465,11 @@ public class InstantiatedRoom : MonoBehaviour
 
         // Enable room trigger collider
         EnableRoomCollider();
+    }
+
+    public int GetRoomTilePenaltyValue(Vector3Int enemyZeroBasedCellPosition)
+    {
+        return aStarMovementPenalty[enemyZeroBasedCellPosition.x, enemyZeroBasedCellPosition.y];
     }
 
     #region Validation

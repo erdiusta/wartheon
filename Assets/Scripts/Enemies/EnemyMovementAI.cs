@@ -15,11 +15,13 @@ public class EnemyMovementAI : MonoBehaviour
     [HideInInspector] public float moveSpeed;
     [HideInInspector] public int updateFrameNumber = 1; // default value.  This is set by the enemy spawner
     [HideInInspector] public bool chasePlayer = false;
+    [HideInInspector] public Coroutine preAttackEnemyRoutine;
     [HideInInspector] public Coroutine attackMoveEnemyRoutine;
     [HideInInspector] public Coroutine chaseMoveEnemyRoutine;
     [HideInInspector] public Coroutine patrolMoveEnemyRoutine;
     [HideInInspector] public float enemyStartingMinSpeed;
     [HideInInspector] public float enemyStartingMaxSpeed;
+    [HideInInspector] public EnemyPhase enemyPhase;
 
     Enemy enemy;
     Stack<Vector3> movementSteps = new Stack<Vector3>();
@@ -37,6 +39,7 @@ public class EnemyMovementAI : MonoBehaviour
     float knockbackForce;
     float knockbackTimeWeight;
     Room currentRoom;
+    bool isPreAttacking;
 
     private void Awake()
     {
@@ -61,11 +64,53 @@ public class EnemyMovementAI : MonoBehaviour
 
         // Reset attack move timer
         attackMoveTimer = enemy.enemyDetails.attackMoveCooldown;
+
+        // Default enemy phase
+        enemyPhase = EnemyPhase.Patrol;
     }
 
     private void Update()
     {
         attackMoveTimer -= Time.deltaTime;
+
+        // If enemy hits wall, stop all coroutines
+        Vector3Int enemyCellPosition = new Vector3Int(currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).x,
+            currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).y);
+        Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
+            enemyCellPosition.y - currentRoom.templateLowerBounds.y);
+
+        // If enemy is in wall or pool tile, make enemy go away from there
+        if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 0 || currentRoom.instantiatedRoom.
+            GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) > 1)
+        {
+            if (preAttackEnemyRoutine != null)
+            {
+                StopCoroutine(preAttackEnemyRoutine);
+                preAttackEnemyRoutine = null;
+            }
+            if (attackMoveEnemyRoutine != null)
+            {
+                StopCoroutine(attackMoveEnemyRoutine);
+                attackMoveEnemyRoutine = null;
+            }
+            if (chaseMoveEnemyRoutine != null)
+            {
+                StopCoroutine(chaseMoveEnemyRoutine);
+                chaseMoveEnemyRoutine = null;
+            }
+            if (idleRoutine != null)
+            {
+                StopCoroutine(idleRoutine);
+                idleRoutine = null;
+            }
+
+            if (enemyPhase != EnemyPhase.Attack)
+            {
+                // For safe pathfind, set enemy phase to chase until enemy settles normal poisiton again
+                enemy.animateEnemy.SetMovementAnimationParameters();
+                enemyPhase = EnemyPhase.Chase;
+            }
+        }
 
         // First check if enemy is dead
         if (enemy.health.currentHealth <= 0f)
@@ -95,55 +140,141 @@ public class EnemyMovementAI : MonoBehaviour
         // If enemy is at the time of other animations, don't move
         if (enemy.health.getHitCoroutine != null)
         {
-            if (attackMoveEnemyRoutine != null)
+            if (patrolMoveEnemyRoutine != null)
             {
-                StopCoroutine(attackMoveEnemyRoutine);
+                StopCoroutine(patrolMoveEnemyRoutine);
+                patrolMoveEnemyRoutine = null;
+                patrolSteps.Clear();
             }
             if (chaseMoveEnemyRoutine != null)
             {
                 StopCoroutine(chaseMoveEnemyRoutine);
+                chaseMoveEnemyRoutine = null;
+                movementSteps.Clear();
+            }
+            if (preAttackEnemyRoutine != null)
+            {
+                StopCoroutine(preAttackEnemyRoutine);
+                preAttackEnemyRoutine = null;
+            }
+            if (attackMoveEnemyRoutine != null)
+            {
+                StopCoroutine(attackMoveEnemyRoutine);
+                attackMoveEnemyRoutine = null;
+            }
+            if (chaseMoveEnemyRoutine != null)
+            {
+                StopCoroutine(chaseMoveEnemyRoutine);
+                chaseMoveEnemyRoutine = null;
             }
             if (idleRoutine != null)
             {
                 StopCoroutine(idleRoutine);
+                idleRoutine = null;
             }
-
-            return;
         }
         else
         {
+            if (isPreAttacking) return;
+
             if (moveStatus != MoveStatus.Stagger && moveStatus != MoveStatus.Stun)
             {
-                Perform();
-            }
-        }
-    }
+                Vector3 direction = (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
 
-    #region Pathfind Move
-    /// <summary>
-    /// Use AStar pathfinding to build a path to the player - and then move the enemy to each grid location on the path
-    /// </summary>
-    private void Perform()
-    {
-        if (enemy.isFiring)
-        {
-            if (enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
-            {
-                if (aimAndShootRoutine == null)
+                Perform();
+
+                switch (enemyPhase)
                 {
-                    aimAndShootRoutine = StartCoroutine(AimAndShootRoutine());
-                    return;
+                    case EnemyPhase.Patrol:
+
+                        if (chaseMoveEnemyRoutine != null)
+                        {
+                            StopCoroutine(chaseMoveEnemyRoutine);
+                            chaseMoveEnemyRoutine = null;
+                            movementSteps.Clear();
+                        }
+
+                        if (currentEnemyPatrolPathRebuildCooldown <= 0f)
+                        {
+                            enemy.isFiring = false;
+                            Patrol();
+                        }
+
+                        break;
+
+                    case EnemyPhase.Chase:
+
+                        if (patrolMoveEnemyRoutine != null)
+                        {
+                            StopCoroutine(patrolMoveEnemyRoutine);
+                            patrolMoveEnemyRoutine = null;
+                            patrolSteps.Clear();
+                        }
+
+                        Chase();
+
+                        break;
+
+                    case EnemyPhase.GetHit:
+
+                        enemy.animateEnemy.SetGetHitAnimationParameters();
+                        break;
+
+                    case EnemyPhase.PreAttack:
+
+                        if (preAttackEnemyRoutine == null)
+                        {
+                            preAttackEnemyRoutine = StartCoroutine(PreAttackMoveRoutine(direction));
+                        }
+
+                        break;
+
+                    case EnemyPhase.Attack:
+
+                        enemy.animateEnemy.SetAttackAnimationParameters();
+
+                        if (enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
+                        {
+                            if (enemy.isFiring)
+                            {
+                                StopAllCoroutines();
+                                patrolSteps.Clear();
+                                movementSteps.Clear();
+                                patrolMoveEnemyRoutine = null;
+                                chaseMoveEnemyRoutine = null;
+                                enemy.idle.StopVelocity();
+
+                                enemy.animator.SetBool(Settings.attackMotion, true);
+
+                                if (aimAndShootRoutine == null && enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
+                                {
+                                    aimAndShootRoutine = StartCoroutine(AimAndShootRoutine());
+                                }
+                            }
+                            else
+                            {
+                                moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+                            }
+                        }
+
+                        if (preAttackEnemyRoutine == null && enemyDetails.enemyBehaviour != EnemyBehaviour.AimAndShoot)
+                        {
+                            if (attackMoveEnemyRoutine == null)
+                            {
+                                attackMoveEnemyRoutine = StartCoroutine(AttackMoveRoutine(direction));
+                            }
+                        }
+
+                        break;
+
+                    default:
+                        break;
                 }
             }
         }
-        else
-        {
-            // If none of the above conditions are met, perform regular pathfinding move
-            Move();
-        }
     }
 
-    private void Move()
+    private void Perform()
     {
         // Movement cooldown timer
         currentEnemyChasePathRebuildCooldown -= Time.deltaTime;
@@ -153,63 +284,16 @@ public class EnemyMovementAI : MonoBehaviour
         if (Time.frameCount % Settings.targetFrameRateToSpreadPathfindingOver != updateFrameNumber) return;
 
         // Check distance to player to see if enemy should start chasing
-        if (!chasePlayer && Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) <
-            enemy.enemyDetails.chaseDistance)
+        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
         {
             if (!GameManager.Instance.GetPlayer().playerDetails.onStealth)
             {
-                chasePlayer = true;
+                enemyPhase = EnemyPhase.Chase;
             }
             else
             {
-                chasePlayer = false;
+                enemyPhase = EnemyPhase.Patrol;
             }
-        }
-
-        // If not close enough to chase player then patrol and disable firing if it is true
-        if (!chasePlayer)
-        {
-            if (chaseMoveEnemyRoutine != null)
-            {
-                StopCoroutine(chaseMoveEnemyRoutine);
-                chaseMoveEnemyRoutine = null;
-                movementSteps.Clear();
-            }
-
-            if (currentEnemyPatrolPathRebuildCooldown <= 0f)
-            {
-                enemy.isFiring = false;
-                Patrol();
-            }
-
-            return;
-        }
-
-        // If the movement cooldown timer reached or player has moved more than required distance then rebuild the enemy path and move the enemy
-        if (currentEnemyChasePathRebuildCooldown <= 0f || (Vector3.Distance(playerReferencePosition, GameManager.Instance.GetPlayer().GetPlayerPosition()) >
-            Settings.playerMoveDistanceToRebuildPath))
-        {
-            if (patrolMoveEnemyRoutine != null)
-            {
-                StopCoroutine(patrolMoveEnemyRoutine);
-                patrolMoveEnemyRoutine = null;
-                patrolSteps.Clear();
-            }
-
-            // If enemy has attack move and distance between enemy and player lower than attack move trigger distance
-            if (enemy.enemyDetails.hasAttackMove && attackMoveEnemyRoutine == null && Vector3.Distance(transform.position, 
-                GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.attackMoveTriggerDistance && attackMoveTimer < 0)
-            {
-                Vector3 direction = (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
-
-                attackMoveEnemyRoutine = StartCoroutine(AttackMoveRoutine(direction));
-            }
-
-            Chase();
-        }
-        else
-        {
-            chasePlayer = false;
         }
     }
 
@@ -222,7 +306,10 @@ public class EnemyMovementAI : MonoBehaviour
         currentEnemyPatrolPathRebuildCooldown = Settings.enemyPathRebuildCooldown;
 
         // Clear chase stack
-        movementSteps.Clear();
+        if (movementSteps != null)
+        {
+            movementSteps.Clear();
+        }
 
         // Reset the current patrol index to 0 if it exceeds the array length
         if (currentPatrolIndex >= currentRoom.spawnPositionArray.Length)
@@ -252,25 +339,54 @@ public class EnemyMovementAI : MonoBehaviour
     /// </summary>
     private void Chase()
     {
-        // Reset path rebuild cooldown timer
-        currentEnemyChasePathRebuildCooldown = Settings.enemyPathRebuildCooldown;
-
-        // Clear patrol stack
-        patrolSteps.Clear();
-
-        // Reset player reference position
-        playerReferencePosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
-
-        // Move the enemy using AStar pathfinding - Trigger rebuild of path to player
-        CreatePath();
-
-        // If a path has been found move the enemy
-        if (movementSteps != null)
+        // If the movement cooldown timer reached or player has moved more than required distance then rebuild the enemy path and move the enemy
+        if (currentEnemyChasePathRebuildCooldown <= 0f || (Vector3.Distance(playerReferencePosition, GameManager.Instance.GetPlayer().GetPlayerPosition()) >
+            Settings.playerMoveDistanceToRebuildPath))
         {
-            if (chaseMoveEnemyRoutine == null)
+            // Reset path rebuild cooldown timer
+            currentEnemyChasePathRebuildCooldown = Settings.enemyPathRebuildCooldown;
+
+            // Clear patrol stack
+            if (patrolSteps != null)
             {
-                // Move enemy along the path using a coroutine
-                chaseMoveEnemyRoutine = StartCoroutine(ChaseMoveEnemyRoutine());
+                patrolSteps.Clear();
+            }
+
+            // Reset player reference position
+            playerReferencePosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
+
+            // Move the enemy using AStar pathfinding - Trigger rebuild of path to player
+            CreatePath();
+
+            // If a path has been found move the enemy
+            if (movementSteps != null)
+            {
+                if (chaseMoveEnemyRoutine == null)
+                {
+                    // Move enemy along the path using a coroutine
+                    chaseMoveEnemyRoutine = StartCoroutine(ChaseMoveEnemyRoutine());
+                }
+            }
+
+            // Switch to attack if chase distance is lower than trigger distance
+            if (enemy.enemyDetails.hasAttackMove && Vector3.Distance(GameManager.Instance.GetPlayer().GetPlayerPosition(), transform.position) <
+                enemy.enemyDetails.attackMoveTriggerDistance)
+            {
+                if (chaseMoveEnemyRoutine != null)
+                {
+                    movementSteps.Clear();
+                    StopCoroutine(chaseMoveEnemyRoutine);
+                    chaseMoveEnemyRoutine = null;
+                }
+
+                if (preAttackEnemyRoutine == null)
+                {
+                    enemyPhase = EnemyPhase.PreAttack;
+                }
+                else
+                {
+                    enemyPhase = EnemyPhase.Chase;
+                }
             }
         }
     }
@@ -344,7 +460,7 @@ public class EnemyMovementAI : MonoBehaviour
     /// </summary>
     IEnumerator PatrolMoveEnemyRoutine()
     {
-        while (patrolSteps.Count > 0)
+        while (patrolSteps != null && patrolSteps.Count > 0)
         {
             Vector3 nextPosition = patrolSteps.Pop();
 
@@ -354,7 +470,7 @@ public class EnemyMovementAI : MonoBehaviour
                 // Trigger movement and animations
                 enemy.movementToPosition.PatrolMoveRigidbodyByPosition(nextPosition, transform.position, moveSpeed);
                 enemy.animateEnemy.SetMovementAnimationParameters();
-                
+
                 // Moving the enemy using 2D physics so wait until the next fixed update
                 yield return waitForFixedUpdate;
 
@@ -362,7 +478,11 @@ public class EnemyMovementAI : MonoBehaviour
                     idleRoutine != null)
                 {
                     nextPosition = transform.position;
-                    patrolSteps.Clear();
+
+                    if (patrolSteps != null)
+                    {
+                        patrolSteps.Clear();
+                    }
                     patrolMoveEnemyRoutine = null;
                 }
             }
@@ -430,47 +550,92 @@ public class EnemyMovementAI : MonoBehaviour
     }
 
     /// <summary>
-    /// Make special move
+    /// Make special move - PreAttack phase 
+    /// </summary>
+    IEnumerator PreAttackMoveRoutine(Vector3 vector)
+    {
+        if (attackMoveTimer < 0f)
+        {
+            // Initialize vectors, angles, directions and aim
+            float unitAngle = HelperUtilities.GetAngleFromVector(vector);
+            AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
+            enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
+            enemy.animateEnemy.InitializeAimAnimationParameters();
+            enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
+            enemy.idle.StopVelocity();
+            isPreAttacking = true;
+
+            yield return waitForFixedUpdate;
+
+            // After aim, direction locked and speed is zero make the next step
+            if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.PrepareAndDash)
+            {
+                // Attack animation pre-attack phase
+                enemy.animateEnemy.SetAttackAnimationParameters();
+                enemy.animator.SetBool(Settings.attackMotion, false);
+                enemy.animator.SetBool(Settings.preAttackMotion, true);
+
+                yield return new WaitForSeconds(0.6f);
+
+                enemy.animator.SetBool(Settings.preAttackMotion, false);
+            }
+
+            isPreAttacking = false;
+            enemy.animator.SetBool(Settings.attackMotion, true);
+
+            enemyPhase = EnemyPhase.Attack;
+            preAttackEnemyRoutine = null;
+        }
+    }
+
+    /// <summary>
+    /// Make special move - Attack phase 
     /// </summary>
     IEnumerator AttackMoveRoutine(Vector3 vector)
     {
         // minDistance used to decide when to exit coroutine loop
         float minDistance = 0.2f;
-
         Vector3 targetPosition = transform.position + vector * enemyDetails.attackMoveEfficentDistance;
 
+        // Attack animation attack phase
         while (Vector3.Distance(transform.position, targetPosition) > minDistance)
         {
-            enemy.movementToPosition.AttackMoveRigidbodyByPosition(vector, moveSpeed * 3);
+            // Check if the current tile is an obstacle (penalty value = 0)
+            Vector3Int enemyCellPosition = new Vector3Int(currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).x,
+                currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).y);
+            Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
+                enemyCellPosition.y - currentRoom.templateLowerBounds.y);
+
+            if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 0 ||
+                currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) > 1)
+            {
+                // If the enemy collides with an obstacle or second-choice tile, transition to the appropriate phase
+                enemyPhase = EnemyPhase.Patrol;
+                attackMoveEnemyRoutine = null;
+                break;
+            }
+
+            // Check if the current tile is preferred (penalty value = 1)
+            if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 1)
+            {
+                // Move towards the target position
+                enemy.movementToPosition.AttackMoveRigidbodyByPosition(vector, moveSpeed * 2.5f);
+            }
 
             // yield and wait for fixed update
-            yield return waitForFixedUpdate;
+            yield return waitForFixedUpdate;        
         }
-
-        attackMoveEnemyRoutine = null;
 
         // Set cooldown timer
         attackMoveTimer = enemy.enemyDetails.attackMoveCooldown;
 
-        transform.position = targetPosition;
-    }
+        // Reset animation parameters and transition to the appropriate phase
+        enemy.idle.StopVelocity();
+        enemy.animateEnemy.SetIdleAnimationParameters();
+        enemyPhase = EnemyPhase.Chase;
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (attackMoveEnemyRoutine != null)
-        {
-            StopCoroutine(attackMoveEnemyRoutine);
-            attackMoveEnemyRoutine = null;
-        }
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (attackMoveEnemyRoutine != null)
-        {
-            StopCoroutine(attackMoveEnemyRoutine);
-            attackMoveEnemyRoutine = null;
-        }
+        // Reset the coroutine reference
+        attackMoveEnemyRoutine = null;
     }
 
     /// <summary>
@@ -512,7 +677,7 @@ public class EnemyMovementAI : MonoBehaviour
                     {
                         obstacle = currentRoom.instantiatedRoom.aStarMovementPenalty[adjustedPlayerCellPosition.x + i, adjustedPlayerCellPosition.y + j];
 
-                        if (obstacle != 0) 
+                        if (obstacle != 0)
                             return new Vector3Int(playerCellPosition.x + i, playerCellPosition.y + j, 0);
                     }
                     catch
@@ -526,7 +691,6 @@ public class EnemyMovementAI : MonoBehaviour
             return playerCellPosition;
         }
     }
-    #endregion
 
     IEnumerator StunRoutine()
     {

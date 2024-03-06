@@ -86,6 +86,15 @@ public enum DamageType
     Light
 }
 
+public enum AttackType
+{
+    MeleeRight,
+    MeleeLeft,
+    Projectile,
+    Contact,
+    Gradual
+}
+
 public enum ChestSpawnEvent
 {
     onRoomEntry,
@@ -109,6 +118,16 @@ public enum EnemyBehaviour
 {
     Pursuit,
     AimAndShoot,
-    NonStopShoot,
-    Independent
+    PrepareAndDash,
+    InstantDash
+}
+
+public enum EnemyPhase
+{
+    Patrol,
+    Chase,
+    GetHit,
+    PreAttack,
+    Attack,
+    Death
 }

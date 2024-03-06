@@ -79,4 +79,5 @@ MonoBehaviour:
   heartIcon: {fileID: -1216308913, guid: f9ee2bab07942d7449d2d3b8d49d5d85, type: 3}
   bulletIcon: {fileID: 21300000, guid: 74e9889e4ca672f47a1de063aeee1613, type: 3}
   ammoDropIcon: {fileID: 21300000, guid: aff7375fc583a5a4bae94ad246a66f65, type: 3}
+  lockIcon: {fileID: 21300000, guid: 75be281a614718c4b89d49a81d864e9d, type: 3}
   minimapBossPrefab: {fileID: 668306937615276397, guid: a6f6cb3ad6450194983577547ff3e678, type: 3}

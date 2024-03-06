@@ -175,8 +175,8 @@ TextureImporter:
         serializedVersion: 2
         x: 39
         y: 0
-        width: 22
-        height: 31
+        width: 24
+        height: 32
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,10 +194,10 @@ TextureImporter:
       name: SkeletonAttack_2
       rect:
         serializedVersion: 2
-        x: 72
-        y: 1
-        width: 22
-        height: 31
+        x: 70
+        y: 0
+        width: 25
+        height: 32
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,10 +215,10 @@ TextureImporter:
       name: SkeletonAttack_3
       rect:
         serializedVersion: 2
-        x: 104
-        y: 2
-        width: 21
-        height: 30
+        x: 101
+        y: 0
+        width: 27
+        height: 32
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

@@ -15,7 +15,6 @@ public class MeleeAttackLeftHand : MonoBehaviour
     AnimationEventHelperLeft leftHandAnimationEventHelper;
     CircleOrigin circleOrigin;
     Transform circleOriginTransform;
-    float radius = 0.2f;
     Health enemyHealth;
     Player player;
     bool leftHandAttackBlocked;
@@ -71,8 +70,7 @@ public class MeleeAttackLeftHand : MonoBehaviour
             if (collider.GetType() == typeof(PolygonCollider2D))
             {
                 // Don't hit yourself if player is also in the collider list
-                if (collider.tag == Settings.playerTag)
-                    continue;
+                if (collider.tag == Settings.playerTag) continue;
 
                 if (enemyHealth = collider.GetComponent<Health>())
                 {
@@ -126,9 +124,17 @@ public class MeleeAttackLeftHand : MonoBehaviour
             player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.meleeDamageMax);
 
         // Critical hit check
-        float randomCriticalDice = Random.Range(0f, 1f);
-        bool criticalHitHappened = randomCriticalDice < player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.criticalHitChance ?
-            true : false;
+        bool criticalHitHappened;
+        if (player.playerDetails.onStealth)
+        {
+            criticalHitHappened = true;
+        }
+        else
+        {
+            float randomCriticalDice = Random.Range(0f, 1f);
+            criticalHitHappened = randomCriticalDice < player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.criticalHitChance ?
+                true : false;
+        }
 
         if (criticalHitHappened)
         {

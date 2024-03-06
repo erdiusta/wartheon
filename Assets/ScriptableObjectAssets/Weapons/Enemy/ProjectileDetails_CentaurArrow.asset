@@ -37,7 +37,7 @@ MonoBehaviour:
   stunChance: 0
   hasSlowDamage: 1
   slowChance: 0.3
-  gravity: 1.5
+  gravity: 0
   projectileSpreadMin: 0
   projectileSpreadMax: 0.8
   projectileSpawnAmountMin: 1

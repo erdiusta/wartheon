@@ -33,12 +33,16 @@ public class LeftWeaponStatusUI : MonoBehaviour
     {
         player.setActiveWeaponEvent.OnSetActiveLeftHandWeapon += SetActiveWeaponEvent_OnSetActiveLeftHandWeapon;
         player.setActiveWeaponEvent.OnSetInactiveLeftHandWeapon += SetActiveWeaponEvent_OnSetInactiveLeftHandWeapon;
+        player.setActiveWeaponEvent.OnTwoHandWeaponEquipped += SetActiveWeaponEvent_OnTwoHandWeaponEquipped;
+        player.setActiveWeaponEvent.OnOneHandWeaponEquipped += SetActiveWeaponEvent_OnOneHandWeaponEquipped;
     }
 
     private void OnDisable()
     {
         player.setActiveWeaponEvent.OnSetActiveLeftHandWeapon -= SetActiveWeaponEvent_OnSetActiveLeftHandWeapon;
         player.setActiveWeaponEvent.OnSetInactiveLeftHandWeapon -= SetActiveWeaponEvent_OnSetInactiveLeftHandWeapon;
+        player.setActiveWeaponEvent.OnTwoHandWeaponEquipped -= SetActiveWeaponEvent_OnTwoHandWeaponEquipped;
+        player.setActiveWeaponEvent.OnOneHandWeaponEquipped -= SetActiveWeaponEvent_OnOneHandWeaponEquipped;
     }
 
     private void Start()
@@ -58,9 +62,25 @@ public class LeftWeaponStatusUI : MonoBehaviour
     /// <summary>
     /// Clear active weapon event on the UI
     /// </summary>
-    private void SetActiveWeaponEvent_OnSetInactiveLeftHandWeapon(SetActiveWeaponEvent @event)
+    private void SetActiveWeaponEvent_OnSetInactiveLeftHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
     {
         MakeWeaponInactive();
+    }
+
+    /// <summary>
+    /// Place lock placeholder if right hand hold two-handed weapon
+    /// </summary>
+    private void SetActiveWeaponEvent_OnTwoHandWeaponEquipped(SetActiveWeaponEvent setActiveWeaponEvent)
+    {
+        DisplayLockImage();
+    }
+
+    /// <summary>
+    /// Remove lock place holder if right hand hold one-handed weapon
+    /// </summary>
+    private void SetActiveWeaponEvent_OnOneHandWeaponEquipped(SetActiveWeaponEvent setActiveWeaponEvent)
+    {
+        RemoveLockImage();
     }
 
     /// <summary>
@@ -73,6 +93,22 @@ public class LeftWeaponStatusUI : MonoBehaviour
             UpdateActiveWeaponImage(weapon.weaponDetails);
             UpdateActiveWeaponName(weapon);
         }
+    }
+
+    /// <summary>
+    /// Populate with the lock image
+    /// </summary>
+    private void DisplayLockImage()
+    {
+        weaponImage.sprite = GameResources.Instance.lockIcon;
+    }
+
+    /// <summary>
+    /// Remove lock image
+    /// </summary>
+    private void RemoveLockImage()
+    {
+        weaponImage.sprite = noWeaponSprite;
     }
 
     /// <summary>

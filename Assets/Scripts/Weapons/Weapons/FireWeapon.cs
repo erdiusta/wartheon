@@ -64,16 +64,6 @@ public class FireWeapon : MonoBehaviour
             enemy.isFiring = true;
         }
 
-        if (tag == Settings.playerTag)
-        {
-            Player player = GetComponent<Player>();
-
-            if (player.playerDetails.playerCharacterName == Settings.erebus && player.playerDetails.onStealth)
-            {
-                player.playerControl.Unstealth();
-            }
-        }
-
         // Handle weapon precharge timer
         WeaponPrecharge(fireWeaponEventArgs);
 
@@ -113,7 +103,7 @@ public class FireWeapon : MonoBehaviour
             float barFill = firePrechargeTimer / GameManager.Instance.GetPlayer().activeWeapon.GetCurrentRightHandWeapon().weaponDetails.
                 weaponPrechargeTime;
 
-            // update bar fill
+            // Update bar fill
             prechargeBar.transform.localScale = new Vector3(barFill, 1f, 1f);
         }
         else
@@ -252,6 +242,9 @@ public class FireWeapon : MonoBehaviour
     {
         // Reset precharge timer
         firePrechargeTimer = activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime;
+
+        // Reset bar fill and disable the bar container
+        prechargeBar.transform.localScale = new Vector3(1f, 1f, 1f);
         prechargeBarContainer.gameObject.SetActive(false);
 
         if (tag == Settings.playerTag && GetComponent<Player>().activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f)

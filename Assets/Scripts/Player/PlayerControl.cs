@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,6 +27,16 @@ public class PlayerControl : MonoBehaviour
     private void Awake()
     {
         player = GetComponent<Player>();
+    }
+
+    private void OnEnable()
+    {
+        player.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
+    }
+
+    private void OnDisable()
+    {
+        player.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
     }
 
     private void Start()
@@ -68,8 +79,7 @@ public class PlayerControl : MonoBehaviour
     private void Update()
     {
         // If player movement disabled then return
-        if (isPlayerMovementDisabled)
-            return;
+        if (isPlayerMovementDisabled) return;
 
         switch (player.moveStatus)
         {
@@ -86,9 +96,21 @@ public class PlayerControl : MonoBehaviour
                 break;
             case MoveStatus.Stagger:
                 player.polygonCollider2D.enabled = false;
+                if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                {
+                    // Trigger fire weapon event for precharge weapons
+                    player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f,
+                        0f, Vector3.zero, false);
+                }
                 StartCoroutine(Stagger());
                 break;
             case MoveStatus.Stun:
+                if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                {
+                    // Trigger fire weapon event for precharge weapons
+                    player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f,
+                        0f, Vector3.zero, false);
+                }
                 StartCoroutine(StunRoutine());
                 break;
             default:
@@ -241,15 +263,16 @@ public class PlayerControl : MonoBehaviour
                     weaponAngleDegrees, weaponDirection, false);
             }
 
-            if (fireCompletedDuringPressed)
-            {
-                return;
-            }
+            if (fireCompletedDuringPressed) return;
         }
         else
         {
             // Reset hasFired when the mouse button is released
             leftMouseDownPreviousFrame = false;
+
+            // Trigger fire weapon event for precharge weapons
+            player.fireWeaponEvent.CallFireWeaponEvent(false, leftMouseDownPreviousFrame, playerAimDirection, playerAngleDegrees,
+                weaponAngleDegrees, weaponDirection, false);
         }
 
         // Fire when right mouse button is clicked
@@ -276,6 +299,12 @@ public class PlayerControl : MonoBehaviour
         {
             rightMouseDownPreviousFrame = false;
         }
+    }
+
+    private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
+    {
+        // Trigger reset prechager mechanism in case a hit taken during the precharge
+        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
     }
 
     /// <summary>
@@ -338,8 +367,8 @@ public class PlayerControl : MonoBehaviour
 
     private void LeftHandWeaponCheck()
     {
-        if (player.activeWeapon.GetCurrentLeftHandWeapon() == null && 
-            player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
+        if (player.activeWeapon.GetCurrentLeftHandWeapon() == null && player.activeWeapon.GetCurrentRightHandWeapon().
+            weaponDetails.wieldType == WieldType.OneHanded)
         {
             currentLeftHandWeaponIndex++;
 
@@ -349,6 +378,10 @@ public class PlayerControl : MonoBehaviour
             }
 
             SetLeftHandWeaponByIndex(currentLeftHandWeaponIndex);
+        }
+        else if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+        {
+            return;
         }
         else
         {
@@ -363,6 +396,15 @@ public class PlayerControl : MonoBehaviour
             currentRightHandWeaponIndex = weaponIndex;
 
             player.setActiveWeaponEvent.CallSetActiveWeaponAtRightHandEvent(player.weaponRightHandList[weaponIndex - 1]);
+
+            if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
+            {
+                player.setActiveWeaponEvent.CallOneHandWeaponEquipEvent();
+            }
+            else if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+            {
+                player.setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
+            }
         }
     }
 

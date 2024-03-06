@@ -204,6 +204,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 917144885, guid: 4d92d9cd72c2bc0468ba8f66d6f819ce, type: 3}
+    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_MaskInteraction
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1473841332294187630, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
       value: 0.5

@@ -15,12 +15,12 @@ MonoBehaviour:
   enemyName: Imp
   enemyPrefab: {fileID: 7183228443647751644, guid: 60bff836939d1b14cb479b0ad4493652, type: 3}
   movementDetails: {fileID: 11400000, guid: 83dbceefafb85d548a043660c57a38ce, type: 2}
-  chaseDistance: 7
+  chaseDistance: 10
   hasAttackMove: 1
-  attackMoveTriggerDistance: 10
-  attackMoveEfficentDistance: 5
-  attackMoveCooldown: 10
-  enemyBehaviour: 0
+  attackMoveTriggerDistance: 6
+  attackMoveEfficentDistance: 3
+  attackMoveCooldown: 4
+  enemyBehaviour: 3
   isEnemyBoss: 0
   enemyArmorValue: 2
   hasShield: 0
@@ -58,7 +58,7 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     enemyHealthAmount: 15
   isImmuneAfterHit: 1
-  hitImmunityTime: 0.7
+  hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
   weaponsByLevelList:

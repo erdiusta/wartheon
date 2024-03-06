@@ -19,12 +19,12 @@ MonoBehaviour:
   ambientMusic: {fileID: 11400000, guid: 61cc5cb1e41586045b964b7d8fbfb5aa, type: 2}
   roomNodeType: {fileID: 11400000, guid: 3f01377fc05f6a249a191f8e64bcc486, type: 2}
   lowerBounds: {x: -8, y: -3}
-  upperBounds: {x: 12, y: 19}
+  upperBounds: {x: 12, y: 20}
   doorwayList:
-  - position: {x: 2, y: 19}
+  - position: {x: 2, y: 20}
     orientation: 0
     doorPrefab: {fileID: 1115459866753101013, guid: 90fd445a63dfd3f40b89a3a33ecc6f57, type: 3}
-    doorwayStartCopyPosition: {x: -1, y: 19}
+    doorwayStartCopyPosition: {x: -1, y: 20}
     doorwayCopyTileWidth: 5
     doorwayCopyTileHeight: 7
     isConnected: 0

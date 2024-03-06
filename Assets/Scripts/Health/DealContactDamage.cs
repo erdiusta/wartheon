@@ -72,6 +72,8 @@ public class DealContactDamage : MonoBehaviour
 
                 if (enemy != null)
                 {
+                    if (player.playerDetails.onStealth) return;
+
                     CheckPoisonStatus(player);
                     CheckAcidStatus(player);
                     CheckBleedingStatus(player);

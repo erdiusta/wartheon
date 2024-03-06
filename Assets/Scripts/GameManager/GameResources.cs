@@ -176,6 +176,10 @@ public class GameResources : MonoBehaviour
     [Tooltip("Populate with bullet icon ammo drop sprite")]
     #endregion
     public Sprite ammoDropIcon;
+    #region Tooltip
+    [Tooltip("Populate with lock icon sprite")]
+    #endregion
+    public Sprite lockIcon;
 
     #region Header MINIMAP
     [Space(10)]

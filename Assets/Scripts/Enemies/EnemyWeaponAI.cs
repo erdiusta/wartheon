@@ -110,6 +110,9 @@ public class EnemyWeaponAI : MonoBehaviour
                 // Trigger fire weapon event
                 if (enemyAttackCoroutine == null)
                 {
+                    enemy.animateEnemy.SetAttackAnimationParameters();
+                    enemy.animator.SetBool(Settings.attackMotion, true);
+
                     enemyAttackCoroutine = StartCoroutine(EnemyAttackAnimRoutine());
                     enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false);
                 }
@@ -158,14 +161,15 @@ public class EnemyWeaponAI : MonoBehaviour
     /// </summary>
     IEnumerator EnemyAttackAnimRoutine()
     {
+        enemy.enemyMovementAI.enemyPhase = EnemyPhase.Attack;
+
         if (enemy.health.currentHealth > 0f)
         {
-            enemy.animateEnemy.SetAttackAnimationParameters();
-
             yield return new WaitForSeconds(1f);
         }
 
         enemyAttackCoroutine = null;
+        enemy.enemyMovementAI.enemyPhase = EnemyPhase.Patrol;
     }
 
     #region Validation

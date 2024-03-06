@@ -161,7 +161,7 @@ public class Player : MonoBehaviour
         foreach (WeaponDetailsSO weaponDetails in playerDetails.startingWeaponList)
         {
             // Add weapon to right hand list of player
-            AddRightHandWeaponToPlayer(weaponDetails);
+            AddRightHandWeaponToPlayer(weaponDetails, false);
             AddShieldToLeftHandIfHave(weaponDetails);
         }
 
@@ -171,7 +171,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Update weapons list if a new one acquired
     /// </summary>
-    public void UpdateWieldedWeapons(WeaponDetailsSO weaponDetails)
+    public void UpdateWieldedWeapons(WeaponDetailsSO weaponDetails, bool updateHappenedAfterNewItemCollected)
     {
         List<WeaponDetailsSO> allEquippedWeaponsList = new List<WeaponDetailsSO> { weaponDetails };
 
@@ -185,14 +185,14 @@ public class Player : MonoBehaviour
             allEquippedWeaponsList.Add(leftHandWeapon.weaponDetails);
         }
 
-        weaponRightHandList = new List<Weapon>();
-        weaponLeftHandList = new List<Weapon>();
+        weaponRightHandList.Clear();
+        weaponLeftHandList.Clear();
 
         // Populate weapon list from starting weapons for right hand and shield for left hand if have any
         foreach (WeaponDetailsSO weapon in allEquippedWeaponsList)
         {
             // Add weapon to right hand list of player
-            AddRightHandWeaponToPlayer(weapon);
+            AddRightHandWeaponToPlayer(weapon, updateHappenedAfterNewItemCollected);
             AddShieldToLeftHandIfHave(weapon);
         }
 
@@ -202,7 +202,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Add a weapon to the right hand of player weapon list
     /// </summary>
-    public Weapon AddRightHandWeaponToPlayer(WeaponDetailsSO weaponDetails)
+    public Weapon AddRightHandWeaponToPlayer(WeaponDetailsSO weaponDetails, bool updateHappenedAfterNewItemCollected)
     {
         Weapon weapon = new Weapon
         {
@@ -222,8 +222,20 @@ public class Player : MonoBehaviour
             // Set weapon position in list
             weapon.weaponRightHandListPosition = weaponRightHandList.Count;
 
-            // Set the added weapon as active
-            setActiveWeaponEvent.CallSetActiveWeaponAtRightHandEvent(weapon);
+            if (!updateHappenedAfterNewItemCollected)
+            {
+                // Set the added weapon as active
+                setActiveWeaponEvent.CallSetActiveWeaponAtRightHandEvent(weapon);
+
+                if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
+                {
+                    setActiveWeaponEvent.CallOneHandWeaponEquipEvent();
+                }
+                else if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+                {
+                    setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
+                }
+            }
         }
 
         return weapon;
@@ -247,9 +259,6 @@ public class Player : MonoBehaviour
 
             // Set weapon position in list
             weapon.weaponLeftHandListPosition = weaponLeftHandList.Count;
-
-
-
         }
     }
 

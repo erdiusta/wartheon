@@ -129,9 +129,10 @@ public class Health : MonoBehaviour
     }
 
     /// <summary>
-    /// Public method called when damage is taken
+    /// Public method called when damage is taken - Projectile
     /// </summary>
-    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, Collider2D collider, bool headShotHappened)
+    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, Collider2D collider, 
+        bool headShotHappened)
     {
         // Check if the collider is a projectile
         bool isProjectile = collider.CompareTag("playerProjectile");
@@ -188,7 +189,7 @@ public class Health : MonoBehaviour
     }
 
     /// <summary>
-    /// Public method called when damage is taken
+    /// Public method called when damage is taken - Melee & Contact
     /// </summary>
     public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, bool headShotHappened)
     {
@@ -258,6 +259,8 @@ public class Health : MonoBehaviour
     {
         if (!isBlocking)
         {
+            enemy.enemyMovementAI.enemyPhase = EnemyPhase.GetHit;
+
             if (enemy.health.currentHealth > 0f)
             {
                 enemy.animateEnemy.ResetAnimatonParameters();
@@ -300,7 +303,7 @@ public class Health : MonoBehaviour
         enemy.animator.SetBool(Settings.block, false);
         isBlocking = false;
         getHitCoroutine = null;
-
+        enemy.enemyMovementAI.enemyPhase = EnemyPhase.Patrol;
     }
 
     /// <summary>

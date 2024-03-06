@@ -60,6 +60,8 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public ArmorStatus armorStatus = ArmorStatus.Normal;
     [HideInInspector] public StatusManager statusManager;
     [HideInInspector] public DamageDisplay damageDisplay;
+    [HideInInspector] public bool rightHandWeaponDamageHappened;
+    [HideInInspector] public bool leftHandWeaponDamageHappened;
 
     public ParticleSystem hitFxParticles;
     public ParticleSystem headShotFxParticles;

@@ -21,11 +21,11 @@ MonoBehaviour:
   projectileChargeTime: 0
   projectileChargeMaterial: {fileID: 0}
   projectileHitEffect: {fileID: 0}
-  projectileDamageMin: 6
-  projectileDamageMax: 10
-  projectileSpeedMin: 7
-  projectileSpeedMax: 11
-  projectileRange: 12
+  projectileDamageMin: 5
+  projectileDamageMax: 8
+  projectileSpeedMin: 4
+  projectileSpeedMax: 8
+  projectileRange: 10
   projectileRotationSpeed: 1
   hasAcid: 1
   acidEfficiency: 0.2
@@ -37,9 +37,9 @@ MonoBehaviour:
   stunChance: 0
   hasSlowDamage: 0
   slowChance: 0
-  gravity: 8
-  projectileSpreadMin: 6
-  projectileSpreadMax: 10
+  gravity: 0
+  projectileSpreadMin: 9
+  projectileSpreadMax: 15
   projectileSpawnAmountMin: 2
   projectileSpawnAmountMax: 5
   projectileSpawnIntervalMin: 2
