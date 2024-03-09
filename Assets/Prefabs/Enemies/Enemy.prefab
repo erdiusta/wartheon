@@ -46144,6 +46144,8 @@ MonoBehaviour:
   armorStatus: 0
   statusManager: {fileID: 0}
   damageDisplay: {fileID: 0}
+  rightHandWeaponDamageHappened: 0
+  leftHandWeaponDamageHappened: 0
   hitFxParticles: {fileID: 5738290968065053144}
   headShotFxParticles: {fileID: 5575912466879800398}
 --- !u!210 &5050891164117682802
@@ -46365,6 +46367,7 @@ MonoBehaviour:
   chasePlayer: 0
   enemyStartingMinSpeed: 0
   enemyStartingMaxSpeed: 0
+  enemyPhase: 0
 --- !u!114 &2505844984895068139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46458,8 +46461,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9312f500e87ee1b41b3e7d65979ce365, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightHandWeaponRotationPointTransform: {fileID: 933830336492734321}
-  leftHandWeaponRotationPointTransform: {fileID: 8688368594907213520}
+  rightHandWeaponAnchorPointTransform: {fileID: 4239920569477357429}
+  leftHandWeaponAnchorPointTransform: {fileID: 8668691372778860321}
 --- !u!114 &866988234407021245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46510,6 +46513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1682e1c2af18de4fb0c220139511f11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSwitching: 0
   weaponRightHandSpriteRenderer: {fileID: 7625487225184071592}
   weaponRightHandPolygonCollider2D: {fileID: 6872100053539618354}
   weaponRightHandShootPositionTransform: {fileID: 2812488011572122476}

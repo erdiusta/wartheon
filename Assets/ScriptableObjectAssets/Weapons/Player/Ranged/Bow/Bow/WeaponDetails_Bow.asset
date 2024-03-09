@@ -28,7 +28,7 @@ MonoBehaviour:
   bleedingChance: 0
   hasSlowDamage: 0
   slowChance: 0
-  weaponShootPosition: {x: -0.075, y: -0.083, z: 0}
+  weaponShootPosition: {x: 0.018750012, y: 0.042000055, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 9be2a43f1e9ef0246b55d9f9b09d115d, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 9e94351610df36548be272034fa0be42, type: 2}

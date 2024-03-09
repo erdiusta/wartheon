@@ -149,132 +149,6 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: crusher-Sheet_0
-      rect:
-        serializedVersion: 2
-        x: 43
-        y: 24
-        width: 20
-        height: 36
-      alignment: 9
-      pivot: {x: 0.49609223, y: 0.16829406}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f479a132368033846b8aa9d32d8dd3f1
-      internalID: 1030242060
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: crusher-Sheet_1
-      rect:
-        serializedVersion: 2
-        x: 100
-        y: 24
-        width: 27
-        height: 39
-      alignment: 9
-      pivot: {x: 0.6273391, y: 0.2}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d9a274893f3f44e4498f5d23b7d8b3ba
-      internalID: 1292876261
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: crusher-Sheet_2
-      rect:
-        serializedVersion: 2
-        x: 152
-        y: 24
-        width: 39
-        height: 39
-      alignment: 9
-      pivot: {x: 0.73992413, y: 0.18967731}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f30ce3aa59532f54a9e6bdbb734d29d6
-      internalID: 964958163
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: crusher-Sheet_3
-      rect:
-        serializedVersion: 2
-        x: 210
-        y: 24
-        width: 45
-        height: 39
-      alignment: 9
-      pivot: {x: 0.7760369, y: 0.19999993}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 956ca4d1a52aa3648b37a7098bd90512
-      internalID: 900298711
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: crusher-Sheet_4
-      rect:
-        serializedVersion: 2
-        x: 273
-        y: 24
-        width: 46
-        height: 39
-      alignment: 9
-      pivot: {x: 0.7793924, y: 0.18773548}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9ddaafeacba903d4dbb5e9196d089ff7
-      internalID: 805118510
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: crusher-Sheet_5
-      rect:
-        serializedVersion: 2
-        x: 333
-        y: 11
-        width: 50
-        height: 52
-      alignment: 9
-      pivot: {x: 0.801355, y: 0.3761493}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0433f1d6142c98c438ae4bc826fd84b9
-      internalID: 447050708
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: crusher-Sheet_6
       rect:
         serializedVersion: 2
@@ -283,7 +157,7 @@ TextureImporter:
         width: 51
         height: 60
       alignment: 9
-      pivot: {x: 0.8031862, y: 0.4344452}
+      pivot: {x: 0.804, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -296,64 +170,211 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: crusher-Sheet_7
+      name: carnage-Sheet_0
       rect:
         serializedVersion: 2
-        x: 462
-        y: 21
-        width: 49
-        height: 42
+        x: 42
+        y: 23
+        width: 21
+        height: 41
       alignment: 9
-      pivot: {x: 0.7969591, y: 0.23639266}
+      pivot: {x: 0.519011, y: 0.23771007}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e42e73040dd1028488b1272a08379980
-      internalID: -975315026
+      spriteID: 518c52d32424c184f8ba25e02257256d
+      internalID: -1060085126
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: crusher-Sheet_8
+      name: carnage-Sheet_1
       rect:
         serializedVersion: 2
-        x: 533
-        y: 24
-        width: 42
-        height: 39
+        x: 76
+        y: 4
+        width: 51
+        height: 60
       alignment: 9
-      pivot: {x: 0.7579389, y: 0.1741578}
+      pivot: {x: 0.804, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c8ca61f74f11a824ebb1b00d06c8fc49
-      internalID: 1187592862
+      spriteID: c6701cf655592ad49811961ce49f2ed4
+      internalID: -638348510
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: crusher-Sheet_9
+      name: carnage-Sheet_2
       rect:
         serializedVersion: 2
-        x: 609
-        y: 24
-        width: 30
-        height: 39
+        x: 140
+        y: 4
+        width: 51
+        height: 60
       alignment: 9
-      pivot: {x: 0.66001993, y: 0.16765223}
+      pivot: {x: 0.804, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 33a47126c88f0744eb4e6f66584828e3
-      internalID: -923038360
+      spriteID: 92b9a443b616fba4892dc7af07405534
+      internalID: 413670678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: carnage-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 4
+        width: 51
+        height: 60
+      alignment: 9
+      pivot: {x: 0.804, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36038fc583d15f54fb6e349e6357e000
+      internalID: 1226665514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: carnage-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 4
+        width: 51
+        height: 60
+      alignment: 9
+      pivot: {x: 0.804, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8442d5b2847f08409670d0dceac9dce
+      internalID: 216526293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: carnage-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 4
+        width: 51
+        height: 60
+      alignment: 9
+      pivot: {x: 0.8050435, y: 0.49678454}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14b2e7b0fd9f0854d9ab8782787f433b
+      internalID: 201139212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: carnage-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 332
+        y: 4
+        width: 51
+        height: 60
+      alignment: 9
+      pivot: {x: 0.804, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff31575162e0e6c4cb5ebecf14cf8189
+      internalID: -1334401208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: carnage-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 4
+        width: 51
+        height: 60
+      alignment: 9
+      pivot: {x: 0.804, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 28fe9cca527f2654c940bbb75027abcc
+      internalID: -1987165082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: carnage-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 4
+        width: 51
+        height: 60
+      alignment: 9
+      pivot: {x: 0.804, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 693d0d26dc3afa143bb6cf73967acf4c
+      internalID: -810916259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: carnage-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 588
+        y: 3
+        width: 51
+        height: 60
+      alignment: 9
+      pivot: {x: 0.804, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58b635fbb71b24f47a179be23f596ddb
+      internalID: 40870434
       vertices: []
       indices: 
       edges: []
@@ -369,6 +390,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      carnage-Sheet_0: -1060085126
+      carnage-Sheet_1: -638348510
+      carnage-Sheet_2: 413670678
+      carnage-Sheet_3: 1226665514
+      carnage-Sheet_4: 216526293
+      carnage-Sheet_5: 201139212
+      carnage-Sheet_6: -1334401208
+      carnage-Sheet_7: -1987165082
+      carnage-Sheet_8: -810916259
+      carnage-Sheet_9: 40870434
       crusher-Sheet_0: 1030242060
       crusher-Sheet_1: 1292876261
       crusher-Sheet_2: 964958163

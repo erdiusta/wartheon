@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCharacterName: Lyrisa
   playerPrefab: {fileID: 38858171499291080, guid: 6a9aa1f748d0ed1438bd95590fc47986, type: 3}
-  runtimeAnimatorController: {fileID: 9100000, guid: 6fc892c384b89db4e800744a33b39bca, type: 2}
+  oneHandRuntimeAnimatorController: {fileID: 9100000, guid: f7fe8e6b5912d9b499b3a0d0cd74c1a1, type: 2}
+  twoHandRuntimeAnimatorController: {fileID: 9100000, guid: 525a9a954242e1a499074cd73da18897, type: 2}
+  bowRuntimeAnimatorController: {fileID: 9100000, guid: 20d8ee28837264745b955ceb23c11b0b, type: 2}
+  staffRuntimeAnimatorController: {fileID: 9100000, guid: b2109df0ec6145a4a93528cd77d9db9f, type: 2}
   playerHealthAmount: 60
   isImmuneAfterHit: 1
   hitImmunityTime: 2
@@ -29,7 +32,9 @@ MonoBehaviour:
   shakeDuration: 0
   playerArmorValue: 0
   startingWeapon: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+  rightHandAnimatorController: {fileID: 9100000, guid: a9f6b3580707cd749861dcb2fc4d7f34, type: 2}
+  leftHandAnimatorController: {fileID: 0}
   startingWeaponList:
   - {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: e6073b54f7439194abfc382f531a8abf, type: 3}
-  playerHandSprite: {fileID: 376452978, guid: 8a6c9a83f78b32c4586a95baad690465, type: 3}
+  playerHandSprite: {fileID: 1585005775, guid: 1ccdf010dd5235241a18978e1a326c1d, type: 3}

@@ -6,6 +6,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class ActiveWeapon : MonoBehaviour
 {
+    [HideInInspector] public bool isSwitching;
+
     [Header("RIGHT HAND")]
     [Space(10)]
     #region Tooltip
@@ -36,7 +38,12 @@ public class ActiveWeapon : MonoBehaviour
     #endregion
     [SerializeField] PolygonCollider2D weaponLeftHandPolygonCollider2D;
 
+    Player player;
+    Transform leftHandAnchorPosition;
+    GameObject thirdHandGameObject;
+    Vector3 startRightHandPosition;
     SetActiveWeaponEvent setActiveWeaponEvent;
+    Animator playerAnimator;
     Animator weaponRightHandAnimator;
     Animator weaponLeftHandAnimator;
     Weapon currentRightHandWeapon;
@@ -44,10 +51,17 @@ public class ActiveWeapon : MonoBehaviour
 
     private void Awake()
     {
+        player = GetComponent<Player>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
-
+        playerAnimator = GetComponent<Animator>();
         weaponRightHandAnimator = transform.GetChild(0).GetComponent<Animator>();
-        weaponLeftHandAnimator = transform.GetChild(1).GetComponent<Animator>();
+
+        if (player != null)
+        {
+            thirdHandGameObject = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).gameObject;
+            weaponLeftHandAnimator = transform.GetChild(1).GetComponent<Animator>();
+            leftHandAnchorPosition = weaponLeftHandAnimator.transform;
+        }
     }
 
     private void OnEnable()
@@ -85,7 +99,50 @@ public class ActiveWeapon : MonoBehaviour
 
     private void SetRightHandWeapon(Weapon weapon)
     {
+        isSwitching = true;
         currentRightHandWeapon = weapon;
+
+        if (player != null)
+        {
+            // If equipped weapon is two-handed, temporarily disable animator and change the position and enable again
+            if (currentRightHandWeapon.weaponDetails.weaponClass == WeaponClass.Bow && currentRightHandWeapon.weaponDetails.weaponName != "Crossbow")
+            {
+                player.aimWeapon.rightHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
+                player.aimWeapon.rightHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
+                playerAnimator.runtimeAnimatorController = player.playerDetails.bowRuntimeAnimatorController;
+                thirdHandGameObject.SetActive(true);
+                weaponLeftHandAnimator.enabled = false;
+                leftHandAnchorPosition.gameObject.SetActive(false);
+            }
+            else if (currentRightHandWeapon.weaponDetails.weaponClass == WeaponClass.Staff)
+            {
+                player.aimWeapon.rightHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
+                player.aimWeapon.rightHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
+                playerAnimator.runtimeAnimatorController = player.playerDetails.staffRuntimeAnimatorController;
+                thirdHandGameObject.SetActive(true);
+                weaponLeftHandAnimator.enabled = false;
+                leftHandAnchorPosition.gameObject.SetActive(false);
+            }
+            else if (currentRightHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded)
+            {
+                player.aimWeapon.rightHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
+                player.aimWeapon.rightHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
+                playerAnimator.runtimeAnimatorController = player.playerDetails.twoHandRuntimeAnimatorController;
+                thirdHandGameObject.SetActive(true);
+                weaponLeftHandAnimator.enabled = false;
+                leftHandAnchorPosition.gameObject.SetActive(false);
+            }
+            // If equipped one - hand, revert position and animator settings to default
+            else
+            {
+                player.aimWeapon.rightHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
+                player.aimWeapon.rightHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
+                playerAnimator.runtimeAnimatorController = player.playerDetails.oneHandRuntimeAnimatorController;
+                thirdHandGameObject.SetActive(false);
+                leftHandAnchorPosition.gameObject.SetActive(true);
+                weaponLeftHandAnimator.enabled = true;
+            }
+        }
 
         // Set animator controller to the weapon animator
         weaponRightHandAnimator.runtimeAnimatorController = currentRightHandWeapon.weaponDetails.weaponAnimatorController;
@@ -106,6 +163,8 @@ public class ActiveWeapon : MonoBehaviour
 
         // Set weapon shoot position
         weaponRightHandShootPositionTransform.localPosition = currentRightHandWeapon.weaponDetails.weaponShootPosition;
+
+        isSwitching = false;
     }
 
     private void SetLeftHandWeapon(Weapon weapon)

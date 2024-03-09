@@ -20,7 +20,7 @@ MonoBehaviour:
   projectileMaterial: {fileID: 2100000, guid: cff3e465470366d4faf7303728a84544, type: 2}
   projectileChargeTime: 0
   projectileChargeMaterial: {fileID: 0}
-  projectileHitEffect: {fileID: 0}
+  projectileHitEffect: {fileID: 11400000, guid: baa13bf3177b0da4ea29cfb6a8f9bced, type: 2}
   projectileDamageMin: 6
   projectileDamageMax: 12
   projectileSpeedMin: 5

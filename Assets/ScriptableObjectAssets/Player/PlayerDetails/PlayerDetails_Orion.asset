@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCharacterName: Orion
   playerPrefab: {fileID: 38858171499291080, guid: 99e6d53686669c243b844a3ade267a1e, type: 3}
-  runtimeAnimatorController: {fileID: 9100000, guid: c73b339f3cf2a6b4ea71cd64253a8594, type: 2}
+  oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 696b2a56ae550444faeb7b1763236a21, type: 2}
+  twoHandRuntimeAnimatorController: {fileID: 9100000, guid: a548100e3f0314d418ac3ddc4b63d691, type: 2}
+  bowRuntimeAnimatorController: {fileID: 9100000, guid: 89608e7d0f782dc4593536c2ee6a98dc, type: 2}
+  staffRuntimeAnimatorController: {fileID: 9100000, guid: 616c36ade33b9d3469486229fb76c45f, type: 2}
   playerHealthAmount: 80
   isImmuneAfterHit: 1
   hitImmunityTime: 2
@@ -29,7 +32,9 @@ MonoBehaviour:
   shakeDuration: 0
   playerArmorValue: 2
   startingWeapon: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
+  rightHandAnimatorController: {fileID: 9100000, guid: fdb61ba75457ab049a7d1bcf42030730, type: 2}
+  leftHandAnimatorController: {fileID: 0}
   startingWeaponList:
   - {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: 2e3dd1dee1d5ea546828fba96743f843, type: 3}
-  playerHandSprite: {fileID: 2082402033, guid: efb8c6e2e5775454f9287f2046a2d121, type: 3}
+  playerHandSprite: {fileID: 1585005775, guid: 1ccdf010dd5235241a18978e1a326c1d, type: 3}

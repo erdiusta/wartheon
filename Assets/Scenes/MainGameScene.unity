@@ -1482,9 +1482,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
-    width: 1
-    height: 1
+    y: 0.63893807
+    width: 0.35995853
+    height: 0.3454646
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2011,6 +2011,21 @@ MonoBehaviour:
   - poolSize: 40
     prefab: {fileID: 5263536334675765252, guid: 339536103c4f7b74995fd50408768bc1, type: 3}
     componentType: IFireable
+  - poolSize: 30
+    prefab: {fileID: 9017448095421764182, guid: 3376823ee23e7b94ba950cb2230ebb14, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 30
+    prefab: {fileID: 9017448095421764182, guid: 2c8eee7b8a34b104d863b2ce0c7feeba, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 30
+    prefab: {fileID: 9017448095421764182, guid: aa9be185344f4c8429aabe99074d832e, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 30
+    prefab: {fileID: 9017448095421764182, guid: 09f5a9ca293110449aaeb4969a85bbde, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 30
+    prefab: {fileID: 9017448095421764182, guid: 5c7f72ffa2200294981ac5dbe287e640, type: 3}
+    componentType: ProjectileHitEffect
 --- !u!4 &673935430
 Transform:
   m_ObjectHideFlags: 0

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: WeaponDetails_Carnage
   m_EditorClassIdentifier: 
   weaponName: Carnage
-  weaponFrontSprite: {fileID: 1030242060, guid: 248df82787829c94f8ff4af50e05b0db, type: 3}
-  weaponRearSprite: {fileID: 1030242060, guid: 248df82787829c94f8ff4af50e05b0db, type: 3}
+  weaponFrontSprite: {fileID: -1060085126, guid: 248df82787829c94f8ff4af50e05b0db, type: 3}
+  weaponRearSprite: {fileID: -1060085126, guid: 248df82787829c94f8ff4af50e05b0db, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: cb0f526e13a38884a9daa6f2c6f07419, type: 2}
   weaponClass: 1
   wieldType: 1

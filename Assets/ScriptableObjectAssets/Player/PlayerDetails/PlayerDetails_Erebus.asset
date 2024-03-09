@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCharacterName: Erebus
   playerPrefab: {fileID: 38858171499291080, guid: dd7a903ea8b0ca44e8877d7b30e01d9f, type: 3}
-  runtimeAnimatorController: {fileID: 9100000, guid: 36e89e2eaf51b2b459398df2a88e890a, type: 2}
+  oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 4102ba67a73173f4eade31c0a46ffc1a, type: 2}
+  twoHandRuntimeAnimatorController: {fileID: 9100000, guid: 3bde3ff582fce72409ca00143dda2347, type: 2}
+  bowRuntimeAnimatorController: {fileID: 9100000, guid: d298c1ca77072b445ac610f3466c2319, type: 2}
+  staffRuntimeAnimatorController: {fileID: 9100000, guid: 832e0fee03e2c62498284cc7ba774ea4, type: 2}
   playerHealthAmount: 80
   isImmuneAfterHit: 1
   hitImmunityTime: 2
@@ -29,8 +32,10 @@ MonoBehaviour:
   shakeDuration: 0
   playerArmorValue: 1
   startingWeapon: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+  rightHandAnimatorController: {fileID: 9100000, guid: 4c02187a09eabde4dba23544bdf50f8e, type: 2}
+  leftHandAnimatorController: {fileID: 9100000, guid: 4c02187a09eabde4dba23544bdf50f8e, type: 2}
   startingWeaponList:
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: bc3c8aa6b77ee384c8eecf6fa922c504, type: 3}
-  playerHandSprite: {fileID: 1901383253, guid: a59cb41ccccced242802a0dbfb3ea65a, type: 3}
+  playerHandSprite: {fileID: 1585005775, guid: 1ccdf010dd5235241a18978e1a326c1d, type: 3}

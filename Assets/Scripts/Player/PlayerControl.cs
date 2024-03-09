@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +16,7 @@ public class PlayerControl : MonoBehaviour
     Vector2 movementInput;
     Player player;
     bool leftMouseDownPreviousFrame = false;
-    bool rightMouseDownPreviousFrame = false;  
+    bool rightMouseDownPreviousFrame = false;
     int currentRightHandWeaponIndex = 1;
     int currentLeftHandWeaponIndex = 0;
     bool isPlayerMovementDisabled = false;

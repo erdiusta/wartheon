@@ -11,6 +11,7 @@ public class ChestItem : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
     TextMeshPro textTMP;
+    Animator animator;
     Enemy enemy;
     WeaponDetailsSO weaponDetails;
     PassiveItemDetailsSO passiveItemDetails;
@@ -20,6 +21,7 @@ public class ChestItem : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        animator = GetComponentInChildren<Animator>();
         textTMP = GetComponentInChildren<TextMeshPro>();
     }
 
@@ -57,6 +59,7 @@ public class ChestItem : MonoBehaviour
     public void Initialize(Sprite sprite, string text, Vector3 spawnPosition)
     {
         spriteRenderer.sprite = sprite;
+
         textTMP.text = text;
         transform.position = spawnPosition;
     }
@@ -74,6 +77,31 @@ public class ChestItem : MonoBehaviour
         spriteRenderer.sprite = sprite;
         textTMP.text = text;
         transform.position = spawnPosition;
+
+        if (textTMP.text == "Silver Coin")
+        {
+            animator.runtimeAnimatorController = GameResources.Instance.silverCoinShineAnimatorController;
+        }
+
+        if (textTMP.text == "Gold Coin")
+        {
+            animator.runtimeAnimatorController = GameResources.Instance.goldCoinShineAnimatorController;
+        }
+
+        if (textTMP.text == "Health")
+        {
+            animator.runtimeAnimatorController = GameResources.Instance.heartShineAnimatorController;
+        }
+
+        if (textTMP.text == "Status Cure")
+        {
+            animator.runtimeAnimatorController = GameResources.Instance.cureShineAnimatorController;
+        }
+
+        if (textTMP.text == "Silver Armor")
+        {
+            animator.runtimeAnimatorController = GameResources.Instance.silverArmorShineAnimatorController;
+        }
     }
 
     /// <summary>

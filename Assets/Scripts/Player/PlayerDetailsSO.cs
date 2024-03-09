@@ -17,9 +17,21 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public GameObject playerPrefab;
     #region Tooltip
-    [Tooltip("Player runtime animator controller")]
+    [Tooltip("Player runtime animator controller - ONE HAND")]
     #endregion
-    public RuntimeAnimatorController runtimeAnimatorController;
+    public RuntimeAnimatorController oneHandRuntimeAnimatorController;
+    #region Tooltip
+    [Tooltip("Player runtime animator controller - TWO HAND")]
+    #endregion
+    public RuntimeAnimatorController twoHandRuntimeAnimatorController;
+    #region Tooltip
+    [Tooltip("Player runtime animator controller - BOW")]
+    #endregion
+    public RuntimeAnimatorController bowRuntimeAnimatorController;
+    #region Tooltip
+    [Tooltip("Player runtime animator controller - STAFF")]
+    #endregion
+    public RuntimeAnimatorController staffRuntimeAnimatorController;
 
     #region Header HEALTH
     [Space(10)]
@@ -103,9 +115,18 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public WeaponDetailsSO startingWeapon;
     #region Tooltip
+    [Tooltip("Player initial starting weapon - Right hand animator controller")]
+    #endregion
+    public RuntimeAnimatorController rightHandAnimatorController;
+    #region Tooltip
+    [Tooltip("Player initial starting weapon - Left hand animator controller")]
+    #endregion
+    public RuntimeAnimatorController leftHandAnimatorController;
+    #region Tooltip
     [Tooltip("Populate with the list of starting weapons")]
     #endregion
     public List<WeaponDetailsSO> startingWeaponList;
+
 
     #region Header OTHER
     [Space(10)]
@@ -130,7 +151,9 @@ public class PlayerDetailsSO : ScriptableObject
         HelperUtilities.ValidateCheckNullValue(this, nameof(startingWeapon), startingWeapon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerMiniMapIcon), playerMiniMapIcon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerHandSprite), playerHandSprite);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(runtimeAnimatorController), runtimeAnimatorController);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(oneHandRuntimeAnimatorController), oneHandRuntimeAnimatorController);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(twoHandRuntimeAnimatorController), twoHandRuntimeAnimatorController);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(bowRuntimeAnimatorController), bowRuntimeAnimatorController);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(playerArmorValue), playerArmorValue, true);
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(startingWeaponList), startingWeaponList);
 

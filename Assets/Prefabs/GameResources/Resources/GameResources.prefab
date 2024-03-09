@@ -80,4 +80,9 @@ MonoBehaviour:
   bulletIcon: {fileID: 21300000, guid: 74e9889e4ca672f47a1de063aeee1613, type: 3}
   ammoDropIcon: {fileID: 21300000, guid: aff7375fc583a5a4bae94ad246a66f65, type: 3}
   lockIcon: {fileID: 21300000, guid: 75be281a614718c4b89d49a81d864e9d, type: 3}
+  heartShineAnimatorController: {fileID: 9100000, guid: 9d6ce20b5187d904dbcb76cd6b3cd7f0, type: 2}
+  silverCoinShineAnimatorController: {fileID: 9100000, guid: aee30f20b17ad354992ee885f7067a4b, type: 2}
+  goldCoinShineAnimatorController: {fileID: 9100000, guid: 734ee2a97bd933c4cb65c070ece3cfd7, type: 2}
+  cureShineAnimatorController: {fileID: 9100000, guid: 8fc45ad79b3fec842be4a21f677a7778, type: 2}
+  silverArmorShineAnimatorController: {fileID: 9100000, guid: e2c2b3ce123a4f742ab9ab903f47fab7, type: 2}
   minimapBossPrefab: {fileID: 668306937615276397, guid: a6f6cb3ad6450194983577547ff3e678, type: 3}

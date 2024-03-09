@@ -23,6 +23,7 @@ public class CharacterSelectorUI : MonoBehaviour
     int selectedPlayerIndex = 0;
     float offset = 4f;
 
+
     private void Awake()
     {
         playerSelectionPrefab = GameResources.Instance.playerSelectionPrefab;
@@ -53,6 +54,17 @@ public class CharacterSelectorUI : MonoBehaviour
     {
         playerSelection.playerRightHandSpriteRenderer.sprite = playerDetails.playerHandSprite;
         playerSelection.playerLeftHandSpriteRenderer.sprite = playerDetails.playerHandSprite;
+        playerSelection.playerRightHandWeaponAnimator.runtimeAnimatorController = playerDetails.rightHandAnimatorController;
+
+        if (playerDetails.leftHandAnimatorController != null)
+        {
+            playerSelection.playerLeftHandWeaponAnimator.runtimeAnimatorController = playerDetails.leftHandAnimatorController;
+        }
+        else
+        {
+            playerSelection.playerLeftHandWeaponAnimator.enabled = false;
+        }
+
         playerSelection.playerWeaponRightHandSpriteRenderer.sprite = playerDetails.startingWeaponList[0].weaponFrontSprite;
         if (playerDetails.startingWeaponList.Count > 1)
         {
@@ -61,9 +73,33 @@ public class CharacterSelectorUI : MonoBehaviour
                 playerSelection.playerLeftHandSpriteRenderer.sortingOrder = 0;
             }
             playerSelection.playerWeaponLeftHandSpriteRenderer.sprite = playerDetails.startingWeaponList[1].weaponFrontSprite;
-
         }
-        playerSelection.animator.runtimeAnimatorController = playerDetails.runtimeAnimatorController;
+
+        if (playerDetails.playerCharacterName == Settings.astraeus)
+        {
+            playerSelection.animator.runtimeAnimatorController = playerDetails.oneHandRuntimeAnimatorController;
+        }
+        else if (playerDetails.playerCharacterName == Settings.orion)
+        {
+            playerSelection.animator.runtimeAnimatorController = playerDetails.bowRuntimeAnimatorController;
+
+            playerSelection.thirdHandGameObject.SetActive(true);
+            playerSelection.playerLeftHandWeaponAnimator.enabled = false;
+            playerSelection.leftWeaponAnchorTransform.gameObject.SetActive(false);
+        }
+        else if (playerDetails.playerCharacterName == Settings.erebus)
+        {
+            playerSelection.animator.runtimeAnimatorController = playerDetails.oneHandRuntimeAnimatorController;
+        }
+        else if (playerDetails.playerCharacterName == Settings.lyrisa)
+        {
+            playerSelection.animator.runtimeAnimatorController = playerDetails.staffRuntimeAnimatorController;
+
+            playerSelection.thirdHandGameObject.SetActive(true);
+            playerSelection.playerLeftHandWeaponAnimator.enabled = false;
+            playerSelection.leftWeaponAnchorTransform.gameObject.SetActive(false);
+        }
+
     }
 
     /// <summary>
@@ -71,8 +107,7 @@ public class CharacterSelectorUI : MonoBehaviour
     /// </summary>
     public void NextCharacter()
     {
-        if (selectedPlayerIndex >= playerDetailsList.Count - 1)
-            return;
+        if (selectedPlayerIndex >= playerDetailsList.Count - 1) return;
 
         selectedPlayerIndex++;
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
