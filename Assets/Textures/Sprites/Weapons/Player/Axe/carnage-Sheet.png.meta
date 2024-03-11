@@ -379,6 +379,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: carnage-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 682
+        y: 23
+        width: 21
+        height: 41
+      alignment: 9
+      pivot: {x: 0.519011, y: 0.23771007}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 853d524503e2fb64890fe29f714b6e8e
+      internalID: 1438343783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -392,6 +413,7 @@ TextureImporter:
     nameFileIdTable:
       carnage-Sheet_0: -1060085126
       carnage-Sheet_1: -638348510
+      carnage-Sheet_10: 1438343783
       carnage-Sheet_2: 413670678
       carnage-Sheet_3: 1226665514
       carnage-Sheet_4: 216526293

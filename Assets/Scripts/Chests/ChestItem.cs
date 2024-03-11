@@ -8,10 +8,13 @@ public class ChestItem : MonoBehaviour
     [HideInInspector] public bool hasWeaponDrop = false;
     [HideInInspector] public bool hasPassiveDrop = false;
     [HideInInspector] public bool hasAmmoDrop = false;
+    [HideInInspector] public TextMeshPro textTMP;
+    [HideInInspector] public WeaponAnimator weaponAnimator;
 
+    Chest chest;
     SpriteRenderer spriteRenderer;
-    TextMeshPro textTMP;
     Animator animator;
+    ParticleSystem collectParticleSystem;
     Enemy enemy;
     WeaponDetailsSO weaponDetails;
     PassiveItemDetailsSO passiveItemDetails;
@@ -23,6 +26,8 @@ public class ChestItem : MonoBehaviour
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         animator = GetComponentInChildren<Animator>();
         textTMP = GetComponentInChildren<TextMeshPro>();
+        collectParticleSystem = GetComponentInChildren<ParticleSystem>();
+        chest = GetComponentInParent<Chest>();
     }
 
     private void Start()
@@ -36,32 +41,73 @@ public class ChestItem : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag == Settings.playerTag)
+        if (collision.tag == Settings.playerTag || collision.tag == Settings.playerWeapon)
         {
             Player player = collision.GetComponent<Player>();
 
-            try
+            if (chest == null)
             {
-                CollectItem(player);
+                try
+                {
+                    animator.SetBool(Settings.hovered, true);
+
+                    if (hasWeaponDrop)
+                    {
+                        if (InputManager.Instance.interaction.action.IsPressed())
+                        {
+                            CollectWeaponItem(player);
+                        }
+                    }
+                    if (hasAmmoDrop)
+                    {
+                        if (InputManager.Instance.interaction.action.IsPressed())
+                        {
+                            CollectAmmoItem(player);
+                        }
+                    }
+                    else
+                    {
+                        CollectPassiveItem(player);
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    Destroy(gameObject);
+                }
             }
-            catch (InvalidOperationException)
+            else if (chest != null && chest.dropCompleted && chest.chestState == ChestState.weaponItem)
             {
-                Destroy(gameObject);
+                hasWeaponDrop = true;
+
+                try
+                {
+                    animator.SetBool(Settings.hovered, true);
+
+                    if (InputManager.Instance.interaction.action.IsPressed())
+                    {
+                        CollectWeaponItem(player);
+                    }
+                    else
+                    {
+                        CollectPassiveItem(player);
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    Destroy(gameObject);
+                }
             }
         }
     }
 
-    /// <summary>
-    /// Initialize for chest drops
-    /// </summary>
-    public void Initialize(Sprite sprite, string text, Vector3 spawnPosition)
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        spriteRenderer.sprite = sprite;
-
-        textTMP.text = text;
-        transform.position = spawnPosition;
+        if (collision.tag == Settings.playerTag || collision.tag == Settings.playerWeapon)
+        {
+            animator.SetBool(Settings.hovered, false);
+        }
     }
 
     /// <summary>
@@ -78,29 +124,43 @@ public class ChestItem : MonoBehaviour
         textTMP.text = text;
         transform.position = spawnPosition;
 
-        if (textTMP.text == "Silver Coin")
+        // Check for animation - Ammo
+        if (hasAmmoDrop)
         {
-            animator.runtimeAnimatorController = GameResources.Instance.silverCoinShineAnimatorController;
+            animator.runtimeAnimatorController = GameResources.Instance.ammoHoverAnimatorController;
         }
 
-        if (textTMP.text == "Gold Coin")
+        // Check for animation - Weapons
+        for (int i = 0; i < GameResources.Instance.weaponsHoverArray.Length; i++)
         {
-            animator.runtimeAnimatorController = GameResources.Instance.goldCoinShineAnimatorController;
+            if (textTMP.text == GameResources.Instance.weaponsHoverArray[i].weaponName)
+            {
+                weaponAnimator = GameResources.Instance.weaponsHoverArray[i];
+                animator.runtimeAnimatorController = weaponAnimator.weaponHoverAnimatorController;
+                break;
+            }
         }
 
-        if (textTMP.text == "Health")
+        // Check for animation - Passive Items
+        switch (textTMP.text)
         {
-            animator.runtimeAnimatorController = GameResources.Instance.heartShineAnimatorController;
-        }
-
-        if (textTMP.text == "Status Cure")
-        {
-            animator.runtimeAnimatorController = GameResources.Instance.cureShineAnimatorController;
-        }
-
-        if (textTMP.text == "Silver Armor")
-        {
-            animator.runtimeAnimatorController = GameResources.Instance.silverArmorShineAnimatorController;
+            case "Silver Coin":
+                animator.runtimeAnimatorController = GameResources.Instance.silverCoinShineAnimatorController;
+                break;
+            case "Gold Coin":
+                animator.runtimeAnimatorController = GameResources.Instance.goldCoinShineAnimatorController;
+                break;
+            case "Health":
+                animator.runtimeAnimatorController = GameResources.Instance.heartShineAnimatorController;
+                break;
+            case "Status Cure":
+                animator.runtimeAnimatorController = GameResources.Instance.cureShineAnimatorController;
+                break;
+            case "Silver Armor":
+                animator.runtimeAnimatorController = GameResources.Instance.silverArmorShineAnimatorController;
+                break;
+            default:
+                break;
         }
     }
 
@@ -127,9 +187,13 @@ public class ChestItem : MonoBehaviour
             //StartCoroutine(DisplayMessage("WEAPON\nALREADY\nEQUIPPED", 5f));
         }
 
+        collectParticleSystem.Play();
+
         isColliding = true;
         weaponDetails = null;
-        Destroy(gameObject);
+        animator.runtimeAnimatorController = null;
+        spriteRenderer.sprite = null;
+        Destroy(gameObject, 1f);
     }
 
     /// <summary>
@@ -210,8 +274,11 @@ public class ChestItem : MonoBehaviour
             isColliding = true;
         }
 
+        collectParticleSystem.Play();
         passiveItemDetails = null;
-        Destroy(gameObject);
+        animator.runtimeAnimatorController = null;
+        spriteRenderer.sprite = null;
+        Destroy(gameObject, 1f);
     }
 
     /// <summary>
@@ -222,6 +289,8 @@ public class ChestItem : MonoBehaviour
         if (!hasAmmoDrop) return;
 
         if (isColliding) return;
+
+        ammoPercent = Random.Range(0, 101);
 
         // Update ammo for current weapon
         if (!player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteProjectile &&
@@ -234,14 +303,10 @@ public class ChestItem : MonoBehaviour
         // Play pickup sound effect
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
 
+        collectParticleSystem.Play();
         ammoPercent = 0;
-        Destroy(gameObject);
-    }
-
-    private void CollectItem(Player player)
-    {
-        CollectWeaponItem(player);
-        CollectPassiveItem(player);
-        CollectAmmoItem(player);
+        animator.runtimeAnimatorController = null;
+        spriteRenderer.sprite = null;
+        Destroy(gameObject, 1f);
     }
 }

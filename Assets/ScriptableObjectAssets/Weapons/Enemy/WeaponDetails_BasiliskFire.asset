@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: WeaponDetails_BasiliskFire
   m_EditorClassIdentifier: 
   weaponName: Basilisk Fire
-  weaponSprite: {fileID: 0}
+  weaponFrontSprite: {fileID: 0}
+  weaponRearSprite: {fileID: 0}
   weaponAnimatorController: {fileID: 0}
   weaponClass: 5
   wieldType: 1
+  canKillSuddenly: 0
+  suddenKillChance: 0.1
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 0
@@ -28,7 +31,8 @@ MonoBehaviour:
   weaponShootPosition: {x: 1.8, y: 1, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 7d219b64b9aa9ab46839075b51a349bd, type: 2}
   weaponShootEffect: {fileID: 0}
-  weaponFiringSoundEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 0}
+  weaponImpactSoundEffect: {fileID: 0}
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 0

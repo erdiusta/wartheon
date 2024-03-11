@@ -15,10 +15,12 @@ public class AimWeapon : MonoBehaviour
     Transform rightHandWeaponRotationPointTransform;
     Transform leftHandWeaponRotationPointTransform;
     Player player;
+    Enemy enemy;
 
     private void Start()
     {
         player = GetComponent<Player>();
+        enemy = GetComponent<Enemy>();
 
         rightHandWeaponRotationPointTransform = rightHandWeaponAnchorPointTransform.GetChild(0);
         leftHandWeaponRotationPointTransform = leftHandWeaponAnchorPointTransform.GetChild(0);
@@ -33,10 +35,26 @@ public class AimWeapon : MonoBehaviour
         {
             rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
 
-            if (leftHandWeaponAnchorPointTransform.gameObject.activeSelf)
+            if (enemy.enemyDetails.enemyWeapon != null && enemy.enemyDetails.enemyWeapon.weaponClass == WeaponClass.Staff)
             {
-                leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
+                switch (aimDirection)
+                {
+                    case AimDirection.Left:
+                    case AimDirection.UpLeft:
+
+                        rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 180f);
+                        break;
+
+                    case AimDirection.Up:
+                    case AimDirection.UpRight:
+                    case AimDirection.Right:
+                    case AimDirection.Down:
+
+                        rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 0f);
+                        break;
+                }
             }
+
         }
         else if (tag == Settings.playerTag)
         {
@@ -198,28 +216,27 @@ public class AimWeapon : MonoBehaviour
                         leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 0f);
                         break;
                 }
-            }
+            }      
+        }
 
-            // Flip weapon transform based on player direction
-            switch (aimDirection)
-            {
-                case AimDirection.Left:
-                case AimDirection.UpLeft:
+        // Flip weapon transform based on player direction
+        switch (aimDirection)
+        {
+            case AimDirection.Left:
+            case AimDirection.UpLeft:
 
-                    rightHandWeaponRotationPointTransform.localScale = new Vector3(1f, -1f, 0f);
-                    leftHandWeaponRotationPointTransform.localScale = new Vector3(1f, -1f, 0f);
-                    break;
+                rightHandWeaponRotationPointTransform.localScale = new Vector3(1f, -1f, 0f);
+                leftHandWeaponRotationPointTransform.localScale = new Vector3(1f, -1f, 0f);
+                break;
 
-                case AimDirection.Up:
-                case AimDirection.UpRight:
-                case AimDirection.Right:
-                case AimDirection.Down:
+            case AimDirection.Up:
+            case AimDirection.UpRight:
+            case AimDirection.Right:
+            case AimDirection.Down:
 
-                    rightHandWeaponRotationPointTransform.localScale = new Vector3(1f, 1f, 0f);
-                    leftHandWeaponRotationPointTransform.localScale = new Vector3(1f, 1f, 0f);
-                    break;
-            }
-            
+                rightHandWeaponRotationPointTransform.localScale = new Vector3(1f, 1f, 0f);
+                leftHandWeaponRotationPointTransform.localScale = new Vector3(1f, 1f, 0f);
+                break;
         }
     }
 

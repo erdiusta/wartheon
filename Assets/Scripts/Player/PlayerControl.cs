@@ -22,6 +22,7 @@ public class PlayerControl : MonoBehaviour
     bool isPlayerMovementDisabled = false;
     Coroutine teleportParticleRoutine;
     bool particlePlayed;
+    float immunityTimer;
 
     private void Awake()
     {
@@ -77,6 +78,14 @@ public class PlayerControl : MonoBehaviour
 
     private void Update()
     {
+        immunityTimer -= Time.deltaTime;
+
+        // If immunity timer lower than zero, make playe
+        if (immunityTimer < 0)
+        {
+            player.health.isDamageable = true;
+        }
+
         // If player movement disabled then return
         if (isPlayerMovementDisabled) return;
 
@@ -599,6 +608,10 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     public void Unstealth()
     {
+        // Set immunity time
+        immunityTimer = 2f;
+        player.health.isDamageable = false;
+
         // Get the current color of the sprite renderer
         Color currentColor = player.spriteRenderer.color;
 
@@ -687,34 +700,32 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void UseItemInput()
     {
-        if (InputManager.Instance.interaction.action.WasPerformedThisFrame())
+        float useItemRadius = 2f;
+
+        // Get any 'Usable' item near the player
+        Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(player.GetPlayerPosition(), useItemRadius);
+
+        // Loop through detected items to see if any are 'usable'
+        foreach (Collider2D collider2D in collider2DArray)
         {
-            float useItemRadius = 2f;
+            IUsable iusable = collider2D.GetComponent<IUsable>();
 
-            // Get any 'Usable' item near the player
-            Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(player.GetPlayerPosition(), useItemRadius);
-
-            // Loop through detected items to see if any are 'usable'
-            foreach (Collider2D collider2D in collider2DArray)
+            if (iusable != null)
             {
-                IUsable iusable = collider2D.GetComponent<IUsable>();
+                // Chest collectible
+                Chest chest = collider2D.GetComponent<Chest>();
 
-                if (iusable != null)
+                if (InputManager.Instance.interaction.action.IsPressed())
                 {
-                    // Chest collectible
-                    Chest chest = collider2D.GetComponent<Chest>();
-
                     if (chest.chestState == ChestState.closed && !chest.dropCompleted)
                     {
-                        iusable.UseItem();
-                    }
-
-                    if (chest.dropCompleted)
-                    {
-                        iusable.UseItem();
+                        iusable.StartChestProcess();
                     }
                 }
+            }
 
+            if (InputManager.Instance.interaction.action.WasPerformedThisFrame())
+            {
                 // Only interactable objects have capsule colliders. So if it's nut null, it means collider is an interactable (like NPC)
                 if (collider2D.GetComponent<CapsuleCollider2D>() != null)
                 {

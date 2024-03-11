@@ -232,6 +232,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: staff-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 7
+        width: 14
+        height: 38
+      alignment: 9
+      pivot: {x: 0.5, y: 0.32}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f9618b9913663249ae5e31db7259857
+      internalID: -1112988894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -247,6 +268,7 @@ TextureImporter:
       staff-Sheet_1: 1370436948
       staff-Sheet_2: -1315254851
       staff-Sheet_3: 2052979283
+      staff-Sheet_4: -1112988894
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

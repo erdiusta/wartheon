@@ -152,8 +152,8 @@ TextureImporter:
       name: Bow_0
       rect:
         serializedVersion: 2
-        x: 18
-        y: 4
+        x: 12
+        y: 5
         width: 10
         height: 24
       alignment: 9
@@ -173,8 +173,8 @@ TextureImporter:
       name: Bow_1
       rect:
         serializedVersion: 2
-        x: 48
-        y: 4
+        x: 42
+        y: 5
         width: 12
         height: 24
       alignment: 9
@@ -194,8 +194,8 @@ TextureImporter:
       name: Bow_2
       rect:
         serializedVersion: 2
-        x: 78
-        y: 4
+        x: 73
+        y: 5
         width: 14
         height: 24
       alignment: 9
@@ -215,8 +215,8 @@ TextureImporter:
       name: Bow_3
       rect:
         serializedVersion: 2
-        x: 108
-        y: 4
+        x: 104
+        y: 5
         width: 16
         height: 24
       alignment: 9
@@ -228,6 +228,27 @@ TextureImporter:
       bones: []
       spriteID: eb0312e1c65147f4d9358fd71c7a95d3
       internalID: -419834094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bow_4
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 5
+        width: 10
+        height: 24
+      alignment: 9
+      pivot: {x: 0.8872198, y: 0.41}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9de905841061da4c8ddb86956a627d4
+      internalID: -2141267954
       vertices: []
       indices: 
       edges: []
@@ -247,6 +268,7 @@ TextureImporter:
       Bow_1: 1814007560
       Bow_2: -1702160266
       Bow_3: -419834094
+      Bow_4: -2141267954
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

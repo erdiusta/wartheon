@@ -337,6 +337,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: phalanx_spear-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 6
+        width: 10
+        height: 44
+      alignment: 9
+      pivot: {x: 0.5240145, y: 0.25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef6368db1d3d7864dad5dcb0255165bd
+      internalID: -1956377092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -357,6 +378,7 @@ TextureImporter:
       phalanx_spear-Sheet_6: -230273510
       phalanx_spear-Sheet_7: 1683974711
       phalanx_spear-Sheet_8: -1295321513
+      phalanx_spear-Sheet_9: -1956377092
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

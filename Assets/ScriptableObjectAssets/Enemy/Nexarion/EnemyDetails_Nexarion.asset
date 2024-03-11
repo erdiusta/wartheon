@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Nexarion
   enemyPrefab: {fileID: 7183228443647751644, guid: 3d2778eb92f63c542b2252f7e2d1fb72, type: 3}
   movementDetails: {fileID: 11400000, guid: 8b22ae23de373844fa6c1e4254d92275, type: 2}
-  chaseDistance: 6
+  chaseDistance: 4
   hasAttackMove: 0
   attackMoveTriggerDistance: 0
   attackMoveEfficentDistance: 0

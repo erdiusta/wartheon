@@ -3,6 +3,13 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Tilemaps;
 
+[System.Serializable]
+public class WeaponAnimator
+{
+    public string weaponName;
+    public RuntimeAnimatorController weaponHoverAnimatorController;
+}
+
 public class GameResources : MonoBehaviour
 {
     private static GameResources instance;
@@ -177,9 +184,17 @@ public class GameResources : MonoBehaviour
     #endregion
     public Sprite ammoDropIcon;
     #region Tooltip
+    [Tooltip("Populate with ammo hover animator controller")]
+    #endregion
+    public RuntimeAnimatorController ammoHoverAnimatorController;
+    #region Tooltip
     [Tooltip("Populate with lock icon sprite")]
     #endregion
     public Sprite lockIcon;
+    #region Tooltip
+    [Tooltip("Populate array with name and animator controller of the related weapon")]
+    #endregion
+    public WeaponAnimator[] weaponsHoverArray;
     #region Tooltip
     [Tooltip("Populate with heart shine animator controller")]
     #endregion

@@ -80,7 +80,7 @@ public class ReloadWeapon : MonoBehaviour
         {
             int projectileIncrease = Mathf.RoundToInt((weapon.weaponDetails.weaponProjectileCapacity * topUpProjectilePercent) / 100f);
 
-            int totalProjectile = weapon.weaponRemainingProjectile + projectileIncrease;
+            int totalProjectile = weapon.weaponRemainingProjectile * projectileIncrease;
 
             weapon.weaponRemainingProjectile = totalProjectile > weapon.weaponDetails.weaponProjectileCapacity ?
                 weapon.weaponDetails.weaponProjectileCapacity : totalProjectile;

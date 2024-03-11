@@ -149,8 +149,8 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails)
     {
-        chestItem.Initialize(weaponDetails, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, transform.position);
         chestItem.hasWeaponDrop = true;
+        chestItem.Initialize(weaponDetails, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, transform.position);
     }
 
     /// <summary>
@@ -158,8 +158,8 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails)
     {
-        chestItem.Initialize(null, passiveItemDetails.passiveItemSprite, passiveItemDetails.passiveItemName, transform.position);
         chestItem.hasPassiveDrop = true;
+        chestItem.Initialize(null, passiveItemDetails.passiveItemSprite, passiveItemDetails.passiveItemName, transform.position);
     }
 
     /// <summary>
@@ -167,8 +167,8 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiateAmmoItem(int ammoPercent)
     {
-        chestItem.Initialize(null, GameResources.Instance.ammoDropIcon, ammoPercent.ToString() + "%", transform.position);
         chestItem.hasAmmoDrop = true;
+        chestItem.Initialize(null, GameResources.Instance.ammoDropIcon, ammoPercent.ToString() + "%", transform.position);
     }
 
     /// <summary>

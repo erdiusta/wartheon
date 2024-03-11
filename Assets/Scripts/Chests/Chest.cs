@@ -53,7 +53,7 @@ public class Chest : MonoBehaviour, IUsable
     /// <summary>
     /// Use the chest - action will vary depending on the chest state
     /// </summary>
-    public void UseItem()
+    public void StartChestProcess()
     {
         if (!isEnabled) return;
 
@@ -65,7 +65,7 @@ public class Chest : MonoBehaviour, IUsable
                 break;
 
             case ChestState.weaponItem:
-                CollectWeaponItem();
+                //CollectWeaponItem();
                 break;
 
             case ChestState.empty:
@@ -129,7 +129,7 @@ public class Chest : MonoBehaviour, IUsable
     {
         InstantiateItem();
 
-        chestItem.Initialize(GameResources.Instance.heartIcon, healthPercent.ToString() + "%", itemSpawnPoint.position);
+        chestItem.Initialize(null, GameResources.Instance.heartIcon, healthPercent.ToString() + "%", itemSpawnPoint.position);
     }
 
     /// <summary>
@@ -160,7 +160,7 @@ public class Chest : MonoBehaviour, IUsable
     {
         InstantiateItem();
 
-        chestItem.Initialize(GameResources.Instance.ammoDropIcon, ammoPercent.ToString() + "%", itemSpawnPoint.position);
+        chestItem.Initialize(null, GameResources.Instance.ammoDropIcon, ammoPercent.ToString() + "%", itemSpawnPoint.position);
     }
 
     /// <summary>
@@ -193,7 +193,8 @@ public class Chest : MonoBehaviour, IUsable
     {
         InstantiateItem();
 
-        chestItemGameObject.GetComponent<ChestItem>().Initialize(weaponDetails.weaponFrontSprite, weaponDetails.weaponName, itemSpawnPoint.position);
+        chestItemGameObject.GetComponent<ChestItem>().Initialize(weaponDetails, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, 
+            itemSpawnPoint.position);
     }
 
     /// <summary>

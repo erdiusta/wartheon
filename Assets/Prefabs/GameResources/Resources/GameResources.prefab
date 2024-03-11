@@ -78,8 +78,46 @@ MonoBehaviour:
   chestItemPrefab: {fileID: 6166831115549756087, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
   heartIcon: {fileID: -1216308913, guid: f9ee2bab07942d7449d2d3b8d49d5d85, type: 3}
   bulletIcon: {fileID: 21300000, guid: 74e9889e4ca672f47a1de063aeee1613, type: 3}
-  ammoDropIcon: {fileID: 21300000, guid: aff7375fc583a5a4bae94ad246a66f65, type: 3}
+  ammoDropIcon: {fileID: -165311887, guid: fc9fccfb67b30cd44a5efd03a95226bf, type: 3}
+  ammoHoverAnimatorController: {fileID: 9100000, guid: 2e47b120b7574f54da4bcd574ae4fa24, type: 2}
   lockIcon: {fileID: 21300000, guid: 75be281a614718c4b89d49a81d864e9d, type: 3}
+  weaponsHoverArray:
+  - weaponName: Axe
+    weaponHoverAnimatorController: {fileID: 9100000, guid: 3f97019750b21be44bf20ae63f574c6d, type: 2}
+  - weaponName: Carnage
+    weaponHoverAnimatorController: {fileID: 9100000, guid: a1992abc3f12c034ab96b276d0b6ef76, type: 2}
+  - weaponName: Bow
+    weaponHoverAnimatorController: {fileID: 9100000, guid: 5e566620eb78e4b46bac5180639b01f4, type: 2}
+  - weaponName: Crossbow
+    weaponHoverAnimatorController: {fileID: 9100000, guid: bd7bbcbe694802043a01534846e9888c, type: 2}
+  - weaponName: Dagger
+    weaponHoverAnimatorController: {fileID: 9100000, guid: 1b8d09cd82044ff4baa1d89f503dda38, type: 2}
+  - weaponName: Gambit
+    weaponHoverAnimatorController: {fileID: 9100000, guid: c2e67091a9236644f8fc21c91544b807, type: 2}
+  - weaponName: Clobbering Time
+    weaponHoverAnimatorController: {fileID: 9100000, guid: 8d50f9dfcd86b91438e4c4868d290b2f, type: 2}
+  - weaponName: Crusher
+    weaponHoverAnimatorController: {fileID: 9100000, guid: e4fd7e865e76fc1439eb7de275c47b7c, type: 2}
+  - weaponName: Apollo Shield
+    weaponHoverAnimatorController: {fileID: 9100000, guid: dd7a3c0d611a22649b83acc6067980dc, type: 2}
+  - weaponName: Shield
+    weaponHoverAnimatorController: {fileID: 9100000, guid: 1a628c7453d881c47a5cd0112a246f01, type: 2}
+  - weaponName: Phalanx Spear
+    weaponHoverAnimatorController: {fileID: 9100000, guid: 7b95804964c7e2c488ad54857a7be2bb, type: 2}
+  - weaponName: Heavens Gale
+    weaponHoverAnimatorController: {fileID: 9100000, guid: 4ec36ae544cb71b40ac93c30ebba9600, type: 2}
+  - weaponName: Solar Flare
+    weaponHoverAnimatorController: {fileID: 9100000, guid: b85240d0397e1da439abe0652fed15a8, type: 2}
+  - weaponName: Staff
+    weaponHoverAnimatorController: {fileID: 9100000, guid: 5fa9795725022d949b654fdbe73c3e5b, type: 2}
+  - weaponName: Gladius
+    weaponHoverAnimatorController: {fileID: 9100000, guid: c1aa8ec2a7ea25f4eb107777b73a89a3, type: 2}
+  - weaponName: Holy Sword
+    weaponHoverAnimatorController: {fileID: 9100000, guid: cf0c1538c47625a4b8b5bb05a1aa69d4, type: 2}
+  - weaponName: Kyokuryu
+    weaponHoverAnimatorController: {fileID: 9100000, guid: 21e16997976246844b6585ed4994d05f, type: 2}
+  - weaponName: Sizzling Sword
+    weaponHoverAnimatorController: {fileID: 9100000, guid: 3fc232eb20b9258488d7a3363d824994, type: 2}
   heartShineAnimatorController: {fileID: 9100000, guid: 9d6ce20b5187d904dbcb76cd6b3cd7f0, type: 2}
   silverCoinShineAnimatorController: {fileID: 9100000, guid: aee30f20b17ad354992ee885f7067a4b, type: 2}
   goldCoinShineAnimatorController: {fileID: 9100000, guid: 734ee2a97bd933c4cb65c070ece3cfd7, type: 2}

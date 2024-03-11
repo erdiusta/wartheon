@@ -358,6 +358,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: gladius-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 18
+        width: 12
+        height: 28
+      alignment: 9
+      pivot: {x: 0.5, y: 0.12}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ca2bd7c5d420c849844c3db3aeb0304
+      internalID: -213415562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -369,6 +390,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      gladius-Sheet_0: -213415562
       sword-Sheet_0: -1467170279
       sword-Sheet_1: -618701605
       sword-Sheet_2: -777629031

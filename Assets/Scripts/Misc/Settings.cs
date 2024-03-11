@@ -65,6 +65,9 @@ public static class Settings
     // Animator parameters - DamageableDecoration
     public static int destroy = Animator.StringToHash("destroy");
     public static string stateDestroyed = "Destroyed";
+
+    // Animator parameters - DropItem
+    public static int hovered = Animator.StringToHash("hovered");
     #endregion
 
     #region GAMEOBJECT TAGS

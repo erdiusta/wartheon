@@ -232,6 +232,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: heavens_gale-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 6
+        width: 12
+        height: 37
+      alignment: 9
+      pivot: {x: 0.5, y: 0.23}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3a0d6ab054bf584588dccfe9cfe3559
+      internalID: 2052337491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -247,6 +268,7 @@ TextureImporter:
       heavens_gale-Sheet_1: -1628116702
       heavens_gale-Sheet_2: 2038632060
       heavens_gale-Sheet_3: -1139257156
+      heavens_gale-Sheet_4: 2052337491
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

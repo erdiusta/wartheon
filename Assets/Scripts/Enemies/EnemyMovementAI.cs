@@ -218,6 +218,12 @@ public class EnemyMovementAI : MonoBehaviour
                     case EnemyPhase.GetHit:
 
                         enemy.animateEnemy.SetGetHitAnimationParameters();
+
+                        if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.PrepareAndDash)
+                        {
+                            enemy.animator.SetBool(Settings.preAttackMotion, false);
+                        }
+
                         break;
 
                     case EnemyPhase.PreAttack:
@@ -238,12 +244,18 @@ public class EnemyMovementAI : MonoBehaviour
                             if (enemy.isFiring)
                             {
                                 StopAllCoroutines();
-                                patrolSteps.Clear();
-                                movementSteps.Clear();
+                                if (patrolSteps != null)
+                                {
+                                    patrolSteps.Clear();
+                                }
+                                if (movementSteps != null)
+                                {
+                                    movementSteps.Clear();
+                                }
                                 patrolMoveEnemyRoutine = null;
                                 chaseMoveEnemyRoutine = null;
                                 enemy.idle.StopVelocity();
-
+                                enemy.animateEnemy.SetIdleAnimationParameters();
                                 enemy.animator.SetBool(Settings.attackMotion, true);
 
                                 if (aimAndShootRoutine == null && enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
@@ -254,6 +266,7 @@ public class EnemyMovementAI : MonoBehaviour
                             else
                             {
                                 moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+                                enemyPhase = EnemyPhase.Chase;
                             }
                         }
 

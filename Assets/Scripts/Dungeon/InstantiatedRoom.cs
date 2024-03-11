@@ -359,13 +359,13 @@ public class InstantiatedRoom : MonoBehaviour
                 {
                     // Create door with parent as the room
                     door = Instantiate(doorway.doorPrefab, gameObject.transform);
-                    door.transform.localPosition = new Vector3(doorway.position.x + tileDistance, doorway.position.y + tileDistance - 1, 0f);
+                    door.transform.localPosition = new Vector3(doorway.position.x + tileDistance, doorway.position.y + tileDistance + 0.4f, 0f);
                 }
                 else if (doorway.orientation == Orientation.West)
                 {
                     // Create door with parent as the room
                     door = Instantiate(doorway.doorPrefab, gameObject.transform);
-                    door.transform.localPosition = new Vector3(doorway.position.x + 1, doorway.position.y + tileDistance - 1, 0f);
+                    door.transform.localPosition = new Vector3(doorway.position.x + 1, doorway.position.y + tileDistance + 0.4f, 0f);
                 }
 
 

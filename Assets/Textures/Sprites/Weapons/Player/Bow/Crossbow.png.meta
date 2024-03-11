@@ -232,6 +232,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Crossbow_4
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 4
+        width: 26
+        height: 23
+      alignment: 9
+      pivot: {x: 0.29314798, y: 0.3473592}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 052628dd94d5e6f429727bf4efd386fa
+      internalID: -959492651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -247,6 +268,7 @@ TextureImporter:
       Crossbow_1: 2020038788
       Crossbow_2: -2060280506
       Crossbow_3: -1526884181
+      Crossbow_4: -959492651
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

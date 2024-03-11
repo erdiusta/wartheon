@@ -35194,7 +35194,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4239920569477357429}
-  - component: {fileID: 44892018135717442}
+  - component: {fileID: 480008352441278276}
   m_Layer: 19
   m_Name: WeaponAnchorPosition
   m_TagString: Untagged
@@ -35218,7 +35218,7 @@ Transform:
   - {fileID: 933830336492734321}
   m_Father: {fileID: 3146469945750014307}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &44892018135717442
+--- !u!95 &480008352441278276
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0

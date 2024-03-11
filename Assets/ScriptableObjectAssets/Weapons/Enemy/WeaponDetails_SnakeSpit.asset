@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: WeaponDetails_SnakeSpit
   m_EditorClassIdentifier: 
   weaponName: Snake Spit
-  weaponSprite: {fileID: 0}
+  weaponFrontSprite: {fileID: 0}
+  weaponRearSprite: {fileID: 0}
   weaponAnimatorController: {fileID: 0}
   weaponClass: 5
   wieldType: 1
+  canKillSuddenly: 0
+  suddenKillChance: 0.1
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 0
@@ -25,7 +28,7 @@ MonoBehaviour:
   bleedingChance: 0
   hasSlowDamage: 0
   slowChance: 0
-  weaponShootPosition: {x: 0.40125, y: 0.791, z: 0}
+  weaponShootPosition: {x: 0.37, y: 0.8535, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 08a15f768e14d714b824d38be840f8e3, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 0}

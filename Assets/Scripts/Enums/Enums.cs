@@ -64,7 +64,7 @@ public enum WeaponClass
     Spear,
     Staff,
     Bow,
-    Dagger
+    Dagger,
 }
 
 public enum WieldType
