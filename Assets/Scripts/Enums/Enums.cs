@@ -22,6 +22,28 @@ public enum GameState
     restartGame
 }
 
+public enum ActiveItemType
+{
+    Generic,
+    Boomerang,
+    Bomb,
+    Shiruken,
+    Trap
+}
+
+public enum BoomerangPhase
+{
+    Aim,
+    Fire,
+    Return
+}
+
+public enum ShirukenPhase
+{
+    Fire,
+    Ricochet
+}
+
 public enum MoveStatus
 {
     Idle,
@@ -127,7 +149,6 @@ public enum EnemyPhase
     Patrol,
     Chase,
     GetHit,
-    PreAttack,
     Attack,
     Death
 }

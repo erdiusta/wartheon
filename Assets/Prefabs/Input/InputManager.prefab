@@ -55,3 +55,5 @@ MonoBehaviour:
   nextLevel: {fileID: -2122744234832147839, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   interaction: {fileID: -3128664531634483429, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   specialMove: {fileID: 5077257753683033983, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  bookView: {fileID: 1534269409563702162, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  activeItem: {fileID: 8120908705557231203, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}

@@ -8,11 +8,11 @@ public class EnemyWeaponAI : MonoBehaviour
     #region Tooltip
     [Tooltip("Select the layers that the enemy bullets will hit")]
     #endregion Tooltip
-    [SerializeField] private LayerMask layerMask;
+    [SerializeField] LayerMask layerMask;
     #region Tooltip
     [Tooltip("Populate this with the WeaponShootPosition child gameobject transform")]
     #endregion Tooltip
-    [SerializeField] private Transform weaponShootPosition;
+    [SerializeField] Transform weaponShootPosition;
 
     [HideInInspector] public Coroutine enemyAttackCoroutine;
 

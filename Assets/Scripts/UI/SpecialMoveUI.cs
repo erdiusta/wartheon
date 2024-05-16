@@ -84,6 +84,7 @@ public class SpecialMoveUI : MonoBehaviour
 
             if (player.specialMoveTimer > player.playerDetails.specialMoveDuration)
             {
+                // Ensure that the timer is not exceeding the duration
                 player.specialMoveTimer = player.playerDetails.specialMoveDuration;
                 player.specialMoveOnCooldown = false;
             }
@@ -91,12 +92,6 @@ public class SpecialMoveUI : MonoBehaviour
         else
         {
             player.specialMoveTimer = 0f;
-
-            if (player.playerDetails.playerCharacterName == Settings.erebus)
-            {
-                player.playerControl.Unstealth();
-                player.playerDetails.onStealth = false;
-            }
 
             containerBar.gameObject.SetActive(false);
         }

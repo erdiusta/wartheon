@@ -127,10 +127,6 @@ public class ProjectileDetailsSO : ScriptableObject
     [Header("PROJECTILE SPREAD DETAILS")]
     #endregion
     #region Tooltip
-    [Tooltip("This modifier affects how much projectile's affected by gravity so that it becomes more arc shape trajectory")]
-    #endregion
-    public float gravity = 0f;
-    #region Tooltip
     [Tooltip("This is the minimum spread angle of the projectile. A higher spread means less accuracy. A random spread is calculated between the min and max values")]
     #endregion
     public float projectileSpreadMin = 0f;

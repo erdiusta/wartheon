@@ -347,8 +347,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Play Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2c3c4a39d2618b84d9e1b11f048b71ba, type: 2}
-  m_sharedMaterial: {fileID: -5877759934995707352, guid: 2c3c4a39d2618b84d9e1b11f048b71ba, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 23d878bd39bb1414087aecf71bce91df, type: 2}
+  m_sharedMaterial: {fileID: 6030368061921504907, guid: 23d878bd39bb1414087aecf71bce91df, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -372,8 +372,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -605,9 +605,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.10619469
-    width: 0.66736186
-    height: 0.63716817
+    y: 0.54647887
+    width: 0.26815102
+    height: 0.21945421
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1144,8 +1144,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 95.68497, y: -59.54521}
-  m_SizeDelta: {x: 161.3699, y: 79.0904}
+  m_AnchoredPosition: {x: 102.8659, y: -61.9626}
+  m_SizeDelta: {x: 175.7318, y: 83.9251}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1899689330
 MonoBehaviour:
@@ -1169,8 +1169,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: PLOT OF THE GODS
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2c3c4a39d2618b84d9e1b11f048b71ba, type: 2}
-  m_sharedMaterial: {fileID: -5877759934995707352, guid: 2c3c4a39d2618b84d9e1b11f048b71ba, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 23d878bd39bb1414087aecf71bce91df, type: 2}
+  m_sharedMaterial: {fileID: 6030368061921504907, guid: 23d878bd39bb1414087aecf71bce91df, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1194,8 +1194,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
-  m_fontSizeBase: 28
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

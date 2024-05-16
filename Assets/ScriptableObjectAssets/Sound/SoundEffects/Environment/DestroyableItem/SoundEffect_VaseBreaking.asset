@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Vase Breaking
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 5f76199a837356c41bde91c9a39e40be, type: 3}
+  - {fileID: 8300000, guid: a43134444929d2646b325de1b5f4ed6c, type: 3}
   soundEffectPitchRandomVariationMin: 0.7
   soundEffectPitchRandomVariationMax: 1
   soundEffectVolume: 0.6

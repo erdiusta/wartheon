@@ -12,6 +12,7 @@ public class PlayerControl : MonoBehaviour
 
     [HideInInspector] public bool fireCompletedDuringPressed = false;
     [HideInInspector] public bool isSoundPlayed = false;
+    [HideInInspector] public Coroutine unstealthRoutine;
 
     Vector2 movementInput;
     Player player;
@@ -22,7 +23,8 @@ public class PlayerControl : MonoBehaviour
     bool isPlayerMovementDisabled = false;
     Coroutine teleportParticleRoutine;
     bool particlePlayed;
-    float immunityTimer;
+    float unstealthImmunityTime = 2f;
+    bool startStealth = true;
 
     private void Awake()
     {
@@ -78,14 +80,6 @@ public class PlayerControl : MonoBehaviour
 
     private void Update()
     {
-        immunityTimer -= Time.deltaTime;
-
-        // If immunity timer lower than zero, make playe
-        if (immunityTimer < 0)
-        {
-            player.health.isDamageable = true;
-        }
-
         // If player movement disabled then return
         if (isPlayerMovementDisabled) return;
 
@@ -94,7 +88,7 @@ public class PlayerControl : MonoBehaviour
             case MoveStatus.Idle:
             case MoveStatus.Slow:
                 // Process the player weapon input
-                WeaponInput();
+                WeaponAndActiveItemInput();
                 // Process the player movement input
                 MovementInput();
                 // Process the player use item input
@@ -176,7 +170,7 @@ public class PlayerControl : MonoBehaviour
     /// <summary>
     /// Weapon Input
     /// </summary>
-    private void WeaponInput()
+    private void WeaponAndActiveItemInput()
     {
         Vector3 weaponDirection;
         float weaponAngleDegrees, playerAngleDegrees;
@@ -187,6 +181,9 @@ public class PlayerControl : MonoBehaviour
 
         // Fire weapon input
         FireWeaponInput(weaponDirection, weaponAngleDegrees, playerAngleDegrees, playerAimDirection);
+
+        // Process the player active item input
+        FireActiveItemInput(weaponDirection, weaponAngleDegrees, playerAngleDegrees, playerAimDirection);
 
         // Switch weapon input
         SwitchWeaponInput();
@@ -306,6 +303,20 @@ public class PlayerControl : MonoBehaviour
         else
         {
             rightMouseDownPreviousFrame = false;
+        }
+    }
+
+    /// <summary>
+    /// Active Item Input
+    /// </summary>
+    private void FireActiveItemInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
+    {
+        // Use active item when clicked
+        if (InputManager.Instance.activeItem.action.WasPressedThisFrame())
+        {
+            // Trigger fire weapon event
+            player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees,
+                weaponAngleDegrees, weaponDirection, false, true);
         }
     }
 
@@ -492,8 +503,6 @@ public class PlayerControl : MonoBehaviour
 
                 case Settings.erebus:
                     Stealth();
-                    player.specialMoveOnCooldown = true;
-                    player.specialMoveEvent.CallSpecialMoveUsedEvent();
                     break;
 
                 case Settings.lyrisa:
@@ -589,6 +598,10 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void Stealth()
     {
+        // Set player's stealth status to true
+        player.playerDetails.onStealth = true;
+        startStealth = false;
+
         // Get the current color of the sprite renderer
         Color currentColor = player.spriteRenderer.color;
         SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveSoundEffect);
@@ -599,8 +612,25 @@ public class PlayerControl : MonoBehaviour
         // Apply the modified color back to the sprite renderer
         player.spriteRenderer.color = currentColor;
 
-        // Set player's stealth status to true
-        player.playerDetails.onStealth = true;
+        // Start the coroutine to maintain the alpha value during stealth
+        StartCoroutine(MaintainStealthAlpha());
+    }
+
+    IEnumerator MaintainStealthAlpha()
+    {
+        while (player.playerDetails.onStealth)
+        {
+            // Get the current color of the sprite renderer
+            Color currentColor = player.spriteRenderer.color;
+
+            // Ensure the alpha value remains at 0.3
+            currentColor.a = 0.3f;
+
+            // Apply the modified color back to the sprite renderer
+            player.spriteRenderer.color = currentColor;
+
+            yield return null; // Wait for the next frame
+        }
     }
 
     /// <summary>
@@ -608,21 +638,40 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     public void Unstealth()
     {
-        // Set immunity time
-        immunityTimer = 2f;
+        if (startStealth) return;
+
+        if (unstealthRoutine != null) return;
+
+        // Trigger cooldown and ui components
+        player.specialMoveOnCooldown = true;
+        player.specialMoveEvent.CallSpecialMoveUsedEvent();
+
+        unstealthRoutine = StartCoroutine(UnstealthRoutine());
+    }
+
+    IEnumerator UnstealthRoutine()
+    {
+        // Set immunity
         player.health.isDamageable = false;
+
+        // Set player's stealth status to false
+        player.playerDetails.onStealth = false;
 
         // Get the current color of the sprite renderer
         Color currentColor = player.spriteRenderer.color;
 
+        // Set the alpha value back to 0.7 (70% opacity)
+        currentColor.a = 0.7f;
+        player.spriteRenderer.color = currentColor; 
+
+        yield return new WaitForSeconds(unstealthImmunityTime);
+
         // Set the alpha value back to 1 (100% opacity)
         currentColor.a = 1f;
-
-        // Apply the modified color back to the sprite renderer
         player.spriteRenderer.color = currentColor;
 
-        // Set player's stealth status to false
-        player.playerDetails.onStealth = false;
+        player.health.isDamageable = true;
+        unstealthRoutine = null;
     }
 
     /// <summary>

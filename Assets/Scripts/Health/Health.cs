@@ -146,6 +146,10 @@ public class Health : MonoBehaviour
         if (isDamageable)
         {
             currentHealth -= damageAmount;
+            if(player != null)
+            {
+                StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
+            }
 
             Debug.Log("Received damage is: " + damageAmount);
 
@@ -196,6 +200,10 @@ public class Health : MonoBehaviour
         if (isDamageable)
         {
             currentHealth -= damageAmount;
+            if (player != null)
+            {
+                StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
+            }
 
             if (player != null)
             {
@@ -303,7 +311,7 @@ public class Health : MonoBehaviour
         enemy.animator.SetBool(Settings.block, false);
         isBlocking = false;
         getHitCoroutine = null;
-        enemy.enemyMovementAI.enemyPhase = EnemyPhase.Patrol;
+        enemy.enemyMovementAI.enemyPhase = EnemyPhase.Chase;
     }
 
     /// <summary>
@@ -464,6 +472,14 @@ public class Health : MonoBehaviour
     public int GetStartingHealth()
     {
         return startingHealth;
+    }
+
+    /// <summary>
+    /// Get current health
+    /// </summary>
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
     }
 
     /// <summary>

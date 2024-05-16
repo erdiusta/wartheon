@@ -29,6 +29,10 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public bool hasAttackMove;
     #region Tooltip
+    [Tooltip("Check the duration of the enemy prepare for attack")]
+    #endregion
+    public float preAttackDuration = 1f;
+    #region Tooltip
     [Tooltip("Distance to the player for attack triggering")]
     #endregion
     public float attackMoveTriggerDistance = 3f;

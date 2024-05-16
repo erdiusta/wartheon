@@ -4,7 +4,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class SoundEffect : MonoBehaviour
 {
-    AudioSource audioSource;
+    [HideInInspector] public AudioSource audioSource;
 
     private void Awake()
     {

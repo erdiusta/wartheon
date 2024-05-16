@@ -15,7 +15,6 @@ public class EnemyMovementAI : MonoBehaviour
     [HideInInspector] public float moveSpeed;
     [HideInInspector] public int updateFrameNumber = 1; // default value.  This is set by the enemy spawner
     [HideInInspector] public bool chasePlayer = false;
-    [HideInInspector] public Coroutine preAttackEnemyRoutine;
     [HideInInspector] public Coroutine attackMoveEnemyRoutine;
     [HideInInspector] public Coroutine chaseMoveEnemyRoutine;
     [HideInInspector] public Coroutine patrolMoveEnemyRoutine;
@@ -32,6 +31,7 @@ public class EnemyMovementAI : MonoBehaviour
     Coroutine aimAndShootRoutine;
     Coroutine idleRoutine;
     float attackMoveTimer;
+    float dashTimer;
     float currentEnemyChasePathRebuildCooldown;
     float currentEnemyPatrolPathRebuildCooldown;
     WaitForFixedUpdate waitForFixedUpdate;
@@ -40,6 +40,7 @@ public class EnemyMovementAI : MonoBehaviour
     float knockbackTimeWeight;
     Room currentRoom;
     bool isPreAttacking;
+    Vector3 lockedVector;
 
     private void Awake()
     {
@@ -72,6 +73,11 @@ public class EnemyMovementAI : MonoBehaviour
     private void Update()
     {
         attackMoveTimer -= Time.deltaTime;
+        dashTimer += Time.deltaTime;
+
+        // Movement cooldown timer
+        currentEnemyChasePathRebuildCooldown -= Time.deltaTime;
+        currentEnemyPatrolPathRebuildCooldown -= Time.deltaTime;
 
         // If enemy hits wall, stop all coroutines
         Vector3Int enemyCellPosition = new Vector3Int(currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).x,
@@ -83,20 +89,15 @@ public class EnemyMovementAI : MonoBehaviour
         if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 0 || currentRoom.instantiatedRoom.
             GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) > 1)
         {
-            if (preAttackEnemyRoutine != null)
-            {
-                StopCoroutine(preAttackEnemyRoutine);
-                preAttackEnemyRoutine = null;
-            }
-            if (attackMoveEnemyRoutine != null)
-            {
-                StopCoroutine(attackMoveEnemyRoutine);
-                attackMoveEnemyRoutine = null;
-            }
             if (chaseMoveEnemyRoutine != null)
             {
                 StopCoroutine(chaseMoveEnemyRoutine);
                 chaseMoveEnemyRoutine = null;
+            }
+            if (patrolMoveEnemyRoutine != null)
+            {
+                StopCoroutine(patrolMoveEnemyRoutine);
+                patrolMoveEnemyRoutine = null;
             }
             if (idleRoutine != null)
             {
@@ -152,11 +153,6 @@ public class EnemyMovementAI : MonoBehaviour
                 chaseMoveEnemyRoutine = null;
                 movementSteps.Clear();
             }
-            if (preAttackEnemyRoutine != null)
-            {
-                StopCoroutine(preAttackEnemyRoutine);
-                preAttackEnemyRoutine = null;
-            }
             if (attackMoveEnemyRoutine != null)
             {
                 StopCoroutine(attackMoveEnemyRoutine);
@@ -175,12 +171,8 @@ public class EnemyMovementAI : MonoBehaviour
         }
         else
         {
-            if (isPreAttacking) return;
-
             if (moveStatus != MoveStatus.Stagger && moveStatus != MoveStatus.Stun)
             {
-                Vector3 direction = (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
-
                 Perform();
 
                 switch (enemyPhase)
@@ -211,7 +203,10 @@ public class EnemyMovementAI : MonoBehaviour
                             patrolSteps.Clear();
                         }
 
-                        Chase();
+                        if (currentEnemyChasePathRebuildCooldown <= 0f)
+                        {
+                            Chase();
+                        }
 
                         break;
 
@@ -226,18 +221,13 @@ public class EnemyMovementAI : MonoBehaviour
 
                         break;
 
-                    case EnemyPhase.PreAttack:
-
-                        if (preAttackEnemyRoutine == null)
-                        {
-                            preAttackEnemyRoutine = StartCoroutine(PreAttackMoveRoutine(direction));
-                        }
-
-                        break;
-
                     case EnemyPhase.Attack:
 
-                        enemy.animateEnemy.SetAttackAnimationParameters();
+                        if (attackMoveTimer > 0f) return;
+
+                        Vector3 direction = (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
+
+                        lockedVector = direction;
 
                         if (enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
                         {
@@ -258,7 +248,7 @@ public class EnemyMovementAI : MonoBehaviour
                                 enemy.animateEnemy.SetIdleAnimationParameters();
                                 enemy.animator.SetBool(Settings.attackMotion, true);
 
-                                if (aimAndShootRoutine == null && enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
+                                if (aimAndShootRoutine == null)
                                 {
                                     aimAndShootRoutine = StartCoroutine(AimAndShootRoutine());
                                 }
@@ -270,12 +260,10 @@ public class EnemyMovementAI : MonoBehaviour
                             }
                         }
 
-                        if (preAttackEnemyRoutine == null && enemyDetails.enemyBehaviour != EnemyBehaviour.AimAndShoot)
+                        // Only start the attack move routine if it's not already in progress
+                        if (attackMoveEnemyRoutine == null && enemyDetails.enemyBehaviour != EnemyBehaviour.AimAndShoot)
                         {
-                            if (attackMoveEnemyRoutine == null)
-                            {
-                                attackMoveEnemyRoutine = StartCoroutine(AttackMoveRoutine(direction));
-                            }
+                            attackMoveEnemyRoutine = StartCoroutine(AttackMoveRoutine());
                         }
 
                         break;
@@ -289,10 +277,6 @@ public class EnemyMovementAI : MonoBehaviour
 
     private void Perform()
     {
-        // Movement cooldown timer
-        currentEnemyChasePathRebuildCooldown -= Time.deltaTime;
-        currentEnemyPatrolPathRebuildCooldown -= Time.deltaTime;
-
         // Only process A Star path rebuild on certain frames to spread the load between enemies
         if (Time.frameCount % Settings.targetFrameRateToSpreadPathfindingOver != updateFrameNumber) return;
 
@@ -334,7 +318,7 @@ public class EnemyMovementAI : MonoBehaviour
         currentPatrolIndex = Random.Range(0, currentRoom.spawnPositionArray.Length);
 
         // Create path for patrol
-        CreatePath(ref currentPatrolIndex);
+        CreatePath(currentPatrolIndex);
 
         // If a path has been found, move the enemy
         if (patrolSteps != null)
@@ -385,21 +369,8 @@ public class EnemyMovementAI : MonoBehaviour
             if (enemy.enemyDetails.hasAttackMove && Vector3.Distance(GameManager.Instance.GetPlayer().GetPlayerPosition(), transform.position) <
                 enemy.enemyDetails.attackMoveTriggerDistance)
             {
-                if (chaseMoveEnemyRoutine != null)
-                {
-                    movementSteps.Clear();
-                    StopCoroutine(chaseMoveEnemyRoutine);
-                    chaseMoveEnemyRoutine = null;
-                }
-
-                if (preAttackEnemyRoutine == null)
-                {
-                    enemyPhase = EnemyPhase.PreAttack;
-                }
-                else
-                {
-                    enemyPhase = EnemyPhase.Chase;
-                }
+                enemyPhase = EnemyPhase.Attack;
+                enemy.animateEnemy.ResetAnimatonParameters();
             }
         }
     }
@@ -407,7 +378,7 @@ public class EnemyMovementAI : MonoBehaviour
     /// <summary>
     /// Use the AStar static class to create a path for the enemy - patrol
     /// </summary>
-    private void CreatePath(ref int currentPatrolIndex)
+    private void CreatePath(int currentPatrolIndex)
     {
         Grid grid = currentRoom.instantiatedRoom.grid;
 
@@ -481,6 +452,7 @@ public class EnemyMovementAI : MonoBehaviour
             while (Vector3.Distance(nextPosition, transform.position) > 0.2f)
             {
                 // Trigger movement and animations
+                enemy.animateEnemy.ResetAnimatonParameters();
                 enemy.movementToPosition.PatrolMoveRigidbodyByPosition(nextPosition, transform.position, moveSpeed);
                 enemy.animateEnemy.SetMovementAnimationParameters();
 
@@ -490,9 +462,9 @@ public class EnemyMovementAI : MonoBehaviour
                 if (enemy.enemyWeaponAI.enemyAttackCoroutine != null || enemy.health.getHitCoroutine != null || attackMoveEnemyRoutine != null ||
                     idleRoutine != null)
                 {
-                    nextPosition = transform.position;
+                    //nextPosition = transform.position;
 
-                    if (patrolSteps != null)
+                    if (patrolSteps != null)    
                     {
                         patrolSteps.Clear();
                     }
@@ -563,55 +535,57 @@ public class EnemyMovementAI : MonoBehaviour
     }
 
     /// <summary>
-    /// Make special move - PreAttack phase 
+    /// Make special move - Attack phase 
     /// </summary>
-    IEnumerator PreAttackMoveRoutine(Vector3 vector)
+    IEnumerator AttackMoveRoutine()
     {
-        if (attackMoveTimer < 0f)
+        // Initialize vectors, angles, directions and aim
+        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
+        enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
+        enemy.animateEnemy.InitializeAimAnimationParameters();
+        enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
+        enemy.animateEnemy.SetAttackAnimationParameters();
+
+        if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.PrepareAndDash)
         {
-            // Initialize vectors, angles, directions and aim
-            float unitAngle = HelperUtilities.GetAngleFromVector(vector);
-            AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-            enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
-            enemy.animateEnemy.InitializeAimAnimationParameters();
-            enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
             enemy.idle.StopVelocity();
             isPreAttacking = true;
 
             yield return waitForFixedUpdate;
 
-            // After aim, direction locked and speed is zero make the next step
-            if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.PrepareAndDash)
+            if (isPreAttacking)
             {
                 // Attack animation pre-attack phase
-                enemy.animateEnemy.SetAttackAnimationParameters();
                 enemy.animator.SetBool(Settings.attackMotion, false);
                 enemy.animator.SetBool(Settings.preAttackMotion, true);
 
-                yield return new WaitForSeconds(0.6f);
+                yield return new WaitForSeconds(enemy.enemyDetails.preAttackDuration);
 
                 enemy.animator.SetBool(Settings.preAttackMotion, false);
+                isPreAttacking = false;
             }
-
-            isPreAttacking = false;
-            enemy.animator.SetBool(Settings.attackMotion, true);
-
-            enemyPhase = EnemyPhase.Attack;
-            preAttackEnemyRoutine = null;
         }
-    }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
 
-    /// <summary>
-    /// Make special move - Attack phase 
-    /// </summary>
-    IEnumerator AttackMoveRoutine(Vector3 vector)
-    {
-        // minDistance used to decide when to exit coroutine loop
-        float minDistance = 0.2f;
-        Vector3 targetPosition = transform.position + vector * enemyDetails.attackMoveEfficentDistance;
+        dashTimer = 0f;
+
+        yield return null;
 
         // Attack animation attack phase
-        while (Vector3.Distance(transform.position, targetPosition) > minDistance)
+        enemy.animateEnemy.SetAttackAnimationParameters();
+        enemy.animator.SetBool(Settings.preAttackMotion, false);
+        enemy.animator.SetBool(Settings.attackMotion, true);
+
+        // minDistance used to decide when to exit coroutine loop
+        float minDistance = 0.2f;
+        Vector3 targetPosition = transform.position + lockedVector * enemyDetails.attackMoveEfficentDistance;
+
+        // Attack animation attack phase
+        while (Vector3.Distance(transform.position, targetPosition) > minDistance && dashTimer <= 0.7f)
         {
             // Check if the current tile is an obstacle (penalty value = 0)
             Vector3Int enemyCellPosition = new Vector3Int(currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).x,
@@ -619,8 +593,8 @@ public class EnemyMovementAI : MonoBehaviour
             Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
                 enemyCellPosition.y - currentRoom.templateLowerBounds.y);
 
-            if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 0 ||
-                currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) > 1)
+            // Break out of the loop if the stepped tile is not a preferred tile
+            if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) != 1)
             {
                 // If the enemy collides with an obstacle or second-choice tile, transition to the appropriate phase
                 enemyPhase = EnemyPhase.Patrol;
@@ -628,27 +602,23 @@ public class EnemyMovementAI : MonoBehaviour
                 break;
             }
 
-            // Check if the current tile is preferred (penalty value = 1)
-            if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 1)
-            {
-                // Move towards the target position
-                enemy.movementToPosition.AttackMoveRigidbodyByPosition(vector, moveSpeed * 2.5f);
-            }
+            // Move towards the target position
+            enemy.movementToPosition.AttackMoveRigidbodyByPosition(lockedVector, moveSpeed * 1.5f);
 
             // yield and wait for fixed update
-            yield return waitForFixedUpdate;        
+            yield return waitForFixedUpdate;
         }
 
         // Set cooldown timer
-        attackMoveTimer = enemy.enemyDetails.attackMoveCooldown;
+        attackMoveTimer = enemy.enemyDetails.attackMoveCooldown + enemy.enemyDetails.preAttackDuration;
 
-        // Reset animation parameters and transition to the appropriate phase
-        enemy.idle.StopVelocity();
-        enemy.animateEnemy.SetIdleAnimationParameters();
+        // Check the previous phase and transition accordingly
         enemyPhase = EnemyPhase.Chase;
 
         // Reset the coroutine reference
         attackMoveEnemyRoutine = null;
+
+        yield return null;
     }
 
     /// <summary>

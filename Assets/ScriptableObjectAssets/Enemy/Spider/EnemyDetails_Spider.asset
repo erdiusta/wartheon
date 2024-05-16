@@ -93,4 +93,4 @@ MonoBehaviour:
   dropSpawnChanceMin: 40
   dropSpawnChanceMax: 60
   numberOfItemsToSpawnMin: 1
-  numberOfItemsToSpawnMax: 2
+  numberOfItemsToSpawnMax: 1

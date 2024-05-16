@@ -58,6 +58,8 @@ MonoBehaviour:
   musicLowSnapshot: {fileID: -3696781970601211204, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   musicOffSnapshot: {fileID: -3379933783261973729, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   soundMasterMixerGroup: {fileID: -1070493446473311056, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
+  openBookSoundEffect: {fileID: 11400000, guid: 410e9bb2402a01a48b3cabc627f11701, type: 2}
+  closeBookSoundEffect: {fileID: 11400000, guid: ddebddc112a095147a3e5177f8ab94b1, type: 2}
   doorOpenCloseSoundEffect: {fileID: 11400000, guid: 58ec3915700e1db40b117db8be25656d, type: 2}
   chestOpen: {fileID: 11400000, guid: 5521acb02156e2d4c968c446b47c06f7, type: 2}
   healthPickup: {fileID: 11400000, guid: 4638ce053d31bdd4595c3991e645fac9, type: 2}
@@ -72,6 +74,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2b105dd9937088a408df34b6f771aaa9, type: 2}
   - {fileID: 11400000, guid: 902803a8e0c14114596584de9600dc6b, type: 2}
   preferredEnemyPathTile: {fileID: 11400000, guid: a8f63dbc7bc1f46479620586f36f00e0, type: 2}
+  bookWeaponSlot: {fileID: 5499570960415012034, guid: 57827440d6b492d4c8b2c2c7723f9158, type: 3}
   heartPrefab: {fileID: 7585392605064363868, guid: becfc86faf78d674f92971eda671b95a, type: 3}
   halfHeartPrefab: {fileID: 7585392605064363868, guid: 8386f841730857947b3db24aa3a75bbe, type: 3}
   projectileIconPrefab: {fileID: 3767299040992984232, guid: 13d7dc9c29e09c54089f573a4705eaaa, type: 3}

@@ -130,8 +130,8 @@ public class AnimateEnemy : MonoBehaviour
     public void SetAttackAnimationParameters()
     {
         // Adjust animator layer weights
-        enemy.animator.SetLayerWeight(baseLayerIndex, 0.3f);
-        enemy.animator.SetLayerWeight(attackLayerIndex, 0.7f);
+        enemy.animator.SetLayerWeight(baseLayerIndex, 0f);
+        enemy.animator.SetLayerWeight(attackLayerIndex, 1f);
         enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
         enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
 

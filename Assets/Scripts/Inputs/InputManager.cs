@@ -18,4 +18,6 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference nextLevel;
     public InputActionReference interaction;
     public InputActionReference specialMove;
+    public InputActionReference bookView;
+    public InputActionReference activeItem;
 }

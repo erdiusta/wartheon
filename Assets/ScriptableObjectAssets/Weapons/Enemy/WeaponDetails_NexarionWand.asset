@@ -19,7 +19,7 @@ MonoBehaviour:
   weaponClass: 5
   wieldType: 1
   canKillSuddenly: 0
-  suddenKillChance: 0.1
+  suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 0

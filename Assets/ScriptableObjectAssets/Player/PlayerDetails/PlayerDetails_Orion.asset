@@ -30,6 +30,9 @@ MonoBehaviour:
   applyScreenShake: 0
   shakeIntensity: 0
   shakeDuration: 0
+  selectedActiveItem: {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
+  activeItemsList:
+  - {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
   playerArmorValue: 2
   startingWeapon: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
   rightHandAnimatorController: {fileID: 9100000, guid: fdb61ba75457ab049a7d1bcf42030730, type: 2}
@@ -38,3 +41,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: 2e3dd1dee1d5ea546828fba96743f843, type: 3}
   playerHandSprite: {fileID: 1585005775, guid: 1ccdf010dd5235241a18978e1a326c1d, type: 3}
+  playerBookSprite: {fileID: 1332110262, guid: ec762a820a0363545bbd2e3ac22442ea, type: 3}

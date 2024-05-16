@@ -22,6 +22,7 @@ using System.Linq;
 [RequireComponent(typeof(MeleeAttackLeftHand))]
 [RequireComponent(typeof(SetActiveWeaponEvent))]
 [RequireComponent(typeof(ActiveWeapon))]
+[RequireComponent(typeof(SelectedActiveItem))]
 [RequireComponent(typeof(WeaponFiredEvent))]
 [RequireComponent(typeof(WeaponFiredEvent))]
 [RequireComponent(typeof(ReloadWeaponEvent))]
@@ -56,6 +57,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public SetActiveWeaponEvent setActiveWeaponEvent;
     [HideInInspector] public AimWeapon aimWeapon;
     [HideInInspector] public ActiveWeapon activeWeapon;
+    [HideInInspector] public SelectedActiveItem selectedActiveItem;
     [HideInInspector] public WeaponFiredEvent weaponFiredEvent;
     [HideInInspector] public ReloadWeaponEvent reloadWeaponEvent;
     [HideInInspector] public WeaponReloadedEvent weaponReloadedEvent;
@@ -78,6 +80,10 @@ public class Player : MonoBehaviour
     public ParticleSystem specialMoveParticlesSystem;
     public List<Weapon> weaponRightHandList = new List<Weapon>();
     public List<Weapon> weaponLeftHandList = new List<Weapon>();
+    public HashSet<Sprite> weaponBookMainHandHashSet = new HashSet<Sprite>();
+    public HashSet<Sprite> weaponBookOffHandHashSet = new HashSet<Sprite>();
+
+    bool isOnAwake = false;
 
     private void Awake()
     {
@@ -92,6 +98,7 @@ public class Player : MonoBehaviour
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
         aimWeapon = GetComponent<AimWeapon>();
         activeWeapon = GetComponent<ActiveWeapon>();
+        selectedActiveItem = GetComponent<SelectedActiveItem>();
         weaponFiredEvent = GetComponent<WeaponFiredEvent>();
         reloadWeaponEvent = GetComponent<ReloadWeaponEvent>();
         weaponReloadedEvent = GetComponent<WeaponReloadedEvent>();
@@ -112,13 +119,18 @@ public class Player : MonoBehaviour
     /// </summary>
     public void Initialize(PlayerDetailsSO playerDetails)
     {
+        isOnAwake = true;
         this.playerDetails = playerDetails;
 
         //Create player starting weapons
         CreatePlayerStartingWeapons();
 
+        //Create player active item
+        CreatePlayerStartingActiveItem();
+
         // Set player starting health
         SetPlayerHealth();
+        isOnAwake = false;
     }
 
     private void OnEnable()
@@ -156,6 +168,8 @@ public class Player : MonoBehaviour
         // Clear list
         weaponRightHandList.Clear();
         weaponLeftHandList.Clear();
+        weaponBookMainHandHashSet.Clear();
+        weaponBookOffHandHashSet.Clear();
 
         // Populate weapon list from starting weapons for right hand and shield for left hand if have any
         foreach (WeaponDetailsSO weaponDetails in playerDetails.startingWeaponList)
@@ -166,6 +180,14 @@ public class Player : MonoBehaviour
         }
 
         AddLeftHandWeaponForSameOneHandedTypesWithRightHand();
+    }
+
+    /// <summary>
+    /// Set the player starting active item
+    /// </summary>
+    private void CreatePlayerStartingActiveItem()
+    {
+        AddActiveItemToPlayer(playerDetails.selectedActiveItem, false);
     }
 
     /// <summary>
@@ -200,6 +222,29 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
+    /// Add an active item to the player
+    /// </summary>
+    public ActiveItem AddActiveItemToPlayer(ActiveItemDetailsSO activeItemDetails, bool updateHappenedAfterNewItemCollected)
+    {
+        ActiveItem activeItem = new ActiveItem
+        {
+            activeItemDetails = activeItemDetails,
+            activeItemRemainingProjectile = activeItemDetails.activeItemProjectileCapacity,
+            isReturning = false
+        };
+
+        PopulateActiveItemsToBook(activeItemDetails.activeItemSprite);
+
+        if (!updateHappenedAfterNewItemCollected)
+        {
+            // Set the added active item as active
+            setActiveWeaponEvent.CallSelectedActiveItem(activeItem);
+        }
+
+        return activeItem;
+    }
+
+    /// <summary>
     /// Add a weapon to the right hand of player weapon list
     /// </summary>
     public Weapon AddRightHandWeaponToPlayer(WeaponDetailsSO weaponDetails, bool updateHappenedAfterNewItemCollected)
@@ -218,6 +263,11 @@ public class Player : MonoBehaviour
         {
             // Add the weapon to the list
             weaponRightHandList.Add(weapon);
+            if (!weaponBookMainHandHashSet.Contains(weapon.weaponDetails.weaponFrontSprite) && !isOnAwake)
+            {
+                weaponBookMainHandHashSet.Add(weaponDetails.weaponFrontSprite);
+                PopulateMainHandWeaponsToBook(weaponDetails.weaponFrontSprite);
+            }
 
             // Set weapon position in list
             weapon.weaponRightHandListPosition = weaponRightHandList.Count;
@@ -256,6 +306,11 @@ public class Player : MonoBehaviour
 
             // Add the weapon to the left hand list if it is a shield type
             weaponLeftHandList.Add(weapon);
+            if (!weaponBookOffHandHashSet.Contains(weapon.weaponDetails.weaponFrontSprite) && !isOnAwake)
+            {
+                weaponBookOffHandHashSet.Add(weaponDetails.weaponFrontSprite);
+                PopulateOffHandWeaponsToBook(weapon.weaponDetails.weaponFrontSprite);
+            }
 
             // Set weapon position in list
             weapon.weaponLeftHandListPosition = weaponLeftHandList.Count;
@@ -294,6 +349,14 @@ public class Player : MonoBehaviour
                 {
                     // If it's a duplicate, add it to the left hand list
                     weaponLeftHandList.Add(weapon);
+
+                    if (!weaponBookOffHandHashSet.Contains(weapon.weaponDetails.weaponFrontSprite) && !isOnAwake &&
+                        weapon.weaponDetails.wieldType != WieldType.TwoHanded && weapon.weaponDetails.weaponClass != WeaponClass.Spear
+                        && weapon.weaponDetails.weaponClass != WeaponClass.Shield)
+                    {
+                        weaponBookOffHandHashSet.Add(weapon.weaponDetails.weaponFrontSprite);
+                        PopulateOffHandWeaponsToBook(weapon.weaponDetails.weaponFrontSprite);
+                    }
                 }
             }
         }
@@ -368,5 +431,23 @@ public class Player : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void PopulateMainHandWeaponsToBook(Sprite sprite)
+    {
+        StaticEventHandler.CallWeaponAddedToMainHandBook(sprite);
+    }
+
+    private void PopulateOffHandWeaponsToBook(Sprite sprite)
+    {
+        if (weaponBookOffHandHashSet.Count > 0)
+        {
+            StaticEventHandler.CallWeaponAddedToOffHandBook(sprite);
+        }
+    }
+
+    private void PopulateActiveItemsToBook(Sprite sprite)
+    {
+        StaticEventHandler.CallItemAddedToActiveItemSlot(sprite);
     }
 }

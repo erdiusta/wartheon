@@ -31,6 +31,15 @@ AnimationClip:
     classID: 212
     script: {fileID: 0}
     flags: 2
+  - serializedVersion: 2
+    curve:
+    - time: 0
+      value: {fileID: 1585005775, guid: 1ccdf010dd5235241a18978e1a326c1d, type: 3}
+    attribute: m_Sprite
+    path: RightWeaponAnchorPosition/RightWeaponRotationPoint/Weapon/HandForTwoHandWeapon
+    classID: 212
+    script: {fileID: 0}
+    flags: 2
   m_SampleRate: 12
   m_WrapMode: 0
   m_Bounds:
@@ -47,10 +56,20 @@ AnimationClip:
       isPPtrCurve: 1
       isIntCurve: 0
       isSerializeReferenceCurve: 0
+    - serializedVersion: 2
+      path: 4291196174
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
     pptrCurveMapping:
     - {fileID: 170218179, guid: 1deeb6ffd1484a540991ae8e026b0370, type: 3}
     - {fileID: 1932028442, guid: 1deeb6ffd1484a540991ae8e026b0370, type: 3}
     - {fileID: 2057229905, guid: 1deeb6ffd1484a540991ae8e026b0370, type: 3}
+    - {fileID: 1585005775, guid: 1ccdf010dd5235241a18978e1a326c1d, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

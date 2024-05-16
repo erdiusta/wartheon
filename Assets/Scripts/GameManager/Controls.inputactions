@@ -103,6 +103,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Book View",
+                    "type": "Button",
+                    "id": "7dc35769-e66a-4a05-b64f-65457e84e1cd",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Active Item",
+                    "type": "Button",
+                    "id": "e519b454-f121-4a2a-83d1-e7e4bcf37a0a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -323,6 +341,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Special Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9005a554-be1b-4f34-912e-4a59d030f8d8",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Book View",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1731449d-00a5-43c3-a4f4-711df9d74d92",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active Item",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

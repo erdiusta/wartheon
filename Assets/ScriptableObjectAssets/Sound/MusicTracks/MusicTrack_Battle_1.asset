@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: MusicTrack_Battle_1
   m_EditorClassIdentifier: 
   musicName: Battle 1
-  musicClip: {fileID: 8300000, guid: f11da48cc43fb924ea6bd4c840cdfbf6, type: 3}
-  musicVolume: 0.7
+  musicClip: {fileID: 8300000, guid: a3f7b450867897741b3dc19539c2e9b9, type: 3}
+  musicVolume: 1

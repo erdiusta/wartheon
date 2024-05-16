@@ -92,6 +92,14 @@ public class GameResources : MonoBehaviour
     #endregion
     public AudioMixerGroup soundMasterMixerGroup;
     #region Tooltip
+    [Tooltip("Open book sound effect")]
+    #endregion Tooltip
+    public SoundEffectSO openBookSoundEffect;
+    #region Tooltip
+    [Tooltip("Close book sound effect")]
+    #endregion Tooltip
+    public SoundEffectSO closeBookSoundEffect;
+    #region Tooltip
     [Tooltip("Door open close sound effect")]
     #endregion Tooltip
     public SoundEffectSO doorOpenCloseSoundEffect;
@@ -145,6 +153,15 @@ public class GameResources : MonoBehaviour
     [Tooltip("Preferred path tile for enemy navigation")]
     #endregion Tooltip
     public TileBase preferredEnemyPathTile;
+
+    #region Header UI
+    [Space(10)]
+    [Header("Book UI")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Populate with book item image prefab")]
+    #endregion
+    public GameObject bookWeaponSlot;
 
     #region Header UI
     [Space(10)]

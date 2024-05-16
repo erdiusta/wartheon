@@ -109,6 +109,14 @@ public class MovementByVelocity : MonoBehaviour
     }
 
     /// <summary>
+    /// Get current move speed
+    /// </summary>
+    public int GetCurrentMoveSpeed()
+    {
+        return (int)moveSpeed;
+    }
+
+    /// <summary>
     /// Neutralize Status on room changed
     /// </summary>
     private void NeutralizeStatus(RoomChangedEventArgs roomChangedEventArgs)

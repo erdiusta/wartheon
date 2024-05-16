@@ -14,7 +14,10 @@ public class CircleOrigin : MonoBehaviour
 
     private void Update()
     {
-        circleRadius = player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.circleRadius;
+        if (GetComponentInParent<Projectile>() == null)
+        {
+            circleRadius = player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.circleRadius;
+        }
     }
 
     private void OnDrawGizmosSelected()

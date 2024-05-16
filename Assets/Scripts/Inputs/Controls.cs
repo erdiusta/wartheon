@@ -125,6 +125,24 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Book View"",
+                    ""type"": ""Button"",
+                    ""id"": ""7dc35769-e66a-4a05-b64f-65457e84e1cd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Active Item"",
+                    ""type"": ""Button"",
+                    ""id"": ""e519b454-f121-4a2a-83d1-e7e4bcf37a0a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -347,6 +365,28 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Special Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9005a554-be1b-4f34-912e-4a59d030f8d8"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Book View"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1731449d-00a5-43c3-a4f4-711df9d74d92"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Active Item"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -366,6 +406,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_NextLevel = m_PlayerInput.FindAction("Next Level", throwIfNotFound: true);
         m_PlayerInput_Interaction = m_PlayerInput.FindAction("Interaction", throwIfNotFound: true);
         m_PlayerInput_SpecialMove = m_PlayerInput.FindAction("Special Move", throwIfNotFound: true);
+        m_PlayerInput_BookView = m_PlayerInput.FindAction("Book View", throwIfNotFound: true);
+        m_PlayerInput_ActiveItem = m_PlayerInput.FindAction("Active Item", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -438,6 +480,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_NextLevel;
     private readonly InputAction m_PlayerInput_Interaction;
     private readonly InputAction m_PlayerInput_SpecialMove;
+    private readonly InputAction m_PlayerInput_BookView;
+    private readonly InputAction m_PlayerInput_ActiveItem;
     public struct PlayerInputActions
     {
         private @Controls m_Wrapper;
@@ -453,6 +497,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @NextLevel => m_Wrapper.m_PlayerInput_NextLevel;
         public InputAction @Interaction => m_Wrapper.m_PlayerInput_Interaction;
         public InputAction @SpecialMove => m_Wrapper.m_PlayerInput_SpecialMove;
+        public InputAction @BookView => m_Wrapper.m_PlayerInput_BookView;
+        public InputAction @ActiveItem => m_Wrapper.m_PlayerInput_ActiveItem;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -495,6 +541,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @SpecialMove.started += instance.OnSpecialMove;
             @SpecialMove.performed += instance.OnSpecialMove;
             @SpecialMove.canceled += instance.OnSpecialMove;
+            @BookView.started += instance.OnBookView;
+            @BookView.performed += instance.OnBookView;
+            @BookView.canceled += instance.OnBookView;
+            @ActiveItem.started += instance.OnActiveItem;
+            @ActiveItem.performed += instance.OnActiveItem;
+            @ActiveItem.canceled += instance.OnActiveItem;
         }
 
         private void UnregisterCallbacks(IPlayerInputActions instance)
@@ -532,6 +584,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @SpecialMove.started -= instance.OnSpecialMove;
             @SpecialMove.performed -= instance.OnSpecialMove;
             @SpecialMove.canceled -= instance.OnSpecialMove;
+            @BookView.started -= instance.OnBookView;
+            @BookView.performed -= instance.OnBookView;
+            @BookView.canceled -= instance.OnBookView;
+            @ActiveItem.started -= instance.OnActiveItem;
+            @ActiveItem.performed -= instance.OnActiveItem;
+            @ActiveItem.canceled -= instance.OnActiveItem;
         }
 
         public void RemoveCallbacks(IPlayerInputActions instance)
@@ -562,5 +620,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnNextLevel(InputAction.CallbackContext context);
         void OnInteraction(InputAction.CallbackContext context);
         void OnSpecialMove(InputAction.CallbackContext context);
+        void OnBookView(InputAction.CallbackContext context);
+        void OnActiveItem(InputAction.CallbackContext context);
     }
 }

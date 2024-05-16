@@ -17,8 +17,9 @@ MonoBehaviour:
   movementDetails: {fileID: 11400000, guid: 6f633f705e9bde84ba5ee31559f34b80, type: 2}
   chaseDistance: 8
   hasAttackMove: 1
+  preAttackDuration: 0.6
   attackMoveTriggerDistance: 3.5
-  attackMoveEfficentDistance: 3
+  attackMoveEfficentDistance: 2
   attackMoveCooldown: 4
   enemyBehaviour: 2
   isEnemyBoss: 0
@@ -93,4 +94,4 @@ MonoBehaviour:
   dropSpawnChanceMin: 50
   dropSpawnChanceMax: 70
   numberOfItemsToSpawnMin: 1
-  numberOfItemsToSpawnMax: 2
+  numberOfItemsToSpawnMax: 1

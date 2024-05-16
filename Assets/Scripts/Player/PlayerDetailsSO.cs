@@ -97,6 +97,19 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public float shakeDuration = 0.5f;
 
+    #region Header ACTIVE
+    [Space(10)]
+    [Header("ACTIVE")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Player's current active item")]
+    #endregion
+    public ActiveItemDetailsSO selectedActiveItem;
+    #region Tooltip
+    [Tooltip("Player's active items list")]
+    #endregion
+    public List<ActiveItemDetailsSO> activeItemsList;
+
     #region Header PASSIVE
     [Space(10)]
     [Header("PASSIVE")]
@@ -140,6 +153,10 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Player hand sprite")]
     #endregion
     public Sprite playerHandSprite;
+    #region Tooltip
+    [Tooltip("Player book sprite")]
+    #endregion
+    public Sprite playerBookSprite;
 
     #region Validation
 #if UNITY_EDITOR

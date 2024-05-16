@@ -15,9 +15,7 @@ MonoBehaviour:
   soundEffectName: Barrel Breaking
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: c61eff5e574bcb04fb0861107d8a825f, type: 3}
-  - {fileID: 8300000, guid: c99729ee2b62c9b40a89fd65fe585950, type: 3}
-  - {fileID: 8300000, guid: b6ca91f232c08d54cbbf990cde0b0263, type: 3}
+  - {fileID: 8300000, guid: 546c1720fc1384a45b97fa22a45e402e, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1
   soundEffectVolume: 0.5

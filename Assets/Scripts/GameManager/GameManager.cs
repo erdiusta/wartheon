@@ -22,6 +22,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     #endregion Tooltip
     [SerializeField] CanvasGroup canvasGroup;
 
+    public GameObject bookView;
+    public GameObject bookCover;
+
     #region Header DUNGEON LEVELS
     [Space(10)]
     [Header("DUNGEON LEVELS")]
@@ -116,12 +119,33 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         previousGameState = GameState.gameStarted;
         gameState = GameState.gameStarted;
 
+        bookCover.SetActive(false);
+        bookView.SetActive(false);
+
         // Set screen to black
         StartCoroutine(Fade(0f, 1f, 0f, Color.black));
     }
 
     private void Update()
     {
+        if (InputManager.Instance.bookView.action.WasPressedThisFrame())
+        {
+            if (bookView.activeSelf)
+            {
+                bookView.SetActive(false);
+                bookCover.SetActive(false);
+                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+                Time.timeScale = 1;
+            }
+            else
+            {
+                bookView.SetActive(true);
+                bookCover.SetActive(true);
+                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.openBookSoundEffect);
+                Time.timeScale = 0;
+            }
+        }
+
         HandleGameState();
     }
 

@@ -17,6 +17,7 @@ MonoBehaviour:
   movementDetails: {fileID: 11400000, guid: 83dbceefafb85d548a043660c57a38ce, type: 2}
   chaseDistance: 10
   hasAttackMove: 1
+  preAttackDuration: 1
   attackMoveTriggerDistance: 6
   attackMoveEfficentDistance: 3
   attackMoveCooldown: 4
@@ -30,7 +31,7 @@ MonoBehaviour:
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 1
-  stunChance: 0.3
+  stunChance: 0.2
   hasBleedingDamage: 0
   bleedingChance: 0
   hasSlowDamage: 0

@@ -1,4 +1,6 @@
 using System;
+using UnityEditor;
+using UnityEngine;
 
 public static class StaticEventHandler
 {
@@ -25,6 +27,38 @@ public static class StaticEventHandler
     {
         OnCameraShaken?.Invoke(new CameraShakeArgs { shakeIntensity = shakeIntensity, shakeDuration = shakeDuration });
     }
+
+    // Weapon added to main hand on book event
+    public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToMainHandBook;
+
+    public static void CallWeaponAddedToMainHandBook(Sprite weaponSprite)
+    {
+        OnWeaponAddedToMainHandBook?.Invoke(new WeaponAddedToBookArgs { weaponSprite = weaponSprite});
+    }
+
+    // Weapon added to off-hand on book event
+    public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToOffHandBook;
+
+    public static void CallWeaponAddedToOffHandBook(Sprite weaponSprite)
+    {
+        OnWeaponAddedToOffHandBook?.Invoke(new WeaponAddedToBookArgs { weaponSprite = weaponSprite});
+    }
+
+    // Item added to active item slot on book event
+    public static event Action<ItemAddedToBookArgs> OnItemAddedToActiveItemSlot;
+
+    public static void CallItemAddedToActiveItemSlot(Sprite itemSprite)
+    {
+        OnItemAddedToActiveItemSlot?.Invoke(new ItemAddedToBookArgs { itemSprite = itemSprite });
+    }
+
+    // Health change on book event
+    public static event Action<HealthChangedArgs> OnBookHealthChanged;
+
+    public static void CallBookHealthChangedEvent(int currentHealth)
+    {
+        OnBookHealthChanged?.Invoke(new HealthChangedArgs { currentHealth = currentHealth });
+    }
 }
 
 public class RoomChangedEventArgs : EventArgs
@@ -41,4 +75,19 @@ public class CameraShakeArgs : EventArgs
 {
     public float shakeIntensity;
     public float shakeDuration;
+}
+
+public class WeaponAddedToBookArgs : EventArgs
+{
+    public Sprite weaponSprite;
+}
+
+public class ItemAddedToBookArgs : EventArgs
+{
+    public Sprite itemSprite;
+}
+
+public class HealthChangedArgs : EventArgs
+{
+    public int currentHealth;
 }

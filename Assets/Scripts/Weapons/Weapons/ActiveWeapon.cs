@@ -123,7 +123,7 @@ public class ActiveWeapon : MonoBehaviour
                 weaponLeftHandAnimator.enabled = false;
                 leftHandAnchorPosition.gameObject.SetActive(false);
             }
-            else if (currentRightHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded)
+            else if (currentRightHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded && currentRightHandWeapon.weaponDetails.weaponName != "Crossbow")
             {
                 player.aimWeapon.rightHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
                 player.aimWeapon.rightHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
