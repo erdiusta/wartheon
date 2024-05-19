@@ -251,6 +251,10 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> passiveItemsByLevelList;
     #region Tooltip
+    [Tooltip("The enemy active drops list")]
+    #endregion
+    public List<SpawnableObjectsByLevel<ActiveItemDetailsSO>> activeItemsByLevelList;
+    #region Tooltip
     [Tooltip("The range of ammo to spawn for each level")]
     #endregion
     public int ammoPercent;

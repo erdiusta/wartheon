@@ -972,6 +972,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 203603506}
+  - component: {fileID: 203603507}
   m_Layer: 5
   m_Name: KeysUI
   m_TagString: Untagged
@@ -1000,6 +1001,19 @@ RectTransform:
   m_AnchoredPosition: {x: 14, y: -64.35976}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &203603507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203603505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc696ccfd89ff74e90243757c395d17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyCountDisplayText: {fileID: 1778198748}
 --- !u!1 &247474109
 GameObject:
   m_ObjectHideFlags: 0
@@ -2761,9 +2775,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.5829528
-    width: 0.29708737
-    height: 0.26198632
+    y: 0
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -5544,7 +5558,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 52e6fefa9e5e91e4d8192398918dd3fa, type: 3}
+  m_Sprite: {fileID: 1910173572, guid: 62471a51733a99d48b45de20275d2ffd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8499,7 +8513,7 @@ GameObject:
   - component: {fileID: 1778198749}
   - component: {fileID: 1778198748}
   m_Layer: 5
-  m_Name: CoinText
+  m_Name: KeyText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10074,6 +10088,7 @@ MonoBehaviour:
   currentDungeonLevelListIndex: 0
   gameState: 0
   previousGameState: 0
+  decoy: {fileID: 0}
 --- !u!1001 &2765135860004656348
 PrefabInstance:
   m_ObjectHideFlags: 0

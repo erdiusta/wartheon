@@ -75,6 +75,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public SpecialMoveEvent specialMoveEvent;
     [HideInInspector] public bool specialMoveOnCooldown = false;
     [HideInInspector] public float specialMoveTimer;
+    [HideInInspector] public int keyCount = 0;
 
     public ParticleSystem dustParticlesSystem;
     public ParticleSystem specialMoveParticlesSystem;
@@ -187,7 +188,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void CreatePlayerStartingActiveItem()
     {
-        AddActiveItemToPlayer(playerDetails.selectedActiveItem, false);
+        AddActiveItemToPlayer(playerDetails.selectedActiveItem);
     }
 
     /// <summary>
@@ -224,7 +225,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Add an active item to the player
     /// </summary>
-    public ActiveItem AddActiveItemToPlayer(ActiveItemDetailsSO activeItemDetails, bool updateHappenedAfterNewItemCollected)
+    public ActiveItem AddActiveItemToPlayer(ActiveItemDetailsSO activeItemDetails)
     {
         ActiveItem activeItem = new ActiveItem
         {
@@ -235,11 +236,8 @@ public class Player : MonoBehaviour
 
         PopulateActiveItemsToBook(activeItemDetails.activeItemSprite);
 
-        if (!updateHappenedAfterNewItemCollected)
-        {
-            // Set the added active item as active
-            setActiveWeaponEvent.CallSelectedActiveItem(activeItem);
-        }
+        // Set the added active item as active
+        setActiveWeaponEvent.CallSelectedActiveItem(activeItem);
 
         return activeItem;
     }
@@ -449,5 +447,10 @@ public class Player : MonoBehaviour
     private void PopulateActiveItemsToBook(Sprite sprite)
     {
         StaticEventHandler.CallItemAddedToActiveItemSlot(sprite);
+    }
+
+    public void RemoveActiveItemFromBook()
+    {
+        StaticEventHandler.CallItemRemovedFromActiveItemSlot();
     }
 }

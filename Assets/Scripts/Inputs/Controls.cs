@@ -143,6 +143,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Drop Active Item"",
+                    ""type"": ""Button"",
+                    ""id"": ""57a24197-87d1-451b-b001-6978b6035f29"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -387,6 +396,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Active Item"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4d8f7d31-fb01-41c7-b9f8-1d8c8e814874"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drop Active Item"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -408,6 +428,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_SpecialMove = m_PlayerInput.FindAction("Special Move", throwIfNotFound: true);
         m_PlayerInput_BookView = m_PlayerInput.FindAction("Book View", throwIfNotFound: true);
         m_PlayerInput_ActiveItem = m_PlayerInput.FindAction("Active Item", throwIfNotFound: true);
+        m_PlayerInput_DropActiveItem = m_PlayerInput.FindAction("Drop Active Item", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -482,6 +503,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_SpecialMove;
     private readonly InputAction m_PlayerInput_BookView;
     private readonly InputAction m_PlayerInput_ActiveItem;
+    private readonly InputAction m_PlayerInput_DropActiveItem;
     public struct PlayerInputActions
     {
         private @Controls m_Wrapper;
@@ -499,6 +521,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @SpecialMove => m_Wrapper.m_PlayerInput_SpecialMove;
         public InputAction @BookView => m_Wrapper.m_PlayerInput_BookView;
         public InputAction @ActiveItem => m_Wrapper.m_PlayerInput_ActiveItem;
+        public InputAction @DropActiveItem => m_Wrapper.m_PlayerInput_DropActiveItem;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -547,6 +570,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @ActiveItem.started += instance.OnActiveItem;
             @ActiveItem.performed += instance.OnActiveItem;
             @ActiveItem.canceled += instance.OnActiveItem;
+            @DropActiveItem.started += instance.OnDropActiveItem;
+            @DropActiveItem.performed += instance.OnDropActiveItem;
+            @DropActiveItem.canceled += instance.OnDropActiveItem;
         }
 
         private void UnregisterCallbacks(IPlayerInputActions instance)
@@ -590,6 +616,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @ActiveItem.started -= instance.OnActiveItem;
             @ActiveItem.performed -= instance.OnActiveItem;
             @ActiveItem.canceled -= instance.OnActiveItem;
+            @DropActiveItem.started -= instance.OnDropActiveItem;
+            @DropActiveItem.performed -= instance.OnDropActiveItem;
+            @DropActiveItem.canceled -= instance.OnDropActiveItem;
         }
 
         public void RemoveCallbacks(IPlayerInputActions instance)
@@ -622,5 +651,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnSpecialMove(InputAction.CallbackContext context);
         void OnBookView(InputAction.CallbackContext context);
         void OnActiveItem(InputAction.CallbackContext context);
+        void OnDropActiveItem(InputAction.CallbackContext context);
     }
 }

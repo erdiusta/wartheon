@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   passiveItemName: Silver Coin
   passiveItemSprite: {fileID: 728537738, guid: 68cc6c99e30b6f546a9a931f5ef536fe, type: 3}
+  passiveItemAnimatorController: {fileID: 9100000, guid: aee30f20b17ad354992ee885f7067a4b, type: 2}

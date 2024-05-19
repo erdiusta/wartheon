@@ -121,6 +121,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Drop Active Item",
+                    "type": "Button",
+                    "id": "57a24197-87d1-451b-b001-6978b6035f29",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -363,6 +372,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Active Item",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4d8f7d31-fb01-41c7-b9f8-1d8c8e814874",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Drop Active Item",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

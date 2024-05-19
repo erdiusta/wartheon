@@ -281,7 +281,15 @@ public class EnemyMovementAI : MonoBehaviour
         if (Time.frameCount % Settings.targetFrameRateToSpreadPathfindingOver != updateFrameNumber) return;
 
         // Check distance to player to see if enemy should start chasing
-        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
+        if(GameManager.Instance.GetDecoy() != null)
+        {
+            if (Vector3.Distance(transform.position, GameManager.Instance.GetDecoy().GetDecoyPosition()) < enemy.enemyDetails.chaseDistance)
+            {
+                enemyPhase = EnemyPhase.Chase;
+            }
+        }
+
+        else if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
         {
             if (!GameManager.Instance.GetPlayer().playerDetails.onStealth)
             {
@@ -337,8 +345,10 @@ public class EnemyMovementAI : MonoBehaviour
     private void Chase()
     {
         // If the movement cooldown timer reached or player has moved more than required distance then rebuild the enemy path and move the enemy
-        if (currentEnemyChasePathRebuildCooldown <= 0f || (Vector3.Distance(playerReferencePosition, GameManager.Instance.GetPlayer().GetPlayerPosition()) >
-            Settings.playerMoveDistanceToRebuildPath))
+        Vector3 updatedTargetPosition = GameManager.Instance.GetDecoy() != null ? GameManager.Instance.GetDecoy().GetDecoyPosition() :
+            GameManager.Instance.GetPlayer().GetPlayerPosition();
+
+        if (currentEnemyChasePathRebuildCooldown <= 0f || (Vector3.Distance(playerReferencePosition, updatedTargetPosition) > Settings.playerMoveDistanceToRebuildPath))
         {
             // Reset path rebuild cooldown timer
             currentEnemyChasePathRebuildCooldown = Settings.enemyPathRebuildCooldown;
@@ -350,7 +360,7 @@ public class EnemyMovementAI : MonoBehaviour
             }
 
             // Reset player reference position
-            playerReferencePosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
+            playerReferencePosition = GameManager.Instance.GetDecoy() == null ?  GameManager.Instance.GetPlayer().GetPlayerPosition() : GameManager.Instance.GetDecoy().GetDecoyPosition();
 
             // Move the enemy using AStar pathfinding - Trigger rebuild of path to player
             CreatePath();
@@ -366,8 +376,7 @@ public class EnemyMovementAI : MonoBehaviour
             }
 
             // Switch to attack if chase distance is lower than trigger distance
-            if (enemy.enemyDetails.hasAttackMove && Vector3.Distance(GameManager.Instance.GetPlayer().GetPlayerPosition(), transform.position) <
-                enemy.enemyDetails.attackMoveTriggerDistance)
+            if (enemy.enemyDetails.hasAttackMove && Vector3.Distance(updatedTargetPosition, transform.position) < enemy.enemyDetails.attackMoveTriggerDistance)
             {
                 enemyPhase = EnemyPhase.Attack;
                 enemy.animateEnemy.ResetAnimatonParameters();
@@ -634,7 +643,16 @@ public class EnemyMovementAI : MonoBehaviour
     /// </summary>
     private Vector3Int GetNearestNonObstaclePlayerPosition(Room currentRoom)
     {
-        Vector3 playerPosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
+        Vector3 playerPosition = new Vector3();
+
+        if (GameManager.Instance.GetDecoy() != null)
+        {
+            playerPosition = GameManager.Instance.GetDecoy().GetDecoyPosition();
+        }
+        else
+        {
+            playerPosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
+        }
 
         Vector3Int playerCellPosition = currentRoom.instantiatedRoom.grid.WorldToCell(playerPosition);
 

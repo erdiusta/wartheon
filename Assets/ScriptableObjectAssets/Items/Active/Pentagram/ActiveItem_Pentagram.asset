@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeItemName: Pentagram
   activeItemType: 4
-  activeItemSprite: {fileID: -1598174377, guid: 197e25c8589554249b319dfb3df6d98b, type: 3}
+  activeItemSprite: {fileID: -672372461, guid: 5be8307d3484bbe489f3fdc87931ff75, type: 3}
+  activeItemAnimatorController: {fileID: 9100000, guid: e54a992ce263e334383bf8e958447d5a, type: 2}
   activeItemPrefabArray:
   - {fileID: 3547249067481803369, guid: ea4b21319a271c2418909126d683f274, type: 3}
   projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}

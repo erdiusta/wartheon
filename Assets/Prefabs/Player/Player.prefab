@@ -6465,6 +6465,7 @@ MonoBehaviour:
   specialMoveEvent: {fileID: 0}
   specialMoveOnCooldown: 0
   specialMoveTimer: 0
+  keyCount: 0
   dustParticlesSystem: {fileID: 4106009469383456593}
   specialMoveParticlesSystem: {fileID: 0}
 --- !u!114 &3362413763628156882

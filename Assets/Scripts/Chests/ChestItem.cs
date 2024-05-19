@@ -7,17 +7,18 @@ public class ChestItem : MonoBehaviour
 {
     [HideInInspector] public bool hasWeaponDrop = false;
     [HideInInspector] public bool hasPassiveDrop = false;
-    [HideInInspector] public bool hasAmmoDrop = false;
+    [HideInInspector] public bool hasActiveDrop = false;
     [HideInInspector] public TextMeshPro textTMP;
     [HideInInspector] public WeaponAnimator weaponAnimator;
+    [HideInInspector] public SpriteRenderer spriteRenderer;
 
     Chest chest;
-    SpriteRenderer spriteRenderer;
     Animator animator;
     ParticleSystem collectParticleSystem;
     Enemy enemy;
     WeaponDetailsSO weaponDetails;
     PassiveItemDetailsSO passiveItemDetails;
+    ActiveItemDetailsSO activeItemDetails;
     int ammoPercent;
     bool isColliding = false;
 
@@ -60,14 +61,17 @@ public class ChestItem : MonoBehaviour
                             CollectWeaponItem(player);
                         }
                     }
-                    if (hasAmmoDrop)
+                    else if (hasActiveDrop)
                     {
                         if (InputManager.Instance.interaction.action.IsPressed())
                         {
-                            CollectAmmoItem(player);
+                            if (player.selectedActiveItem.GetCurrentActiveItem() == null)
+                            {
+                                CollectActiveItem(player);
+                            }
                         }
                     }
-                    else
+                    else if (hasPassiveDrop)
                     {
                         CollectPassiveItem(player);
                     }
@@ -113,54 +117,51 @@ public class ChestItem : MonoBehaviour
     /// <summary>
     /// Initialize for enemy drops
     /// </summary>
-    public void Initialize(WeaponDetailsSO weaponDetails, Sprite sprite, string text, Vector3 spawnPosition)
+    public void Initialize(WeaponDetailsSO weaponDetails, ActiveItemDetailsSO activeItemDetails, PassiveItemDetailsSO passiveItemDetails, Sprite sprite, string text, Vector3 spawnPosition)
     {
         if (weaponDetails != null)
         {
             this.weaponDetails = weaponDetails;
         }
 
+        if (activeItemDetails != null)
+        {
+            this.activeItemDetails = activeItemDetails;
+        }
+
+        if (passiveItemDetails != null)
+        {
+            this.passiveItemDetails = passiveItemDetails;
+        }
+
         spriteRenderer.sprite = sprite;
         textTMP.text = text;
         transform.position = spawnPosition;
 
-        // Check for animation - Ammo
-        if (hasAmmoDrop)
+        // Check for animation - Active Item
+        if (hasActiveDrop)
         {
-            animator.runtimeAnimatorController = GameResources.Instance.ammoHoverAnimatorController;
-        }
-
-        // Check for animation - Weapons
-        for (int i = 0; i < GameResources.Instance.weaponsHoverArray.Length; i++)
-        {
-            if (textTMP.text == GameResources.Instance.weaponsHoverArray[i].weaponName)
-            {
-                weaponAnimator = GameResources.Instance.weaponsHoverArray[i];
-                animator.runtimeAnimatorController = weaponAnimator.weaponHoverAnimatorController;
-                break;
-            }
+            animator.runtimeAnimatorController = activeItemDetails.activeItemAnimatorController;
         }
 
         // Check for animation - Passive Items
-        switch (textTMP.text)
+        if (hasPassiveDrop)
         {
-            case "Silver Coin":
-                animator.runtimeAnimatorController = GameResources.Instance.silverCoinShineAnimatorController;
-                break;
-            case "Gold Coin":
-                animator.runtimeAnimatorController = GameResources.Instance.goldCoinShineAnimatorController;
-                break;
-            case "Health":
-                animator.runtimeAnimatorController = GameResources.Instance.heartShineAnimatorController;
-                break;
-            case "Status Cure":
-                animator.runtimeAnimatorController = GameResources.Instance.cureShineAnimatorController;
-                break;
-            case "Silver Armor":
-                animator.runtimeAnimatorController = GameResources.Instance.silverArmorShineAnimatorController;
-                break;
-            default:
-                break;
+            animator.runtimeAnimatorController = passiveItemDetails.passiveItemAnimatorController;
+        }
+
+        // Check for animation - Weapons
+        if (hasWeaponDrop)
+        {
+            for (int i = 0; i < GameResources.Instance.weaponsHoverArray.Length; i++)
+            {
+                if (textTMP.text == GameResources.Instance.weaponsHoverArray[i].weaponName)
+                {
+                    weaponAnimator = GameResources.Instance.weaponsHoverArray[i];
+                    animator.runtimeAnimatorController = weaponAnimator.weaponHoverAnimatorController;
+                    break;
+                }
+            }
         }
     }
 
@@ -207,6 +208,12 @@ public class ChestItem : MonoBehaviour
 
         // Play pickup sound effect
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
+
+        if (textTMP.text == "Key")
+        {
+            player.keyCount++;
+            isColliding = true;
+        }
 
         if (textTMP.text == "Silver Coin")
         {
@@ -274,6 +281,24 @@ public class ChestItem : MonoBehaviour
             isColliding = true;
         }
 
+        if (textTMP.text == "Ammo")
+        {
+            ammoPercent = Random.Range(0, 101);
+
+            // Update ammo for current weapon
+            if (!player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteProjectile &&
+                !player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
+            {
+                player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), ammoPercent);
+                isColliding = true;
+            }
+
+            // Play pickup sound effect
+            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
+
+            ammoPercent = 0;
+        }
+
         collectParticleSystem.Play();
         passiveItemDetails = null;
         animator.runtimeAnimatorController = null;
@@ -282,29 +307,20 @@ public class ChestItem : MonoBehaviour
     }
 
     /// <summary>
-    /// Collect an ammo item and add it to the ammo in the players current weapon
+    /// Collect an active item and add it to the player's current active item
     /// </summary>
-    private void CollectAmmoItem(Player player)
+    private void CollectActiveItem(Player player)
     {
-        if (!hasAmmoDrop) return;
+        if (!hasActiveDrop) return;
 
         if (isColliding) return;
 
-        ammoPercent = Random.Range(0, 101);
-
-        // Update ammo for current weapon
-        if (!player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteProjectile &&
-            !player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
-        {
-            player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), ammoPercent);
-            isColliding = true;
-        }
-
-        // Play pickup sound effect
-        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
+        player.AddActiveItemToPlayer(activeItemDetails);
 
         collectParticleSystem.Play();
-        ammoPercent = 0;
+        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
+
+        isColliding = true;
         animator.runtimeAnimatorController = null;
         spriteRenderer.sprite = null;
         Destroy(gameObject, 1f);

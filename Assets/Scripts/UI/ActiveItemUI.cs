@@ -32,13 +32,14 @@ public class ActiveItemUI : MonoBehaviour
     private void OnEnable()
     {
         player.setActiveWeaponEvent.OnSelectedActiveItem += SetActiveWeaponEvent_OnSelectedActiveItem;
+        player.setActiveWeaponEvent.OnRemovedActiveItem += SetActiveWeaponEvent_OnRemovedActiveItem;
         player.weaponFiredEvent.OnActiveItemFired += WeaponFiredEvent_OnActiveItemFired;
     }
-
 
     private void OnDisable()
     {
         player.setActiveWeaponEvent.OnSelectedActiveItem -= SetActiveWeaponEvent_OnSelectedActiveItem;
+        player.setActiveWeaponEvent.OnRemovedActiveItem -= SetActiveWeaponEvent_OnRemovedActiveItem;
         player.weaponFiredEvent.OnActiveItemFired -= WeaponFiredEvent_OnActiveItemFired;
     }
 
@@ -53,11 +54,15 @@ public class ActiveItemUI : MonoBehaviour
         SetSelectedActiveItem(setSelectedActiveItemArgs.activeItem);
     }
 
+    private void SetActiveWeaponEvent_OnRemovedActiveItem(SetActiveWeaponEvent setActiveWeaponEvent)
+    {
+        RemoveSelectedActiveItem();
+    }
+
     private void WeaponFiredEvent_OnActiveItemFired(WeaponFiredEvent weaponFiredEvent, ActiveItemFiredEventArgs activeItemFiredEventArgs)
     {
         UpdateActiveItemRemainingProjectile(activeItemFiredEventArgs.activeItem);
     }
-
 
     private void SetSelectedActiveItem(ActiveItem activeItem)
     {
@@ -66,9 +71,16 @@ public class ActiveItemUI : MonoBehaviour
         UpdateActiveItemRemainingProjectile(activeItem);
     }
 
+    private void RemoveSelectedActiveItem()
+    {
+        activeItemImage.enabled = false;
+        itemNameText.text = "";
+        itemRemainingText.text = "";
+    }
 
     private void UpdateActiveItemImage(ActiveItemDetailsSO activeItemDetails)
     {
+        activeItemImage.enabled = true;
         activeItemImage.sprite = activeItemDetails.activeItemSprite;
     }
 

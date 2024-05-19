@@ -32,12 +32,14 @@ public class Projectile : MonoBehaviour, IFireable
     float countDown = 3f;
     float blastRadius = 5f;
     Coroutine explosionRoutine;
+    Decoy decoy;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         polygonCollider2D = GetComponent<PolygonCollider2D>();
         rb2d = GetComponent<Rigidbody2D>();
+        decoy = GetComponent<Decoy>();
     }
 
     private void OnEnable()
@@ -118,7 +120,7 @@ public class Projectile : MonoBehaviour, IFireable
                     {
                         DisableProjectile();
                     }
-                    else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb)
+                    else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb || activeItemDetails.activeItemType != ActiveItemType.Dummy)
                     {
                         DisableProjectile();
                     }
@@ -323,13 +325,17 @@ public class Projectile : MonoBehaviour, IFireable
                 DealDamage(collision);
             }
         }
+        else if (collision.tag == Settings.decoyTag)
+        {
+            // Deal Damage To Collision Object
+            DealDamage(collision);
+        }
         else if (collision.tag == "playerWeapon")
         {
             return;
         }
         else // HIT WALL CHECK
         {
-
             // Deal Damage To Collision Object
             DealDamage(collision);
 
@@ -635,6 +641,7 @@ public class Projectile : MonoBehaviour, IFireable
             {
                 case ActiveItemType.Boomerang:
                 case ActiveItemType.Bomb:
+                case ActiveItemType.Dummy:
                     return;
                 case ActiveItemType.Generic:
                 case ActiveItemType.Shiruken:

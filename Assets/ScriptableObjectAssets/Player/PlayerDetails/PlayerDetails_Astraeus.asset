@@ -30,9 +30,9 @@ MonoBehaviour:
   applyScreenShake: 1
   shakeIntensity: 5
   shakeDuration: 1.5
-  selectedActiveItem: {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
+  selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
   activeItemsList:
-  - {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
+  - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
   playerArmorValue: 2
   startingWeapon: {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
   rightHandAnimatorController: {fileID: 9100000, guid: 4d6238627c4ee314e8a1a4fec3ad65d4, type: 2}

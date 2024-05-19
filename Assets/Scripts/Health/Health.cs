@@ -37,6 +37,7 @@ public class Health : MonoBehaviour
     Coroutine bleedingCoroutine;
     int poisonPeriodCount = 0;
     bool isProjectileHit = false;
+    Decoy decoy;
 
     private void Awake()
     {
@@ -49,9 +50,10 @@ public class Health : MonoBehaviour
         // Trigger a health event for UI update
         CallHealthEvent(0);
 
-        // Attempt to load enemy / player components
+        // Attempt to load enemy / player / decoy components
         player = GetComponent<Player>();
         enemy = GetComponent<Enemy>();
+        decoy = GetComponent<Decoy>();
        
         // Get player / enemy hit immunity details
         if (player != null)
@@ -75,6 +77,14 @@ public class Health : MonoBehaviour
                 immunityTime = enemy.enemyDetails.hitImmunityTime;
                 spriteRenderer = enemy.spriteRendererArray[0];
             }
+        }
+        else if (decoy != null)
+        {
+            currentArmorValue = 0;
+
+            isImmuneAfterHit = true;
+            immunityTime = 1.5f;
+            spriteRenderer = decoy.spriteRenderer;
         }
 
         // Enable the health bar if required
@@ -126,6 +136,14 @@ public class Health : MonoBehaviour
                 }
             }
         }
+        else if (decoy != null)
+        {
+            if (currentHealth <= 0f)
+            {
+                SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemImpactSoundEffect);
+                Destroy(gameObject);
+            }
+        }
     }
 
     /// <summary>
@@ -164,7 +182,15 @@ public class Health : MonoBehaviour
                     }
                 }
             }
-            if (enemy != null)
+            else if (decoy != null)
+            {
+                if (getHitCoroutine == null)
+                {
+                    getHitCoroutine = StartCoroutine(DecoyGetHitRoutine());
+                    PostHitImmunity();
+                }
+            }
+            else if (enemy != null)
             {
                 if (getHitCoroutine == null)
                 {
@@ -216,7 +242,15 @@ public class Health : MonoBehaviour
                     }
                 }
             }
-            if (enemy != null)
+            else if (decoy != null)
+            {
+                if (currentHealth > 0)
+                {
+                    getHitCoroutine = StartCoroutine(DecoyGetHitRoutine());
+                    PostHitImmunity();
+                }
+            }
+            else if (enemy != null)
             {
                 if (getHitCoroutine == null)
                 {
@@ -246,7 +280,7 @@ public class Health : MonoBehaviour
 
     IEnumerator PlayerGetHitRoutine()
     {
-        if (player.health.currentHealth > 0f)
+        if (player.health.GetCurrentHealth() > 0f)
         {
             player.animatePlayer.SetGetHitAnimationParameters();
             player.animator.SetBool(Settings.getHit, true);
@@ -263,13 +297,22 @@ public class Health : MonoBehaviour
         getHitCoroutine = null;
     }
 
+    IEnumerator DecoyGetHitRoutine()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemSwingSoundEffect);
+
+        yield return new WaitForSeconds(0.1f);
+
+        getHitCoroutine = null;
+    }
+
     IEnumerator EnemyGetHitRoutine(bool headShotHappened)
     {
         if (!isBlocking)
         {
             enemy.enemyMovementAI.enemyPhase = EnemyPhase.GetHit;
 
-            if (enemy.health.currentHealth > 0f)
+            if (enemy.health.GetCurrentHealth() > 0f)
             {
                 enemy.animateEnemy.ResetAnimatonParameters();
                 enemy.animateEnemy.SetGetHitAnimationParameters();

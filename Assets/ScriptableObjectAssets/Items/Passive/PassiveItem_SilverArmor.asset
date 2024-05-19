@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   passiveItemName: Silver Armor
   passiveItemSprite: {fileID: 21300000, guid: f0c667eeb9110ca42b80d4e5156e78bb, type: 3}
+  passiveItemAnimatorController: {fileID: 9100000, guid: e2c2b3ce123a4f742ab9ab903f47fab7, type: 2}

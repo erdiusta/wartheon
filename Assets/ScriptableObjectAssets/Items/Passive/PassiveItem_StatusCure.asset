@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   passiveItemName: Status Cure
   passiveItemSprite: {fileID: 21300000, guid: ede83db55e699a140b55ac156efdc0c8, type: 3}
+  passiveItemAnimatorController: {fileID: 9100000, guid: 8fc45ad79b3fec842be4a21f677a7778, type: 2}

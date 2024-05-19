@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeItemName: Boomerang
   activeItemType: 1
-  activeItemSprite: {fileID: 21300000, guid: db21fa0428cef8e49b0ef4472c0306c1, type: 3}
+  activeItemSprite: {fileID: 757753385, guid: 2a42511835b2bf340b92409e1747ce97, type: 3}
+  activeItemAnimatorController: {fileID: 9100000, guid: f2d449a8ee5f1dd4487c7b888ab9ddf8, type: 2}
   activeItemPrefabArray:
   - {fileID: 5263536334675765252, guid: 59e583c8581962145b11dfd8f2b08a6f, type: 3}
   projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -52,7 +53,7 @@ MonoBehaviour:
   hasSlowDamage: 0
   slowChance: 0
   isProjectileTrail: 0
-  projectileTrailTime: 3
-  projectileTrailMaterial: {fileID: 0}
-  projectileTrailStartWidth: 0
+  projectileTrailTime: 0.5
+  projectileTrailMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  projectileTrailStartWidth: 0.1
   projectileTrailEndWidth: 0

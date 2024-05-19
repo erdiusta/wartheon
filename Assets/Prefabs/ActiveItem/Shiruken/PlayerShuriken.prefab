@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: -257139871
   m_SortingLayer: 3
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: fe8ac5b597593c149b1f758c96a39a83, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f8671df78c003654088ee41061de1ac3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -124,7 +124,7 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.33333334, y: 0.33333334}
     newSize: {x: 0.5, y: 0.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -132,10 +132,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.24779662, y: 0.014062287}
-      - {x: 0.01661563, y: 0.2563001}
-      - {x: -0.22746271, y: 0.013141796}
-      - {x: 0.015651792, y: -0.22047603}
+    - - {x: 0.17235878, y: 0.015473525}
+      - {x: 0.008914511, y: 0.17642298}
+      - {x: -0.15293731, y: 0.0074593537}
+      - {x: 0.01210548, y: -0.17460446}
   m_UseDelaunayMesh: 0
 --- !u!50 &3757776428519931849
 Rigidbody2D:
@@ -264,7 +264,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.54901886
+        value: 0.27378845
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -272,22 +272,22 @@ TrailRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 1
-        value: 0.049019635
-        inSlope: 0
-        outSlope: 0
+        time: 0.6123965
+        value: 0
+        inSlope: -0.20885575
+        outSlope: -0.20885575
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0
+        inWeight: 0.4331149
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
+      key0: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 0.5372549}
+      key2: {r: 1, g: 1, b: 1, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}
@@ -295,15 +295,15 @@ TrailRenderer:
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
       ctime1: 65535
-      ctime2: 0
+      ctime2: 65535
       ctime3: 0
       ctime4: 0
       ctime5: 0
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
-      atime2: 0
+      atime1: 9830
+      atime2: 65535
       atime3: 0
       atime4: 0
       atime5: 0
@@ -312,7 +312,7 @@ TrailRenderer:
       m_Mode: 0
       m_ColorSpace: 0
       m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
+      m_NumAlphaKeys: 3
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0

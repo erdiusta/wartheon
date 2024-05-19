@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using System;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
@@ -40,6 +41,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     [HideInInspector] public GameState gameState;
     [HideInInspector] public GameState previousGameState;
+    [HideInInspector] public Decoy decoy;
 
     Room currentRoom;
     Room previousRoom;
@@ -75,6 +77,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void OnEnable()
     {
         StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
+        StaticEventHandler.OnDecoySpawned += StaticEventHandler_OnDecoySpawned;
         player.destroyedEvent.OnDestroyed += Player_OnDestroyed;
 
         if (InputManager.Instance != null)
@@ -88,6 +91,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void OnDisable()
     {
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
+        StaticEventHandler.OnDecoySpawned -= StaticEventHandler_OnDecoySpawned;
         player.destroyedEvent.OnDestroyed -= Player_OnDestroyed;
 
         if (InputManager.Instance  != null)
@@ -103,6 +107,15 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void StaticEventHandler_OnRoomChanged(RoomChangedEventArgs roomChangedEventArgs)
     {
         SetCurrentRoom(roomChangedEventArgs.room);
+        if (decoy != null)
+        {
+            Destroy(decoy.gameObject);
+        }
+    }
+
+    private void StaticEventHandler_OnDecoySpawned(DecoySpawnedArgs decoySpawnedArgs)
+    {
+        SetDecoy(decoySpawnedArgs.decoy);
     }
 
     /// <summary>
@@ -112,6 +125,19 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         previousGameState = gameState;
         gameState = GameState.gameLost;
+    }
+
+    /// <summary>
+    /// Handle decoy set
+    /// </summary>
+    private void SetDecoy(Decoy decoy)
+    {
+        this.decoy = decoy;
+    }
+
+    public Decoy GetDecoy()
+    {
+        return decoy;
     }
 
     private void Start()

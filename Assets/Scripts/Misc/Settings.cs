@@ -74,6 +74,7 @@ public static class Settings
     public const string playerTag = "Player";
     public const string playerWeapon = "playerWeapon";
     public const string enemyTag = "Enemy";
+    public const string decoyTag = "Decoy";
     #endregion
 
     #region FIRING CONTROL

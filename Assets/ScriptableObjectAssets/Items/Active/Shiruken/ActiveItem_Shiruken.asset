@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeItemName: Shiruken
   activeItemType: 3
-  activeItemSprite: {fileID: 21300000, guid: fe8ac5b597593c149b1f758c96a39a83, type: 3}
+  activeItemSprite: {fileID: 146081717, guid: 4d563ae87f5c23344b1b1439b8e4d1bd, type: 3}
+  activeItemAnimatorController: {fileID: 9100000, guid: 44080774a435b074684da1f27d54cb13, type: 2}
   activeItemPrefabArray:
   - {fileID: 5263536334675765252, guid: 5ee8ca1d4c3ef4b41a162c92447232cc, type: 3}
   projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -51,8 +52,8 @@ MonoBehaviour:
   stunChance: 0
   hasSlowDamage: 0
   slowChance: 0
-  isProjectileTrail: 0
-  projectileTrailTime: 3
-  projectileTrailMaterial: {fileID: 0}
-  projectileTrailStartWidth: 0
+  isProjectileTrail: 1
+  projectileTrailTime: 0.75
+  projectileTrailMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  projectileTrailStartWidth: 0.1
   projectileTrailEndWidth: 0

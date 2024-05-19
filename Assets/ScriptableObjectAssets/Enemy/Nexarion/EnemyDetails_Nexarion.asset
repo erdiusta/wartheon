@@ -17,6 +17,7 @@ MonoBehaviour:
   movementDetails: {fileID: 11400000, guid: 8b22ae23de373844fa6c1e4254d92275, type: 2}
   chaseDistance: 4
   hasAttackMove: 0
+  preAttackDuration: 1
   attackMoveTriggerDistance: 0
   attackMoveEfficentDistance: 0
   attackMoveCooldown: 0
@@ -89,8 +90,17 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: f793c8e0100ca3e40bc4b1e0becfa2e1, type: 2}
       ratio: 2
+  activeItemsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
+      ratio: 1
   ammoPercent: 50
-  dropSpawnChanceMin: 50
-  dropSpawnChanceMax: 70
+  dropSpawnChanceMin: 15
+  dropSpawnChanceMax: 25
   numberOfItemsToSpawnMin: 1
   numberOfItemsToSpawnMax: 1

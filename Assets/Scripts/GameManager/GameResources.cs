@@ -108,6 +108,10 @@ public class GameResources : MonoBehaviour
     #endregion
     public SoundEffectSO chestOpen;
     #region Tooltip
+    [Tooltip("Populate with the chest lock sound effect")]
+    #endregion
+    public SoundEffectSO chestLock;
+    #region Tooltip
     [Tooltip("Populate with the health pickup sound effect")]
     #endregion
     public SoundEffectSO healthPickup;
@@ -212,26 +216,6 @@ public class GameResources : MonoBehaviour
     [Tooltip("Populate array with name and animator controller of the related weapon")]
     #endregion
     public WeaponAnimator[] weaponsHoverArray;
-    #region Tooltip
-    [Tooltip("Populate with heart shine animator controller")]
-    #endregion
-    public RuntimeAnimatorController heartShineAnimatorController;
-    #region Tooltip
-    [Tooltip("Populate with silver coin shine animator controller")]
-    #endregion
-    public RuntimeAnimatorController silverCoinShineAnimatorController;
-    #region Tooltip
-    [Tooltip("Populate with gold coin shine animator controller")]
-    #endregion
-    public RuntimeAnimatorController goldCoinShineAnimatorController;
-    #region Tooltip
-    [Tooltip("Populate with cure shine animator controller")]
-    #endregion
-    public RuntimeAnimatorController cureShineAnimatorController;
-    #region Tooltip
-    [Tooltip("Populate with silver armor shine animator controller")]
-    #endregion
-    public RuntimeAnimatorController silverArmorShineAnimatorController;
 
     #region Header MINIMAP
     [Space(10)]

@@ -28,7 +28,8 @@ public enum ActiveItemType
     Boomerang,
     Bomb,
     Shiruken,
-    Trap
+    Trap,
+    Dummy
 }
 
 public enum BoomerangPhase

@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeItemName: Bomb
   activeItemType: 2
-  activeItemSprite: {fileID: 416563190, guid: 336cf90f226aec04891beb888518984a, type: 3}
+  activeItemSprite: {fileID: -157224240, guid: a7b5cb23b3da2c24491ea591c4c132f9, type: 3}
+  activeItemAnimatorController: {fileID: 9100000, guid: b09b6bcd3bceab64aa8699a74964cb9c, type: 2}
   activeItemPrefabArray:
   - {fileID: 3547249067481803369, guid: 2af4e44397d18874b9b14aa688f558b0, type: 3}
   projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}

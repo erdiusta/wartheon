@@ -187,7 +187,7 @@ public class FireWeapon : MonoBehaviour
                     }
 
                     // Fire projectile routine for active item
-                    StartCoroutine(FireProjectileRoutine(currentActiveItem, aimAngle, weaponAimAngle, weaponAimDirectionVector, headShotHappened));
+                    StartCoroutine(FireProjectileRoutine(currentActiveItem, aimAngle, weaponAimAngle, weaponAimDirectionVector, headShotHappened, true));
                 }
             }
         }
@@ -197,7 +197,7 @@ public class FireWeapon : MonoBehaviour
     /// Coroutine to spawn multiple ammo per shot if specified in the ammo details - PROJECTILE
     /// </summary>
     IEnumerator FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, 
-        Vector3 weaponAimDirectionVector, bool headShotHappened)
+        Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false)
     {      
         int projectileCounter = 0;
 
@@ -252,7 +252,7 @@ public class FireWeapon : MonoBehaviour
         DoWeaponShootEffect(aimAngle);
 
         // Weapon fired sound effect
-        WeaponSoundEffect();
+        WeaponSoundEffect(isActiveItem);
 
         if (enemy != null)
         {
@@ -264,7 +264,7 @@ public class FireWeapon : MonoBehaviour
     /// Coroutine to spawn for specified active item details - ACTIVE ITEM
     /// </summary>
     IEnumerator FireProjectileRoutine(ActiveItemDetailsSO currentActiveItem, float aimAngle, float weaponAimAngle,
-        Vector3 weaponAimDirectionVector, bool headShotHappened)
+        Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false)
     {
         int projectileCounter = 0;
 
@@ -295,8 +295,7 @@ public class FireWeapon : MonoBehaviour
             float projectileSpeed = Random.Range(currentActiveItem.projectileSpeedMin, currentActiveItem.projectileSpeedMax);
 
             // Get Gameobject with IFireable component
-            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(activeItemPrefab, activeWeapon.GetRightHandShootPosition(),
-                Quaternion.identity);
+            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(activeItemPrefab, activeWeapon.GetRightHandShootPosition(), Quaternion.identity);
 
             // Initialize projectile
             projectile.InitializeProjectile(headShotHappened, currentActiveItem, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector);
@@ -318,15 +317,13 @@ public class FireWeapon : MonoBehaviour
         DoWeaponShootEffect(aimAngle);
 
         // Weapon fired sound effect
-        WeaponSoundEffect();
+        WeaponSoundEffect(isActiveItem);
 
         if (enemy != null)
         {
             enemy.isFiring = false;
         }
     }
-
-
 
     /// <summary>
     /// Reset cooldown timer
@@ -384,8 +381,10 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Play weapon shooting sound effect
     /// </summary>
-    private void WeaponSoundEffect()
+    private void WeaponSoundEffect(bool isActiveItem)
     {
+        if (isActiveItem) return;
+
         if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponSwingSoundEffect != null &&
             GetComponent<PlayerControl>().isSoundPlayed == false)
         {           

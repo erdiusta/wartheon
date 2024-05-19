@@ -20,4 +20,5 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference specialMove;
     public InputActionReference bookView;
     public InputActionReference activeItem;
+    public InputActionReference dropActiveItem;
 }

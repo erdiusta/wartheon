@@ -8,6 +8,9 @@ public class Chest : MonoBehaviour, IUsable
 {
     [HideInInspector] public bool dropCompleted = false;
     [HideInInspector] public ChestState chestState = ChestState.closed;
+    [HideInInspector] public bool bobbyPinTried = false;
+    [HideInInspector] public bool bobbyPinTrySuccessful = false;
+    [HideInInspector] public Coroutine chestLockSoundRoutine;
 
     #region Tooltip
     [Tooltip("Populate withItemSpawnPoint transform")]
@@ -60,8 +63,19 @@ public class Chest : MonoBehaviour, IUsable
         switch (chestState)
         {
             case ChestState.closed:
-                OpenChest();
-                StartCoroutine(MoveItemDown(chestItem.transform, 1.5f));
+                if (GameManager.Instance.GetPlayer().keyCount > 0 || bobbyPinTrySuccessful)
+                {
+                    OpenChest();
+                    StartCoroutine(MoveItemDown(chestItem.transform, 1.5f));
+                }
+                else
+                {
+                    if (chestLockSoundRoutine == null)
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.chestLock);
+                    }
+                }
+
                 break;
 
             case ChestState.weaponItem:
@@ -81,6 +95,10 @@ public class Chest : MonoBehaviour, IUsable
     /// </summary>
     private void OpenChest()
     {
+        if (!bobbyPinTrySuccessful)
+        {
+            GameManager.Instance.GetPlayer().keyCount--;
+        }
         animator.SetBool(Settings.use, true);
 
         // chest open sound effect
@@ -94,6 +112,7 @@ public class Chest : MonoBehaviour, IUsable
         }
 
         UpdateChestState();
+       
     }
 
     /// <summary>
@@ -129,7 +148,7 @@ public class Chest : MonoBehaviour, IUsable
     {
         InstantiateItem();
 
-        chestItem.Initialize(null, GameResources.Instance.heartIcon, healthPercent.ToString() + "%", itemSpawnPoint.position);
+        chestItem.Initialize(null, null, null, GameResources.Instance.heartIcon, healthPercent.ToString() + "%", itemSpawnPoint.position);
     }
 
     /// <summary>
@@ -160,7 +179,7 @@ public class Chest : MonoBehaviour, IUsable
     {
         InstantiateItem();
 
-        chestItem.Initialize(null, GameResources.Instance.ammoDropIcon, ammoPercent.ToString() + "%", itemSpawnPoint.position);
+        chestItem.Initialize(null, null, null, GameResources.Instance.ammoDropIcon, ammoPercent.ToString() + "%", itemSpawnPoint.position);
     }
 
     /// <summary>
@@ -193,8 +212,28 @@ public class Chest : MonoBehaviour, IUsable
     {
         InstantiateItem();
 
-        chestItemGameObject.GetComponent<ChestItem>().Initialize(weaponDetails, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, 
+        chestItemGameObject.GetComponent<ChestItem>().Initialize(weaponDetails, null, null, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, 
             itemSpawnPoint.position);
+    }
+
+    public void PlayLock()
+    {
+        if (chestLockSoundRoutine == null)
+        {
+            chestLockSoundRoutine = StartCoroutine(PlayLockRoutine());
+        }
+    }
+
+    /// <summary>
+    /// Play lock routine
+    /// </summary>
+    IEnumerator PlayLockRoutine()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.chestLock);
+
+        yield return new WaitForSeconds(2f);
+
+        chestLockSoundRoutine = null;
     }
 
     /// <summary>

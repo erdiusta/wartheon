@@ -70,8 +70,18 @@ public class DealContactDamage : MonoBehaviour
             {
                 Player player = collision.GetComponent<Player>();
 
+                // Damage produced by enemy
+                int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMin);
+
                 if (enemy != null)
                 {
+                    // Check if collider is a decoy
+                    if (collision.GetComponent<Decoy>() != null)
+                    {
+                        receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
+                        return;
+                    }
+
                     if (player.playerDetails.onStealth) return;
 
                     CheckPoisonStatus(player);
@@ -84,14 +94,16 @@ public class DealContactDamage : MonoBehaviour
                     player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
                 }
 
-                // Damage produced by enemy
-                int damageDone = Random.Range(contactDamageAmountMin,contactDamageAmountMin);
-
                 // Damage inflicted to enemy after deducting enemy armor
                 int inflictedDamage = damageDone > player.health.GetArmorValue() ?
                     damageDone - player.health.GetArmorValue() : 1;
 
                 receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
+            }
+            else if (collision.tag == Settings.decoyTag)
+            {
+                receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
+                enemy.enemyMovementAI.TriggerKnockback((transform.position - collision.transform.position));
             }
             else
             {

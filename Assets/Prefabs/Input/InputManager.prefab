@@ -57,3 +57,4 @@ MonoBehaviour:
   specialMove: {fileID: 5077257753683033983, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   bookView: {fileID: 1534269409563702162, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   activeItem: {fileID: 8120908705557231203, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  dropActiveItem: {fileID: 3940752818712815275, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}

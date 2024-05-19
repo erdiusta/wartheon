@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   passiveItemName: Gold Coin
   passiveItemSprite: {fileID: 21300000, guid: baf8f7e39a70ee1419ece15eb840e297, type: 3}
+  passiveItemAnimatorController: {fileID: 9100000, guid: 734ee2a97bd933c4cb65c070ece3cfd7, type: 2}

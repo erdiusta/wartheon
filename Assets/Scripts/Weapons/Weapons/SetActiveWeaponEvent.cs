@@ -10,6 +10,7 @@ public class SetActiveWeaponEvent : MonoBehaviour
     public event Action<SetActiveWeaponEvent> OnTwoHandWeaponEquipped;
     public event Action<SetActiveWeaponEvent> OnOneHandWeaponEquipped;
     public event Action<SetActiveWeaponEvent, SetSelectedActiveItemArgs> OnSelectedActiveItem;
+    public event Action<SetActiveWeaponEvent> OnRemovedActiveItem;
 
     public void CallTwoHandWeaponEquipEvent()
     {
@@ -39,6 +40,11 @@ public class SetActiveWeaponEvent : MonoBehaviour
     public void CallSelectedActiveItem(ActiveItem activeItem)
     {
         OnSelectedActiveItem?.Invoke(this, new SetSelectedActiveItemArgs { activeItem = activeItem});
+    }
+
+    public void CallRemovedActiveItem()
+    {
+        OnRemovedActiveItem?.Invoke(this);
     }
 }
 

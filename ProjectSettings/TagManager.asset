@@ -16,6 +16,7 @@ TagManager:
   - poolTilemap
   - playerProjectile
   - sideTilemap
+  - Dummy
   layers:
   - Default
   - TransparentFX

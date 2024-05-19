@@ -13,15 +13,18 @@ public class ActiveItemDetailsSO : ScriptableObject
     public string activeItemName;
     public ActiveItemType activeItemType = ActiveItemType.Generic;
 
-
-    #region Header PROJECTILE SPRITE, PREFAB & MATERIALS
+    #region Header ITEM SPRITE, PREFAB & MATERIALS
     [Space(10)]
     [Header("PROJECTILE SPRITE, PREFAB & MATERIALS")]
     #endregion
     #region Tooltip
-    [Tooltip("Sprite to be used for the projectile")]
+    [Tooltip("Sprite to be used for the item")]
     #endregion
     public Sprite activeItemSprite;
+    #region Tooltip
+    [Tooltip("Animator controller to be used for the item")]
+    #endregion
+    public RuntimeAnimatorController activeItemAnimatorController;
     #region Tooltip
     [Tooltip("Populate with the prefab to be used for the projectile.  If multiple prefabs are specified then a random prefab from the array will be selecetd.  " +
         "The prefab can be an projectile pattern - as long as it conforms to the IFireable interface.")]

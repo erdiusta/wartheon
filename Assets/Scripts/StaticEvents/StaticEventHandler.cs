@@ -52,12 +52,29 @@ public static class StaticEventHandler
         OnItemAddedToActiveItemSlot?.Invoke(new ItemAddedToBookArgs { itemSprite = itemSprite });
     }
 
+    // Item removed from active item slot on book event
+
+    public static event Action OnItemRemovedFromActiveItemSlot;
+
+    public static void CallItemRemovedFromActiveItemSlot()
+    {
+        OnItemRemovedFromActiveItemSlot?.Invoke();
+    }
+
     // Health change on book event
     public static event Action<HealthChangedArgs> OnBookHealthChanged;
 
     public static void CallBookHealthChangedEvent(int currentHealth)
     {
         OnBookHealthChanged?.Invoke(new HealthChangedArgs { currentHealth = currentHealth });
+    }
+
+    // Decoy added to the room event
+    public static event Action<DecoySpawnedArgs> OnDecoySpawned;
+
+    public static void CallDecoySpawned(Decoy decoy)
+    {
+        OnDecoySpawned?.Invoke(new DecoySpawnedArgs { decoy = decoy });
     }
 }
 
@@ -90,4 +107,9 @@ public class ItemAddedToBookArgs : EventArgs
 public class HealthChangedArgs : EventArgs
 {
     public int currentHealth;
+}
+
+public class DecoySpawnedArgs : EventArgs 
+{
+    public Decoy decoy;
 }

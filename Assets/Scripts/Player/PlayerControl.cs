@@ -95,6 +95,8 @@ public class PlayerControl : MonoBehaviour
                 UseItemInput();
                 // Process the player use special move input
                 SpecialMoveInput();
+                // Drop the player's active item if have
+                DropActiveItemInput();
                 break;
             case MoveStatus.Stagger:
                 player.polygonCollider2D.enabled = false;
@@ -311,12 +313,30 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void FireActiveItemInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
-        // Use active item when clicked
-        if (InputManager.Instance.activeItem.action.WasPressedThisFrame())
+        if (player.selectedActiveItem.GetCurrentActiveItem() != null)
         {
-            // Trigger fire weapon event
-            player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees,
-                weaponAngleDegrees, weaponDirection, false, true);
+            // Use active item when clicked
+            if (InputManager.Instance.activeItem.action.WasPressedThisFrame())
+            {
+                if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Dummy)
+                {
+                    if (player.selectedActiveItem.GetCurrentActiveItem().decoyUsed == false)
+                    {
+                        player.selectedActiveItem.GetCurrentActiveItem().decoyUsed = true;
+
+                        GameObject decoyObject = Instantiate(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray[0],
+                            transform.position, Quaternion.identity);
+
+                        StaticEventHandler.CallDecoySpawned(decoyObject.GetComponent<Decoy>());
+                    }
+                }
+                else
+                {
+                    // Trigger fire weapon event
+                    player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees,
+                        weaponAngleDegrees, weaponDirection, false, true);
+                }
+            }
         }
     }
 
@@ -764,11 +784,37 @@ public class PlayerControl : MonoBehaviour
                 // Chest collectible
                 Chest chest = collider2D.GetComponent<Chest>();
 
+                // Open chest with key process
                 if (InputManager.Instance.interaction.action.IsPressed())
                 {
                     if (chest.chestState == ChestState.closed && !chest.dropCompleted)
                     {
                         iusable.StartChestProcess();
+                    }
+                }
+
+                // Try open with bobby pin process
+                if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemName == "Bobby Pin" && chest.bobbyPinTried == false)
+                {
+                    if (InputManager.Instance.activeItem.action.IsPressed())
+                    {
+                        chest.bobbyPinTried = true;
+                        int diceRoll = Random.Range(0, 100);
+
+                        if (diceRoll > 50)
+                        {
+                            if (chest.chestState == ChestState.closed && !chest.dropCompleted)
+                            {
+                                chest.bobbyPinTrySuccessful = true;
+                                SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemSwingSoundEffect);
+                                iusable.StartChestProcess();
+                            }
+                        }
+                    }
+
+                    if (InputManager.Instance.activeItem.action.WasPerformedThisFrame() && !chest.bobbyPinTrySuccessful)
+                    {
+                        chest.PlayLock();
                     }
                 }
             }
@@ -782,6 +828,32 @@ public class PlayerControl : MonoBehaviour
                     interaction.TriggerDialogue();
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Drop current active weapon
+    /// </summary>
+    private void DropActiveItemInput()
+    {
+        if (InputManager.Instance.dropActiveItem.action.WasPressedThisFrame())
+        {
+            DropProcess();
+        }
+    }
+
+    public void DropProcess()
+    {
+        if (player.selectedActiveItem.GetCurrentActiveItem() != null)
+        {
+            ChestItem chestItem = Instantiate(GameResources.Instance.chestItemPrefab, transform.position, Quaternion.identity).GetComponent<ChestItem>();
+
+            chestItem.hasActiveDrop = true;
+            chestItem.Initialize(null, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails, null, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemSprite,
+                player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemName, transform.position);
+
+            player.setActiveWeaponEvent.CallRemovedActiveItem();
+            player.RemoveActiveItemFromBook();
         }
     }
 

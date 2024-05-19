@@ -62,6 +62,7 @@ MonoBehaviour:
   closeBookSoundEffect: {fileID: 11400000, guid: ddebddc112a095147a3e5177f8ab94b1, type: 2}
   doorOpenCloseSoundEffect: {fileID: 11400000, guid: 58ec3915700e1db40b117db8be25656d, type: 2}
   chestOpen: {fileID: 11400000, guid: 5521acb02156e2d4c968c446b47c06f7, type: 2}
+  chestLock: {fileID: 11400000, guid: 73e2c3425ccbe1e4bb80b3e9f40fba60, type: 2}
   healthPickup: {fileID: 11400000, guid: 4638ce053d31bdd4595c3991e645fac9, type: 2}
   weaponPickup: {fileID: 11400000, guid: 89c2519ed7c7c0546a8b53183833b881, type: 2}
   ammoPickup: {fileID: 11400000, guid: ac672474329ba2c44bac9040ffa01664, type: 2}
@@ -121,9 +122,4 @@ MonoBehaviour:
     weaponHoverAnimatorController: {fileID: 9100000, guid: 21e16997976246844b6585ed4994d05f, type: 2}
   - weaponName: Sizzling Sword
     weaponHoverAnimatorController: {fileID: 9100000, guid: 3fc232eb20b9258488d7a3363d824994, type: 2}
-  heartShineAnimatorController: {fileID: 9100000, guid: 9d6ce20b5187d904dbcb76cd6b3cd7f0, type: 2}
-  silverCoinShineAnimatorController: {fileID: 9100000, guid: aee30f20b17ad354992ee885f7067a4b, type: 2}
-  goldCoinShineAnimatorController: {fileID: 9100000, guid: 734ee2a97bd933c4cb65c070ece3cfd7, type: 2}
-  cureShineAnimatorController: {fileID: 9100000, guid: 8fc45ad79b3fec842be4a21f677a7778, type: 2}
-  silverArmorShineAnimatorController: {fileID: 9100000, guid: e2c2b3ce123a4f742ab9ab903f47fab7, type: 2}
   minimapBossPrefab: {fileID: 668306937615276397, guid: a6f6cb3ad6450194983577547ff3e678, type: 3}

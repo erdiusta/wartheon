@@ -70,6 +70,7 @@ public class BookUI : MonoBehaviour
         StaticEventHandler.OnWeaponAddedToOffHandBook += StaticEventHandler_OnWeaponAddedToOffHandBook;
         StaticEventHandler.OnBookHealthChanged += StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnItemAddedToActiveItemSlot += StaticEventHandler_OnItemAddedToActiveItemSlot;
+        StaticEventHandler.OnItemRemovedFromActiveItemSlot += StaticEventHandler_OnItemRemovedFromActiveItemSlot;
     }
 
     private void OnDisable()
@@ -78,6 +79,7 @@ public class BookUI : MonoBehaviour
         StaticEventHandler.OnWeaponAddedToOffHandBook -= StaticEventHandler_OnWeaponAddedToOffHandBook;
         StaticEventHandler.OnBookHealthChanged -= StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnItemAddedToActiveItemSlot -= StaticEventHandler_OnItemAddedToActiveItemSlot;
+        StaticEventHandler.OnItemRemovedFromActiveItemSlot -= StaticEventHandler_OnItemRemovedFromActiveItemSlot;
     }
 
     private void StaticEventHandler_OnWeaponAddedToMainHandBook(WeaponAddedToBookArgs weaponAddedToBookArgs)
@@ -100,6 +102,12 @@ public class BookUI : MonoBehaviour
     {
         GameObject activeItem = Instantiate(GameResources.Instance.bookWeaponSlot, activeItemContainer);
         activeItem.GetComponent<Image>().sprite = itemAddedToBookArgs.itemSprite;
+    }
+
+    private void StaticEventHandler_OnItemRemovedFromActiveItemSlot()
+    {
+        GameObject activeItemImageObject = activeItemContainer.GetChild(activeItemContainer.childCount - 1).gameObject;
+        Destroy(activeItemImageObject);
     }
 
     private void StaticEventHandler_OnBookHealthChanged(HealthChangedArgs healthChangedArgs)

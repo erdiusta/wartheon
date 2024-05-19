@@ -14,16 +14,23 @@ public class SelectedActiveItem : MonoBehaviour
     private void OnEnable()
     {
         setActiveWeaponEvent.OnSelectedActiveItem += SetActiveWeaponEvent_OnSelectedActiveItem;
+        setActiveWeaponEvent.OnRemovedActiveItem += SetActiveWeaponEvent_OnRemovedActiveItem;
     }
 
     private void OnDisable()
     {
         setActiveWeaponEvent.OnSelectedActiveItem -= SetActiveWeaponEvent_OnSelectedActiveItem;
+        setActiveWeaponEvent.OnRemovedActiveItem -= SetActiveWeaponEvent_OnRemovedActiveItem;
     }
 
     private void SetActiveWeaponEvent_OnSelectedActiveItem(SetActiveWeaponEvent setActiveWeaponEvent, SetSelectedActiveItemArgs setSelectedActiveItemArgs)
     {
         SetActiveItem(setSelectedActiveItemArgs.activeItem);
+    }
+
+    private void SetActiveWeaponEvent_OnRemovedActiveItem(SetActiveWeaponEvent setActiveWeaponEvent)
+    {
+        currentActiveItem = null;
     }
 
     private void SetActiveItem(ActiveItem activeItem)
