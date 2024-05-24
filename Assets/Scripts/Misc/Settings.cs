@@ -21,6 +21,11 @@ public static class Settings
     public const float doorUnlockDelay = 1f;
     #endregion
 
+    #region AUDIO
+    public const float musicFadeOutTime = 0.5f; // Default music fade out transition
+    public const float musicFadeInTime = 0.5f; // Default music fade in transition
+    #endregion
+
     #region ANIMATOR PARAMETERS
     // Animator parameters - Player
     public static int aimUp = Animator.StringToHash("aimUp");
@@ -32,10 +37,27 @@ public static class Settings
     public static int isIdle = Animator.StringToHash("isIdle");
     public static int isMoving = Animator.StringToHash("isMoving");
     public static int use = Animator.StringToHash("use");
-    public const float baseSpeedForPlayerAnimations = 8f;
+    public static int preAttackMotion = Animator.StringToHash("preAttack");
+    public static int attackMotion = Animator.StringToHash("attack");
+    public const float baseSpeedForPlayerAnimations = 6f;
+
+    // Animator parameters - Status
+    public static int isStunned = Animator.StringToHash("isStunned");
+
+    // Animator parameters - Damage
+    public static int death = Animator.StringToHash("death");
+    public static int getHit = Animator.StringToHash("getHit");
+
+    // Animator parameters - MeleeAttack
+    public static int meleeAttackAtRightHand = Animator.StringToHash("AttackAtRightHand");
+    public static int meleeAttackAtLeftHand = Animator.StringToHash("AttackAtLeftHand");
+    public static int isLeft = Animator.StringToHash("isLeft");
+
+    // Animator parameters - Shield
+    public static int block = Animator.StringToHash("block");
 
     // Animator parameters - Enemy
-    public const float baseSpeedForEnemyAnimations = 3f;
+    public const float baseSpeedForEnemyAnimations = 2f;
 
     // Animator parameters - Door
     public static int open = Animator.StringToHash("open");
@@ -43,11 +65,17 @@ public static class Settings
     // Animator parameters - DamageableDecoration
     public static int destroy = Animator.StringToHash("destroy");
     public static string stateDestroyed = "Destroyed";
+
+    // Animator parameters - DropItem
+    public static int hovered = Animator.StringToHash("hovered");
     #endregion
 
     #region GAMEOBJECT TAGS
     public const string playerTag = "Player";
     public const string playerWeapon = "playerWeapon";
+    public const string enemyTag = "Enemy";
+    public const string decoyTag = "Decoy";
+    public const string summonedEnemyTag = "summonedEnemy";
     #endregion
 
     #region FIRING CONTROL
@@ -57,15 +85,22 @@ public static class Settings
     #endregion
 
     #region ASTAR PATHFINDING PARAMETERS
-    public const int defaultAStarMovementPenalty = 40;
+    public const int defaultAStarMovementPenalty = 35;
     public const int preferredPathAStarMovementPenalty = 1;
     public const int targetFrameRateToSpreadPathfindingOver = 60;
-    public const float playerMoveDistanceToRebuildPath = 3f;
-    public const float enemyPathRebuildCooldown = 2f;
+    public const float playerMoveDistanceToRebuildPath = 2f;
+    public const float enemyPathRebuildCooldown = 1f;
     #endregion
 
     #region ENEMY PARAMETERS
     public const int defaultEnemyHealth = 20;
+    #endregion
+
+    #region CHARACTER NAMES
+    public const string astraeus = "Astraeus";
+    public const string orion = "Orion";
+    public const string erebus = "Erebus";
+    public const string lyrisa = "Lyrisa";
     #endregion
 
     #region UI PARAMETERS

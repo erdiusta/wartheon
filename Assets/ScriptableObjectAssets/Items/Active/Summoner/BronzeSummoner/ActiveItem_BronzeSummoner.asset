@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9403acda36cdd0549be3a72ff47d802d, type: 3}
+  m_Name: ActiveItem_BronzeSummoner
+  m_EditorClassIdentifier: 
+  activeItemName: Bronze Summoner
+  activeItemType: 9
+  activeItemSprite: {fileID: -1753342970, guid: d6248bea9d4da0c41844b243240a8caf, type: 3}
+  activeItemAnimatorController: {fileID: 9100000, guid: f98e11399389aee49ae8b40562195c9f, type: 2}
+  activeItemPrefabArray:
+  - {fileID: 7183228443647751644, guid: 9585ae35702a6264da505c0b0fd182cb, type: 3}
+  - {fileID: 7183228443647751644, guid: fe2168624c9403c4ba2ee6c3732d747a, type: 3}
+  - {fileID: 7183228443647751644, guid: f72bccc6b6cfa9b4eaf6da629c67640a, type: 3}
+  projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  projectileChargeTime: 0
+  projectileChargeMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  activeItemShootEffect: {fileID: 0}
+  activeItemSwingSoundEffect: {fileID: 0}
+  activeItemImpactSoundEffect: {fileID: 0}
+  activeItemUseSoundEffect: {fileID: 11400000, guid: c9b4053ce84e4764bb717fc1d4f43637, type: 2}
+  hasNoProjectileNumberLimit: 0
+  activeItemMaxCharge: 1
+  activeItemChargeRegenerationPerSixRooms: 1
+  projectileDamageMin: 0
+  projectileDamageMax: 0
+  countDown: 0
+  burstDamageMin: 0
+  burstDamageMax: 0
+  blastRadius: 0
+  itemDuration: 0
+  projectileSpeedMin: 0
+  projectileSpeedMax: 0
+  projectileRange: 0
+  projectileRotationSpeed: 0
+  projectileSpreadMin: 0
+  projectileSpreadMax: 0
+  projectileSpawnAmountMin: 0
+  projectileSpawnAmountMax: 0
+  projectileSpawnIntervalMin: 0
+  projectileSpawnIntervalMax: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
+  isProjectileTrail: 0
+  projectileTrailTime: 3
+  projectileTrailMaterial: {fileID: 0}
+  projectileTrailStartWidth: 0
+  projectileTrailEndWidth: 0

@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_Shield
+  m_EditorClassIdentifier: 
+  weaponName: Shield
+  weaponFrontSprite: {fileID: -1551370753, guid: 87c4a611cede8854994d7a1056212191, type: 3}
+  weaponRearSprite: {fileID: -1497517463, guid: 87c4a611cede8854994d7a1056212191, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: b9154558c719d7c44bde88eae4e95ecd, type: 2}
+  weaponClass: 3
+  wieldType: 0
+  hasAcid: 0
+  acidEfficiency: 0.4
+  hasStunDamage: 0
+  stunChance: 0.2
+  hasBleedingDamage: 0
+  bleedingChance: 0.2
+  hasSlowDamage: 0
+  slowChance: 0.2
+  weaponShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
+  weaponImpactSoundEffect: {fileID: 0}
+  weaponReloadingSoundEffect: {fileID: 0}
+  isMeleeWeapon: 0
+  isShield: 1
+  weaponFireRate: 0
+  projectileDeflectRatio: 0.6
+  circleRadius: 0
+  meleeDamageMin: 0
+  meleeDamageMax: 0
+  criticalHitChance: 0.1
+  criticalHitDamageMultiplier: 2
+  hasInfiniteProjectile: 0
+  hasInfiniteClipCapacity: 0
+  weaponClipProjectileCapacity: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0
+  weaponReloadTime: 0

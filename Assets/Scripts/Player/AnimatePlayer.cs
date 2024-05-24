@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Player))]
@@ -9,51 +6,34 @@ public class AnimatePlayer : MonoBehaviour
 {
     Player player;
 
+    [HideInInspector] public int baseLayerIndex;
+    [HideInInspector] public int attackLayerIndex;
+    [HideInInspector] public int getHitLayerIndex;
+    [HideInInspector] public int deathLayerIndex;
+
     private void Awake()
     {
         player = GetComponent<Player>();
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        player.movementByVelocityEvent.OnMovementByVelocity += MovementByVelocityEvent_OnMovementByVelocity;
-        player.idleEvent.OnIdle += IdleEvent_OnIdle;
-        player.aimWeaponEvent.OnWeaponAim += AimWeaponEvent_OnWeaponAim;
-    }
+        baseLayerIndex = player.animator.GetLayerIndex("Base Layer");
+        attackLayerIndex = player.animator.GetLayerIndex("Attack Layer");
+        getHitLayerIndex = player.animator.GetLayerIndex("Get Hit Layer");
+        deathLayerIndex = player.animator.GetLayerIndex("Death Layer");
 
-    private void OnDisable()
-    {
-        player.movementByVelocityEvent.OnMovementByVelocity -= MovementByVelocityEvent_OnMovementByVelocity;
-        player.idleEvent.OnIdle -= IdleEvent_OnIdle;
-        player.aimWeaponEvent.OnWeaponAim -= AimWeaponEvent_OnWeaponAim;
-    }
-
-    private void MovementByVelocityEvent_OnMovementByVelocity(MovementByVelocityEvent movementByVelocityEvent, MovementByVelocityArgs movementByVelocityArgs)
-    {
-        SetMovementAnimationParameters();
-    }
-
-    /// <summary>
-    /// On idle event handler
-    /// </summary>
-    private void IdleEvent_OnIdle(IdleEvent idleEvent)
-    {
-        SetIdleAnimationParameters();
-    }
-
-    /// <summary>
-    /// On weapon aim event handler
-    /// </summary>
-    private void AimWeaponEvent_OnWeaponAim(AimWeaponEvent aimWeaponEvent, AimWeaponEventArgs aimWeaponEventArgs)
-    {
-        InitializeAimAnimationParameters();
-        SetAimWeaponAnimationParameters(aimWeaponEventArgs.aimDirection);
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(baseLayerIndex, 1f);
+        player.animator.SetLayerWeight(getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(deathLayerIndex, 0f);
     }
 
     /// <summary>
     /// Initialise aim animation parameters
     /// </summary>
-    private void InitializeAimAnimationParameters()
+    public void InitializeAimAnimationParameters()
     {
         player.animator.SetBool(Settings.aimUp, false);
         player.animator.SetBool(Settings.aimUpRight, false);
@@ -66,25 +46,79 @@ public class AnimatePlayer : MonoBehaviour
     /// <summary>
     /// Set movement animation parameters
     /// </summary>
-    private void SetMovementAnimationParameters()
+    public void SetMovementAnimationParameters()
     {
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
+        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
+
+        player.animator.SetBool(Settings.attackMotion, false);
         player.animator.SetBool(Settings.isMoving, true);
         player.animator.SetBool(Settings.isIdle, false);
+        player.animator.SetBool(Settings.getHit, false);
+        player.animator.SetBool(Settings.death, false);
     }
 
     /// <summary>
     /// Set movement animation parameters
     /// </summary>
-    private void SetIdleAnimationParameters()
+    public void SetIdleAnimationParameters()
     {
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
+        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
+
+        player.animator.SetBool(Settings.attackMotion, false);
         player.animator.SetBool(Settings.isMoving, false);
         player.animator.SetBool(Settings.isIdle, true);
+        player.animator.SetBool(Settings.getHit, false);
+        player.animator.SetBool(Settings.death, false);
+    }
+
+    /// <summary>
+    /// Play get hit animation
+    /// </summary>
+    public void SetGetHitAnimationParameters()
+    {
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(baseLayerIndex, 0f);
+        player.animator.SetLayerWeight(attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(getHitLayerIndex, 1f);
+        player.animator.SetLayerWeight(deathLayerIndex, 0f);
+
+        player.animator.SetBool(Settings.attackMotion, false);
+        player.animator.SetBool(Settings.isMoving, false);
+        player.animator.SetBool(Settings.isIdle, false);
+        player.animator.SetBool(Settings.getHit, true);
+        player.animator.SetBool(Settings.death, false);
+    }
+
+    /// <summary>
+    /// Play death animation
+    /// </summary>
+    public void SetDeathAnimationParameters()
+    {
+        // Adjust animator layer weights
+        player.animator.SetLayerWeight(baseLayerIndex, 0f);
+        player.animator.SetLayerWeight(attackLayerIndex, 0f);
+        player.animator.SetLayerWeight(getHitLayerIndex, 0f);
+        player.animator.SetLayerWeight(deathLayerIndex, 1f);
+
+        player.animator.SetBool(Settings.attackMotion, false);
+        player.animator.SetBool(Settings.isMoving, false);
+        player.animator.SetBool(Settings.isIdle, false);
+        player.animator.SetBool(Settings.getHit, false);
+        player.animator.SetBool(Settings.death, true);
     }
 
     /// <summary>
     /// Set aim animation parameters
     /// </summary>
-    private void SetAimWeaponAnimationParameters(AimDirection aimDirection)
+    public void SetAimWeaponAnimationParameters(AimDirection aimDirection)
     {
         // Set aim direction
         switch (aimDirection)

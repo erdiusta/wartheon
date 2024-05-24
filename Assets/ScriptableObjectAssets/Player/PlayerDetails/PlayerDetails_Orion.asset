@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352fbee161db0434d9a6bbbc0a4e4c34, type: 3}
+  m_Name: PlayerDetails_Orion
+  m_EditorClassIdentifier: 
+  playerCharacterName: Orion
+  playerPrefab: {fileID: 38858171499291080, guid: 99e6d53686669c243b844a3ade267a1e, type: 3}
+  oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 696b2a56ae550444faeb7b1763236a21, type: 2}
+  twoHandRuntimeAnimatorController: {fileID: 9100000, guid: a548100e3f0314d418ac3ddc4b63d691, type: 2}
+  bowRuntimeAnimatorController: {fileID: 9100000, guid: 89608e7d0f782dc4593536c2ee6a98dc, type: 2}
+  staffRuntimeAnimatorController: {fileID: 9100000, guid: 616c36ade33b9d3469486229fb76c45f, type: 2}
+  playerHealthAmount: 80
+  isImmuneAfterHit: 1
+  hitImmunityTime: 2
+  getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
+  specialMoveName: HEADSHOT
+  specialMoveSoundEffect: {fileID: 11400000, guid: 371fa797b2be9e342804b8ad3958bdf4, type: 2}
+  specialMoveDuration: 12
+  onStealth: 0
+  applyScreenShake: 0
+  shakeIntensity: 0
+  shakeDuration: 0
+  selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  activeItemsList:
+  - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  playerArmorValue: 2
+  startingWeapon: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
+  rightHandAnimatorController: {fileID: 9100000, guid: fdb61ba75457ab049a7d1bcf42030730, type: 2}
+  leftHandAnimatorController: {fileID: 0}
+  startingWeaponList:
+  - {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
+  playerMiniMapIcon: {fileID: 21300000, guid: 2e3dd1dee1d5ea546828fba96743f843, type: 3}
+  playerHandSprite: {fileID: 1585005775, guid: 1ccdf010dd5235241a18978e1a326c1d, type: 3}
+  playerBookSprite: {fileID: 1332110262, guid: ec762a820a0363545bbd2e3ac22442ea, type: 3}

@@ -76,6 +76,22 @@ PrefabInstance:
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[7].y
       value: 0.61278117
       objectReference: {fileID: 0}
+    - target: {fileID: 573751883470857211, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_MaskInteraction
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1273379931405193202, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 1.5625
+      objectReference: {fileID: 0}
+    - target: {fileID: 2215445447960316656, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_Layer
+      value: 24
+      objectReference: {fileID: 0}
     - target: {fileID: 3146469945750014307, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -116,6 +132,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3525311341189638168, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4214307536645877505, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 2.28125
+      objectReference: {fileID: 0}
+    - target: {fileID: 4372519502995614186, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5135288035861418495, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_TagString
+      value: Chest Item
+      objectReference: {fileID: 0}
+    - target: {fileID: 6671259502560293248, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: enemyDetails
+      value: 
+      objectReference: {fileID: 11400000, guid: d9310b552f23add4ba3fc5d78262c472, type: 2}
     - target: {fileID: 6671259502560293248, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: movementDetails
       value: 
@@ -126,7 +162,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6689813577759810905, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Offset.y
-      value: 0
+      value: 0.27
       objectReference: {fileID: 0}
     - target: {fileID: 6872100053539618354, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.size
@@ -180,9 +216,25 @@ PrefabInstance:
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[5].y
       value: 0.2703578
       objectReference: {fileID: 0}
+    - target: {fileID: 7248722829194322239, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 7736189416814370986, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Name
       value: Bat
+      objectReference: {fileID: 0}
+    - target: {fileID: 8037039556400538667, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_Layer
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 8497238629979407875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: layerMask.m_Bits
+      value: 17827840
+      objectReference: {fileID: 0}
+    - target: {fileID: 8901436270454263267, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: knockbackForce
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller

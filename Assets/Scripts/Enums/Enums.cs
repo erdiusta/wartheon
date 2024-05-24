@@ -22,6 +22,56 @@ public enum GameState
     restartGame
 }
 
+public enum ActiveItemType
+{
+    Generic,
+    Boomerang,
+    Bomb,
+    Shiruken,
+    Trap,
+    Dummy,
+    Hourglass,
+    Compass,
+    Potion,
+    Summoner
+}
+
+public enum BoomerangPhase
+{
+    Aim,
+    Fire,
+    Return
+}
+
+public enum ShirukenPhase
+{
+    Fire,
+    Ricochet
+}
+
+public enum MoveStatus
+{
+    Idle,
+    Stagger,
+    Stun,
+    Slow
+}
+
+public enum HealthStatus
+{
+    Normal,
+    Poisoned,
+    Bleeding
+}
+
+public enum ArmorStatus
+{
+    Normal,
+    SilverArmor,
+    GoldenArmor,
+    Acid
+}
+
 public enum AimDirection
 {
     Up,
@@ -30,6 +80,46 @@ public enum AimDirection
     Right,
     Left,
     Down
+}
+
+public enum WeaponClass
+{
+    Sword,
+    Axe,
+    Hammer,
+    Shield,
+    Spear,
+    Staff,
+    Bow,
+    Dagger,
+}
+
+public enum WieldType
+{
+    OneHanded,
+    TwoHanded
+}
+
+public enum DamageType
+{
+    Slashing,
+    Piercing,
+    Crushing,
+    Fire,
+    Water,
+    Earth,
+    Air,
+    Dark,
+    Light
+}
+
+public enum AttackType
+{
+    MeleeRight,
+    MeleeLeft,
+    Projectile,
+    Contact,
+    Gradual
 }
 
 public enum ChestSpawnEvent
@@ -47,8 +137,23 @@ public enum ChestSpawnPosition
 public enum ChestState
 {
     closed,
-    healthItem,
-    ammoItem,
     weaponItem,
     empty
+}
+
+public enum EnemyBehaviour
+{
+    Pursuit,
+    AimAndShoot,
+    PrepareAndDash,
+    InstantDash
+}
+
+public enum EnemyPhase
+{
+    Patrol,
+    Chase,
+    GetHit,
+    Attack,
+    Death
 }

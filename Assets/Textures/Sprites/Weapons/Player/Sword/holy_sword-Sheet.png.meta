@@ -1,0 +1,408 @@
+fileFormatVersion: 2
+guid: f53b0475c86f95141910cb247770d70f
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: holy_sword-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 21
+        width: 19
+        height: 40
+      alignment: 9
+      pivot: {x: 0.49293658, y: 0.10412288}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31ae2d5e337bad0479c9c3a30e7ce300
+      internalID: 735104743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: holy_sword-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 21
+        width: 21
+        height: 41
+      alignment: 9
+      pivot: {x: 0.551122, y: 0.10068614}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9773f5a23fa0ddc448e34f272089b2b4
+      internalID: -302777072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: holy_sword-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 21
+        width: 35
+        height: 41
+      alignment: 9
+      pivot: {x: 0.737718, y: 0.094139986}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4368eb62cdca8ff4cb66d2e245079864
+      internalID: 725501952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: holy_sword-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 21
+        width: 48
+        height: 41
+      alignment: 9
+      pivot: {x: 0.80473584, y: 0.097413085}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa71a76340e925a4cb72adc6cb64eec2
+      internalID: 857657622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: holy_sword-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 21
+        width: 54
+        height: 41
+      alignment: 9
+      pivot: {x: 0.828034, y: 0.09086692}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e3e66ee1a8fccd429813aa8c36d00cc
+      internalID: 145978608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: holy_sword-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 18
+        width: 52
+        height: 44
+      alignment: 9
+      pivot: {x: 0.81884295, y: 0.15144786}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab3e0c22fbdad034c982904bcb29ff1b
+      internalID: -1299582259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: holy_sword-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 12
+        width: 51
+        height: 50
+      alignment: 9
+      pivot: {x: 0.8169292, y: 0.24714802}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba797744dbf43254db7840af81d359b3
+      internalID: -1739258253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: holy_sword-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 21
+        width: 54
+        height: 41
+      alignment: 9
+      pivot: {x: 0.8237005, y: 0.091244765}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ac8c6e69838c9b347a1d0f0d67552a2c
+      internalID: -1140991129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: holy_sword-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 21
+        width: 35
+        height: 41
+      alignment: 9
+      pivot: {x: 0.73184466, y: 0.087520786}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5cc6fa4e8fde6544f897cfe640205951
+      internalID: -1908614874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: holy_sword-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 618
+        y: 21
+        width: 21
+        height: 41
+      alignment: 9
+      pivot: {x: 0.55471367, y: 0.08743709}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 55c8ee2610ea4034fb497e4e9e0f730b
+      internalID: 1847559946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: holy_sword-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 21
+        width: 19
+        height: 40
+      alignment: 9
+      pivot: {x: 0.49293658, y: 0.10412288}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c0eae0467c6a7b4284553f46166450c
+      internalID: -531008926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: b3377c4cdbefdbc489642b3d2fc69053
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      holy_sword-Sheet_0: 735104743
+      holy_sword-Sheet_1: -302777072
+      holy_sword-Sheet_10: -531008926
+      holy_sword-Sheet_2: 725501952
+      holy_sword-Sheet_3: 857657622
+      holy_sword-Sheet_4: 145978608
+      holy_sword-Sheet_5: -1299582259
+      holy_sword-Sheet_6: -1739258253
+      holy_sword-Sheet_7: -1140991129
+      holy_sword-Sheet_8: -1908614874
+      holy_sword-Sheet_9: 1847559946
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

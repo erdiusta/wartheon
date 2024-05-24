@@ -24,13 +24,13 @@ public class ReloadWeapon : MonoBehaviour
     private void OnEnable()
     {
         reloadWeaponEvent.OnReloadWeapon += ReloadWeaponEvent_OnReloadWeapon;
-        setActiveWeaponEvent.OnSetActiveWeapon += SetActiveWeaponEvent_OnSetActiveWeapon;
+        setActiveWeaponEvent.OnSetActiveRightHandWeapon += SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
     }
 
     private void OnDisable()
     {
         reloadWeaponEvent.OnReloadWeapon -= ReloadWeaponEvent_OnReloadWeapon;
-        setActiveWeaponEvent.OnSetActiveWeapon -= SetActiveWeaponEvent_OnSetActiveWeapon;
+        setActiveWeaponEvent.OnSetActiveRightHandWeapon -= SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public class ReloadWeapon : MonoBehaviour
         {
             int projectileIncrease = Mathf.RoundToInt((weapon.weaponDetails.weaponProjectileCapacity * topUpProjectilePercent) / 100f);
 
-            int totalProjectile = weapon.weaponRemainingProjectile + projectileIncrease;
+            int totalProjectile = weapon.weaponRemainingProjectile * projectileIncrease;
 
             weapon.weaponRemainingProjectile = totalProjectile > weapon.weaponDetails.weaponProjectileCapacity ?
                 weapon.weaponDetails.weaponProjectileCapacity : totalProjectile;
@@ -112,7 +112,7 @@ public class ReloadWeapon : MonoBehaviour
     /// <summary>
     /// Set active weapon event handler
     /// </summary>
-    private void SetActiveWeaponEvent_OnSetActiveWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    private void SetActiveWeaponEvent_OnSetActiveRightHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
         if (setActiveWeaponEventArgs.weapon.isWeaponReloading)
         {

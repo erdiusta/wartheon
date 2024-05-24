@@ -1,4 +1,5 @@
-using UnityEngine;  
+using System.Collections;
+using UnityEngine;
 
 [RequireComponent(typeof(Enemy))]
 [DisallowMultipleComponent]
@@ -7,11 +8,13 @@ public class EnemyWeaponAI : MonoBehaviour
     #region Tooltip
     [Tooltip("Select the layers that the enemy bullets will hit")]
     #endregion Tooltip
-    [SerializeField] private LayerMask layerMask;
+    [SerializeField] LayerMask layerMask;
     #region Tooltip
     [Tooltip("Populate this with the WeaponShootPosition child gameobject transform")]
     #endregion Tooltip
-    [SerializeField] private Transform weaponShootPosition;
+    [SerializeField] Transform weaponShootPosition;
+
+    [HideInInspector] public Coroutine enemyAttackCoroutine;
 
     Enemy enemy;
     EnemyDetailsSO enemyDetails;
@@ -33,6 +36,16 @@ public class EnemyWeaponAI : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.GetPlayer().playerDetails.onStealth) return;
+
+        if (enemy.enemyMovementAI.moveStatus == MoveStatus.Stun) return;
+
+        if (enemy.enemyMovementAI.moveStatus == MoveStatus.Stagger) return;
+
+        if (enemy.enemyMovementAI.attackMoveEnemyRoutine != null) return;
+
+        if (enemy.health.getHitCoroutine != null) return;
+
         // Update timers
         firingIntervalTimer -= Time.deltaTime;
 
@@ -76,23 +89,11 @@ public class EnemyWeaponAI : MonoBehaviour
     /// </summary>
     private void DoFireWeapon()
     {
-        // Player distance
-        Vector3 playerDirectionVector = GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position;
+        Vector3 playerDirectionVector, weaponDirection;
+        float weaponAngleDegrees, enemyAngleDegrees;
+        AimDirection enemyAimDirection;
 
-        // Calculate direction vector of player from weapon shoot position
-        Vector3 weaponDirection = GameManager.Instance.GetPlayer().GetPlayerPosition() - weaponShootPosition.position;
-
-        // Get weapon to player angle
-        float weaponAngleDegrees = HelperUtilities.GetAngleFromVector(weaponDirection);
-
-        // Get enemy to player angle
-        float enemyAngleDegrees = HelperUtilities.GetAngleFromVector(playerDirectionVector);
-
-        // Set enemy aim direction
-        AimDirection enemyAimDirection = HelperUtilities.GetAimDirection(enemyAngleDegrees);
-
-        // Trigger weapon aim event
-        enemy.aimWeaponEvent.CallAimWeaponEvent(enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection);
+        Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection);
 
         // Only fire if enemy has a weapon
         if (enemyDetails.enemyWeapon != null)
@@ -104,13 +105,43 @@ public class EnemyWeaponAI : MonoBehaviour
             if (playerDirectionVector.magnitude <= enemyProjectileRange)
             {
                 // Does this enemy require line of sight to the player before firing?
-                if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange))
-                    return;
+                if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
 
                 // Trigger fire weapon event
-                enemy.fireWeaponEvent.CallFireWeaponEvent(true, true, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection);
+                if (enemyAttackCoroutine == null)
+                {
+                    enemy.animateEnemy.SetAttackAnimationParameters();
+                    enemy.animator.SetBool(Settings.attackMotion, true);
+
+                    enemyAttackCoroutine = StartCoroutine(EnemyAttackAnimRoutine());
+                    enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false);
+                }
             }
         }
+    }
+
+    public void Aim(out Vector3 playerDirectionVector, out Vector3 weaponDirection, out float weaponAngleDegrees, out float enemyAngleDegrees, 
+        out AimDirection enemyAimDirection)
+    {
+        // Player distance
+        playerDirectionVector = GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position;
+
+        // Calculate direction vector of player from weapon shoot position
+        weaponDirection = GameManager.Instance.GetPlayer().GetPlayerPosition() - weaponShootPosition.position;
+
+        // Get weapon to player angle
+        weaponAngleDegrees = HelperUtilities.GetAngleFromVector(weaponDirection);
+
+        // Get enemy to player angle
+        enemyAngleDegrees = HelperUtilities.GetAngleFromVector(playerDirectionVector);
+
+        // Set enemy aim direction
+        enemyAimDirection = HelperUtilities.GetAimDirection(enemyAngleDegrees);
+
+        // Trigger weapon aim methods
+        enemy.aimWeapon.Aim(enemyAimDirection, enemyAngleDegrees);
+        enemy.animateEnemy.InitializeAimAnimationParameters();
+        enemy.animateEnemy.SetAimWeaponAnimationParameters(enemyAimDirection);
     }
 
     private bool IsPlayerInLineOfSight(Vector3 weaponDirection, float enemyProjectileRange)
@@ -123,6 +154,22 @@ public class EnemyWeaponAI : MonoBehaviour
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Enemy character attack motion
+    /// </summary>
+    IEnumerator EnemyAttackAnimRoutine()
+    {
+        enemy.enemyMovementAI.enemyPhase = EnemyPhase.Attack;
+
+        if (enemy.health.currentHealth > 0f)
+        {
+            yield return new WaitForSeconds(1f);
+        }
+
+        enemyAttackCoroutine = null;
+        enemy.enemyMovementAI.enemyPhase = EnemyPhase.Patrol;
     }
 
     #region Validation

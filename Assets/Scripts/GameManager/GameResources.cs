@@ -1,6 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Tilemaps;
+
+[System.Serializable]
+public class WeaponAnimator
+{
+    public string weaponName;
+    public RuntimeAnimatorController weaponHoverAnimatorController;
+}
 
 public class GameResources : MonoBehaviour
 {
@@ -28,14 +36,52 @@ public class GameResources : MonoBehaviour
     #endregion
     public RoomNodeTypeListSO roomNodeTypeList;
 
+    #region Header PLAYER SELECTION
+    [Space(10)]
+    [Header("PLAYER SELECTION")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The PlayerSelection prefab")]
+    #endregion
+    public GameObject playerSelectionPrefab;
+
     #region Header PLAYER
     [Space(10)]
     [Header("PLAYER")]
+    #endregion Header PLAYER
+    #region Tooltip
+    [Tooltip("Player details list - populate the list with the playerdetails scriptable object")]
     #endregion
+    public List<PlayerDetailsSO> playerDetailsList;
     #region Tooltip
     [Tooltip("The current player scriptable object - this is used to reference the current player between scenes")]
+    #endregion Tooltip
+    public CurrentPlayerSO currentPlayer;
+
+    #region Header MUSIC
+    [Space(10)]
+    [Header("MUSIC")]
     #endregion
-    public CurrentPlayerSO currentPlayer;   
+    #region Tooltip
+    [Tooltip("Populate with the music master mixer group")]
+    #endregion
+    public AudioMixerGroup musicMasterMixerGroup;
+    #region Tooltip
+    [Tooltip("Main menu music scriptable object")]
+    #endregion
+    public MusicTrackSO mainMenuMusic;
+    #region Tooltip
+    [Tooltip("Music on full snapshot")]
+    #endregion
+    public AudioMixerSnapshot musicOnFullSnaphot;
+    #region Tooltip
+    [Tooltip("Music low snapshot")]
+    #endregion
+    public AudioMixerSnapshot musicLowSnapshot;
+    #region Tooltip
+    [Tooltip("Music off snapshot")]
+    #endregion
+    public AudioMixerSnapshot musicOffSnapshot;
 
     #region Header SOUNDS
     [Space(10)]
@@ -46,6 +92,14 @@ public class GameResources : MonoBehaviour
     #endregion
     public AudioMixerGroup soundMasterMixerGroup;
     #region Tooltip
+    [Tooltip("Open book sound effect")]
+    #endregion Tooltip
+    public SoundEffectSO openBookSoundEffect;
+    #region Tooltip
+    [Tooltip("Close book sound effect")]
+    #endregion Tooltip
+    public SoundEffectSO closeBookSoundEffect;
+    #region Tooltip
     [Tooltip("Door open close sound effect")]
     #endregion Tooltip
     public SoundEffectSO doorOpenCloseSoundEffect;
@@ -53,6 +107,10 @@ public class GameResources : MonoBehaviour
     [Tooltip("Populate with the chest open sound effect")]
     #endregion
     public SoundEffectSO chestOpen;
+    #region Tooltip
+    [Tooltip("Populate with the chest lock sound effect")]
+    #endregion
+    public SoundEffectSO chestLock;
     #region Tooltip
     [Tooltip("Populate with the health pickup sound effect")]
     #endregion
@@ -102,12 +160,25 @@ public class GameResources : MonoBehaviour
 
     #region Header UI
     [Space(10)]
+    [Header("Book UI")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Populate with book item image prefab")]
+    #endregion
+    public GameObject bookWeaponSlot;
+
+    #region Header UI
+    [Space(10)]
     [Header("UI")]
     #endregion
     #region Tooltip
     [Tooltip("Populate with heart image prefab")]
     #endregion
     public GameObject heartPrefab;
+    #region Tooltip
+    [Tooltip("Populate with half heart image prefab")]
+    #endregion
+    public GameObject halfHeartPrefab;
     #region Tooltip
     [Tooltip("Populate with projectile icon prefab")]
     #endregion
@@ -129,6 +200,22 @@ public class GameResources : MonoBehaviour
     [Tooltip("Populate with bullet icon sprite")]
     #endregion
     public Sprite bulletIcon;
+    #region Tooltip
+    [Tooltip("Populate with bullet icon ammo drop sprite")]
+    #endregion
+    public Sprite ammoDropIcon;
+    #region Tooltip
+    [Tooltip("Populate with ammo hover animator controller")]
+    #endregion
+    public RuntimeAnimatorController ammoHoverAnimatorController;
+    #region Tooltip
+    [Tooltip("Populate with lock icon sprite")]
+    #endregion
+    public Sprite lockIcon;
+    #region Tooltip
+    [Tooltip("Populate array with name and animator controller of the related weapon")]
+    #endregion
+    public WeaponAnimator[] weaponsHoverArray;
 
     #region Header MINIMAP
     [Space(10)]
@@ -144,6 +231,8 @@ public class GameResources : MonoBehaviour
     private void OnValidate()
     {
         HelperUtilities.ValidateCheckNullValue(this, nameof(roomNodeTypeList), roomNodeTypeList);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(playerSelectionPrefab), playerSelectionPrefab);
+        HelperUtilities.ValidateCheckEnumerableValues(this, nameof(playerDetailsList), playerDetailsList);
         HelperUtilities.ValidateCheckNullValue(this, nameof(currentPlayer), currentPlayer);
         HelperUtilities.ValidateCheckNullValue(this, nameof(soundMasterMixerGroup), soundMasterMixerGroup);
         HelperUtilities.ValidateCheckNullValue(this, nameof(doorOpenCloseSoundEffect), doorOpenCloseSoundEffect);
@@ -157,7 +246,12 @@ public class GameResources : MonoBehaviour
         HelperUtilities.ValidateCheckNullValue(this, nameof(materializeShader), materializeShader);
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(enemyUnwalkableCollisionTilesArray), enemyUnwalkableCollisionTilesArray);
         HelperUtilities.ValidateCheckNullValue(this, nameof(preferredEnemyPathTile), preferredEnemyPathTile);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(musicMasterMixerGroup), musicMasterMixerGroup);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(musicOnFullSnaphot), musicOnFullSnaphot);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(musicLowSnapshot), musicLowSnapshot);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(musicOffSnapshot), musicOffSnapshot);
         HelperUtilities.ValidateCheckNullValue(this, nameof(heartPrefab), heartPrefab);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(halfHeartPrefab), halfHeartPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(projectileIconPrefab), projectileIconPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(chestItemPrefab), chestItemPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(heartIcon), heartIcon);

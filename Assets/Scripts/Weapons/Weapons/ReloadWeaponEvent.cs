@@ -9,9 +9,9 @@ public class ReloadWeaponEvent : MonoBehaviour
     /// <summary>
     /// Specify the weapon to have it's clip reloaded. If the total projectile is also to be increased then specify the topUpAmmoPercent.
     /// </summary>
-    public void CallReloadWeaponEvent(Weapon weapon, int topUpAmmoPercent)
+    public void CallReloadWeaponEvent(Weapon weapon, int topUpProjectilePercent)
     {
-        OnReloadWeapon?.Invoke(this, new ReloadWeaponEventArgs { weapon = weapon, topUpProjectilePercent = topUpAmmoPercent });
+        OnReloadWeapon?.Invoke(this, new ReloadWeaponEventArgs { weapon = weapon, topUpProjectilePercent = topUpProjectilePercent });
     }
 }
 

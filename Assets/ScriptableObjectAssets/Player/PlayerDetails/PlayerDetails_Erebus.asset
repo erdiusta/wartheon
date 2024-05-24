@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352fbee161db0434d9a6bbbc0a4e4c34, type: 3}
+  m_Name: PlayerDetails_Erebus
+  m_EditorClassIdentifier: 
+  playerCharacterName: Erebus
+  playerPrefab: {fileID: 38858171499291080, guid: dd7a903ea8b0ca44e8877d7b30e01d9f, type: 3}
+  oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 4102ba67a73173f4eade31c0a46ffc1a, type: 2}
+  twoHandRuntimeAnimatorController: {fileID: 9100000, guid: 3bde3ff582fce72409ca00143dda2347, type: 2}
+  bowRuntimeAnimatorController: {fileID: 9100000, guid: d298c1ca77072b445ac610f3466c2319, type: 2}
+  staffRuntimeAnimatorController: {fileID: 9100000, guid: 832e0fee03e2c62498284cc7ba774ea4, type: 2}
+  playerHealthAmount: 80
+  isImmuneAfterHit: 1
+  hitImmunityTime: 2
+  getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
+  specialMoveName: STEALTH
+  specialMoveSoundEffect: {fileID: 11400000, guid: 65771ccd5a8ddb44bbeb1d4b0f60aeeb, type: 2}
+  specialMoveDuration: 20
+  onStealth: 0
+  applyScreenShake: 0
+  shakeIntensity: 0
+  shakeDuration: 0
+  selectedActiveItem: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
+  activeItemsList:
+  - {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
+  playerArmorValue: 1
+  startingWeapon: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+  rightHandAnimatorController: {fileID: 9100000, guid: 4c02187a09eabde4dba23544bdf50f8e, type: 2}
+  leftHandAnimatorController: {fileID: 9100000, guid: 4c02187a09eabde4dba23544bdf50f8e, type: 2}
+  startingWeaponList:
+  - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+  - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+  playerMiniMapIcon: {fileID: 21300000, guid: bc3c8aa6b77ee384c8eecf6fa922c504, type: 3}
+  playerHandSprite: {fileID: 1585005775, guid: 1ccdf010dd5235241a18978e1a326c1d, type: 3}
+  playerBookSprite: {fileID: 1173042849, guid: b8d514e49a404c548be3b21657cef539, type: 3}

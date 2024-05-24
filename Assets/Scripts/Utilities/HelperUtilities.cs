@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+    using System.Collections;
 using UnityEngine;
 
 public static class HelperUtilities
@@ -14,7 +13,7 @@ public static class HelperUtilities
         if (mainCamera == null)
             mainCamera = Camera.main;
 
-        Vector3 mouseScreenPosition = Input.mousePosition;
+        Vector2 mouseScreenPosition = InputManager.Instance.pointerPosition.action.ReadValue<Vector2>();
 
         // Clamp mouse position to screen size
         mouseScreenPosition.x = Mathf.Clamp(mouseScreenPosition.x, 0f, Screen.width);
@@ -300,5 +299,25 @@ public static class HelperUtilities
         }
 
         return nearestSpawnPosition;
+    }
+
+    /// <summary>
+    /// Check if related animator has specific parameter or not
+    /// </summary>
+    public static bool AnimatorHasParameter(Animator animator, string paramName)
+    {
+        // Get the parameters list from the animator controller
+        AnimatorControllerParameter[] parameters = animator.parameters;
+
+        // Check if the parameter with the given name exists
+        foreach (AnimatorControllerParameter parameter in parameters)
+        {
+            if (parameter.name == paramName)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

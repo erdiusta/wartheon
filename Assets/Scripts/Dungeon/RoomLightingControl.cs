@@ -67,6 +67,7 @@ public class RoomLightingControl : MonoBehaviour
         instantiatedRoom.groundTilemap.GetComponent<TilemapRenderer>().material = material;
         instantiatedRoom.decoration1Tilemap.GetComponent<TilemapRenderer>().material = material;
         instantiatedRoom.decoration2Tilemap.GetComponent<TilemapRenderer>().material = material;
+        instantiatedRoom.sideTilemap.GetComponent<TilemapRenderer>().material = material;
         instantiatedRoom.frontTilemap.GetComponent<TilemapRenderer>().material = material;
         instantiatedRoom.minimapTilemap.GetComponent<TilemapRenderer>().material = material;
 
@@ -80,6 +81,7 @@ public class RoomLightingControl : MonoBehaviour
         instantiatedRoom.groundTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.decoration1Tilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.decoration2Tilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
+        instantiatedRoom.sideTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.frontTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.minimapTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
     }

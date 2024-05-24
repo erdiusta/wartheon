@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -33,6 +32,9 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
 
         currentRoom = roomChangedEventArgs.room;
 
+        // Update music for room
+        MusicManager.Instance.PlayMusic(currentRoom.ambientMusic, 0.2f, 2f);
+
         // If the room is a corridor or the entrance then return
         if (currentRoom.roomNodeType.isCorridorEW || currentRoom.roomNodeType.isCorridorNS || currentRoom.roomNodeType.isEntrance)
             return;
@@ -57,6 +59,9 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
 
         // Get concurrent number of enemies to spawn
         enemyMaxConcurrentSpawnNumber = GetConcurrentEnemies();
+
+        // Update music for room
+        MusicManager.Instance.PlayMusic(currentRoom.battleMusic, 0.2f, 0.5f);
 
         // Lock doors
         currentRoom.instantiatedRoom.LockDoors();
@@ -162,7 +167,7 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     /// <summary>
     /// Process enemy destroyed
     /// </summary>
-    private void Enemy_OnDestroyed(DestroyedEvent destroyedEvent, DestroyedEventArgs destroyedEventArgs)
+    public void Enemy_OnDestroyed(DestroyedEvent destroyedEvent, DestroyedEventArgs destroyedEventArgs)
     {
         // Unsubscribe from event
         destroyedEvent.OnDestroyed -= Enemy_OnDestroyed;
@@ -189,8 +194,11 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
             // Unlock doors
             currentRoom.instantiatedRoom.UnlockDoors(Settings.doorUnlockDelay);
 
+            // Update music for room
+            MusicManager.Instance.PlayMusic(currentRoom.ambientMusic, 0.2f, 2f);
+
             // Trigger room enemies defeated event
-            StaticEventHandler.CallRoomEnemiesDefeatedEvent(currentRoom);
+            StaticEventHandler.CallRoomEnemiesDefeatedEvent(currentRoom, GameManager.Instance.GetPlayer().summonedEnemies);
         }
     }
 }
