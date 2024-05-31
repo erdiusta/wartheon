@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Player))]
@@ -24,9 +26,12 @@ public class PlayerControl : MonoBehaviour
     Coroutine teleportParticleRoutine;
     Coroutine dropCoroutine;
     Coroutine healthPotionDrinkCoroutine;
+    Coroutine attackMotionCoroutine;
     bool particlePlayed;
     float unstealthImmunityTime = 2f;
     bool startStealth = true;
+    AimDirection aimDirection;
+    float attackMotionTransitionTimer = 0f;
 
     private void Awake()
     {
@@ -85,42 +90,44 @@ public class PlayerControl : MonoBehaviour
         // If player movement disabled then return
         if (isPlayerMovementDisabled) return;
 
-        switch (player.moveStatus)
+        if (attackMotionCoroutine == null)
         {
-            case MoveStatus.Idle:
-            case MoveStatus.Slow:
-                // Process the player weapon input
-                WeaponAndActiveItemInput();
-                // Process the player movement input
-                MovementInput();
-                // Process the player use item input
-                UseItemInput();
-                // Process the player use special move input
-                SpecialMoveInput();
-                // Drop the player's active item if have
-                DropActiveItemInput();
-                break;
-            case MoveStatus.Stagger:
-                player.polygonCollider2D.enabled = false;
-                if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0)
-                {
-                    // Trigger fire weapon event for precharge weapons
-                    player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f,
-                        0f, Vector3.zero, false);
-                }
-                StartCoroutine(Stagger());
-                break;
-            case MoveStatus.Stun:
-                if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0)
-                {
-                    // Trigger fire weapon event for precharge weapons
-                    player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f,
-                        0f, Vector3.zero, false);
-                }
-                StartCoroutine(StunRoutine());
-                break;
-            default:
-                break;
+            switch (player.moveStatus)
+            {
+                case MoveStatus.Idle:
+                    // Process the player weapon input
+                    WeaponAndActiveItemInput();
+                    // Process the player movement input
+                    MovementInput();
+                    // Process the player use item input
+                    UseItemInput();
+                    // Process the player use special move input
+                    SpecialMoveInput();
+                    // Drop the player's active item if have
+                    DropActiveItemInput();
+                    break;
+                case MoveStatus.Stagger:
+                    player.polygonCollider2D.enabled = false;
+                    if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                    {
+                        // Trigger fire weapon event for precharge weapons
+                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f,
+                            0f, Vector3.zero, false);
+                    }
+                    StartCoroutine(Stagger());
+                    break;
+                case MoveStatus.Stun:
+                    if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                    {
+                        // Trigger fire weapon event for precharge weapons
+                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f,
+                            0f, Vector3.zero, false);
+                    }
+                    StartCoroutine(StunRoutine());
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -129,37 +136,40 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void MovementInput()
     {
-        // Get movement input
-        movementInput = InputManager.Instance.movement.action.ReadValue<Vector2>().normalized;
-
-        float horizontalMovement = movementInput.x;
-        float verticalMovement = movementInput.y;
-
-        player.movementByVelocity.MovementInput = movementInput;
-
-        // Create a direction vector based on the input
-        Vector2 direction = new Vector2(horizontalMovement, verticalMovement);
-
-        // Adjust distance for diagonal movement (pythagoras approximation)
-        if (horizontalMovement != 0f && verticalMovement != 0f)
+        if (player.meleeAttackRightHand.playerAttackMotionRoutine == null)
         {
-            direction *= 0.7f;
-        }
+            // Get movement input
+            movementInput = InputManager.Instance.movement.action.ReadValue<Vector2>().normalized;
 
-        // If there is movement
-        if (direction != Vector2.zero)
-        {
-            // Trigger movement event
-            player.movementByVelocity.MoveRigidbody(direction, player.movementByVelocity.moveSpeed);
+            float horizontalMovement = movementInput.x;
+            float verticalMovement = movementInput.y;
 
-            // Trigger move animations
-            player.animatePlayer.SetMovementAnimationParameters();
-        }
-        // Else trigger idle event
-        else
-        {
-            player.idle.StopVelocity();
-            player.animatePlayer.SetIdleAnimationParameters();
+            player.movementByVelocity.MovementInput = movementInput;
+
+            // Create a direction vector based on the input
+            Vector2 direction = new Vector2(horizontalMovement, verticalMovement);
+
+            // Adjust distance for diagonal movement (pythagoras approximation)
+            if (horizontalMovement != 0f && verticalMovement != 0f)
+            {
+                direction *= 0.7f;
+            }
+
+            // If there is movement
+            if (direction != Vector2.zero)
+            {
+                // Trigger movement event
+                player.movementByVelocity.MoveRigidbody(direction, player.movementByVelocity.moveSpeed);
+
+                // Trigger move animations
+                player.animatePlayer.SetMovementAnimationParameters();
+            }
+            // Else trigger idle event
+            else
+            {
+                player.idle.StopVelocity();
+                player.animatePlayer.SetIdleAnimationParameters();
+            }
         }
     }
 
@@ -215,6 +225,7 @@ public class PlayerControl : MonoBehaviour
 
         // Set player aim direction
         playerAimDirection = HelperUtilities.GetAimDirection(playerAngleDegrees);
+        aimDirection = playerAimDirection;
 
         // Trigger weapon aim methods
         player.aimWeapon.Aim(playerAimDirection, playerAngleDegrees);
@@ -454,11 +465,8 @@ public class PlayerControl : MonoBehaviour
         player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
         player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
 
-        player.animator.SetBool(Settings.attackMotion, true);
+        yield return new WaitForSeconds(0.5f);
 
-        yield return new WaitForSeconds(0.6f);
-
-        player.animator.SetBool(Settings.attackMotion, false);
         player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
         player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
         player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
@@ -823,11 +831,6 @@ public class PlayerControl : MonoBehaviour
                     enemy.GetComponent<EnemyMovementAI>().TriggerKnockback((enemy.transform.position - transform.position).normalized);
                 }
 
-                if (GetComponent<MeleeAttackRightHand>().playerAttackRightHandRoutine == null)
-                {
-                    GetComponent<MeleeAttackRightHand>().playerAttackRightHandRoutine = StartCoroutine(PlayerAttackAnimRoutine());
-                }
-
                 if (enemy.health != null)
                 {
                     enemy.health.TakeDamage(seismicSlamDamage, transform.position, enemy.health.transform.position, false);
@@ -1086,6 +1089,11 @@ public class PlayerControl : MonoBehaviour
 
         // Set current weapon
         SetRightHandWeaponByIndex(currentRightHandWeaponIndex);
+    }
+
+    public AimDirection GetAimDirection()
+    {
+        return aimDirection;
     }
 
     // This method visualizes the radius of the seismic slam for debugging purposes.

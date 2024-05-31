@@ -171,10 +171,8 @@ public class Projectile : MonoBehaviour, IFireable
                 {
                     // Status checks
                     CheckPoisonStatus(player);
-                    CheckBleedingStatus(player);
                     CheckAcidStatus(player);
                     CheckStunStatus(player);
-                    CheckSlowStatus(player);
 
                     // Deal Damage To Collision Object
                     DealDamage(collision);
@@ -186,10 +184,8 @@ public class Projectile : MonoBehaviour, IFireable
                     {
                         // Status checks
                         CheckPoisonStatus(player);
-                        CheckBleedingStatus(player);
                         CheckAcidStatus(player);
                         CheckStunStatus(player);
-                        CheckSlowStatus(player);
 
                         // Deal Damage To Collision Object
                         DealDamage(collision);
@@ -208,10 +204,8 @@ public class Projectile : MonoBehaviour, IFireable
             {
                 // Status checks
                 CheckPoisonStatus(player);
-                CheckBleedingStatus(player);
                 CheckAcidStatus(player);
                 CheckStunStatus(player);
-                CheckSlowStatus(player);
 
                 // Deal Damage To Collision Object
                 DealDamage(collision);
@@ -256,19 +250,15 @@ public class Projectile : MonoBehaviour, IFireable
                         {
                             // Status checks - PROJECTILE
                             CheckPoisonStatus(enemy);
-                            CheckBleedingStatus(enemy);
                             CheckAcidStatus(enemy);
                             CheckStunStatus(enemy);
-                            CheckSlowStatus(enemy);
                         }
                         else
                         {
                             // Status checks - ACTIVE ITEM
                             CheckPoisonStatus(enemy, true);
-                            CheckBleedingStatus(enemy, true);
                             CheckAcidStatus(enemy, true);
                             CheckStunStatus(enemy, true);
-                            CheckSlowStatus(enemy, true);
                         }
 
                         // Deal Damage To Collision Object
@@ -281,19 +271,15 @@ public class Projectile : MonoBehaviour, IFireable
                     {
                         // Status checks - PROJECTILE
                         CheckPoisonStatus(enemy);
-                        CheckBleedingStatus(enemy);
                         CheckAcidStatus(enemy);
                         CheckStunStatus(enemy);
-                        CheckSlowStatus(enemy);
                     }
                     else
                     {
                         // Status checks - ACTIVE ITEM
                         CheckPoisonStatus(enemy, true);
-                        CheckBleedingStatus(enemy, true);
                         CheckAcidStatus(enemy, true);
                         CheckStunStatus(enemy, true);
-                        CheckSlowStatus(enemy, true);
                     }
 
                     // Deal Damage To Collision Object
@@ -306,19 +292,15 @@ public class Projectile : MonoBehaviour, IFireable
                 {
                     // Status checks - PROJECTILE
                     CheckPoisonStatus(enemy);
-                    CheckBleedingStatus(enemy);
                     CheckAcidStatus(enemy);
                     CheckStunStatus(enemy);
-                    CheckSlowStatus(enemy);
                 }
                 else
                 {
                     // Status checks - ACTIVE ITEM
                     CheckPoisonStatus(enemy, true);
-                    CheckBleedingStatus(enemy, true);
                     CheckAcidStatus(enemy, true);
                     CheckStunStatus(enemy, true);
-                    CheckSlowStatus(enemy, true);
                 }
 
                 // Deal Damage To Collision Object
@@ -745,72 +727,6 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check bleeding status
-    /// </summary>
-    private void CheckBleedingStatus(Player player, bool isActiveItem = false)
-    {
-        if (!isActiveItem)
-        {
-            if (projectileDetails.hasBleedingDamage)
-            {
-                // Check get bleeding
-                float randomDice = Random.Range(0f, 1f);
-                if (randomDice < projectileDetails.bleedingChance)
-                {
-                    player.healthEvent.CallGetBleedingEvent();
-                    player.healthStatus = HealthStatus.Bleeding;
-                }
-            }
-        }
-        else
-        {
-            if (activeItemDetails.hasBleedingDamage)
-            {
-                // Check get bleeding
-                float randomDice = Random.Range(0f, 1f);
-                if (randomDice < activeItemDetails.bleedingChance)
-                {
-                    player.healthEvent.CallGetBleedingEvent();
-                    player.healthStatus = HealthStatus.Bleeding;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Check bleed status
-    /// </summary>
-    private void CheckBleedingStatus(Enemy enemy, bool isActiveItem = false)
-    {
-        if (!isActiveItem)
-        {
-            if (projectileDetails.hasBleedingDamage)
-            {
-                // Check get bleeding
-                float randomDice = Random.Range(0f, 1f);
-                if (randomDice < projectileDetails.bleedingChance)
-                {
-                    enemy.healthEvent.CallGetBleedingEvent();
-                    enemy.healthStatus = HealthStatus.Bleeding;
-                }
-            }
-        }
-        else
-        {
-            if (activeItemDetails.hasBleedingDamage)
-            {
-                // Check get bleeding
-                float randomDice = Random.Range(0f, 1f);
-                if (randomDice < activeItemDetails.bleedingChance)
-                {
-                    enemy.healthEvent.CallGetBleedingEvent();
-                    enemy.healthStatus = HealthStatus.Bleeding;
-                }
-            }
-        }
-    }
-
-    /// <summary>
     /// Check acid status - Player
     /// </summary>
     private void CheckAcidStatus(Player player, bool isActiveItem = false)
@@ -895,7 +811,7 @@ public class Projectile : MonoBehaviour, IFireable
     {
         if (!isActiveItem)
         {
-            if (projectileDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun && player.moveStatus != MoveStatus.Slow)
+            if (projectileDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun)
             {
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < projectileDetails.stunChance)
@@ -909,7 +825,7 @@ public class Projectile : MonoBehaviour, IFireable
         }
         else
         {
-            if (activeItemDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun && player.moveStatus != MoveStatus.Slow)
+            if (activeItemDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun)
             {
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < activeItemDetails.stunChance)
@@ -932,8 +848,7 @@ public class Projectile : MonoBehaviour, IFireable
         {
             EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
 
-            if (projectileDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemyMovementAI.moveStatus != MoveStatus.Slow
-                && enemy.health.currentHealth > 0)
+            if (projectileDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemy.health.currentHealth > 0)
             {
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < projectileDetails.stunChance)
@@ -946,8 +861,7 @@ public class Projectile : MonoBehaviour, IFireable
         {
             EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
 
-            if (activeItemDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemyMovementAI.moveStatus != MoveStatus.Slow
-                && enemy.health.currentHealth > 0)
+            if (activeItemDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemy.health.currentHealth > 0)
             {
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < activeItemDetails.stunChance)
@@ -958,69 +872,6 @@ public class Projectile : MonoBehaviour, IFireable
         }
     }
 
-    /// <summary>
-    /// Check slow status - Player
-    /// </summary>
-    private void CheckSlowStatus(Player player, bool isActiveItem = false)
-    {
-        if (!isActiveItem)
-        {
-            if (projectileDetails.hasSlowDamage && player.moveStatus != MoveStatus.Stun && player.moveStatus != MoveStatus.Slow)
-            {
-                float randomDice = Random.Range(0f, 1f);
-                if (randomDice < projectileDetails.slowChance)
-                {
-                    SlowPlayerSpeed(player);
-                }
-            }
-        }
-        else
-        {
-            if (activeItemDetails.hasSlowDamage && player.moveStatus != MoveStatus.Stun && player.moveStatus != MoveStatus.Slow)
-            {
-                float randomDice = Random.Range(0f, 1f);
-                if (randomDice < activeItemDetails.slowChance)
-                {
-                    SlowPlayerSpeed(player);
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Check slow status - Enemy
-    /// </summary>
-    private void CheckSlowStatus(Enemy enemy, bool isActiveItem = false)
-    {
-        if (!isActiveItem)
-        {
-            EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
-
-            if (projectileDetails.hasSlowDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemyMovementAI.moveStatus != MoveStatus.Slow &&
-                enemy.health.currentHealth > 0)
-            {
-                float randomDice = Random.Range(0f, 1f);
-                if (randomDice < projectileDetails.slowChance)
-                {
-                    SlowEnemySpeed(enemy);
-                }
-            }
-        }
-        else
-        {
-            EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
-
-            if (activeItemDetails.hasSlowDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemyMovementAI.moveStatus != MoveStatus.Slow &&
-                enemy.health.currentHealth > 0)
-            {
-                float randomDice = Random.Range(0f, 1f);
-                if (randomDice < activeItemDetails.slowChance)
-                {
-                    SlowEnemySpeed(enemy);
-                }
-            }
-        }
-    }
 
     IEnumerator StunRoutine(Enemy enemy)
     {
@@ -1033,29 +884,6 @@ public class Projectile : MonoBehaviour, IFireable
         yield return new WaitForFixedUpdate();
     }
 
-    private void SlowPlayerSpeed(Player player, bool isActiveItem = false)
-    {
-        if (!isActiveItem)
-        {
-            float slowedMinMoveSpeed = player.movementByVelocity.movementDetails.minMoveSpeed * 0.6f;
-            float slowedMaxMoveSpeed = player.movementByVelocity.movementDetails.maxMoveSpeed * 0.6f;
-            player.movementByVelocity.moveSpeed = Random.Range(slowedMinMoveSpeed, slowedMaxMoveSpeed);
-            player.moveStatus = MoveStatus.Slow;
-            player.healthEvent.CallGetSlowEvent();
-        }
-    }
-
-    private void SlowEnemySpeed(Enemy enemy, bool isActiveItem = false)
-    {
-        if (!isActiveItem)
-        {
-            float slowedMinMoveSpeed = enemy.enemyDetails.movementDetails.minMoveSpeed * 0.6f;
-            float slowedMaxMoveSpeed = enemy.enemyDetails.movementDetails.maxMoveSpeed * 0.6f;
-            enemy.enemyMovementAI.moveSpeed = Random.Range(slowedMinMoveSpeed, slowedMaxMoveSpeed);
-            enemy.enemyMovementAI.moveStatus = MoveStatus.Slow;
-            enemy.healthEvent.CallGetSlowEvent();
-        }
-    }
 
     IEnumerator ExplosionRoutine()
     {
@@ -1090,9 +918,7 @@ public class Projectile : MonoBehaviour, IFireable
                     enemy.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
 
                     CheckAcidStatus(enemy, true);
-                    CheckBleedingStatus(enemy, true);
                     CheckStunStatus(enemy, true);
-                    CheckSlowStatus(enemy, true);
 
                     if (!enemy.enemyDetails.hasKnockbackResistance && enemy.GetComponent<Health>().currentHealth > 0)
                     {

@@ -13,7 +13,12 @@ MonoBehaviour:
   m_Name: PlayerDetails_Lyrisa
   m_EditorClassIdentifier: 
   playerCharacterName: Lyrisa
+  playerCharacterIndex: 3
   playerPrefab: {fileID: 38858171499291080, guid: 6a9aa1f748d0ed1438bd95590fc47986, type: 3}
+  collectibleWeaponsArray:
+  - {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+  - {fileID: 11400000, guid: 7e3b41f2a27597c4d9a1b212d49e9ff0, type: 2}
+  - {fileID: 11400000, guid: 9926f985354b71a4690cb034e554c091, type: 2}
   oneHandRuntimeAnimatorController: {fileID: 9100000, guid: f7fe8e6b5912d9b499b3a0d0cd74c1a1, type: 2}
   twoHandRuntimeAnimatorController: {fileID: 9100000, guid: 525a9a954242e1a499074cd73da18897, type: 2}
   bowRuntimeAnimatorController: {fileID: 9100000, guid: 20d8ee28837264745b955ceb23c11b0b, type: 2}

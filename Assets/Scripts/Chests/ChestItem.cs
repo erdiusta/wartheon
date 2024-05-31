@@ -267,10 +267,6 @@ public class ChestItem : MonoBehaviour
         if (textTMP.text == "Status Cure")
         {
             // HEALTH STATUS CHECKS
-            if (player.healthStatus == HealthStatus.Bleeding)
-            {
-                player.healthEvent.CallBleedingCuredEvent();
-            }
             if (player.healthStatus == HealthStatus.Poisoned)
             {
                 player.healthEvent.CallPoisonCuredEvent();
@@ -279,13 +275,6 @@ public class ChestItem : MonoBehaviour
             player.healthStatus = HealthStatus.Normal;
 
             // MOVE STATUS CHECKS
-            if (player.moveStatus == MoveStatus.Slow)
-            {
-                player.movementByVelocity.moveSpeed = Random.Range(player.movementByVelocity.playerStartingMinSpeed, 
-                    player.movementByVelocity.playerStartingMaxSpeed);
-                player.healthEvent.CallSlowCuredEvent();
-            }
-
             player.moveStatus = MoveStatus.Idle;
 
             // ARMOR STATUS CHECKS

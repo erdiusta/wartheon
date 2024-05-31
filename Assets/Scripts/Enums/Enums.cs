@@ -7,6 +7,14 @@ public enum Orientation
     None
 }
 
+public enum Character
+{
+    Astraeus,
+    Erebus,
+    Orion,
+    Lyrisa
+}
+
 public enum GameState
 {
     gameStarted,
@@ -54,14 +62,12 @@ public enum MoveStatus
     Idle,
     Stagger,
     Stun,
-    Slow
 }
 
 public enum HealthStatus
 {
     Normal,
     Poisoned,
-    Bleeding
 }
 
 public enum ArmorStatus

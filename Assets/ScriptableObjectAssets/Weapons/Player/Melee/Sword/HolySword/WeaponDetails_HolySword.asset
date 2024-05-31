@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: Holy Sword
   weaponFrontSprite: {fileID: 735104743, guid: f53b0475c86f95141910cb247770d70f, type: 3}
   weaponRearSprite: {fileID: 735104743, guid: f53b0475c86f95141910cb247770d70f, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: 3e72a90825dad85449d7cd5a6e086ecb, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: 3f229bc09f868ff4396cee3fc91afbb6, type: 2}
   weaponClass: 0
   wieldType: 1
   canKillSuddenly: 0
@@ -38,7 +38,7 @@ MonoBehaviour:
   isShield: 0
   weaponFireRate: 1.2
   projectileDeflectRatio: 0
-  circleRadius: 0.9
+  circleRadius: 1.2
   meleeDamageMin: 13
   meleeDamageMax: 13
   criticalHitChance: 0.1

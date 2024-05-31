@@ -13,7 +13,20 @@ MonoBehaviour:
   m_Name: PlayerDetails_Astraeus
   m_EditorClassIdentifier: 
   playerCharacterName: Astraeus
+  playerCharacterIndex: 0
   playerPrefab: {fileID: 38858171499291080, guid: af0377fdaae0f9149837404546914c2a, type: 3}
+  collectibleWeaponsArray:
+  - {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
+  - {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
+  - {fileID: 11400000, guid: f452683b8567bc84d8dc35c734b37e7c, type: 2}
+  - {fileID: 11400000, guid: a310b80193e93084c9fde37c6fc1bb61, type: 2}
+  - {fileID: 11400000, guid: 107b06428c3ac0746aa44728b775af01, type: 2}
+  - {fileID: 11400000, guid: bba05607ec78139438ec83b847d254ee, type: 2}
+  - {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
+  - {fileID: 11400000, guid: dc70bba435344054aa98ff671fae1024, type: 2}
+  - {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
+  - {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
+  - {fileID: 11400000, guid: 2709e31502b5c5d45a59d45fc94517bf, type: 2}
   oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 836fd2be91cb18a48a7e9b5427b0fb5c, type: 2}
   twoHandRuntimeAnimatorController: {fileID: 9100000, guid: c51aa5637f38c474d8e672f7f9cc7cfd, type: 2}
   bowRuntimeAnimatorController: {fileID: 9100000, guid: b9faaa81f817ad14085bdb08607495d1, type: 2}
@@ -34,11 +47,11 @@ MonoBehaviour:
   activeItemsList:
   - {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
   playerArmorValue: 2
-  startingWeapon: {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
-  rightHandAnimatorController: {fileID: 9100000, guid: 4d6238627c4ee314e8a1a4fec3ad65d4, type: 2}
+  startingWeapon: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
+  rightHandAnimatorController: {fileID: 9100000, guid: 3f229bc09f868ff4396cee3fc91afbb6, type: 2}
   leftHandAnimatorController: {fileID: 9100000, guid: b9154558c719d7c44bde88eae4e95ecd, type: 2}
   startingWeaponList:
-  - {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
+  - {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
   - {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: 3640f47ca78384741a1cfa06c932e212, type: 3}
   playerHandSprite: {fileID: 1585005775, guid: 1ccdf010dd5235241a18978e1a326c1d, type: 3}

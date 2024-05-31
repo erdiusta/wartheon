@@ -72,6 +72,10 @@ public class MeleeAttackLeftHand : MonoBehaviour
                 // Don't hit yourself if player is also in the collider list
                 if (collider.tag == Settings.playerTag) continue;
 
+                if (collider.tag == Settings.decoyTag) continue;
+
+                if (collider.tag == Settings.chestItemTag) continue;
+
                 if (enemyHealth = collider.GetComponent<Health>())
                 {
                     Enemy enemy = collider.GetComponent<Enemy>();
@@ -97,9 +101,7 @@ public class MeleeAttackLeftHand : MonoBehaviour
                     SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
                     CheckAcidStatus(enemy);
-                    CheckBleedingStatus(enemy);
                     CheckStunStatus(enemy);
-                    CheckSlowStatus(enemy);
 
                     if (player.playerDetails.playerCharacterName == Settings.erebus && player.playerDetails.onStealth)
                     {
@@ -113,7 +115,7 @@ public class MeleeAttackLeftHand : MonoBehaviour
 
                     if (playerAttackLeftHandRoutine == null)
                     {
-                        playerAttackLeftHandRoutine = StartCoroutine(PlayerAttackAnimRoutine());
+                        player.meleeAttackRightHand.playerAttackMotionRoutine = null;
                     }
                 }
             }
@@ -194,23 +196,6 @@ public class MeleeAttackLeftHand : MonoBehaviour
     }
 
     /// <summary>
-    /// Check bleed status
-    /// </summary>
-    private void CheckBleedingStatus(Enemy enemy)
-    {
-        if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.hasBleedingDamage)
-        {
-            // Check get bleeding
-            float randomPoisonNum = Random.Range(0f, 1f);
-            if (randomPoisonNum < player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.bleedingChance)
-            {
-                enemy.healthEvent.CallGetBleedingEvent();
-                enemy.healthStatus = HealthStatus.Bleeding;
-            }
-        }
-    }
-
-    /// <summary>
     /// Check stun status
     /// </summary>
     private void CheckStunStatus(Enemy enemy)
@@ -228,24 +213,6 @@ public class MeleeAttackLeftHand : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Check slow status
-    /// </summary>
-    private void CheckSlowStatus(Enemy enemy)
-    {
-        EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
-
-        if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.hasSlowDamage && enemyMovementAI.moveStatus != MoveStatus.Stun
-            && enemyMovementAI.moveStatus != MoveStatus.Slow && enemy.health.currentHealth > 0)
-        {
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.slowChance)
-            {
-                SlowEnemySpeed(enemy);
-            }
-        }
-    }
-
     IEnumerator StunRoutine(Enemy enemy)
     {
         enemy.enemyMovementAI.moveStatus = MoveStatus.Stun;
@@ -257,40 +224,68 @@ public class MeleeAttackLeftHand : MonoBehaviour
         yield return new WaitForFixedUpdate();
     }
 
-    private void SlowEnemySpeed(Enemy enemy)
-    {
-        float slowedMinMoveSpeed = enemy.enemyDetails.movementDetails.minMoveSpeed * 0.6f;
-        float slowedMaxMoveSpeed = enemy.enemyDetails.movementDetails.maxMoveSpeed * 0.6f;
-        enemy.enemyMovementAI.moveSpeed = Random.Range(slowedMinMoveSpeed, slowedMaxMoveSpeed);
-        enemy.enemyMovementAI.moveStatus = MoveStatus.Slow;
-        enemy.healthEvent.CallGetSlowEvent();
-    }
-
     IEnumerator PlayerAttackAnimRoutine()
     {
+        player.movementByVelocity.moveSpeed = 0;
+
         // Adjust animator layer weights
         player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
         player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 1f);
         player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
         player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
 
-        player.animator.SetBool(Settings.attackMotion, true);
+        switch (player.playerControl.GetAimDirection())
+        {
+            case AimDirection.Up:
+                break;
+            case AimDirection.UpLeft:
+            case AimDirection.UpRight:
+            case AimDirection.Right:
+            case AimDirection.Left:
+            case AimDirection.Down:
+                player.animator.SetTrigger(Settings.attackMotion);
+                break;
+            default:
+                break;
+        }
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.25f);
 
-        playerAttackLeftHandRoutine = null;
-        player.animatePlayer.SetIdleAnimationParameters();
+        player.meleeAttackRightHand.playerAttackMotionRoutine = null;
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetMoveSpeed();
     }
 
     public void ResetIsAttackingLeftHand()
     {
         IsAttackingAtLeftHand = false;
+        player.health.isDamageable = true;
     }
 
     void AttackAtLeftHand(Weapon weapon)
     {
         if (leftHandAttackBlocked)
             return;
+
+        player.health.isDamageable = false;
+        leftHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtLeftHand);
+
+        switch (player.playerControl.GetAimDirection())
+        {
+            case AimDirection.Up:
+                leftHandMeleeAnimator.SetInteger("attackMoveType", 2);
+                break;
+            case AimDirection.UpLeft:
+            case AimDirection.UpRight:
+            case AimDirection.Right:
+            case AimDirection.Left:
+                leftHandMeleeAnimator.SetInteger("attackMoveType", 0);
+                break;
+            case AimDirection.Down:
+                leftHandMeleeAnimator.SetInteger("attackMoveType", 1);
+                break;
+            default:
+                break;
+        }
 
         // Trigger the attack animation
         leftHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtLeftHand);

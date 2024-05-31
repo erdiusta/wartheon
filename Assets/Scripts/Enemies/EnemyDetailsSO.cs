@@ -93,22 +93,6 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check enemy's bleeding chance")]
     #endregion
     [Range(0f, 1f)] public float stunChance = 0.4f;
-    #region Tooltip
-    [Tooltip("Check if enemy has a bleeding damage")]
-    #endregion
-    public bool hasBleedingDamage = false;
-    #region Tooltip
-    [Tooltip("Check enemy's bleeding chance")]
-    #endregion
-    [Range(0f, 1f)] public float bleedingChance = 0f;
-    #region Tooltip
-    [Tooltip("Check if enemy has a slow damage")]
-    #endregion
-    public bool hasSlowDamage = false;
-    #region Tooltip
-    [Tooltip("Check enemy's slow chance")]
-    #endregion
-    [Range(0f, 1f)] public float slowChance = 0f;
 
     #region Header ENEMY MATERIAL
     [Space(10)]
@@ -173,10 +157,6 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("The sound effect for this enemy to be poisoned")]
     #endregion
     public SoundEffectSO poisonSoundEffect;
-    #region Tooltip
-    [Tooltip("The sound effect for this enemy to be bled")]
-    #endregion
-    public SoundEffectSO bleedingSoundEffect;
 
 
     #region Header ENEMY WEAPON SETTINGS

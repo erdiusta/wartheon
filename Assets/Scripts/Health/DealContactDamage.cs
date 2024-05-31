@@ -65,7 +65,6 @@ public class DealContactDamage : MonoBehaviour
             // Reset the contact collision after set time
             Invoke("ResetContactCollision", Settings.contactDamageCollisionResetDelay);
 
-
             if (collision.tag == Settings.playerTag)
             {
                 Player player = collision.GetComponent<Player>();
@@ -73,31 +72,33 @@ public class DealContactDamage : MonoBehaviour
                 // Damage produced by enemy
                 int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMin);
 
-                if (enemy != null)
+                if (player.health.isDamageable)
                 {
-                    // Check if collider is a decoy
-                    if (collision.GetComponent<Decoy>() != null)
+
+                    if (enemy != null)
                     {
-                        receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
-                        return;
+                        // Check if collider is a decoy
+                        if (collision.GetComponent<Decoy>() != null)
+                        {
+                            receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
+                            return;
+                        }
+
+                        if (player.playerDetails.onStealth) return;
+
+                        CheckPoisonStatus(player);
+                        CheckAcidStatus(player);
+                        CheckStunStatus(player);
+
+                        // Apply knockback
+                        player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
+
+                        // Damage inflicted to enemy after deducting enemy armor
+                        int inflictedDamage = damageDone > player.health.GetArmorValue() ? damageDone - player.health.GetArmorValue() : 1;
+
+                        receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
                     }
-
-                    if (player.playerDetails.onStealth) return;
-
-                    CheckPoisonStatus(player);
-                    CheckAcidStatus(player);
-                    CheckBleedingStatus(player);
-                    CheckStunStatus(player);
-                    CheckSlowStatus(player);
-
-                    // Apply knockback
-                    player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
                 }
-
-                // Damage inflicted to enemy after deducting enemy armor
-                int inflictedDamage = damageDone > player.health.GetArmorValue() ? damageDone - player.health.GetArmorValue() : 1;
-
-                receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
             }
             else if (collision.tag == Settings.summonedEnemyTag)
             {
@@ -161,23 +162,6 @@ public class DealContactDamage : MonoBehaviour
     }
 
     /// <summary>
-    /// Check bleeding status
-    /// </summary>
-    private void CheckBleedingStatus(Player player)
-    {
-        if (enemy.enemyDetails.hasBleedingDamage)
-        {
-            // Check get bleeding
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.bleedingChance)
-            {
-                player.healthEvent.CallGetBleedingEvent();
-                player.healthStatus = HealthStatus.Bleeding;
-            }
-        }
-    }
-
-    /// <summary>
     /// Check acid status
     /// </summary>
     private void CheckAcidStatus(Player player)
@@ -205,7 +189,7 @@ public class DealContactDamage : MonoBehaviour
     /// </summary>
     private void CheckStunStatus(Player player)
     {
-        if (enemy.enemyDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun && player.moveStatus != MoveStatus.Slow)
+        if (enemy.enemyDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun)
         {
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < enemy.enemyDetails.stunChance)
@@ -216,30 +200,6 @@ public class DealContactDamage : MonoBehaviour
                 player.animator.SetBool(Settings.isStunned, true);
             }
         }
-    }
-
-    /// <summary>
-    /// Check slow status
-    /// </summary>
-    private void CheckSlowStatus(Player player)
-    {
-        if (enemy.enemyDetails.hasSlowDamage && player.moveStatus != MoveStatus.Stun && player.moveStatus != MoveStatus.Slow)
-        {
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.slowChance)
-            {
-                SlowPlayerSpeed(player);
-            }
-        }
-    }
-
-    private void SlowPlayerSpeed(Player player)
-    {
-        float slowedMinMoveSpeed = player.movementByVelocity.movementDetails.minMoveSpeed * 0.6f;
-        float slowedMaxMoveSpeed = player.movementByVelocity.movementDetails.maxMoveSpeed * 0.6f;
-        player.movementByVelocity.moveSpeed = Random.Range(slowedMinMoveSpeed, slowedMaxMoveSpeed);
-        player.moveStatus = MoveStatus.Slow;
-        player.healthEvent.CallGetSlowEvent();
     }
 
     /// <summary>

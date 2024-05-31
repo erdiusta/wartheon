@@ -13,7 +13,11 @@ MonoBehaviour:
   m_Name: PlayerDetails_Orion
   m_EditorClassIdentifier: 
   playerCharacterName: Orion
+  playerCharacterIndex: 2
   playerPrefab: {fileID: 38858171499291080, guid: 99e6d53686669c243b844a3ade267a1e, type: 3}
+  collectibleWeaponsArray:
+  - {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
+  - {fileID: 11400000, guid: b415640f0d1ca4d41b24898c8eab10bd, type: 2}
   oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 696b2a56ae550444faeb7b1763236a21, type: 2}
   twoHandRuntimeAnimatorController: {fileID: 9100000, guid: a548100e3f0314d418ac3ddc4b63d691, type: 2}
   bowRuntimeAnimatorController: {fileID: 9100000, guid: 89608e7d0f782dc4593536c2ee6a98dc, type: 2}

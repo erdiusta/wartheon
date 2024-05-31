@@ -66,13 +66,19 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
-      ratio: 1
+      ratio: 7
     - dungeonObject: {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
-      ratio: 1
+      ratio: 7
+    - dungeonObject: {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
+      ratio: 6
+    - dungeonObject: {fileID: 11400000, guid: dc70bba435344054aa98ff671fae1024, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+      ratio: 25
+    - dungeonObject: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
+      ratio: 25
+    - dungeonObject: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+      ratio: 25
   passiveItemsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     spawnableObjectRatioList:
@@ -102,7 +108,7 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
       ratio: 1
   ammoPercent: 30
-  dropSpawnChanceMin: 10
-  dropSpawnChanceMax: 20
+  dropSpawnChanceMin: 15
+  dropSpawnChanceMax: 15
   numberOfItemsToSpawnMin: 1
   numberOfItemsToSpawnMax: 1

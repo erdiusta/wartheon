@@ -109,14 +109,6 @@ public class Health : MonoBehaviour
                     poisonCoroutine = StartCoroutine(GraduallyHealthReduceDuetoPoison());
                 }
             }
-
-            if (player.healthStatus == HealthStatus.Bleeding)
-            {
-                if (bleedingCoroutine == null)
-                {
-                    bleedingCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBleeding());
-                }
-            }
         }
         else if (enemy != null)
         {
@@ -125,14 +117,6 @@ public class Health : MonoBehaviour
                 if (poisonCoroutine == null)
                 {
                     poisonCoroutine = StartCoroutine(GraduallyHealthReduceDuetoPoison());
-                }
-            }
-
-            if (enemy.healthStatus == HealthStatus.Bleeding)
-            {
-                if (bleedingCoroutine == null)
-                {
-                    bleedingCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBleeding());
                 }
             }
         }
@@ -475,40 +459,6 @@ public class Health : MonoBehaviour
         poisonCoroutine = null; // Reset the coroutine reference when it's finished
     }
 
-    /// <summary>
-    /// Gradually reduce health - Bleeding
-    /// </summary>
-    IEnumerator GraduallyHealthReduceDuetoBleeding()
-    {
-        int damageAmount = 1;
-        // Trigger health event
-        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)startingHealth), currentHealth, damageAmount);
-        TakeDamage(damageAmount, Vector2.zero, transform.position, false);
-
-        float randomDice = Random.Range(0f, 1f);
-
-        if (randomDice > 0.9f)
-        {
-            if (player != null)
-            {
-                player.healthStatus = HealthStatus.Normal;
-                player.healthEvent.CallBleedingCuredEvent();
-                damageAmount = 0;
-            }
-            if (enemy != null)
-            {
-                enemy.healthStatus = HealthStatus.Normal;
-                enemy.healthEvent.CallBleedingCuredEvent();
-                damageAmount = 0;
-            }
-        }
-
-        yield return new WaitForSeconds(2.5f);
-
-        damageAmount++;
-        bleedingCoroutine = null; // Reset the coroutine reference when it's finished
-    }
-
     private void CallHealthEvent(int damageAmount)
     {
         // Trigger health event
@@ -559,6 +509,7 @@ public class Health : MonoBehaviour
         }
 
         CallHealthEvent(0);
+        StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
     }
 
 

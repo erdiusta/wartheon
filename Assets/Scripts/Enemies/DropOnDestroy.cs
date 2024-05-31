@@ -10,6 +10,7 @@ public class DropOnDestroy : MonoBehaviour
     List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> enemyPassiveItemDropList;
     List<SpawnableObjectsByLevel<ActiveItemDetailsSO>> enemyActiveItemDropList;
     int ammoPercent;
+    int characterIndexNo;
 
     int dropSpawnChanceMin;
     int dropSpawnChanceMax;
@@ -22,11 +23,13 @@ public class DropOnDestroy : MonoBehaviour
     GameObject chestItemGameObject;
     ChestItem chestItem;
     Enemy enemy;
+    Player player;
 
     private void Start()
     {
         chestItemPrefab = GameResources.Instance.chestItemPrefab;
         enemy = GetComponent<Enemy>();
+        player = GameManager.Instance.GetPlayer();
 
         SetDropList();
 
@@ -160,6 +163,8 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails)
     {
+        if (chestItem == null) return;
+
         chestItem.hasWeaponDrop = true;
         chestItem.Initialize(weaponDetails, null, null, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, transform.position);
     }
@@ -169,6 +174,8 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails)
     {
+        if (chestItem == null) return;
+
         chestItem.hasPassiveDrop = true;
         chestItem.Initialize(null, null, passiveItemDetails, passiveItemDetails.passiveItemSprite, passiveItemDetails.passiveItemName, transform.position);
     }
@@ -179,6 +186,8 @@ public class DropOnDestroy : MonoBehaviour
     private void InstantiateActiveItem(ActiveItemDetailsSO activeItemDetails)
     {
         int ammoPercent = 0;
+
+        if (chestItem == null) return;
 
         chestItem.hasActiveDrop = true;
 
@@ -198,7 +207,50 @@ public class DropOnDestroy : MonoBehaviour
 
         WeaponDetailsSO weaponDetails = weaponRandom.GetItem();
 
-        return weaponDetails;
+        return IsWeaponAvailableForTheCharacter(weaponDetails) && !DoesWeaponAlreadyExistAtCharacter(weaponDetails) ? weaponDetails : null;
+    }
+
+    private bool IsWeaponAvailableForTheCharacter(WeaponDetailsSO weaponDetails)
+    {
+        for (int i = 0; i < player.playerDetails.collectibleWeaponsArray.Length; i++)
+        {
+            if (player.playerDetails.collectibleWeaponsArray[i].weaponName == weaponDetails.weaponName)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool DoesWeaponAlreadyExistAtCharacter(WeaponDetailsSO weaponDetails)
+    {
+        if (weaponDetails.weaponClass == WeaponClass.Shield || weaponDetails.wieldType == WieldType.OneHanded)
+        {
+            foreach (Weapon weapon in player.weaponLeftHandList)
+            {
+                if (weapon.weaponDetails.weaponName == weaponDetails.weaponName)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        else if (weaponDetails.wieldType == WieldType.TwoHanded)
+        {
+            foreach (Weapon weapon in player.weaponRightHandList)
+            {
+                if (weapon.weaponDetails.weaponName == weaponDetails.weaponName)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>

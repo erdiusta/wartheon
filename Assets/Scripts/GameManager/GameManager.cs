@@ -241,6 +241,12 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void Update()
     {
+        HandleBook();
+        HandleGameState();
+    }
+
+    private void HandleBook()
+    {
         if (InputManager.Instance.bookView.action.WasPressedThisFrame())
         {
             if (bookView.activeSelf)
@@ -258,8 +264,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 Time.timeScale = 0;
             }
         }
-
-        HandleGameState();
     }
 
     /// <summary>

@@ -4966,7 +4966,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.3333334, y: 1.3333334}
+  m_Size: {x: 0.5, y: 1.75}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
@@ -5222,6 +5222,9 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   isPickedUp: 0
   animator: {fileID: 0}
+  boxCollider2D: {fileID: 0}
+  remainingItemCharge: 0
+  droppedByPlayer: 0
 --- !u!61 &6777748807740845358
 BoxCollider2D:
   m_ObjectHideFlags: 0

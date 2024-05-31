@@ -25,36 +25,28 @@ public class StatusManager : MonoBehaviour
         if (player != null)
         {
             player.healthEvent.GetPoisoned += EnablePoisonImage;
-            player.healthEvent.GetBleeding += EnableBleedingImage;
             player.healthEvent.GetAcid += EnableAcidImage;
             player.healthEvent.GetStun += EnableStunImage;
-            player.healthEvent.GetSlow += EnableSlowImage;
             player.healthEvent.GetSilverArmor += EnableSilverArmorImage;
             player.healthEvent.GetDeath += EnableDeathImage;
 
             player.healthEvent.PoisonCured += DisablePoisonImage;
-            player.healthEvent.BleedingCured += DisableBleedingImage;
             player.healthEvent.AcidCured += DisableAcidImage;
             player.healthEvent.StunCured += DisableStunImage;
-            player.healthEvent.SlowCured += DisableSlowImage;
             player.healthEvent.ArmorWoreOff += DisableArmorImage;
         }
 
         if (enemy != null)
         {
             enemy.healthEvent.GetPoisoned += EnablePoisonImage;
-            enemy.healthEvent.GetBleeding += EnableBleedingImage;
             enemy.healthEvent.GetAcid += EnableAcidImage;
             enemy.healthEvent.GetStun += EnableStunImage;
-            enemy.healthEvent.GetSlow += EnableSlowImage;
             enemy.healthEvent.GetSilverArmor += EnableSilverArmorImage;
             enemy.healthEvent.GetDeath += EnableDeathImage;
 
             enemy.healthEvent.PoisonCured += DisablePoisonImage;
-            enemy.healthEvent.BleedingCured += DisableBleedingImage;
             enemy.healthEvent.AcidCured += DisableAcidImage;
             enemy.healthEvent.StunCured += DisableStunImage;
-            enemy.healthEvent.SlowCured += DisableSlowImage;
             enemy.healthEvent.ArmorWoreOff += DisableArmorImage;
         }
     }
@@ -64,36 +56,28 @@ public class StatusManager : MonoBehaviour
         if (player != null)
         {
             player.healthEvent.GetPoisoned -= EnablePoisonImage;
-            player.healthEvent.GetBleeding -= EnableBleedingImage;
             player.healthEvent.GetAcid -= EnableAcidImage;
             player.healthEvent.GetStun -= EnableStunImage;
-            player.healthEvent.GetSlow -= EnableSlowImage;
             player.healthEvent.GetSilverArmor -= EnableSilverArmorImage;
             player.healthEvent.GetDeath -= EnableDeathImage;
 
             player.healthEvent.PoisonCured -= DisablePoisonImage;
-            player.healthEvent.BleedingCured -= DisableBleedingImage;
             player.healthEvent.AcidCured -= DisableAcidImage;
             player.healthEvent.StunCured -= DisableStunImage;
-            player.healthEvent.SlowCured -= DisableSlowImage;
             player.healthEvent.ArmorWoreOff -= DisableArmorImage;
         }
 
         if (enemy != null)
         {
             enemy.healthEvent.GetPoisoned -= EnablePoisonImage;
-            enemy.healthEvent.GetBleeding -= EnableBleedingImage;
             enemy.healthEvent.GetAcid -= EnableAcidImage;
             enemy.healthEvent.GetStun -= EnableStunImage;
-            enemy.healthEvent.GetSlow -= EnableSlowImage;
             enemy.healthEvent.GetSilverArmor -= EnableSilverArmorImage;
             enemy.healthEvent.GetDeath -= EnableDeathImage;
 
             enemy.healthEvent.PoisonCured -= DisablePoisonImage;
-            enemy.healthEvent.BleedingCured -= DisableBleedingImage;
             enemy.healthEvent.AcidCured -= DisableAcidImage;
             enemy.healthEvent.StunCured -= DisableStunImage;
-            enemy.healthEvent.SlowCured -= DisableSlowImage;
             enemy.healthEvent.ArmorWoreOff -= DisableArmorImage;
         }
     }
@@ -108,11 +92,6 @@ public class StatusManager : MonoBehaviour
         poisonImage.SetActive(true);
     }
 
-    private void EnableBleedingImage(HealthEvent healthEvent)
-    {
-        bleedingImage.SetActive(true);
-    }
-
     private void EnableAcidImage(HealthEvent healthEvent)
     {
         acidImage.SetActive(true);
@@ -121,11 +100,6 @@ public class StatusManager : MonoBehaviour
     private void EnableStunImage(HealthEvent healthEvent)
     {
         stunImage.SetActive(true);
-    }
-
-    private void EnableSlowImage(HealthEvent healthEvent)
-    {
-        slowImage.SetActive(true);
     }
 
     private void EnableDeathImage(HealthEvent @event)
@@ -143,11 +117,6 @@ public class StatusManager : MonoBehaviour
         poisonImage.SetActive(false);
     }
 
-    private void DisableBleedingImage(HealthEvent healthEvent)
-    {
-        bleedingImage.SetActive(false);
-    }
-
     private void DisableAcidImage(HealthEvent healthEvent)
     {
         acidImage.SetActive(false);
@@ -156,10 +125,5 @@ public class StatusManager : MonoBehaviour
     private void DisableStunImage(HealthEvent healthEvent)
     {
         stunImage.SetActive(false);
-    }
-
-    private void DisableSlowImage(HealthEvent healthEvent)
-    {
-        slowImage.SetActive(false);
     }
 }

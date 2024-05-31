@@ -60,6 +60,7 @@ public class AimWeapon : MonoBehaviour
         {
             if (player.activeWeapon.isSwitching) return;
 
+            // Bow aim
             if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow && player.activeWeapon.
                 GetCurrentRightHandWeapon().weaponDetails.weaponName != "Crossbow")
             {
@@ -130,6 +131,7 @@ public class AimWeapon : MonoBehaviour
                 }
             }
 
+            // Staff case
             if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
             {
                 switch (aimDirection)
@@ -151,7 +153,29 @@ public class AimWeapon : MonoBehaviour
             }
             else
             {
-                rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
+                switch (aimDirection)
+                {
+                    case AimDirection.Up:
+                        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow && player.activeWeapon.
+                            GetCurrentRightHandWeapon().weaponDetails.weaponName != "Crossbow")
+                        {
+                            rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
+                        }
+                        else
+                        {
+                            rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle - 120);
+                        }
+                        break;
+                    case AimDirection.UpRight:
+                    case AimDirection.UpLeft:
+                    case AimDirection.Right:
+                    case AimDirection.Left:
+                    case AimDirection.Down:
+                        rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
+                        break;
+                    default:
+                        break;
+                }
 
                 if (leftHandWeaponAnchorPointTransform.gameObject.activeSelf)
                 {

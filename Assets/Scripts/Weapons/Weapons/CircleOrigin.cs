@@ -5,7 +5,6 @@ public class CircleOrigin : MonoBehaviour
     public float circleRadius;
 
     Player player;
-    Weapon currentWeapon;
 
     private void Awake()
     {

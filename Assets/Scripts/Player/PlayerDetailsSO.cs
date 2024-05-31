@@ -13,9 +13,17 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public string playerCharacterName;
     #region Tooltip
+    [Tooltip("Player character name index")]
+    #endregion
+    public Character playerCharacterIndex;
+    #region Tooltip
     [Tooltip("Prefab gameobject for the player")]
     #endregion
     public GameObject playerPrefab;
+    #region Tooltip
+    [Tooltip("Collectible weapons array for the specific selected character")]
+    #endregion
+    public WeaponDetailsSO[] collectibleWeaponsArray;
     #region Tooltip
     [Tooltip("Player runtime animator controller - ONE HAND")]
     #endregion
@@ -139,7 +147,6 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Populate with the list of starting weapons")]
     #endregion
     public List<WeaponDetailsSO> startingWeaponList;
-
 
     #region Header OTHER
     [Space(10)]

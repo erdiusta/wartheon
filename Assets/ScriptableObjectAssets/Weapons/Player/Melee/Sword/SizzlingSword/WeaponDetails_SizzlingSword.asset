@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: Sizzling Sword
   weaponFrontSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
   weaponRearSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: 68b9352f59d71994fa46248dd50aabfc, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: a4a813ca2de749a43856ff4b17a99224, type: 2}
   weaponClass: 0
   wieldType: 0
   canKillSuddenly: 0

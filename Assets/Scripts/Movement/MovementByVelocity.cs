@@ -90,11 +90,6 @@ public class MovementByVelocity : MonoBehaviour
             return;
         }
 
-        if (player.moveStatus == MoveStatus.Slow)
-        {
-            rb2D.velocity = MovementInput * moveSpeed;
-        }
-
         // If none of the above conditions are met, perform regular move
         rb2D.velocity = MovementInput * moveSpeed;
     }

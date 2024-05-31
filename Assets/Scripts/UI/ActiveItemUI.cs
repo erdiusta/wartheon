@@ -108,9 +108,11 @@ public class ActiveItemUI : MonoBehaviour
         barImage.color = Color.yellow;
 
         if (currentActiveItem.activeItemDetails.hasNoProjectileNumberLimit)
+        {
+            availabilityBar.gameObject.SetActive(true);
             availabilityBar.transform.localScale = new Vector3(1f, 1f, 1f);
-
-        if (!currentActiveItem.activeItemDetails.hasNoProjectileNumberLimit)
+        }
+        else
         {
             // Update availability bar
             float barFill = (float)currentActiveItem.activeItemRemainingCharge / (float)currentActiveItem.activeItemDetails.activeItemMaxCharge;
