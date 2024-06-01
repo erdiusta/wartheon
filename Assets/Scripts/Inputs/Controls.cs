@@ -152,6 +152,24 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SweepFx"",
+                    ""type"": ""Button"",
+                    ""id"": ""ba18b140-7b57-44a8-a770-c9c78eddf9f7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ThrustFx"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a9bd5eb-c504-4c8a-b837-97b404d95e21"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -407,6 +425,28 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Drop Active Item"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6be051af-054a-4dc4-86e9-b5c037fd6513"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SweepFx"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a1336fe2-0a8c-4450-98ee-f04d30dc00ad"",
+                    ""path"": ""<Keyboard>/alt"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ThrustFx"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -429,6 +469,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_BookView = m_PlayerInput.FindAction("Book View", throwIfNotFound: true);
         m_PlayerInput_ActiveItem = m_PlayerInput.FindAction("Active Item", throwIfNotFound: true);
         m_PlayerInput_DropActiveItem = m_PlayerInput.FindAction("Drop Active Item", throwIfNotFound: true);
+        m_PlayerInput_SweepFx = m_PlayerInput.FindAction("SweepFx", throwIfNotFound: true);
+        m_PlayerInput_ThrustFx = m_PlayerInput.FindAction("ThrustFx", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -504,6 +546,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_BookView;
     private readonly InputAction m_PlayerInput_ActiveItem;
     private readonly InputAction m_PlayerInput_DropActiveItem;
+    private readonly InputAction m_PlayerInput_SweepFx;
+    private readonly InputAction m_PlayerInput_ThrustFx;
     public struct PlayerInputActions
     {
         private @Controls m_Wrapper;
@@ -522,6 +566,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @BookView => m_Wrapper.m_PlayerInput_BookView;
         public InputAction @ActiveItem => m_Wrapper.m_PlayerInput_ActiveItem;
         public InputAction @DropActiveItem => m_Wrapper.m_PlayerInput_DropActiveItem;
+        public InputAction @SweepFx => m_Wrapper.m_PlayerInput_SweepFx;
+        public InputAction @ThrustFx => m_Wrapper.m_PlayerInput_ThrustFx;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -573,6 +619,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @DropActiveItem.started += instance.OnDropActiveItem;
             @DropActiveItem.performed += instance.OnDropActiveItem;
             @DropActiveItem.canceled += instance.OnDropActiveItem;
+            @SweepFx.started += instance.OnSweepFx;
+            @SweepFx.performed += instance.OnSweepFx;
+            @SweepFx.canceled += instance.OnSweepFx;
+            @ThrustFx.started += instance.OnThrustFx;
+            @ThrustFx.performed += instance.OnThrustFx;
+            @ThrustFx.canceled += instance.OnThrustFx;
         }
 
         private void UnregisterCallbacks(IPlayerInputActions instance)
@@ -619,6 +671,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @DropActiveItem.started -= instance.OnDropActiveItem;
             @DropActiveItem.performed -= instance.OnDropActiveItem;
             @DropActiveItem.canceled -= instance.OnDropActiveItem;
+            @SweepFx.started -= instance.OnSweepFx;
+            @SweepFx.performed -= instance.OnSweepFx;
+            @SweepFx.canceled -= instance.OnSweepFx;
+            @ThrustFx.started -= instance.OnThrustFx;
+            @ThrustFx.performed -= instance.OnThrustFx;
+            @ThrustFx.canceled -= instance.OnThrustFx;
         }
 
         public void RemoveCallbacks(IPlayerInputActions instance)
@@ -652,5 +710,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnBookView(InputAction.CallbackContext context);
         void OnActiveItem(InputAction.CallbackContext context);
         void OnDropActiveItem(InputAction.CallbackContext context);
+        void OnSweepFx(InputAction.CallbackContext context);
+        void OnThrustFx(InputAction.CallbackContext context);
     }
 }

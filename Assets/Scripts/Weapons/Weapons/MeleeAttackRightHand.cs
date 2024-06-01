@@ -69,7 +69,7 @@ public class MeleeAttackRightHand : MonoBehaviour
 
     private void MeleeAttackEvent_OnRightHandMeleeAttack(MeleeAttackEvent meleeAttackEvent, MeleeAttackEventArgs meleeAttackEventArgs)
     {
-        AttackAtRightHand(meleeAttackEventArgs.weapon);
+        AttackAtRightHand(meleeAttackEventArgs.weapon, meleeAttackEventArgs.meleeAttackType);
     }
 
     /// <summary>
@@ -265,26 +265,25 @@ public class MeleeAttackRightHand : MonoBehaviour
         player.health.isDamageable = true;
     }
 
-    void AttackAtRightHand(Weapon weapon)
+    void AttackAtRightHand(Weapon weapon, MeleeAttackType meleeAttackType)
     {
         if (rightHandAttackBlocked) return;
 
         player.health.isDamageable = false;
         rightHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtRightHand);
 
-        switch (player.playerControl.GetAimDirection())
+        switch (meleeAttackType)
         {
-            case AimDirection.Up:
-                rightHandMeleeAnimator.SetInteger("attackMoveType", 2);
+            case MeleeAttackType.None:
                 break;
-            case AimDirection.UpLeft:
-            case AimDirection.UpRight:
-            case AimDirection.Right:
-            case AimDirection.Left:
+            case MeleeAttackType.Slash:
                 rightHandMeleeAnimator.SetInteger("attackMoveType", 0);
                 break;
-            case AimDirection.Down:
+            case MeleeAttackType.Sweep:
                 rightHandMeleeAnimator.SetInteger("attackMoveType", 1);
+                break;
+            case MeleeAttackType.Thrust:
+                rightHandMeleeAnimator.SetInteger("attackMoveType", 2);
                 break;
             default:
                 break;

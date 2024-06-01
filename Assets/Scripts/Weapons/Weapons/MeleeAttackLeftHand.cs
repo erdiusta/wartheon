@@ -5,7 +5,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class MeleeAttackLeftHand : MonoBehaviour
 {
-    public bool IsAttackingAtLeftHand { get; private set; }
+    public bool IsAttackingAtLeftHand { get; set; }
 
     [HideInInspector] public Coroutine playerAttackLeftHandRoutine;
 
@@ -57,7 +57,7 @@ public class MeleeAttackLeftHand : MonoBehaviour
 
     private void MeleeAttackEvent_OnLeftHandMeleeAttack(MeleeAttackEvent meleeAttackEvent, MeleeAttackEventArgs meleeAttackEventArgs)
     {
-        AttackAtLeftHand(meleeAttackEventArgs.weapon);
+        AttackAtLeftHand(meleeAttackEventArgs.weapon, meleeAttackEventArgs.meleeAttackType);
     }
 
     /// <summary>
@@ -261,27 +261,25 @@ public class MeleeAttackLeftHand : MonoBehaviour
         player.health.isDamageable = true;
     }
 
-    void AttackAtLeftHand(Weapon weapon)
+    void AttackAtLeftHand(Weapon weapon, MeleeAttackType meleeAttackType)
     {
-        if (leftHandAttackBlocked)
-            return;
+        if (leftHandAttackBlocked) return;
 
         player.health.isDamageable = false;
         leftHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtLeftHand);
 
-        switch (player.playerControl.GetAimDirection())
+        switch (meleeAttackType)
         {
-            case AimDirection.Up:
-                leftHandMeleeAnimator.SetInteger("attackMoveType", 2);
+            case MeleeAttackType.None:
                 break;
-            case AimDirection.UpLeft:
-            case AimDirection.UpRight:
-            case AimDirection.Right:
-            case AimDirection.Left:
+            case MeleeAttackType.Slash:
                 leftHandMeleeAnimator.SetInteger("attackMoveType", 0);
                 break;
-            case AimDirection.Down:
+            case MeleeAttackType.Sweep:
                 leftHandMeleeAnimator.SetInteger("attackMoveType", 1);
+                break;
+            case MeleeAttackType.Thrust:
+                leftHandMeleeAnimator.SetInteger("attackMoveType", 2);
                 break;
             default:
                 break;

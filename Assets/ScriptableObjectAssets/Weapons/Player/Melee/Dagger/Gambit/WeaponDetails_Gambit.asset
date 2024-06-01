@@ -43,6 +43,9 @@ MonoBehaviour:
   meleeDamageMax: 10
   criticalHitChance: 0.35
   criticalHitDamageMultiplier: 2.25
+  hasSlash: 1
+  hasSweep: 0
+  hasThrust: 1
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0
   weaponClipProjectileCapacity: 0

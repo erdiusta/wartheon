@@ -130,6 +130,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SweepFx",
+                    "type": "Button",
+                    "id": "ba18b140-7b57-44a8-a770-c9c78eddf9f7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ThrustFx",
+                    "type": "Button",
+                    "id": "8a9bd5eb-c504-4c8a-b837-97b404d95e21",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -383,6 +401,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Drop Active Item",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6be051af-054a-4dc4-86e9-b5c037fd6513",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SweepFx",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a1336fe2-0a8c-4450-98ee-f04d30dc00ad",
+                    "path": "<Keyboard>/alt",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ThrustFx",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

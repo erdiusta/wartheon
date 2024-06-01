@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_SizzlingSword
+  m_EditorClassIdentifier: 
+  weaponName: Sizzling Sword
+  weaponFrontSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
+  weaponRearSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: dbb95d5f2f9b8194aa3b21815d24a1b0, type: 2}
+  weaponClass: 0
+  wieldType: 0
+  canKillSuddenly: 0
+  suddenKillChance: 0
+  hasAcid: 1
+  acidEfficiency: 0.6
+  hasStunDamage: 0
+  stunChance: 0
+  hasBleedingDamage: 1
+  bleedingChance: 0.1
+  hasSlowDamage: 0
+  slowChance: 0
+  weaponShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 3900fd10105b8fc4eb3ceacea2a5cc5b, type: 2}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: eaf74e25edc124043a8cd50c981d16df, type: 2}
+  weaponReloadingSoundEffect: {fileID: 0}
+  isMeleeWeapon: 1
+  isShield: 0
+  weaponFireRate: 0.55
+  projectileDeflectRatio: 0
+  circleRadius: 0.65
+  meleeDamageMin: 7
+  meleeDamageMax: 10
+  criticalHitChance: 0.1
+  criticalHitDamageMultiplier: 1.5
+  hasSlash: 1
+  hasSweep: 1
+  hasThrust: 1
+  hasInfiniteProjectile: 0
+  hasInfiniteClipCapacity: 0
+  weaponClipProjectileCapacity: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0
+  weaponReloadTime: 0

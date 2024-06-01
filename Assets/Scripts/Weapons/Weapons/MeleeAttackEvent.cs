@@ -6,14 +6,14 @@ public class MeleeAttackEvent : MonoBehaviour
     public event Action<MeleeAttackEvent, MeleeAttackEventArgs> OnRightHandMeleeAttack;
     public event Action<MeleeAttackEvent, MeleeAttackEventArgs> OnLeftHandMeleeAttack;
 
-    public void CallRightHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon)
+    public void CallRightHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon, MeleeAttackType meleeAttackType)
     {
-        OnRightHandMeleeAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon });
+        OnRightHandMeleeAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon, meleeAttackType = meleeAttackType });
     }
 
-    public void CallLeftHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon)
+    public void CallLeftHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon, MeleeAttackType meleeAttackType)
     {
-        OnLeftHandMeleeAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon });
+        OnLeftHandMeleeAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon, meleeAttackType = meleeAttackType});
     }
 }
 
@@ -21,4 +21,5 @@ public class MeleeAttackEventArgs : EventArgs
 {
     public AimDirection aimDirection;
     public Weapon weapon;
+    public MeleeAttackType meleeAttackType;
 }

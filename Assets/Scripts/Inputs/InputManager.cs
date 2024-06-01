@@ -21,6 +21,8 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference bookView;
     public InputActionReference activeItem;
     public InputActionReference dropActiveItem;
+    public InputActionReference sweepFx;
+    public InputActionReference thrustFx;
 
     [HideInInspector] public bool isPressedPreviousFrame;
 }

@@ -12,7 +12,8 @@ public enum Character
     Astraeus,
     Erebus,
     Orion,
-    Lyrisa
+    Lyrisa,
+    TestWarrior
 }
 
 public enum GameState
@@ -117,6 +118,14 @@ public enum DamageType
     Air,
     Dark,
     Light
+}
+
+public enum MeleeAttackType
+{
+    None,
+    Slash,
+    Sweep,
+    Thrust,
 }
 
 public enum AttackType

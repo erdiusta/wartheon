@@ -235,6 +235,56 @@ public class PlayerControl : MonoBehaviour
 
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
+        // Fire when left mouse button is clicked - melee
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
+        {
+            // Thrust option
+            if (InputManager.Instance.thrustFx.action.IsPressed() && InputManager.Instance.attack.action.WasPerformedThisFrame())
+            {
+                player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+                player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon(), MeleeAttackType.Thrust);
+            }
+            // Sweep option
+            else if (InputManager.Instance.sweepFx.action.IsPressed() && InputManager.Instance.attack.action.WasPerformedThisFrame())
+            {
+                player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+                player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon(), MeleeAttackType.Sweep);
+            }
+            else if (InputManager.Instance.attack.action.WasPerformedThisFrame())
+            {
+                player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+                player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon(), MeleeAttackType.Slash);
+            }
+
+            // Don't pass to the ranged weapon elements so finish method here while returning
+            return;
+        }
+
+        // Fire when right mouse button is clicked - melee left hand
+        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
+        {
+            // Thrust option
+            if (InputManager.Instance.thrustFx.action.IsPressed() && InputManager.Instance.attackLeftHand.action.WasPerformedThisFrame())
+            {
+                player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
+                player.meleeAttackEvent.CallLeftHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon(), MeleeAttackType.Thrust);
+            }
+            // Sweep option
+            else if (InputManager.Instance.sweepFx.action.IsPressed() && InputManager.Instance.attackLeftHand.action.WasPerformedThisFrame())
+            {
+                player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
+                player.meleeAttackEvent.CallLeftHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon(), MeleeAttackType.Sweep);
+            }
+            else if (InputManager.Instance.attackLeftHand.action.WasPerformedThisFrame())
+            {
+                player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
+                player.meleeAttackEvent.CallLeftHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon(), MeleeAttackType.Slash);
+            }
+
+            // Don't pass to the ranged weapon elements so finish method here while returning
+            return;
+        }
+
         // Fire when left mouse button is clicked
         if (InputManager.Instance.attack.action.WasPerformedThisFrame())
         {
@@ -246,18 +296,13 @@ public class PlayerControl : MonoBehaviour
 
             if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f) return;
 
-            if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
-            {
-                player.meleeAttackRightHand.IsAttackingAtRightHand = true;
-                player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon());
-            }
 
             if (player.activeWeapon.GetCurrentRightHandWeapon().weaponClipRemainingProjectile > 0)
             {
                 if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
                 {
                     player.meleeAttackRightHand.IsAttackingAtRightHand = true;
-                    player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon());
+                    player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon(), MeleeAttackType.None);
                 }
 
                 // Trigger fire weapon event
@@ -275,7 +320,7 @@ public class PlayerControl : MonoBehaviour
 
                 if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
                 {
-                    player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection,player.activeWeapon.GetCurrentRightHandWeapon());
+                    player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection,player.activeWeapon.GetCurrentRightHandWeapon(), MeleeAttackType.None);
                 }
 
                 // Trigger fire weapon event for precharge weapons
@@ -304,12 +349,7 @@ public class PlayerControl : MonoBehaviour
             if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponClass != WeaponClass.Shield ||
                 player.activeWeapon.GetCurrentLeftHandWeapon() != null)
             {
-                if (player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.isMeleeWeapon)
-                {
-                    player.meleeAttackEvent.CallLeftHandWeaponAnimEvent(playerAimDirection,
-                        player.activeWeapon.GetCurrentLeftHandWeapon());
-                }
-                else
+                if (!player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.isMeleeWeapon)
                 {
                     rightMouseDownPreviousFrame = true;
                 }
@@ -858,7 +898,7 @@ public class PlayerControl : MonoBehaviour
         isSoundPlayed = false;
 
         player.meleeAttackRightHand.IsAttackingAtRightHand = true;
-        player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon());
+        player.meleeAttackEvent.CallRightHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentRightHandWeapon(), MeleeAttackType.None);
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, true);

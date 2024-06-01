@@ -153,29 +153,7 @@ public class AimWeapon : MonoBehaviour
             }
             else
             {
-                switch (aimDirection)
-                {
-                    case AimDirection.Up:
-                        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow && player.activeWeapon.
-                            GetCurrentRightHandWeapon().weaponDetails.weaponName != "Crossbow")
-                        {
-                            rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
-                        }
-                        else
-                        {
-                            rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle - 120);
-                        }
-                        break;
-                    case AimDirection.UpRight:
-                    case AimDirection.UpLeft:
-                    case AimDirection.Right:
-                    case AimDirection.Left:
-                    case AimDirection.Down:
-                        rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
-                        break;
-                    default:
-                        break;
-                }
+                rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
 
                 if (leftHandWeaponAnchorPointTransform.gameObject.activeSelf)
                 {

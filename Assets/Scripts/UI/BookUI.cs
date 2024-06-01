@@ -36,8 +36,8 @@ public class BookUI : MonoBehaviour
 
         switch (player.playerDetails.playerCharacterName)
         {
-            case "Astraeus":
-            case "Erebus":
+            case Settings.astraeus:
+            case Settings.erebus:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 mainHandWeapon.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[0].weaponFrontSprite;
@@ -48,8 +48,9 @@ public class BookUI : MonoBehaviour
                 player.weaponBookOffHandHashSet.Add(player.playerDetails.startingWeaponList[1].weaponFrontSprite);
                 break;
 
-            case "Orion":
-            case "Lyrisa":
+            case Settings.orion:
+            case Settings.lyrisa:
+            case Settings.testWarrior:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 mainHandWeapon.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[0].weaponFrontSprite;

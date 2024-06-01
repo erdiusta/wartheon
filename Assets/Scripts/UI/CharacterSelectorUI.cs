@@ -15,7 +15,7 @@ public class CharacterSelectorUI : MonoBehaviour
     #endregion
     [SerializeField] TextMeshProUGUI characterNameText;
 
-    List<PlayerDetailsSO> playerDetailsList;
+    PlayerDetailsSO[] playerDetailsList;
     GameObject playerSelectionPrefab;
     CurrentPlayerSO currentPlayer;
     List<GameObject> playerCharacterGameObjectList = new List<GameObject>();
@@ -27,14 +27,14 @@ public class CharacterSelectorUI : MonoBehaviour
     private void Awake()
     {
         playerSelectionPrefab = GameResources.Instance.playerSelectionPrefab;
-        playerDetailsList = GameResources.Instance.playerDetailsList;
+        playerDetailsList = GameResources.Instance.playerDetailsArray;
         currentPlayer = GameResources.Instance.currentPlayer;
     }
 
     private void Start()
     {
         // Instantiate player characters
-        for (int i = 0; i < playerDetailsList.Count; i++)
+        for (int i = 0; i < playerDetailsList.Length; i++)
         {
             GameObject playerSelectionObject = Instantiate(playerSelectionPrefab, characterSelector);
             playerCharacterGameObjectList.Add(playerSelectionObject);
@@ -99,6 +99,14 @@ public class CharacterSelectorUI : MonoBehaviour
             playerSelection.playerLeftHandWeaponAnimator.enabled = false;
             playerSelection.leftWeaponAnchorTransform.gameObject.SetActive(false);
         }
+        else if (playerDetails.playerCharacterName == Settings.testWarrior)
+        {
+            playerSelection.animator.runtimeAnimatorController = playerDetails.twoHandRuntimeAnimatorController;
+
+            playerSelection.thirdHandGameObject.SetActive(true);
+            playerSelection.playerLeftHandWeaponAnimator.enabled = false;
+            playerSelection.leftWeaponAnchorTransform.gameObject.SetActive(false);
+        }
 
     }
 
@@ -107,7 +115,7 @@ public class CharacterSelectorUI : MonoBehaviour
     /// </summary>
     public void NextCharacter()
     {
-        if (selectedPlayerIndex >= playerDetailsList.Count - 1) return;
+        if (selectedPlayerIndex >= playerDetailsList.Length - 1) return;
 
         selectedPlayerIndex++;
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];

@@ -156,6 +156,18 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Critical hit damage multiplier")]
     #endregion
     public float criticalHitDamageMultiplier = 2f;
+    #region Tooltip
+    [Tooltip("Check if melee weapon has slash fx")]
+    #endregion
+    public bool hasSlash = false;
+    #region Tooltip
+    [Tooltip("Check if melee weapon has sweep fx")]
+    #endregion
+    public bool hasSweep = false;
+    #region Tooltip
+    [Tooltip("Check if melee weapon has thrust fx")]
+    #endregion
+    public bool hasThrust = false;
 
     #region Header RANGED WEAPON OPERATING VALUES
     [Space(10)]

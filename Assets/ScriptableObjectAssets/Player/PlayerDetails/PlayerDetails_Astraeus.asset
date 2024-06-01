@@ -48,7 +48,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
   playerArmorValue: 2
   startingWeapon: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
-  rightHandAnimatorController: {fileID: 9100000, guid: 3f229bc09f868ff4396cee3fc91afbb6, type: 2}
+  rightHandAnimatorController: {fileID: 9100000, guid: 62981e0d8f1f2654ba07248e32948684, type: 2}
   leftHandAnimatorController: {fileID: 9100000, guid: b9154558c719d7c44bde88eae4e95ecd, type: 2}
   startingWeaponList:
   - {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
