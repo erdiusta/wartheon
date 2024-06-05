@@ -173,12 +173,12 @@ TextureImporter:
       name: carnage-Sheet_0
       rect:
         serializedVersion: 2
-        x: 42
-        y: 23
-        width: 21
+        x: 43
+        y: 22
+        width: 20
         height: 41
       alignment: 9
-      pivot: {x: 0.519011, y: 0.23771007}
+      pivot: {x: 0.5, y: 0.2}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -194,12 +194,12 @@ TextureImporter:
       name: carnage-Sheet_1
       rect:
         serializedVersion: 2
-        x: 76
-        y: 4
-        width: 51
-        height: 60
+        x: 107
+        y: 22
+        width: 20
+        height: 41
       alignment: 9
-      pivot: {x: 0.804, y: 0.5}
+      pivot: {x: 0.5, y: 0.2}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

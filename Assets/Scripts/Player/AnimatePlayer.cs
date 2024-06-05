@@ -56,7 +56,6 @@ public class AnimatePlayer : MonoBehaviour
             player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
             player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
 
-            player.animator.SetBool(Settings.attackMotion, false);
             player.animator.SetBool(Settings.isMoving, true);
             player.animator.SetBool(Settings.isIdle, false);
             player.animator.SetBool(Settings.getHit, false);
@@ -77,7 +76,6 @@ public class AnimatePlayer : MonoBehaviour
             player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
             player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
 
-            player.animator.SetBool(Settings.attackMotion, false);
             player.animator.SetBool(Settings.isMoving, false);
             player.animator.SetBool(Settings.isIdle, true);
             player.animator.SetBool(Settings.getHit, false);

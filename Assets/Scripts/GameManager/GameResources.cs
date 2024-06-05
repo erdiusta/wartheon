@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Tilemaps;
@@ -212,10 +211,6 @@ public class GameResources : MonoBehaviour
     [Tooltip("Populate with lock icon sprite")]
     #endregion
     public Sprite lockIcon;
-    #region Tooltip
-    [Tooltip("Populate array with name and animator controller of the related weapon")]
-    #endregion
-    public WeaponAnimator[] weaponsHoverArray;
 
     #region Header MINIMAP
     [Space(10)]

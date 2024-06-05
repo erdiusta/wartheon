@@ -15,7 +15,8 @@ MonoBehaviour:
   weaponName: Axe
   weaponFrontSprite: {fileID: 1790330148, guid: bfc24c2a5ff939144b40915215db1c69, type: 3}
   weaponRearSprite: {fileID: 1790330148, guid: bfc24c2a5ff939144b40915215db1c69, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: 76319878d48e6b246bcf4fb59a9d0d0a, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: 84bf492e5921d9542bd23dbefb031d9a, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 3f97019750b21be44bf20ae63f574c6d, type: 2}
   weaponClass: 1
   wieldType: 0
   canKillSuddenly: 0
@@ -24,10 +25,6 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  hasBleedingDamage: 1
-  bleedingChance: 0.05
-  hasSlowDamage: 1
-  slowChance: 1
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -43,8 +40,8 @@ MonoBehaviour:
   meleeDamageMax: 10
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 1.5
-  hasSlash: 1
-  hasSweep: 0
+  hasSwing: 1
+  hasSweep: 1
   hasThrust: 0
   hasInfiniteProjectile: 0
   hasInfiniteClipCapacity: 0

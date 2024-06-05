@@ -15,7 +15,8 @@ MonoBehaviour:
   weaponName: Sizzling Sword
   weaponFrontSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
   weaponRearSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: dbb95d5f2f9b8194aa3b21815d24a1b0, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: 64ebf44b64a983545be47d8b87f9ed73, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 3fc232eb20b9258488d7a3363d824994, type: 2}
   weaponClass: 0
   wieldType: 0
   canKillSuddenly: 0
@@ -24,10 +25,6 @@ MonoBehaviour:
   acidEfficiency: 0.6
   hasStunDamage: 0
   stunChance: 0
-  hasBleedingDamage: 1
-  bleedingChance: 0.1
-  hasSlowDamage: 0
-  slowChance: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -43,7 +40,7 @@ MonoBehaviour:
   meleeDamageMax: 10
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 1.5
-  hasSlash: 1
+  hasSwing: 1
   hasSweep: 1
   hasThrust: 1
   hasInfiniteProjectile: 0

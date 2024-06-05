@@ -107,7 +107,7 @@ public class MeleeAttackRightHand : MonoBehaviour
                         enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
                     }
 
-                    SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponImpactSoundEffect);
+                    SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
                     CheckAcidStatus(enemy);
                     CheckStunStatus(enemy);
@@ -132,8 +132,8 @@ public class MeleeAttackRightHand : MonoBehaviour
     private int CalculateDamageAmount(Enemy enemy)
     {
         // Damage produced by player
-        int damageDone = Random.Range(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMin,
-            player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.meleeDamageMax);
+        int damageDone = Random.Range(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin,
+            player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax);
 
         // Critical hit check
         bool criticalHitHappened;
@@ -144,17 +144,17 @@ public class MeleeAttackRightHand : MonoBehaviour
         else
         {
             float randomCriticalDice = Random.Range(0f, 1f);
-            criticalHitHappened = randomCriticalDice < player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.criticalHitChance ?
+            criticalHitHappened = randomCriticalDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitChance ?
                 true : false;
         }
 
         if (criticalHitHappened)
         {
             enemy.healthEvent.CallCriticalHitEvent();
-            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.criticalHitSoundEffect);
+            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.criticalHitSoundEffect);
         } 
 
-        damageDone = criticalHitHappened == true ? (int)(damageDone * player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.
+        damageDone = criticalHitHappened == true ? (int)(damageDone * player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.
             criticalHitDamageMultiplier) : damageDone;
 
         // Damage inflicted to enemy after deducting enemy armor
@@ -167,10 +167,10 @@ public class MeleeAttackRightHand : MonoBehaviour
     /// </summary>
     private void CheckSuddenDeathStatus(Enemy enemy)
     {
-        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.canKillSuddenly && enemy.health.currentHealth > 0)
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.canKillSuddenly && enemy.health.currentHealth > 0)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.suddenKillChance)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.suddenKillChance)
             {
                 enemyHealth.suddenDeathHappened = true;
                 enemy.healthEvent.CallGetDeathEvent();
@@ -183,15 +183,15 @@ public class MeleeAttackRightHand : MonoBehaviour
     /// </summary>
     private void CheckAcidStatus(Enemy enemy)
     {
-        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid && 
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid && 
             enemy.health.currentHealth > 0)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.acidEfficiency)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.acidEfficiency)
             {
                 enemy.armorStatus = ArmorStatus.Acid;
                 enemyHealth.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue *
-                    (1 - player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.acidEfficiency)));
+                    (1 - player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.acidEfficiency)));
 
                 enemy.GetComponent<HealthEvent>().CallGetAcidEvent();
             }
@@ -205,11 +205,11 @@ public class MeleeAttackRightHand : MonoBehaviour
     {
         EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
 
-        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun 
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun 
             && enemy.health.currentHealth > 0)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.stunChance)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.stunChance)
             {
                 StartCoroutine(StunRoutine(enemy));
             }
@@ -229,8 +229,6 @@ public class MeleeAttackRightHand : MonoBehaviour
 
     public IEnumerator PlayerAttackAnimRoutine()
     {
-        player.movementByVelocity.moveSpeed = 0;
-
         // Adjust animator layer weights
         player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
         player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 1f);
@@ -299,9 +297,9 @@ public class MeleeAttackRightHand : MonoBehaviour
         StartCoroutine(DelayAttackRightHand(weapon));
 
         // Melee attack sound effect
-        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
         {
-            SoundEffect(player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponSwingSoundEffect);
+            SoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
         }
     }
 
@@ -317,7 +315,7 @@ public class MeleeAttackRightHand : MonoBehaviour
     /// </summary>
     private void SoundEffect(SoundEffectSO soundEffect)
     {
-        if (player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponSwingSoundEffect != null)
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect != null)
         {
             SoundEffectManager.Instance.PlaySoundEffect(soundEffect);
         }

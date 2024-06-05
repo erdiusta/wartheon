@@ -10,7 +10,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference pointerPosition;
     public InputActionReference movement;
     public InputActionReference attack;
-    public InputActionReference attackLeftHand;
+    public InputActionReference attackOffHand;
     public InputActionReference switchWeapon;
     public InputActionReference overviewMapFullView;
     public InputActionReference reload;
@@ -21,8 +21,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference bookView;
     public InputActionReference activeItem;
     public InputActionReference dropActiveItem;
-    public InputActionReference sweepFx;
-    public InputActionReference thrustFx;
+    public InputActionReference pause;
 
     [HideInInspector] public bool isPressedPreviousFrame;
 }

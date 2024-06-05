@@ -68,7 +68,7 @@ public class RightWeaponStatusUI : MonoBehaviour
     private void Start()
     {
         // Update active weapon status on the UI
-        SetActiveWeapon(player.activeWeapon.GetCurrentRightHandWeapon());
+        SetActiveWeapon(player.activeWeapon.GetCurrentMainHandWeapon());
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public class RightWeaponStatusUI : MonoBehaviour
     private void WeaponReloaded(Weapon weapon)
     {
         // if weapon reloaded is the current weapon
-        if (player.activeWeapon.GetCurrentRightHandWeapon() == weapon)
+        if (player.activeWeapon.GetCurrentMainHandWeapon() == weapon)
         {
             UpdateReloadText(weapon);
             UpdateProjectileText(weapon);

@@ -30,7 +30,7 @@ public class BookUI : MonoBehaviour
 
         characterName.text = player.playerDetails.playerCharacterName;
         healthText.text = $"Health : {player.health.GetCurrentHealth()} / {player.health.GetStartingHealth()}"; 
-        weaponText.text = $"Pr.Weapon : {player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponName}";
+        weaponText.text = $"Pr.Weapon : {player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponName}";
         speedText.text = $"Speed : {player.movementByVelocity.GetCurrentMoveSpeed()}";
         specialMoveText.text = $"Sp.Move : {player.playerDetails.specialMoveName}";       
 
@@ -38,6 +38,7 @@ public class BookUI : MonoBehaviour
         {
             case Settings.astraeus:
             case Settings.erebus:
+            case Settings.testWarrior2:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 mainHandWeapon.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[0].weaponFrontSprite;

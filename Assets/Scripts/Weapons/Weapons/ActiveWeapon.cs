@@ -214,7 +214,7 @@ public class ActiveWeapon : MonoBehaviour
         return currentRightHandWeapon.weaponDetails.weaponCurrentProjectile;
     }
 
-    public Weapon GetCurrentRightHandWeapon()
+    public Weapon GetCurrentMainHandWeapon()
     {
         return currentRightHandWeapon;
     }
@@ -234,7 +234,7 @@ public class ActiveWeapon : MonoBehaviour
         currentRightHandWeapon = null;
     }
 
-    public Weapon GetCurrentLeftHandWeapon()
+    public Weapon GetCurrentOffHandWeapon()
     {
         return currentLeftHandWeapon;
     }

@@ -15,6 +15,12 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Space(10)]
     [Header("GAMEOBJECT REFERENCES")]
     #endregion Header GAMEOBJECT REFERENCES
+
+    #region Tooltip
+    [Tooltip("Populate with pause menu gameobject in the hierarchy")]
+    #endregion
+    [SerializeField] GameObject pauseMenu;
+
     #region Tooltip
     [Tooltip("Populate with the MessageText textmeshpro component in the FadeScreenUI")]
     #endregion Tooltip
@@ -38,11 +44,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     #region Tooltip
     [Tooltip("Populate with the dungeon level scriptable objects")]
     #endregion Tooltip
-    [SerializeField] List<DungeonLevelSO> dungeonLevelList;
+    public List<DungeonLevelSO> dungeonLevelList;
     #region Tooltip
     [Tooltip("Populate with the starting dungeon level for testing , first level = 0")]
     #endregion Tooltip
-    [SerializeField] int currentDungeonLevelListIndex = 0;
+    public int currentDungeonLevelListIndex = 0;
 
     [HideInInspector] public GameState gameState;
     [HideInInspector] public GameState previousGameState;
@@ -55,6 +61,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     Room previousRoom;
     PlayerDetailsSO playerDetails;
     Player player;
+    InstantiatedRoom bossRoom;
     bool isFading = false;
     Vignette vignette;
     HashSet<Room> visitedRooms = new HashSet<Room>();
@@ -176,6 +183,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             Destroy(summonedEnemy);
         }
+
+        RoomEnemiesDefeated();
     }
 
     private void StaticEventHandler_OnDecoySpawned(DecoySpawnedArgs decoySpawnedArgs)
@@ -278,13 +287,35 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 // Play first level
                 PlayDungeonLevel(currentDungeonLevelListIndex);
                 gameState = GameState.playingLevel;
+
+                // Trigger room enemies defeated since we start in the entrance where there are no enemies (just in case you have a level with just a boss room)
+                RoomEnemiesDefeated();
                 break;
 
             // While playing the level handle the tab key for the dungeon overview map
             case GameState.playingLevel:
+                if (InputManager.Instance.pause.action.WasPressedThisFrame())
+                {
+                    PauseGameMenu();
+                }
+
                 if (InputManager.Instance.overviewMapFullView.action.WasPressedThisFrame())
                 {
                     DisplayDungeonOverviewMap();
+                }
+                break;
+
+            case GameState.engagingEnemies:
+                if (InputManager.Instance.pause.action.WasPressedThisFrame())
+                {
+                    PauseGameMenu();
+                }
+                break;
+
+            case GameState.engagingBoss:
+                if (InputManager.Instance.pause.action.WasPressedThisFrame())
+                {
+                    PauseGameMenu();
                 }
                 break;
 
@@ -295,14 +326,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 {
                     // Clear dungeonOverviewMap
                     DungeonMap.Instance.ClearDungeonOverViewMap();
-                }
-                break;
-
-            // While playing the level and before the boss is engaged, handle the tab key for the dungeon overview map
-            case GameState.bossStage:
-                if (InputManager.Instance.overviewMapFullView.action.WasPressedThisFrame())
-                {
-                    DisplayDungeonOverviewMap();
                 }
                 break;
 
@@ -331,6 +354,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case GameState.restartGame:
                 RestartGame();
                 break;
+
+            case GameState.gamePaused:
+                if (InputManager.Instance.pause.action.WasPressedThisFrame())
+                {
+                    PauseGameMenu();
+                }
+                break;
         }
     }
 
@@ -343,14 +373,52 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         currentRoom = room;
     }
 
+    /// <summary>
+    /// Room enemies defeated - test if all dungeon rooms have been cleared of enemies - if so load next dungeon game level
+    /// </summary>
+    private void RoomEnemiesDefeated()
+    {
+        // Loop through all dungeon rooms to see if cleared of enemies
+        foreach (KeyValuePair<string, Room> keyValuePair in DungeonBuilder.Instance.dungeonBuilderRoomDictionary)
+        {
+            // Detect boss room
+            if (keyValuePair.Value.roomNodeType.isBossRoom)
+            {
+                bossRoom = keyValuePair.Value.instantiatedRoom;
+                break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Pause game menu - also called from resume game button on pause menu
+    /// </summary>
+    public void PauseGameMenu()
+    {
+        if (gameState != GameState.gamePaused)
+        {
+            pauseMenu.SetActive(true);
+            GetPlayer().playerControl.DisablePlayer();
+
+            // Set game state
+            previousGameState = gameState;
+            gameState = GameState.gamePaused;
+        }
+        else if (gameState == GameState.gamePaused)
+        {
+            pauseMenu.SetActive(false);
+            GetPlayer().playerControl.EnablePlayer();
+
+            // Set game state
+            gameState = previousGameState;
+            previousGameState = GameState.gamePaused;
+        }
+    }
+
     private void ControlDisplayDungeonOverviewMap(InputAction.CallbackContext context)
     {
         // While playing the level handle the tab key for the dungeon overview map.
         if (gameState == GameState.playingLevel)
-        {
-            DisplayDungeonOverviewMap();
-        }
-        if (gameState == GameState.bossStage)
         {
             DisplayDungeonOverviewMap();
         }
@@ -438,7 +506,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             float timer = displaySeconds;
 
-            while (timer > 0f && !InputManager.Instance.nextLevel.action.IsPressed())
+            while (timer > 0f && !InputManager.Instance.nextLevel.action.WasPerformedThisFrame())
             {
                 timer -= Time.deltaTime;
                 yield return null;
@@ -447,7 +515,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         else
         // else display the message until the return button is pressed
         {
-            while (!InputManager.Instance.nextLevel.action.IsPressed())
+            while (!InputManager.Instance.nextLevel.action.WasPerformedThisFrame())
             {
                 yield return null;
             }
@@ -470,15 +538,15 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Wait 2 seconds
         yield return new WaitForSeconds(2f);
 
-        Debug.Log("Level Completed - Press Return To Progress To The Next Level");
+        // Fade in canvas to display text message
+        yield return StartCoroutine(Fade(0f, 1f, 2f, new Color(0f, 0f, 0f, 0.4f)));
 
-        // When player presses the return key proceed to the next level
-        while (!InputManager.Instance.nextLevel.action.WasPerformedThisFrame())
-        {
-            yield return null;
-        }
+        // Display level completed
+        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! \n\nYOU'VE SURVIVED THIS DUNGEON " +
+            "LEVEL", Color.white, 5f));
 
-        yield return null; // to avoid enter being detected twice
+        // Fade out canvas
+        yield return StartCoroutine(Fade(1f, 0f, 2f, new Color(0f, 0f, 0f, 0.4f)));
 
         // Increase index to next level
         currentDungeonLevelListIndex++;
@@ -521,7 +589,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         yield return StartCoroutine(Fade(0f, 1f, 2f, Color.black));
 
         // Display game won
-        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + GameResources.Instance.currentPlayer.playerName + "! YOU HAVE DEFEATED THE DUNGEON", 
+        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE DEFEATED THE DUNGEON", 
             Color.white, 3f));
 
         yield return StartCoroutine(DisplayMessageRoutine("PRESS RETURN TO RESTART THE GAME", Color.white, 0f));
@@ -554,7 +622,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
 
         // Display game lost
-        yield return StartCoroutine(DisplayMessageRoutine("BAD LUCK " + GameResources.Instance.currentPlayer.playerName + 
+        yield return StartCoroutine(DisplayMessageRoutine("BAD LUCK " + player.playerDetails.playerCharacterName + 
             "! YOU HAVE SUCCUMBED TO THE DUNGEON", Color.white, 2f));
 
         yield return StartCoroutine(DisplayMessageRoutine("PRESS RETURN TO RESTART THE GAME", Color.white, 0f));
@@ -644,6 +712,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 #if UNITY_EDITOR
     private void OnValidate()
     {
+        HelperUtilities.ValidateCheckNullValue(this, nameof(pauseMenu), pauseMenu);
         HelperUtilities.ValidateCheckNullValue(this, nameof(messageTextTMP), messageTextTMP);
         HelperUtilities.ValidateCheckNullValue(this, nameof(canvasGroup), canvasGroup);
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(dungeonLevelList), dungeonLevelList);

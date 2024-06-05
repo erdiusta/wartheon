@@ -48,7 +48,7 @@ public class LeftWeaponStatusUI : MonoBehaviour
     private void Start()
     {
         // Update active weapon status on the UI
-        SetActiveWeapon(player.activeWeapon.GetCurrentLeftHandWeapon());
+        SetActiveWeapon(player.activeWeapon.GetCurrentOffHandWeapon());
     }
 
     /// <summary>

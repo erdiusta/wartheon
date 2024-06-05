@@ -105,7 +105,7 @@ public class FireWeapon : MonoBehaviour
             if (!prechargeBarContainer.gameObject.activeSelf)
             {
                 // Activate precharge bar container
-                firePrechargeTimer = activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime;
+                firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime;
                 prechargeBarContainer.gameObject.SetActive(true);
             }
 
@@ -113,7 +113,7 @@ public class FireWeapon : MonoBehaviour
             firePrechargeTimer -= Time.deltaTime;
 
             // Update precharge bar
-            float barFill = firePrechargeTimer / GameManager.Instance.GetPlayer().activeWeapon.GetCurrentRightHandWeapon().weaponDetails.
+            float barFill = firePrechargeTimer / GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon().weaponDetails.
                 weaponPrechargeTime;
 
             // Update bar fill
@@ -132,22 +132,22 @@ public class FireWeapon : MonoBehaviour
     private bool IsWeaponReadyToFire()
     {
         // If there is no projectile and weapon doesn't have infinite projectile then return false
-        if (!activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteProjectile && activeWeapon.GetCurrentRightHandWeapon().
+        if (!activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile && activeWeapon.GetCurrentMainHandWeapon().
             weaponRemainingProjectile <= 0)
             return false;
 
         // If no projectile in the clip and the weapon doesn't have infinite clip capacity then return false
-        if (!activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteClipCapacity && activeWeapon.GetCurrentRightHandWeapon().
+        if (!activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteClipCapacity && activeWeapon.GetCurrentMainHandWeapon().
             weaponClipRemainingProjectile <= 0)
         {
             // Trigger a reload weapon event
-            reloadWeaponEvent.CallReloadWeaponEvent(activeWeapon.GetCurrentRightHandWeapon(), 0);
+            reloadWeaponEvent.CallReloadWeaponEvent(activeWeapon.GetCurrentMainHandWeapon(), 0);
 
             return false;
         }
 
         // If the weapon is reloading then return false
-        if (activeWeapon.GetCurrentRightHandWeapon().isWeaponReloading)
+        if (activeWeapon.GetCurrentMainHandWeapon().isWeaponReloading)
             return false;
 
         // If the weapon isn't precharged or is cooling down then return false.
@@ -239,14 +239,14 @@ public class FireWeapon : MonoBehaviour
         }
 
         // Reduce projectile clip count if not infinite clip capacity
-        if (!activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteClipCapacity)
+        if (!activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteClipCapacity)
         {
-            activeWeapon.GetCurrentRightHandWeapon().weaponClipRemainingProjectile--;
-            activeWeapon.GetCurrentRightHandWeapon().weaponRemainingProjectile--;
+            activeWeapon.GetCurrentMainHandWeapon().weaponClipRemainingProjectile--;
+            activeWeapon.GetCurrentMainHandWeapon().weaponRemainingProjectile--;
         }
 
         // Call weapon fired event
-        weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentRightHandWeapon());
+        weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentMainHandWeapon());
 
         // Display weapon shoot effect
         DoWeaponShootEffect(aimAngle);
@@ -331,7 +331,7 @@ public class FireWeapon : MonoBehaviour
     private void ResetCooldownTimer()
     {
         // Reset cooldown timer
-        fireRateCooldownTimer = activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponFireRate;
+        fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponFireRate;
     }
 
     /// <summary>
@@ -340,13 +340,13 @@ public class FireWeapon : MonoBehaviour
     private void ResetPrechargeTimer(bool firePreviousFrame)
     {
         // Reset precharge timer
-        firePrechargeTimer = activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime;
+        firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime;
 
         // Reset bar fill and disable the bar container
         prechargeBar.transform.localScale = new Vector3(1f, 1f, 1f);
         prechargeBarContainer.gameObject.SetActive(false);
 
-        if (tag == Settings.playerTag && GetComponent<Player>().activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
+        if (tag == Settings.playerTag && GetComponent<Player>().activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
         {
             // Check for first frame for not jumping to fire completed
             if (firePreviousFrame == true)
@@ -362,15 +362,15 @@ public class FireWeapon : MonoBehaviour
     private void DoWeaponShootEffect(float aimAngle)
     {
         // Process if there is a shoot effect & prefab
-        if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponShootEffect != null && activeWeapon.GetCurrentRightHandWeapon().
+        if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponShootEffect != null && activeWeapon.GetCurrentMainHandWeapon().
             weaponDetails.weaponShootEffect.weaponShootEffectPrefab != null)
         {
             // Get weapon shoot effect gameobject from the pool with particle system component
-            WeaponShootEffect weaponShootEffect = (WeaponShootEffect)PoolManager.Instance.ReuseComponent(activeWeapon.GetCurrentRightHandWeapon().
+            WeaponShootEffect weaponShootEffect = (WeaponShootEffect)PoolManager.Instance.ReuseComponent(activeWeapon.GetCurrentMainHandWeapon().
                 weaponDetails.weaponShootEffect.weaponShootEffectPrefab, activeWeapon.GetRightHandShootEffectPosition(), Quaternion.identity);
 
             // Set shoot effect
-            weaponShootEffect.SetShootEffect(activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponShootEffect, aimAngle);
+            weaponShootEffect.SetShootEffect(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponShootEffect, aimAngle);
 
             // Set gameobject active (the particle system is set to automatically disable the
             // gameobject once finished)
@@ -385,11 +385,11 @@ public class FireWeapon : MonoBehaviour
     {
         if (isActiveItem) return;
 
-        if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponSwingSoundEffect != null &&
+        if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect != null &&
             GetComponent<PlayerControl>().isSoundPlayed == false)
         {           
             GetComponent<PlayerControl>().isSoundPlayed = true;
-            SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentRightHandWeapon().weaponDetails.weaponSwingSoundEffect);
+            SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
         }
     }
 }

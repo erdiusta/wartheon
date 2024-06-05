@@ -157,7 +157,7 @@ TextureImporter:
         width: 8
         height: 28
       alignment: 9
-      pivot: {x: 0.49459696, y: 0.108827524}
+      pivot: {x: 0.5, y: 0.1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -173,12 +173,12 @@ TextureImporter:
       name: sizzling_sword-Sheet_1
       rect:
         serializedVersion: 2
-        x: 111
+        x: 118
         y: 18
-        width: 15
+        width: 8
         height: 28
       alignment: 9
-      pivot: {x: 0.72953033, y: 0.10495145}
+      pivot: {x: 0.5, y: 0.1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

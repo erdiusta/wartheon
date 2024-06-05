@@ -15,7 +15,8 @@ MonoBehaviour:
   weaponName: Clobbering Time
   weaponFrontSprite: {fileID: 1259814964, guid: 77be0b9347560c84ca598d345eebca8e, type: 3}
   weaponRearSprite: {fileID: 1259814964, guid: 77be0b9347560c84ca598d345eebca8e, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: c76eb2906eb286b4f8db54db6947509b, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: 94f1ebbd0af8dd549b3ce20e72d3de80, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 8d50f9dfcd86b91438e4c4868d290b2f, type: 2}
   weaponClass: 2
   wieldType: 0
   canKillSuddenly: 0
@@ -24,10 +25,6 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 1
   stunChance: 0.15
-  hasBleedingDamage: 0
-  bleedingChance: 0
-  hasSlowDamage: 1
-  slowChance: 0.05
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -43,7 +40,7 @@ MonoBehaviour:
   meleeDamageMax: 11
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 1.5
-  hasSlash: 1
+  hasSwing: 1
   hasSweep: 0
   hasThrust: 0
   hasInfiniteProjectile: 0

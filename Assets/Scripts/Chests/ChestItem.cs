@@ -187,16 +187,7 @@ public class ChestItem : MonoBehaviour
         if (hasWeaponDrop)
         {
             this.weaponDetails = weaponDetails;
-            animator.runtimeAnimatorController = weaponDetails.weaponAnimatorController;
-
-            for (int i = 0; i < GameResources.Instance.weaponsHoverArray.Length; i++)
-            {
-                if (textTMP.text == GameResources.Instance.weaponsHoverArray[i].weaponName)
-                {
-                    weaponAnimator = GameResources.Instance.weaponsHoverArray[i];
-                    break;
-                }
-            }
+            animator.runtimeAnimatorController = weaponDetails.weaponHoverAnimatorController;
         }
     }
 
@@ -303,10 +294,10 @@ public class ChestItem : MonoBehaviour
             ammoPercent = Random.Range(0, 101);
 
             // Update ammo for current weapon
-            if (!player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.hasInfiniteProjectile &&
-                !player.activeWeapon.GetCurrentRightHandWeapon().weaponDetails.isMeleeWeapon)
+            if (!player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile &&
+                !player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
             {
-                player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), ammoPercent);
+                player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentMainHandWeapon(), ammoPercent);
             }
 
             // Play pickup sound effect

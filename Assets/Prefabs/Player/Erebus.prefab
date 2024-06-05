@@ -15,7 +15,7 @@ PrefabInstance:
     - target: {fileID: -8096707519950815419, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 3bde3ff582fce72409ca00143dda2347, type: 2}
+      objectReference: {fileID: 9100000, guid: 4102ba67a73173f4eade31c0a46ffc1a, type: 2}
     - target: {fileID: -6498518524249918456, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
       value: 0.5
@@ -214,11 +214,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 312786131199480866, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.x
-      value: 0.875
+      value: 0.375
       objectReference: {fileID: 0}
     - target: {fileID: 312786131199480866, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.y
-      value: 1.375
+      value: 1.1875
       objectReference: {fileID: 0}
     - target: {fileID: 312786131199480866, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Sprite
@@ -310,11 +310,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1694001904705187332, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.x
-      value: 0.5625
+      value: 0.375
       objectReference: {fileID: 0}
     - target: {fileID: 1694001904705187332, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.y
-      value: 1.375
+      value: 1.1875
       objectReference: {fileID: 0}
     - target: {fileID: 1694001904705187332, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Sprite
@@ -418,19 +418,19 @@ PrefabInstance:
       objectReference: {fileID: 7130026987593935357}
     - target: {fileID: 6455263427142652176, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
-      value: 0.54453903
+      value: 0.5606842
       objectReference: {fileID: 0}
     - target: {fileID: 6455263427142652176, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.y
-      value: 0.14469966
+      value: 0.15740794
       objectReference: {fileID: 0}
     - target: {fileID: 6455263427142652176, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 0.5625
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6455263427142652176, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.y
-      value: 1.375
+      value: 1.1875
       objectReference: {fileID: 0}
     - target: {fileID: 6455263427142652176, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
@@ -511,7 +511,7 @@ PrefabInstance:
     - target: {fileID: 7089998605978601817, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 945e4af7c1e7d614db908ef7e58419dc, type: 2}
+      objectReference: {fileID: 9100000, guid: 1d014ed845af8d64b957a60042eb126a, type: 2}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
       value: 0.5606842
@@ -522,11 +522,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 0.875
+      value: 0.375
       objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.y
-      value: 1.375
+      value: 1.1875
       objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
@@ -595,7 +595,7 @@ PrefabInstance:
     - target: {fileID: 8213552445980175040, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 945e4af7c1e7d614db908ef7e58419dc, type: 2}
+      objectReference: {fileID: 9100000, guid: 1d014ed845af8d64b957a60042eb126a, type: 2}
     - target: {fileID: 8213552445980175040, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_CullingMode
       value: 0

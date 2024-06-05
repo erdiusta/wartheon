@@ -24,7 +24,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Attack",
+                    "name": "AttackMainHand",
                     "type": "Button",
                     "id": "b6e4faac-d540-4546-b3ec-247340f8f0dc",
                     "expectedControlType": "Button",
@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AttackLeftHand",
+                    "name": "AttackOffHand",
                     "type": "Button",
                     "id": "f30d7e66-c6ea-48c7-997e-4fab32af75c3",
                     "expectedControlType": "Button",
@@ -132,18 +132,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SweepFx",
+                    "name": "Pause",
                     "type": "Button",
-                    "id": "ba18b140-7b57-44a8-a770-c9c78eddf9f7",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "ThrustFx",
-                    "type": "Button",
-                    "id": "8a9bd5eb-c504-4c8a-b837-97b404d95e21",
+                    "id": "b30105a8-6f93-4de1-8386-2d72d9be7ff5",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -279,7 +270,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Attack",
+                    "action": "AttackMainHand",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -290,7 +281,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AttackLeftHand",
+                    "action": "AttackOffHand",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -406,23 +397,12 @@
                 },
                 {
                     "name": "",
-                    "id": "6be051af-054a-4dc4-86e9-b5c037fd6513",
-                    "path": "<Keyboard>/ctrl",
+                    "id": "692cb854-aea5-4aed-8278-05cb71eba076",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SweepFx",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "a1336fe2-0a8c-4450-98ee-f04d30dc00ad",
-                    "path": "<Keyboard>/alt",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ThrustFx",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

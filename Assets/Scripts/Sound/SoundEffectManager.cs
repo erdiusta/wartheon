@@ -35,6 +35,30 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
     }
 
     /// <summary>
+    /// Increase sound volume
+    /// </summary>
+    public void IncreaseSoundVolume()
+    {
+        int maxSoundVolume = 20;
+
+        if (soundVolume >= maxSoundVolume) return;
+
+        soundVolume += 1;
+        SetSoundVolume(soundVolume);
+    }
+
+    /// <summary>
+    /// Decrease sound volume
+    /// </summary>
+    public void DecreaseSoundVolume()
+    {
+        if (soundVolume == 0) return;
+
+        soundVolume -= 1;
+        SetSoundVolume(soundVolume);
+    }
+
+    /// <summary>
     /// Set sounds volume
     /// </summary>
     private void SetSoundVolume(int soundVolume)

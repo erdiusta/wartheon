@@ -46,7 +46,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Attack"",
+                    ""name"": ""AttackMainHand"",
                     ""type"": ""Button"",
                     ""id"": ""b6e4faac-d540-4546-b3ec-247340f8f0dc"",
                     ""expectedControlType"": ""Button"",
@@ -55,7 +55,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""AttackLeftHand"",
+                    ""name"": ""AttackOffHand"",
                     ""type"": ""Button"",
                     ""id"": ""f30d7e66-c6ea-48c7-997e-4fab32af75c3"",
                     ""expectedControlType"": ""Button"",
@@ -154,18 +154,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""SweepFx"",
+                    ""name"": ""Pause"",
                     ""type"": ""Button"",
-                    ""id"": ""ba18b140-7b57-44a8-a770-c9c78eddf9f7"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""ThrustFx"",
-                    ""type"": ""Button"",
-                    ""id"": ""8a9bd5eb-c504-4c8a-b837-97b404d95e21"",
+                    ""id"": ""b30105a8-6f93-4de1-8386-2d72d9be7ff5"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -301,7 +292,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Attack"",
+                    ""action"": ""AttackMainHand"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -312,7 +303,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AttackLeftHand"",
+                    ""action"": ""AttackOffHand"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -428,23 +419,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""6be051af-054a-4dc4-86e9-b5c037fd6513"",
-                    ""path"": ""<Keyboard>/ctrl"",
+                    ""id"": ""692cb854-aea5-4aed-8278-05cb71eba076"",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SweepFx"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""a1336fe2-0a8c-4450-98ee-f04d30dc00ad"",
-                    ""path"": ""<Keyboard>/alt"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ThrustFx"",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -457,8 +437,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput = asset.FindActionMap("PlayerInput", throwIfNotFound: true);
         m_PlayerInput_Movement = m_PlayerInput.FindAction("Movement", throwIfNotFound: true);
         m_PlayerInput_PointerPosition = m_PlayerInput.FindAction("Pointer Position", throwIfNotFound: true);
-        m_PlayerInput_Attack = m_PlayerInput.FindAction("Attack", throwIfNotFound: true);
-        m_PlayerInput_AttackLeftHand = m_PlayerInput.FindAction("AttackLeftHand", throwIfNotFound: true);
+        m_PlayerInput_AttackMainHand = m_PlayerInput.FindAction("AttackMainHand", throwIfNotFound: true);
+        m_PlayerInput_AttackOffHand = m_PlayerInput.FindAction("AttackOffHand", throwIfNotFound: true);
         m_PlayerInput_SwitchWeapon = m_PlayerInput.FindAction("Switch Weapon", throwIfNotFound: true);
         m_PlayerInput_OverviewMapFullView = m_PlayerInput.FindAction("Overview Map Full View", throwIfNotFound: true);
         m_PlayerInput_Reload = m_PlayerInput.FindAction("Reload", throwIfNotFound: true);
@@ -469,8 +449,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_BookView = m_PlayerInput.FindAction("Book View", throwIfNotFound: true);
         m_PlayerInput_ActiveItem = m_PlayerInput.FindAction("Active Item", throwIfNotFound: true);
         m_PlayerInput_DropActiveItem = m_PlayerInput.FindAction("Drop Active Item", throwIfNotFound: true);
-        m_PlayerInput_SweepFx = m_PlayerInput.FindAction("SweepFx", throwIfNotFound: true);
-        m_PlayerInput_ThrustFx = m_PlayerInput.FindAction("ThrustFx", throwIfNotFound: true);
+        m_PlayerInput_Pause = m_PlayerInput.FindAction("Pause", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -534,8 +513,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private List<IPlayerInputActions> m_PlayerInputActionsCallbackInterfaces = new List<IPlayerInputActions>();
     private readonly InputAction m_PlayerInput_Movement;
     private readonly InputAction m_PlayerInput_PointerPosition;
-    private readonly InputAction m_PlayerInput_Attack;
-    private readonly InputAction m_PlayerInput_AttackLeftHand;
+    private readonly InputAction m_PlayerInput_AttackMainHand;
+    private readonly InputAction m_PlayerInput_AttackOffHand;
     private readonly InputAction m_PlayerInput_SwitchWeapon;
     private readonly InputAction m_PlayerInput_OverviewMapFullView;
     private readonly InputAction m_PlayerInput_Reload;
@@ -546,16 +525,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_BookView;
     private readonly InputAction m_PlayerInput_ActiveItem;
     private readonly InputAction m_PlayerInput_DropActiveItem;
-    private readonly InputAction m_PlayerInput_SweepFx;
-    private readonly InputAction m_PlayerInput_ThrustFx;
+    private readonly InputAction m_PlayerInput_Pause;
     public struct PlayerInputActions
     {
         private @Controls m_Wrapper;
         public PlayerInputActions(@Controls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_PlayerInput_Movement;
         public InputAction @PointerPosition => m_Wrapper.m_PlayerInput_PointerPosition;
-        public InputAction @Attack => m_Wrapper.m_PlayerInput_Attack;
-        public InputAction @AttackLeftHand => m_Wrapper.m_PlayerInput_AttackLeftHand;
+        public InputAction @AttackMainHand => m_Wrapper.m_PlayerInput_AttackMainHand;
+        public InputAction @AttackOffHand => m_Wrapper.m_PlayerInput_AttackOffHand;
         public InputAction @SwitchWeapon => m_Wrapper.m_PlayerInput_SwitchWeapon;
         public InputAction @OverviewMapFullView => m_Wrapper.m_PlayerInput_OverviewMapFullView;
         public InputAction @Reload => m_Wrapper.m_PlayerInput_Reload;
@@ -566,8 +544,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @BookView => m_Wrapper.m_PlayerInput_BookView;
         public InputAction @ActiveItem => m_Wrapper.m_PlayerInput_ActiveItem;
         public InputAction @DropActiveItem => m_Wrapper.m_PlayerInput_DropActiveItem;
-        public InputAction @SweepFx => m_Wrapper.m_PlayerInput_SweepFx;
-        public InputAction @ThrustFx => m_Wrapper.m_PlayerInput_ThrustFx;
+        public InputAction @Pause => m_Wrapper.m_PlayerInput_Pause;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -583,12 +560,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @PointerPosition.started += instance.OnPointerPosition;
             @PointerPosition.performed += instance.OnPointerPosition;
             @PointerPosition.canceled += instance.OnPointerPosition;
-            @Attack.started += instance.OnAttack;
-            @Attack.performed += instance.OnAttack;
-            @Attack.canceled += instance.OnAttack;
-            @AttackLeftHand.started += instance.OnAttackLeftHand;
-            @AttackLeftHand.performed += instance.OnAttackLeftHand;
-            @AttackLeftHand.canceled += instance.OnAttackLeftHand;
+            @AttackMainHand.started += instance.OnAttackMainHand;
+            @AttackMainHand.performed += instance.OnAttackMainHand;
+            @AttackMainHand.canceled += instance.OnAttackMainHand;
+            @AttackOffHand.started += instance.OnAttackOffHand;
+            @AttackOffHand.performed += instance.OnAttackOffHand;
+            @AttackOffHand.canceled += instance.OnAttackOffHand;
             @SwitchWeapon.started += instance.OnSwitchWeapon;
             @SwitchWeapon.performed += instance.OnSwitchWeapon;
             @SwitchWeapon.canceled += instance.OnSwitchWeapon;
@@ -619,12 +596,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @DropActiveItem.started += instance.OnDropActiveItem;
             @DropActiveItem.performed += instance.OnDropActiveItem;
             @DropActiveItem.canceled += instance.OnDropActiveItem;
-            @SweepFx.started += instance.OnSweepFx;
-            @SweepFx.performed += instance.OnSweepFx;
-            @SweepFx.canceled += instance.OnSweepFx;
-            @ThrustFx.started += instance.OnThrustFx;
-            @ThrustFx.performed += instance.OnThrustFx;
-            @ThrustFx.canceled += instance.OnThrustFx;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         private void UnregisterCallbacks(IPlayerInputActions instance)
@@ -635,12 +609,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @PointerPosition.started -= instance.OnPointerPosition;
             @PointerPosition.performed -= instance.OnPointerPosition;
             @PointerPosition.canceled -= instance.OnPointerPosition;
-            @Attack.started -= instance.OnAttack;
-            @Attack.performed -= instance.OnAttack;
-            @Attack.canceled -= instance.OnAttack;
-            @AttackLeftHand.started -= instance.OnAttackLeftHand;
-            @AttackLeftHand.performed -= instance.OnAttackLeftHand;
-            @AttackLeftHand.canceled -= instance.OnAttackLeftHand;
+            @AttackMainHand.started -= instance.OnAttackMainHand;
+            @AttackMainHand.performed -= instance.OnAttackMainHand;
+            @AttackMainHand.canceled -= instance.OnAttackMainHand;
+            @AttackOffHand.started -= instance.OnAttackOffHand;
+            @AttackOffHand.performed -= instance.OnAttackOffHand;
+            @AttackOffHand.canceled -= instance.OnAttackOffHand;
             @SwitchWeapon.started -= instance.OnSwitchWeapon;
             @SwitchWeapon.performed -= instance.OnSwitchWeapon;
             @SwitchWeapon.canceled -= instance.OnSwitchWeapon;
@@ -671,12 +645,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @DropActiveItem.started -= instance.OnDropActiveItem;
             @DropActiveItem.performed -= instance.OnDropActiveItem;
             @DropActiveItem.canceled -= instance.OnDropActiveItem;
-            @SweepFx.started -= instance.OnSweepFx;
-            @SweepFx.performed -= instance.OnSweepFx;
-            @SweepFx.canceled -= instance.OnSweepFx;
-            @ThrustFx.started -= instance.OnThrustFx;
-            @ThrustFx.performed -= instance.OnThrustFx;
-            @ThrustFx.canceled -= instance.OnThrustFx;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         public void RemoveCallbacks(IPlayerInputActions instance)
@@ -698,8 +669,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnPointerPosition(InputAction.CallbackContext context);
-        void OnAttack(InputAction.CallbackContext context);
-        void OnAttackLeftHand(InputAction.CallbackContext context);
+        void OnAttackMainHand(InputAction.CallbackContext context);
+        void OnAttackOffHand(InputAction.CallbackContext context);
         void OnSwitchWeapon(InputAction.CallbackContext context);
         void OnOverviewMapFullView(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
@@ -710,7 +681,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnBookView(InputAction.CallbackContext context);
         void OnActiveItem(InputAction.CallbackContext context);
         void OnDropActiveItem(InputAction.CallbackContext context);
-        void OnSweepFx(InputAction.CallbackContext context);
-        void OnThrustFx(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
 }

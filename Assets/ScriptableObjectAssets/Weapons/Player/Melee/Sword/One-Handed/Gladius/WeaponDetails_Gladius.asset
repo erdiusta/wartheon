@@ -16,6 +16,7 @@ MonoBehaviour:
   weaponFrontSprite: {fileID: -1571304438, guid: a66a9a53ef43ce54db026e7c210f033c, type: 3}
   weaponRearSprite: {fileID: -1571304438, guid: a66a9a53ef43ce54db026e7c210f033c, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 4d6238627c4ee314e8a1a4fec3ad65d4, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: c1aa8ec2a7ea25f4eb107777b73a89a3, type: 2}
   weaponClass: 0
   wieldType: 0
   canKillSuddenly: 0
@@ -24,10 +25,6 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  hasBleedingDamage: 1
-  bleedingChance: 0.1
-  hasSlowDamage: 0
-  slowChance: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -43,7 +40,7 @@ MonoBehaviour:
   meleeDamageMax: 9
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 1.5
-  hasSlash: 1
+  hasSwing: 1
   hasSweep: 1
   hasThrust: 1
   hasInfiniteProjectile: 0

@@ -148,7 +148,7 @@ public class Projectile : MonoBehaviour, IFireable
         {
             Player player = collision.GetComponent<Player>();
 
-            if (player.activeWeapon.GetCurrentLeftHandWeapon() != null && player.activeWeapon.GetCurrentLeftHandWeapon().
+            if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().
                 weaponDetails.weaponClass == WeaponClass.Shield)
             {
                 // Get enemy projectile direction
@@ -164,7 +164,7 @@ public class Projectile : MonoBehaviour, IFireable
                 // Calculate the dot product between the shield's forward direction and the projectile direction
                 float dotProduct = Vector2.Dot(pointerDirection, enemyProjectileDirection);
 
-                float blockingThreshold = player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.projectileDeflectRatio;
+                float blockingThreshold = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.projectileDeflectRatio;
 
                 // Check if the dot product is greater than the threshold, deflection fails
                 if (dotProduct > blockingThreshold - 1f)
@@ -351,7 +351,7 @@ public class Projectile : MonoBehaviour, IFireable
         // Adjust animator layer weights
         player.animatePlayer.SetGetHitAnimationParameters();
         player.transform.GetChild(1).GetComponent<Animator>().SetTrigger(Settings.block);
-        SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentLeftHandWeapon().weaponDetails.weaponSwingSoundEffect);
+        SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponSwingSoundEffect);
 
         yield return new WaitForSeconds(0.6f);
 

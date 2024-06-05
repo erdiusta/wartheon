@@ -52,6 +52,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3c718eafb0e25534e830534a8fb1e2dc, type: 2}
   - {fileID: 11400000, guid: 8223c721c4f4e38479feb606a8ea4430, type: 2}
   - {fileID: 11400000, guid: 283726bc8914c854eb5c771e49f51b05, type: 2}
+  - {fileID: 11400000, guid: a77438bad30583849a0d29722b4112f2, type: 2}
   currentPlayer: {fileID: 11400000, guid: bdc48d7a1898cca47b62df50366f8c9a, type: 2}
   musicMasterMixerGroup: {fileID: 1624570340859876765, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   mainMenuMusic: {fileID: 11400000, guid: 1bdaf3d9e77162142a7d389b5f99296e, type: 2}
@@ -123,4 +124,6 @@ MonoBehaviour:
     weaponHoverAnimatorController: {fileID: 9100000, guid: 21e16997976246844b6585ed4994d05f, type: 2}
   - weaponName: Sizzling Sword
     weaponHoverAnimatorController: {fileID: 9100000, guid: 3fc232eb20b9258488d7a3363d824994, type: 2}
+  - weaponName: Scimitar
+    weaponHoverAnimatorController: {fileID: 9100000, guid: f145ce2e6c24b0543964f14a5a2b7bb6, type: 2}
   minimapBossPrefab: {fileID: 668306937615276397, guid: a6f6cb3ad6450194983577547ff3e678, type: 3}

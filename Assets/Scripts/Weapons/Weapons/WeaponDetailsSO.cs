@@ -24,6 +24,10 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public RuntimeAnimatorController weaponAnimatorController;
     #region Tooltip
+    [Tooltip("The animator controller fot hovering during the drop")]
+    #endregion Tooltip
+    public RuntimeAnimatorController weaponHoverAnimatorController;
+    #region Tooltip
     [Tooltip("Weapon class for the weapon")]
     #endregion Tooltip
     public WeaponClass weaponClass;
@@ -60,22 +64,6 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("The chance of weapon's stun")]
     #endregion Tooltip
     [Range(0f, 1f)] public float stunChance = 0.2f;
-    #region Tooltip
-    [Tooltip("Check if weapon has bleeding damage")]
-    #endregion Tooltip
-    public bool hasBleedingDamage;
-    #region Tooltip
-    [Tooltip("The chance of weapon's bleeding")]
-    #endregion Tooltip
-    [Range(0f, 1f)] public float bleedingChance= 0.2f;
-    #region Tooltip
-    [Tooltip("Check if weapon has slow damage")]
-    #endregion Tooltip
-    public bool hasSlowDamage;
-    #region Tooltip
-    [Tooltip("The chance of weapon's slow damage")]
-    #endregion Tooltip
-    [Range(0f, 1f)] public float slowChance = 0.2f;
 
     #region Header WEAPON CONFIGURATION
     [Space(10)]
@@ -159,7 +147,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Check if melee weapon has slash fx")]
     #endregion
-    public bool hasSlash = false;
+    public bool hasSwing = false;
     #region Tooltip
     [Tooltip("Check if melee weapon has sweep fx")]
     #endregion

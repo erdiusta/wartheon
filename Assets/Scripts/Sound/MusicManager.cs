@@ -105,8 +105,7 @@ public class MusicManager : SingletonMonobehaviour<MusicManager>
     {
         int maxMusicVolume = 20;
 
-        if (musicVolume >= maxMusicVolume)
-            return;
+        if (musicVolume >= maxMusicVolume) return;
 
         musicVolume += 1;
         SetMusicVolume(musicVolume);
@@ -117,8 +116,7 @@ public class MusicManager : SingletonMonobehaviour<MusicManager>
     /// </summary>
     public void DecreaseMusicVolume()
     {
-        if (musicVolume <= 0)
-            return;
+        if (musicVolume <= 0) return;
 
         musicVolume -= 1;
         SetMusicVolume(musicVolume);

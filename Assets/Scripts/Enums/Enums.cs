@@ -13,7 +13,8 @@ public enum Character
     Erebus,
     Orion,
     Lyrisa,
-    TestWarrior
+    TestWarrior,
+    TestWarrior2
 }
 
 public enum GameState
@@ -21,7 +22,6 @@ public enum GameState
     gameStarted,
     playingLevel,
     engagingEnemies,
-    bossStage,
     engagingBoss,
     levelCompleted,
     gameWon,

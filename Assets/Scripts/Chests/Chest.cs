@@ -193,7 +193,7 @@ public class Chest : MonoBehaviour, IUsable
         Player player = GameManager.Instance.GetPlayer();
 
         // Update ammo for current weapon
-        player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentRightHandWeapon(), ammoPercent);
+        player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentMainHandWeapon(), ammoPercent);
 
         // Play pickup sound effect
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);

@@ -15,7 +15,8 @@ MonoBehaviour:
   weaponName: Gambit
   weaponFrontSprite: {fileID: 1716864224, guid: 183de742a99d6a540b8709e5a27f2de9, type: 3}
   weaponRearSprite: {fileID: 1716864224, guid: 183de742a99d6a540b8709e5a27f2de9, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: 945e4af7c1e7d614db908ef7e58419dc, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: 1d014ed845af8d64b957a60042eb126a, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: c2e67091a9236644f8fc21c91544b807, type: 2}
   weaponClass: 7
   wieldType: 0
   canKillSuddenly: 0
@@ -24,10 +25,6 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  hasBleedingDamage: 1
-  bleedingChance: 0.1
-  hasSlowDamage: 0
-  slowChance: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -43,7 +40,7 @@ MonoBehaviour:
   meleeDamageMax: 10
   criticalHitChance: 0.35
   criticalHitDamageMultiplier: 2.25
-  hasSlash: 1
+  hasSwing: 1
   hasSweep: 0
   hasThrust: 1
   hasInfiniteProjectile: 0

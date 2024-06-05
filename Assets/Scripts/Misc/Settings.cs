@@ -103,6 +103,7 @@ public static class Settings
     public const string erebus = "Erebus";
     public const string lyrisa = "Lyrisa";
     public const string testWarrior = "Test Warrior";
+    public const string testWarrior2 = "Test Warrior2";
     #endregion
 
     #region UI PARAMETERS

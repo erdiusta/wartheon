@@ -47,7 +47,7 @@ MonoBehaviour:
   pointerPosition: {fileID: -2020365906605296236, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   movement: {fileID: -1868886686725831558, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   attack: {fileID: 4738310459945266975, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  attackLeftHand: {fileID: -831659078736980469, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  attackOffHand: {fileID: -831659078736980469, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   switchWeapon: {fileID: -1489316078523976086, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   overviewMapFullView: {fileID: -4451642181129647435, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   reload: {fileID: -6482433486226854903, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
@@ -58,6 +58,5 @@ MonoBehaviour:
   bookView: {fileID: 1534269409563702162, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   activeItem: {fileID: 8120908705557231203, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   dropActiveItem: {fileID: 3940752818712815275, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  sweepFx: {fileID: 5972650195564431091, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  thrustFx: {fileID: 1428258515470209957, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  pause: {fileID: 3463766678715258796, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   isPressedPreviousFrame: 0

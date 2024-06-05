@@ -36,12 +36,10 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         MusicManager.Instance.PlayMusic(currentRoom.ambientMusic, 0.2f, 2f);
 
         // If the room is a corridor or the entrance then return
-        if (currentRoom.roomNodeType.isCorridorEW || currentRoom.roomNodeType.isCorridorNS || currentRoom.roomNodeType.isEntrance)
-            return;
+        if (currentRoom.roomNodeType.isCorridorEW || currentRoom.roomNodeType.isCorridorNS || currentRoom.roomNodeType.isEntrance) return;
 
         // If the room has already been defeated then return
-        if (currentRoom.isClearedOfEnemies)
-            return;
+        if (currentRoom.isClearedOfEnemies) return;
 
         // Get random number of enemies to spawn
         enemiesToSpawn = currentRoom.GetNumberOfEnemiesToSpawn(GameManager.Instance.GetCurrentDungeonLevel());
@@ -67,26 +65,27 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         currentRoom.instantiatedRoom.LockDoors();
 
         // Spawn enemies
-        SpawnEnemies();
+        SpawnEnemies(roomChangedEventArgs.room);
     }
 
     /// <summary>
     /// Spawn the enemies
     /// </summary>
-    private void SpawnEnemies()
+    private void SpawnEnemies(Room room)
     {
-        // Set gamestate engaging boss
-        if (GameManager.Instance.gameState == GameState.bossStage)
-        {
-            GameManager.Instance.previousGameState = GameState.bossStage;
-            GameManager.Instance.gameState = GameState.engagingBoss;
-        }
-
         // Set gamestate engaging enemies
-        else if (GameManager.Instance.gameState == GameState.playingLevel)
+        if (GameManager.Instance.gameState == GameState.playingLevel)
         {
-            GameManager.Instance.previousGameState = GameState.playingLevel;
-            GameManager.Instance.gameState = GameState.engagingEnemies;
+            if (room.roomNodeType.isBossRoom)
+            {
+                GameManager.Instance.previousGameState = GameState.playingLevel;
+                GameManager.Instance.gameState = GameState.engagingBoss;
+            }
+            else
+            {
+                GameManager.Instance.previousGameState = GameState.playingLevel;
+                GameManager.Instance.gameState = GameState.engagingEnemies;
+            }
         }
 
         StartCoroutine(SpawnEnemiesRoutine());
@@ -187,8 +186,15 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
             }
             else if (GameManager.Instance.gameState == GameState.engagingBoss)
             {
-                GameManager.Instance.gameState = GameState.bossStage;
-                GameManager.Instance.previousGameState = GameState.engagingBoss;
+                // Are there more dungeon levels then
+                if (GameManager.Instance.currentDungeonLevelListIndex < GameManager.Instance.dungeonLevelList.Count - 1)
+                {
+                    GameManager.Instance.gameState = GameState.levelCompleted;
+                }
+                else
+                {
+                    GameManager.Instance.gameState = GameState.gameWon;
+                }
             }
 
             // Unlock doors

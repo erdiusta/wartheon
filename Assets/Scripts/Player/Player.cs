@@ -298,11 +298,11 @@ public class Player : MonoBehaviour
                 // Set the added weapon as active
                 setActiveWeaponEvent.CallSetActiveWeaponAtRightHandEvent(weapon);
 
-                if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
+                if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
                 {
                     setActiveWeaponEvent.CallOneHandWeaponEquipEvent();
                 }
-                else if (activeWeapon.GetCurrentRightHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+                else if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
                 {
                     setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
                 }

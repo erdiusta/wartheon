@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: WeaponDetails_Dagger
   m_EditorClassIdentifier: 
   weaponName: Dagger
-  weaponFrontSprite: {fileID: 1869581405, guid: b172dd0603818d44d9b9900f3e400991, type: 3}
-  weaponRearSprite: {fileID: 1869581405, guid: b172dd0603818d44d9b9900f3e400991, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: 4c02187a09eabde4dba23544bdf50f8e, type: 2}
+  weaponFrontSprite: {fileID: 772035009, guid: 7cfb6a8e6c61c1140a32dfe7bdf25598, type: 3}
+  weaponRearSprite: {fileID: 772035009, guid: 7cfb6a8e6c61c1140a32dfe7bdf25598, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: fe2632354abf80540ae561908fd9d705, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 1b8d09cd82044ff4baa1d89f503dda38, type: 2}
   weaponClass: 7
   wieldType: 0
   canKillSuddenly: 0
@@ -24,10 +25,6 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  hasBleedingDamage: 1
-  bleedingChance: 0.1
-  hasSlowDamage: 0
-  slowChance: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -43,7 +40,7 @@ MonoBehaviour:
   meleeDamageMax: 8
   criticalHitChance: 0.25
   criticalHitDamageMultiplier: 2
-  hasSlash: 1
+  hasSwing: 1
   hasSweep: 0
   hasThrust: 1
   hasInfiniteProjectile: 0
