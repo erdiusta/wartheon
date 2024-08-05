@@ -219,3 +219,12 @@ public enum EnemyRace
     Vermin,
     Reptile
 }
+
+public enum BookPage
+{
+    Stats,
+    Weapons,
+    Items,
+    Beastiary,
+    Bosses
+}

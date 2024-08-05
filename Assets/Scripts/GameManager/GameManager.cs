@@ -37,6 +37,14 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public GameObject bookView;
     public GameObject bookCover;
 
+    public GameObject pauseMenuUI;
+
+    [HideInInspector] public bool glossaryBookOpen;
+    [HideInInspector] public bool turnPageCompleted;
+    [HideInInspector] public bool zoomOutFinished;
+    [HideInInspector] public bool zoomInFinished;
+    [HideInInspector] public bool statsPageChanged;
+
     #region Header DUNGEON LEVELS
     [Space(10)]
     [Header("DUNGEON LEVELS")]
@@ -261,23 +269,59 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void HandleBook()
     {
+        if (pauseMenu.activeSelf) return;
+
+        if (zoomInFinished)
+        {
+            zoomInFinished = false;
+            bookView.GetComponent<Animator>().enabled = false;
+            bookView.GetComponent<Animator>().enabled = true;
+        }
+
+        if (zoomOutFinished)
+        {
+            zoomOutFinished = false;
+            bookView.GetComponent<Animator>().enabled = false;
+            bookView.GetComponent<Animator>().enabled = true;
+            bookView.SetActive(false);
+            bookCover.SetActive(false);
+            glossaryBookOpen = false;
+        }
+
+        if (turnPageCompleted)
+        {
+            bookView.GetComponent<Animator>().SetBool(Settings.turnPage, false);
+            turnPageCompleted = false;
+            bookView.GetComponent<Animator>().enabled = false;
+            bookView.GetComponent<Animator>().enabled = true;
+        }
+
         if (InputManager.Instance.bookView.action.WasPressedThisFrame())
         {
             if (bookView.activeSelf)
             {
-                bookView.SetActive(false);
-                bookCover.SetActive(false);
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
-                Time.timeScale = 1;
+                bookView.GetComponent<Animator>().SetTrigger(Settings.zoomOut);
             }
             else
             {
                 bookView.SetActive(true);
                 bookCover.SetActive(true);
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.openBookSoundEffect);
-                Time.timeScale = 0;
+                glossaryBookOpen = true;
+                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+                bookView.GetComponent<Animator>().SetTrigger(Settings.zoomIn);
             }
         }
+    }
+
+    public void CloseBookInCasePauseClick()
+    {
+        zoomOutFinished = false;
+        bookView.GetComponent<Animator>().enabled = false;
+        bookView.GetComponent<Animator>().enabled = true;
+        bookView.SetActive(false);
+        bookCover.SetActive(false);
+        glossaryBookOpen = false;
     }
 
     /// <summary>
@@ -712,6 +756,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         return toBeDroppedChestItem;
     }
+
 
     #region Validation
 #if UNITY_EDITOR

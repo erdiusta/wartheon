@@ -36,16 +36,18 @@ public class PauseMenuUI : MonoBehaviour
     {
         Time.timeScale = 0f;
 
+        if (GameManager.Instance.glossaryBookOpen)
+        {
+            GameManager.Instance.CloseBookInCasePauseClick();
+        }
+
         // Initialize UI text
         StartCoroutine(InitializeUI());
     }
 
     private void OnDisable()
     {
-        if (!GameManager.Instance.bookView.activeSelf)
-        {
-            Time.timeScale = 1f;
-        }
+        Time.timeScale = 1f;
     }
 
     public void IncreaseMusicVolume()

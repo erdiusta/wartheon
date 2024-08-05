@@ -233,6 +233,8 @@ public class PlayerControl : MonoBehaviour
 
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
+        if (GameManager.Instance.glossaryBookOpen) return;
+
         // Fire when left mouse button is clicked - melee
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
         {

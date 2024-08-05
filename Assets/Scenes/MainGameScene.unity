@@ -539,7 +539,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &54425435
 RectTransform:
   m_ObjectHideFlags: 0
@@ -552,13 +552,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 258408245}
-  - {fileID: 1819990544}
-  - {fileID: 1174563834}
-  - {fileID: 2105419104}
-  - {fileID: 1627410404}
-  - {fileID: 1783108430}
-  - {fileID: 70774304}
+  - {fileID: 320116115}
   m_Father: {fileID: 1617418087}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -671,7 +665,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 54425435}
+  m_Father: {fileID: 320116115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
@@ -1514,7 +1508,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &244361830
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1782,7 +1776,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &247612441
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2015,7 +2009,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 54425435}
+  m_Father: {fileID: 320116115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -2776,6 +2770,48 @@ MonoBehaviour:
   - {x: 0.5, y: -0.5, z: 0}
   - {x: 0.5, y: 0.5, z: 0}
   - {x: -0.5, y: 0.5, z: 0}
+--- !u!1 &320116114
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 320116115}
+  m_Layer: 5
+  m_Name: BeastiaryContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &320116115
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 320116114}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 258408245}
+  - {fileID: 1819990544}
+  - {fileID: 1174563834}
+  - {fileID: 2105419104}
+  - {fileID: 1627410404}
+  - {fileID: 1783108430}
+  - {fileID: 70774304}
+  m_Father: {fileID: 54425435}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &321561463
 GameObject:
   m_ObjectHideFlags: 0
@@ -4246,9 +4282,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.10291596
-    width: 0.65106815
-    height: 0.6174957
+    y: 0.07890223
+    width: 0.99999994
+    height: 0.8413379
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -5032,7 +5068,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 640606998}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2060895240}
+        m_TargetAssemblyTypeName: BookUI, Assembly-CSharp
+        m_MethodName: OpenStatsPage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &640606998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5131,12 +5179,12 @@ GameObject:
   - component: {fileID: 649022741}
   - component: {fileID: 649022740}
   m_Layer: 5
-  m_Name: CharacterName
+  m_Name: ItemName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &649022739
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6623,7 +6671,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &809077076
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7039,7 +7087,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 865866826}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2060895240}
+        m_TargetAssemblyTypeName: BookUI, Assembly-CSharp
+        m_MethodName: OpenWeaponsPage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &865866826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7227,7 +7287,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &915328124
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7548,7 +7608,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1001157843}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2060895240}
+        m_TargetAssemblyTypeName: BookUI, Assembly-CSharp
+        m_MethodName: OpenBossesPage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1001157843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8925,7 +8997,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 54425435}
+  m_Father: {fileID: 320116115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -9740,12 +9812,12 @@ GameObject:
   - component: {fileID: 1251377770}
   - component: {fileID: 1251377769}
   m_Layer: 5
-  m_Name: CharacterName
+  m_Name: BossName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1251377768
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11954,8 +12026,10 @@ GameObject:
   - component: {fileID: 1617418087}
   - component: {fileID: 1617418089}
   - component: {fileID: 1617418088}
+  - component: {fileID: 1617418091}
+  - component: {fileID: 1617418090}
   m_Layer: 5
-  m_Name: BookImage
+  m_Name: BookView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12006,7 +12080,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fbbb7e6564ed4c2448289627c214baca, type: 3}
+  m_Sprite: {fileID: 787058442, guid: 71a1dbec037eed943bdab9828986e012, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -12024,6 +12098,48 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1617418086}
   m_CullTransparentMesh: 1
+--- !u!114 &1617418090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617418086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31811814cb86bd04c9dcc1ef1118cd89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnTurnPageCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBookClosed:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBookOpened:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!95 &1617418091
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617418086}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 93b06912954b1664ab3b1b528cee80e4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1627410403
 GameObject:
   m_ObjectHideFlags: 0
@@ -12054,7 +12170,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 54425435}
+  m_Father: {fileID: 320116115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -12360,7 +12476,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1652466946}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2060895240}
+        m_TargetAssemblyTypeName: BookUI, Assembly-CSharp
+        m_MethodName: OpenBestiaryPage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1652466946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12481,7 +12609,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1688758357}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2060895240}
+        m_TargetAssemblyTypeName: BookUI, Assembly-CSharp
+        m_MethodName: OpenItemPage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1688758357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12988,7 +13128,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 54425435}
+  m_Father: {fileID: 320116115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
@@ -13333,7 +13473,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 54425435}
+  m_Father: {fileID: 320116115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -14755,6 +14895,7 @@ MonoBehaviour:
   weaponText: {fileID: 481503787}
   speedText: {fileID: 1088028147}
   specialMoveText: {fileID: 1689759660}
+  bookAnimator: {fileID: 1617418091}
 --- !u!222 &2060895242
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14793,7 +14934,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 54425435}
+  m_Father: {fileID: 320116115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -15044,6 +15185,12 @@ MonoBehaviour:
   volume: {fileID: 1063868306}
   bookView: {fileID: 1617418086}
   bookCover: {fileID: 1435044111}
+  pauseMenuUI: {fileID: 1312960709}
+  glossaryBookOpen: 0
+  turnPageCompleted: 0
+  zoomOutFinished: 0
+  zoomInFinished: 0
+  statsPageChanged: 0
   dungeonLevelList:
   - {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
   - {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}

@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,11 +8,11 @@ public class BookUI : MonoBehaviour
 {
     [Header("PAGE HEADERS")]
     [Space(10)]
-    [SerializeField] Transform statsPage;
-    [SerializeField] Transform weaponsPage;
-    [SerializeField] Transform itemsPage;
-    [SerializeField] Transform beastiaryPage;
-    [SerializeField] Transform bossesPage;
+    public Transform statsPage;
+    public Transform weaponsPage;
+    public Transform itemsPage;
+    public Transform beastiaryPage;
+    public Transform bossesPage;
 
     [SerializeField] TextMeshProUGUI characterName;
     [SerializeField] Image characterImage;
@@ -19,6 +21,8 @@ public class BookUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI weaponText;
     [SerializeField] TextMeshProUGUI speedText;
     [SerializeField] TextMeshProUGUI specialMoveText;
+
+    [SerializeField] Animator bookAnimator;
 
     Transform mainHandWeaponContainer;
     Transform offHandWeaponContainer;
@@ -141,5 +145,111 @@ public class BookUI : MonoBehaviour
     {
         GameObject passiveItemGameObject = passiveItemContainer.GetChild(passiveItemContainer.childCount - 1).gameObject;
         Destroy(passiveItemGameObject);
+    }
+
+    public void OpenStatsPage()
+    {
+        if (statsPage.GetChild(0).gameObject.activeSelf) return;
+
+        StopAllCoroutines();
+        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Stats));
+    }
+
+    public void OpenWeaponsPage()
+    {
+        if (weaponsPage.GetChild(0).gameObject.activeSelf) return;
+
+        StopAllCoroutines();
+        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Weapons));
+    }
+
+    public void OpenItemPage()
+    {
+        if (itemsPage.GetChild(0).gameObject.activeSelf) return;
+
+        StopAllCoroutines();
+        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Items));
+    }
+
+    public void OpenBestiaryPage()
+    {
+        if (beastiaryPage.GetChild(0).gameObject.activeSelf) return;
+
+        StopAllCoroutines();
+        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Beastiary));
+    }
+
+    public void OpenBossesPage()
+    {
+        if (bossesPage.GetChild(0).gameObject.activeSelf) return;
+
+        StopAllCoroutines();
+        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Bosses));
+    }
+
+    IEnumerator CompleteTurnPageThenDisplay(BookPage bookPage)
+    {
+        TurnThePage();
+
+        while (!GameManager.Instance.turnPageCompleted)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+        if (GameManager.Instance.turnPageCompleted)
+        {
+            GameManager.Instance.statsPageChanged = true;
+
+            switch (bookPage)
+            {
+                case BookPage.Stats:
+                    EnableStatPage();
+                    break;
+                case BookPage.Weapons:
+                    weaponsPage.GetChild(0).gameObject.SetActive(true);
+                    break;
+                case BookPage.Items:
+                    itemsPage.GetChild(0).gameObject.SetActive(true);
+                    break;
+                case BookPage.Beastiary:
+                    beastiaryPage.GetChild(0).gameObject.SetActive(true);
+                    break;
+                case BookPage.Bosses:
+                    bossesPage.GetChild(0).gameObject.SetActive(true);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void TurnThePage()
+    {
+        if (statsPage.GetChild(0).gameObject.activeSelf) { ClearStatPage(); }
+        else if (weaponsPage.GetChild(0).gameObject.activeSelf) { weaponsPage.GetChild(0).gameObject.SetActive(false); }
+        else if (itemsPage.GetChild(0).gameObject.activeSelf) { itemsPage.GetChild(0).gameObject.SetActive(false); }
+        else if (beastiaryPage.GetChild(0).gameObject.activeSelf) { beastiaryPage.GetChild(0).gameObject.SetActive(false); }
+        else if (bossesPage.GetChild(0).gameObject.activeSelf) { bossesPage.GetChild(0).gameObject.SetActive(false); }
+
+        bookAnimator.enabled = false;
+        bookAnimator.enabled = true;
+        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.openBookSoundEffect);
+        bookAnimator.SetBool(Settings.turnPage, true);
+    }
+
+    private void ClearStatPage()
+    {
+        foreach (Transform child in statsPage)
+        {
+            child.gameObject.SetActive(false);
+        }
+    }
+
+    private void EnableStatPage()
+    {
+        foreach (Transform child in statsPage)
+        {
+            child.gameObject.SetActive(true);
+        }
     }
 }

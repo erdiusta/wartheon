@@ -68,6 +68,11 @@ public static class Settings
 
     // Animator parameters - DropItem
     public static int hovered = Animator.StringToHash("hovered");
+
+    // Animator parameters - Book
+    public static int turnPage = Animator.StringToHash("turnPage");
+    public static int zoomIn = Animator.StringToHash("zoomIn");
+    public static int zoomOut = Animator.StringToHash("zoomOut");
     #endregion
 
     #region GAMEOBJECT TAGS
