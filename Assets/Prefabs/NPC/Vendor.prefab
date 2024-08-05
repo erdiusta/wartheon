@@ -121,8 +121,8 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.002866745, y: 0.9038029}
-  m_Size: {x: 3.8034587, y: 5.074501}
+  m_Offset: {x: -0.112356186, y: 0.73960686}
+  m_Size: {x: 8.82802, y: 9.824772}
   m_Direction: 0
 --- !u!50 &2949632287361592263
 Rigidbody2D:
@@ -184,22 +184,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e571bc2f43371044daec5cc488e2652d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogue:
-    name: Hermes Haven
+  dialogues:
+  - name: Hermes Haven
     sentences:
-    - Hi there!
-    - I think purchasing something is a very good idea. What do you think?
-    - No? I have a passage I memorized in Bible some sort of fits this occasion.
-    - 'Ezekiel 25: 17'
-    - The path of the righteous man is beset on all sides,
-    - By the inequities of the selfish and the tyranny of evil men.
-    - Blessed is he who, in the name of charity and good will,
-    - Shepherds the weak through the valley of darkness,
-    - For he is truly his brother's keeper and the finder of lost children.
-    - And I will strike down upon thee with great vengeance and furious anger,
-    - Those who attempt to poison and destroy my brothers.
-    - And you will know my name is the Lord when I lay my vengeance upon thee!
-    - I hope that will change your mind.
+    - Hi there! Is there anything to help you?
+  - name: Hermes Haven
+    sentences:
+    - Buy something then maybe I can give you a hint related to your adventure.
+  - name: Hermes Haven
+    sentences:
+    - Sorry! You don't have enough coins. I understand but I can't make a favor to
+      you.
   nameText: {fileID: 9155516492479711910}
   dialogueText: {fileID: 1790351835186083326}
   dialoguePanel: {fileID: 6285277385364679491}
@@ -432,7 +427,7 @@ MeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1863229017
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 11
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &1790351835186083326
@@ -606,7 +601,7 @@ MeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1863229017
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 11
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &9155516492479711910

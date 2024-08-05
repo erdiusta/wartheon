@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: WeaponDetails_Crossbow
   m_EditorClassIdentifier: 
   weaponName: Crossbow
+  weaponTitle: 14
   weaponFrontSprite: {fileID: -1459062109, guid: c1c65c6adc5e93742818ef50bc4c1422, type: 3}
   weaponRearSprite: {fileID: 2020038788, guid: c1c65c6adc5e93742818ef50bc4c1422, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 55017cf24144cc049bf336df8ed0c5e8, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: bd7bbcbe694802043a01534846e9888c, type: 2}
   weaponClass: 6
   wieldType: 1
+  price: 6
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0
@@ -34,6 +36,7 @@ MonoBehaviour:
   isMeleeWeapon: 0
   isShield: 0
   weaponCooldownDuration: 2.75
+  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0
   circleRadius: 0
   meleeDamageMin: 0

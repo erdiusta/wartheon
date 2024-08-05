@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: WeaponDetails_Gladius
   m_EditorClassIdentifier: 
   weaponName: Gladius
-  weaponFrontSprite: {fileID: -1571304438, guid: a66a9a53ef43ce54db026e7c210f033c, type: 3}
-  weaponRearSprite: {fileID: -1571304438, guid: a66a9a53ef43ce54db026e7c210f033c, type: 3}
+  weaponTitle: 1
+  weaponFrontSprite: {fileID: 590802172, guid: d3b68e43ee1614042b803464ac9f2e89, type: 3}
+  weaponRearSprite: {fileID: 590802172, guid: d3b68e43ee1614042b803464ac9f2e89, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 4d6238627c4ee314e8a1a4fec3ad65d4, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: c1aa8ec2a7ea25f4eb107777b73a89a3, type: 2}
   weaponClass: 0
   wieldType: 0
+  price: 3
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0
@@ -34,6 +36,7 @@ MonoBehaviour:
   isMeleeWeapon: 1
   isShield: 0
   weaponCooldownDuration: 0.8
+  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0
   circleRadius: 0.65
   meleeDamageMin: 6

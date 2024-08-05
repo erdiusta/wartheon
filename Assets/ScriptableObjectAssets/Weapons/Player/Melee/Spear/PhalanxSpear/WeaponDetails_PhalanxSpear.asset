@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: WeaponDetails_PhalanxSpear
   m_EditorClassIdentifier: 
   weaponName: Phalanx Spear
+  weaponTitle: 5
   weaponFrontSprite: {fileID: 1230032176, guid: ce303d2404321da4e870e4c5bfc59d3b, type: 3}
   weaponRearSprite: {fileID: 1230032176, guid: ce303d2404321da4e870e4c5bfc59d3b, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 3eeb7901bc4c98640937a7fd82d248c9, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 7b95804964c7e2c488ad54857a7be2bb, type: 2}
   weaponClass: 4
   wieldType: 0
+  price: 6
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0
@@ -34,6 +36,7 @@ MonoBehaviour:
   isMeleeWeapon: 1
   isShield: 0
   weaponCooldownDuration: 1.7
+  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0
   circleRadius: 0.95
   meleeDamageMin: 7

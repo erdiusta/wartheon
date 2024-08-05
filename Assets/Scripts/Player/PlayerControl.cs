@@ -37,6 +37,7 @@ public class PlayerControl : MonoBehaviour
     float offHandFirePressHoldDownTimer = 0f;
     bool mainHandThrustCompleted;
     bool offHandThrustCompleted;
+    float attackDelayDuration = 0.11f;
 
     private void Awake()
     {
@@ -238,25 +239,26 @@ public class PlayerControl : MonoBehaviour
             // Check for quick tap input
             if (InputManager.Instance.attack.action.WasPerformedThisFrame())
             {
-                // If a quick tap was detected and no thrust attack was triggered
+                // If shift button is held down, trigger Sweep attack immediately
+                if (InputManager.Instance.shiftButton.action.IsPressed())
+                {
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasSweep)
+                    {
+                        player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+                        player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.Sweep);
+                        return;
+                    }
+                }
+
+                // If no thrust attack was triggered then execute swing
                 if (mainHandFirePressHoldDownTimer == 0f)
                 {
-                    // If coroutine is running, it means this is the second quick tap for a sweep attack
                     if (mainHandMeleeWeaponClickedCoroutine != null)
                     {
-                        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasSweep)
-                        {
-                            player.meleeAttackRightHand.IsAttackingAtRightHand = true;
-                            player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.Sweep);
-                            StopCoroutine(mainHandMeleeWeaponClickedCoroutine); // Stop the running coroutine
-                            mainHandMeleeWeaponClickedCoroutine = null; // Reset the coroutine reference
-                        }
+                        StopCoroutine(mainHandMeleeWeaponClickedCoroutine);
                     }
-                    else
-                    {
-                        // Start coroutine to check for a second quick tap for sweep attack
-                        mainHandMeleeWeaponClickedCoroutine = StartCoroutine(MainHandMeleeWeaponClickRoutine(playerAimDirection));
-                    }
+
+                    mainHandMeleeWeaponClickedCoroutine = StartCoroutine(MainHandMeleeWeaponClickRoutine(playerAimDirection));
                 }
             }
 
@@ -269,7 +271,7 @@ public class PlayerControl : MonoBehaviour
                     if (mainHandThrustCompleted) return;
 
                     // Check if the fire button is held down for more than 0.18 seconds for thrust attack
-                    if (mainHandFirePressHoldDownTimer > 0.18f)
+                    if (mainHandFirePressHoldDownTimer > attackDelayDuration)
                     {
                         player.meleeAttackRightHand.IsAttackingAtRightHand = true;
                         player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.Thrust);
@@ -290,7 +292,7 @@ public class PlayerControl : MonoBehaviour
             {
                 return;
             }
-            
+
         }
 
         if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
@@ -301,26 +303,26 @@ public class PlayerControl : MonoBehaviour
                 // Check for quick tap input
                 if (InputManager.Instance.attackOffHand.action.WasPerformedThisFrame())
                 {
-                    // If a quick tap was detected and no thrust attack was triggered
-                    if (mainHandFirePressHoldDownTimer == 0f)
+                    // If shift button is held down, trigger Sweep attack immediately
+                    if (InputManager.Instance.shiftButton.action.IsPressed())
                     {
-                        // If coroutine is running, it means this is the second quick tap for a sweep attack
+                        if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasSweep)
+                        {
+                            player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
+                            player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), MeleeAttackType.Sweep);
+                            return;
+                        }
+                    }
+
+                    // If a quick tap was detected and no thrust attack was triggered
+                    if (offHandFirePressHoldDownTimer == 0f)
+                    {
+                        // Start coroutine to check for a second quick tap for sweep attack
                         if (offHandMeleeWeaponClickedCoroutine != null)
                         {
-                            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasSweep)
-                            {
-                                player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
-                                player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), 
-                                    MeleeAttackType.Sweep);
-                                StopCoroutine(offHandMeleeWeaponClickedCoroutine); // Stop the running coroutine
-                                offHandMeleeWeaponClickedCoroutine = null; // Reset the coroutine reference
-                            }
+                            StopCoroutine(offHandMeleeWeaponClickedCoroutine);
                         }
-                        else
-                        {
-                            // Start coroutine to check for a second quick tap for sweep attack
-                            offHandMeleeWeaponClickedCoroutine = StartCoroutine(OffHandMeleeWeaponClickRoutine(playerAimDirection));
-                        }
+                        offHandMeleeWeaponClickedCoroutine = StartCoroutine(OffHandMeleeWeaponClickRoutine(playerAimDirection));
                     }
                 }
 
@@ -332,8 +334,8 @@ public class PlayerControl : MonoBehaviour
                     {
                         if (offHandThrustCompleted) return;
 
-                        // Check if the fire button is held down for more than 0.3 seconds for thrust attack
-                        if (offHandFirePressHoldDownTimer > 0.18f)
+                        // Check if the fire button is held down for more than 0.18 seconds for thrust attack
+                        if (offHandFirePressHoldDownTimer > attackDelayDuration)
                         {
                             player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
                             player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), MeleeAttackType.Thrust);
@@ -425,10 +427,10 @@ public class PlayerControl : MonoBehaviour
 
     IEnumerator MainHandMeleeWeaponClickRoutine(AimDirection playerAimDirection)
     {
-        yield return new WaitForSeconds(0.18f);
+        yield return new WaitForSeconds(attackDelayDuration);
 
         // If the coroutine completes, it means only one tap was detected within 0.3 seconds
-        if (mainHandFirePressHoldDownTimer == 0f)
+        if (!mainHandThrustCompleted)
         {
             player.meleeAttackRightHand.IsAttackingAtRightHand = true;
             player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.Slash);
@@ -439,10 +441,10 @@ public class PlayerControl : MonoBehaviour
 
     IEnumerator OffHandMeleeWeaponClickRoutine(AimDirection playerAimDirection)
     {
-        yield return new WaitForSeconds(0.18f);
+        yield return new WaitForSeconds(attackDelayDuration);
 
         // If the coroutine completes, it means only one tap was detected within 0.3 seconds
-        if (offHandFirePressHoldDownTimer == 0f)
+        if (!offHandThrustCompleted)
         {
             player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
             player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), MeleeAttackType.Slash);
@@ -463,38 +465,44 @@ public class PlayerControl : MonoBehaviour
             {
                 if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Dummy)
                 {
-                    if (player.selectedActiveItem.GetCurrentActiveItem().decoyUsed == false)
+                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
                     {
-                        player.selectedActiveItem.GetCurrentActiveItem().decoyUsed = true;
+                        if (player.selectedActiveItem.GetCurrentActiveItem().decoyUsed == false)
+                        {
+                            player.selectedActiveItem.GetCurrentActiveItem().decoyUsed = true;
 
-                        GameObject decoyObject = Instantiate(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray[0],
-                            transform.position, Quaternion.identity);
+                            GameObject decoyObject = Instantiate(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray[0],
+                                transform.position, Quaternion.identity);
 
-                        StaticEventHandler.CallDecoySpawned(decoyObject.GetComponent<Decoy>());
-                        player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
+                            StaticEventHandler.CallDecoySpawned(decoyObject.GetComponent<Decoy>());
+                            player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
 
-                        // Call weapon fired event
-                        player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                            // Call weapon fired event
+                            player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                        }
                     }
                 }
                 else if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Hourglass)
                 {
-                    if (player.selectedActiveItem.GetCurrentActiveItem().hourGlassUsed == false)
+                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
                     {
-                        player.selectedActiveItem.GetCurrentActiveItem().hourGlassUsed = true;
+                        if (player.selectedActiveItem.GetCurrentActiveItem().hourGlassUsed == false)
+                        {
+                            player.selectedActiveItem.GetCurrentActiveItem().hourGlassUsed = true;
 
-                        GameObject hourGlassObject = Instantiate(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray[0],
-                        transform.position, Quaternion.identity);
+                            GameObject hourGlassObject = Instantiate(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray[0],
+                            transform.position, Quaternion.identity);
 
-                        hourGlassObject.GetComponent<Animator>().SetTrigger("burst");
-                        SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemSwingSoundEffect);
-                        Time.timeScale = 0.5f;
+                            hourGlassObject.GetComponent<Animator>().SetTrigger("burst");
+                            SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemSwingSoundEffect);
+                            Time.timeScale = 0.5f;
 
-                        StaticEventHandler.CallHourglassSpawned();
-                        player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
+                            StaticEventHandler.CallHourglassSpawned();
+                            player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
 
-                        // Call weapon fired event
-                        player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                            // Call weapon fired event
+                            player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                        }
                     }
                 }
                 else if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Compass)
@@ -504,16 +512,19 @@ public class PlayerControl : MonoBehaviour
                 else if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Potion &&
                     !player.selectedActiveItem.GetCurrentActiveItem().potionDrank)
                 {
-                    if (healthPotionDrinkCoroutine == null)
+                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
                     {
-                        SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemUseSoundEffect);
-                        player.selectedActiveItem.GetCurrentActiveItem().potionDrank = true;
-                        healthPotionDrinkCoroutine = StartCoroutine(AddHealthCoroutine((int)(50f / player.health.GetStartingHealth() * 100)));
+                        if (healthPotionDrinkCoroutine == null)
+                        {
+                            SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemUseSoundEffect);
+                            player.selectedActiveItem.GetCurrentActiveItem().potionDrank = true;
+                            healthPotionDrinkCoroutine = StartCoroutine(AddHealthCoroutine((int)(50f / player.health.GetStartingHealth() * 100)));
 
-                        player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
+                            player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
 
-                        // Call weapon fired event
-                        player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                            // Call weapon fired event
+                            player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                        }
                     }
                 }
                 else if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Summoner)
@@ -534,20 +545,38 @@ public class PlayerControl : MonoBehaviour
                             break;
                     }
 
-                    int selectedIndex = Random.Range(0, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray.Length);
-                    GameObject summonedEnemyPrefab = player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray[selectedIndex];
+                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
+                    {
+                        int selectedIndex = Random.Range(0, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray.Length);
+                        GameObject summonedEnemyPrefab = player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray[selectedIndex];
 
-                    GameObject summonedEnemyObject = Instantiate(summonedEnemyPrefab, transform.position, Quaternion.identity);
-                    Enemy enemy = summonedEnemyObject.GetComponent<Enemy>();
-                    SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemUseSoundEffect);
+                        GameObject summonedEnemyObject = Instantiate(summonedEnemyPrefab, transform.position, Quaternion.identity);
+                        Enemy enemy = summonedEnemyObject.GetComponent<Enemy>();
+                        SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemUseSoundEffect);
 
-                    enemy.EnemyInitialization(enemy.enemyMovementAI.enemyDetails, 15, GameManager.Instance.GetCurrentDungeonLevel());
-                    player.summonedEnemies.Add(summonedEnemyObject);
+                        enemy.EnemyInitialization(enemy.enemyMovementAI.enemyDetails, 15, GameManager.Instance.GetCurrentDungeonLevel());
+                        player.summonedEnemies.Add(summonedEnemyObject);
 
-                    player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
+                        player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
 
-                    // Call weapon fired event
-                    player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                        if (GameManager.Instance.GetCurrentRoom().isClearedOfEnemies)
+                        {
+                            Destroy(summonedEnemyObject);
+                        }
+
+                        // Call weapon fired event
+                        player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                    }
+                }
+                else if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Potion)
+                {
+                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
+                    {
+                        player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
+
+                        // Call weapon fired event
+                        player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                    }
                 }
                 // Trigger fire weapon event if item is treated as a projectile
                 else

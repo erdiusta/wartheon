@@ -1,12 +1,20 @@
-using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 
 public class DamageDisplay : MonoBehaviour
 {
-    [SerializeField] TextMeshPro damageDisplayText;
-    [SerializeField] TextMeshPro criticalHitText;
+    [SerializeField] TMP_Text damageDisplayTextPrefab; // Prefab for damage text
+    [SerializeField] Transform damageTextSpawnPoint; // The point where the damage text will appear
+    [SerializeField] Transform criticalTextSpawnPoint; // The point where the critical hit text will appear
+    [SerializeField] Transform headShotTextSpawnPoint; // The point where the head shot te
+
+    [SerializeField] Color criticalHitColor = new Color(1, 0.93f, 0.59f);
+    [SerializeField] Color headShotColor = Color.red;
+    [SerializeField] float displayDuration = 0.7f;
+    [SerializeField] float criticalHitDuration = 0.5f;
+    [SerializeField] float headShotDuration = 0.5f;
+    [SerializeField] Vector3 popUpOffset = new Vector3(0, 0.5f, 0);
+    [SerializeField] float popUpDuration = 0.5f;
 
     Enemy enemy;
 
@@ -29,66 +37,72 @@ public class DamageDisplay : MonoBehaviour
         enemy.healthEvent.OnHeadShot -= HealthEvent_OnHeadShot;
     }
 
-    private void Start()
-    {
-        damageDisplayText.text = "";
-        criticalHitText.text = "";
-    }
-
     private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {
-        if (!enemy.health.suddenDeathHappened)
+        if (!enemy.health.suddenDeathHappened && healthEventArgs.damageAmount > 0)
         {
-            StartCoroutine(DisplayDamage(healthEventArgs.damageAmount));
+            DisplayDamage(healthEventArgs.damageAmount);
         }
     }
 
     private void HealthEvent_OnCriticalHit(HealthEvent healthEvent)
     {
-        StartCoroutine(DisplayCriticalDamage());
+        if (!enemy.health.suddenDeathHappened)
+        {
+            DisplayCriticalDamage();
+        }
     }
 
     private void HealthEvent_OnHeadShot(HealthEvent healthEvent)
     {
-        StartCoroutine(DisplayHeadShot());
-    }
-
-    /// <summary>
-    /// Display critical hit text
-    /// </summary>
-    IEnumerator DisplayCriticalDamage()
-    {
-        criticalHitText.color = new Color(1, 0.93f, 0.59f);
-        criticalHitText.text = "CRITICAL HIT";
-
-        yield return new WaitForSeconds(0.5f);
-
-        criticalHitText.text = "";
-
-    }
-
-    /// <summary>
-    /// Display head shot text
-    /// </summary>
-    IEnumerator DisplayHeadShot()
-    {
-        criticalHitText.color = Color.red;
-        criticalHitText.text = "HEAD SHOT";
-
-        yield return new WaitForSeconds(0.5f);
-
-        criticalHitText.text = "";
+        if (!enemy.health.suddenDeathHappened)
+        {
+            DisplayHeadShot();
+        }
     }
 
     /// <summary>
     /// Display amount of damage
     /// </summary>
-    IEnumerator DisplayDamage(int damageAmount)
+    private void DisplayDamage(int damageAmount)
     {
-        damageDisplayText.text = damageAmount.ToString();
+        var damageText = Instantiate(damageDisplayTextPrefab, damageTextSpawnPoint.position, Quaternion.identity, damageTextSpawnPoint);
+        damageText.text = damageAmount.ToString();
+        AnimateText(damageText, displayDuration);
+    }
 
-        yield return new WaitForSeconds(0.7f);
+    /// <summary>
+    /// Display critical hit text
+    /// </summary>
+    private void DisplayCriticalDamage()
+    {
+        var criticalText = Instantiate(damageDisplayTextPrefab, criticalTextSpawnPoint.position, Quaternion.identity, criticalTextSpawnPoint);
+        criticalText.color = criticalHitColor;
+        criticalText.text = "CRITICAL HIT";
+        AnimateText(criticalText, criticalHitDuration);
+    }
 
-        damageDisplayText.text = "";
+
+    /// <summary>
+    /// Display head shot text
+    /// </summary>
+    private void DisplayHeadShot()
+    {
+        var headShotText = Instantiate(damageDisplayTextPrefab, headShotTextSpawnPoint.position, Quaternion.identity, headShotTextSpawnPoint);
+        headShotText.color = headShotColor;
+        headShotText.text = "HEAD SHOT";
+        AnimateText(headShotText, headShotDuration);
+    }
+
+    private void AnimateText(TMP_Text text, float duration)
+    {
+
+        Vector3 startPosition = text.transform.position;
+        Vector3 endPosition = startPosition + popUpOffset;
+
+        LeanTween.move(text.gameObject, endPosition, popUpDuration).setEase(LeanTweenType.linear);
+        LeanTween.scale(text.gameObject, Vector3.zero, popUpDuration).setEaseInOutBounce().setDelay(duration);
+
+        Destroy(text.gameObject, duration + popUpDuration);
     }
 }

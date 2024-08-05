@@ -4,6 +4,14 @@ using UnityEngine.UI;
 
 public class BookUI : MonoBehaviour
 {
+    [Header("PAGE HEADERS")]
+    [Space(10)]
+    [SerializeField] Transform statsPage;
+    [SerializeField] Transform weaponsPage;
+    [SerializeField] Transform itemsPage;
+    [SerializeField] Transform beastiaryPage;
+    [SerializeField] Transform bossesPage;
+
     [SerializeField] TextMeshProUGUI characterName;
     [SerializeField] Image characterImage;
 
@@ -19,10 +27,10 @@ public class BookUI : MonoBehaviour
 
     private void Awake()
     {
-        mainHandWeaponContainer = transform.GetChild(1).GetChild(4).GetChild(0);
-        offHandWeaponContainer = transform.GetChild(1).GetChild(5).GetChild(0);
-        passiveItemContainer = transform.GetChild(1).GetChild(6).GetChild(0);
-        activeItemContainer = transform.GetChild(1).GetChild(7).GetChild(0);
+        mainHandWeaponContainer = transform.GetChild(1).GetChild(1).GetChild(3).GetChild(0);
+        offHandWeaponContainer = transform.GetChild(1).GetChild(1).GetChild(4).GetChild(0);
+        passiveItemContainer = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(0);
+        activeItemContainer = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(0);
 
         GameObject mainHandWeapon = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponContainer);
 

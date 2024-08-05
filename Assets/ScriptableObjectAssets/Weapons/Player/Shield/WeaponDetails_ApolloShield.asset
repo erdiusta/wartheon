@@ -16,16 +16,16 @@ MonoBehaviour:
   weaponFrontSprite: {fileID: -835678534, guid: 0f345e1b11560f442a96b95cb88d2573, type: 3}
   weaponRearSprite: {fileID: -608057043, guid: 0f345e1b11560f442a96b95cb88d2573, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 2c943196b747bdb4aadd1822515819bd, type: 2}
+  weaponHoverAnimatorController: {fileID: 0}
   weaponClass: 3
   wieldType: 0
+  price: 9
+  canKillSuddenly: 0
+  suddenKillChance: 0.1
   hasAcid: 0
   acidEfficiency: 0.4
   hasStunDamage: 0
   stunChance: 0.2
-  hasBleedingDamage: 0
-  bleedingChance: 0.2
-  hasSlowDamage: 0
-  slowChance: 0.2
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -34,16 +34,16 @@ MonoBehaviour:
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 1
-  weaponFireRate: 0
+  weaponCooldownDuration: 0.2
   projectileDeflectRatio: 0.8
   circleRadius: 0
   meleeDamageMin: 0
   meleeDamageMax: 0
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 2
+  hasSwing: 0
+  hasSweep: 0
+  hasThrust: 0
   hasInfiniteProjectile: 0
-  hasInfiniteClipCapacity: 0
-  weaponClipProjectileCapacity: 0
   weaponProjectileCapacity: 0
   weaponPrechargeTime: 0
-  weaponReloadTime: 0

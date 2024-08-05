@@ -12,9 +12,7 @@ public enum Character
     Astraeus,
     Erebus,
     Orion,
-    Lyrisa,
-    TestWarrior,
-    TestWarrior2
+    Lyrisa
 }
 
 public enum GameState
@@ -104,6 +102,28 @@ public enum AimDirection
     Down
 }
 
+public enum WeaponTitle
+{
+    None,
+    Gladius,
+    Scimitar,
+    SizzlingSword,
+    Hatchet,
+    PhalanxSpear,
+    ClobberingTime,
+    HolySword,
+    AncientKatana,
+    Carnage,
+    Crusher,
+    Dirk,
+    Gambit,
+    Bow,
+    Crossbow,
+    Staff,
+    SolarFlare,
+    HeavensGale,
+}
+
 public enum WeaponClass
 {
     Sword,
@@ -186,4 +206,16 @@ public enum EnemyPhase
     GetHit,
     Attack,
     Death
+}
+
+public enum EnemyRace
+{
+    Critter,
+    Beast,
+    Eldritch,
+    Elemental,
+    Demon,
+    Undead,
+    Vermin,
+    Reptile
 }

@@ -163,6 +163,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                                 player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemMaxCharge;
                         }
 
+                        if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Dummy)
+                        {
+                            player.selectedActiveItem.GetCurrentActiveItem().decoyUsed = false;
+                        }
+
                         player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
 
                         exploredRoomCount = 0;

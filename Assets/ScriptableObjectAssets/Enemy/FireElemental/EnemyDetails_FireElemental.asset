@@ -14,13 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Fire Elemental
   enemyPrefab: {fileID: 7183228443647751644, guid: 8fea7a9db8fde704dab71124ec6d56b5, type: 3}
+  enemyRace: 3
   movementDetails: {fileID: 11400000, guid: 006bc7b24d185b148a452111f4c05600, type: 2}
+  experiencePoint: 75
   chaseDistance: 4
   hasAttackMove: 0
   preAttackDuration: 1
   attackMoveTriggerDistance: 0
   attackMoveEfficentDistance: 0
-  attackMoveCooldown: 0
+  attackMoveBaseCooldown: 8
+  baseEvasiveness: 0.8
   enemyBehaviour: 1
   isEnemyBoss: 0
   enemyArmorValue: 1
@@ -99,6 +102,8 @@ MonoBehaviour:
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
       ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: e87d6cab4dd029648b79abd7d75ca6e6, type: 2}
+      ratio: 1
     - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
       ratio: 5
     - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
@@ -113,6 +118,8 @@ MonoBehaviour:
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
       ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: e87d6cab4dd029648b79abd7d75ca6e6, type: 2}
+      ratio: 1
     - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
       ratio: 5
     - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}

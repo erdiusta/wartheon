@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
   m_Name: WeaponDetails_Dagger
   m_EditorClassIdentifier: 
-  weaponName: Dagger
+  weaponName: Dirk
+  weaponTitle: 11
   weaponFrontSprite: {fileID: 772035009, guid: 7cfb6a8e6c61c1140a32dfe7bdf25598, type: 3}
   weaponRearSprite: {fileID: 772035009, guid: 7cfb6a8e6c61c1140a32dfe7bdf25598, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: fe2632354abf80540ae561908fd9d705, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 1b8d09cd82044ff4baa1d89f503dda38, type: 2}
   weaponClass: 7
   wieldType: 0
+  price: 2
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0
@@ -34,6 +36,7 @@ MonoBehaviour:
   isMeleeWeapon: 1
   isShield: 0
   weaponCooldownDuration: 0.55
+  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0
   circleRadius: 0.5
   meleeDamageMin: 4

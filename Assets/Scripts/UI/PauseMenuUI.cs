@@ -42,7 +42,10 @@ public class PauseMenuUI : MonoBehaviour
 
     private void OnDisable()
     {
-        Time.timeScale = 1f;
+        if (!GameManager.Instance.bookView.activeSelf)
+        {
+            Time.timeScale = 1f;
+        }
     }
 
     public void IncreaseMusicVolume()

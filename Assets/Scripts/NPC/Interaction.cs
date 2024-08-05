@@ -5,12 +5,22 @@ using UnityEngine;
 
 public class Interaction : MonoBehaviour
 {
-    public Dialogue dialogue;
+    public List<Dialogue> dialogues;
     public TextMeshPro nameText;
     public TextMeshPro dialogueText;
     public GameObject dialoguePanel;
     public Queue<string> sentences;
     bool dialogueStarted = false;
+
+    private void OnEnable()
+    {
+        StaticDialogueHandler.OnInsufficientFunds += StaticDialogueHandler_OnInsufficientFunds;
+    }
+
+    private void OnDisable()
+    {
+        StaticDialogueHandler.OnInsufficientFunds -= StaticDialogueHandler_OnInsufficientFunds;
+    }
 
     private void Start()
     {
@@ -18,9 +28,16 @@ public class Interaction : MonoBehaviour
         nameText.color = Color.magenta;
     }
 
+    private void StaticDialogueHandler_OnInsufficientFunds()
+    {
+        StartDialogue(dialogues[2]);
+    }
+
     public void TriggerDialogue()
     {
-        StartDialogue(dialogue);
+        int randomNum = Random.Range(0, 2);
+
+        StartDialogue(dialogues[randomNum]);
     }
 
     /// <summary>

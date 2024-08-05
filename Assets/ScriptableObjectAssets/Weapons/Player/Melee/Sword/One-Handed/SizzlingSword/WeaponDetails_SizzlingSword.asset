@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: WeaponDetails_SizzlingSword
   m_EditorClassIdentifier: 
   weaponName: Sizzling Sword
+  weaponTitle: 3
   weaponFrontSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
   weaponRearSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 64ebf44b64a983545be47d8b87f9ed73, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 3fc232eb20b9258488d7a3363d824994, type: 2}
   weaponClass: 0
   wieldType: 0
+  price: 5
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 1
@@ -34,6 +36,7 @@ MonoBehaviour:
   isMeleeWeapon: 1
   isShield: 0
   weaponCooldownDuration: 0.85
+  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0
   circleRadius: 0.65
   meleeDamageMin: 7

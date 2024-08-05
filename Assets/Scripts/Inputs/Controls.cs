@@ -161,6 +161,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ShiftButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""b8836972-45a8-42f0-96f0-4c86833d04a8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -427,6 +436,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""402c267e-7555-44bd-84a7-3fb134fb5ba9"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShiftButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -450,6 +470,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_ActiveItem = m_PlayerInput.FindAction("Active Item", throwIfNotFound: true);
         m_PlayerInput_DropActiveItem = m_PlayerInput.FindAction("Drop Active Item", throwIfNotFound: true);
         m_PlayerInput_Pause = m_PlayerInput.FindAction("Pause", throwIfNotFound: true);
+        m_PlayerInput_ShiftButton = m_PlayerInput.FindAction("ShiftButton", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -526,6 +547,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_ActiveItem;
     private readonly InputAction m_PlayerInput_DropActiveItem;
     private readonly InputAction m_PlayerInput_Pause;
+    private readonly InputAction m_PlayerInput_ShiftButton;
     public struct PlayerInputActions
     {
         private @Controls m_Wrapper;
@@ -545,6 +567,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @ActiveItem => m_Wrapper.m_PlayerInput_ActiveItem;
         public InputAction @DropActiveItem => m_Wrapper.m_PlayerInput_DropActiveItem;
         public InputAction @Pause => m_Wrapper.m_PlayerInput_Pause;
+        public InputAction @ShiftButton => m_Wrapper.m_PlayerInput_ShiftButton;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -599,6 +622,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @ShiftButton.started += instance.OnShiftButton;
+            @ShiftButton.performed += instance.OnShiftButton;
+            @ShiftButton.canceled += instance.OnShiftButton;
         }
 
         private void UnregisterCallbacks(IPlayerInputActions instance)
@@ -648,6 +674,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @ShiftButton.started -= instance.OnShiftButton;
+            @ShiftButton.performed -= instance.OnShiftButton;
+            @ShiftButton.canceled -= instance.OnShiftButton;
         }
 
         public void RemoveCallbacks(IPlayerInputActions instance)
@@ -682,5 +711,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnActiveItem(InputAction.CallbackContext context);
         void OnDropActiveItem(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnShiftButton(InputAction.CallbackContext context);
     }
 }

@@ -410,7 +410,7 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -2010287945, guid: 248df82787829c94f8ff4af50e05b0db, type: 3}
+      value: {fileID: 1816078452, guid: 6af2fef1af38f0c499463867bff3ea61, type: 3}
     - time: 0.020833334
       value: {fileID: -973098255, guid: a6b93898914758f46889bf864de5dbfb, type: 3}
     - time: 0.041666668
@@ -430,7 +430,7 @@ AnimationClip:
     - time: 0.3125
       value: {fileID: 1530275668, guid: a6b93898914758f46889bf864de5dbfb, type: 3}
     - time: 0.33333334
-      value: {fileID: -2010287945, guid: 248df82787829c94f8ff4af50e05b0db, type: 3}
+      value: {fileID: 1816078452, guid: 6af2fef1af38f0c499463867bff3ea61, type: 3}
     attribute: m_Sprite
     path: RightWeaponRotationPoint/Weapon
     classID: 212
@@ -507,7 +507,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -2010287945, guid: 248df82787829c94f8ff4af50e05b0db, type: 3}
+    - {fileID: 1816078452, guid: 6af2fef1af38f0c499463867bff3ea61, type: 3}
     - {fileID: -973098255, guid: a6b93898914758f46889bf864de5dbfb, type: 3}
     - {fileID: 259883558, guid: a6b93898914758f46889bf864de5dbfb, type: 3}
     - {fileID: 1949781305, guid: a6b93898914758f46889bf864de5dbfb, type: 3}
@@ -517,7 +517,7 @@ AnimationClip:
     - {fileID: -1068963869, guid: a6b93898914758f46889bf864de5dbfb, type: 3}
     - {fileID: 1905226622, guid: a6b93898914758f46889bf864de5dbfb, type: 3}
     - {fileID: 1530275668, guid: a6b93898914758f46889bf864de5dbfb, type: 3}
-    - {fileID: -2010287945, guid: 248df82787829c94f8ff4af50e05b0db, type: 3}
+    - {fileID: 1816078452, guid: 6af2fef1af38f0c499463867bff3ea61, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

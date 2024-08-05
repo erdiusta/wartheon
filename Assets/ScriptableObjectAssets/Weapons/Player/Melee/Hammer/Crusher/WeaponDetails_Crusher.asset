@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: WeaponDetails_Crusher
   m_EditorClassIdentifier: 
   weaponName: Crusher
-  weaponFrontSprite: {fileID: 1640763228, guid: 994ac388b6578fa459c83299ecded184, type: 3}
-  weaponRearSprite: {fileID: 1640763228, guid: 994ac388b6578fa459c83299ecded184, type: 3}
+  weaponTitle: 10
+  weaponFrontSprite: {fileID: -1792190094, guid: a6b93898914758f46889bf864de5dbfb, type: 3}
+  weaponRearSprite: {fileID: -1792190094, guid: a6b93898914758f46889bf864de5dbfb, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: e0ec677c819372d4ba798ed36d8937ae, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: e4fd7e865e76fc1439eb7de275c47b7c, type: 2}
   weaponClass: 2
   wieldType: 1
+  price: 8
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0
@@ -34,6 +36,7 @@ MonoBehaviour:
   isMeleeWeapon: 1
   isShield: 0
   weaponCooldownDuration: 2.2
+  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0
   circleRadius: 0.8
   meleeDamageMin: 8

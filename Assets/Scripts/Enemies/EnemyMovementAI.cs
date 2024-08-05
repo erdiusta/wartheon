@@ -65,7 +65,7 @@ public class EnemyMovementAI : MonoBehaviour
         referencePosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
 
         // Reset attack move timer
-        attackMoveTimer = enemy.enemyDetails.attackMoveCooldown;
+        attackMoveTimer = enemy.enemyDetails.attackMoveBaseCooldown;
 
         // Default enemy phase
         enemyPhase = EnemyPhase.Patrol;
@@ -719,7 +719,7 @@ public class EnemyMovementAI : MonoBehaviour
         }
 
         // Set cooldown timer
-        attackMoveTimer = enemy.enemyDetails.attackMoveCooldown + enemy.enemyDetails.preAttackDuration;
+        attackMoveTimer = enemy.enemyDetails.attackMoveBaseCooldown + enemy.enemyDetails.preAttackDuration;
 
         // Check the previous phase and transition accordingly
         enemyPhase = EnemyPhase.Chase;

@@ -17,9 +17,17 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public GameObject enemyPrefab;
     #region Tooltip
+    [Tooltip("The race of the enemy")]
+    #endregion
+    public EnemyRace enemyRace;
+    #region Tooltip
     [Tooltip("Movement details of enemy")]
     #endregion
     public MovementDetailsSO movementDetails;
+    #region Tooltip
+    [Tooltip("Experience points of enemy")]
+    #endregion
+    public int experiencePoint = 30;
     #region Tooltip
     [Tooltip("Distance to the player before enemy starts chasing")]
     #endregion
@@ -43,7 +51,11 @@ public class EnemyDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Cooldown duration after special attack performed")]
     #endregion
-    public float attackMoveCooldown = 8f;
+    public float attackMoveBaseCooldown = 8f;
+    #region Tooltip
+    [Tooltip("Base evasivenes of the enemy to dodge player")]
+    #endregion
+    public float baseEvasiveness = .8f;
     #region Tooltip
     [Tooltip("Enemy behaviour type")]
     #endregion
@@ -271,6 +283,7 @@ public class EnemyDetailsSO : ScriptableObject
     {
         HelperUtilities.ValidateCheckEmptyString(this, nameof(enemyName), enemyName);
         HelperUtilities.ValidateCheckNullValue(this, nameof(enemyPrefab), enemyPrefab);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(experiencePoint), experiencePoint, false);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(chaseDistance), chaseDistance, false);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(enemyArmorValue), enemyArmorValue, true);
         HelperUtilities.ValidateCheckNullValue(this, nameof(enemyStandardMaterial), enemyStandardMaterial);

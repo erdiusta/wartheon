@@ -36,6 +36,8 @@ using System.Linq;
 [RequireComponent(typeof(Coins))]
 [RequireComponent(typeof(StatusManager))]
 [RequireComponent(typeof(SpecialMoveEvent))]
+[RequireComponent(typeof(BranchMastery))]
+[RequireComponent(typeof(WeaponMastery))]
 #endregion
 [DisallowMultipleComponent]
 public class Player : MonoBehaviour
@@ -72,8 +74,13 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool specialMoveOnCooldown = false;
     [HideInInspector] public float specialMoveTimer;
     [HideInInspector] public int keyCount = 0;
+    [HideInInspector] public BranchMastery branchMastery;
+    [HideInInspector] public WeaponMastery weaponMastery;
     [HideInInspector] public ChestItem chestItem;
     [HideInInspector] public bool hasRingOfFortune;
+
+    [HideInInspector] public float playerWeaponHandlingModifier = 0f;
+    [HideInInspector] public float playerEvasivenessModifier = 0f;
 
     public ParticleSystem dustParticlesSystem;
     public ParticleSystem specialMoveParticlesSystem;
@@ -112,6 +119,8 @@ public class Player : MonoBehaviour
         movementByVelocity = GetComponent<MovementByVelocity>();
         specialMoveEvent = GetComponent<SpecialMoveEvent>();
         chestItem = GetComponentInChildren<ChestItem>();
+        branchMastery = GetComponent<BranchMastery>();
+        weaponMastery = GetComponent<WeaponMastery>();
     }
 
     /// <summary>
@@ -310,11 +319,11 @@ public class Player : MonoBehaviour
         };
 
         // If the weapon is not a shield then it can equipped to the right hand
-        if (weapon.weaponDetails.weaponClass != WeaponClass.Shield)
+        if (weaponDetails.weaponClass != WeaponClass.Shield)
         {
             // Add the weapon to the list
             weaponRightHandList.Add(weapon);
-            if (!weaponBookMainHandHashSet.Contains(weapon.weaponDetails.weaponFrontSprite) && !isOnAwake)
+            if (!weaponBookMainHandHashSet.Contains(weaponDetails.weaponFrontSprite) && !isOnAwake)
             {
                 weaponBookMainHandHashSet.Add(weaponDetails.weaponFrontSprite);
                 PopulateMainHandWeaponsToBook(weaponDetails.weaponFrontSprite);

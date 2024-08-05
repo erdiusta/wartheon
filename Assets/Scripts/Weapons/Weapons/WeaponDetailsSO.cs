@@ -12,6 +12,10 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public string weaponName;
     #region Tooltip
+    [Tooltip("Weapon name")]
+    #endregion Tooltip
+    public WeaponTitle weaponTitle;
+    #region Tooltip
     [Tooltip("The front sprite for the weapon - the sprite should have the 'generate physics shape' option selected ")]
     #endregion Tooltip
     public Sprite weaponFrontSprite;
@@ -35,6 +39,10 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Weapon wield type")]
     #endregion Tooltip
     public WieldType wieldType;
+    #region Tooltip
+    [Tooltip("Price of the weapon")]
+    #endregion Tooltip
+    public int price;
 
     #region Header PASSIVE
     [Space(10)]
@@ -110,6 +118,10 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Weapon Fire Rate - 0.2 means 5 shots a second")]
     #endregion Tooltip
     public float weaponCooldownDuration = 0.2f;
+    #region Tooltip
+    [Tooltip("Weapon base handling rate to hit enemy successfully")]
+    #endregion Tooltip
+    public float weaponBaseHandling = 0.8f;
 
     #region Header SHIELD OPERATING VALUES
     [Space(10)]

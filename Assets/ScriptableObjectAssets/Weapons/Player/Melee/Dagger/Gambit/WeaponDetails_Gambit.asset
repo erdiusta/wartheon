@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: WeaponDetails_Gambit
   m_EditorClassIdentifier: 
   weaponName: Gambit
+  weaponTitle: 12
   weaponFrontSprite: {fileID: 1716864224, guid: 183de742a99d6a540b8709e5a27f2de9, type: 3}
   weaponRearSprite: {fileID: 1716864224, guid: 183de742a99d6a540b8709e5a27f2de9, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 1d014ed845af8d64b957a60042eb126a, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: c2e67091a9236644f8fc21c91544b807, type: 2}
   weaponClass: 7
   wieldType: 0
+  price: 9
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0
@@ -34,6 +36,7 @@ MonoBehaviour:
   isMeleeWeapon: 1
   isShield: 0
   weaponCooldownDuration: 0.55
+  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0
   circleRadius: 0.55
   meleeDamageMin: 6

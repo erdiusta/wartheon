@@ -6078,6 +6078,8 @@ GameObject:
   - component: {fileID: 3760601999533703318}
   - component: {fileID: -7766726267448648419}
   - component: {fileID: 8582659391090279790}
+  - component: {fileID: -9133217020520152176}
+  - component: {fileID: 6815216415085289844}
   m_Layer: 11
   m_Name: Player
   m_TagString: Player
@@ -6390,6 +6392,8 @@ MonoBehaviour:
   keyCount: 0
   chestItem: {fileID: 0}
   hasRingOfFortune: 0
+  playerWeaponHandlingModifier: 0
+  playerEvasivenessModifier: 0
   dustParticlesSystem: {fileID: 4106009469383456593}
   specialMoveParticlesSystem: {fileID: 0}
   passiveItemList: []
@@ -6734,6 +6738,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3152a0b0bab69846ad02b521e8e5289, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-9133217020520152176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee12bde76e7bd534ea348da50dbb363f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6815216415085289844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58409f8791895cc4a8d488878dad2ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4966358325702215446

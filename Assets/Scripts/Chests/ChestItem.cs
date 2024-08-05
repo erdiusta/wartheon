@@ -19,7 +19,7 @@ public class ChestItem : MonoBehaviour
     [HideInInspector] public bool droppedByPlayer = false;
     [HideInInspector] public ActiveItem toBeDroppedActiveItem;
     [HideInInspector] public PassiveItem toBeDroppedPassiveItem;
-
+    
     bool isColliding;
     Chest chest;
     ParticleSystem collectParticleSystem;
@@ -66,7 +66,21 @@ public class ChestItem : MonoBehaviour
                     {
                         if (InputManager.Instance.interaction.action.IsPressed())
                         {
-                            CollectWeaponItem(player);
+                            if (GetComponentInParent<Counter>() != null)
+                            {
+                                if (GameManager.Instance.GetPlayer().coins.coinAmount >= weaponDetails.price)
+                                {
+                                    GameManager.Instance.GetPlayer().coins.coinAmount -= weaponDetails.price;
+                                }
+                                else
+                                {
+                                    StaticDialogueHandler.CallInsufficientFundsEvent();
+                                }
+                            }
+                            else
+                            {
+                                CollectWeaponItem(player);
+                            }
                         }
                     }
                     else if (hasActiveDrop)
@@ -303,7 +317,10 @@ public class ChestItem : MonoBehaviour
                 if (!player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile &&
                     !player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
                 {
+                    player.activeWeapon.GetCurrentMainHandWeapon().weaponRemainingProjectile =
+                        player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponProjectileCapacity;
 
+                    player.weaponFiredEvent.CallWeaponFiredEvent(player.activeWeapon.GetCurrentMainHandWeapon());
                 }
 
                 // Play pickup sound effect

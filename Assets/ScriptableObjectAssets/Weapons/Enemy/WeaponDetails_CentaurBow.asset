@@ -13,21 +13,20 @@ MonoBehaviour:
   m_Name: WeaponDetails_CentaurBow
   m_EditorClassIdentifier: 
   weaponName: Centaur Bow
+  weaponTitle: 0
   weaponFrontSprite: {fileID: 0}
   weaponRearSprite: {fileID: 0}
   weaponAnimatorController: {fileID: 0}
+  weaponHoverAnimatorController: {fileID: 0}
   weaponClass: 6
   wieldType: 1
+  price: 0
   canKillSuddenly: 0
   suddenKillChance: 0.1
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  hasBleedingDamage: 0
-  bleedingChance: 0
-  hasSlowDamage: 0
-  slowChance: 0
   weaponShootPosition: {x: 1.425, y: 1.65625, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: f9fb64df6ca344f4888dbe48b062e22f, type: 2}
   weaponShootEffect: {fileID: 0}
@@ -36,16 +35,17 @@ MonoBehaviour:
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 0
-  weaponFireRate: 0.8
+  weaponCooldownDuration: 0.2
+  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0
   circleRadius: 0
   meleeDamageMin: 0
   meleeDamageMax: 0
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 2
+  hasSwing: 0
+  hasSweep: 0
+  hasThrust: 0
   hasInfiniteProjectile: 1
-  hasInfiniteClipCapacity: 1
-  weaponClipProjectileCapacity: 0
   weaponProjectileCapacity: 0
   weaponPrechargeTime: 0
-  weaponReloadTime: 0

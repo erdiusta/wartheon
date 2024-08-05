@@ -3,6 +3,7 @@ using System.Collections.Generic;
 public class Weapon
 {
     public WeaponDetailsSO weaponDetails;
+    public float activeWeaponHandling;
     public int weaponRightHandListPosition;
     public int weaponLeftHandListPosition;
     public int weaponRemainingProjectile;

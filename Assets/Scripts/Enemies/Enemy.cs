@@ -25,7 +25,6 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CircleCollider2D))]
 [RequireComponent(typeof(PolygonCollider2D))]
-[RequireComponent(typeof(DropOnDestroy))]
 [RequireComponent(typeof(StatusManager))]
 [RequireComponent(typeof(DamageDisplay))]
 #endregion
@@ -35,6 +34,7 @@ public class Enemy : MonoBehaviour
 {
     [HideInInspector] public EnemyDetailsSO enemyDetails;
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
+    [HideInInspector] public FireWeapon fireWeapon;
     [HideInInspector] public WeaponFiredEvent weaponFiredEvent;
     [HideInInspector] public DestroyedEvent destroyedEvent;
     [HideInInspector] public SpriteRenderer[] spriteRendererArray;
@@ -63,7 +63,6 @@ public class Enemy : MonoBehaviour
     public ParticleSystem hitFxParticles;
     public ParticleSystem headShotFxParticles;
 
-    FireWeapon fireWeapon;
     SetActiveWeaponEvent setActiveWeaponEvent;
     MaterializeEffect materializeEffect;
     CircleCollider2D circleCollider2D;

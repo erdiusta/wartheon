@@ -34992,7 +34992,7 @@ GameObject:
   - component: {fileID: 4484463956873996418}
   - component: {fileID: 7150230896634044282}
   m_Layer: 11
-  m_Name: Text
+  m_Name: DamageText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35251,7 +35251,7 @@ GameObject:
   - component: {fileID: 5788763560476751888}
   - component: {fileID: 6195632694955144991}
   m_Layer: 11
-  m_Name: Text
+  m_Name: CrHitText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46676,8 +46676,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49f8e7f73d661dc4bb09d7904d10d980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageDisplayText: {fileID: 7150230896634044282}
-  criticalHitText: {fileID: 6195632694955144991}
+  damageDisplayTextPrefab: {fileID: 7150230896634044282}
+  damageTextSpawnPoint: {fileID: 4214307536645877505}
+  criticalTextSpawnPoint: {fileID: 4589956830810753142}
+  headShotTextSpawnPoint: {fileID: 4589956830810753142}
+  criticalHitColor: {r: 1, g: 0.93, b: 0.59, a: 1}
+  headShotColor: {r: 1, g: 0, b: 0, a: 1}
+  displayDuration: 0.7
+  criticalHitDuration: 0.5
+  headShotDuration: 0.5
+  popUpOffset: {x: 0, y: 1, z: 0}
+  popUpDuration: 0.5
 --- !u!114 &554938303889344163
 MonoBehaviour:
   m_ObjectHideFlags: 0
