@@ -24,6 +24,10 @@ public class PassiveItemDetailsSO : ScriptableObject
     #endregion Tooltip
     public PassiveItemType passiveItemType;
     #region Tooltip
+    [Tooltip("The socket where item should be placed")]
+    #endregion Tooltip
+    public ItemSlotName itemSlotName;
+    #region Tooltip
     [Tooltip("The animatior controller for the item")]
     #endregion Tooltip
     public RuntimeAnimatorController passiveItemAnimatorController;

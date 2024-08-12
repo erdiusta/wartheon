@@ -19,6 +19,7 @@ TagManager:
   - Dummy
   - roomBounds
   - summonedEnemy
+  - Cursor
   layers:
   - Default
   - TransparentFX

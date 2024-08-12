@@ -118,15 +118,6 @@ AnimationClip:
     - time: 0
       value: {fileID: -1551370753, guid: 87c4a611cede8854994d7a1056212191, type: 3}
     attribute: m_Sprite
-    path: 
-    classID: 212
-    script: {fileID: 0}
-    flags: 2
-  - serializedVersion: 2
-    curve:
-    - time: 0
-      value: {fileID: -1551370753, guid: 87c4a611cede8854994d7a1056212191, type: 3}
-    attribute: m_Sprite
     path: LeftWeaponRotationPoint/Weapon
     classID: 212
     script: {fileID: 0}
@@ -138,15 +129,6 @@ AnimationClip:
     m_Extent: {x: 0, y: 0, z: 0}
   m_ClipBindingConstant:
     genericBindings:
-    - serializedVersion: 2
-      path: 0
-      attribute: 0
-      script: {fileID: 0}
-      typeID: 212
-      customType: 23
-      isPPtrCurve: 1
-      isIntCurve: 0
-      isSerializeReferenceCurve: 0
     - serializedVersion: 2
       path: 809178550
       attribute: 0
@@ -202,7 +184,6 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -1551370753, guid: 87c4a611cede8854994d7a1056212191, type: 3}
     - {fileID: -1551370753, guid: 87c4a611cede8854994d7a1056212191, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2

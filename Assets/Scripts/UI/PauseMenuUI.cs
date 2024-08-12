@@ -13,25 +13,6 @@ public class PauseMenuUI : MonoBehaviour
     #endregion
     [SerializeField] TextMeshProUGUI soundlevelText;
 
-    private void Start()
-    {
-        // Initially hide the pause menu
-        gameObject.SetActive(false);
-    }
-
-    /// <summary>
-    /// Initialize the UI text
-    /// </summary>
-    IEnumerator InitializeUI()
-    {
-        // Wait a frame to ensure the previous music and sound levels have been set
-        yield return null;
-
-        // Initialize UI text
-        soundlevelText.SetText(SoundEffectManager.Instance.soundVolume.ToString());
-        musiclevelText.SetText(MusicManager.Instance.musicVolume.ToString());
-    }
-
     private void OnEnable()
     {
         Time.timeScale = 0f;
@@ -48,6 +29,19 @@ public class PauseMenuUI : MonoBehaviour
     private void OnDisable()
     {
         Time.timeScale = 1f;
+    }
+
+    /// <summary>
+    /// Initialize the UI text
+    /// </summary>
+    IEnumerator InitializeUI()
+    {
+        // Wait a frame to ensure the previous music and sound levels have been set
+        yield return null;
+
+        // Initialize UI text
+        soundlevelText.SetText(SoundEffectManager.Instance.soundVolume.ToString());
+        musiclevelText.SetText(MusicManager.Instance.musicVolume.ToString());
     }
 
     public void IncreaseMusicVolume()

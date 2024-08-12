@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Scimitar
   weaponTitle: 2
-  weaponFrontSprite: {fileID: 938089855, guid: 8d3ced4283292b549815503b1f00959e, type: 3}
-  weaponRearSprite: {fileID: 938089855, guid: 8d3ced4283292b549815503b1f00959e, type: 3}
+  weaponFrontSprite: {fileID: -1563044547, guid: 7dbf7b58221d0454c95d77b126efc0eb, type: 3}
+  weaponRearSprite: {fileID: -1563044547, guid: 7dbf7b58221d0454c95d77b126efc0eb, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 6b0919a94ef424041b0130085cb6429e, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: f145ce2e6c24b0543964f14a5a2b7bb6, type: 2}
   weaponClass: 0

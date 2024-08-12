@@ -58,7 +58,7 @@ public class ActiveWeapon : MonoBehaviour
 
         if (player != null)
         {
-            thirdHandGameObject = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).gameObject;
+            thirdHandGameObject = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(3).gameObject;
             weaponLeftHandAnimator = transform.GetChild(1).GetComponent<Animator>();
             leftHandAnchorPosition = weaponLeftHandAnimator.transform;
         }
@@ -67,15 +67,15 @@ public class ActiveWeapon : MonoBehaviour
     private void OnEnable()
     {
         setActiveWeaponEvent.OnSetActiveRightHandWeapon += SetActiveRightWeaponEvent_OnSetActiveRightHandWeapon;
-        setActiveWeaponEvent.OnSetActiveLeftHandWeapon += SetActiveLeftWeaponEvent_OnSetActiveLeftHandWeapon;
-        setActiveWeaponEvent.OnSetInactiveLeftHandWeapon += SetInactiveLeftWeaponEvent_OnSetInactiveLeftWeapon;
+        setActiveWeaponEvent.OnSetActiveOffHandWeapon += SetActiveLeftWeaponEvent_OnSetActiveLeftHandWeapon;
+        setActiveWeaponEvent.OnSetInactiveOffHandWeapon += SetInactiveLeftWeaponEvent_OnSetInactiveLeftWeapon;
     }
 
     private void OnDisable()
     {
         setActiveWeaponEvent.OnSetActiveRightHandWeapon -= SetActiveRightWeaponEvent_OnSetActiveRightHandWeapon;
-        setActiveWeaponEvent.OnSetActiveLeftHandWeapon -= SetActiveLeftWeaponEvent_OnSetActiveLeftHandWeapon;
-        setActiveWeaponEvent.OnSetInactiveLeftHandWeapon -= SetInactiveLeftWeaponEvent_OnSetInactiveLeftWeapon;
+        setActiveWeaponEvent.OnSetActiveOffHandWeapon -= SetActiveLeftWeaponEvent_OnSetActiveLeftHandWeapon;
+        setActiveWeaponEvent.OnSetInactiveOffHandWeapon -= SetInactiveLeftWeaponEvent_OnSetInactiveLeftWeapon;
     }
 
     private void SetActiveRightWeaponEvent_OnSetActiveRightHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 

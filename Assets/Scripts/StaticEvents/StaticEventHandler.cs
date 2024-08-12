@@ -31,17 +31,25 @@ public static class StaticEventHandler
     // Weapon added to main hand on book event
     public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToMainHandBook;
 
-    public static void CallWeaponAddedToMainHandBook(Sprite weaponSprite)
+    public static void CallWeaponAddedToMainHandBook(Weapon weapon, bool onStart, bool onlySwitch)
     {
-        OnWeaponAddedToMainHandBook?.Invoke(new WeaponAddedToBookArgs { weaponSprite = weaponSprite});
+        OnWeaponAddedToMainHandBook?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, onStart = onStart, onlySwitch = onlySwitch});
     }
 
     // Weapon added to off-hand on book event
     public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToOffHandBook;
 
-    public static void CallWeaponAddedToOffHandBook(Sprite weaponSprite)
+    public static void CallWeaponAddedToOffHandBook(Weapon weapon)
     {
-        OnWeaponAddedToOffHandBook?.Invoke(new WeaponAddedToBookArgs { weaponSprite = weaponSprite});
+        OnWeaponAddedToOffHandBook?.Invoke(new WeaponAddedToBookArgs { weapon = weapon});
+    }
+
+    // Off-hand weapon removed from off-hand on book event
+    public static event Action OnWeaponRemovedFromOffHandBook;
+
+    public static void CallWeaponRemovedFromOffHandBook()
+    {
+        OnWeaponRemovedFromOffHandBook?.Invoke();
     }
 
     // Item added to active item slot on book event
@@ -64,17 +72,17 @@ public static class StaticEventHandler
     // Item added to passiveitem slot on book event
     public static event Action<ItemAddedToBookArgs> OnItemAddedToPassiveItemSlot;
 
-    public static void CallItemAddedToPassiveItemSlot(Sprite itemSprite)
+    public static void CallItemAddedToPassiveItemSlot(Sprite itemSprite, ItemSlotName itemSlotName)
     {
-        OnItemAddedToPassiveItemSlot?.Invoke(new ItemAddedToBookArgs { itemSprite = itemSprite });
+        OnItemAddedToPassiveItemSlot?.Invoke(new ItemAddedToBookArgs { itemSprite = itemSprite, itemSlotName = itemSlotName });
     }
 
     // Item removed from passive item slot on book event
     public static event Action<ItemRemovedFromBookArgs> OnItemRemovedFromPassiveItemSlot;
 
-    public static void CallItemRemovedFromPassiveItemSlot(Sprite itemSprite)
+    public static void CallItemRemovedFromPassiveItemSlot(Sprite itemSprite, ItemSlotName itemSlotName)
     {
-        OnItemRemovedFromPassiveItemSlot?.Invoke(new ItemRemovedFromBookArgs { itemSprite = itemSprite});
+        OnItemRemovedFromPassiveItemSlot?.Invoke(new ItemRemovedFromBookArgs { itemSprite = itemSprite, itemSlotName = itemSlotName});
     }
 
     // Health change on book event
@@ -145,17 +153,21 @@ public class CameraShakeArgs : EventArgs
 
 public class WeaponAddedToBookArgs : EventArgs
 {
-    public Sprite weaponSprite;
+    public Weapon weapon;
+    public bool onStart;
+    public bool onlySwitch;
 }
 
 public class ItemAddedToBookArgs : EventArgs
 {
     public Sprite itemSprite;
+    public ItemSlotName itemSlotName;
 }
 
 public class ItemRemovedFromBookArgs : EventArgs
 {
     public Sprite itemSprite;
+    public ItemSlotName itemSlotName;
 }
 
 public class HealthChangedArgs : EventArgs

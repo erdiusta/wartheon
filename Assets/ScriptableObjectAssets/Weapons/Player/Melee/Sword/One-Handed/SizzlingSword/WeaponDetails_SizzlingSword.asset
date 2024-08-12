@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Sizzling Sword
   weaponTitle: 3
-  weaponFrontSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
-  weaponRearSprite: {fileID: 962721585, guid: 85b0a5f1e04908c439e6cc0563f74a26, type: 3}
+  weaponFrontSprite: {fileID: 2143818662, guid: eb48387fe1924b94886a959ea765b887, type: 3}
+  weaponRearSprite: {fileID: 2143818662, guid: eb48387fe1924b94886a959ea765b887, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 64ebf44b64a983545be47d8b87f9ed73, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 3fc232eb20b9258488d7a3363d824994, type: 2}
   weaponClass: 0

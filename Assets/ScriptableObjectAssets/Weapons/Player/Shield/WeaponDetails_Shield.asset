@@ -13,19 +13,20 @@ MonoBehaviour:
   m_Name: WeaponDetails_Shield
   m_EditorClassIdentifier: 
   weaponName: Shield
+  weaponTitle: 0
   weaponFrontSprite: {fileID: -1551370753, guid: 87c4a611cede8854994d7a1056212191, type: 3}
   weaponRearSprite: {fileID: -1497517463, guid: 87c4a611cede8854994d7a1056212191, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: b9154558c719d7c44bde88eae4e95ecd, type: 2}
-  weaponHoverAnimatorController: {fileID: 0}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 1a628c7453d881c47a5cd0112a246f01, type: 2}
   weaponClass: 3
   wieldType: 0
   price: 4
   canKillSuddenly: 0
-  suddenKillChance: 0.1
+  suddenKillChance: 0
   hasAcid: 0
-  acidEfficiency: 0.4
+  acidEfficiency: 0
   hasStunDamage: 0
-  stunChance: 0.2
+  stunChance: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -35,6 +36,7 @@ MonoBehaviour:
   isMeleeWeapon: 0
   isShield: 1
   weaponCooldownDuration: 0.2
+  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0.6
   circleRadius: 0
   meleeDamageMin: 0

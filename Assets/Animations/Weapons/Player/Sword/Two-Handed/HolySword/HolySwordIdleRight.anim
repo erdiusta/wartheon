@@ -106,7 +106,7 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 735104743, guid: f53b0475c86f95141910cb247770d70f, type: 3}
+      value: {fileID: 1126591399, guid: 9b95dc7534cd08244b929c787ef83014, type: 3}
     attribute: m_Sprite
     path: RightWeaponRotationPoint/Weapon
     classID: 212
@@ -174,7 +174,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 735104743, guid: f53b0475c86f95141910cb247770d70f, type: 3}
+    - {fileID: 1126591399, guid: 9b95dc7534cd08244b929c787ef83014, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

@@ -13,19 +13,20 @@ MonoBehaviour:
   m_Name: WeaponDetails_ApolloShield
   m_EditorClassIdentifier: 
   weaponName: Apollo Shield
+  weaponTitle: 0
   weaponFrontSprite: {fileID: -835678534, guid: 0f345e1b11560f442a96b95cb88d2573, type: 3}
   weaponRearSprite: {fileID: -608057043, guid: 0f345e1b11560f442a96b95cb88d2573, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 2c943196b747bdb4aadd1822515819bd, type: 2}
-  weaponHoverAnimatorController: {fileID: 0}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: dd7a3c0d611a22649b83acc6067980dc, type: 2}
   weaponClass: 3
   wieldType: 0
   price: 9
   canKillSuddenly: 0
-  suddenKillChance: 0.1
+  suddenKillChance: 0
   hasAcid: 0
-  acidEfficiency: 0.4
+  acidEfficiency: 0
   hasStunDamage: 0
-  stunChance: 0.2
+  stunChance: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
@@ -35,6 +36,7 @@ MonoBehaviour:
   isMeleeWeapon: 0
   isShield: 1
   weaponCooldownDuration: 0.2
+  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0.8
   circleRadius: 0
   meleeDamageMin: 0

@@ -158,7 +158,7 @@ public enum DamageType
 public enum MeleeAttackType
 {
     None,
-    Slash,
+    Swing,
     Sweep,
     Thrust,
 }
@@ -227,4 +227,18 @@ public enum BookPage
     Items,
     Beastiary,
     Bosses
+}
+
+public enum ItemSlotName
+{
+    None,
+    Head,
+    Chest,
+    Neck,
+    Finger,
+    Back,
+    Waist,
+    Arm,
+    Leg,
+    Accessory
 }

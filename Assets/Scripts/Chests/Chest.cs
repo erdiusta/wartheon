@@ -263,7 +263,7 @@ public class Chest : MonoBehaviour, IUsable
         if (chestItem == null) return;
 
         // Add weapon to player
-        GameManager.Instance.GetPlayer().UpdateWieldedWeapons(weaponDetails, true);
+        GameManager.Instance.GetPlayer().UpdateWieldedWeapons(weaponDetails, true, false);
 
         // Play pickup sound effect
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);

@@ -227,7 +227,7 @@ public class ChestItem : MonoBehaviour
             SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
 
             // Pick up item and update equipped weapon list
-            player.UpdateWieldedWeapons(weaponDetails, true);
+            player.UpdateWieldedWeapons(weaponDetails, true, false);
         }
         else
         {
@@ -320,7 +320,7 @@ public class ChestItem : MonoBehaviour
                     player.activeWeapon.GetCurrentMainHandWeapon().weaponRemainingProjectile =
                         player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponProjectileCapacity;
 
-                    player.weaponFiredEvent.CallWeaponFiredEvent(player.activeWeapon.GetCurrentMainHandWeapon());
+                    player.weaponFiredEvent.CallWeaponFiredEvent(player.activeWeapon.GetCurrentMainHandWeapon(), true);
                 }
 
                 // Play pickup sound effect

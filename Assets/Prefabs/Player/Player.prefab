@@ -73,6 +73,52 @@ MonoBehaviour:
   OnAttackLeftHandPerformed:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &256994677781490074
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8447202650038424383}
+  - component: {fileID: 2226921973809070019}
+  m_Layer: 18
+  m_Name: BoxOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8447202650038424383
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256994677781490074}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6538372001484231902}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2226921973809070019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256994677781490074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 434f044da44318145917cee4e676f266, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boxLength: 1
+  boxHeight: 1
 --- !u!1 &338371118052753355
 GameObject:
   m_ObjectHideFlags: 0
@@ -5182,6 +5228,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7936086671000619909}
+  - {fileID: 8447202650038424383}
   - {fileID: 4915825305535495891}
   m_Father: {fileID: 2635258226080149353}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5580,6 +5627,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2111572377593781178}
+  - {fileID: 2935184723905329284}
   - {fileID: 3979467838447037499}
   - {fileID: 6323349653924527998}
   m_Father: {fileID: 6873713257487317844}
@@ -5757,6 +5805,52 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &3330880721001429551
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2935184723905329284}
+  - component: {fileID: 6993977867922307612}
+  m_Layer: 18
+  m_Name: BoxOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2935184723905329284
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3330880721001429551}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6687286877644175380}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6993977867922307612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3330880721001429551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 434f044da44318145917cee4e676f266, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boxLength: 1
+  boxHeight: 1
 --- !u!1 &3395802143089367590
 GameObject:
   m_ObjectHideFlags: 0
@@ -6181,7 +6275,7 @@ SpriteRenderer:
   m_SortingLayerID: -257139871
   m_SortingLayer: 3
   m_SortingOrder: 2
-  m_Sprite: {fileID: 2109471022, guid: 8ee144884596c18429c51f270dbc2b1c, type: 3}
+  m_Sprite: {fileID: 1307114046, guid: 5d12ab0ad64a9914b9b6ff838f7feeb7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -6248,8 +6342,8 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.25}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: -0.000121593475}
-    oldSize: {x: 1.5, y: 1.8125}
+    pivot: {x: 0.5, y: 0}
+    oldSize: {x: 1, y: 1.5}
     newSize: {x: 1.5, y: 2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -6293,8 +6387,8 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: -0.000121593475}
-    oldSize: {x: 1.5, y: 1.8125}
+    pivot: {x: 0.5, y: 0}
+    oldSize: {x: 1, y: 1.5}
     newSize: {x: 1.5, y: 2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -6390,6 +6484,8 @@ MonoBehaviour:
   specialMoveOnCooldown: 0
   specialMoveTimer: 0
   keyCount: 0
+  branchMastery: {fileID: 0}
+  weaponMastery: {fileID: 0}
   chestItem: {fileID: 0}
   hasRingOfFortune: 0
   playerWeaponHandlingModifier: 0
@@ -6455,6 +6551,8 @@ MonoBehaviour:
   seismicSlamCircleRadius: 0
   fireCompletedDuringPressed: 0
   isSoundPlayed: 0
+  meleeAttackTypeMainHand: 0
+  meleeAttackTypeOffHand: 0
 --- !u!114 &8675837940116119588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6752,6 +6850,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee12bde76e7bd534ea348da50dbb363f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  swordMasteryPoints: 0
+  axeMasteryPoints: 0
+  hammerMasteryPoints: 0
+  spearMasteryPoints: 0
+  daggerMasteryPoints: 0
+  bowMasteryPoints: 0
+  crossbowMasteryPoints: 0
+  staffMasteryPoints: 0
 --- !u!114 &6815216415085289844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6764,6 +6870,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58409f8791895cc4a8d488878dad2ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gladiusMasteryPoints: 0
+  scimitarMasterPoints: 0
+  sizzlingSwordMasterPoints: 0
+  hatchetMasteryPoints: 0
+  phalanxSpearMasteryPoints: 0
+  clobberingTimeMasteryPoints: 0
+  holySwordMasteryPoints: 0
+  ancientKatanaMasteryPoints: 0
+  carnageMasteryPoints: 0
+  crusherMasteryPoints: 0
+  dirkMasteryPoints: 0
+  gambitMasteryPoints: 0
+  bowMasteryPoints: 0
+  crossBowMasteryPoints: 0
+  staffMasteryPoints: 0
+  solarFlareMasteryPoints: 0
+  heavensGaleMasteryPoints: 0
 --- !u!1 &4966358325702215446
 GameObject:
   m_ObjectHideFlags: 0

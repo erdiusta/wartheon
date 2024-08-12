@@ -5,8 +5,8 @@ using UnityEngine;
 public class SetActiveWeaponEvent : MonoBehaviour
 {
     public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnSetActiveRightHandWeapon;
-    public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnSetActiveLeftHandWeapon;
-    public event Action<SetActiveWeaponEvent> OnSetInactiveLeftHandWeapon;
+    public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnSetActiveOffHandWeapon;
+    public event Action<SetActiveWeaponEvent> OnSetInactiveOffHandWeapon;
     public event Action<SetActiveWeaponEvent> OnTwoHandWeaponEquipped;
     public event Action<SetActiveWeaponEvent> OnOneHandWeaponEquipped;
     public event Action<SetActiveWeaponEvent, SetSelectedActiveItemArgs> OnSelectedActiveItem;
@@ -27,14 +27,14 @@ public class SetActiveWeaponEvent : MonoBehaviour
         OnSetActiveRightHandWeapon?.Invoke(this, new SetActiveWeaponEventArgs { weapon = weapon });
     }
 
-    public void CallSetActiveWeaponAtLeftHandEvent(Weapon weapon)
+    public void CallSetActiveWeaponAtOffHandEvent(Weapon weapon)
     {
-        OnSetActiveLeftHandWeapon?.Invoke(this, new SetActiveWeaponEventArgs { weapon = weapon });
+        OnSetActiveOffHandWeapon?.Invoke(this, new SetActiveWeaponEventArgs { weapon = weapon });
     }
 
-    public void CallSetInactiveWeaponAtLeftHandEvent()
+    public void CallSetInactiveWeaponAtOffHandEvent()
     {
-        OnSetInactiveLeftHandWeapon?.Invoke(this);
+        OnSetInactiveOffHandWeapon?.Invoke(this);
     }
 
     public void CallSelectedActiveItem(ActiveItem activeItem)

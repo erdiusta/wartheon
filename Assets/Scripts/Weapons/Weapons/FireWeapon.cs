@@ -245,7 +245,7 @@ public class FireWeapon : MonoBehaviour
         activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
 
         // Call weapon fired event
-        weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentMainHandWeapon());
+        weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentMainHandWeapon(), true);
 
         // Display weapon shoot effect
         DoWeaponShootEffect(aimAngle);

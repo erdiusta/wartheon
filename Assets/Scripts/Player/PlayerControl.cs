@@ -32,6 +32,8 @@ public class PlayerControl : MonoBehaviour
     AimDirection aimDirection;
 
     // Attack member variables
+    [HideInInspector] public MeleeAttackType meleeAttackTypeMainHand = MeleeAttackType.None;
+    [HideInInspector] public MeleeAttackType meleeAttackTypeOffHand = MeleeAttackType.None;
     float attackMotionTransitionTimer = 0f;
     float mainHandFirePressHoldDownTimer = 0f;
     float offHandFirePressHoldDownTimer = 0f;
@@ -74,7 +76,7 @@ public class PlayerControl : MonoBehaviour
         {
             if (weapon.weaponDetails == player.playerDetails.startingWeapon)
             {
-                SetRightHandWeaponByIndex(index);
+                SetRightHandWeaponByIndex(index, true, false);
                 break;
             }
 
@@ -137,40 +139,37 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void MovementInput()
     {
-        if (player.meleeAttackRightHand.playerAttackMotionRoutine == null)
+        // Get movement input
+        movementInput = InputManager.Instance.movement.action.ReadValue<Vector2>().normalized;
+
+        float horizontalMovement = movementInput.x;
+        float verticalMovement = movementInput.y;
+
+        player.movementByVelocity.MovementInput = movementInput;
+
+        // Create a direction vector based on the input
+        Vector2 direction = new Vector2(horizontalMovement, verticalMovement);
+
+        // Adjust distance for diagonal movement (pythagoras approximation)
+        if (horizontalMovement != 0f && verticalMovement != 0f)
         {
-            // Get movement input
-            movementInput = InputManager.Instance.movement.action.ReadValue<Vector2>().normalized;
+            direction *= 0.7f;
+        }
 
-            float horizontalMovement = movementInput.x;
-            float verticalMovement = movementInput.y;
+        // If there is movement
+        if (direction != Vector2.zero)
+        {
+            // Trigger movement event
+            player.movementByVelocity.MoveRigidbody(direction, player.movementByVelocity.moveSpeed);
 
-            player.movementByVelocity.MovementInput = movementInput;
-
-            // Create a direction vector based on the input
-            Vector2 direction = new Vector2(horizontalMovement, verticalMovement);
-
-            // Adjust distance for diagonal movement (pythagoras approximation)
-            if (horizontalMovement != 0f && verticalMovement != 0f)
-            {
-                direction *= 0.7f;
-            }
-
-            // If there is movement
-            if (direction != Vector2.zero)
-            {
-                // Trigger movement event
-                player.movementByVelocity.MoveRigidbody(direction, player.movementByVelocity.moveSpeed);
-
-                // Trigger move animations
-                player.animatePlayer.SetMovementAnimationParameters();
-            }
-            // Else trigger idle event
-            else
-            {
-                player.idle.StopVelocity();
-                player.animatePlayer.SetIdleAnimationParameters();
-            }
+            // Trigger move animations
+            player.animatePlayer.SetMovementAnimationParameters();
+        }
+        // Else trigger idle event
+        else
+        {
+            player.idle.StopVelocity();
+            player.animatePlayer.SetIdleAnimationParameters();
         }
     }
 
@@ -201,7 +200,7 @@ public class PlayerControl : MonoBehaviour
         FireActiveItemInput(weaponDirection, weaponAngleDegrees, playerAngleDegrees, playerAimDirection);
 
         // Switch weapon input
-        SwitchWeaponInput();
+        SwitchWeaponInput(false);
     }
 
     private void AimWeaponInput(out Vector3 weaponDirection, out float weaponAngleDegrees, out float playerAngleDegrees, out AimDirection playerAimDirection)
@@ -233,6 +232,7 @@ public class PlayerControl : MonoBehaviour
 
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
+        // If glossary book is open, disable attack
         if (GameManager.Instance.glossaryBookOpen) return;
 
         // Fire when left mouse button is clicked - melee
@@ -241,52 +241,64 @@ public class PlayerControl : MonoBehaviour
             // Check for quick tap input
             if (InputManager.Instance.attack.action.WasPerformedThisFrame())
             {
-                // If shift button is held down, trigger Sweep attack immediately
-                if (InputManager.Instance.shiftButton.action.IsPressed())
+                player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+
+                diceAgainForMainHand:
+
+                int randomNum = Random.Range(1, 101);
+                int selectedWeaponMoveIndex;
+
+                if (randomNum <= 40)
                 {
-                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasSweep)
-                    {
-                        player.meleeAttackRightHand.IsAttackingAtRightHand = true;
-                        player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.Sweep);
-                        return;
-                    }
+                    selectedWeaponMoveIndex = 1;
+                }
+                else if (randomNum <= 70)
+                {
+                    selectedWeaponMoveIndex = 2;
+                }
+                else
+                {
+                    selectedWeaponMoveIndex = 3;
                 }
 
-                // If no thrust attack was triggered then execute swing
-                if (mainHandFirePressHoldDownTimer == 0f)
+                switch (selectedWeaponMoveIndex)
                 {
-                    if (mainHandMeleeWeaponClickedCoroutine != null)
-                    {
-                        StopCoroutine(mainHandMeleeWeaponClickedCoroutine);
-                    }
-
-                    mainHandMeleeWeaponClickedCoroutine = StartCoroutine(MainHandMeleeWeaponClickRoutine(playerAimDirection));
+                    case 1:
+                        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasSwing)
+                        {
+                            meleeAttackTypeMainHand = MeleeAttackType.Swing;
+                        }
+                        else
+                        {
+                            goto diceAgainForMainHand;
+                        }
+                        break;
+                    case 2:
+                        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasSweep)
+                        {
+                            meleeAttackTypeMainHand = MeleeAttackType.Sweep;
+                        }
+                        else
+                        {
+                            goto diceAgainForMainHand;
+                        }
+                        break;
+                    case 3:
+                        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasThrust)
+                        {
+                            meleeAttackTypeMainHand = MeleeAttackType.Thrust;
+                        }
+                        else
+                        {
+                            goto diceAgainForMainHand;
+                        }
+                        break;
+                    default:
+                        break;
                 }
-            }
 
-            if (InputManager.Instance.attack.action.IsPressed())
-            {
-                mainHandFirePressHoldDownTimer += Time.deltaTime;
+                player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), meleeAttackTypeMainHand);
 
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasThrust)
-                {
-                    if (mainHandThrustCompleted) return;
-
-                    // Check if the fire button is held down for more than 0.18 seconds for thrust attack
-                    if (mainHandFirePressHoldDownTimer > attackDelayDuration)
-                    {
-                        player.meleeAttackRightHand.IsAttackingAtRightHand = true;
-                        player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.Thrust);
-                        mainHandFirePressHoldDownTimer = 0f; // Reset timer
-                        mainHandThrustCompleted = true;
-                        return; // Exit the method to avoid further checks
-                    }
-                }
-            }
-            else
-            {
-                mainHandFirePressHoldDownTimer = 0f; // Reset timer if button is released
-                mainHandThrustCompleted = false;
             }
 
             // Return after moves finished if off-hand weapon is free or a shield
@@ -305,52 +317,64 @@ public class PlayerControl : MonoBehaviour
                 // Check for quick tap input
                 if (InputManager.Instance.attackOffHand.action.WasPerformedThisFrame())
                 {
-                    // If shift button is held down, trigger Sweep attack immediately
-                    if (InputManager.Instance.shiftButton.action.IsPressed())
+                    player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
+
+                    diceAgainForOffHand:
+
+                    int randomNum = Random.Range(1, 101);
+                    int selectedWeaponMoveIndex;
+
+                    if (randomNum <= 40)
                     {
-                        if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasSweep)
-                        {
-                            player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
-                            player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), MeleeAttackType.Sweep);
-                            return;
-                        }
+                        selectedWeaponMoveIndex = 1;
+                    }
+                    else if (randomNum <= 70)
+                    {
+                        selectedWeaponMoveIndex = 2;
+                    }
+                    else
+                    {
+                        selectedWeaponMoveIndex = 3;
                     }
 
-                    // If a quick tap was detected and no thrust attack was triggered
-                    if (offHandFirePressHoldDownTimer == 0f)
+                    switch (selectedWeaponMoveIndex)
                     {
-                        // Start coroutine to check for a second quick tap for sweep attack
-                        if (offHandMeleeWeaponClickedCoroutine != null)
-                        {
-                            StopCoroutine(offHandMeleeWeaponClickedCoroutine);
-                        }
-                        offHandMeleeWeaponClickedCoroutine = StartCoroutine(OffHandMeleeWeaponClickRoutine(playerAimDirection));
+                        case 1:
+                            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasSwing)
+                            {
+                                meleeAttackTypeOffHand = MeleeAttackType.Swing;
+                            }
+                            else
+                            {
+                                goto diceAgainForOffHand;
+                            }
+                            break;
+                        case 2:
+                            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasSweep)
+                            {
+                                meleeAttackTypeOffHand = MeleeAttackType.Sweep;
+                            }
+                            else
+                            {
+                                goto diceAgainForOffHand;
+                            }
+                            break;
+                        case 3:
+                            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasThrust)
+                            {
+                                meleeAttackTypeOffHand = MeleeAttackType.Thrust;
+                            }
+                            else
+                            {
+                                goto diceAgainForOffHand;
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                }
 
-                if (InputManager.Instance.attackOffHand.action.IsPressed())
-                {
-                    offHandFirePressHoldDownTimer += Time.deltaTime;
+                    player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), meleeAttackTypeOffHand);
 
-                    if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasThrust)
-                    {
-                        if (offHandThrustCompleted) return;
-
-                        // Check if the fire button is held down for more than 0.18 seconds for thrust attack
-                        if (offHandFirePressHoldDownTimer > attackDelayDuration)
-                        {
-                            player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
-                            player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), MeleeAttackType.Thrust);
-                            offHandFirePressHoldDownTimer = 0f; // Reset timer
-                            offHandThrustCompleted = true;
-                            return; // Exit the method to avoid further checks
-                        }
-                    }
-                }
-                else
-                {
-                    offHandFirePressHoldDownTimer = 0f; // Reset timer if button is released
-                    offHandThrustCompleted = false;
                 }
 
                 // Don't pass to the ranged weapon elements so finish method here while returning
@@ -431,11 +455,12 @@ public class PlayerControl : MonoBehaviour
     {
         yield return new WaitForSeconds(attackDelayDuration);
 
-        // If the coroutine completes, it means only one tap was detected within 0.3 seconds
+        // If the coroutine completes, it means only one tap was detected within attacDelayDuration
         if (!mainHandThrustCompleted)
         {
             player.meleeAttackRightHand.IsAttackingAtRightHand = true;
-            player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.Slash);
+            meleeAttackTypeMainHand = MeleeAttackType.Swing;
+            player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), meleeAttackTypeMainHand);
         }
 
         mainHandMeleeWeaponClickedCoroutine = null; // Reset the coroutine reference
@@ -449,7 +474,8 @@ public class PlayerControl : MonoBehaviour
         if (!offHandThrustCompleted)
         {
             player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
-            player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), MeleeAttackType.Slash);
+            meleeAttackTypeOffHand = MeleeAttackType.Swing;
+            player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), meleeAttackTypeOffHand);
         }
 
         offHandMeleeWeaponClickedCoroutine = null; // Reset the coroutine reference
@@ -633,7 +659,7 @@ public class PlayerControl : MonoBehaviour
         player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
     }
 
-    private void SwitchWeaponInput()
+    private void SwitchWeaponInput(bool onStart)
     {
         float scrollValue = (InputManager.Instance.switchWeapon.action.ReadValue<Vector2>().normalized).y;
 
@@ -645,16 +671,16 @@ public class PlayerControl : MonoBehaviour
 
         if (scrollValue > 0f)
         {
-            NextRightHandWeapon();
+            NextRightHandWeapon(onStart, true);
         }
 
         if (InputManager.Instance.resetWeaponIndex.action.triggered)
         {
-            SetCurrentWeaponToFirstInTheList();
+            SetCurrentWeaponToFirstInTheList(onStart, true);
         }
     }
 
-    private void NextRightHandWeapon()
+    private void NextRightHandWeapon(bool onStart, bool onlySwitch)
     {
         if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
         {
@@ -665,7 +691,7 @@ public class PlayerControl : MonoBehaviour
                 currentRightHandWeaponIndex = 1;
             }
 
-            SetRightHandWeaponByIndex(currentRightHandWeaponIndex);
+            SetRightHandWeaponByIndex(currentRightHandWeaponIndex, onStart, onlySwitch);
         }
     }
 
@@ -689,11 +715,12 @@ public class PlayerControl : MonoBehaviour
         }
         else
         {
-            player.setActiveWeaponEvent.CallSetInactiveWeaponAtLeftHandEvent();
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+            StaticEventHandler.CallWeaponRemovedFromOffHandBook();
         }
     }
 
-    private void SetRightHandWeaponByIndex(int weaponIndex)
+    private void SetRightHandWeaponByIndex(int weaponIndex, bool onStart, bool onlySwitch)
     {
         if (weaponIndex - 1 < player.weaponRightHandList.Count)
         {
@@ -709,6 +736,8 @@ public class PlayerControl : MonoBehaviour
             {
                 player.setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
             }
+
+            StaticEventHandler.CallWeaponAddedToMainHandBook(player.weaponRightHandList[weaponIndex - 1], onStart, onlySwitch);
         }
     }
 
@@ -718,7 +747,8 @@ public class PlayerControl : MonoBehaviour
         {
             currentLeftHandWeaponIndex = weaponIndex;
 
-            player.setActiveWeaponEvent.CallSetActiveWeaponAtLeftHandEvent(player.weaponLeftHandList[weaponIndex - 1]);
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(player.weaponLeftHandList[weaponIndex - 1]);
+            StaticEventHandler.CallWeaponAddedToOffHandBook(player.weaponLeftHandList[weaponIndex - 1]);
         }
     }
 
@@ -1196,7 +1226,7 @@ public class PlayerControl : MonoBehaviour
     /// <summary>
     /// Set the current weapon to be first in the player weapon list
     /// </summary>
-    private void SetCurrentWeaponToFirstInTheList()
+    private void SetCurrentWeaponToFirstInTheList(bool onStart, bool onlySwitch)
     {
         // Create new temporary list
         List<Weapon> tempWeaponList = new List<Weapon>();
@@ -1224,7 +1254,7 @@ public class PlayerControl : MonoBehaviour
         currentRightHandWeaponIndex = 1;
 
         // Set current weapon
-        SetRightHandWeaponByIndex(currentRightHandWeaponIndex);
+        SetRightHandWeaponByIndex(currentRightHandWeaponIndex, onStart, onlySwitch);
     }
 
     public AimDirection GetAimDirection()

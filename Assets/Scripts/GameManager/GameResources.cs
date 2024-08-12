@@ -165,6 +165,10 @@ public class GameResources : MonoBehaviour
     [Tooltip("Populate with book item image prefab")]
     #endregion
     public GameObject bookWeaponSlot;
+    #region
+    [Tooltip("Populate with the lock slot image")]
+    #endregion
+    public Sprite lockSlotIcon;
 
     #region Header UI
     [Space(10)]

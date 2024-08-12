@@ -76,6 +76,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 902803a8e0c14114596584de9600dc6b, type: 2}
   preferredEnemyPathTile: {fileID: 11400000, guid: a8f63dbc7bc1f46479620586f36f00e0, type: 2}
   bookWeaponSlot: {fileID: 5499570960415012034, guid: 57827440d6b492d4c8b2c2c7723f9158, type: 3}
+  lockSlotIcon: {fileID: 21300000, guid: 0f39839699a5d5348b14439733365e2d, type: 3}
   heartPrefab: {fileID: 7585392605064363868, guid: becfc86faf78d674f92971eda671b95a, type: 3}
   halfHeartPrefab: {fileID: 7585392605064363868, guid: 8386f841730857947b3db24aa3a75bbe, type: 3}
   projectileIconPrefab: {fileID: 3767299040992984232, guid: 13d7dc9c29e09c54089f573a4705eaaa, type: 3}
