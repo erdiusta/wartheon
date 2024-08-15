@@ -47,7 +47,7 @@ public class ActiveWeapon : MonoBehaviour
     Animator weaponRightHandAnimator;
     Animator weaponLeftHandAnimator;
     Weapon currentRightHandWeapon;
-    Weapon currentLeftHandWeapon;
+    Weapon currentOffHandWeapon;
 
     private void Awake()
     {
@@ -66,38 +66,45 @@ public class ActiveWeapon : MonoBehaviour
 
     private void OnEnable()
     {
-        setActiveWeaponEvent.OnSetActiveRightHandWeapon += SetActiveRightWeaponEvent_OnSetActiveRightHandWeapon;
-        setActiveWeaponEvent.OnSetActiveOffHandWeapon += SetActiveLeftWeaponEvent_OnSetActiveLeftHandWeapon;
-        setActiveWeaponEvent.OnSetInactiveOffHandWeapon += SetInactiveLeftWeaponEvent_OnSetInactiveLeftWeapon;
+        setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveMainWeaponEvent_OnSetActiveMainHandWeapon;
+        setActiveWeaponEvent.OnSetInactiveMainHandWeapon += SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
+        setActiveWeaponEvent.OnSetActiveOffHandWeapon += SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon;
+        setActiveWeaponEvent.OnSetInactiveOffHandWeapon += SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
     }
 
     private void OnDisable()
     {
-        setActiveWeaponEvent.OnSetActiveRightHandWeapon -= SetActiveRightWeaponEvent_OnSetActiveRightHandWeapon;
-        setActiveWeaponEvent.OnSetActiveOffHandWeapon -= SetActiveLeftWeaponEvent_OnSetActiveLeftHandWeapon;
-        setActiveWeaponEvent.OnSetInactiveOffHandWeapon -= SetInactiveLeftWeaponEvent_OnSetInactiveLeftWeapon;
+        setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveMainWeaponEvent_OnSetActiveMainHandWeapon;
+        setActiveWeaponEvent.OnSetInactiveMainHandWeapon -= SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
+        setActiveWeaponEvent.OnSetActiveOffHandWeapon -= SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon;
+        setActiveWeaponEvent.OnSetInactiveOffHandWeapon -= SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
     }
 
-    private void SetActiveRightWeaponEvent_OnSetActiveRightHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
+    private void SetActiveMainWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
         SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        SetRightHandWeapon(setActiveWeaponEventArgs.weapon);
+        SetMainHandWeapon(setActiveWeaponEventArgs.weapon);
         weaponRightHandAnimator.SetBool(Settings.isLeft, false);
     }
 
-    private void SetActiveLeftWeaponEvent_OnSetActiveLeftHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
+    private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
+    {
+        DeselectMainHandWeapon();
+    }
+
+    private void SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
         SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        SetLeftHandWeapon(setActiveWeaponEventArgs.weapon);
+        SetOffHandWeapon(setActiveWeaponEventArgs.weapon);
         weaponLeftHandAnimator.SetBool(Settings.isLeft, true);
     }
 
-    private void SetInactiveLeftWeaponEvent_OnSetInactiveLeftWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
+    private void SetActiveWeaponEvent_OnSetInactiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
     {
-        DeselectLeftHandWeapon();
+        DeselectOffHandWeapon();
     }
 
-    private void SetRightHandWeapon(Weapon weapon)
+    private void SetMainHandWeapon(Weapon weapon)
     {
         isSwitching = true;
         currentRightHandWeapon = weapon;
@@ -167,15 +174,15 @@ public class ActiveWeapon : MonoBehaviour
         isSwitching = false;
     }
 
-    private void SetLeftHandWeapon(Weapon weapon)
+    private void SetOffHandWeapon(Weapon weapon)
     {
-        currentLeftHandWeapon = weapon;
+        currentOffHandWeapon = weapon;
 
         // Set animator controller to the weapon animator
-        weaponLeftHandAnimator.runtimeAnimatorController = currentLeftHandWeapon.weaponDetails.weaponAnimatorController;
+        weaponLeftHandAnimator.runtimeAnimatorController = currentOffHandWeapon.weaponDetails.weaponAnimatorController;
 
         // Set current weapon sprite
-        weaponLeftHandSpriteRenderer.sprite = currentLeftHandWeapon.weaponDetails.weaponFrontSprite;
+        weaponLeftHandSpriteRenderer.sprite = currentOffHandWeapon.weaponDetails.weaponFrontSprite;
 
         // If the weapon has a polygon collider and a sprite then set it to the weapon sprite physics shape
         if (weaponLeftHandPolygonCollider2D != null && weaponLeftHandSpriteRenderer.sprite != null)
@@ -189,9 +196,29 @@ public class ActiveWeapon : MonoBehaviour
         }
     }
 
-    private void DeselectLeftHandWeapon()
+    private void DeselectMainHandWeapon()
     {
-        currentLeftHandWeapon = null;
+        currentRightHandWeapon = null;
+
+        // Set current weapon sprite
+        weaponRightHandSpriteRenderer.sprite = null;
+
+        // Set very small bounds for the Polygon Collider 2D
+        Vector2[] smallBounds = new Vector2[]
+        {
+            new Vector2(0.1f, 0.1f),
+            new Vector2(0.1f, -0.1f),
+            new Vector2(-0.1f, -0.1f),
+            new Vector2(-0.1f, 0.1f)
+        };
+        weaponRightHandPolygonCollider2D.SetPath(0, smallBounds);
+
+        weaponRightHandAnimator.runtimeAnimatorController = null;
+    }
+
+    private void DeselectOffHandWeapon()
+    {
+        currentOffHandWeapon = null;
 
         // Set current weapon sprite
         weaponLeftHandSpriteRenderer.sprite = null;
@@ -236,12 +263,12 @@ public class ActiveWeapon : MonoBehaviour
 
     public Weapon GetCurrentOffHandWeapon()
     {
-        return currentLeftHandWeapon;
+        return currentOffHandWeapon;
     }
 
     public void RemoveCurrentLeftHandWeapon()
     {
-        currentLeftHandWeapon = null;
+        currentOffHandWeapon = null;
     }
 
     #region Validation

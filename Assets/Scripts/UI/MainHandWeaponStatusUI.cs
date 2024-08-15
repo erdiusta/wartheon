@@ -41,13 +41,13 @@ public class MainHandWeaponStatusUI : MonoBehaviour
 
     private void OnEnable()
     {
-        player.setActiveWeaponEvent.OnSetActiveRightHandWeapon += SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
+        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
         player.weaponFiredEvent.OnWeaponFired += WeaponFiredEvent_OnWeaponFired;
     }
 
     private void OnDisable()
     {
-        player.setActiveWeaponEvent.OnSetActiveRightHandWeapon -= SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
+        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
         player.weaponFiredEvent.OnWeaponFired -= WeaponFiredEvent_OnWeaponFired;
     }
 

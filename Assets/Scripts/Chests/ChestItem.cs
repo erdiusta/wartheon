@@ -17,6 +17,7 @@ public class ChestItem : MonoBehaviour
     [HideInInspector] public BoxCollider2D boxCollider2D;
     [HideInInspector] public int remainingItemCharge;
     [HideInInspector] public bool droppedByPlayer = false;
+    [HideInInspector] public Weapon toBeDroppedWeapon;
     [HideInInspector] public ActiveItem toBeDroppedActiveItem;
     [HideInInspector] public PassiveItem toBeDroppedPassiveItem;
     
@@ -94,7 +95,7 @@ public class ChestItem : MonoBehaviour
                                 if (player.selectedActiveItem.GetCurrentActiveItem() != null && !isPickedUp)
                                 {
                                     Debug.Log("Dropping item from ChestItem.");
-                                    player.playerControl.DropProcess(GameManager.Instance.GetToBeDroppedChestItem());
+                                    player.playerControl.DropProcess(GameManager.Instance.GetToBeDroppedChestItem(), false);
                                 }
 
                                 // Pick up process

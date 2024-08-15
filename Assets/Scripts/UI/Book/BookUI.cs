@@ -23,10 +23,7 @@ public class BookUI : MonoBehaviour
 
     [SerializeField] Animator bookAnimator;
 
-    Transform mainHandWeaponContainer;
     Transform mainHandWeaponSlot;
-
-    Transform offHandWeaponContainer;
     Transform offHandWeaponSlot;
 
     Transform activeItemContainer;
@@ -47,11 +44,9 @@ public class BookUI : MonoBehaviour
     private void Awake()
     {
         // Main Hand Slot
-        mainHandWeaponContainer = transform.GetChild(1).GetChild(1).GetChild(3).GetChild(0);
         mainHandWeaponSlot = transform.GetChild(1).GetChild(1).GetChild(3).GetChild(1);
 
         // Off-hand Slot
-        offHandWeaponContainer = transform.GetChild(1).GetChild(1).GetChild(4).GetChild(0);
         offHandWeaponSlot = transform.GetChild(1).GetChild(1).GetChild(4).GetChild(1);
 
         // Active Item Slot
@@ -70,8 +65,6 @@ public class BookUI : MonoBehaviour
         passiveItemAccessorySlot1 = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(9);
         passiveItemAccessorySlot2 = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(10);
 
-        GameObject mainHandWeaponAtContainer = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponContainer);
-
         Player player = GameManager.Instance.GetPlayer();
 
         characterName.text = player.playerDetails.playerCharacterName;
@@ -86,10 +79,6 @@ public class BookUI : MonoBehaviour
             case Settings.erebus:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
-                // MAIN HAND WEAPON EQUIP AT START - CONTAINER
-                mainHandWeaponAtContainer.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[0].weaponFrontSprite;
-                player.weaponBookMainHandHashSet.Add(player.playerDetails.startingWeaponList[0].weaponFrontSprite);
-
                 // MAIN HAND WEAPON EQUIP AT START - SLOT
                 Transform mainWeaponBackground = mainHandWeaponSlot.GetChild(0);
                 Transform mainWeaponEquipped = mainHandWeaponSlot.GetChild(1);
@@ -98,28 +87,18 @@ public class BookUI : MonoBehaviour
                 GameObject mainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainWeaponEquipped);
                 mainHandWeaponAtSlot.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[0].weaponFrontSprite;
 
-                // OFF-HAND WEAPON EQUIP AT START - CONTAINER
-                GameObject offHandWeapon = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponContainer);
-                offHandWeapon.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[1].weaponFrontSprite;
-                player.weaponBookOffHandHashSet.Add(player.playerDetails.startingWeaponList[1].weaponFrontSprite);
-
-                // OFF-HAND WEAPON EQUIP AT START - SLOT
+                // OFF HAND WEAPON EQUIP AT START - SLOT
                 Transform offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
                 Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
                 offHandWeaponBackground.gameObject.SetActive(false);
                 offHandWeaponEquipped.gameObject.SetActive(true);
                 GameObject offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
                 offHandWeaponAtSlot.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[1].weaponFrontSprite;
-
                 break;
 
             case Settings.orion:
             case Settings.lyrisa:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
-
-                // WEAPON EQUIP AT START - CONTAINER
-                mainHandWeaponAtContainer.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[0].weaponFrontSprite;
-                player.weaponBookMainHandHashSet.Add(player.playerDetails.startingWeaponList[0].weaponFrontSprite);
 
                 // WEAPON EQUIP AT START - SLOT
                 mainWeaponBackground = mainHandWeaponSlot.GetChild(0);
@@ -193,6 +172,7 @@ public class BookUI : MonoBehaviour
     private void OnEnable()
     {
         StaticEventHandler.OnWeaponAddedToMainHandBook += StaticEventHandler_OnWeaponAddedToMainHandBook;
+        StaticEventHandler.OnWeaponRemovedFromMainHandBook += StaticEventHandler_OnWeaponRemovedFromMainHandBook;
         StaticEventHandler.OnWeaponAddedToOffHandBook += StaticEventHandler_OnWeaponAddedToOffHandBook;
         StaticEventHandler.OnWeaponRemovedFromOffHandBook += StaticEventHandler_OnWeaponRemovedFromOffHandBook;
         StaticEventHandler.OnBookHealthChanged += StaticEventHandler_OnBookHealthChanged;
@@ -200,12 +180,12 @@ public class BookUI : MonoBehaviour
         StaticEventHandler.OnItemRemovedFromActiveItemSlot += StaticEventHandler_OnItemRemovedFromActiveItemSlot;
         StaticEventHandler.OnItemAddedToPassiveItemSlot += StaticEventHandler_OnItemAddedToPassiveItemSlot;
         StaticEventHandler.OnItemRemovedFromPassiveItemSlot += StaticEventHandler_OnItemRemovedFromPassiveItemSlot;
-  
     }
 
     private void OnDisable()
     {
         StaticEventHandler.OnWeaponAddedToMainHandBook -= StaticEventHandler_OnWeaponAddedToMainHandBook;
+        StaticEventHandler.OnWeaponRemovedFromMainHandBook -= StaticEventHandler_OnWeaponRemovedFromMainHandBook;
         StaticEventHandler.OnWeaponAddedToOffHandBook -= StaticEventHandler_OnWeaponAddedToOffHandBook;
         StaticEventHandler.OnWeaponRemovedFromOffHandBook -= StaticEventHandler_OnWeaponRemovedFromOffHandBook;
         StaticEventHandler.OnBookHealthChanged -= StaticEventHandler_OnBookHealthChanged;
@@ -220,8 +200,8 @@ public class BookUI : MonoBehaviour
         // ADD WEAPON TO MAIN HAND INVENTORY
         if (!weaponAddedToBookArgs.onlySwitch && !weaponAddedToBookArgs.onStart)
         {
-            GameObject mainHandWeapon = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponContainer);
-            mainHandWeapon.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
+            //GameObject mainHandWeapon = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponContainer);
+            //mainHandWeapon.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
         }
 
         // OFF-HAND WEAPON EQUIP AT START - SLOT
@@ -259,14 +239,32 @@ public class BookUI : MonoBehaviour
         Transform mainHandWeaponEquipped = mainHandWeaponSlot.GetChild(1);
         mainHandWeaponBackground.gameObject.SetActive(true);
         mainHandWeaponEquipped.gameObject.SetActive(false);
-        GameObject mainHandWeaponAtSlot = mainHandWeaponEquipped.GetChild(0).gameObject;
-        Destroy(mainHandWeaponAtSlot);
+        GameObject mainHandWeaponAtSlot;
+        if (mainHandWeaponEquipped.childCount > 0)
+        {
+            mainHandWeaponAtSlot = mainHandWeaponEquipped.GetChild(0).gameObject;
+            Destroy(mainHandWeaponAtSlot);
+        }
 
         // Place new weapon icon to the slot
         mainHandWeaponBackground.gameObject.SetActive(false);
         mainHandWeaponEquipped.gameObject.SetActive(true);
         GameObject newMainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponEquipped);
         newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
+    }
+
+    private void StaticEventHandler_OnWeaponRemovedFromMainHandBook()
+    {
+        Transform mainHandWeaponBackground = mainHandWeaponSlot.GetChild(0);
+        Transform mainHandWeaponEquipped = mainHandWeaponSlot.GetChild(1);
+        mainHandWeaponBackground.gameObject.SetActive(true);
+        mainHandWeaponEquipped.gameObject.SetActive(false);
+
+        if (mainHandWeaponEquipped.childCount > 0)
+        {
+            GameObject mainHandWeaponAtSlot = mainHandWeaponEquipped.GetChild(0).gameObject;
+            Destroy(mainHandWeaponAtSlot);
+        }
     }
 
     private void StaticEventHandler_OnWeaponAddedToOffHandBook(WeaponAddedToBookArgs weaponAddedToBookArgs)
@@ -286,8 +284,12 @@ public class BookUI : MonoBehaviour
         Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
         offHandWeaponBackground.gameObject.SetActive(true);
         offHandWeaponEquipped.gameObject.SetActive(false);
-        GameObject offHandWeaponAtSlot = offHandWeaponEquipped.GetChild(0).gameObject;
-        Destroy(offHandWeaponAtSlot);
+
+        if (offHandWeaponEquipped.childCount > 0)
+        {
+            GameObject offHandWeaponAtSlot = offHandWeaponEquipped.GetChild(0).gameObject;
+            Destroy(offHandWeaponAtSlot);
+        }
     }
 
     private void StaticEventHandler_OnBookHealthChanged(HealthChangedArgs healthChangedArgs)

@@ -251,7 +251,7 @@ public class DropOnDestroy : MonoBehaviour
     {
         if (weaponDetails.weaponClass == WeaponClass.Shield || weaponDetails.wieldType == WieldType.OneHanded)
         {
-            foreach (Weapon weapon in player.weaponLeftHandList)
+            foreach (Weapon weapon in player.weaponOffHandList)
             {
                 if (weapon.weaponDetails.weaponName == weaponDetails.weaponName)
                 {
@@ -263,7 +263,7 @@ public class DropOnDestroy : MonoBehaviour
         }
         else if (weaponDetails.wieldType == WieldType.TwoHanded)
         {
-            foreach (Weapon weapon in player.weaponRightHandList)
+            foreach (Weapon weapon in player.weaponMainHandList)
             {
                 if (weapon.weaponDetails.weaponName == weaponDetails.weaponName)
                 {

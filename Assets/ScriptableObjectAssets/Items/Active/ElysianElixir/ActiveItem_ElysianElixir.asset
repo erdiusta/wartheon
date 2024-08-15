@@ -51,11 +51,11 @@ MonoBehaviour:
   hasBleedingDamage: 0
   bleedingChance: 0
   hasStunDamage: 0
-  stunChance: 0.2
+  stunChance: 0
   hasSlowDamage: 0
   slowChance: 0
   isProjectileTrail: 0
   projectileTrailTime: 3
-  projectileTrailMaterial: {fileID: 0}
+  projectileTrailMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0

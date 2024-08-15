@@ -44,16 +44,20 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     private void OnEnable()
     {
         player.setActiveWeaponEvent.OnSetActiveOffHandWeapon += SetActiveWeaponEvent_OnSetActiveOffHandWeapon;
-        player.setActiveWeaponEvent.OnSetInactiveOffHandWeapon += SetActiveWeaponEvent_OnSetInactiveLeftHandWeapon;
+        player.setActiveWeaponEvent.OnSetInactiveOffHandWeapon += SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
+        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
         player.setActiveWeaponEvent.OnTwoHandWeaponEquipped += SetActiveWeaponEvent_OnTwoHandWeaponEquipped;
         player.setActiveWeaponEvent.OnOneHandWeaponEquipped += SetActiveWeaponEvent_OnOneHandWeaponEquipped;
         player.weaponFiredEvent.OnWeaponFired += WeaponFiredEvent_OnWeaponFired;
     }
 
+
+
     private void OnDisable()
     {
         player.setActiveWeaponEvent.OnSetActiveOffHandWeapon -= SetActiveWeaponEvent_OnSetActiveOffHandWeapon;
-        player.setActiveWeaponEvent.OnSetInactiveOffHandWeapon -= SetActiveWeaponEvent_OnSetInactiveLeftHandWeapon;
+        player.setActiveWeaponEvent.OnSetInactiveOffHandWeapon -= SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
+        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
         player.setActiveWeaponEvent.OnTwoHandWeaponEquipped -= SetActiveWeaponEvent_OnTwoHandWeaponEquipped;
         player.setActiveWeaponEvent.OnOneHandWeaponEquipped -= SetActiveWeaponEvent_OnOneHandWeaponEquipped;
         player.weaponFiredEvent.OnWeaponFired -= WeaponFiredEvent_OnWeaponFired;
@@ -84,12 +88,18 @@ public class OffHandWeaponStatusUI : MonoBehaviour
         SetActiveWeapon(setActiveWeaponEventArgs.weapon);
     }
 
-    /// <summary>
-    /// Clear active weapon event on the UI
-    /// </summary>
-    private void SetActiveWeaponEvent_OnSetInactiveLeftHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
+    private void SetActiveWeaponEvent_OnSetInactiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
     {
         MakeWeaponInactive();
+        cooldownBarParent.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Remove unnecessary elements in case of no off-hand or shield
+    /// </summary>
+    private void SetActiveWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    {
+
     }
 
     /// <summary>
@@ -132,22 +142,23 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     {
         if (weapon != null)
         {
-            if (cooldownRoutine != null)
-            {
-                StopCoroutine(cooldownRoutine);
-            }
+            UpdateActiveWeaponImage(weapon.weaponDetails);
+            UpdateActiveWeaponName(weapon);
 
-            if (weapon.weaponDetails.weaponClass != WeaponClass.Shield)
+            if (weapon.weaponDetails.weaponClass != WeaponClass.Shield) // If weapon is dual-wield
             {
+                cooldownBarParent.gameObject.SetActive(true);
                 ResetWeaponCooldownBar(weapon);
             }
-            else
+            else // If weapon is a shield
             {
                 cooldownBarParent.gameObject.SetActive(false);
             }
 
-            UpdateActiveWeaponImage(weapon.weaponDetails);
-            UpdateActiveWeaponName(weapon);
+            if (cooldownRoutine != null)
+            {
+                StopCoroutine(cooldownRoutine);
+            }
         }
     }
 

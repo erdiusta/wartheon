@@ -3,15 +3,27 @@ using UnityEngine.EventSystems;
 
 public class DropButton : MonoBehaviour, IDropHandler
 {
+    Player player;
+
+    private void Start()
+    {
+        player = GameManager.Instance.GetPlayer();
+    }
+
     public void OnDrop(PointerEventData eventData)
     {
         if (eventData.pointerDrag != null)
         {
-            // Handle the logic for dropping the item
-            Debug.Log("Item dropped on the drop button");
+            DraggableItem draggableItem = eventData.pointerDrag.GetComponent<DraggableItem>();
 
-            // You can destroy the dropped item or handle it in another way
-            Destroy(eventData.pointerDrag);
+            if (draggableItem != null)
+            {
+                Weapon weapon = draggableItem.weapon;
+
+                // Handle the logic for dropping the item
+                player.playerControl.DropProcess(player.CreateChestItemForWeapon(weapon), true, weapon);
+                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
+            }
         }
     }
 }

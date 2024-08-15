@@ -242,3 +242,9 @@ public enum ItemSlotName
     Leg,
     Accessory
 }
+
+public enum PopUpReason
+{
+    None,
+    LessThanOneMainHandWeapon
+}

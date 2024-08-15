@@ -240,7 +240,6 @@ public class ActiveItemDetailsSO : ScriptableObject
     {
         HelperUtilities.ValidateCheckEmptyString(this, nameof(activeItemName), activeItemName);
         HelperUtilities.ValidateCheckNullValue(this, nameof(activeItemSprite), activeItemSprite);
-        HelperUtilities.ValidateCheckEnumerableValues(this, nameof(activeItemPrefabArray), activeItemPrefabArray);
     }
 #endif
     #endregion Validation

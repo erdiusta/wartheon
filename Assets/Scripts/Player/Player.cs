@@ -76,22 +76,25 @@ public class Player : MonoBehaviour
     [HideInInspector] public int keyCount = 0;
     [HideInInspector] public BranchMastery branchMastery;
     [HideInInspector] public WeaponMastery weaponMastery;
-    [HideInInspector] public ChestItem chestItem;
+    [HideInInspector] public ChestItem activeItemChestItem;
     [HideInInspector] public bool hasRingOfFortune;
 
     [HideInInspector] public float playerWeaponHandlingModifier = 0f;
     [HideInInspector] public float playerEvasivenessModifier = 0f;
 
-    public ParticleSystem dustParticlesSystem;
-    public ParticleSystem specialMoveParticlesSystem;
-    public List<Weapon> weaponRightHandList = new List<Weapon>();
-    public List<Weapon> weaponLeftHandList = new List<Weapon>();
-    public List<PassiveItem> passiveItemList = new List<PassiveItem>();
-    public HashSet<Sprite> weaponBookMainHandHashSet = new HashSet<Sprite>();
-    public HashSet<Sprite> weaponBookOffHandHashSet = new HashSet<Sprite>();
-    public List<GameObject> summonedEnemies = new List<GameObject>();
+    [HideInInspector] public ParticleSystem dustParticlesSystem;
+    [HideInInspector] public ParticleSystem specialMoveParticlesSystem;
+    [HideInInspector] public List<Weapon> weaponMainHandList = new List<Weapon>();
+    [HideInInspector] public List<Weapon> weaponOffHandList = new List<Weapon>();
+    [HideInInspector] public Weapon[][] weaponSlotSetArray = new Weapon[3][] { new Weapon[2] {null, null}, new Weapon[2] {null, null}, new Weapon[2] {null, null}};
+    [HideInInspector] public int currentWeaponSlotSetIndex = 1;
+    [HideInInspector] public List<PassiveItem> passiveItemList = new List<PassiveItem>();
+    [HideInInspector] public HashSet<Sprite> weaponBookMainHandHashSet = new HashSet<Sprite>();
+    [HideInInspector] public HashSet<Sprite> weaponBookOffHandHashSet = new HashSet<Sprite>();
+    [HideInInspector] public List<GameObject> summonedEnemies = new List<GameObject>();
 
-    bool isOnAwake = false;
+    bool mainHandSlotFilledAtStart = false;
+    bool offHandSlotFilled = false;
 
     private void Awake()
     {
@@ -118,17 +121,15 @@ public class Player : MonoBehaviour
         idle = GetComponent<Idle>();
         movementByVelocity = GetComponent<MovementByVelocity>();
         specialMoveEvent = GetComponent<SpecialMoveEvent>();
-        chestItem = GetComponentInChildren<ChestItem>();
         branchMastery = GetComponent<BranchMastery>();
         weaponMastery = GetComponent<WeaponMastery>();
     }
-
+    
     /// <summary>
     /// Initialize the player
     /// </summary>
     public void Initialize(PlayerDetailsSO playerDetails)
     {
-        isOnAwake = true;
         this.playerDetails = playerDetails;
 
         //Create player starting weapons
@@ -142,7 +143,6 @@ public class Player : MonoBehaviour
 
         // Set player starting health
         SetPlayerHealth();
-        isOnAwake = false;
     }
 
     private void OnEnable()
@@ -178,21 +178,12 @@ public class Player : MonoBehaviour
     /// </summary>
     private void CreatePlayerStartingWeapons()
     {
-        // Clear list
-        weaponRightHandList.Clear();
-        weaponLeftHandList.Clear();
-        weaponBookMainHandHashSet.Clear();
-        weaponBookOffHandHashSet.Clear();
-
         // Populate weapon list from starting weapons for right hand and shield for left hand if have any
         foreach (WeaponDetailsSO weaponDetails in playerDetails.startingWeaponList)
         {
             // Add weapon to right hand list of player
-            AddRightHandWeaponToPlayer(weaponDetails, false, true, false);
-            AddShieldToLeftHandIfHave(weaponDetails, false);
+            AddNextWeaponToPlayer(weaponDetails, false, true, false);
         }
-
-        AddLeftHandWeaponForSameOneHandedTypesWithRightHand();
     }
 
     /// <summary>
@@ -200,9 +191,11 @@ public class Player : MonoBehaviour
     /// </summary>
     private void CreatePlayerStartingActiveItem()
     {
-        chestItem.remainingItemCharge = playerDetails.selectedActiveItem.activeItemMaxCharge;
+        GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+        activeItemChestItem = chestItemObject.GetComponent<ChestItem>();
 
-        AddActiveItemToPlayer(playerDetails.selectedActiveItem, chestItem, chestItem.remainingItemCharge);
+        activeItemChestItem.remainingItemCharge = playerDetails.selectedActiveItem.activeItemMaxCharge;
+        AddActiveItemToPlayer(playerDetails.selectedActiveItem, activeItemChestItem, activeItemChestItem.remainingItemCharge);
     }
 
     /// <summary>
@@ -222,28 +215,22 @@ public class Player : MonoBehaviour
     {
         List<WeaponDetailsSO> allEquippedWeaponsList = new List<WeaponDetailsSO> { weaponDetails };
 
-        foreach (Weapon rightHandWeapon in weaponRightHandList)
+        foreach (Weapon rightHandWeapon in weaponMainHandList)
         {
             allEquippedWeaponsList.Add(rightHandWeapon.weaponDetails);
         }
 
-        foreach (Weapon leftHandWeapon in weaponLeftHandList)
+        foreach (Weapon leftHandWeapon in weaponOffHandList)
         {
             allEquippedWeaponsList.Add(leftHandWeapon.weaponDetails);
         }
-
-        weaponRightHandList.Clear();
-        weaponLeftHandList.Clear();
 
         // Populate weapon list from starting weapons for right hand and shield for left hand if have any
         foreach (WeaponDetailsSO weapon in allEquippedWeaponsList)
         {
             // Add weapon to right hand list of player
-            AddRightHandWeaponToPlayer(weapon, updateHappenedAfterNewItemCollected, onStart, false);
-            AddShieldToLeftHandIfHave(weapon, updateHappenedAfterNewItemCollected);
+            AddNextWeaponToPlayer(weapon, updateHappenedAfterNewItemCollected, onStart, false);     
         }
-
-        AddLeftHandWeaponForSameOneHandedTypesWithRightHand();
     }
 
     /// <summary>
@@ -260,7 +247,7 @@ public class Player : MonoBehaviour
 
         chestItem.boxCollider2D.enabled = false;
 
-        PopulateActiveItemsToBook(activeItemDetails.activeItemSprite);
+        playerControl.PopulateActiveItemsToBook(activeItemDetails.activeItemSprite);
 
         // Set the added active item as active
         setActiveWeaponEvent.CallSelectedActiveItem(activeItem);
@@ -279,8 +266,6 @@ public class Player : MonoBehaviour
         // Declare this chest item as to-be-dropped chest item
         GameManager.Instance.SetToBeDroppedChestItem(chestItem);
         GameManager.Instance.GetToBeDroppedChestItem().toBeDroppedActiveItem = activeItem;
-
-        Debug.Log("Item added to player: " + activeItemDetails.activeItemName);
 
         return activeItem;
     }
@@ -302,7 +287,7 @@ public class Player : MonoBehaviour
         }
 
         passiveItemList.Add(passiveItem);
-        PopulatePassiveItemsToBook(passiveItemDetails.passiveItemSprite, passiveItemDetails.itemSlotName);
+        playerControl.PopulatePassiveItemsToBook(passiveItemDetails.passiveItemSprite, passiveItemDetails.itemSlotName);
 
         return passiveItem;
     }
@@ -310,32 +295,243 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Add a weapon to the right hand of player weapon list
     /// </summary>
-    public Weapon AddRightHandWeaponToPlayer(WeaponDetailsSO weaponDetails, bool updateHappenedAfterNewItemCollected, bool onStart, bool onlySwitch)
+    public void AddNextWeaponToPlayer(WeaponDetailsSO weaponDetails, bool updateHappenedAfterNewItemCollected, bool onStart, bool onlySwitch)
     {
-        Weapon weapon = new Weapon
+        if (!offHandSlotFilled)
         {
-            weaponDetails = weaponDetails,
-            weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity
-        };
-
-        // If the weapon is not a shield then it can equipped to the right hand
-        if (weaponDetails.weaponClass != WeaponClass.Shield)
-        {
-            // Add the weapon to the list
-            weaponRightHandList.Add(weapon);
-            if (!weaponBookMainHandHashSet.Contains(weaponDetails.weaponFrontSprite) && !isOnAwake)
+            // First check if it is a shield, if yes equip and return to avoid further checks
+            if (weaponDetails.weaponClass == WeaponClass.Shield)
             {
-                weaponBookMainHandHashSet.Add(weaponDetails.weaponFrontSprite);
-                PopulateMainHandWeaponsToBook(weapon, onStart, onlySwitch);
+                Weapon weapon = new Weapon
+                {
+                    weaponDetails = weaponDetails,
+                    weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
+                    onMaindHand = false
+                };
+
+                if (weaponSlotSetArray[0][1] == null)
+                {
+                    if (weaponSlotSetArray[0][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                    {
+                        weaponSlotSetArray[0][1] = weapon;
+                        weapon.weaponBelongingToWhichOffHandSet = 1;
+                        if (onStart)
+                        {
+                            ActivateWeapon(updateHappenedAfterNewItemCollected, weapon, true, 1);
+                        }
+                        if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon addition are excluded
+                        {
+                            playerControl.PopulateOffHandWeaponsToBook(weapon);
+                        }
+                        return;
+                    }
+                }
+                else if (weaponSlotSetArray[1][1] == null)
+                {
+                    if (weaponSlotSetArray[1][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                    {
+                        weaponSlotSetArray[1][1] = weapon;
+                        weapon.weaponBelongingToWhichOffHandSet = 2;
+                        playerControl.PopulateOffHandWeaponsToBook(weapon);
+                        return;
+                    }
+                }
+                else if (weaponSlotSetArray[2][1] == null)
+                {
+                    if (weaponSlotSetArray[2][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                    {
+                        weaponSlotSetArray[2][1] = weapon;
+                        weapon.weaponBelongingToWhichOffHandSet = 3;
+                        playerControl.PopulateOffHandWeaponsToBook(weapon);
+                        offHandSlotFilled = true;
+                        return;
+                    }
+                }
+                else
+                {
+                    offHandSlotFilled = true;
+                    return;
+                }
             }
+        }
 
-            // Set weapon position in list
-            weapon.weaponRightHandListPosition = weaponRightHandList.Count;
-
-            if (!updateHappenedAfterNewItemCollected)
+        if (!mainHandSlotFilledAtStart)
+        {
+            if (weaponDetails.weaponClass != WeaponClass.Shield)
             {
-                // Set the added weapon as active
-                setActiveWeaponEvent.CallSetActiveWeaponAtRightHandEvent(weapon);
+                Weapon weapon = new Weapon
+                {
+                    weaponDetails = weaponDetails,
+                    weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
+                    onMaindHand = true
+                };
+
+                if (weaponSlotSetArray[0][0] == null)
+                {
+                    weaponSlotSetArray[0][0] = weapon;
+                    weapon.weaponBelongingToWhichMainHandSet = 1;
+                    if (onStart)
+                    {
+                        ActivateWeapon(updateHappenedAfterNewItemCollected, weapon, false, 1);
+                    }
+                    if (!onStart)
+                    {
+                        playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                    }
+                }
+                else if (weaponSlotSetArray[1][0] == null)
+                {
+                    weaponSlotSetArray[1][0] = weapon;
+                    weapon.weaponBelongingToWhichMainHandSet = 2;
+                    if (!onStart)
+                    {
+                        playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                    }
+                }
+                else if (weaponSlotSetArray[2][0] == null)
+                {
+                    weaponSlotSetArray[2][0] = weapon;
+                    weapon.weaponBelongingToWhichMainHandSet = 3;
+                    if (!onStart)
+                    {
+                        playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                    }
+                    mainHandSlotFilledAtStart = true; // All 3 main hand slots filled at start
+                }
+            }
+        }
+        else
+        {
+            if (!offHandSlotFilled)
+            {
+                // Main hand slot filled at weapon if it is not a two-handed weapon
+                if (weaponDetails.wieldType == WieldType.TwoHanded) return;
+
+                // Shield check for off-hand is already done above, so avoid duplicate check
+                if (weaponDetails.weaponClass == WeaponClass.Shield) return;
+
+                Weapon weapon = new Weapon
+                {
+                    weaponDetails = weaponDetails,
+                    weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
+                    onMaindHand = false
+                };
+
+                if (weaponSlotSetArray[0][1] == null)
+                {
+                    weaponSlotSetArray[0][1] = weapon;
+                    weapon.weaponBelongingToWhichOffHandSet = 1;
+                    if (onStart)
+                    {
+                        ActivateWeapon(updateHappenedAfterNewItemCollected, weapon, true, 1);
+                    }
+                    if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon addition are excluded
+                    {
+                        playerControl.PopulateOffHandWeaponsToBook(weapon);
+                    }
+                }
+                else if (weaponSlotSetArray[1][1] == null)
+                {
+                    weaponSlotSetArray[1][1] = weapon;
+                    weapon.weaponBelongingToWhichOffHandSet = 2;
+                    playerControl.PopulateOffHandWeaponsToBook(weapon);
+                }
+                else if (weaponSlotSetArray[2][1] == null)
+                {
+                    weaponSlotSetArray[2][1] = weapon;
+                    weapon.weaponBelongingToWhichOffHandSet = 3;
+                    playerControl.PopulateOffHandWeaponsToBook(weapon);
+                    offHandSlotFilled = true;
+                }
+                else
+                {
+                    offHandSlotFilled = true;
+                }
+            }
+        }
+    }
+
+    //public void AddLeftHandWeaponForSameOneHandedTypesWithRightHand(bool onStart)
+    //{
+    //    List<Weapon> uniqueRightHandWeapons = new List<Weapon>();
+    //    List<Weapon> uniqueLeftHandWeapons = weaponOffHandList;
+
+    //    for (int i = 0; i < weaponMainHandList.Count; i++)
+    //    {
+    //        for (int j = 0; j < weaponMainHandList.Count; j++)
+    //        {
+    //            if (i == j) continue;
+
+    //            // Sort right hand weapons based on weapon names
+    //            weaponMainHandList.Sort((i, j) => string.Compare(i.weaponDetails.weaponName, j.weaponDetails.weaponName, 
+    //                StringComparison.Ordinal));
+    //        }
+    //    }
+
+    //    // Remove duplicates based on weapon names
+    //    uniqueRightHandWeapons = weaponMainHandList.Distinct(new WeaponNameComparer()).ToList();
+
+    //    // Keep track of encountered weapon names
+    //    HashSet<string> encounteredWeaponNames = new HashSet<string>();
+
+    //    foreach (Weapon weapon in weaponMainHandList)
+    //    {
+    //        // Check if the weapon name is a duplicate
+    //        if (!encounteredWeaponNames.Add(weapon.weaponDetails.weaponName))
+    //        {
+    //            if (weapon.weaponDetails.weaponClass != WeaponClass.Spear)
+    //            {
+    //                // If it's a duplicate, add it to the left hand list
+    //                weaponOffHandList.Add(weapon);
+
+    //                if (!weaponBookOffHandHashSet.Contains(weapon.weaponDetails.weaponFrontSprite) && !onStart &&
+    //                    weapon.weaponDetails.wieldType != WieldType.TwoHanded && weapon.weaponDetails.weaponClass != WeaponClass.Spear
+    //                    && weapon.weaponDetails.weaponClass != WeaponClass.Shield)
+    //                {
+    //                    weaponBookOffHandHashSet.Add(weapon.weaponDetails.weaponFrontSprite);
+    //                    PopulateOffHandWeaponsToBook(weapon);
+    //                }
+    //            }
+    //        }
+    //    }
+
+    //    weaponMainHandList = uniqueRightHandWeapons;
+
+    //    // Correct duplicated left hand weapons
+    //    for (int i = 0; i < weaponOffHandList.Count; i++)
+    //    {
+    //        for (int j = 0; j < weaponOffHandList.Count; j++)
+    //        {
+    //            if (i == j) continue;
+
+    //            // Sort hand weapons based on weapon names
+    //            weaponOffHandList.Sort((i, j) => string.Compare(i.weaponDetails.weaponName, j.weaponDetails.weaponName, StringComparison.Ordinal));
+
+    //            // Remove duplicates based on weapon names
+    //            uniqueLeftHandWeapons = weaponOffHandList.Distinct(new WeaponNameComparer()).ToList();
+    //        }
+    //    }
+
+    //    weaponOffHandList = uniqueLeftHandWeapons;
+
+    //    // Correct if there is a two-handed weapon at left hand
+    //    foreach (Weapon weapon in weaponOffHandList)
+    //    {
+    //        if (weapon.weaponDetails.wieldType == WieldType.TwoHanded && weapon.weaponDetails.weaponClass != WeaponClass.Shield)
+    //        {
+    //            weaponOffHandList.Remove(weapon);
+    //        }
+    //    }
+    //}
+
+    public void ActivateWeapon(bool updateHappenedAfterNewItemCollected, Weapon weapon, bool isOffHand, int setIndex)
+    {
+        if (!updateHappenedAfterNewItemCollected)
+        {
+            if (!isOffHand)
+            {
+                // Set the added weapon as active - main hand
+                setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, setIndex);
 
                 if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
                 {
@@ -346,109 +542,10 @@ public class Player : MonoBehaviour
                     setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
                 }
             }
-        }
-
-        return weapon;
-    }
-
-    public void AddShieldToLeftHandIfHave(WeaponDetailsSO weaponDetails, bool updateHappenedAfterNewItemCollected)
-    {
-        if (weaponDetails.weaponClass == WeaponClass.Shield)
-        {
-            Weapon weapon = new Weapon
+            else
             {
-                weaponDetails = weaponDetails,
-                weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity
-            };
-
-            // Add the weapon to the left hand list if it is a shield type
-            weaponLeftHandList.Add(weapon);
-            if (!weaponBookOffHandHashSet.Contains(weapon.weaponDetails.weaponFrontSprite) && !isOnAwake)
-            {
-                weaponBookOffHandHashSet.Add(weaponDetails.weaponFrontSprite);
-                PopulateOffHandWeaponsToBook(weapon);
-            }
-
-            if (!updateHappenedAfterNewItemCollected)
-            {
+                // Set the added weapon as active - main hand
                 setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(weapon);
-            }
-
-            // Set weapon position in list
-            weapon.weaponLeftHandListPosition = weaponLeftHandList.Count;
-        }
-    }
-
-    public void AddLeftHandWeaponForSameOneHandedTypesWithRightHand()
-    {
-        List<Weapon> uniqueRightHandWeapons = new List<Weapon>();
-        List<Weapon> uniqueLeftHandWeapons = weaponLeftHandList;
-
-        for (int i = 0; i < weaponRightHandList.Count; i++)
-        {
-            for (int j = 0; j < weaponRightHandList.Count; j++)
-            {
-                if (i == j) continue;
-
-                // Sort right hand weapons based on weapon names
-                weaponRightHandList.Sort((i, j) => string.Compare(i.weaponDetails.weaponName, j.weaponDetails.weaponName, 
-                    StringComparison.Ordinal));
-            }
-        }
-
-        // Remove duplicates based on weapon names
-        uniqueRightHandWeapons = weaponRightHandList.Distinct(new WeaponNameComparer()).ToList();
-
-        // Keep track of encountered weapon names
-        HashSet<string> encounteredWeaponNames = new HashSet<string>();
-
-        foreach (Weapon weapon in weaponRightHandList)
-        {
-            // Check if the weapon name is a duplicate
-            if (!encounteredWeaponNames.Add(weapon.weaponDetails.weaponName))
-            {
-                if (weapon.weaponDetails.weaponClass != WeaponClass.Spear)
-                {
-                    // If it's a duplicate, add it to the left hand list
-                    weaponLeftHandList.Add(weapon);
-
-                    if (!weaponBookOffHandHashSet.Contains(weapon.weaponDetails.weaponFrontSprite) && !isOnAwake &&
-                        weapon.weaponDetails.wieldType != WieldType.TwoHanded && weapon.weaponDetails.weaponClass != WeaponClass.Spear
-                        && weapon.weaponDetails.weaponClass != WeaponClass.Shield)
-                    {
-                        weaponBookOffHandHashSet.Add(weapon.weaponDetails.weaponFrontSprite);
-                        PopulateOffHandWeaponsToBook(weapon);
-                    }
-                }
-            }
-        }
-
-        weaponRightHandList = uniqueRightHandWeapons;
-
-        // Correct duplicated left hand weapons
-        for (int i = 0; i < weaponLeftHandList.Count; i++)
-        {
-            for (int j = 0; j < weaponLeftHandList.Count; j++)
-            {
-                if (i == j) continue;
-
-                // Sort hand weapons based on weapon names
-                weaponLeftHandList.Sort((i, j) => string.Compare(i.weaponDetails.weaponName, j.weaponDetails.weaponName, 
-                    StringComparison.Ordinal));
-
-                // Remove duplicates based on weapon names
-                uniqueLeftHandWeapons = weaponLeftHandList.Distinct(new WeaponNameComparer()).ToList();
-            }
-        }
-
-        weaponLeftHandList = uniqueLeftHandWeapons;
-
-        // Correct if there is a two-handed weapon at left hand
-        foreach (Weapon weapon in weaponLeftHandList)
-        {
-            if (weapon.weaponDetails.wieldType == WieldType.TwoHanded && weapon.weaponDetails.weaponClass != WeaponClass.Shield)
-            {
-                weaponLeftHandList.Remove(weapon);
             }
         }
     }
@@ -470,11 +567,11 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns true if the weapon is held by the player right hand - otherwise returns false
+    /// Returns true if the weapon is held by the player left hand- otherwise returns false
     /// </summary>
-    public bool IsWeaponHeldByPlayerRightHand(WeaponDetailsSO weaponDetails)
+    public bool IsWeaponHeldByPlayerLeftHand(WeaponDetailsSO weaponDetails)
     {
-        foreach (Weapon weapon in weaponRightHandList)
+        foreach (Weapon weapon in weaponOffHandList)
         {
             if (weapon.weaponDetails == weaponDetails) return true;
         }
@@ -483,48 +580,28 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns true if the weapon is held by the player left hand- otherwise returns false
+    /// Create a chest item for to-be-dropped weapon
     /// </summary>
-    public bool IsWeaponHeldByPlayerLeftHand(WeaponDetailsSO weaponDetails)
+    public ChestItem CreateChestItemForWeapon(Weapon weapon)
     {
-        foreach (Weapon weapon in weaponLeftHandList)
-        {
-            if (weapon.weaponDetails == weaponDetails) return true;
-        }
+        GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+        ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
 
-        return false;
-    }
+        chestItem.remainingItemCharge = playerDetails.selectedActiveItem.activeItemMaxCharge;
+        chestItem.boxCollider2D.enabled = false;
 
-    private void PopulateMainHandWeaponsToBook(Weapon weapon, bool onStart, bool onlySwitch)
-    {
-        StaticEventHandler.CallWeaponAddedToMainHandBook(weapon, onStart, onlySwitch);
-    }
+        // Set hasActiveDrop flag to true
+        chestItem.hasWeaponDrop = true;
 
-    private void PopulateOffHandWeaponsToBook(Weapon weapon)
-    {
-        if (weaponBookOffHandHashSet.Count > 0)
-        {
-            StaticEventHandler.CallWeaponAddedToOffHandBook(weapon);
-        }
-    }
+        // Initialize chest item
+        chestItem.Initialize(weapon.weaponDetails, null, null, weapon.weaponDetails.weaponFrontSprite, weapon.weaponDetails.weaponName, transform.position);
 
-    private void PopulateActiveItemsToBook(Sprite sprite)
-    {
-        StaticEventHandler.CallItemAddedToActiveItemSlot(sprite);
-    }
+        // Disable some components during equipped
+        chestItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
+        chestItem.textTMP.enabled = false;
+        chestItem.spriteRenderer.enabled = false;
+        chestItem.animator.enabled = false;
 
-    public void RemoveActiveItemFromBook()
-    {
-        StaticEventHandler.CallItemRemovedFromActiveItemSlot();
-    }
-
-    private void PopulatePassiveItemsToBook(Sprite sprite, ItemSlotName itemSlotName)
-    {
-        StaticEventHandler.CallItemAddedToPassiveItemSlot(sprite, itemSlotName);
-    }
-
-    public void RemovePassiveItemFromBook(Sprite sprite, ItemSlotName itemSlotName)
-    {
-        StaticEventHandler.CallItemRemovedFromPassiveItemSlot(sprite, itemSlotName);
+        return chestItem;
     }
 }

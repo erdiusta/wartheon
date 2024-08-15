@@ -177,7 +177,7 @@ public class Enemy : MonoBehaviour
             Weapon weapon = new Weapon { weaponDetails = enemyDetails.enemyWeapon, weaponRemainingProjectile = enemyDetails.enemyWeapon.weaponProjectileCapacity };
 
             //Set weapon for enemy
-            setActiveWeaponEvent.CallSetActiveWeaponAtRightHandEvent(weapon);
+            setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, 1);
         }
     }
 

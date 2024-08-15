@@ -26,7 +26,7 @@ MonoBehaviour:
   activeItemUseSoundEffect: {fileID: 0}
   hasNoProjectileNumberLimit: 1
   activeItemMaxCharge: 0
-  activeItemChargeRegenerationPerFourRooms: 1
+  activeItemChargeRegenerationPerSixRooms: 1
   projectileDamageMin: 0
   projectileDamageMax: 0
   countDown: 0
@@ -56,6 +56,6 @@ MonoBehaviour:
   slowChance: 0
   isProjectileTrail: 0
   projectileTrailTime: 3
-  projectileTrailMaterial: {fileID: 0}
+  projectileTrailMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0

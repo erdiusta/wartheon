@@ -4,8 +4,9 @@ public class Weapon
 {
     public WeaponDetailsSO weaponDetails;
     public float activeWeaponHandling;
-    public int weaponRightHandListPosition;
-    public int weaponLeftHandListPosition;
+    public bool onMaindHand;
+    public int weaponBelongingToWhichMainHandSet;
+    public int weaponBelongingToWhichOffHandSet;
     public int weaponRemainingProjectile;
     public bool onPrecharge;
     public bool onCooldown;

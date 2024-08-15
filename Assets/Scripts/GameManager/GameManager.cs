@@ -36,8 +36,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     public GameObject bookView;
     public GameObject bookCover;
-
-    public GameObject pauseMenuUI;
+    public GameObject warningPopUp;
 
     [HideInInspector] public bool glossaryBookOpen;
     [HideInInspector] public bool turnPageCompleted;
@@ -246,6 +245,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         bookCover.SetActive(false);
         bookView.SetActive(false);
+        warningPopUp.SetActive(false);
 
         // Set screen to black
         StartCoroutine(Fade(0f, 1f, 0f, Color.black));
@@ -757,6 +757,48 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         return toBeDroppedChestItem;
     }
 
+    public void GoToWeaponSetWithIndex(int setIndex)
+    {
+        player.playerControl.NextWeaponSet(false, false, setIndex);
+    }
+
+    public void WeaponSetOne()
+    {
+        player.playerControl.NextWeaponSet(false, false, 1);
+    }
+
+    public void WeaponSetTwo()
+    {
+        player.playerControl.NextWeaponSet(false, false, 2);
+    }
+
+    public void WeaponSetThree()
+    {
+        player.playerControl.NextWeaponSet(false, false, 3);
+    }
+
+    public void OpenWarningPopUpMenu(PopUpReason popUpReason)
+    {
+        warningPopUp.SetActive(true);
+
+        TextMeshProUGUI warningText = warningPopUp.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
+
+        switch (popUpReason)
+        {
+            case PopUpReason.None:
+                break;
+            case PopUpReason.LessThanOneMainHandWeapon:
+                warningText.text = "Equipped main hand weapon can't be less than 1 in 3 sets";
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void CloseWarningPopUpMenu()
+    {
+        warningPopUp.SetActive(false);
+    }
 
     #region Validation
 #if UNITY_EDITOR

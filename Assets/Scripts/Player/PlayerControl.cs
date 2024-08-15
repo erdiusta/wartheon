@@ -18,8 +18,6 @@ public class PlayerControl : MonoBehaviour
     Player player;
     bool leftMouseDownPreviousFrame = false;
     bool rightMouseDownPreviousFrame = false;
-    int currentRightHandWeaponIndex = 1;
-    int currentLeftHandWeaponIndex = 0;
     bool isPlayerMovementDisabled = false;
     Coroutine teleportParticleRoutine;
     Coroutine dropCoroutine;
@@ -34,12 +32,6 @@ public class PlayerControl : MonoBehaviour
     // Attack member variables
     [HideInInspector] public MeleeAttackType meleeAttackTypeMainHand = MeleeAttackType.None;
     [HideInInspector] public MeleeAttackType meleeAttackTypeOffHand = MeleeAttackType.None;
-    float attackMotionTransitionTimer = 0f;
-    float mainHandFirePressHoldDownTimer = 0f;
-    float offHandFirePressHoldDownTimer = 0f;
-    bool mainHandThrustCompleted;
-    bool offHandThrustCompleted;
-    float attackDelayDuration = 0.11f;
 
     private void Awake()
     {
@@ -58,30 +50,8 @@ public class PlayerControl : MonoBehaviour
 
     private void Start()
     {
-        // Set starting weapon
-        SetStartingWeapon();
-
         // Set player animation speed
         SetPlayerAnimationSpeed();
-    }
-
-    /// <summary>
-    /// Set the player starting weapon
-    /// </summary>
-    private void SetStartingWeapon()
-    {
-        int index = 1;
-
-        foreach (Weapon weapon in player.weaponRightHandList)
-        {
-            if (weapon.weaponDetails == player.playerDetails.startingWeapon)
-            {
-                SetRightHandWeaponByIndex(index, true, false);
-                break;
-            }
-
-            index++;
-        }
     }
 
     /// <summary>
@@ -200,7 +170,7 @@ public class PlayerControl : MonoBehaviour
         FireActiveItemInput(weaponDirection, weaponAngleDegrees, playerAngleDegrees, playerAimDirection);
 
         // Switch weapon input
-        SwitchWeaponInput(false);
+        SwitchWeaponInput();
     }
 
     private void AimWeaponInput(out Vector3 weaponDirection, out float weaponAngleDegrees, out float playerAngleDegrees, out AimDirection playerAimDirection)
@@ -451,36 +421,6 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    IEnumerator MainHandMeleeWeaponClickRoutine(AimDirection playerAimDirection)
-    {
-        yield return new WaitForSeconds(attackDelayDuration);
-
-        // If the coroutine completes, it means only one tap was detected within attacDelayDuration
-        if (!mainHandThrustCompleted)
-        {
-            player.meleeAttackRightHand.IsAttackingAtRightHand = true;
-            meleeAttackTypeMainHand = MeleeAttackType.Swing;
-            player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), meleeAttackTypeMainHand);
-        }
-
-        mainHandMeleeWeaponClickedCoroutine = null; // Reset the coroutine reference
-    }
-
-    IEnumerator OffHandMeleeWeaponClickRoutine(AimDirection playerAimDirection)
-    {
-        yield return new WaitForSeconds(attackDelayDuration);
-
-        // If the coroutine completes, it means only one tap was detected within 0.3 seconds
-        if (!offHandThrustCompleted)
-        {
-            player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
-            meleeAttackTypeOffHand = MeleeAttackType.Swing;
-            player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), meleeAttackTypeOffHand);
-        }
-
-        offHandMeleeWeaponClickedCoroutine = null; // Reset the coroutine reference
-    }
-
     /// <summary>
     /// Active Item Input
     /// </summary>
@@ -659,74 +599,101 @@ public class PlayerControl : MonoBehaviour
         player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
     }
 
-    private void SwitchWeaponInput(bool onStart)
+    private void SwitchWeaponInput()
     {
         float scrollValue = (InputManager.Instance.switchWeapon.action.ReadValue<Vector2>().normalized).y;
+
+        int checkedIndexNum;
 
         // Switch weapon if mouse scroll wheel selecetd
         if (scrollValue < 0f)
         {
-            LeftHandWeaponCheck();
+            checkedIndexNum = player.currentWeaponSlotSetIndex - 1;
+
+            if (checkedIndexNum == 0)
+            {
+                checkedIndexNum = 3;
+            }
+
+            if (player.weaponSlotSetArray[checkedIndexNum - 1][0] == null)
+            {
+                Debug.Log("CAN'T SWITCH DON'T HAVE WEAPON");
+            }
+            else
+            {
+                PreviousWeaponSet(true);
+            }
         }
 
         if (scrollValue > 0f)
         {
-            NextRightHandWeapon(onStart, true);
-        }
+            checkedIndexNum = player.currentWeaponSlotSetIndex + 1;
 
-        if (InputManager.Instance.resetWeaponIndex.action.triggered)
-        {
-            SetCurrentWeaponToFirstInTheList(onStart, true);
+            if (checkedIndexNum == 4)
+            {
+                checkedIndexNum = 1;
+            }
+
+            if (player.weaponSlotSetArray[checkedIndexNum - 1][0] == null)
+            {
+                Debug.Log("CAN'T SWITCH DON'T HAVE WEAPON");
+            }
+            else
+            {
+                NextWeaponSet(true, true);
+            }
         }
     }
 
-    private void NextRightHandWeapon(bool onStart, bool onlySwitch)
+    public void NextWeaponSet(bool onlySwitch, bool mouseWheel, int setNumber = 0)
     {
-        if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
+        if (mouseWheel)
         {
-            currentRightHandWeaponIndex++;
+            player.currentWeaponSlotSetIndex++;
 
-            if (currentRightHandWeaponIndex > player.weaponRightHandList.Count)
+            if (player.currentWeaponSlotSetIndex > 3)
             {
-                currentRightHandWeaponIndex = 1;
+                player.currentWeaponSlotSetIndex = 1;
             }
 
-            SetRightHandWeaponByIndex(currentRightHandWeaponIndex, onStart, onlySwitch);
-        }
-    }
-
-    private void LeftHandWeaponCheck()
-    {
-        if (player.activeWeapon.GetCurrentOffHandWeapon() == null && player.activeWeapon.GetCurrentMainHandWeapon().
-            weaponDetails.wieldType == WieldType.OneHanded)
-        {
-            currentLeftHandWeaponIndex++;
-
-            if (currentLeftHandWeaponIndex > player.weaponLeftHandList.Count)
-            {
-                currentLeftHandWeaponIndex = 1;
-            }
-
-            SetLeftHandWeaponByIndex(currentLeftHandWeaponIndex);
-        }
-        else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
-        {
-            return;
+            SetWeaponSetByIndex(onlySwitch);
         }
         else
         {
-            player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
-            StaticEventHandler.CallWeaponRemovedFromOffHandBook();
+            if (player.currentWeaponSlotSetIndex == setNumber) return;
+
+            int checkedIndexNum = setNumber;
+
+            if (player.weaponSlotSetArray[checkedIndexNum - 1][0] == null)
+            {
+                Debug.Log("CAN'T SWITCH DON'T HAVE WEAPON");
+            }
+            else
+            {
+                player.currentWeaponSlotSetIndex = setNumber;
+                SetWeaponSetByIndex(onlySwitch);
+            }
         }
     }
 
-    private void SetRightHandWeaponByIndex(int weaponIndex, bool onStart, bool onlySwitch)
+    public void PreviousWeaponSet(bool onlySwitch)
     {
-        if (weaponIndex - 1 < player.weaponRightHandList.Count)
-        {
-            currentRightHandWeaponIndex = weaponIndex;
+        player.currentWeaponSlotSetIndex--;
 
-            player.setActiveWeaponEvent.CallSetActiveWeaponAtRightHandEvent(player.weaponRightHandList[weaponIndex - 1]);
+        if (player.currentWeaponSlotSetIndex < 1)
+        {
+            player.currentWeaponSlotSetIndex = 3;
+        }
+
+        SetWeaponSetByIndex(onlySwitch);
+    }
+
+    private void SetWeaponSetByIndex(bool onlySwitch)
+    {
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+        {
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], player.currentWeaponSlotSetIndex);
+            PopulateMainHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], onlySwitch);
 
             if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
             {
@@ -736,19 +703,17 @@ public class PlayerControl : MonoBehaviour
             {
                 player.setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
             }
-
-            StaticEventHandler.CallWeaponAddedToMainHandBook(player.weaponRightHandList[weaponIndex - 1], onStart, onlySwitch);
         }
-    }
 
-    private void SetLeftHandWeaponByIndex(int weaponIndex)
-    {
-        if (weaponIndex - 1 < player.weaponLeftHandList.Count)
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null)
         {
-            currentLeftHandWeaponIndex = weaponIndex;
-
-            player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(player.weaponLeftHandList[weaponIndex - 1]);
-            StaticEventHandler.CallWeaponAddedToOffHandBook(player.weaponLeftHandList[weaponIndex - 1]);
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]);
+            PopulateOffHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]);
+        }
+        else
+        {
+            player.setActiveWeaponEvent.CallSetInactiveAtOffHandEvent();
+            RemoveOffHandWeaponsFromBook();
         }
     }
 
@@ -1104,47 +1069,115 @@ public class PlayerControl : MonoBehaviour
     {
         if (InputManager.Instance.dropActiveItem.action.WasPressedThisFrame())
         {
-            DropProcess(GameManager.Instance.GetToBeDroppedChestItem());
+            DropProcess(GameManager.Instance.GetToBeDroppedChestItem(), false);
         }
     }
 
-    public void DropProcess(ChestItem chestItem)
+    public void DropProcess(ChestItem chestItem, bool isWeaponDrop, Weapon weapon = null)
     {
-        if (player.selectedActiveItem.GetCurrentActiveItem() != null)
+        if (!isWeaponDrop)
         {
-            Debug.Log("Dropping item: " + player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemName);
-
-            if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Compass)
+            if (player.selectedActiveItem.GetCurrentActiveItem() != null)
             {
-                StaticEventHandler.CallCompassDisabled();
+                if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Compass)
+                {
+                    StaticEventHandler.CallCompassDisabled();
+                }
+
+                chestItem.Initialize(null, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails, null, player.selectedActiveItem.GetCurrentActiveItem().
+                    activeItemDetails.activeItemSprite, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemName, transform.position);
+
+                chestItem.hasActiveDrop = true;
+                chestItem.droppedByPlayer = true;
+
+                // Break free from the player object
+                chestItem.spriteRenderer.enabled = true;
+                chestItem.animator.enabled = true;
+                chestItem.textTMP.enabled = true;
+
+                // Store remaining charge count during drop process
+                chestItem.remainingItemCharge = player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge;
+
+                player.setActiveWeaponEvent.CallRemovedActiveItem();
+                RemoveActiveItemFromBook();
+
+                chestItem.gameObject.transform.SetParent(null);
+                chestItem.boxCollider2D.enabled = true;
+                chestItem.isPickedUp = false;
+
+                if (dropCoroutine == null)
+                {
+                    dropCoroutine = StartCoroutine(MoveItemDown(chestItem));
+                }
             }
-
-            chestItem.Initialize(null, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails, null, player.selectedActiveItem.GetCurrentActiveItem().
-                activeItemDetails.activeItemSprite, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemName, transform.position);
-
-            chestItem.hasActiveDrop = true;
-            chestItem.droppedByPlayer = true;
-
-            // Break free from the player object
-            chestItem.spriteRenderer.enabled = true;
-            chestItem.animator.enabled = true;
-            chestItem.textTMP.enabled = true;
-
-            // Store remaining charge count during drop process
-            chestItem.remainingItemCharge = player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge;
-
-            Debug.Log(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemName + " dropped successfully.");
-
-            player.setActiveWeaponEvent.CallRemovedActiveItem();
-            player.RemoveActiveItemFromBook();
-
-            chestItem.gameObject.transform.SetParent(null);
-            chestItem.boxCollider2D.enabled = true;
-            chestItem.isPickedUp = false;
-
-            if (dropCoroutine == null)
+        }
+        else
+        {
+            if (weapon.onMaindHand)
             {
-                dropCoroutine = StartCoroutine(MoveItemDown(chestItem));
+                int gauge = 0;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    if (player.weaponSlotSetArray[i][0] != null)
+                    {
+                        gauge++;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                if (gauge <= 1)
+                {
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.LessThanOneMainHandWeapon);
+                }
+                else
+                {
+                    switch (weapon.weaponBelongingToWhichMainHandSet)
+                    {
+                        case 1:
+                            player.weaponSlotSetArray[0][0] = null;
+                            break;
+                        case 2:
+                            player.weaponSlotSetArray[1][0] = null;
+                            break;
+                        case 3:
+                            player.weaponSlotSetArray[2][0] = null;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    chestItem.droppedByPlayer = true;
+
+                    // Break free from the player object
+                    chestItem.spriteRenderer.enabled = true;
+                    chestItem.animator.enabled = true;
+                    chestItem.textTMP.enabled = true;
+                    chestItem.gameObject.transform.SetParent(null);
+                    chestItem.boxCollider2D.enabled = true;
+                    chestItem.isPickedUp = false;
+
+                    RemoveMainHandWeaponFromBook();
+                    player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+                }
+            }
+            else
+            {
+                chestItem.droppedByPlayer = true;
+
+                // Break free from the player object
+                chestItem.spriteRenderer.enabled = true;
+                chestItem.animator.enabled = true;
+                chestItem.textTMP.enabled = true;
+                chestItem.gameObject.transform.SetParent(null);
+                chestItem.boxCollider2D.enabled = true;
+                chestItem.isPickedUp = false;
+
+                RemoveOffHandWeaponsFromBook();
+                player.setActiveWeaponEvent.CallSetInactiveAtOffHandEvent();
             }
         }
     }
@@ -1223,40 +1256,6 @@ public class PlayerControl : MonoBehaviour
         player.animatePlayer.SetIdleAnimationParameters();
     }
 
-    /// <summary>
-    /// Set the current weapon to be first in the player weapon list
-    /// </summary>
-    private void SetCurrentWeaponToFirstInTheList(bool onStart, bool onlySwitch)
-    {
-        // Create new temporary list
-        List<Weapon> tempWeaponList = new List<Weapon>();
-
-        // Add the current weapon to first in the temp list
-        Weapon currentWeapon = player.weaponRightHandList[currentRightHandWeaponIndex - 1];
-        currentWeapon.weaponRightHandListPosition = 1;
-        tempWeaponList.Add(currentWeapon);
-
-        // Loop through existing weapon list and add - skipping current weapon
-        int index = 2;
-
-        foreach (Weapon weapon in player.weaponRightHandList)
-        {
-            if (weapon == currentWeapon) continue;
-
-            tempWeaponList.Add(weapon);
-            weapon.weaponRightHandListPosition = index;
-            index++;
-        }
-
-        // Assign new list
-        player.weaponRightHandList = tempWeaponList;
-
-        currentRightHandWeaponIndex = 1;
-
-        // Set current weapon
-        SetRightHandWeaponByIndex(currentRightHandWeaponIndex, onStart, onlySwitch);
-    }
-
     public AimDirection GetAimDirection()
     {
         return aimDirection;
@@ -1267,5 +1266,45 @@ public class PlayerControl : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, seismicSlamCircleRadius);
+    }
+
+    public void PopulateMainHandWeaponsToBook(Weapon weapon, bool onlySwitch)
+    {
+        StaticEventHandler.CallWeaponAddedToMainHandBook(weapon, onlySwitch);
+    }
+
+    public void RemoveMainHandWeaponFromBook()
+    {
+        StaticEventHandler.CallWeaponRemovedFromMainHandBook();
+    }
+
+    public void PopulateOffHandWeaponsToBook(Weapon weapon)
+    {
+        StaticEventHandler.CallWeaponAddedToOffHandBook(weapon);
+    }
+
+    public void RemoveOffHandWeaponsFromBook()
+    {
+        StaticEventHandler.CallWeaponRemovedFromOffHandBook();
+    }
+
+    public void PopulateActiveItemsToBook(Sprite sprite)
+    {
+        StaticEventHandler.CallItemAddedToActiveItemSlot(sprite);
+    }
+
+    public void RemoveActiveItemFromBook()
+    {
+        StaticEventHandler.CallItemRemovedFromActiveItemSlot();
+    }
+
+    public void PopulatePassiveItemsToBook(Sprite sprite, ItemSlotName itemSlotName)
+    {
+        StaticEventHandler.CallItemAddedToPassiveItemSlot(sprite, itemSlotName);
+    }
+
+    public void RemovePassiveItemFromBook(Sprite sprite, ItemSlotName itemSlotName)
+    {
+        StaticEventHandler.CallItemRemovedFromPassiveItemSlot(sprite, itemSlotName);
     }
 }

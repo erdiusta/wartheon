@@ -107,7 +107,7 @@ public class Chest : MonoBehaviour, IUsable
         // Check if player already has the weapon - if so set weapon to null
         if (weaponDetails != null)
         {
-            if (GameManager.Instance.GetPlayer().weaponRightHandList.Contains(weaponDetails.GetWeapon()))
+            if (GameManager.Instance.GetPlayer().weaponMainHandList.Contains(weaponDetails.GetWeapon()))
                 weaponDetails = null;
         }
 
