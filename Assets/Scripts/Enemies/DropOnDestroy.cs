@@ -139,17 +139,17 @@ public class DropOnDestroy : MonoBehaviour
 
         if (numberofItemsToSpawn == 1)
         {
-            choice = Random.Range(0, 10);
+            choice = Random.Range(0, 50);
 
-            if (choice >= 0 && choice <= 2) { weapons++; return; }
-            if (choice >= 3 && choice <= 5) { actives++; return; }
-            if (choice > 5 && choice <= 50) { passives++; return; }
+            if (choice >= 0 && choice <= 35) { weapons++; return; }
+            if (choice > 35 && choice <= 40) { actives++; return; }
+            if (choice > 40 && choice <= 50) { passives++; return; }
 
             return;
         }
         else if (numberofItemsToSpawn == 2)
         {
-            choice = Random.Range(0, 10);
+            choice = Random.Range(0, 50);
             if (choice >= 0 && choice <= 2) { weapons++; return; }
             if (choice >= 3 && choice <= 5) { actives++; return; }
             if (choice > 5 && choice <= 50) { passives++; return; }
@@ -231,7 +231,7 @@ public class DropOnDestroy : MonoBehaviour
 
         WeaponDetailsSO weaponDetails = weaponRandom.GetItem();
 
-        return IsWeaponAvailableForTheCharacter(weaponDetails) && !DoesWeaponAlreadyExistAtCharacter(weaponDetails) ? weaponDetails : null;
+        return IsWeaponAvailableForTheCharacter(weaponDetails) ? weaponDetails : null;
     }
 
     private bool IsWeaponAvailableForTheCharacter(WeaponDetailsSO weaponDetails)
@@ -241,36 +241,6 @@ public class DropOnDestroy : MonoBehaviour
             if (player.playerDetails.collectibleWeaponsArray[i].weaponName == weaponDetails.weaponName)
             {
                 return true;
-            }
-        }
-
-        return false;
-    }
-
-    private bool DoesWeaponAlreadyExistAtCharacter(WeaponDetailsSO weaponDetails)
-    {
-        if (weaponDetails.weaponClass == WeaponClass.Shield || weaponDetails.wieldType == WieldType.OneHanded)
-        {
-            foreach (Weapon weapon in player.weaponOffHandList)
-            {
-                if (weapon.weaponDetails.weaponName == weaponDetails.weaponName)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        else if (weaponDetails.wieldType == WieldType.TwoHanded)
-        {
-            foreach (Weapon weapon in player.weaponMainHandList)
-            {
-                if (weapon.weaponDetails.weaponName == weaponDetails.weaponName)
-                {
-                    return true;
-                }
-
-                return false;
             }
         }
 

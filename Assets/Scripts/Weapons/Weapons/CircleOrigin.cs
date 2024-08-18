@@ -15,7 +15,10 @@ public class CircleOrigin : MonoBehaviour
     {
         if (GetComponentInParent<Projectile>() == null)
         {
-            circleRadius = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.circleRadius;
+            if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+            {
+                circleRadius = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.circleRadius;
+            }
         }
     }
 

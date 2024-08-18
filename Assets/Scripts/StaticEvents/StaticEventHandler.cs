@@ -36,6 +36,14 @@ public static class StaticEventHandler
         OnWeaponAddedToMainHandBook?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, onlySwitch = onlySwitch});
     }
 
+    // Weapon swapped at main hand
+    public static event Action<WeaponAddedToBookArgs> OnWeaponSwappedAtMainHand;
+
+    public static void CallWeaponSwappedAtMainHand(Weapon weapon)
+    {
+        OnWeaponSwappedAtMainHand?.Invoke(new WeaponAddedToBookArgs { weapon = weapon });
+    }
+
     // Main hand weapon removed from main hand on book event
     public static event Action OnWeaponRemovedFromMainHandBook;
 
@@ -50,6 +58,14 @@ public static class StaticEventHandler
     public static void CallWeaponAddedToOffHandBook(Weapon weapon)
     {
         OnWeaponAddedToOffHandBook?.Invoke(new WeaponAddedToBookArgs { weapon = weapon});
+    }
+
+    // Weapon swapped at main hand
+    public static event Action<WeaponAddedToBookArgs> OnWeaponSwappedAtOffHand;
+
+    public static void CallWeaponSwappedAtOffHand(Weapon weapon)
+    {
+        OnWeaponSwappedAtOffHand?.Invoke(new WeaponAddedToBookArgs { weapon = weapon });
     }
 
     // Off-hand weapon removed from off-hand on book event

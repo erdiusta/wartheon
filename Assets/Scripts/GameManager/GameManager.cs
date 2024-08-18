@@ -34,15 +34,17 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     #endregion Tooltip
     [SerializeField] Volume volume;
 
+    // Book members
     public GameObject bookView;
     public GameObject bookCover;
     public GameObject warningPopUp;
-
     [HideInInspector] public bool glossaryBookOpen;
     [HideInInspector] public bool turnPageCompleted;
     [HideInInspector] public bool zoomOutFinished;
     [HideInInspector] public bool zoomInFinished;
     [HideInInspector] public bool statsPageChanged;
+
+    [HideInInspector] public bool popUpWindowOpen;
 
     #region Header DUNGEON LEVELS
     [Space(10)]
@@ -780,6 +782,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public void OpenWarningPopUpMenu(PopUpReason popUpReason)
     {
         warningPopUp.SetActive(true);
+        popUpWindowOpen = true; // It's used for disabling mouse fire button while window is open
 
         TextMeshProUGUI warningText = warningPopUp.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
 
@@ -790,14 +793,34 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case PopUpReason.LessThanOneMainHandWeapon:
                 warningText.text = "Equipped main hand weapon can't be less than 1 in 3 sets";
                 break;
+            case PopUpReason.DontHaveWeaponOnSelectedSet:
+                warningText.text = "Can't switch to next set because there is no weapon";
+                break;
+            case PopUpReason.OffHandFull:
+                warningText.text = "You can't drop main weapon. Active weapon set's off-hand is full";
+                break;
+            case PopUpReason.ShieldCantBePutOnMainHand:
+                warningText.text = "Shield can not be equipped on the main hand";
+                break;
             default:
                 break;
         }
     }
 
+    public Transform GetMainHandEquippedSlot()
+    {
+        return bookView.transform.GetChild(1).GetChild(3).GetChild(1).GetChild(1);
+    }
+    
+    public Transform GetOffHandEquippedSlot()
+    {
+        return bookView.transform.GetChild(1).GetChild(4).GetChild(1).GetChild(1);
+    }
+        
     public void CloseWarningPopUpMenu()
     {
         warningPopUp.SetActive(false);
+        popUpWindowOpen = false;
     }
 
     #region Validation

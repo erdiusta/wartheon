@@ -84,8 +84,6 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public ParticleSystem dustParticlesSystem;
     [HideInInspector] public ParticleSystem specialMoveParticlesSystem;
-    [HideInInspector] public List<Weapon> weaponMainHandList = new List<Weapon>();
-    [HideInInspector] public List<Weapon> weaponOffHandList = new List<Weapon>();
     [HideInInspector] public Weapon[][] weaponSlotSetArray = new Weapon[3][] { new Weapon[2] {null, null}, new Weapon[2] {null, null}, new Weapon[2] {null, null}};
     [HideInInspector] public int currentWeaponSlotSetIndex = 1;
     [HideInInspector] public List<PassiveItem> passiveItemList = new List<PassiveItem>();
@@ -93,8 +91,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public HashSet<Sprite> weaponBookOffHandHashSet = new HashSet<Sprite>();
     [HideInInspector] public List<GameObject> summonedEnemies = new List<GameObject>();
 
-    bool mainHandSlotFilledAtStart = false;
-    bool offHandSlotFilled = false;
+    [HideInInspector] public bool mainHandSlotFilled = false;
+    [HideInInspector] public bool offHandSlotFilled = false;
 
     private void Awake()
     {
@@ -186,6 +184,23 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void AddSecondWeaponToFirstSetOffHandedIfOneHand(WeaponDetailsSO weaponDetails)
+    {
+        Weapon weapon = new Weapon
+        {
+            weaponDetails = weaponDetails,
+            weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
+            onMaindHand = false
+        };
+
+        if (weaponSlotSetArray[1][1] == null)
+        {
+            weaponSlotSetArray[1][1] = weapon;
+            weapon.weaponBelongingToWhichOffHandSet = 1;
+            ActivateWeapon(weapon, true, 1);
+        }
+    }
+
     /// <summary>
     /// Set the player starting active item
     /// </summary>
@@ -213,24 +228,7 @@ public class Player : MonoBehaviour
     /// </summary>
     public void UpdateWieldedWeapons(WeaponDetailsSO weaponDetails, bool updateHappenedAfterNewItemCollected, bool onStart)
     {
-        List<WeaponDetailsSO> allEquippedWeaponsList = new List<WeaponDetailsSO> { weaponDetails };
-
-        foreach (Weapon rightHandWeapon in weaponMainHandList)
-        {
-            allEquippedWeaponsList.Add(rightHandWeapon.weaponDetails);
-        }
-
-        foreach (Weapon leftHandWeapon in weaponOffHandList)
-        {
-            allEquippedWeaponsList.Add(leftHandWeapon.weaponDetails);
-        }
-
-        // Populate weapon list from starting weapons for right hand and shield for left hand if have any
-        foreach (WeaponDetailsSO weapon in allEquippedWeaponsList)
-        {
-            // Add weapon to right hand list of player
-            AddNextWeaponToPlayer(weapon, updateHappenedAfterNewItemCollected, onStart, false);     
-        }
+        AddNextWeaponToPlayer(weaponDetails, updateHappenedAfterNewItemCollected, onStart, false);
     }
 
     /// <summary>
@@ -295,7 +293,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Add a weapon to the right hand of player weapon list
     /// </summary>
-    public void AddNextWeaponToPlayer(WeaponDetailsSO weaponDetails, bool updateHappenedAfterNewItemCollected, bool onStart, bool onlySwitch)
+    public void AddNextWeaponToPlayer(WeaponDetailsSO weaponDetails, bool pickingUp, bool onStart, bool onlySwitch)
     {
         if (!offHandSlotFilled)
         {
@@ -315,9 +313,9 @@ public class Player : MonoBehaviour
                     {
                         weaponSlotSetArray[0][1] = weapon;
                         weapon.weaponBelongingToWhichOffHandSet = 1;
-                        if (onStart)
+                        if (currentWeaponSlotSetIndex == 1)
                         {
-                            ActivateWeapon(updateHappenedAfterNewItemCollected, weapon, true, 1);
+                            ActivateWeapon(weapon, !weapon.onMaindHand, 1);
                         }
                         if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon addition are excluded
                         {
@@ -328,23 +326,37 @@ public class Player : MonoBehaviour
                 }
                 else if (weaponSlotSetArray[1][1] == null)
                 {
-                    if (weaponSlotSetArray[1][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                    if (weaponSlotSetArray[1][0] != null)
                     {
-                        weaponSlotSetArray[1][1] = weapon;
-                        weapon.weaponBelongingToWhichOffHandSet = 2;
-                        playerControl.PopulateOffHandWeaponsToBook(weapon);
-                        return;
+                        if (weaponSlotSetArray[1][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                        {
+                            weaponSlotSetArray[1][1] = weapon;
+                            if (currentWeaponSlotSetIndex == 2)
+                            {
+                                ActivateWeapon(weapon, !weapon.onMaindHand, 2);
+                            }
+                            weapon.weaponBelongingToWhichOffHandSet = 2;
+                            playerControl.PopulateOffHandWeaponsToBook(weapon);
+                            return;
+                        }
                     }
                 }
                 else if (weaponSlotSetArray[2][1] == null)
                 {
-                    if (weaponSlotSetArray[2][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                    if (weaponSlotSetArray[2][0] != null)
                     {
-                        weaponSlotSetArray[2][1] = weapon;
-                        weapon.weaponBelongingToWhichOffHandSet = 3;
-                        playerControl.PopulateOffHandWeaponsToBook(weapon);
-                        offHandSlotFilled = true;
-                        return;
+                        if (weaponSlotSetArray[2][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                        {
+                            weaponSlotSetArray[2][1] = weapon;
+                            if (currentWeaponSlotSetIndex == 3)
+                            {
+                                ActivateWeapon(weapon, !weapon.onMaindHand, 3);
+                            }
+                            weapon.weaponBelongingToWhichOffHandSet = 3;
+                            playerControl.PopulateOffHandWeaponsToBook(weapon);
+                            offHandSlotFilled = true;
+                            return;
+                        }
                     }
                 }
                 else
@@ -355,7 +367,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (!mainHandSlotFilledAtStart)
+        if (!mainHandSlotFilled)
         {
             if (weaponDetails.weaponClass != WeaponClass.Shield)
             {
@@ -370,9 +382,9 @@ public class Player : MonoBehaviour
                 {
                     weaponSlotSetArray[0][0] = weapon;
                     weapon.weaponBelongingToWhichMainHandSet = 1;
-                    if (onStart)
+                    if (currentWeaponSlotSetIndex == 1)
                     {
-                        ActivateWeapon(updateHappenedAfterNewItemCollected, weapon, false, 1);
+                        ActivateWeapon(weapon, !weapon.onMaindHand, 1);
                     }
                     if (!onStart)
                     {
@@ -383,6 +395,10 @@ public class Player : MonoBehaviour
                 {
                     weaponSlotSetArray[1][0] = weapon;
                     weapon.weaponBelongingToWhichMainHandSet = 2;
+                    if (currentWeaponSlotSetIndex == 2)
+                    {
+                        ActivateWeapon(weapon, !weapon.onMaindHand, 2);
+                    }
                     if (!onStart)
                     {
                         playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
@@ -392,11 +408,15 @@ public class Player : MonoBehaviour
                 {
                     weaponSlotSetArray[2][0] = weapon;
                     weapon.weaponBelongingToWhichMainHandSet = 3;
+                    if (currentWeaponSlotSetIndex == 3)
+                    {
+                        ActivateWeapon(weapon, !weapon.onMaindHand, 3);
+                    }
                     if (!onStart)
                     {
                         playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
                     }
-                    mainHandSlotFilledAtStart = true; // All 3 main hand slots filled at start
+                    mainHandSlotFilled = true; // All 3 main hand slots filled at start
                 }
             }
         }
@@ -421,9 +441,9 @@ public class Player : MonoBehaviour
                 {
                     weaponSlotSetArray[0][1] = weapon;
                     weapon.weaponBelongingToWhichOffHandSet = 1;
-                    if (onStart)
+                    if (currentWeaponSlotSetIndex == 1)
                     {
-                        ActivateWeapon(updateHappenedAfterNewItemCollected, weapon, true, 1);
+                        ActivateWeapon(weapon, !weapon.onMaindHand, 1);
                     }
                     if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon addition are excluded
                     {
@@ -434,12 +454,20 @@ public class Player : MonoBehaviour
                 {
                     weaponSlotSetArray[1][1] = weapon;
                     weapon.weaponBelongingToWhichOffHandSet = 2;
+                    if (currentWeaponSlotSetIndex == 2)
+                    {
+                        ActivateWeapon(weapon, !weapon.onMaindHand, 2);
+                    }
                     playerControl.PopulateOffHandWeaponsToBook(weapon);
                 }
                 else if (weaponSlotSetArray[2][1] == null)
                 {
                     weaponSlotSetArray[2][1] = weapon;
                     weapon.weaponBelongingToWhichOffHandSet = 3;
+                    if (currentWeaponSlotSetIndex == 3)
+                    {
+                        ActivateWeapon(weapon, !weapon.onMaindHand, 3);
+                    }
                     playerControl.PopulateOffHandWeaponsToBook(weapon);
                     offHandSlotFilled = true;
                 }
@@ -524,29 +552,26 @@ public class Player : MonoBehaviour
     //    }
     //}
 
-    public void ActivateWeapon(bool updateHappenedAfterNewItemCollected, Weapon weapon, bool isOffHand, int setIndex)
+    public void ActivateWeapon(Weapon weapon, bool isOffHand, int setIndex)
     {
-        if (!updateHappenedAfterNewItemCollected)
+        if (!isOffHand)
         {
-            if (!isOffHand)
-            {
-                // Set the added weapon as active - main hand
-                setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, setIndex);
+            // Set the added weapon as active - main hand
+            setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, setIndex);
 
-                if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
-                {
-                    setActiveWeaponEvent.CallOneHandWeaponEquipEvent();
-                }
-                else if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
-                {
-                    setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
-                }
-            }
-            else
+            if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
             {
-                // Set the added weapon as active - main hand
-                setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(weapon);
+                setActiveWeaponEvent.CallOneHandWeaponEquipEvent();
             }
+            else if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+            {
+                setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
+            }
+        }
+        else
+        {
+            // Set the added weapon as active - main hand
+            setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(weapon);
         }
     }
 
@@ -567,23 +592,60 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns true if the weapon is held by the player left hand- otherwise returns false
-    /// </summary>
-    public bool IsWeaponHeldByPlayerLeftHand(WeaponDetailsSO weaponDetails)
-    {
-        foreach (Weapon weapon in weaponOffHandList)
-        {
-            if (weapon.weaponDetails == weaponDetails) return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
     /// Create a chest item for to-be-dropped weapon
     /// </summary>
     public ChestItem CreateChestItemForWeapon(Weapon weapon)
     {
+        if (weapon.onMaindHand)
+        {
+            if (IsMainHandDropNotPossible())
+            {
+                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.LessThanOneMainHandWeapon);
+                return null;
+            }
+            else
+            {
+                switch (weapon.weaponBelongingToWhichMainHandSet)
+                {
+                    case 1:
+                        if (weaponSlotSetArray[0][1] == null) // Drop main hand if only off-hand slot is empty
+                        {
+                            weaponSlotSetArray[0][0] = null;
+                        }
+                        else
+                        {
+                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
+                            return null;
+                        }
+                        break;
+                    case 2:
+                        if (weaponSlotSetArray[1][1] == null)
+                        {
+                            weaponSlotSetArray[1][0] = null;
+                        }
+                        else
+                        {
+                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
+                            return null;
+                        }
+                        break;
+                    case 3:
+                        if (weaponSlotSetArray[2][1] == null)
+                        {
+                            weaponSlotSetArray[2][0] = null;
+                        }
+                        else
+                        {
+                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
+                            return null;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
         ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
 
@@ -603,5 +665,24 @@ public class Player : MonoBehaviour
         chestItem.animator.enabled = false;
 
         return chestItem;
+    }
+
+    private bool IsMainHandDropNotPossible()
+    {
+        int gauge = 0;
+
+        for (int i = 0; i < 3; i++)
+        {
+            if (weaponSlotSetArray[i][0] != null)
+            {
+                gauge++;
+            }
+            else
+            {
+                continue;
+            }
+        }
+
+        return gauge <= 1;
     }
 }

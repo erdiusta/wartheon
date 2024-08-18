@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Player))]
 [DisallowMultipleComponent]
@@ -22,8 +22,6 @@ public class PlayerControl : MonoBehaviour
     Coroutine teleportParticleRoutine;
     Coroutine dropCoroutine;
     Coroutine healthPotionDrinkCoroutine;
-    Coroutine mainHandMeleeWeaponClickedCoroutine;
-    Coroutine offHandMeleeWeaponClickedCoroutine;
     bool particlePlayed;
     float unstealthImmunityTime = 2f;
     bool startStealth = true;
@@ -205,6 +203,9 @@ public class PlayerControl : MonoBehaviour
         // If glossary book is open, disable attack
         if (GameManager.Instance.glossaryBookOpen) return;
 
+        // If pop-up window is open, disable attack
+        if (GameManager.Instance.popUpWindowOpen) return;
+
         // Fire when left mouse button is clicked - melee
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
         {
@@ -276,7 +277,6 @@ public class PlayerControl : MonoBehaviour
             {
                 return;
             }
-
         }
 
         if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
@@ -617,7 +617,7 @@ public class PlayerControl : MonoBehaviour
 
             if (player.weaponSlotSetArray[checkedIndexNum - 1][0] == null)
             {
-                Debug.Log("CAN'T SWITCH DON'T HAVE WEAPON");
+
             }
             else
             {
@@ -636,7 +636,7 @@ public class PlayerControl : MonoBehaviour
 
             if (player.weaponSlotSetArray[checkedIndexNum - 1][0] == null)
             {
-                Debug.Log("CAN'T SWITCH DON'T HAVE WEAPON");
+
             }
             else
             {
@@ -649,6 +649,7 @@ public class PlayerControl : MonoBehaviour
     {
         if (mouseWheel)
         {
+            // Increment the current weapon slot set index
             player.currentWeaponSlotSetIndex++;
 
             if (player.currentWeaponSlotSetIndex > 3)
@@ -662,11 +663,9 @@ public class PlayerControl : MonoBehaviour
         {
             if (player.currentWeaponSlotSetIndex == setNumber) return;
 
-            int checkedIndexNum = setNumber;
-
-            if (player.weaponSlotSetArray[checkedIndexNum - 1][0] == null)
+            if (player.weaponSlotSetArray[setNumber - 1][0] == null)
             {
-                Debug.Log("CAN'T SWITCH DON'T HAVE WEAPON");
+                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontHaveWeaponOnSelectedSet);
             }
             else
             {
@@ -674,10 +673,13 @@ public class PlayerControl : MonoBehaviour
                 SetWeaponSetByIndex(onlySwitch);
             }
         }
+
+        HighlightWeaponSetButton();
     }
 
     public void PreviousWeaponSet(bool onlySwitch)
     {
+        // Decrease the current weapon slot set index
         player.currentWeaponSlotSetIndex--;
 
         if (player.currentWeaponSlotSetIndex < 1)
@@ -686,13 +688,17 @@ public class PlayerControl : MonoBehaviour
         }
 
         SetWeaponSetByIndex(onlySwitch);
+
+        HighlightWeaponSetButton();
     }
 
     private void SetWeaponSetByIndex(bool onlySwitch)
     {
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
         {
-            player.setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], player.currentWeaponSlotSetIndex);
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], 
+                player.currentWeaponSlotSetIndex);
+
             PopulateMainHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], onlySwitch);
 
             if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
@@ -715,6 +721,31 @@ public class PlayerControl : MonoBehaviour
             player.setActiveWeaponEvent.CallSetInactiveAtOffHandEvent();
             RemoveOffHandWeaponsFromBook();
         }
+    }
+
+    /// <summary>
+    /// Highlight weapon set button to be seen clearly
+    /// </summary>
+    private void HighlightWeaponSetButton()
+    {
+        // Get the button container
+        Transform buttonContainer = GameManager.Instance.bookView.transform.GetChild(1).GetChild(3).GetChild(0);
+
+        // Clamp the index within the valid range (assuming 3 weapon slots)
+        player.currentWeaponSlotSetIndex = Mathf.Clamp(player.currentWeaponSlotSetIndex, 1, 3);
+
+        // Loop through all buttons to reset them to the normal state
+        for (int i = 0; i < buttonContainer.childCount; i++)
+        {
+            Button button = buttonContainer.GetChild(i).GetComponent<Button>();
+            ColorBlock cb = button.colors;
+            button.image.color = cb.normalColor;  // Reset to normal color
+        }
+
+        // Highlight the current button
+        Button highlightedButton = buttonContainer.GetChild(player.currentWeaponSlotSetIndex - 1).GetComponent<Button>();
+        ColorBlock highlightedCb = highlightedButton.colors;
+        highlightedButton.image.color = highlightedCb.highlightedColor;
     }
 
     /// <summary>
@@ -1115,57 +1146,41 @@ public class PlayerControl : MonoBehaviour
         {
             if (weapon.onMaindHand)
             {
-                int gauge = 0;
+                chestItem.droppedByPlayer = true;
 
-                for (int i = 0; i < 3; i++)
-                {
-                    if (player.weaponSlotSetArray[i][0] != null)
-                    {
-                        gauge++;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
+                // Break free from the player object
+                chestItem.spriteRenderer.enabled = true;
+                chestItem.animator.enabled = true;
+                chestItem.textTMP.enabled = true;
+                chestItem.gameObject.transform.SetParent(null);
+                chestItem.boxCollider2D.enabled = true;
+                chestItem.isPickedUp = false;
 
-                if (gauge <= 1)
-                {
-                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.LessThanOneMainHandWeapon);
-                }
-                else
-                {
-                    switch (weapon.weaponBelongingToWhichMainHandSet)
-                    {
-                        case 1:
-                            player.weaponSlotSetArray[0][0] = null;
-                            break;
-                        case 2:
-                            player.weaponSlotSetArray[1][0] = null;
-                            break;
-                        case 3:
-                            player.weaponSlotSetArray[2][0] = null;
-                            break;
-                        default:
-                            break;
-                    }
+                // De-active dropped main hand weapon
+                RemoveMainHandWeaponFromBook();
+                player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+                player.mainHandSlotFilled = false;
 
-                    chestItem.droppedByPlayer = true;
-
-                    // Break free from the player object
-                    chestItem.spriteRenderer.enabled = true;
-                    chestItem.animator.enabled = true;
-                    chestItem.textTMP.enabled = true;
-                    chestItem.gameObject.transform.SetParent(null);
-                    chestItem.boxCollider2D.enabled = true;
-                    chestItem.isPickedUp = false;
-
-                    RemoveMainHandWeaponFromBook();
-                    player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
-                }
+                // Switch to next weapon set having main hand weapon
+                player.playerControl.NextWeaponSet(true, true);
             }
             else
             {
+                switch (weapon.weaponBelongingToWhichOffHandSet)
+                {
+                    case 1:
+                        player.weaponSlotSetArray[0][1] = null;
+                        break;
+                    case 2:
+                        player.weaponSlotSetArray[1][1] = null;
+                        break;
+                    case 3:
+                        player.weaponSlotSetArray[2][1] = null;
+                        break;
+                    default:
+                        break;
+                }
+
                 chestItem.droppedByPlayer = true;
 
                 // Break free from the player object
@@ -1178,6 +1193,7 @@ public class PlayerControl : MonoBehaviour
 
                 RemoveOffHandWeaponsFromBook();
                 player.setActiveWeaponEvent.CallSetInactiveAtOffHandEvent();
+                player.offHandSlotFilled = false;
             }
         }
     }

@@ -156,7 +156,7 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
       ratio: 1
   ammoPercent: 40
-  dropSpawnChanceMin: 15
-  dropSpawnChanceMax: 25
+  dropSpawnChanceMin: 100
+  dropSpawnChanceMax: 100
   numberOfItemsToSpawnMin: 1
   numberOfItemsToSpawnMax: 1

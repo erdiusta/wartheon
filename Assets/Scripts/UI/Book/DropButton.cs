@@ -21,8 +21,13 @@ public class DropButton : MonoBehaviour, IDropHandler
                 Weapon weapon = draggableItem.weapon;
 
                 // Handle the logic for dropping the item
-                player.playerControl.DropProcess(player.CreateChestItemForWeapon(weapon), true, weapon);
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
+                ChestItem chestItem = player.CreateChestItemForWeapon(weapon);
+
+                if (chestItem != null)
+                {
+                    player.playerControl.DropProcess(player.CreateChestItemForWeapon(weapon), true, weapon);
+                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
+                }
             }
         }
     }

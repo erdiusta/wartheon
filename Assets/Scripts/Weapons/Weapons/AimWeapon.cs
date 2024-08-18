@@ -60,106 +60,123 @@ public class AimWeapon : MonoBehaviour
         {
             if (player.activeWeapon.isSwitching) return;
 
-            // Bow aim
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow && player.activeWeapon.
-                GetCurrentMainHandWeapon().weaponDetails.weaponName != "Crossbow")
+            // No weapon
+            if (player.activeWeapon.GetCurrentMainHandWeapon() == null)
             {
-                // Set angle of the weapon transform
-                if (aimAngle > 0f && aimAngle < 22f) // RIGHT
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(0.1f, 0f, 0f);
-                }
-                else if (aimAngle >= 22f && aimAngle <= 45f) // UPRIGHT
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.05f, 0.15f, 0f);
-                }
-                else if (aimAngle >= 45f && aimAngle <= 67f) // UPRIGHT
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.05f, 0.15f, 0f);
-                }
-                else if (aimAngle > 67f && aimAngle <= 90f) // UP
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(0.05f, 0.3f, 0f);
-                }
-                else if (aimAngle > 90f && aimAngle <= 112f) // UP
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(0.05f, 0.3f, 0f);
-                }
-                else if (aimAngle > 112f && aimAngle <= 135f) // UPLEFT
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.05f, 0.15f, 0f);
-                }
-                else if (aimAngle > 135f && aimAngle <= 158f) // UPLEFT
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.05f, 0.15f, 0f);
-                }
-                else if (aimAngle <= 180f && aimAngle > 158f) // LEFT
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.1f, 0.05f, 0f);
-                }
-                else if (aimAngle > -180f && aimAngle <= -158f) // LEFT
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.1f, -0.25f, 0f);
-                }
-                else if (aimAngle > -158f && aimAngle <= -135f) // LEFT
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(0f, -0.5f, 0f);
-                }
-                else if (aimAngle > -135f && aimAngle <= -112f) // DOWN
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.8f, -0.6f, 0f);
-                }
-                else if (aimAngle > -112f && aimAngle <= -90f) // DOWN
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.45f, -0.7f, 0f);
-                }
-                else if (aimAngle > -90f && aimAngle <= -67f) // DOWN
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.35f, -0.7f, 0f);
-                }
-                else if (aimAngle > -67f && aimAngle <= -45f) // DOWN
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.2f, -0.6f, 0f);
-                }
-                else if (aimAngle > -45f && aimAngle <= -22f) // RIGHT
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.15f, -0.5f, 0f);
-                }
-                else if (aimAngle > -22f && aimAngle <= 0f) // RIGHT
-                {
-                    rightHandWeaponRotationPointTransform.localPosition = new Vector3(0.1f, -0.3f, 0f);
-                }
-            }
 
-            // Staff case
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
-            {
-                switch (aimDirection)
-                {
-                    case AimDirection.Left:
-                    case AimDirection.UpLeft:
-
-                        rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 180f);
-                        break;
-
-                    case AimDirection.Up:
-                    case AimDirection.UpRight:
-                    case AimDirection.Right:
-                    case AimDirection.Down:
-
-                        rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 0f);
-                        break;
-                }
             }
             else
             {
-                rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
-
-                if (leftHandWeaponAnchorPointTransform.gameObject.activeSelf)
+                // Bow aim
+                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow && player.activeWeapon.
+                    GetCurrentMainHandWeapon().weaponDetails.weaponName != "Crossbow")
                 {
-                    leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
+                    // Set angle of the weapon transform
+                    if (aimAngle > 0f && aimAngle < 22f) // RIGHT
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(0.1f, 0f, 0f);
+                    }
+                    else if (aimAngle >= 22f && aimAngle <= 45f) // UPRIGHT
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.05f, 0.15f, 0f);
+                    }
+                    else if (aimAngle >= 45f && aimAngle <= 67f) // UPRIGHT
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.05f, 0.15f, 0f);
+                    }
+                    else if (aimAngle > 67f && aimAngle <= 90f) // UP
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(0.05f, 0.3f, 0f);
+                    }
+                    else if (aimAngle > 90f && aimAngle <= 112f) // UP
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(0.05f, 0.3f, 0f);
+                    }
+                    else if (aimAngle > 112f && aimAngle <= 135f) // UPLEFT
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.05f, 0.15f, 0f);
+                    }
+                    else if (aimAngle > 135f && aimAngle <= 158f) // UPLEFT
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.05f, 0.15f, 0f);
+                    }
+                    else if (aimAngle <= 180f && aimAngle > 158f) // LEFT
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.1f, 0.05f, 0f);
+                    }
+                    else if (aimAngle > -180f && aimAngle <= -158f) // LEFT
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.1f, -0.25f, 0f);
+                    }
+                    else if (aimAngle > -158f && aimAngle <= -135f) // LEFT
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(0f, -0.5f, 0f);
+                    }
+                    else if (aimAngle > -135f && aimAngle <= -112f) // DOWN
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.8f, -0.6f, 0f);
+                    }
+                    else if (aimAngle > -112f && aimAngle <= -90f) // DOWN
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.45f, -0.7f, 0f);
+                    }
+                    else if (aimAngle > -90f && aimAngle <= -67f) // DOWN
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.35f, -0.7f, 0f);
+                    }
+                    else if (aimAngle > -67f && aimAngle <= -45f) // DOWN
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.2f, -0.6f, 0f);
+                    }
+                    else if (aimAngle > -45f && aimAngle <= -22f) // RIGHT
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(-0.15f, -0.5f, 0f);
+                    }
+                    else if (aimAngle > -22f && aimAngle <= 0f) // RIGHT
+                    {
+                        rightHandWeaponRotationPointTransform.localPosition = new Vector3(0.1f, -0.3f, 0f);
+                    }
                 }
             }
+
+            // No weapon
+            if (player.activeWeapon.GetCurrentMainHandWeapon() == null)
+            {
+
+            }
+            else
+            {
+                // Staff case
+                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                {
+                    switch (aimDirection)
+                    {
+                        case AimDirection.Left:
+                        case AimDirection.UpLeft:
+
+                            rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 180f);
+                            break;
+
+                        case AimDirection.Up:
+                        case AimDirection.UpRight:
+                        case AimDirection.Right:
+                        case AimDirection.Down:
+
+                            rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 0f);
+                            break;
+                    }
+                }
+                else
+                {
+                    rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
+
+                    if (leftHandWeaponAnchorPointTransform.gameObject.activeSelf)
+                    {
+                        leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
+                    }
+                }
+            }
+
 
             // In case of shield
             Animator shieldAnimator = player.transform.GetChild(1).GetComponent<Animator>();

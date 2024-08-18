@@ -59,14 +59,17 @@ public class MainHandWeaponStatusUI : MonoBehaviour
 
     private void Update()
     {
-        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0 && player.activeWeapon.GetCurrentMainHandWeapon().onPrecharge)
+        if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
         {
-            ResetWeaponCooldownBar(player.activeWeapon.GetCurrentMainHandWeapon());
-            return;
-        }
-        if (player.activeWeapon.GetCurrentMainHandWeapon().onCooldown)
-        {
-            cooldownTimer -= Time.deltaTime;
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0 && player.activeWeapon.GetCurrentMainHandWeapon().onPrecharge)
+            {
+                ResetWeaponCooldownBar(player.activeWeapon.GetCurrentMainHandWeapon());
+                return;
+            }
+            if (player.activeWeapon.GetCurrentMainHandWeapon().onCooldown)
+            {
+                cooldownTimer -= Time.deltaTime;
+            }
         }
     }
 

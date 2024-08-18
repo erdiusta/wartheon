@@ -172,8 +172,10 @@ public class BookUI : MonoBehaviour
     private void OnEnable()
     {
         StaticEventHandler.OnWeaponAddedToMainHandBook += StaticEventHandler_OnWeaponAddedToMainHandBook;
+        StaticEventHandler.OnWeaponSwappedAtMainHand += StaticEventHandler_OnWeaponSwappedAtMainHand;
         StaticEventHandler.OnWeaponRemovedFromMainHandBook += StaticEventHandler_OnWeaponRemovedFromMainHandBook;
         StaticEventHandler.OnWeaponAddedToOffHandBook += StaticEventHandler_OnWeaponAddedToOffHandBook;
+        StaticEventHandler.OnWeaponSwappedAtOffHand += StaticEventHandler_OnWeaponSwappedAtOffHand;
         StaticEventHandler.OnWeaponRemovedFromOffHandBook += StaticEventHandler_OnWeaponRemovedFromOffHandBook;
         StaticEventHandler.OnBookHealthChanged += StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnItemAddedToActiveItemSlot += StaticEventHandler_OnItemAddedToActiveItemSlot;
@@ -185,8 +187,10 @@ public class BookUI : MonoBehaviour
     private void OnDisable()
     {
         StaticEventHandler.OnWeaponAddedToMainHandBook -= StaticEventHandler_OnWeaponAddedToMainHandBook;
+        StaticEventHandler.OnWeaponSwappedAtMainHand -= StaticEventHandler_OnWeaponSwappedAtMainHand;
         StaticEventHandler.OnWeaponRemovedFromMainHandBook -= StaticEventHandler_OnWeaponRemovedFromMainHandBook;
         StaticEventHandler.OnWeaponAddedToOffHandBook -= StaticEventHandler_OnWeaponAddedToOffHandBook;
+        StaticEventHandler.OnWeaponSwappedAtOffHand -= StaticEventHandler_OnWeaponSwappedAtOffHand;
         StaticEventHandler.OnWeaponRemovedFromOffHandBook -= StaticEventHandler_OnWeaponRemovedFromOffHandBook;
         StaticEventHandler.OnBookHealthChanged -= StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnItemAddedToActiveItemSlot -= StaticEventHandler_OnItemAddedToActiveItemSlot;
@@ -253,6 +257,16 @@ public class BookUI : MonoBehaviour
         newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
     }
 
+    private void StaticEventHandler_OnWeaponSwappedAtMainHand(WeaponAddedToBookArgs weaponAddedToBookArgs)
+    {
+        Transform mainHandWeaponBackground = mainHandWeaponSlot.GetChild(0);
+        Transform mainHandWeaponEquipped = mainHandWeaponSlot.GetChild(1);
+        mainHandWeaponBackground.gameObject.SetActive(false);
+        mainHandWeaponEquipped.gameObject.SetActive(true);
+        GameObject newMainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponEquipped);
+        newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
+    }
+
     private void StaticEventHandler_OnWeaponRemovedFromMainHandBook()
     {
         Transform mainHandWeaponBackground = mainHandWeaponSlot.GetChild(0);
@@ -276,6 +290,16 @@ public class BookUI : MonoBehaviour
         offHandWeaponEquipped.gameObject.SetActive(true);
         GameObject offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
         offHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
+    }
+
+    private void StaticEventHandler_OnWeaponSwappedAtOffHand(WeaponAddedToBookArgs weaponAddedToBookArgs)
+    {
+        Transform offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
+        Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
+        offHandWeaponBackground.gameObject.SetActive(false);
+        offHandWeaponEquipped.gameObject.SetActive(true);
+        GameObject newMainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
+        newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
     }
 
     private void StaticEventHandler_OnWeaponRemovedFromOffHandBook()

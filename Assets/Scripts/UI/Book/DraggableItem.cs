@@ -8,12 +8,17 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public Transform bookStatsPageContainer;
     [HideInInspector] public bool swapCanceled;
     [HideInInspector] public Slot belongingSlot;
+    [HideInInspector] public int originalIndexNum ;
+    [HideInInspector] public bool transactionOnTheSameSet;
 
     CanvasGroup canvasGroup;
     RectTransform rectTransform;
     Canvas canvas;
     Vector2 originalPosition;
     Player player;
+    Transform dropButton;
+    Transform buttonSetContainer;
+    bool originalSetSwitched;
 
     private void Awake()
     {
@@ -27,6 +32,10 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         player = GameManager.Instance.GetPlayer();
         bookStatsPageContainer = GetTopLevelParent(transform, 4);
         belongingSlot = GetTopLevelParent(transform, 2).GetComponent<Slot>();
+        dropButton = bookStatsPageContainer.GetChild(7);
+        buttonSetContainer = bookStatsPageContainer.GetChild(3).GetChild(0);
+        originalIndexNum = player.currentWeaponSlotSetIndex;
+        transactionOnTheSameSet = true;
 
         if (IsWeaponOnMainHand())
         {
@@ -35,7 +44,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         else
         {
             weapon = GameManager.Instance.GetPlayer().activeWeapon.GetCurrentOffHandWeapon();
-        }
+        }     
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -64,93 +73,30 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 // Ensure the set switch is only triggered if it's different from the current set
                 if (player.currentWeaponSlotSetIndex != setIndex)
                 {
-                    // Make previous weapon slot null
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = null;
+                    if (!originalSetSwitched)
+                    {
+                        transactionOnTheSameSet = false;
 
-                    Transform mainWeaponBackground = null;
-                    Transform mainWeaponEquipped = null;
-                    Transform offHandWeaponBackground = null;
-                    Transform offHandWeaponEquipped = null;
-                    BackGroundAndEquippedSlotTransactions(setIndex, ref mainWeaponBackground, ref mainWeaponEquipped, ref offHandWeaponBackground, ref offHandWeaponEquipped);
+                        // Make drop button inactive while dragging a weapon to another set
+                        dropButton.gameObject.SetActive(false);
 
-                    // Switch to the desired weapon set
-                    GameManager.Instance.GoToWeaponSetWithIndex(setIndex);
+                        BackGroundAndEquippedSlotTransactions();
+
+                        // Switch to the desired weapon set
+                        GameManager.Instance.GoToWeaponSetWithIndex(setIndex);
+
+                        // Change original set switch flag
+                        originalSetSwitched = true;
+                    }
+                }
+                else
+                {
+                    transactionOnTheSameSet = true;
+
+                    //Destroy(belongingSlot.transform.GetChild(0).gameObject);
                 }
             }
         }
-    }
-
-    private void BackGroundAndEquippedSlotTransactions(int setIndex, ref Transform mainWeaponBackground, ref Transform mainWeaponEquipped, 
-        ref Transform offHandWeaponBackground, ref Transform offHandWeaponEquipped)
-    {
-        if (IsWeaponOnMainHand())
-        {
-            switch (setIndex)
-            {
-                case 1:
-                    if (player.weaponSlotSetArray[0][0] == null)
-                    {
-                        EnableEquippedParentAndDisableBackgroundForMainHand(out mainWeaponBackground, out mainWeaponEquipped);
-                    }
-                    break;
-                case 2:
-                    if (player.weaponSlotSetArray[1][0] == null)
-                    {
-                        EnableEquippedParentAndDisableBackgroundForMainHand(out mainWeaponBackground, out mainWeaponEquipped);
-                    }
-                    break;
-                case 3:
-                    if (player.weaponSlotSetArray[2][0] == null)
-                    {
-                        EnableEquippedParentAndDisableBackgroundForMainHand(out mainWeaponBackground, out mainWeaponEquipped);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        else
-        {
-            switch (setIndex)
-            {
-                case 1:
-                    if (player.weaponSlotSetArray[0][1] == null)
-                    {
-                        EnableEquippedParentAndDisableBackgroundForOffHand(out offHandWeaponBackground, out offHandWeaponEquipped);
-                    }
-                    break;
-                case 2:
-                    if (player.weaponSlotSetArray[1][1] == null)
-                    {
-                        EnableEquippedParentAndDisableBackgroundForOffHand(out offHandWeaponBackground, out offHandWeaponEquipped);
-                    }
-                    break;
-                case 3:
-                    if (player.weaponSlotSetArray[2][1] == null)
-                    {
-                        EnableEquippedParentAndDisableBackgroundForOffHand(out offHandWeaponBackground, out offHandWeaponEquipped);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    private void EnableEquippedParentAndDisableBackgroundForMainHand(out Transform mainWeaponBackground, out Transform mainWeaponEquipped)
-    {
-        mainWeaponBackground = bookStatsPageContainer.GetChild(3).GetChild(1).GetChild(0);
-        mainWeaponEquipped = bookStatsPageContainer.GetChild(3).GetChild(1).GetChild(1);
-        mainWeaponBackground.gameObject.SetActive(false);
-        mainWeaponEquipped.gameObject.SetActive(true);
-    }
-
-    private void EnableEquippedParentAndDisableBackgroundForOffHand(out Transform offHandWeaponBackground, out Transform offHandWeaponEquipped)
-    {
-        offHandWeaponBackground = bookStatsPageContainer.GetChild(4).GetChild(1).GetChild(0);
-        offHandWeaponEquipped = bookStatsPageContainer.GetChild(4).GetChild(1).GetChild(1);
-        offHandWeaponBackground.gameObject.SetActive(false);
-        offHandWeaponEquipped.gameObject.SetActive(true);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -159,13 +105,30 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         canvasGroup.blocksRaycasts = true;  // Re-enable blocking raycasts
 
         ResetPosition();
+        transactionOnTheSameSet = true;
 
         // Check if the drag was canceled due to an invalid swap
         if (swapCanceled)
         {
-            // Reset the position of the dragged item to its original slot
-            player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
-            ResetPosition();
+            // Return to original parent if not dropped on a valid slot
+            if (IsWeaponOnMainHand())
+            {
+                player.weaponSlotSetArray[weapon.weaponBelongingToWhichMainHandSet - 1][0] = weapon;
+            }
+            else
+            {
+                player.weaponSlotSetArray[weapon.weaponBelongingToWhichOffHandSet - 1][1] = weapon;
+            }
+
+            if (!transactionOnTheSameSet)
+            {
+                if (belongingSlot.transform.GetChild(1) != null)
+                {
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
+                    dropButton.gameObject.SetActive(true);
+                }
+            }
+
             return;
         }
 
@@ -174,27 +137,90 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             if (eventData.pointerEnter.CompareTag(Settings.weaponSetButton))
             {
                 // Return to original parent if not dropped on a valid slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
+                if (IsWeaponOnMainHand())
+                {
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = weapon;
+                }
+                else
+                {
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
+                }
                 ResetPosition();
             }
-            else if (!eventData.pointerEnter.CompareTag(Settings.mainHandSlot) || !eventData.pointerEnter.CompareTag(Settings.offHandSlot))
+            else if (eventData.pointerEnter.CompareTag(Settings.dropButton))
             {
-                // Return to original parent if not dropped on a valid slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
+                // For drop issuse, don't assign weapon to null reference
+            }
+            else if (eventData.pointerEnter.CompareTag(Settings.bookCover))
+            {
+                if (IsWeaponOnMainHand())
+                {
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = weapon;
+                }
+                else
+                {
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
+                }
+            }
+            else if (eventData.pointerEnter.transform.parent.CompareTag(Settings.mainHandSlot) || eventData.pointerEnter.transform.parent.CompareTag(Settings.offHandSlot) ||
+                eventData.pointerEnter.transform.CompareTag(Settings.mainHandSlot) || eventData.pointerEnter.transform.CompareTag(Settings.offHandSlot))
+            {
+                // If hits one of the slots, don't do anything
             }
             else
             {
                 // Return to original parent if not dropped on a valid slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
+                if (IsWeaponOnMainHand())
+                {
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = weapon;
+                }
+                else
+                {
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
+                }
                 ResetPosition();
             }
         }
         else
         {
             // Return to original parent if not dropped on a valid slot
-            player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
+            if (IsWeaponOnMainHand())
+            {
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = weapon;
+            }
+            else
+            {
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
+            }
             ResetPosition();
         }
+
+        dropButton.gameObject.SetActive(true);
+
+        // Change original set switch flag
+        originalSetSwitched = true;
+    }
+
+    private void BackGroundAndEquippedSlotTransactions()
+    {
+        EnableEquippedParentAndDisableBackgroundForMainHand();
+        EnableEquippedParentAndDisableBackgroundForOffHand();
+    }
+
+    public void EnableEquippedParentAndDisableBackgroundForMainHand()
+    {
+        Transform mainWeaponBackground = bookStatsPageContainer.GetChild(3).GetChild(1).GetChild(0);
+        Transform mainWeaponEquipped = bookStatsPageContainer.GetChild(3).GetChild(1).GetChild(1);
+        mainWeaponBackground.gameObject.SetActive(false);
+        mainWeaponEquipped.gameObject.SetActive(true);
+    }
+
+    public void EnableEquippedParentAndDisableBackgroundForOffHand()
+    {
+        Transform offHandWeaponBackground = bookStatsPageContainer.GetChild(4).GetChild(1).GetChild(0);
+        Transform offHandWeaponEquipped = bookStatsPageContainer.GetChild(4).GetChild(1).GetChild(1);
+        offHandWeaponBackground.gameObject.SetActive(false);
+        offHandWeaponEquipped.gameObject.SetActive(true);
     }
 
     public bool IsWeaponOnMainHand()

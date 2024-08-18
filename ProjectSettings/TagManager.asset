@@ -24,6 +24,7 @@ TagManager:
   - offHandSlot
   - weaponSetButton
   - bookCover
+  - dropButton
   layers:
   - Default
   - TransparentFX

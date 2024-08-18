@@ -84,8 +84,9 @@ public static class Settings
     public const string chestItemTag = "Chest Item";
     public const string mainHandSlot = "mainHandSlot";
     public const string offHandSlot = "offHandSlot";
-    public const string weaponSetButton = "weaponSetButton";
     public const string bookCover = "bookCover";
+    public const string weaponSetButton = "weaponSetButton";
+    public const string dropButton = "dropButton";
     #endregion
 
     #region FIRING CONTROL

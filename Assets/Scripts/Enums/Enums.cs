@@ -243,8 +243,20 @@ public enum ItemSlotName
     Accessory
 }
 
+public enum ItemSwapPos
+{
+    None,
+    DragMainSlotMain,
+    DragMainSlotOff,
+    DragOffSlotMain,
+    DragOffSlotOff
+}
+
 public enum PopUpReason
 {
     None,
-    LessThanOneMainHandWeapon
+    LessThanOneMainHandWeapon,
+    DontHaveWeaponOnSelectedSet,
+    OffHandFull,
+    ShieldCantBePutOnMainHand
 }

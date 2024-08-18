@@ -104,15 +104,7 @@ public class Chest : MonoBehaviour, IUsable
         // chest open sound effect
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.chestOpen);
 
-        // Check if player already has the weapon - if so set weapon to null
-        if (weaponDetails != null)
-        {
-            if (GameManager.Instance.GetPlayer().weaponMainHandList.Contains(weaponDetails.GetWeapon()))
-                weaponDetails = null;
-        }
-
-        UpdateChestState();
-       
+        UpdateChestState();       
     }
 
     /// <summary>
