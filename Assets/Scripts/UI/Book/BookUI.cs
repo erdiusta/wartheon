@@ -201,13 +201,6 @@ public class BookUI : MonoBehaviour
 
     private void StaticEventHandler_OnWeaponAddedToMainHandBook(WeaponAddedToBookArgs weaponAddedToBookArgs)
     {
-        // ADD WEAPON TO MAIN HAND INVENTORY
-        if (!weaponAddedToBookArgs.onlySwitch && !weaponAddedToBookArgs.onStart)
-        {
-            //GameObject mainHandWeapon = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponContainer);
-            //mainHandWeapon.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
-        }
-
         // OFF-HAND WEAPON EQUIP AT START - SLOT
         if (weaponAddedToBookArgs.weapon.weaponDetails.wieldType == WieldType.TwoHanded)
         {
@@ -246,7 +239,7 @@ public class BookUI : MonoBehaviour
         GameObject mainHandWeaponAtSlot;
         if (mainHandWeaponEquipped.childCount > 0)
         {
-            mainHandWeaponAtSlot = mainHandWeaponEquipped.GetChild(0).gameObject;
+            mainHandWeaponAtSlot = mainHandWeaponEquipped.GetChild(mainHandWeaponEquipped.childCount - 1).gameObject;
             Destroy(mainHandWeaponAtSlot);
         }
 
@@ -276,7 +269,7 @@ public class BookUI : MonoBehaviour
 
         if (mainHandWeaponEquipped.childCount > 0)
         {
-            GameObject mainHandWeaponAtSlot = mainHandWeaponEquipped.GetChild(0).gameObject;
+            GameObject mainHandWeaponAtSlot = mainHandWeaponEquipped.GetChild(mainHandWeaponEquipped.childCount - 1).gameObject;
             Destroy(mainHandWeaponAtSlot);
         }
     }
@@ -306,13 +299,17 @@ public class BookUI : MonoBehaviour
     {
         Transform offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
         Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
-        offHandWeaponBackground.gameObject.SetActive(true);
-        offHandWeaponEquipped.gameObject.SetActive(false);
 
         if (offHandWeaponEquipped.childCount > 0)
         {
-            GameObject offHandWeaponAtSlot = offHandWeaponEquipped.GetChild(0).gameObject;
+            GameObject offHandWeaponAtSlot = offHandWeaponEquipped.GetChild(offHandWeaponEquipped.childCount - 1).gameObject;
             Destroy(offHandWeaponAtSlot);
+        }
+
+        if (offHandWeaponEquipped.childCount == 0)
+        {
+            offHandWeaponBackground.gameObject.SetActive(true);
+            offHandWeaponEquipped.gameObject.SetActive(false);
         }
     }
 

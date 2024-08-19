@@ -258,5 +258,6 @@ public enum PopUpReason
     LessThanOneMainHandWeapon,
     DontHaveWeaponOnSelectedSet,
     OffHandFull,
-    ShieldCantBePutOnMainHand
+    ShieldCantBePutOnMainHand,
+    OffHandCantBeAddedToTwoHanded
 }

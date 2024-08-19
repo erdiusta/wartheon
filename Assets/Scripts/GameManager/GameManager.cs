@@ -802,6 +802,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case PopUpReason.ShieldCantBePutOnMainHand:
                 warningText.text = "Shield can not be equipped on the main hand";
                 break;
+            case PopUpReason.OffHandCantBeAddedToTwoHanded:
+                warningText.text = "Off-hand weapon can't be added while main hand has a two-handed weapon";
+                break;
             default:
                 break;
         }

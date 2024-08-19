@@ -25,6 +25,8 @@ public class Slot : MonoBehaviour, IDropHandler
         {
             Transform currentChild = null;
 
+            draggableItem.contactSuccessful = true;
+
             if (equippedTransform != null)
             {
                 // Check if the slot is occupied
@@ -42,24 +44,12 @@ public class Slot : MonoBehaviour, IDropHandler
             }
             else
             {
+                draggableItem.justMoveNotSwap = true;
+
                 // If slot is not occupied, just relocate selected item
                 MoveItemToSlot(draggableItem);
             }
         }
-    }
-
-    private void CheckIndexNumDebug(DraggableItem draggableItem)
-    {
-        if (draggableItem.weapon.onMaindHand)
-        {
-            Debug.Log("Draggable item's set number is " + draggableItem.weapon.weaponBelongingToWhichMainHandSet);
-        }
-        else
-        {
-            Debug.Log("Draggable item's set number is " + draggableItem.weapon.weaponBelongingToWhichOffHandSet);
-        }
-
-        Debug.Log("Current set index number is " + player.currentWeaponSlotSetIndex);
     }
 
     private void SwapItems(DraggableItem draggableItem, Transform currentChild)
@@ -132,6 +122,7 @@ public class Slot : MonoBehaviour, IDropHandler
                 if (player.weaponSlotSetArray[currentSlotsDraggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
                 {
                     // Slot item is a shield, so swap is canceled
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
                     draggableItem.swapCanceled = true;
                     return;
                 }
@@ -139,6 +130,7 @@ public class Slot : MonoBehaviour, IDropHandler
                 else if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
                 {
                     // Draggable item is two-handed weapon, so swap is canceled
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandCantBeAddedToTwoHanded);
                     draggableItem.swapCanceled = true;
                     return;
                 }
@@ -159,6 +151,7 @@ public class Slot : MonoBehaviour, IDropHandler
                 if (draggableItem.weapon.weaponDetails.weaponClass == WeaponClass.Shield)
                 {
                     // Draggable item is a shield, so swap is canceled
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
                     draggableItem.swapCanceled = true;
                     return;
                 }
@@ -166,6 +159,7 @@ public class Slot : MonoBehaviour, IDropHandler
                 else if (player.weaponSlotSetArray[currentSlotsDraggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
                 {
                     // Slot item is two-handed weapon, so swap is canceled
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandCantBeAddedToTwoHanded);
                     draggableItem.swapCanceled = true;
                     return;
                 }
@@ -232,11 +226,10 @@ public class Slot : MonoBehaviour, IDropHandler
                 // Put draggable item to current slot
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
                 currentSlotsDraggableItem.weapon.weaponBelongingToWhichMainHandSet = draggableItem.weapon.weaponBelongingToWhichMainHandSet;
-                draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                Destroy(equippedTransform.GetChild(0).gameObject);
-                draggableItem.weapon.onMaindHand = true;
                 currentSlotsDraggableItem.weapon.onMaindHand = true;
-                player.ActivateWeapon(draggableItem.weapon, true, player.currentWeaponSlotSetIndex);
+                draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                draggableItem.weapon.onMaindHand = true;
+                player.playerControl.SetWeaponSetByIndex(true);
                 break;
             case ItemSwapPos.DragMainSlotOff:
                 // Put current slots child to draggable item slot
@@ -251,19 +244,15 @@ public class Slot : MonoBehaviour, IDropHandler
                 draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
                 draggableItem.weapon.onMaindHand = false;
 
-                player.ActivateWeapon(draggableItem.weapon, true, player.currentWeaponSlotSetIndex);
                 if (draggableItem.transactionOnTheSameSet)
                 {
-                    player.ActivateWeapon(currentSlotsDraggableItem.weapon, false, player.currentWeaponSlotSetIndex);
-                    StaticEventHandler.CallWeaponAddedToMainHandBook(draggableItem.weapon, false);
-                    Destroy(GameManager.Instance.GetOffHandEquippedSlot().GetChild(0).gameObject);
+                    player.playerControl.SetWeaponSetByIndex(true);
                 }
                 else
                 {
                     Destroy(equippedTransform.GetChild(0).gameObject);
+                    StaticEventHandler.CallWeaponAddedToOffHandBook(draggableItem.weapon);
                 }
-
-                StaticEventHandler.CallWeaponAddedToOffHandBook(draggableItem.weapon);
                 break;
             case ItemSwapPos.DragOffSlotMain:
                 // Put current slots child to draggable item slot
@@ -278,14 +267,9 @@ public class Slot : MonoBehaviour, IDropHandler
                 draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
                 draggableItem.weapon.onMaindHand = true;
 
-                player.ActivateWeapon(draggableItem.weapon, false, player.currentWeaponSlotSetIndex);
                 if (draggableItem.transactionOnTheSameSet)
                 {
-                    player.ActivateWeapon(currentSlotsDraggableItem.weapon, true, player.currentWeaponSlotSetIndex);
-                    StaticEventHandler.CallWeaponSwappedAtOffHand(currentSlotsDraggableItem.weapon);
-                    StaticEventHandler.CallWeaponSwappedAtMainHand(draggableItem.weapon);
-                    Destroy(GameManager.Instance.GetOffHandEquippedSlot().GetChild(0).gameObject);
-                    Destroy(equippedTransform.GetChild(1).gameObject);
+                    player.playerControl.SetWeaponSetByIndex(true);
                 }
                 else
                 {
@@ -302,10 +286,9 @@ public class Slot : MonoBehaviour, IDropHandler
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
                 currentSlotsDraggableItem.weapon.weaponBelongingToWhichOffHandSet = draggableItem.weapon.weaponBelongingToWhichOffHandSet;
                 draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                Destroy(equippedTransform.GetChild(0).gameObject);
                 draggableItem.weapon.onMaindHand = false;
                 currentSlotsDraggableItem.weapon.onMaindHand = false;
-                player.ActivateWeapon(draggableItem.weapon, true, player.currentWeaponSlotSetIndex);
+                player.playerControl.SetWeaponSetByIndex(true);
                 break;
             default:
                 break;

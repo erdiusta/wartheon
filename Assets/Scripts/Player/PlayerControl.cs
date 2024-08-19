@@ -692,7 +692,7 @@ public class PlayerControl : MonoBehaviour
         HighlightWeaponSetButton();
     }
 
-    private void SetWeaponSetByIndex(bool onlySwitch)
+    public void SetWeaponSetByIndex(bool onlySwitch)
     {
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
         {

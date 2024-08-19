@@ -10,6 +10,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public Slot belongingSlot;
     [HideInInspector] public int originalIndexNum ;
     [HideInInspector] public bool transactionOnTheSameSet;
+    [HideInInspector] public bool contactSuccessful;
+    [HideInInspector] public bool justMoveNotSwap;
 
     CanvasGroup canvasGroup;
     RectTransform rectTransform;
@@ -89,12 +91,6 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                         originalSetSwitched = true;
                     }
                 }
-                else
-                {
-                    transactionOnTheSameSet = true;
-
-                    //Destroy(belongingSlot.transform.GetChild(0).gameObject);
-                }
             }
         }
     }
@@ -105,6 +101,17 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         canvasGroup.blocksRaycasts = true;  // Re-enable blocking raycasts
 
         ResetPosition();
+
+        if (contactSuccessful)
+        {
+            if (justMoveNotSwap) return; // This is only valid for swaps
+
+            if(belongingSlot.transform.GetChild(1).childCount > 1)
+            {
+                Destroy(belongingSlot.transform.GetChild(1).GetChild(belongingSlot.transform.GetChild(1).childCount - 1).gameObject);
+            }
+        }
+
         transactionOnTheSameSet = true;
 
         // Check if the drag was canceled due to an invalid swap
@@ -134,6 +141,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         if (eventData.pointerEnter != null)
         {
+
             if (eventData.pointerEnter.CompareTag(Settings.weaponSetButton))
             {
                 // Return to original parent if not dropped on a valid slot
@@ -199,6 +207,9 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         // Change original set switch flag
         originalSetSwitched = true;
+
+        contactSuccessful = false;
+        justMoveNotSwap = false;
     }
 
     private void BackGroundAndEquippedSlotTransactions()

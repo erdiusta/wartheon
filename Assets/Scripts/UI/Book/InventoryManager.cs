@@ -1,23 +1,37 @@
+using UnityEngine;
+
 public class InventoryManager : SingletonMonobehaviour<InventoryManager> 
 {
-    public void MoveItemToWeaponSet(int setIndex, DraggableItem item)
+    public Transform mainHandEquippedSlot;
+    public Transform offHandEquippedSlot;
+
+    public void ClearMainHandEquippedSlot()
     {
-        // Get weapon info from draggable item
-        Weapon weapon = GetCurrentWeapon(item);
-
-        // Check if desired set slot is available
-
-        // Update the UI accordingly
-        UpdateWeaponSetUI(setIndex);
+        for (int i = 0; i < mainHandEquippedSlot.childCount; i++)
+        {
+            Destroy(mainHandEquippedSlot.GetChild(i).gameObject);
+        }
     }
 
-    private Weapon GetCurrentWeapon(DraggableItem item) => item.GetDraggedWeapon();
-
-    private int GetWeaponSetNumber(DraggableItem item) => item.GetSetNumber();
-
-
-    private void UpdateWeaponSetUI(int setIndex)
+    public void ClearOffHandEquippedSlot()
     {
-        // Update the UI to reflect the changes in the weapon sets
+        for (int i = 0; i < offHandEquippedSlot.childCount; i++)
+        {
+            Destroy(offHandEquippedSlot.GetChild(i).gameObject);
+        }
     }
+
+    public void ClearIntendedElementInMainHandEquippedSlot(int childNum)
+    {
+        Destroy(mainHandEquippedSlot.GetChild(childNum).gameObject);
+    }
+
+    public void ClearIntendedElementInOffHandEquippedSlot(int childNum)
+    {
+        Destroy(offHandEquippedSlot.GetChild(childNum).gameObject);
+    }
+
+    public int GetMainHandEquippedChildCounts() => mainHandEquippedSlot.childCount;
+
+    public int GetOffHandEquippedChildCounts() => offHandEquippedSlot.childCount;
 }
