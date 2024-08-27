@@ -29,6 +29,7 @@ public class ChestItem : MonoBehaviour
     PassiveItemDetailsSO passiveItemDetails;
     ActiveItemDetailsSO activeItemDetails;
     int ammoPercent;
+    bool isPurchasing;
 
     private void Awake()
     {
@@ -67,15 +68,21 @@ public class ChestItem : MonoBehaviour
                     {
                         if (InputManager.Instance.interaction.action.IsPressed())
                         {
-                            if (GetComponentInParent<Counter>() != null)
+                            Counter counter = GetComponentInParent<Counter>();
+
+                            if (counter != null)
                             {
-                                if (GameManager.Instance.GetPlayer().coins.coinAmount >= weaponDetails.price)
+                                if (weaponDetails != null)
                                 {
-                                    GameManager.Instance.GetPlayer().coins.coinAmount -= weaponDetails.price;
-                                }
-                                else
-                                {
-                                    StaticDialogueHandler.CallInsufficientFundsEvent();
+                                    if (GameManager.Instance.GetPlayer().coins.coinAmount >= weaponDetails.price && !isPurchasing)
+                                    {
+                                        isPurchasing = true;
+                                        CollectWeaponItem(player);
+                                    }
+                                    else
+                                    {
+                                        StaticDialogueHandler.CallInsufficientFundsEvent();
+                                    }
                                 }
                             }
                             else
@@ -195,21 +202,21 @@ public class ChestItem : MonoBehaviour
         if (hasActiveDrop)
         {
             this.activeItemDetails = activeItemDetails;
-            animator.runtimeAnimatorController = activeItemDetails.activeItemAnimatorController;
+            animator.runtimeAnimatorController = activeItemDetails?.activeItemAnimatorController ?? animator.runtimeAnimatorController;
         }
 
         // Check for animation - Passive Items
         if (hasPrimaryPassiveDrop || hasSecondaryPassiveDrop)
         {
             this.passiveItemDetails = passiveItemDetails;
-            animator.runtimeAnimatorController = passiveItemDetails.passiveItemAnimatorController;
+            animator.runtimeAnimatorController = passiveItemDetails?.passiveItemAnimatorController ?? animator.runtimeAnimatorController;
         }
 
         // Check for animation - Weapons
         if (hasWeaponDrop)
         {
             this.weaponDetails = weaponDetails;
-            animator.runtimeAnimatorController = weaponDetails.weaponHoverAnimatorController;
+            animator.runtimeAnimatorController = weaponDetails?.weaponHoverAnimatorController ?? animator.runtimeAnimatorController;
         }
     }
 
@@ -222,8 +229,45 @@ public class ChestItem : MonoBehaviour
 
         if (isColliding) return;
 
+        if (player.mainHandSlotFilled)
+        {
+            if (!player.offHandSlotFilled)
+            {
+                for (int i = 3; i > 0; i--)
+                {
+                    int index = player.currentWeaponSlotSetIndex - i >= 0 ? player.currentWeaponSlotSetIndex - i : player.currentWeaponSlotSetIndex - i + 3;
+
+                    if (player.weaponSlotSetArray[index][1] != null)
+                    {
+                        continue;
+                    }
+                    else if (player.weaponSlotSetArray[index][1] == null)
+                    {
+                        if (weaponDetails.weaponClass == WeaponClass.Shield)
+                        {
+                            if (isPurchasing)
+                            {
+                                GameManager.Instance.GetPlayer().coins.coinAmount -= weaponDetails.price;
+                            }
+                            goto shieldContinue;
+                        }
+                    }
+                }
+            }
+
+            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.YourHandsFull);
+            isPurchasing = false;
+            return;
+        }
+
+        shieldContinue:
         if (weaponDetails != null)
         {
+            if (isPurchasing)
+            {
+                GameManager.Instance.GetPlayer().coins.coinAmount -= weaponDetails.price;
+            }
+
             // Play pickup sound effect
             SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
 
@@ -358,9 +402,10 @@ public class ChestItem : MonoBehaviour
 
         if (isColliding) return;
 
-        Debug.Log("Collecting item: " + activeItemDetails.activeItemName);
-
-        chestItem.remainingItemCharge = droppedByPlayer ? chestItem.remainingItemCharge : activeItemDetails.activeItemMaxCharge;
+        if (activeItemDetails != null)
+        {
+            chestItem.remainingItemCharge = droppedByPlayer ? chestItem.remainingItemCharge : activeItemDetails.activeItemMaxCharge;
+        }
 
         player.AddActiveItemToPlayer(activeItemDetails, this, chestItem.remainingItemCharge);
 

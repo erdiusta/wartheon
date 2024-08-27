@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 7584150233779532959}
   - component: {fileID: 3372484860896285005}
   m_Layer: 0
-  m_Name: RightWeaponAnchorPosition
+  m_Name: MainHandWeaponAnchorPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -557,15 +557,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1153a025b3ef11449b5d315be0f059f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightWeaponAnchorTransform: {fileID: 7584150233779532959}
-  leftWeaponAnchorTransform: {fileID: 8261799886565396319}
-  playerRightHandSpriteRenderer: {fileID: 7856503361407272268}
-  playerWeaponRightHandSpriteRenderer: {fileID: 8004660626743693806}
-  playerRightHandWeaponAnimator: {fileID: 3372484860896285005}
-  playerLeftHandWeaponAnimator: {fileID: 266263774045077135}
+  mainHandWeaponAnchorTransform: {fileID: 7584150233779532959}
+  offHandWeaponAnchorTransform: {fileID: 8261799886565396319}
+  playerMainHandSpriteRenderer: {fileID: 7856503361407272268}
+  playerWeaponMainHandSpriteRenderer: {fileID: 8004660626743693806}
+  playerMainHandWeaponAnimator: {fileID: 3372484860896285005}
+  playerOffHandWeaponAnimator: {fileID: 266263774045077135}
   thirdHandGameObject: {fileID: 6746072400377832852}
-  playerLeftHandSpriteRenderer: {fileID: 2132484968673984745}
-  playerWeaponLeftHandSpriteRenderer: {fileID: 8144983607169314506}
+  playerOffHandSpriteRenderer: {fileID: 2132484968673984745}
+  playerWeaponOffHandSpriteRenderer: {fileID: 8144983607169314506}
   animator: {fileID: 3098864206639209938}
 --- !u!210 &8824902504176701143
 SortingGroup:
@@ -696,7 +696,7 @@ GameObject:
   - component: {fileID: 8261799886565396319}
   - component: {fileID: 266263774045077135}
   m_Layer: 0
-  m_Name: LeftWeaponAnchorPosition
+  m_Name: OffHandWeaponAnchorPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

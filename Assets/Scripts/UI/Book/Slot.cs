@@ -27,6 +27,8 @@ public class Slot : MonoBehaviour, IDropHandler
 
             draggableItem.contactSuccessful = true;
 
+            if (ReferenceEquals(draggableItem.belongingSlot, this) && draggableItem.transactionOnTheSameSet) return;
+
             if (equippedTransform != null)
             {
                 // Check if the slot is occupied
@@ -40,7 +42,6 @@ public class Slot : MonoBehaviour, IDropHandler
             {
                 // If slot is occupied, swap items
                 SwapItems(draggableItem, currentChild);
-
             }
             else
             {
@@ -60,8 +61,15 @@ public class Slot : MonoBehaviour, IDropHandler
         // Draggable item is on main hand
         if (draggableItem.weapon.onMaindHand)
         {
+            if (currentSlotsDraggableItem.weapon == null)
+            {
+                // Draggable item is two-handed weapon, so swap is canceled
+
+                draggableItem.swapCanceled = true;
+                return;
+            }
             // Slot and draggable items are both main hands
-            if (currentSlotsDraggableItem.weapon.onMaindHand)
+            else if (currentSlotsDraggableItem.weapon.onMaindHand)
             {
                 // Draggable item doesn't have an off-hand weapon
                 if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][1] == null)
@@ -200,16 +208,6 @@ public class Slot : MonoBehaviour, IDropHandler
 
     private void MoveItemToSlot(DraggableItem draggableItem)
     {
-        // Empty previous slot
-        if (draggableItem.weapon.onMaindHand) // Detect weapon's hand and remove it from list
-        {
-            player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
-        }
-        else
-        {
-            player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
-        }
-
         BackgroundAndEquippedSlotTransactions(draggableItem);
     }
 
@@ -297,85 +295,92 @@ public class Slot : MonoBehaviour, IDropHandler
 
     private void BackgroundAndEquippedSlotTransactions(DraggableItem draggableItem)
     {
-        if (isMainHand)
+        if (draggableItem.weapon.onMaindHand)
         {
-            // If trying to place shild to main-hand, cancel the transaction
-            if (draggableItem.weapon.weaponDetails.weaponClass == WeaponClass.Shield)
+            if (isMainHand)
             {
-                draggableItem.swapCanceled = true;
-                return;
-            }
+                if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
+                {
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EmptyOffHandFirst);
+                    draggableItem.swapCanceled = true;
+                    return;
+                }
 
-            int draggedItemIndex;
+                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
 
-            if (draggableItem.weapon.onMaindHand)
-            {
-                draggedItemIndex = draggableItem.weapon.weaponBelongingToWhichMainHandSet;
+                // Put draggable item to current slot
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
+
+                draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                player.ActivateWeapon(draggableItem.weapon, false, player.currentWeaponSlotSetIndex);
+                player.playerControl.SetWeaponSetByIndex(true);
             }
             else
             {
-                draggedItemIndex = draggableItem.weapon.weaponBelongingToWhichOffHandSet;
-            }
+                if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
+                {
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EmptyOffHandFirst);
+                    draggableItem.swapCanceled = true;
+                    return;
+                }
 
-            switch (draggedItemIndex)
-            {
-                case 1:
-                    draggableItem.weapon.onMaindHand = false;
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
-                    draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                    player.ActivateWeapon(draggableItem.weapon, false, 1);
-                    break;
-                case 2:
-                    draggableItem.weapon.onMaindHand = false;
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
-                    draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                    player.ActivateWeapon(draggableItem.weapon, false, 2);
-                    break;
-                case 3:
-                    draggableItem.weapon.onMaindHand = false;
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
-                    draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                    player.ActivateWeapon(draggableItem.weapon, false, 3);
-                    break;
-                default:
-                    break;
+                if (draggableItem.transactionOnTheSameSet)
+                {
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.CantMoveYourMainHandWithEmptyOffHand);
+                    draggableItem.swapCanceled = true;
+                    return;
+                }
+
+                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
+
+                // Put draggable item to current slot
+                draggableItem.weapon.onMaindHand = false;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
+
+                draggableItem.weapon.weaponBelongingToWhichMainHandSet = 0;
+                draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                player.ActivateWeapon(draggableItem.weapon, false, player.currentWeaponSlotSetIndex);
+                player.playerControl.SetWeaponSetByIndex(true);
             }
         }
         else
         {
-            int draggedItemIndex;
-
-            if (draggableItem.weapon.onMaindHand)
+            if (isMainHand)
             {
-                draggedItemIndex = draggableItem.weapon.weaponBelongingToWhichMainHandSet;
+                if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
+                {
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
+                    draggableItem.swapCanceled = true;
+                    return;
+                }
+                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
+
+                // Put draggable item to current slot
+                draggableItem.weapon.onMaindHand = true;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
+
+                draggableItem.weapon.weaponBelongingToWhichOffHandSet = 0;
+                draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                player.ActivateWeapon(draggableItem.weapon, true, player.currentWeaponSlotSetIndex);
+                player.playerControl.SetWeaponSetByIndex(true);
             }
             else
             {
-                draggedItemIndex = draggableItem.weapon.weaponBelongingToWhichOffHandSet;
-            }
+                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] == null)
+                {
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EquipMainHandFirst);
+                    draggableItem.swapCanceled = true;
+                    return;
+                }
 
-            switch (draggedItemIndex)
-            {
-                case 1:
-                    draggableItem.weapon.onMaindHand = false;
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
-                    draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                    player.ActivateWeapon(draggableItem.weapon, true, 1);
-                    break;
-                case 2:
-                    draggableItem.weapon.onMaindHand = false;
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
-                    draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                    player.ActivateWeapon(draggableItem.weapon, true, 2);
-                    break;
-                case 3:
-                    draggableItem.weapon.onMaindHand = false;
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
-                    draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                    player.ActivateWeapon(draggableItem.weapon, true, 3);
-                    break;
-                default:
-                    break;
+                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
+
+                // Put draggable item to current slot
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
+
+                draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                player.ActivateWeapon(draggableItem.weapon, true, player.currentWeaponSlotSetIndex);
+                player.playerControl.SetWeaponSetByIndex(true);
             }
         }
 

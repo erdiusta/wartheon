@@ -13,7 +13,7 @@ public class MeleeAttackOffHand : MonoBehaviour
     MeleeAttackEvent meleeAttackEvent;
     Animator leftHandMeleeAnimator;
     SpriteRenderer weaponSpriteRenderer;
-    AnimationEventHelperLeft leftHandAnimationEventHelper;
+    AnimationEventHelperOffHand leftHandAnimationEventHelper;
     CircleOrigin circleOrigin;
     BoxOrigin boxOrigin;
     Transform circleOriginTransform;
@@ -27,7 +27,7 @@ public class MeleeAttackOffHand : MonoBehaviour
         player = GetComponent<Player>();
         meleeAttackEvent = GetComponent<MeleeAttackEvent>();
         leftHandMeleeAnimator = transform.GetChild(1).GetComponent<Animator>();
-        leftHandAnimationEventHelper = leftHandMeleeAnimator.GetComponent<AnimationEventHelperLeft>();
+        leftHandAnimationEventHelper = leftHandMeleeAnimator.GetComponent<AnimationEventHelperOffHand>();
         circleOrigin = GetComponentInChildren<CircleOrigin>();
         boxOrigin = GetComponentInChildren<BoxOrigin>();
     }
@@ -35,15 +35,15 @@ public class MeleeAttackOffHand : MonoBehaviour
     private void OnEnable()
     {
         meleeAttackEvent.OnLeftHandMeleeAttack += MeleeAttackEvent_OnLeftHandMeleeAttack;
-        leftHandAnimationEventHelper.OnAnimationLeftHandEventTriggered.AddListener(ResetIsAttackingLeftHand);
-        leftHandAnimationEventHelper.OnAttackLeftHandPerformed.AddListener(DetectColliders);
+        leftHandAnimationEventHelper.OnAnimationOffHandEventTriggered.AddListener(ResetIsAttackingLeftHand);
+        leftHandAnimationEventHelper.OnAttackOffHandPerformed.AddListener(DetectColliders);
     }
 
     private void OnDisable()
     {
         meleeAttackEvent.OnLeftHandMeleeAttack -= MeleeAttackEvent_OnLeftHandMeleeAttack;
-        leftHandAnimationEventHelper.OnAnimationLeftHandEventTriggered.RemoveListener(ResetIsAttackingLeftHand);
-        leftHandAnimationEventHelper.OnAttackLeftHandPerformed.RemoveListener(DetectColliders);
+        leftHandAnimationEventHelper.OnAnimationOffHandEventTriggered.RemoveListener(ResetIsAttackingLeftHand);
+        leftHandAnimationEventHelper.OnAttackOffHandPerformed.RemoveListener(DetectColliders);
     }
 
     void Start()

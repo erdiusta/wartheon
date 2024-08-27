@@ -41,8 +41,8 @@ MonoBehaviour:
   passiveItemsList:
   - {fileID: 11400000, guid: ea43c30395e36ed4dad1c912b02fe8ee, type: 2}
   startingWeapon: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
-  rightHandAnimatorController: {fileID: 9100000, guid: 4c02187a09eabde4dba23544bdf50f8e, type: 2}
-  leftHandAnimatorController: {fileID: 9100000, guid: 4c02187a09eabde4dba23544bdf50f8e, type: 2}
+  mainHandAnimatorController: {fileID: 9100000, guid: fe2632354abf80540ae561908fd9d705, type: 2}
+  offHandAnimatorController: {fileID: 9100000, guid: fe2632354abf80540ae561908fd9d705, type: 2}
   startingWeaponList:
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}

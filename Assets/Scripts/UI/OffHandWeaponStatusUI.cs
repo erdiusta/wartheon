@@ -51,8 +51,6 @@ public class OffHandWeaponStatusUI : MonoBehaviour
         player.weaponFiredEvent.OnWeaponFired += WeaponFiredEvent_OnWeaponFired;
     }
 
-
-
     private void OnDisable()
     {
         player.setActiveWeaponEvent.OnSetActiveOffHandWeapon -= SetActiveWeaponEvent_OnSetActiveOffHandWeapon;
@@ -160,6 +158,14 @@ public class OffHandWeaponStatusUI : MonoBehaviour
                 StopCoroutine(cooldownRoutine);
             }
         }
+        else
+        {
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+            {
+                MakeWeaponInactive();
+                DisplayLockImage();
+            }
+        }
     }
 
     /// <summary>
@@ -205,7 +211,19 @@ public class OffHandWeaponStatusUI : MonoBehaviour
 
     private void MakeWeaponInactive()
     {
-        weaponImage.sprite = noWeaponSprite;
+        if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+        {
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType != WieldType.TwoHanded)
+            {
+                weaponImage.sprite = noWeaponSprite;
+            }
+        }
+
+        if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
+        {
+            weaponImage.sprite = noWeaponSprite;
+        }
+
         weaponNameText.text = "";
     }
 

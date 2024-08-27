@@ -7,7 +7,7 @@ public class Coins : MonoBehaviour
     private void Start()
     {
         // Reset Coin Amount
-        coinAmount = 0;
+        coinAmount = 10;
     }
 
     public void Add(int count)

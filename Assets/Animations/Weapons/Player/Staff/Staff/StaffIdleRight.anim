@@ -30,7 +30,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: RightWeaponRotationPoint/Weapon/HandForTwoHandWeapon
+    path: MainHandWeaponRotationPoint/Weapon/HandForTwoHandWeapon
   m_ScaleCurves: []
   m_FloatCurves: []
   m_PPtrCurves:
@@ -39,7 +39,7 @@ AnimationClip:
     - time: 0
       value: {fileID: -110142417, guid: cd389daac55ac044bb6c47bc5c3f407a, type: 3}
     attribute: m_Sprite
-    path: RightWeaponRotationPoint/Weapon
+    path: MainHandWeaponRotationPoint/Weapon
     classID: 212
     script: {fileID: 0}
     flags: 2
@@ -51,7 +51,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 1203281921
+      path: 3497116207
       attribute: 0
       script: {fileID: 0}
       typeID: 212
@@ -60,7 +60,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 4206426758
+      path: 868830247
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -108,7 +108,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: RightWeaponRotationPoint/Weapon/HandForTwoHandWeapon
+    path: MainHandWeaponRotationPoint/Weapon/HandForTwoHandWeapon
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -129,7 +129,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: RightWeaponRotationPoint/Weapon/HandForTwoHandWeapon
+    path: MainHandWeaponRotationPoint/Weapon/HandForTwoHandWeapon
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -150,7 +150,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: RightWeaponRotationPoint/Weapon/HandForTwoHandWeapon
+    path: MainHandWeaponRotationPoint/Weapon/HandForTwoHandWeapon
     classID: 4
     script: {fileID: 0}
     flags: 0

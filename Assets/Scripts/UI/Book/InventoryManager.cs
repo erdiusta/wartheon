@@ -4,6 +4,9 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>
 {
     public Transform mainHandEquippedSlot;
     public Transform offHandEquippedSlot;
+    public GameObject dropButton;
+    public int originalSlotIndex = 1;
+    public bool mainHandDropped;
 
     public void ClearMainHandEquippedSlot()
     {
@@ -34,4 +37,13 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>
     public int GetMainHandEquippedChildCounts() => mainHandEquippedSlot.childCount;
 
     public int GetOffHandEquippedChildCounts() => offHandEquippedSlot.childCount;
+
+    public GameObject GetDropButtonObject() => dropButton;
+
+    public void SetOriginalSlotIndex(int index)
+    {
+        originalSlotIndex = index;
+    }
+
+    public int GetOriginalSlotIndex() => originalSlotIndex;
 }

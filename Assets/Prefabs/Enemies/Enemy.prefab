@@ -35037,7 +35037,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -5877759934995707352, guid: 2c3c4a39d2618b84d9e1b11f048b71ba, type: 2}
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -35081,8 +35081,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2c3c4a39d2618b84d9e1b11f048b71ba, type: 2}
-  m_sharedMaterial: {fileID: -5877759934995707352, guid: 2c3c4a39d2618b84d9e1b11f048b71ba, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -35296,7 +35296,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -5877759934995707352, guid: 2c3c4a39d2618b84d9e1b11f048b71ba, type: 2}
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -35340,8 +35340,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2c3c4a39d2618b84d9e1b11f048b71ba, type: 2}
-  m_sharedMaterial: {fileID: -5877759934995707352, guid: 2c3c4a39d2618b84d9e1b11f048b71ba, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -46120,6 +46120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyDetails: {fileID: 0}
   fireWeaponEvent: {fileID: 0}
+  fireWeapon: {fileID: 0}
   weaponFiredEvent: {fileID: 0}
   destroyedEvent: {fileID: 0}
   spriteRendererArray: []
@@ -46459,8 +46460,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9312f500e87ee1b41b3e7d65979ce365, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightHandWeaponAnchorPointTransform: {fileID: 4239920569477357429}
-  leftHandWeaponAnchorPointTransform: {fileID: 8668691372778860321}
+  mainHandWeaponAnchorPointTransform: {fileID: 4239920569477357429}
+  offHandWeaponAnchorPointTransform: {fileID: 8668691372778860321}
 --- !u!114 &866988234407021245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46512,12 +46513,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSwitching: 0
-  weaponRightHandSpriteRenderer: {fileID: 7625487225184071592}
-  weaponRightHandPolygonCollider2D: {fileID: 6872100053539618354}
-  weaponRightHandShootPositionTransform: {fileID: 2812488011572122476}
-  weaponRightHandEffectPositionTransform: {fileID: 8845574466449883188}
-  weaponLeftHandSpriteRenderer: {fileID: 8724249606337226725}
-  weaponLeftHandPolygonCollider2D: {fileID: 1473841332294187630}
+  weaponMainHandSpriteRenderer: {fileID: 7625487225184071592}
+  weaponMainHandPolygonCollider2D: {fileID: 6872100053539618354}
+  weaponMainHandShootPositionTransform: {fileID: 2812488011572122476}
+  weaponMainHandEffectPositionTransform: {fileID: 8845574466449883188}
+  weaponOffHandSpriteRenderer: {fileID: 8724249606337226725}
+  weaponOffHandPolygonCollider2D: {fileID: 1473841332294187630}
 --- !u!114 &2058154315832034504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46658,10 +46659,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poisonImage: {fileID: 7396973610872839575}
-  bleedingImage: {fileID: 6481469968057690553}
   acidImage: {fileID: 3217616161218783392}
   stunImage: {fileID: 5244188265297830613}
-  slowImage: {fileID: 5485693978232478151}
   silverArmorImage: {fileID: 3265223387113222126}
   deathImage: {fileID: 1558117876368005248}
 --- !u!114 &9183617335226411885

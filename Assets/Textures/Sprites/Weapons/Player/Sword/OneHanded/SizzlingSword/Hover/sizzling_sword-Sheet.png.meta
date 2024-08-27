@@ -152,8 +152,8 @@ TextureImporter:
       name: sizzling_sword-Sheet_0
       rect:
         serializedVersion: 2
-        x: 54
-        y: 18
+        x: 49
+        y: 31
         width: 8
         height: 28
       alignment: 9
@@ -173,8 +173,8 @@ TextureImporter:
       name: sizzling_sword-Sheet_1
       rect:
         serializedVersion: 2
-        x: 118
-        y: 18
+        x: 113
+        y: 31
         width: 8
         height: 28
       alignment: 9

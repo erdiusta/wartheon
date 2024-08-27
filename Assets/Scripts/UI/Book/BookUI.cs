@@ -107,6 +107,14 @@ public class BookUI : MonoBehaviour
                 mainWeaponEquipped.gameObject.SetActive(true);
                 mainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainWeaponEquipped);
                 mainHandWeaponAtSlot.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[0].weaponFrontSprite;
+
+                // OFF HAND WEAPON EQUIP AT START - SLOT
+                offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
+                offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
+                offHandWeaponBackground.gameObject.SetActive(false);
+                offHandWeaponEquipped.gameObject.SetActive(true);
+                offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
+                offHandWeaponAtSlot.GetComponent<Image>().sprite = GameResources.Instance.lockSlotIcon;
                 break;
 
             default:
@@ -272,6 +280,12 @@ public class BookUI : MonoBehaviour
             GameObject mainHandWeaponAtSlot = mainHandWeaponEquipped.GetChild(mainHandWeaponEquipped.childCount - 1).gameObject;
             Destroy(mainHandWeaponAtSlot);
         }
+
+        if (mainHandWeaponEquipped.childCount == 0)
+        {
+            mainHandWeaponBackground.gameObject.SetActive(true);
+            mainHandWeaponEquipped.gameObject.SetActive(false);
+        }
     }
 
     private void StaticEventHandler_OnWeaponAddedToOffHandBook(WeaponAddedToBookArgs weaponAddedToBookArgs)
@@ -291,8 +305,8 @@ public class BookUI : MonoBehaviour
         Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
         offHandWeaponBackground.gameObject.SetActive(false);
         offHandWeaponEquipped.gameObject.SetActive(true);
-        GameObject newMainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
-        newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
+        GameObject newOffHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
+        newOffHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
     }
 
     private void StaticEventHandler_OnWeaponRemovedFromOffHandBook()
@@ -306,11 +320,8 @@ public class BookUI : MonoBehaviour
             Destroy(offHandWeaponAtSlot);
         }
 
-        if (offHandWeaponEquipped.childCount == 0)
-        {
-            offHandWeaponBackground.gameObject.SetActive(true);
-            offHandWeaponEquipped.gameObject.SetActive(false);
-        }
+        offHandWeaponBackground.gameObject.SetActive(true);
+        offHandWeaponEquipped.gameObject.SetActive(false);
     }
 
     private void StaticEventHandler_OnBookHealthChanged(HealthChangedArgs healthChangedArgs)

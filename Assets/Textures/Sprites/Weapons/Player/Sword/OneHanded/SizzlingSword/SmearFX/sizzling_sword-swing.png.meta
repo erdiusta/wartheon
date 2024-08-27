@@ -152,8 +152,8 @@ TextureImporter:
       name: sizzling_sword-swing_0
       rect:
         serializedVersion: 2
-        x: 54
-        y: 18
+        x: 49
+        y: 31
         width: 8
         height: 28
       alignment: 9
@@ -173,8 +173,8 @@ TextureImporter:
       name: sizzling_sword-swing_1
       rect:
         serializedVersion: 2
-        x: 118
-        y: 18
+        x: 113
+        y: 31
         width: 8
         height: 28
       alignment: 9
@@ -194,8 +194,8 @@ TextureImporter:
       name: sizzling_sword-swing_2
       rect:
         serializedVersion: 2
-        x: 182
-        y: 18
+        x: 177
+        y: 31
         width: 8
         height: 28
       alignment: 9
@@ -215,8 +215,8 @@ TextureImporter:
       name: sizzling_sword-swing_3
       rect:
         serializedVersion: 2
-        x: 219
-        y: 2
+        x: 214
+        y: 15
         width: 35
         height: 44
       alignment: 9
@@ -236,8 +236,8 @@ TextureImporter:
       name: sizzling_sword-swing_4
       rect:
         serializedVersion: 2
-        x: 286
-        y: 8
+        x: 281
+        y: 21
         width: 32
         height: 38
       alignment: 9
@@ -257,8 +257,8 @@ TextureImporter:
       name: sizzling_sword-swing_5
       rect:
         serializedVersion: 2
-        x: 374
-        y: 18
+        x: 369
+        y: 31
         width: 8
         height: 28
       alignment: 9

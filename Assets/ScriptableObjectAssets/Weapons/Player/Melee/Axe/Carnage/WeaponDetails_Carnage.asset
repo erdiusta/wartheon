@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Carnage
   weaponTitle: 9
-  weaponFrontSprite: {fileID: 1816078452, guid: 6af2fef1af38f0c499463867bff3ea61, type: 3}
-  weaponRearSprite: {fileID: 1816078452, guid: 6af2fef1af38f0c499463867bff3ea61, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: c51d5e5313809de43ad94b065c18d538, type: 2}
+  weaponFrontSprite: {fileID: -841119055, guid: 5c960803439d0284a808cc018ba71710, type: 3}
+  weaponRearSprite: {fileID: -841119055, guid: 5c960803439d0284a808cc018ba71710, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: c32169d2179d0e9449e33af11362afd1, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: a1992abc3f12c034ab96b276d0b6ef76, type: 2}
   weaponClass: 1
   wieldType: 1

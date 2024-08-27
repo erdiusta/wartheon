@@ -13,7 +13,7 @@ public class MeleeAttackMainHand : MonoBehaviour
     MeleeAttackEvent meleeAttackEvent;
     Animator rightHandMeleeAnimator;
     SpriteRenderer weaponSpriteRenderer;
-    AnimationEventHelperRight rightHandAnimationEventHelper;
+    AnimationEventHelperMainHand rightHandAnimationEventHelper;
     CircleOrigin circleOrigin;
     BoxOrigin boxOrigin;
     Transform circleOriginTransform;
@@ -27,7 +27,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         player = GetComponent<Player>();
         meleeAttackEvent = GetComponent<MeleeAttackEvent>();
         rightHandMeleeAnimator = transform.GetChild(0).GetComponent<Animator>();
-        rightHandAnimationEventHelper = rightHandMeleeAnimator.GetComponent<AnimationEventHelperRight>();
+        rightHandAnimationEventHelper = rightHandMeleeAnimator.GetComponent<AnimationEventHelperMainHand>();
         circleOrigin = GetComponentInChildren<CircleOrigin>();
         boxOrigin = GetComponentInChildren<BoxOrigin>();
     }
@@ -35,15 +35,15 @@ public class MeleeAttackMainHand : MonoBehaviour
     private void OnEnable()
     {
         meleeAttackEvent.OnRightHandMeleeAttack += MeleeAttackEvent_OnRightHandMeleeAttack;
-        rightHandAnimationEventHelper.OnAnimationRightHandEventTriggered.AddListener(ResetIsAttackingRightHand);
-        rightHandAnimationEventHelper.OnAttackRightHandPerformed.AddListener(DetectColliders);
+        rightHandAnimationEventHelper.OnAnimationMainHandEventTriggered.AddListener(ResetIsAttackingRightHand);
+        rightHandAnimationEventHelper.OnAttackOffHandPerformed.AddListener(DetectColliders);
     }
 
     private void OnDisable()
     {
         meleeAttackEvent.OnRightHandMeleeAttack -= MeleeAttackEvent_OnRightHandMeleeAttack;
-        rightHandAnimationEventHelper.OnAnimationRightHandEventTriggered.RemoveListener(ResetIsAttackingRightHand);
-        rightHandAnimationEventHelper.OnAttackRightHandPerformed.RemoveListener(DetectColliders);
+        rightHandAnimationEventHelper.OnAnimationMainHandEventTriggered.RemoveListener(ResetIsAttackingRightHand);
+        rightHandAnimationEventHelper.OnAttackOffHandPerformed.RemoveListener(DetectColliders);
     }
 
 

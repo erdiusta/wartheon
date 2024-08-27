@@ -6,27 +6,27 @@ public class PlayerSelectionUI : MonoBehaviour
     #region Tooltip
     [Tooltip("Populate with the RightWeaponAnchorTransform")]
     #endregion
-    public Transform rightWeaponAnchorTransform;
+    public Transform mainHandWeaponAnchorTransform;
     #region Tooltip
     [Tooltip("Populate with the LeftWeaponAnchorTransform")]
     #endregion
-    public Transform leftWeaponAnchorTransform;
+    public Transform offHandWeaponAnchorTransform;
     #region Tooltip
     [Tooltip("Populate with the Sprite Renderer on child gameObject RightWeaponAnchorPosition/WeaponRotationPoint/Hand")]
     #endregion
-    public SpriteRenderer playerRightHandSpriteRenderer;
+    public SpriteRenderer playerMainHandSpriteRenderer;
     #region Tooltip
     [Tooltip("Populate with the Sprite Renderer on child gameObject RightWeaponAnchorPosition/WeaponRotationPoint/Weapon")]
     #endregion
-    public SpriteRenderer playerWeaponRightHandSpriteRenderer;
+    public SpriteRenderer playerWeaponMainHandSpriteRenderer;
     #region Tooltip
     [Tooltip("Populate with the right hand weapon animator on child gameObject")]
     #endregion
-    public Animator playerRightHandWeaponAnimator;
+    public Animator playerMainHandWeaponAnimator;
     #region Tooltip
     [Tooltip("Populate with the left hand weapon animator on child gameObject")]
     #endregion
-    public Animator playerLeftHandWeaponAnimator;
+    public Animator playerOffHandWeaponAnimator;
     #region Tooltip
     [Tooltip("Populate with the thirdHandGameObject")]
     #endregion
@@ -34,11 +34,11 @@ public class PlayerSelectionUI : MonoBehaviour
     #region Tooltip
     [Tooltip("Populate with the Sprite Renderer on child gameObject LeftWeaponAnchorPosition/WeaponRotationPoint/Hand")]
     #endregion
-    public SpriteRenderer playerLeftHandSpriteRenderer;
+    public SpriteRenderer playerOffHandSpriteRenderer;
     #region Tooltip
     [Tooltip("Populate with the Sprite Renderer on child gameObject LeftWeaponAnchorPosition/WeaponRotationPoint/Weapon")]
     #endregion
-    public SpriteRenderer playerWeaponLeftHandSpriteRenderer;
+    public SpriteRenderer playerWeaponOffHandSpriteRenderer;
     #region Tooltip
     [Tooltip("Populate with the Animator component")]
     #endregion
@@ -48,10 +48,10 @@ public class PlayerSelectionUI : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(playerRightHandSpriteRenderer), playerRightHandSpriteRenderer);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(playerLeftHandSpriteRenderer), playerLeftHandSpriteRenderer);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(playerWeaponRightHandSpriteRenderer), playerWeaponRightHandSpriteRenderer);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(playerWeaponLeftHandSpriteRenderer), playerWeaponLeftHandSpriteRenderer);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(playerMainHandSpriteRenderer), playerMainHandSpriteRenderer);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(playerOffHandSpriteRenderer), playerOffHandSpriteRenderer);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(playerWeaponMainHandSpriteRenderer), playerWeaponMainHandSpriteRenderer);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(playerWeaponOffHandSpriteRenderer), playerWeaponOffHandSpriteRenderer);
         HelperUtilities.ValidateCheckNullValue(this, nameof(animator), animator);
     }
 #endif

@@ -6,11 +6,11 @@ public class AimWeapon : MonoBehaviour
     #region Tooltip
     [Tooltip("Populate with the Transform from the child RightHandWeaponAnchorPoint gameobject")]
     #endregion
-    public Transform rightHandWeaponAnchorPointTransform;
+    public Transform mainHandWeaponAnchorPointTransform;
     #region Tooltip
     [Tooltip("Populate with the Transform from the child LeftHandWeaponAnchorPoint gameobject")]
     #endregion
-    public Transform leftHandWeaponAnchorPointTransform;
+    public Transform offHandWeaponAnchorPointTransform;
 
     Transform rightHandWeaponRotationPointTransform;
     Transform leftHandWeaponRotationPointTransform;
@@ -22,8 +22,8 @@ public class AimWeapon : MonoBehaviour
         player = GetComponent<Player>();
         enemy = GetComponent<Enemy>();
 
-        rightHandWeaponRotationPointTransform = rightHandWeaponAnchorPointTransform.GetChild(0);
-        leftHandWeaponRotationPointTransform = leftHandWeaponAnchorPointTransform.GetChild(0);
+        rightHandWeaponRotationPointTransform = mainHandWeaponAnchorPointTransform.GetChild(0);
+        leftHandWeaponRotationPointTransform = offHandWeaponAnchorPointTransform.GetChild(0);
     }
 
     /// <summary>
@@ -170,7 +170,7 @@ public class AimWeapon : MonoBehaviour
                 {
                     rightHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
 
-                    if (leftHandWeaponAnchorPointTransform.gameObject.activeSelf)
+                    if (offHandWeaponAnchorPointTransform.gameObject.activeSelf)
                     {
                         leftHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, aimAngle);
                     }
@@ -263,8 +263,8 @@ public class AimWeapon : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(rightHandWeaponAnchorPointTransform), rightHandWeaponAnchorPointTransform);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(leftHandWeaponAnchorPointTransform), leftHandWeaponAnchorPointTransform);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(mainHandWeaponAnchorPointTransform), mainHandWeaponAnchorPointTransform);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(offHandWeaponAnchorPointTransform), offHandWeaponAnchorPointTransform);
     }
 #endif
     #endregion

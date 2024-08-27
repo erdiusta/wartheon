@@ -18,9 +18,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     Canvas canvas;
     Vector2 originalPosition;
     Player player;
-    Transform dropButton;
-    Transform buttonSetContainer;
-    bool originalSetSwitched;
+    GameObject dropButton;
 
     private void Awake()
     {
@@ -34,8 +32,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         player = GameManager.Instance.GetPlayer();
         bookStatsPageContainer = GetTopLevelParent(transform, 4);
         belongingSlot = GetTopLevelParent(transform, 2).GetComponent<Slot>();
-        dropButton = bookStatsPageContainer.GetChild(7);
-        buttonSetContainer = bookStatsPageContainer.GetChild(3).GetChild(0);
+        dropButton = InventoryManager.Instance.GetDropButtonObject();
         originalIndexNum = player.currentWeaponSlotSetIndex;
         transactionOnTheSameSet = true;
 
@@ -75,21 +72,15 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 // Ensure the set switch is only triggered if it's different from the current set
                 if (player.currentWeaponSlotSetIndex != setIndex)
                 {
-                    if (!originalSetSwitched)
-                    {
-                        transactionOnTheSameSet = false;
+                    transactionOnTheSameSet = false;
 
-                        // Make drop button inactive while dragging a weapon to another set
-                        dropButton.gameObject.SetActive(false);
+                    // Make drop button inactive while dragging a weapon to another set
+                    dropButton.SetActive(false);
 
-                        BackGroundAndEquippedSlotTransactions();
+                    BackGroundAndEquippedSlotTransactions();
 
-                        // Switch to the desired weapon set
-                        GameManager.Instance.GoToWeaponSetWithIndex(setIndex);
-
-                        // Change original set switch flag
-                        originalSetSwitched = true;
-                    }
+                    // Switch to the desired weapon set
+                    GameManager.Instance.GoToWeaponSetWithIndex(setIndex);
                 }
             }
         }
@@ -132,7 +123,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 if (belongingSlot.transform.GetChild(1) != null)
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
-                    dropButton.gameObject.SetActive(true);
+                    dropButton.SetActive(true);
                 }
             }
 
@@ -157,7 +148,13 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             }
             else if (eventData.pointerEnter.CompareTag(Settings.dropButton))
             {
-                // For drop issuse, don't assign weapon to null reference
+                // For drop issue, don't assign weapon to null reference
+                if (player.weaponSlotSetArray[InventoryManager.Instance.GetOriginalSlotIndex() - 1][0] == null && 
+                    player.weaponSlotSetArray[InventoryManager.Instance.GetOriginalSlotIndex() - 1][1] == null)
+                {
+                    Destroy(belongingSlot.transform.GetChild(1).GetChild(belongingSlot.transform.GetChild(1).childCount - 1).gameObject);
+                    Destroy(this);
+                }
             }
             else if (eventData.pointerEnter.CompareTag(Settings.bookCover))
             {
@@ -203,10 +200,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             ResetPosition();
         }
 
-        dropButton.gameObject.SetActive(true);
-
-        // Change original set switch flag
-        originalSetSwitched = true;
+        dropButton.SetActive(true);
 
         contactSuccessful = false;
         justMoveNotSwap = false;

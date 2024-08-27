@@ -259,5 +259,11 @@ public enum PopUpReason
     DontHaveWeaponOnSelectedSet,
     OffHandFull,
     ShieldCantBePutOnMainHand,
-    OffHandCantBeAddedToTwoHanded
+    OffHandCantBeAddedToTwoHanded,
+    TwoHandCantBeEquippedToOffHand,
+    OffHandCatBeAddedToEmptyMainHand,
+    EmptyOffHandFirst,
+    EquipMainHandFirst,
+    CantMoveYourMainHandWithEmptyOffHand,
+    YourHandsFull
 }

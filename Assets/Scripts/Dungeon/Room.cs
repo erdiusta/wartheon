@@ -36,11 +36,11 @@ public class Room
     /// </summary>
     public int GetNumberOfEnemiesToSpawn(DungeonLevelSO dungeonLevel)
     {
-        foreach (RoomEnemySpawnParameters roomEnemySpawnParameters in roomLevelEnemySpawnParametersList)
+        for (int i = 0; i < roomLevelEnemySpawnParametersList.Count; i++)
         {
-            if (roomEnemySpawnParameters.dungeonLevel == dungeonLevel)
+            if (roomLevelEnemySpawnParametersList[i].dungeonLevel == dungeonLevel)
             {
-                return Random.Range(roomEnemySpawnParameters.minTotalEnemiesToSpawn, roomEnemySpawnParameters.maxTotalEnemiesToSpawn);
+                return Random.Range(roomLevelEnemySpawnParametersList[i].minTotalEnemiesToSpawn, roomLevelEnemySpawnParametersList[i].maxTotalEnemiesToSpawn);
             }
         }
 
@@ -52,13 +52,14 @@ public class Room
     /// </summary>
     public RoomEnemySpawnParameters GetRoomEnemySpawnParameters(DungeonLevelSO dungeonLevel)
     {
-        foreach (RoomEnemySpawnParameters roomEnemySpawnParameters in roomLevelEnemySpawnParametersList)
+        for (int i = 0; i < roomLevelEnemySpawnParametersList.Count; i++)
         {
-            if (roomEnemySpawnParameters.dungeonLevel == dungeonLevel)
+            if (roomLevelEnemySpawnParametersList[i].dungeonLevel == dungeonLevel)
             {
-                return roomEnemySpawnParameters;
+                return roomLevelEnemySpawnParametersList[i];
             }
         }
+
         return null;
     }
 }

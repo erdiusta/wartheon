@@ -14,6 +14,10 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     #endregion Tooltip
     [SerializeField] Image weaponImage;
     #region Tooltip
+    [Tooltip("Populate with blank 1x1 as no weapon sprite on the child WeaponImage gameobject")]
+    #endregion Tooltip
+    [SerializeField] Sprite noWeaponSprite;
+    #region Tooltip
     [Tooltip("Populate with the TextMeshPro-Text component on the child ProjectileRemainingText gameobject")]
     #endregion Tooltip
     [SerializeField] TextMeshProUGUI projectileRemainingText;
@@ -33,21 +37,25 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     Player player;
     Coroutine cooldownRoutine;
     float cooldownTimer;
+    Transform cooldownBarParent;
 
     private void Awake()
     {
         player = GameManager.Instance.GetPlayer();
+        cooldownBarParent = cooldownBar.parent;
     }
 
     private void OnEnable()
     {
         player.setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
+        player.setActiveWeaponEvent.OnSetInactiveMainHandWeapon += SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
         player.weaponFiredEvent.OnWeaponFired += WeaponFiredEvent_OnWeaponFired;
     }
 
     private void OnDisable()
     {
         player.setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
+        player.setActiveWeaponEvent.OnSetInactiveMainHandWeapon -= SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
         player.weaponFiredEvent.OnWeaponFired -= WeaponFiredEvent_OnWeaponFired;
     }
 
@@ -79,6 +87,12 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     private void SetActiveWeaponEvent_OnSetActiveRightHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
         SetActiveWeapon(setActiveWeaponEventArgs.weapon);
+    }
+
+    private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
+    {
+        MakeWeaponInactive();
+        cooldownBarParent.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -182,6 +196,12 @@ public class MainHandWeaponStatusUI : MonoBehaviour
         }
 
         ResetWeaponCooldownBar(currentWeapon);
+    }
+
+    private void MakeWeaponInactive()
+    {
+        weaponImage.sprite = noWeaponSprite;
+        weaponNameText.text = "";
     }
 
     /// <summary>

@@ -52,27 +52,27 @@ public class CharacterSelectorUI : MonoBehaviour
     /// </summary>
     private void PopulatePlayerDetails(PlayerSelectionUI playerSelection, PlayerDetailsSO playerDetails)
     {
-        playerSelection.playerRightHandSpriteRenderer.sprite = playerDetails.playerHandSprite;
-        playerSelection.playerLeftHandSpriteRenderer.sprite = playerDetails.playerHandSprite;
-        playerSelection.playerRightHandWeaponAnimator.runtimeAnimatorController = playerDetails.rightHandAnimatorController;
+        playerSelection.playerMainHandSpriteRenderer.sprite = playerDetails.playerHandSprite;
+        playerSelection.playerOffHandSpriteRenderer.sprite = playerDetails.playerHandSprite;
+        playerSelection.playerMainHandWeaponAnimator.runtimeAnimatorController = playerDetails.mainHandAnimatorController;
 
-        if (playerDetails.leftHandAnimatorController != null)
+        if (playerDetails.offHandAnimatorController != null)
         {
-            playerSelection.playerLeftHandWeaponAnimator.runtimeAnimatorController = playerDetails.leftHandAnimatorController;
+            playerSelection.playerOffHandWeaponAnimator.runtimeAnimatorController = playerDetails.offHandAnimatorController;
         }
         else
         {
-            playerSelection.playerLeftHandWeaponAnimator.enabled = false;
+            playerSelection.playerOffHandWeaponAnimator.enabled = false;
         }
 
-        playerSelection.playerWeaponRightHandSpriteRenderer.sprite = playerDetails.startingWeaponList[0].weaponFrontSprite;
+        playerSelection.playerWeaponMainHandSpriteRenderer.sprite = playerDetails.startingWeaponList[0].weaponFrontSprite;
         if (playerDetails.startingWeaponList.Count > 1)
         {
             if (playerDetails.startingWeaponList[1].weaponClass == WeaponClass.Shield)
             {
-                playerSelection.playerLeftHandSpriteRenderer.sortingOrder = 0;
+                playerSelection.playerOffHandSpriteRenderer.sortingOrder = 0;
             }
-            playerSelection.playerWeaponLeftHandSpriteRenderer.sprite = playerDetails.startingWeaponList[1].weaponFrontSprite;
+            playerSelection.playerWeaponOffHandSpriteRenderer.sprite = playerDetails.startingWeaponList[1].weaponFrontSprite;
         }
 
         if (playerDetails.playerCharacterName == Settings.astraeus)
@@ -87,8 +87,8 @@ public class CharacterSelectorUI : MonoBehaviour
 
             playerSelection.animator.runtimeAnimatorController = playerDetails.bowRuntimeAnimatorController;
 
-            playerSelection.playerLeftHandWeaponAnimator.enabled = false;
-            playerSelection.leftWeaponAnchorTransform.gameObject.SetActive(false);
+            playerSelection.playerOffHandWeaponAnimator.enabled = false;
+            playerSelection.offHandWeaponAnchorTransform.gameObject.SetActive(false);
         }
         else if (playerDetails.playerCharacterName == Settings.erebus)
         {
@@ -100,8 +100,8 @@ public class CharacterSelectorUI : MonoBehaviour
             playerSelection.animator.runtimeAnimatorController = playerDetails.staffRuntimeAnimatorController;
 
             playerSelection.thirdHandGameObject.SetActive(true);
-            playerSelection.playerLeftHandWeaponAnimator.enabled = false;
-            playerSelection.leftWeaponAnchorTransform.gameObject.SetActive(false);
+            playerSelection.playerOffHandWeaponAnimator.enabled = false;
+            playerSelection.offHandWeaponAnchorTransform.gameObject.SetActive(false);
         }
     }
 

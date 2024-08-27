@@ -791,19 +791,37 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case PopUpReason.None:
                 break;
             case PopUpReason.LessThanOneMainHandWeapon:
-                warningText.text = "Equipped main hand weapon can't be less than 1 in 3 sets";
+                warningText.text = "Equipped main hand weapon can't be less than 1 in 3 sets.";
                 break;
             case PopUpReason.DontHaveWeaponOnSelectedSet:
-                warningText.text = "Can't switch to next set because there is no weapon";
+                warningText.text = "Can't switch to next set because there is no weapon.";
                 break;
             case PopUpReason.OffHandFull:
-                warningText.text = "You can't drop main weapon. Active weapon set's off-hand is full";
+                warningText.text = "You can't drop main weapon. Active weapon set's off-hand is full.";
                 break;
             case PopUpReason.ShieldCantBePutOnMainHand:
-                warningText.text = "Shield can not be equipped on the main hand";
+                warningText.text = "Shield can not be equipped on the main hand.";
                 break;
             case PopUpReason.OffHandCantBeAddedToTwoHanded:
-                warningText.text = "Off-hand weapon can't be added while main hand has a two-handed weapon";
+                warningText.text = "Off-hand weapon can't be added while main hand has a two-handed weapon.";
+                break;
+            case PopUpReason.TwoHandCantBeEquippedToOffHand:
+                warningText.text = "Two-hand weapon can't be equipped to off-hand.";
+                break;
+            case PopUpReason.OffHandCatBeAddedToEmptyMainHand:
+                warningText.text = "Off-hand weapon can't be addet to the set not having weapon on main hand.";
+                break;
+            case PopUpReason.EmptyOffHandFirst:
+                warningText.text = "Empty your off-hand first.";
+                break;
+            case PopUpReason.EquipMainHandFirst:
+                warningText.text = "Equip your main first.";
+                break;
+            case PopUpReason.CantMoveYourMainHandWithEmptyOffHand:
+                warningText.text = "You can't move your main hand weapon if your off-hand weapon is empty at the same set.";
+                break;
+            case PopUpReason.YourHandsFull:
+                warningText.text = "All sets in main hand is full. Drop one of your weapons first.";
                 break;
             default:
                 break;

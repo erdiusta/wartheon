@@ -4695,9 +4695,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.08912387
+    y: 0.07682292
     width: 1
-    height: 0.82165784
+    height: 0.8466797
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -5158,6 +5158,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainHandEquippedSlot: {fileID: 1381156665}
   offHandEquippedSlot: {fileID: 772996921}
+  dropButton: {fileID: 1267146980}
+  originalSlotIndex: 1
+  mainHandDropped: 0
 --- !u!1 &617743742
 GameObject:
   m_ObjectHideFlags: 0
@@ -13993,6 +13996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponImage: {fileID: 340001333}
+  noWeaponSprite: {fileID: 21300000, guid: 8760afd85e4d3be47861ba2f44c3fe0b, type: 3}
   projectileRemainingText: {fileID: 1803145196}
   weaponNameText: {fileID: 1074073447}
   cooldownBar: {fileID: 1139654969}

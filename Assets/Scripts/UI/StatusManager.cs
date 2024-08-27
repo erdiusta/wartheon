@@ -4,10 +4,8 @@ using UnityEngine;
 public class StatusManager : MonoBehaviour
 {
     public GameObject poisonImage;
-    public GameObject bleedingImage;
     public GameObject acidImage;
     public GameObject stunImage;
-    public GameObject slowImage;
     public GameObject silverArmorImage;
     public GameObject deathImage;
 

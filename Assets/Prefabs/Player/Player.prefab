@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8213552445980175040}
   - component: {fileID: 6607506224730912274}
   m_Layer: 18
-  m_Name: LeftWeaponAnchorPosition
+  m_Name: OffHandWeaponAnchorPosition
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -129,7 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2635258226080149353}
   m_Layer: 18
-  m_Name: LeftWeaponRotationPoint
+  m_Name: OffHandWeaponRotationPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5468,7 +5468,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6873713257487317844}
   m_Layer: 18
-  m_Name: RightWeaponRotationPoint
+  m_Name: MainHandWeaponRotationPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5534,7 +5534,7 @@ GameObject:
   - component: {fileID: 7089998605978601817}
   - component: {fileID: 1566926548965692839}
   m_Layer: 18
-  m_Name: RightWeaponAnchorPosition
+  m_Name: MainHandWeaponAnchorPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6486,14 +6486,17 @@ MonoBehaviour:
   keyCount: 0
   branchMastery: {fileID: 0}
   weaponMastery: {fileID: 0}
-  chestItem: {fileID: 0}
+  activeItemChestItem: {fileID: 0}
   hasRingOfFortune: 0
   playerWeaponHandlingModifier: 0
   playerEvasivenessModifier: 0
   dustParticlesSystem: {fileID: 4106009469383456593}
   specialMoveParticlesSystem: {fileID: 0}
+  currentWeaponSlotSetIndex: 1
   passiveItemList: []
   summonedEnemies: []
+  mainHandSlotFilled: 0
+  offHandSlotFilled: 0
 --- !u!114 &3362413763628156882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6518,8 +6521,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9312f500e87ee1b41b3e7d65979ce365, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightHandWeaponAnchorPointTransform: {fileID: 96723439451589857}
-  leftHandWeaponAnchorPointTransform: {fileID: 2933691242404562980}
+  mainHandWeaponAnchorPointTransform: {fileID: 96723439451589857}
+  offHandWeaponAnchorPointTransform: {fileID: 2933691242404562980}
 --- !u!114 &3495262142536431903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6594,12 +6597,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSwitching: 0
-  weaponRightHandSpriteRenderer: {fileID: 312786131199480866}
-  weaponRightHandPolygonCollider2D: {fileID: 7166756456653077127}
-  weaponRightHandShootPositionTransform: {fileID: 802560995188249724}
-  weaponRightHandEffectPositionTransform: {fileID: 1225761756619009746}
-  weaponLeftHandSpriteRenderer: {fileID: 1694001904705187332}
-  weaponLeftHandPolygonCollider2D: {fileID: 6455263427142652176}
+  weaponMainHandSpriteRenderer: {fileID: 312786131199480866}
+  weaponMainHandPolygonCollider2D: {fileID: 7166756456653077127}
+  weaponMainHandShootPositionTransform: {fileID: 802560995188249724}
+  weaponMainHandEffectPositionTransform: {fileID: 1225761756619009746}
+  weaponOffHandSpriteRenderer: {fileID: 1694001904705187332}
+  weaponOffHandPolygonCollider2D: {fileID: 6455263427142652176}
 --- !u!114 &2050193959976247817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6808,10 +6811,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poisonImage: {fileID: 2500326158488082647}
-  bleedingImage: {fileID: 0}
   acidImage: {fileID: 3878516794255212751}
   stunImage: {fileID: 1188941767910138742}
-  slowImage: {fileID: 0}
   silverArmorImage: {fileID: 8738477376619738444}
   deathImage: {fileID: 5985153715682997875}
 --- !u!114 &-7766726267448648419

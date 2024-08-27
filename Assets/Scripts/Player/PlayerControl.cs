@@ -206,6 +206,8 @@ public class PlayerControl : MonoBehaviour
         // If pop-up window is open, disable attack
         if (GameManager.Instance.popUpWindowOpen) return;
 
+        if (player.activeWeapon.GetCurrentMainHandWeapon() == null) return;
+
         // Fire when left mouse button is clicked - melee
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
         {
@@ -603,45 +605,16 @@ public class PlayerControl : MonoBehaviour
     {
         float scrollValue = (InputManager.Instance.switchWeapon.action.ReadValue<Vector2>().normalized).y;
 
-        int checkedIndexNum;
-
         // Switch weapon if mouse scroll wheel selecetd
         if (scrollValue < 0f)
         {
-            checkedIndexNum = player.currentWeaponSlotSetIndex - 1;
-
-            if (checkedIndexNum == 0)
-            {
-                checkedIndexNum = 3;
-            }
-
-            if (player.weaponSlotSetArray[checkedIndexNum - 1][0] == null)
-            {
-
-            }
-            else
-            {
-                PreviousWeaponSet(true);
-            }
+            PreviousWeaponSet(true);
         }
 
         if (scrollValue > 0f)
         {
-            checkedIndexNum = player.currentWeaponSlotSetIndex + 1;
 
-            if (checkedIndexNum == 4)
-            {
-                checkedIndexNum = 1;
-            }
-
-            if (player.weaponSlotSetArray[checkedIndexNum - 1][0] == null)
-            {
-
-            }
-            else
-            {
-                NextWeaponSet(true, true);
-            }
+            NextWeaponSet(true, true);
         }
     }
 
@@ -649,6 +622,9 @@ public class PlayerControl : MonoBehaviour
     {
         if (mouseWheel)
         {
+            // Cache previous weapon slot index
+            InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+
             // Increment the current weapon slot set index
             player.currentWeaponSlotSetIndex++;
 
@@ -657,21 +633,18 @@ public class PlayerControl : MonoBehaviour
                 player.currentWeaponSlotSetIndex = 1;
             }
 
+
             SetWeaponSetByIndex(onlySwitch);
         }
         else
         {
             if (player.currentWeaponSlotSetIndex == setNumber) return;
 
-            if (player.weaponSlotSetArray[setNumber - 1][0] == null)
-            {
-                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontHaveWeaponOnSelectedSet);
-            }
-            else
-            {
-                player.currentWeaponSlotSetIndex = setNumber;
-                SetWeaponSetByIndex(onlySwitch);
-            }
+            // Cache previous weapon slot index
+            InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+
+            player.currentWeaponSlotSetIndex = setNumber;
+            SetWeaponSetByIndex(onlySwitch);
         }
 
         HighlightWeaponSetButton();
@@ -679,6 +652,9 @@ public class PlayerControl : MonoBehaviour
 
     public void PreviousWeaponSet(bool onlySwitch)
     {
+        // Cache previous weapon slot index
+        InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+
         // Decrease the current weapon slot set index
         player.currentWeaponSlotSetIndex--;
 
@@ -694,6 +670,8 @@ public class PlayerControl : MonoBehaviour
 
     public void SetWeaponSetByIndex(bool onlySwitch)
     {
+        Debug.Log(player.currentWeaponSlotSetIndex);
+
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
         {
             player.setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], 
@@ -710,6 +688,11 @@ public class PlayerControl : MonoBehaviour
                 player.setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
             }
         }
+        else
+        {
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+            RemoveMainHandWeaponFromBook();
+        }
 
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null)
         {
@@ -718,8 +701,17 @@ public class PlayerControl : MonoBehaviour
         }
         else
         {
-            player.setActiveWeaponEvent.CallSetInactiveAtOffHandEvent();
-            RemoveOffHandWeaponsFromBook();
+            if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+            {
+                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                {
+                    player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+                }
+                else
+                {
+                    RemoveOffHandWeaponsFromBook();
+                }
+            }
         }
     }
 
@@ -1144,9 +1136,24 @@ public class PlayerControl : MonoBehaviour
         }
         else
         {
+            chestItem.droppedByPlayer = true;
+
             if (weapon.onMaindHand)
             {
-                chestItem.droppedByPlayer = true;
+                switch (weapon.weaponBelongingToWhichMainHandSet)
+                {
+                    case 1:
+                        player.weaponSlotSetArray[0][1] = null;
+                        break;
+                    case 2:
+                        player.weaponSlotSetArray[1][1] = null;
+                        break;
+                    case 3:
+                        player.weaponSlotSetArray[2][1] = null;
+                        break;
+                    default:
+                        break;
+                }
 
                 // Break free from the player object
                 chestItem.spriteRenderer.enabled = true;
@@ -1160,9 +1167,6 @@ public class PlayerControl : MonoBehaviour
                 RemoveMainHandWeaponFromBook();
                 player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
                 player.mainHandSlotFilled = false;
-
-                // Switch to next weapon set having main hand weapon
-                player.playerControl.NextWeaponSet(true, true);
             }
             else
             {
@@ -1192,7 +1196,7 @@ public class PlayerControl : MonoBehaviour
                 chestItem.isPickedUp = false;
 
                 RemoveOffHandWeaponsFromBook();
-                player.setActiveWeaponEvent.CallSetInactiveAtOffHandEvent();
+                player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
                 player.offHandSlotFilled = false;
             }
         }

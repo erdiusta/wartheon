@@ -142,11 +142,11 @@ public class PlayerDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Player initial starting weapon - Right hand animator controller")]
     #endregion
-    public RuntimeAnimatorController rightHandAnimatorController;
+    public RuntimeAnimatorController mainHandAnimatorController;
     #region Tooltip
     [Tooltip("Player initial starting weapon - Left hand animator controller")]
     #endregion
-    public RuntimeAnimatorController leftHandAnimatorController;
+    public RuntimeAnimatorController offHandAnimatorController;
     #region Tooltip
     [Tooltip("Populate with the list of starting weapons")]
     #endregion

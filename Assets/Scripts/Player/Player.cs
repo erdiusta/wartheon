@@ -184,23 +184,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void AddSecondWeaponToFirstSetOffHandedIfOneHand(WeaponDetailsSO weaponDetails)
-    {
-        Weapon weapon = new Weapon
-        {
-            weaponDetails = weaponDetails,
-            weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
-            onMaindHand = false
-        };
-
-        if (weaponSlotSetArray[1][1] == null)
-        {
-            weaponSlotSetArray[1][1] = weapon;
-            weapon.weaponBelongingToWhichOffHandSet = 1;
-            ActivateWeapon(weapon, true, 1);
-        }
-    }
-
     /// <summary>
     /// Set the player starting active item
     /// </summary>

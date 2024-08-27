@@ -11,6 +11,7 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     int enemyMaxConcurrentSpawnNumber;
     Room currentRoom;
     RoomEnemySpawnParameters roomEnemySpawnParameters;
+    MusicTrackSO musicTrack;
 
     private void OnEnable()
     {
@@ -20,6 +21,11 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     private void OnDisable()
     {
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
+    }
+
+    private void Start()
+    {
+        
     }
 
     /// <summary>
