@@ -96,9 +96,27 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Special Move",
+                    "name": "Special Move1",
                     "type": "Button",
                     "id": "18d82115-ffab-441e-8d09-3ba1ec79990b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Special Move2",
+                    "type": "Button",
+                    "id": "51383c56-5677-4948-b9f9-6c6a8c09340d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Special Move3",
+                    "type": "Button",
+                    "id": "46ae1878-7aca-4762-8ed3-8e1dd8568c34",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -363,11 +381,11 @@
                 {
                     "name": "",
                     "id": "e9ef3500-fe44-49cb-82f5-869a154baee1",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/z",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Special Move",
+                    "action": "Special Move1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -423,6 +441,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "ShiftButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "53fcfa54-f0e4-48fa-804e-4e62c8b2ad69",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Special Move2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "004bc29e-8e97-4784-8ea3-b0d742c819ec",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Special Move3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

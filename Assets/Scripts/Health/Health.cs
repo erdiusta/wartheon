@@ -327,7 +327,7 @@ public class Health : MonoBehaviour
             {
                 enemy.headShotFxParticles.Play();
                 enemy.healthEvent.CallHeadShotEvent();
-                SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.specialMoveSoundEffect);
+                SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.specialMoveOneSoundEffect);
             }
             else
             {
@@ -357,13 +357,12 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Indicate a hit and give some post hit immunity
     /// </summary>
-    private void PostHitImmunity()
+    public void PostHitImmunity(bool blockSpecialMoveEnabled = false)
     {
         // Check if gameobject is active - if not return
         if (gameObject.activeSelf == false) return;
 
-        // If there is post hit immunity then
-        if (isImmuneAfterHit)
+        if (blockSpecialMoveEnabled)
         {
             if (immunityCoroutine != null)
             {
@@ -371,48 +370,89 @@ public class Health : MonoBehaviour
             }
 
             // Flash red&white and give period of immunity
-            immunityCoroutine = StartCoroutine(PostHitImmunityRoutine(immunityTime, spriteRenderer));
+            immunityCoroutine = StartCoroutine(PostHitImmunityRoutine(immunityTime, spriteRenderer, true));
+        }
+        else
+        {
+            // If there is post hit immunity then
+            if (isImmuneAfterHit)
+            {
+                if (immunityCoroutine != null)
+                {
+                    StopCoroutine(immunityCoroutine);
+                }
+
+                // Flash red&white and give period of immunity
+                immunityCoroutine = StartCoroutine(PostHitImmunityRoutine(immunityTime, spriteRenderer));
+            }
         }
     }
 
     /// <summary>
     /// Coroutine to indicate a hit and give some post hit immunity
     /// </summary>
-    IEnumerator PostHitImmunityRoutine(float immunityTime, SpriteRenderer spriteRenderer)
+    IEnumerator PostHitImmunityRoutine(float immunityTime, SpriteRenderer spriteRenderer, bool blockSpecialMoveEnabled = false)
     {
         int iterations = Mathf.RoundToInt(immunityTime / spriteFlashInterval / 4);
 
         isDamageable = isProjectileHit;
 
-        // Flash effect
-        while (iterations > 0)
+        if (blockSpecialMoveEnabled)
         {
-            flashManager.RedFlashCharacter(spriteRenderer);
-            yield return waitForSecondsSpriteFlashInterval;
-
-            flashManager.UnflashCharacter(spriteRenderer);
-            yield return waitForSecondsSpriteFlashInterval;
-
-            if (player != null && player.healthStatus == HealthStatus.Poisoned)
-            {
-                flashManager.PoisonFlashCharacter(spriteRenderer);
-                yield return waitForSecondsSpriteFlashInterval;
-
-                flashManager.UnflashCharacter(spriteRenderer);
-                yield return waitForSecondsSpriteFlashInterval;
-            }
-            else
+            // Flash effect
+            while (iterations > 0)
             {
                 flashManager.WhiteFlashCharacter(spriteRenderer);
                 yield return waitForSecondsSpriteFlashInterval;
 
                 flashManager.UnflashCharacter(spriteRenderer);
                 yield return waitForSecondsSpriteFlashInterval;
+
+                flashManager.WhiteFlashCharacter(spriteRenderer);
+                yield return waitForSecondsSpriteFlashInterval;
+
+                flashManager.UnflashCharacter(spriteRenderer);
+                yield return waitForSecondsSpriteFlashInterval;
+
+                iterations--;
+
+                yield return null;
             }
+        }
+        else
+        {
+            iterations = Mathf.RoundToInt(immunityTime / spriteFlashInterval / 4);
 
-            iterations--;
+            // Flash effect
+            while (iterations > 0)
+            {
+                flashManager.RedFlashCharacter(spriteRenderer);
+                yield return waitForSecondsSpriteFlashInterval;
 
-            yield return null;
+                flashManager.UnflashCharacter(spriteRenderer);
+                yield return waitForSecondsSpriteFlashInterval;
+
+                if (player != null && player.healthStatus == HealthStatus.Poisoned)
+                {
+                    flashManager.PoisonFlashCharacter(spriteRenderer);
+                    yield return waitForSecondsSpriteFlashInterval;
+
+                    flashManager.UnflashCharacter(spriteRenderer);
+                    yield return waitForSecondsSpriteFlashInterval;
+                }
+                else
+                {
+                    flashManager.WhiteFlashCharacter(spriteRenderer);
+                    yield return waitForSecondsSpriteFlashInterval;
+
+                    flashManager.UnflashCharacter(spriteRenderer);
+                    yield return waitForSecondsSpriteFlashInterval;
+                }
+
+                iterations--;
+
+                yield return null;
+            }
         }
 
         // If not hit by a projectile, re-enable damageability

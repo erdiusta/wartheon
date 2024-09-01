@@ -14,13 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Bat
   enemyPrefab: {fileID: 7183228443647751644, guid: 5b47e0efa440e0443a327bd01a1d9035, type: 3}
+  enemyRace: 0
   movementDetails: {fileID: 11400000, guid: 0fec25a507abd7d44965f2276a63e9fe, type: 2}
+  experiencePoint: 30
   chaseDistance: 9
   hasAttackMove: 0
   preAttackDuration: 1
   attackMoveTriggerDistance: 0
   attackMoveEfficentDistance: 0
-  attackMoveCooldown: 0
+  attackMoveBaseCooldown: 8
+  baseEvasiveness: 0.8
   enemyBehaviour: 0
   isEnemyBoss: 0
   enemyArmorValue: 2
@@ -93,24 +96,6 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
       ratio: 25
   passiveItemsByLevelList:
-  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    spawnableObjectRatioList:
-    - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
-      ratio: 3
-    - dungeonObject: {fileID: 11400000, guid: e87d6cab4dd029648b79abd7d75ca6e6, type: 2}
-      ratio: 10
-    - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
-      ratio: 4
-    - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: f793c8e0100ca3e40bc4b1e0becfa2e1, type: 2}
-      ratio: 2
-    - dungeonObject: {fileID: 11400000, guid: 02b65729f69cc0e4cb30894fdcb1a9d0, type: 2}
-      ratio: 10
-    - dungeonObject: {fileID: 11400000, guid: ea43c30395e36ed4dad1c912b02fe8ee, type: 2}
-      ratio: 10
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
@@ -123,8 +108,6 @@ MonoBehaviour:
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
       ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: f793c8e0100ca3e40bc4b1e0becfa2e1, type: 2}
-      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 02b65729f69cc0e4cb30894fdcb1a9d0, type: 2}
       ratio: 10
   activeItemsByLevelList:

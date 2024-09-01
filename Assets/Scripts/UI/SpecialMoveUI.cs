@@ -1,5 +1,4 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,58 +9,30 @@ public class SpecialMoveUI : MonoBehaviour
     [Header("OBJECT REFERENCES")]
     #endregion Header OBJECT REFERENCES
     #region Tooltip
-    [Tooltip("Populate with the TextMeshPro-Text component on the child specialMoveNameText gameobject")]
+    [Tooltip("Populate with the First Special Move object")]
     #endregion Tooltip
-    [SerializeField] TextMeshProUGUI specialMoveNameText;
+    [SerializeField] Transform firstSpecialMoveContainer;
     #region Tooltip
-    [Tooltip("Populate with the container bar")]
+    [Tooltip("Populate with the Second Special Move object")]
     #endregion Tooltip
-    [SerializeField] GameObject containerBar;
+    [SerializeField] Transform secondSpecialMoveContainer;
     #region Tooltip
-    [Tooltip("Populate with the RectTransform of the child gameobject moveReadyBar")]
+    [Tooltip("Populate with the Third Special Move object")]
     #endregion Tooltip
-    [SerializeField] Transform moveReadyBar;
-    #region Tooltip
-    [Tooltip("Populate with the Image component of the child gameobject BarImage")]
-    #endregion Tooltip
-    [SerializeField] Image barImage;
+    [SerializeField] Transform thirdSpecialMoveContainer;
+
 
     Player player;
-    Coroutine reloadSpecialMoveCoroutine;
+    Coroutine specialMoveOneCooldownCoroutine;
+    Coroutine specialMoveTwoCooldownCoroutine;
+    Coroutine specialMoveThreeCooldownCoroutine;
+    bool specialMoveOneIsReset;
+    bool specialMoveTwoIsReset;
+    bool specialMoveThreeIsReset;
 
     private void Awake()
     {
         player = GameManager.Instance.GetPlayer();
-    }
-
-    private void Start()
-    {
-        switch (player.playerDetails.playerCharacterName)
-        {
-            case Settings.astraeus:
-                // Set the special move cooldown bar to magenta
-                barImage.color = Color.magenta;
-                break;
-            case Settings.orion:
-                // Set the special move cooldown bar to green
-                barImage.color = Color.green;
-                break;
-            case Settings.erebus:
-                // Set the special move cooldown bar to cyan
-                barImage.color = Color.cyan;
-                break;
-            case Settings.lyrisa:
-                // Set the special move cooldown bar to yellow
-                barImage.color = Color.yellow;
-                break;
-            default:
-                break;
-        }
-
-        // Set the special move text
-        specialMoveNameText.text = player.playerDetails.specialMoveName;
-        // Update bar fill
-        containerBar.gameObject.SetActive(false);
     }
 
     private void OnEnable()
@@ -76,93 +47,209 @@ public class SpecialMoveUI : MonoBehaviour
 
     private void Update()
     {
-        if (player.specialMoveOnCooldown)
+        if (player.specialMoveOneOnCooldown)
         {
-            player.specialMoveTimer += Time.deltaTime;
+            specialMoveOneIsReset = false;
 
-            containerBar.gameObject.SetActive(true);
+            player.specialMoveOneCooldownTimer += Time.deltaTime;
 
-            if (player.specialMoveTimer > player.playerDetails.specialMoveDuration)
+            if (player.playerDetails.specialMoveOneDuration > 0)
+            {
+                player.specialMoveOneDurationTimer += Time.deltaTime;
+            }
+
+            if (player.specialMoveOneCooldownTimer > player.playerDetails.specialMoveOneCooldownDuration)
             {
                 // Ensure that the timer is not exceeding the duration
-                player.specialMoveTimer = player.playerDetails.specialMoveDuration;
-                player.specialMoveOnCooldown = false;
+                player.specialMoveOneOnCooldown = false;
+                player.specialMoveOneCooldownTimer = 0f;
+                player.specialMoveOneDurationTimer = 0f;
+                ResetSpecialMoveCooldownSlot(1);
             }
         }
-        else
-        {
-            player.specialMoveTimer = 0f;
 
-            containerBar.gameObject.SetActive(false);
+        if (player.specialMoveTwoOnCooldown)
+        {
+            specialMoveTwoIsReset = false;
+
+            player.specialMoveTwoCooldownTimer += Time.deltaTime;
+
+            if (player.playerDetails.specialMoveTwoDuration > 0)
+            {
+                player.specialMoveTwoDurationTimer += Time.deltaTime;
+
+                if (player.specialMoveTwoDurationTimer >= player.playerDetails.specialMoveTwoDuration)
+                {
+                    player.isBlockingActive = false;
+                    player.healthEvent.CallArmorWoreOffEvent();
+                }
+            }
+
+            if (player.specialMoveTwoCooldownTimer > player.playerDetails.specialMoveTwoCooldownDuration)
+            {
+                // Ensure that the timer is not exceeding the duration
+                player.specialMoveTwoOnCooldown = false;
+                player.specialMoveTwoCooldownTimer = 0f;
+                player.specialMoveTwoDurationTimer = 0f;
+                ResetSpecialMoveCooldownSlot(2);
+            }
+        }
+
+        if (player.specialMoveThreeOnCooldown)
+        {
+            specialMoveThreeIsReset = false;
+
+            player.specialMoveThreeCooldownTimer += Time.deltaTime;
+
+            if (player.playerDetails.specialMoveThreeDuration > 0)
+            {
+                player.specialMoveThreeDurationTimer += Time.deltaTime;
+
+                if (player.specialMoveThreeDurationTimer >= player.playerDetails.specialMoveThreeDuration)
+                {
+                    player.healthEvent.CallGemSkinSpecialMoveEndEvent();
+                    Debug.Log("Current armor value is " + GameManager.Instance.GetPlayer().health.currentArmorValue);
+                    GameManager.Instance.GetPlayer().health.currentArmorValue = GameManager.Instance.GetPlayer().playerDetails.playerArmorValue; // Reset armor value
+                    Debug.Log("Current armor value is " + GameManager.Instance.GetPlayer().health.currentArmorValue);
+                }
+            }
+
+            if (player.specialMoveThreeCooldownTimer > player.playerDetails.specialMoveThreeCooldownDuration)
+            {
+                // Ensure that the timer is not exceeding the duration
+                player.specialMoveThreeOnCooldown = false;
+                player.specialMoveThreeCooldownTimer = 0f;
+                player.specialMoveThreeDurationTimer = 0f;
+                ResetSpecialMoveCooldownSlot(3);
+            }
         }
     }
 
-    private void SpecialMoveEvent_OnSpecialMoveUsed()
+    private void SpecialMoveEvent_OnSpecialMoveUsed(SpecialMoveEvent specialMoveEvent, SpecialMoveEventArgs specialMoveEventArgs)
     {
-        StopSpecialMoveCoroutine();
-        UpdateSpecialMoveText();
-
-        reloadSpecialMoveCoroutine = StartCoroutine(UpdateSpecialMoveReloadBarRoutine());
+        switch (specialMoveEventArgs.specialMoveNumber)
+        {
+            case 1:
+                StopSpecialMoveCoroutine(specialMoveOneCooldownCoroutine);
+                specialMoveOneCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(1));
+                break;
+            case 2:
+                StopSpecialMoveCoroutine(specialMoveTwoCooldownCoroutine);
+                specialMoveTwoCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(2));
+                break;
+            case 3:
+                StopSpecialMoveCoroutine(specialMoveThreeCooldownCoroutine);
+                specialMoveThreeCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(3));
+                break;
+            default:
+                break;
+        }
     }
 
     /// <summary>
     /// Stop coroutine updating special move progress bar
     /// </summary>
-    private void StopSpecialMoveCoroutine()
+    private void StopSpecialMoveCoroutine(Coroutine coroutine)
     {
         // Stop any active weapon reload bar on the UI
-        if (reloadSpecialMoveCoroutine != null)
+        if (coroutine != null)
         {
-            StopCoroutine(reloadSpecialMoveCoroutine);
+            StopCoroutine(coroutine);
         }
     }
 
     /// <summary>
-    /// Update the blinking special move text
+    /// Animate special cooldown slot coroutine
     /// </summary>
-    private void UpdateSpecialMoveText()
+    private IEnumerator UpdateCooldownSlotRoutine(int specialMoveNumber)
     {
-        // set the reload bar to red
-        barImage.color = Color.red;
+        // Animate the weapon reload bar
+        while (player.specialMoveOneCooldownTimer < player.playerDetails.specialMoveOneCooldownDuration)
+        {
+            Image specialMoveCooldownBackground;
+            Image specialMoveCooldownImage;
+
+            switch (specialMoveNumber)
+            {
+                case 1:
+                    if (!specialMoveOneIsReset)
+                    {
+                        specialMoveCooldownBackground = firstSpecialMoveContainer.GetChild(0).GetComponent<Image>();
+                        specialMoveCooldownImage = firstSpecialMoveContainer.GetChild(1).GetComponent<Image>();
+
+                        // update cooldownCircle
+                        float circleFill = Mathf.Clamp(player.specialMoveOneCooldownTimer / player.playerDetails.specialMoveOneCooldownDuration, 0, 1);
+                        specialMoveCooldownBackground.fillAmount = circleFill;
+                        specialMoveCooldownImage.color = new Color(1f, 1f, 1f, 0.3f);
+                    }
+                    break;
+                case 2:
+                    if (!specialMoveTwoIsReset)
+                    {
+                        specialMoveCooldownBackground = secondSpecialMoveContainer.GetChild(0).GetComponent<Image>();
+                        specialMoveCooldownImage = secondSpecialMoveContainer.GetChild(1).GetComponent<Image>();
+
+                        // update cooldownCircle
+                        float circleFill = Mathf.Clamp(player.specialMoveTwoCooldownTimer / player.playerDetails.specialMoveTwoCooldownDuration, 0, 1);
+                        specialMoveCooldownBackground.fillAmount = circleFill;
+                        specialMoveCooldownImage.color = new Color(1f, 1f, 1f, 0.3f);
+                    }
+                    break;
+                case 3:
+                    if (!specialMoveThreeIsReset)
+                    {
+                        specialMoveCooldownBackground = thirdSpecialMoveContainer.GetChild(0).GetComponent<Image>();
+                        specialMoveCooldownImage = thirdSpecialMoveContainer.GetChild(1).GetComponent<Image>();
+
+                        // update cooldownCircle
+                        float circleFill = Mathf.Clamp(player.specialMoveThreeCooldownTimer / player.playerDetails.specialMoveThreeCooldownDuration, 0, 1);
+                        specialMoveCooldownBackground.fillAmount = circleFill;
+                        specialMoveCooldownImage.color = new Color(1f, 1f, 1f, 0.3f);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            //specialMoveCooldownBackground.color = new Color(1f, 1f, 1f);
+            //specialMoveImage.color = new Color(0.5f, 0f, 0f);
+
+            yield return null;
+        }
     }
 
     /// <summary>
-    /// Animate special move bar coroutine
-    /// </summary>
-    private IEnumerator UpdateSpecialMoveReloadBarRoutine()
+    /// Reset special move bar coroutine
+    private void ResetSpecialMoveCooldownSlot(int specialMoveNum)
     {
-        switch (player.playerDetails.playerCharacterName)
+        Image specialMoveCooldownBackground;
+        Image specialMoveCooldownImage;
+
+        switch (specialMoveNum)
         {
-            case Settings.astraeus:
-                // Set the reload bar to red
-                barImage.color = Color.magenta;
+            case 1:
+                specialMoveCooldownBackground = firstSpecialMoveContainer.GetChild(0).GetComponent<Image>();
+                specialMoveCooldownImage = firstSpecialMoveContainer.GetChild(1).GetComponent<Image>();
+                specialMoveCooldownBackground.fillAmount = 1;
+                specialMoveCooldownImage.color = new Color(1, 1, 1, 1);
+                specialMoveOneIsReset = true;
                 break;
-            case Settings.orion:
-                // Set the reload bar to red
-                barImage.color = Color.green;
+            case 2:
+                specialMoveCooldownBackground = secondSpecialMoveContainer.GetChild(0).GetComponent<Image>();
+                specialMoveCooldownImage = secondSpecialMoveContainer.GetChild(1).GetComponent<Image>();
+                specialMoveCooldownBackground.fillAmount = 1;
+                specialMoveCooldownImage.color = new Color(1, 1, 1, 1);
+                specialMoveTwoIsReset = true;
                 break;
-            case Settings.erebus:
-                // Set the reload bar to red
-                barImage.color = Color.cyan;
-                break;
-            case Settings.lyrisa:
-                // Set the reload bar to red
-                barImage.color = Color.yellow;
+            case 3:
+                specialMoveCooldownBackground = thirdSpecialMoveContainer.GetChild(0).GetComponent<Image>();
+                specialMoveCooldownImage = thirdSpecialMoveContainer.GetChild(1).GetComponent<Image>();
+                specialMoveCooldownBackground.fillAmount = 1;
+                specialMoveCooldownImage.color = new Color(1, 1, 1, 1);
+                specialMoveThreeIsReset = true;
                 break;
             default:
                 break;
-        }
-
-        // Animate the weapon reload bar
-        while (player.specialMoveTimer < player.playerDetails.specialMoveDuration)
-        {
-            // update reloadbar
-            float barFill = player.specialMoveTimer / player.playerDetails.specialMoveDuration;
-
-            // update bar fill
-            moveReadyBar.transform.localScale = new Vector3(barFill, 1f, 1f);
-
-            yield return null;
         }
     }
 }

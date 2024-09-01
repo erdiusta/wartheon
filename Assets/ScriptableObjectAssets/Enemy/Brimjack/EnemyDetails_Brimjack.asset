@@ -118,8 +118,6 @@ MonoBehaviour:
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
       ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: f793c8e0100ca3e40bc4b1e0becfa2e1, type: 2}
-      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: ea43c30395e36ed4dad1c912b02fe8ee, type: 2}
@@ -136,8 +134,6 @@ MonoBehaviour:
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
       ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: f793c8e0100ca3e40bc4b1e0becfa2e1, type: 2}
-      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 1
   activeItemsByLevelList:

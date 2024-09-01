@@ -74,29 +74,38 @@ public class DealContactDamage : MonoBehaviour
 
                 if (player.health.isDamageable)
                 {
-
                     if (enemy != null)
                     {
-                        // Check if collider is a decoy
-                        if (collision.GetComponent<Decoy>() != null)
+                        if (player.isBlockingActive)
                         {
-                            receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
-                            return;
+                            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
+                            player.health.PostHitImmunity(true);
+                            player.isBlockingActive = false;
+                            player.healthEvent.CallArmorWoreOffEvent();
                         }
+                        else
+                        {
+                            // Check if collider is a decoy
+                            if (collision.GetComponent<Decoy>() != null)
+                            {
+                                receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
+                                return;
+                            }
 
-                        if (player.playerDetails.onStealth) return;
+                            if (player.playerDetails.onStealth) return;
 
-                        CheckPoisonStatus(player);
-                        CheckAcidStatus(player);
-                        CheckStunStatus(player);
+                            CheckPoisonStatus(player);
+                            CheckAcidStatus(player);
+                            CheckStunStatus(player);
+
+                            // Damage inflicted to enemy after deducting enemy armor
+                            int inflictedDamage = damageDone > player.health.GetArmorValue() ? damageDone - player.health.GetArmorValue() : 1;
+
+                            receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
+                        }
 
                         // Apply knockback
                         player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
-
-                        // Damage inflicted to enemy after deducting enemy armor
-                        int inflictedDamage = damageDone > player.health.GetArmorValue() ? damageDone - player.health.GetArmorValue() : 1;
-
-                        receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
                     }
                 }
             }

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -10,9 +11,11 @@ public class MovementByVelocity : MonoBehaviour
     [Tooltip("MovementDetailsSO scriptable object containing movement details such as speed")]
     #endregion Tooltip
     public MovementDetailsSO movementDetails;
+    public Transform dustTrailContainer;
 
     [HideInInspector] public float playerStartingMinSpeed;
     [HideInInspector] public float playerStartingMaxSpeed;
+    [HideInInspector] public Animator dustTrailAnimator;
 
     public Vector2 MovementInput { get; set; }
     public float moveSpeed;
@@ -24,14 +27,16 @@ public class MovementByVelocity : MonoBehaviour
     float knockbackTimeWeight;
     Coroutine stunPlayerRoutine;
 
+    float marginDistance = 1f;
     Coroutine trailParticlesCoroutine;
-    float trailParticlesDuration = 1f;
+    float trailDustDuration = 0.3f;
 
     private void Awake()
     {
         player = GetComponent<Player>();
         rb2D = GetComponent<Rigidbody2D>();
         moveSpeed = movementDetails.GetMoveSpeed();
+        dustTrailAnimator = dustTrailContainer.GetComponentInChildren<Animator>();
     }
 
     private void OnEnable()
@@ -61,14 +66,19 @@ public class MovementByVelocity : MonoBehaviour
         // Check trail dust emittance based on move condition
         if (moveSpeed < 0.5f || (Mathf.Abs(MovementInput.x) < 0.1f && Mathf.Abs(MovementInput.y) < 0.1f))
         {
-            StopTrailParticles();
+            //StopTrailParticles();
         }
         else
         {
-            if (trailParticlesCoroutine == null)
+            if (player.playerControl.movementTimer > trailDustDuration)
             {
-                // If coroutine isn't running, start it to emit particles for a certain duration
-                trailParticlesCoroutine = StartCoroutine(PlayTrailParticlesForDuration());
+                if (trailParticlesCoroutine == null)
+                {
+                    // If coroutine isn't running, start it to emit particles for a certain duration
+                    trailParticlesCoroutine = StartCoroutine(PlayTrailParticlesForDuration());
+                }
+
+                player.playerControl.movementTimer = 0f;
             }
         }
 
@@ -78,7 +88,7 @@ public class MovementByVelocity : MonoBehaviour
         // Second check if player is on stun status
         if (player.moveStatus == MoveStatus.Stun)
         {
-            StopTrailParticles();
+            //StopTrailParticles();
             stunPlayerRoutine = StartCoroutine(StunRoutine());
             return;
         }
@@ -171,31 +181,60 @@ public class MovementByVelocity : MonoBehaviour
     // Coroutine to play trail particles for a certain duration
     private IEnumerator PlayTrailParticlesForDuration()
     {
-        PlayTrailParticles(); // Start trail particles emission
-        yield return new WaitForSeconds(trailParticlesDuration); // Wait for specified duration
+        EmitDustTrail(); // Start trail particles emission
+        yield return new WaitForSeconds(trailDustDuration); // Wait for specified duration
 
-        StopTrailParticles(); // Stop trail particles emission
         trailParticlesCoroutine = null; // Reset coroutine reference
     }
 
-    private void PlayTrailParticles()
+    private void EmitDustTrail()
     {
-        // Calculate player direction
-        Vector3 playerDirection = MovementInput;
+        if (dustTrailAnimator == null)
+        {
+            GameObject dustTrailObject = Instantiate(GameResources.Instance.dustTrailPrefab, dustTrailContainer);
+            dustTrailAnimator = dustTrailObject.GetComponent<Animator>();
 
-        // Convert direction to rotation
-        Quaternion rotation = Quaternion.LookRotation(playerDirection, Vector3.up);
+            if (dustTrailAnimator.transform.parent == null)
+            {
+                {
+                    dustTrailAnimator.transform.SetParent(dustTrailContainer);
+                }
+            }
+        }
+        else
+        {
+            if (dustTrailAnimator.transform.parent == null)
+            {
+                {
+                    GameObject dustTrailObject = Instantiate(GameResources.Instance.dustTrailPrefab, dustTrailContainer);
+                    dustTrailAnimator = dustTrailObject.GetComponent<Animator>();
 
-        // Set start rotation of the particle system
-        ParticleSystem.MainModule mainModule = player.dustParticlesSystem.main;
-        mainModule.startRotation = (rotation.eulerAngles.y * Mathf.Deg2Rad) - (90 * Mathf.Deg2Rad);
+                    dustTrailAnimator.transform.SetParent(dustTrailContainer);
+                }
+            }
+        }
 
-        player.dustParticlesSystem.Play();
-    }
+        // Calculate direction vector of mouse cursor from player transform position
+        Vector3 playerDirection = (HelperUtilities.GetMouseWorldPosition() - transform.position).normalized;
 
-    private void StopTrailParticles()
-    {
-        player.dustParticlesSystem.Stop();
+        // Get player to cursor angle
+        float playerAngleDegrees = HelperUtilities.GetAngleFromVector(playerDirection);
+
+        // Determine the localScale based on the angle
+        Vector3 newLocalScale = dustTrailContainer.localScale;
+
+        // Adjust x-scale based on angle (flip on x-axis)
+        newLocalScale.x = Mathf.Cos(playerAngleDegrees * Mathf.Deg2Rad) >= 0 ? 1 : -1;
+
+        // Apply the new localScale to the DustTrailContainer
+        dustTrailContainer.localScale = newLocalScale;
+
+        // Adjust the position of the DustTrailContainer with margin distance
+        dustTrailContainer.localPosition = playerDirection * marginDistance * -1;
+
+        dustTrailAnimator.SetTrigger("trail");
+
+        dustTrailAnimator.transform.SetParent(null);
     }
 
     IEnumerator Stagger(Vector3 vector)

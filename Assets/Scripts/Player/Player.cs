@@ -71,8 +71,15 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool isDead;
     [HideInInspector] public StatusManager statusManager;
     [HideInInspector] public SpecialMoveEvent specialMoveEvent;
-    [HideInInspector] public bool specialMoveOnCooldown = false;
-    [HideInInspector] public float specialMoveTimer;
+    [HideInInspector] public bool specialMoveOneOnCooldown = false;
+    [HideInInspector] public bool specialMoveTwoOnCooldown = false;
+    [HideInInspector] public bool specialMoveThreeOnCooldown = false;
+    [HideInInspector] public float specialMoveOneCooldownTimer;
+    [HideInInspector] public float specialMoveTwoCooldownTimer;
+    [HideInInspector] public float specialMoveThreeCooldownTimer;
+    [HideInInspector] public float specialMoveOneDurationTimer;
+    [HideInInspector] public float specialMoveTwoDurationTimer;
+    [HideInInspector] public float specialMoveThreeDurationTimer;
     [HideInInspector] public int keyCount = 0;
     [HideInInspector] public BranchMastery branchMastery;
     [HideInInspector] public WeaponMastery weaponMastery;
@@ -82,7 +89,6 @@ public class Player : MonoBehaviour
     [HideInInspector] public float playerWeaponHandlingModifier = 0f;
     [HideInInspector] public float playerEvasivenessModifier = 0f;
 
-    [HideInInspector] public ParticleSystem dustParticlesSystem;
     [HideInInspector] public ParticleSystem specialMoveParticlesSystem;
     [HideInInspector] public Weapon[][] weaponSlotSetArray = new Weapon[3][] { new Weapon[2] {null, null}, new Weapon[2] {null, null}, new Weapon[2] {null, null}};
     [HideInInspector] public int currentWeaponSlotSetIndex = 1;
@@ -93,6 +99,10 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public bool mainHandSlotFilled = false;
     [HideInInspector] public bool offHandSlotFilled = false;
+    [HideInInspector] public short specialSkillNumber = 0;
+
+    [HideInInspector] public bool isBlockingActive;
+    [HideInInspector] public bool isGemSkinActive;
 
     private void Awake()
     {
@@ -148,7 +158,6 @@ public class Player : MonoBehaviour
         healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
     }
 
-
     private void OnDisable()
     {
         healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
@@ -156,7 +165,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        specialMoveTimer = 0;
+        specialMoveOneCooldownTimer = 0;
     }
 
     /// <summary>

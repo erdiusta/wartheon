@@ -187,6 +187,15 @@ public class GameResources : MonoBehaviour
     #endregion
     public GameObject projectileIconPrefab;
 
+    #region Header
+    [Space(10)]
+    [Header("DUST")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Dust trail prefab")]
+    #endregion
+    public GameObject dustTrailPrefab;
+
     #region Header CHESTS
     [Space(10)]
     [Header("CHESTS")]

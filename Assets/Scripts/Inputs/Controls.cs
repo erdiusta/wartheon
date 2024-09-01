@@ -118,9 +118,27 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Special Move"",
+                    ""name"": ""Special Move1"",
                     ""type"": ""Button"",
                     ""id"": ""18d82115-ffab-441e-8d09-3ba1ec79990b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Special Move2"",
+                    ""type"": ""Button"",
+                    ""id"": ""51383c56-5677-4948-b9f9-6c6a8c09340d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Special Move3"",
+                    ""type"": ""Button"",
+                    ""id"": ""46ae1878-7aca-4762-8ed3-8e1dd8568c34"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -385,11 +403,11 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""e9ef3500-fe44-49cb-82f5-869a154baee1"",
-                    ""path"": ""<Keyboard>/space"",
+                    ""path"": ""<Keyboard>/z"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Special Move"",
+                    ""action"": ""Special Move1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -447,6 +465,28 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""ShiftButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""53fcfa54-f0e4-48fa-804e-4e62c8b2ad69"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Special Move2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""004bc29e-8e97-4784-8ea3-b0d742c819ec"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Special Move3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -465,7 +505,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_ResetWeaponIndex = m_PlayerInput.FindAction("Reset Weapon Index", throwIfNotFound: true);
         m_PlayerInput_NextLevel = m_PlayerInput.FindAction("Next Level", throwIfNotFound: true);
         m_PlayerInput_Interaction = m_PlayerInput.FindAction("Interaction", throwIfNotFound: true);
-        m_PlayerInput_SpecialMove = m_PlayerInput.FindAction("Special Move", throwIfNotFound: true);
+        m_PlayerInput_SpecialMove1 = m_PlayerInput.FindAction("Special Move1", throwIfNotFound: true);
+        m_PlayerInput_SpecialMove2 = m_PlayerInput.FindAction("Special Move2", throwIfNotFound: true);
+        m_PlayerInput_SpecialMove3 = m_PlayerInput.FindAction("Special Move3", throwIfNotFound: true);
         m_PlayerInput_BookView = m_PlayerInput.FindAction("Book View", throwIfNotFound: true);
         m_PlayerInput_ActiveItem = m_PlayerInput.FindAction("Active Item", throwIfNotFound: true);
         m_PlayerInput_DropActiveItem = m_PlayerInput.FindAction("Drop Active Item", throwIfNotFound: true);
@@ -542,7 +584,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_ResetWeaponIndex;
     private readonly InputAction m_PlayerInput_NextLevel;
     private readonly InputAction m_PlayerInput_Interaction;
-    private readonly InputAction m_PlayerInput_SpecialMove;
+    private readonly InputAction m_PlayerInput_SpecialMove1;
+    private readonly InputAction m_PlayerInput_SpecialMove2;
+    private readonly InputAction m_PlayerInput_SpecialMove3;
     private readonly InputAction m_PlayerInput_BookView;
     private readonly InputAction m_PlayerInput_ActiveItem;
     private readonly InputAction m_PlayerInput_DropActiveItem;
@@ -562,7 +606,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @ResetWeaponIndex => m_Wrapper.m_PlayerInput_ResetWeaponIndex;
         public InputAction @NextLevel => m_Wrapper.m_PlayerInput_NextLevel;
         public InputAction @Interaction => m_Wrapper.m_PlayerInput_Interaction;
-        public InputAction @SpecialMove => m_Wrapper.m_PlayerInput_SpecialMove;
+        public InputAction @SpecialMove1 => m_Wrapper.m_PlayerInput_SpecialMove1;
+        public InputAction @SpecialMove2 => m_Wrapper.m_PlayerInput_SpecialMove2;
+        public InputAction @SpecialMove3 => m_Wrapper.m_PlayerInput_SpecialMove3;
         public InputAction @BookView => m_Wrapper.m_PlayerInput_BookView;
         public InputAction @ActiveItem => m_Wrapper.m_PlayerInput_ActiveItem;
         public InputAction @DropActiveItem => m_Wrapper.m_PlayerInput_DropActiveItem;
@@ -607,9 +653,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Interaction.started += instance.OnInteraction;
             @Interaction.performed += instance.OnInteraction;
             @Interaction.canceled += instance.OnInteraction;
-            @SpecialMove.started += instance.OnSpecialMove;
-            @SpecialMove.performed += instance.OnSpecialMove;
-            @SpecialMove.canceled += instance.OnSpecialMove;
+            @SpecialMove1.started += instance.OnSpecialMove1;
+            @SpecialMove1.performed += instance.OnSpecialMove1;
+            @SpecialMove1.canceled += instance.OnSpecialMove1;
+            @SpecialMove2.started += instance.OnSpecialMove2;
+            @SpecialMove2.performed += instance.OnSpecialMove2;
+            @SpecialMove2.canceled += instance.OnSpecialMove2;
+            @SpecialMove3.started += instance.OnSpecialMove3;
+            @SpecialMove3.performed += instance.OnSpecialMove3;
+            @SpecialMove3.canceled += instance.OnSpecialMove3;
             @BookView.started += instance.OnBookView;
             @BookView.performed += instance.OnBookView;
             @BookView.canceled += instance.OnBookView;
@@ -659,9 +711,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Interaction.started -= instance.OnInteraction;
             @Interaction.performed -= instance.OnInteraction;
             @Interaction.canceled -= instance.OnInteraction;
-            @SpecialMove.started -= instance.OnSpecialMove;
-            @SpecialMove.performed -= instance.OnSpecialMove;
-            @SpecialMove.canceled -= instance.OnSpecialMove;
+            @SpecialMove1.started -= instance.OnSpecialMove1;
+            @SpecialMove1.performed -= instance.OnSpecialMove1;
+            @SpecialMove1.canceled -= instance.OnSpecialMove1;
+            @SpecialMove2.started -= instance.OnSpecialMove2;
+            @SpecialMove2.performed -= instance.OnSpecialMove2;
+            @SpecialMove2.canceled -= instance.OnSpecialMove2;
+            @SpecialMove3.started -= instance.OnSpecialMove3;
+            @SpecialMove3.performed -= instance.OnSpecialMove3;
+            @SpecialMove3.canceled -= instance.OnSpecialMove3;
             @BookView.started -= instance.OnBookView;
             @BookView.performed -= instance.OnBookView;
             @BookView.canceled -= instance.OnBookView;
@@ -706,7 +764,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnResetWeaponIndex(InputAction.CallbackContext context);
         void OnNextLevel(InputAction.CallbackContext context);
         void OnInteraction(InputAction.CallbackContext context);
-        void OnSpecialMove(InputAction.CallbackContext context);
+        void OnSpecialMove1(InputAction.CallbackContext context);
+        void OnSpecialMove2(InputAction.CallbackContext context);
+        void OnSpecialMove3(InputAction.CallbackContext context);
         void OnBookView(InputAction.CallbackContext context);
         void OnActiveItem(InputAction.CallbackContext context);
         void OnDropActiveItem(InputAction.CallbackContext context);

@@ -29,8 +29,12 @@ MonoBehaviour:
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
   specialMoveName: TELEPORT
-  specialMoveSoundEffect: {fileID: 11400000, guid: 34f8e2cdca30ac34ba736472fa3c0311, type: 2}
-  specialMoveDuration: 20
+  specialMoveOneSoundEffect: {fileID: 11400000, guid: 34f8e2cdca30ac34ba736472fa3c0311, type: 2}
+  specialMoveOneDuration: 20
+  specialMoveTwoSoundEffect: {fileID: 0}
+  specialMoveTwoDuration: 20
+  specialMoveThreeSoundEffect: {fileID: 0}
+  specialMoveThreeDuration: 20
   onStealth: 0
   applyScreenShake: 0
   shakeIntensity: 0

@@ -28,8 +28,15 @@ MonoBehaviour:
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
   specialMoveName: SEISMIC SLAM
-  specialMoveSoundEffect: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
-  specialMoveDuration: 20
+  specialMoveOneSoundEffect: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
+  specialMoveOneCooldownDuration: 25
+  specialMoveOneDuration: 0
+  specialMoveTwoSoundEffect: {fileID: 11400000, guid: 31e1b327278476749be5bee20fd1b280, type: 2}
+  specialMoveTwoCooldownDuration: 15
+  specialMoveTwoDuration: 8
+  specialMoveThreeSoundEffect: {fileID: 11400000, guid: 78ff5393a05efd8459a875c9ee1760d7, type: 2}
+  specialMoveThreeCooldownDuration: 35
+  specialMoveThreeDuration: 12
   onStealth: 0
   applyScreenShake: 1
   shakeIntensity: 5

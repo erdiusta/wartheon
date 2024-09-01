@@ -13,6 +13,7 @@ public class PlayerControl : MonoBehaviour
     [HideInInspector] public bool fireCompletedDuringPressed = false;
     [HideInInspector] public bool isSoundPlayed = false;
     [HideInInspector] public Coroutine unstealthRoutine;
+    [HideInInspector] public float movementTimer = 0;
 
     Vector2 movementInput;
     Player player;
@@ -114,6 +115,15 @@ public class PlayerControl : MonoBehaviour
         float verticalMovement = movementInput.y;
 
         player.movementByVelocity.MovementInput = movementInput;
+
+        if (Mathf.Abs(movementInput.x) > 0.1f || Mathf.Abs(movementInput.y) > 0.1f)
+        {
+            movementTimer += Time.deltaTime;
+        }
+        else
+        {
+            movementTimer = 0;
+        }
 
         // Create a direction vector based on the input
         Vector2 direction = new Vector2(horizontalMovement, verticalMovement);
@@ -761,35 +771,74 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void SpecialMoveInput()
     {
-        if (InputManager.Instance.specialMove.action.WasPressedThisFrame() && !player.specialMoveOnCooldown)
+        if (InputManager.Instance.specialMoveOne.action.WasPressedThisFrame() && !player.specialMoveOneOnCooldown)
         {
-            switch (player.playerDetails.playerCharacterName)
+            switch (player.playerDetails.playerCharacterIndex)
             {
-                case Settings.astraeus:
+                case Character.Astraeus:
                     SeismicSlam();
-                    player.specialMoveOnCooldown = true;
-                    player.specialMoveEvent.CallSpecialMoveUsedEvent();
+                    player.specialMoveOneOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent(1);
                     break;
 
-                case Settings.orion:
+                case Character.Orion:
                     if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
                     {
                         HeadShot();
-                        player.specialMoveOnCooldown = true;
-                        player.specialMoveEvent.CallSpecialMoveUsedEvent();
+                        player.specialMoveOneOnCooldown = true;
+                        player.specialMoveEvent.CallSpecialMoveUsedEvent(1);
                     }
                     break;
 
-                case Settings.erebus:
+                case Character.Erebus:
                     Stealth();
                     break;
 
-                case Settings.lyrisa:
+                case Character.Lyrisa:
                     Teleport();
-                    player.specialMoveOnCooldown = true;
-                    player.specialMoveEvent.CallSpecialMoveUsedEvent();
+                    player.specialMoveOneOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent(1);
                     break;
 
+                default:
+                    break;
+            }
+        }
+
+        if (InputManager.Instance.specialMoveTwo.action.WasPressedThisFrame() && !player.specialMoveTwoOnCooldown)
+        {
+            switch (player.playerDetails.playerCharacterIndex)
+            {
+                case Character.Astraeus:
+                    Block();
+                    player.specialMoveTwoOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent(2);
+                    break;
+                case Character.Erebus:
+                    break;
+                case Character.Orion:
+                    break;
+                case Character.Lyrisa:
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (InputManager.Instance.specialMoveThree.action.WasPressedThisFrame() && !player.specialMoveThreeOnCooldown)
+        {
+            switch (player.playerDetails.playerCharacterIndex)
+            {
+                case Character.Astraeus:
+                    GemSkin();
+                    player.specialMoveThreeOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent(3);
+                    break;
+                case Character.Erebus:
+                    break;
+                case Character.Orion:
+                    break;
+                case Character.Lyrisa:
+                    break;
                 default:
                     break;
             }
@@ -801,7 +850,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void Teleport()
     {
-        if (player.specialMoveOnCooldown == false)
+        if (player.specialMoveOneOnCooldown == false)
         {
             // Start playing teleport particle system
             if (teleportParticleRoutine != null)
@@ -814,7 +863,7 @@ public class PlayerControl : MonoBehaviour
             InputManager.Instance.pointerPosition.action.performed += OnTeleportInput;
 
             // Play special move sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveSoundEffect);
+            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveOneSoundEffect);
         }
     }
 
@@ -883,7 +932,7 @@ public class PlayerControl : MonoBehaviour
 
         // Get the current color of the sprite renderer
         Color currentColor = player.spriteRenderer.color;
-        SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveSoundEffect);
+        SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveOneSoundEffect);
 
         // Set the alpha value to 0.3 (30% opacity)
         currentColor.a = 0.3f;
@@ -922,8 +971,8 @@ public class PlayerControl : MonoBehaviour
         if (unstealthRoutine != null) return;
 
         // Trigger cooldown and ui components
-        player.specialMoveOnCooldown = true;
-        player.specialMoveEvent.CallSpecialMoveUsedEvent();
+        player.specialMoveOneOnCooldown = true;
+        player.specialMoveEvent.CallSpecialMoveUsedEvent(1);
 
         unstealthRoutine = StartCoroutine(UnstealthRoutine());
     }
@@ -964,7 +1013,7 @@ public class PlayerControl : MonoBehaviour
         if (player.specialMoveParticlesSystem != null)
         {
             player.specialMoveParticlesSystem.Play();
-            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveSoundEffect);
+            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveOneSoundEffect);
         }
 
         if (player.playerDetails.applyScreenShake)
@@ -990,6 +1039,31 @@ public class PlayerControl : MonoBehaviour
                     enemy.health.TakeDamage(seismicSlamDamage, transform.position, enemy.health.transform.position, false);
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Execute Block special move
+    /// </summary>
+    private void Block()
+    {
+        if (player.specialMoveTwoDurationTimer < player.playerDetails.specialMoveTwoDuration)
+        {
+            player.isBlockingActive = true;
+            player.healthEvent.CallGetBlockSpecialMoveEvent(); // This is for displaying shield icon
+        }
+    }
+
+    /// <summary>
+    /// Execute Gem Skin special move
+    /// </summary>
+    private void GemSkin()
+    {
+        if (player.specialMoveThreeDurationTimer < player.playerDetails.specialMoveThreeDuration)
+        {
+            player.isGemSkinActive = true;
+            player.healthEvent.CallGetGemSkinSpecialMoveEvent(); // This is for displaying gem skin icon
+            player.health.currentArmorValue += 5;
         }
     }
 

@@ -17,7 +17,9 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference resetWeaponIndex;
     public InputActionReference nextLevel;
     public InputActionReference interaction;
-    public InputActionReference specialMove;
+    public InputActionReference specialMoveOne;
+    public InputActionReference specialMoveTwo;
+    public InputActionReference specialMoveThree;
     public InputActionReference bookView;
     public InputActionReference activeItem;
     public InputActionReference dropActiveItem;

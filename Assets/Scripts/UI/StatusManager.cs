@@ -6,7 +6,8 @@ public class StatusManager : MonoBehaviour
     public GameObject poisonImage;
     public GameObject acidImage;
     public GameObject stunImage;
-    public GameObject silverArmorImage;
+    public GameObject blockSpecialMoveImage;
+    public GameObject gemSkinSpecialMoveImage;
     public GameObject deathImage;
 
     Player player;
@@ -25,13 +26,15 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetPoisoned += EnablePoisonImage;
             player.healthEvent.GetAcid += EnableAcidImage;
             player.healthEvent.GetStun += EnableStunImage;
-            player.healthEvent.GetSilverArmor += EnableSilverArmorImage;
+            player.healthEvent.GetBlockSpecialMove += EnableBlockSkillImage;
+            player.healthEvent.GetGemSkinSpecialMove += EnableGemSkinSkillImage;
             player.healthEvent.GetDeath += EnableDeathImage;
 
             player.healthEvent.PoisonCured += DisablePoisonImage;
             player.healthEvent.AcidCured += DisableAcidImage;
             player.healthEvent.StunCured += DisableStunImage;
-            player.healthEvent.ArmorWoreOff += DisableArmorImage;
+            player.healthEvent.BlockSpecialMoveDurationEnded += DisableBlockSkillImage;
+            player.healthEvent.OnGemSkinSpecialMoveEnded += DisableGemSkinSkillImage;
         }
 
         if (enemy != null)
@@ -39,13 +42,15 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetPoisoned += EnablePoisonImage;
             enemy.healthEvent.GetAcid += EnableAcidImage;
             enemy.healthEvent.GetStun += EnableStunImage;
-            enemy.healthEvent.GetSilverArmor += EnableSilverArmorImage;
+            enemy.healthEvent.GetBlockSpecialMove += EnableBlockSkillImage;
+            enemy.healthEvent.GetGemSkinSpecialMove += EnableGemSkinSkillImage;
             enemy.healthEvent.GetDeath += EnableDeathImage;
 
             enemy.healthEvent.PoisonCured += DisablePoisonImage;
             enemy.healthEvent.AcidCured += DisableAcidImage;
             enemy.healthEvent.StunCured += DisableStunImage;
-            enemy.healthEvent.ArmorWoreOff += DisableArmorImage;
+            enemy.healthEvent.BlockSpecialMoveDurationEnded += DisableBlockSkillImage;
+            enemy.healthEvent.OnGemSkinSpecialMoveEnded += DisableGemSkinSkillImage;
         }
     }
 
@@ -56,13 +61,15 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetPoisoned -= EnablePoisonImage;
             player.healthEvent.GetAcid -= EnableAcidImage;
             player.healthEvent.GetStun -= EnableStunImage;
-            player.healthEvent.GetSilverArmor -= EnableSilverArmorImage;
+            player.healthEvent.GetBlockSpecialMove -= EnableBlockSkillImage;
+            player.healthEvent.GetGemSkinSpecialMove -= EnableGemSkinSkillImage;
             player.healthEvent.GetDeath -= EnableDeathImage;
 
             player.healthEvent.PoisonCured -= DisablePoisonImage;
             player.healthEvent.AcidCured -= DisableAcidImage;
             player.healthEvent.StunCured -= DisableStunImage;
-            player.healthEvent.ArmorWoreOff -= DisableArmorImage;
+            player.healthEvent.BlockSpecialMoveDurationEnded -= DisableBlockSkillImage;
+            player.healthEvent.OnGemSkinSpecialMoveEnded -= DisableGemSkinSkillImage;
         }
 
         if (enemy != null)
@@ -70,20 +77,29 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetPoisoned -= EnablePoisonImage;
             enemy.healthEvent.GetAcid -= EnableAcidImage;
             enemy.healthEvent.GetStun -= EnableStunImage;
-            enemy.healthEvent.GetSilverArmor -= EnableSilverArmorImage;
+            enemy.healthEvent.GetBlockSpecialMove -= EnableBlockSkillImage;
+            enemy.healthEvent.GetGemSkinSpecialMove -= EnableGemSkinSkillImage;
             enemy.healthEvent.GetDeath -= EnableDeathImage;
 
             enemy.healthEvent.PoisonCured -= DisablePoisonImage;
             enemy.healthEvent.AcidCured -= DisableAcidImage;
             enemy.healthEvent.StunCured -= DisableStunImage;
-            enemy.healthEvent.ArmorWoreOff -= DisableArmorImage;
+            enemy.healthEvent.BlockSpecialMoveDurationEnded -= DisableBlockSkillImage;
+            enemy.healthEvent.OnGemSkinSpecialMoveEnded -= DisableGemSkinSkillImage;
         }
     }
 
-    private void EnableSilverArmorImage(HealthEvent healthEvent)
+
+    private void EnableBlockSkillImage(HealthEvent healthEvent)
     {
-        silverArmorImage.SetActive(true);
+        blockSpecialMoveImage.SetActive(true);
     }
+
+    private void EnableGemSkinSkillImage(HealthEvent healthEvent)
+    {
+        gemSkinSpecialMoveImage.SetActive(true);
+    }
+
 
     private void EnablePoisonImage(HealthEvent healthEvent)
     {
@@ -105,9 +121,14 @@ public class StatusManager : MonoBehaviour
         deathImage.SetActive(true);
     }
 
-    private void DisableArmorImage(HealthEvent healthEvent)
+    private void DisableBlockSkillImage(HealthEvent healthEvent)
     {
-        silverArmorImage.SetActive(false);
+        blockSpecialMoveImage.SetActive(false);
+    }
+
+    private void DisableGemSkinSkillImage(HealthEvent healthEvent)
+    {
+        gemSkinSpecialMoveImage.SetActive(false);
     }
 
     private void DisablePoisonImage(HealthEvent healthEvent)

@@ -23,20 +23,20 @@ public class ChestItem : MonoBehaviour
     
     bool isColliding;
     Chest chest;
-    ParticleSystem collectParticleSystem;
     Enemy enemy;
     WeaponDetailsSO weaponDetails;
     PassiveItemDetailsSO passiveItemDetails;
     ActiveItemDetailsSO activeItemDetails;
     int ammoPercent;
     bool isPurchasing;
+    Animator pickUpAnimator;
 
     private void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        animator = GetComponentInChildren<Animator>();
+        animator = transform.GetChild(0).GetComponent<Animator>();
+        pickUpAnimator = transform.GetChild(2).GetComponent<Animator>();
         textTMP = GetComponentInChildren<TextMeshPro>();
-        collectParticleSystem = GetComponentInChildren<ParticleSystem>();
         chest = GetComponentInParent<Chest>();
         boxCollider2D = GetComponent<BoxCollider2D>();
     }
@@ -280,7 +280,7 @@ public class ChestItem : MonoBehaviour
             //StartCoroutine(DisplayMessage("WEAPON\nALREADY\nEQUIPPED", 5f));
         }
 
-        collectParticleSystem.Play();
+        pickUpAnimator.SetTrigger("pickUp");
 
         isColliding = true;
         weaponDetails = null;
@@ -341,19 +341,6 @@ public class ChestItem : MonoBehaviour
                 }
             }
 
-            if (textTMP.text == "Silver Armor")
-            {
-                if (player.armorStatus == ArmorStatus.Acid)
-                {
-                    player.healthEvent.CallAcidCuredEvent();
-                }
-
-                player.armorStatus = ArmorStatus.SilverArmor;
-                player.health.SetArmorValue();
-                player.healthEvent.CallGetSilverArmorEvent();
-                Debug.Log("Player's current armor value is " + player.health.currentArmorValue);
-            }
-
             if (textTMP.text == "Ammo")
             {
                 ammoPercent = Random.Range(0, 101);
@@ -386,7 +373,7 @@ public class ChestItem : MonoBehaviour
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
 
         isColliding = true;
-        collectParticleSystem.Play();
+        pickUpAnimator.SetTrigger("pickUp");
         passiveItemDetails = null;
         animator.runtimeAnimatorController = null;
         spriteRenderer.sprite = null;
@@ -409,7 +396,7 @@ public class ChestItem : MonoBehaviour
 
         player.AddActiveItemToPlayer(activeItemDetails, this, chestItem.remainingItemCharge);
 
-        collectParticleSystem.Play();
+        pickUpAnimator.SetTrigger("pickUp");
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
 
         isColliding = true;

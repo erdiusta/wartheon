@@ -74,15 +74,43 @@ public class PlayerDetailsSO : ScriptableObject
     #region
     [Tooltip("Spacial move name")]
     #endregion
-    public string specialMoveName = "SEISMIC SLAM";
+    public string specialMoveName = "";
     #region Tooltip
     [Tooltip("Special move sound effect")]
     #endregion
-    public SoundEffectSO specialMoveSoundEffect;
+    public SoundEffectSO specialMoveOneSoundEffect;
+    #region
+    [Tooltip("Spacial move cooldown duration")]
+    #endregion
+    public float specialMoveOneCooldownDuration = 20f;
     #region
     [Tooltip("Spacial move duration")]
     #endregion
-    public float specialMoveDuration = 20f;
+    public float specialMoveOneDuration = 0f;
+    #region Tooltip
+    [Tooltip("Special move sound effect")]
+    #endregion
+    public SoundEffectSO specialMoveTwoSoundEffect;
+    #region
+    [Tooltip("Spacial move cooldown duration")]
+    #endregion
+    public float specialMoveTwoCooldownDuration = 20f;
+    #region
+    [Tooltip("Spacial move duration")]
+    #endregion
+    public float specialMoveTwoDuration = 0f;
+    #region Tooltip
+    [Tooltip("Special move sound effect")]
+    #endregion
+    public SoundEffectSO specialMoveThreeSoundEffect;
+    #region
+    [Tooltip("Spacial move cooldown duration")]
+    #endregion
+    public float specialMoveThreeCooldownDuration = 20f;
+    #region
+    [Tooltip("Spacial move duration")]
+    #endregion
+    public float specialMoveThreeDuration = 0f;
     #region
     [Tooltip("Check if on stealth mode")]
     #endregion

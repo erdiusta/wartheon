@@ -46,12 +46,7 @@ public class HealthEvent : MonoBehaviour
         GetSlow?.Invoke(this);
     }
 
-    public event Action<HealthEvent> GetSilverArmor;
 
-    public void CallGetSilverArmorEvent()
-    {
-        GetSilverArmor?.Invoke(this);
-    }
 
     public event Action<HealthEvent> GetDeath;
 
@@ -95,11 +90,32 @@ public class HealthEvent : MonoBehaviour
         SlowCured?.Invoke(this);
     }
 
-    public event Action<HealthEvent> ArmorWoreOff;
+    public event Action<HealthEvent> GetBlockSpecialMove;
+
+    public void CallGetBlockSpecialMoveEvent()
+    {
+        GetBlockSpecialMove?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> BlockSpecialMoveDurationEnded;
 
     public void CallArmorWoreOffEvent()
     {
-        ArmorWoreOff?.Invoke(this);
+        BlockSpecialMoveDurationEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetGemSkinSpecialMove;
+
+    public void CallGetGemSkinSpecialMoveEvent()
+    {
+        GetGemSkinSpecialMove?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnGemSkinSpecialMoveEnded;
+
+    public void CallGemSkinSpecialMoveEndEvent()
+    {
+        OnGemSkinSpecialMoveEnded?.Invoke(this);
     }
 
     public event Action<HealthEvent> OnCriticalHit;
