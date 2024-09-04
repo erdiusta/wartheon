@@ -15,7 +15,7 @@ PrefabInstance:
     - target: {fileID: -8096707519950815419, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 5a90f6b2373ea5a40932f8ccd43cf690, type: 2}
+      objectReference: {fileID: 9100000, guid: 89608e7d0f782dc4593536c2ee6a98dc, type: 2}
     - target: {fileID: -8096707519950815419, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
@@ -200,10 +200,6 @@ PrefabInstance:
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[16].y
       value: 1.0665534
       objectReference: {fileID: 0}
-    - target: {fileID: -983905956611885164, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
-      propertyPath: dustParticlesSystem
-      value: 
-      objectReference: {fileID: 8810623360647308487}
     - target: {fileID: -983905956611885164, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: specialMoveParticlesSystem
       value: 
@@ -526,27 +522,27 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: fdb61ba75457ab049a7d1bcf42030730, type: 2}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
-      value: 0.8872198
+      value: 0.29314798
       objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.y
-      value: 0.41
+      value: 0.35
       objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 0.5555556
+      value: 1.625
       objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.y
-      value: 1.3333334
+      value: 1.4375
       objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.5555556
+      value: 1.625
       objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 1.3333334
+      value: 1.4375
       objectReference: {fileID: 0}
     - target: {fileID: 7166756456653077127, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.adaptiveTilingThreshold
@@ -629,10 +625,5 @@ PrefabInstance:
 --- !u!1 &7130026987593935357 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2327260788624308843, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
-  m_PrefabInstance: {fileID: 4809535025200075670}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &8810623360647308487 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 4106009469383456593, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
   m_PrefabInstance: {fileID: 4809535025200075670}
   m_PrefabAsset: {fileID: 0}

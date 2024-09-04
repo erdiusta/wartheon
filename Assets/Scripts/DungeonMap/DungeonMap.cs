@@ -49,7 +49,11 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
     private void GetRoomClicked()
     {
         // Convert screen position to world position
-        Vector3 worldPosition = dungeonMapCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 checkedPos = dungeonMapCamera.ScreenToWorldPoint(Input.mousePosition);
+
+        if (checkedPos == null) return;
+
+        Vector3 worldPosition = checkedPos;
         worldPosition = new Vector3(worldPosition.x, worldPosition.y, 0f);
 
         // Check for collisions at cursor position

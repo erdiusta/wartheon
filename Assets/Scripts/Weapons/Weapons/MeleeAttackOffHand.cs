@@ -103,7 +103,7 @@ public class MeleeAttackOffHand : MonoBehaviour
                             CheckAcidStatus(enemy);
                             CheckStunStatus(enemy);
 
-                            if (player.playerDetails.playerCharacterName == Settings.erebus && player.playerDetails.onStealth)
+                            if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
                             {
                                 player.playerControl.Unstealth();
                             }
@@ -150,7 +150,7 @@ public class MeleeAttackOffHand : MonoBehaviour
                             CheckAcidStatus(enemy);
                             CheckStunStatus(enemy);
 
-                            if (player.playerDetails.playerCharacterName == Settings.erebus && player.playerDetails.onStealth)
+                            if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
                             {
                                 player.playerControl.Unstealth();
                             }
@@ -199,7 +199,7 @@ public class MeleeAttackOffHand : MonoBehaviour
     private bool CriticalHitHappened()
     {
         bool criticalHitHappened;
-        if (player.playerDetails.onStealth)
+        if (player.onStealth)
         {
             criticalHitHappened = true;
         }
@@ -298,37 +298,6 @@ public class MeleeAttackOffHand : MonoBehaviour
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
 
         yield return new WaitForFixedUpdate();
-    }
-
-    IEnumerator PlayerAttackAnimRoutine()
-    {
-        player.movementByVelocity.moveSpeed = 0;
-
-        // Adjust animator layer weights
-        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
-        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 1f);
-        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
-        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
-
-        switch (player.playerControl.GetAimDirection())
-        {
-            case AimDirection.Up:
-                break;
-            case AimDirection.UpLeft:
-            case AimDirection.UpRight:
-            case AimDirection.Right:
-            case AimDirection.Left:
-            case AimDirection.Down:
-                player.animator.SetTrigger(Settings.attackMotion);
-                break;
-            default:
-                break;
-        }
-
-        yield return new WaitForSeconds(0.25f);
-
-        player.meleeAttackRightHand.playerAttackMotionRoutine = null;
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetMoveSpeed();
     }
 
     public void ResetIsAttackingLeftHand()

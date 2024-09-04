@@ -14,7 +14,7 @@ public class MovementByVelocity : MonoBehaviour
     public Transform dustTrailContainer;
 
     [HideInInspector] public float playerStartingMinSpeed;
-    [HideInInspector] public float playerStartingMaxSpeed;
+    [HideInInspector] public float playerStartingSpeed;
     [HideInInspector] public Animator dustTrailAnimator;
 
     public Vector2 MovementInput { get; set; }
@@ -27,9 +27,9 @@ public class MovementByVelocity : MonoBehaviour
     float knockbackTimeWeight;
     Coroutine stunPlayerRoutine;
 
-    float marginDistance = 1f;
+    float marginDistance = 0f;
     Coroutine trailParticlesCoroutine;
-    float trailDustDuration = 0.3f;
+    float trailDustDuration = 0.35f;
 
     private void Awake()
     {
@@ -51,8 +51,7 @@ public class MovementByVelocity : MonoBehaviour
 
     private void Start()
     {
-        playerStartingMinSpeed = movementDetails.minMoveSpeed;
-        playerStartingMaxSpeed = movementDetails.maxMoveSpeed;
+        playerStartingSpeed = movementDetails.moveSpeed;
     }
 
     private void FixedUpdate()
@@ -127,11 +126,6 @@ public class MovementByVelocity : MonoBehaviour
     private void NeutralizeStatus(RoomChangedEventArgs roomChangedEventArgs)
     {
         // MOVE STATUS CHECKS
-
-        player.movementByVelocity.moveSpeed = Random.Range(player.movementByVelocity.playerStartingMinSpeed,
-            player.movementByVelocity.playerStartingMaxSpeed);
-        
-        player.healthEvent.CallSlowCuredEvent();
         player.moveStatus = MoveStatus.Idle;
 
         // ARMOR STATUS CHECKS
@@ -174,7 +168,13 @@ public class MovementByVelocity : MonoBehaviour
     {
         if (player.moveStatus == MoveStatus.Idle)
         {
-            StartCoroutine(Stagger(vector));
+            if (!player.isClone)
+            {
+                if (player.gameObject.activeSelf)
+                {
+                    StartCoroutine(Stagger(vector));
+                }
+            }
         }
     }
 

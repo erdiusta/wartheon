@@ -25,6 +25,8 @@ TagManager:
   - weaponSetButton
   - bookCover
   - dropButton
+  - forceField
+  - meteor
   layers:
   - Default
   - TransparentFX
@@ -51,7 +53,7 @@ TagManager:
   - NPC
   - Drop
   - SummonedEnemy
-  - 
+  - ForceField
   - 
   - 
   - 

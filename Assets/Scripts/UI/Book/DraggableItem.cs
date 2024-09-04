@@ -43,7 +43,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         else
         {
             weapon = GameManager.Instance.GetPlayer().activeWeapon.GetCurrentOffHandWeapon();
-        }     
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -92,6 +92,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         canvasGroup.blocksRaycasts = true;  // Re-enable blocking raycasts
 
         ResetPosition();
+        dropButton.SetActive(true);
 
         if (contactSuccessful)
         {

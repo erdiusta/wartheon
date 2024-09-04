@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -30,6 +31,7 @@ public class Projectile : MonoBehaviour, IFireable
     PolygonCollider2D polygonCollider2D;
     Rigidbody2D rb2d;
     bool headShotHappened;
+    bool isPenetrationArrow;
     float countDown = 3f;
     float blastRadius = 5f;
     Coroutine explosionRoutine;
@@ -59,6 +61,12 @@ public class Projectile : MonoBehaviour, IFireable
                 blastRadius = activeItemDetails.blastRadius;
             }
         }
+
+        if (tag == "meteor")
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+
     }
 
     private void Update()
@@ -380,6 +388,11 @@ public class Projectile : MonoBehaviour, IFireable
                 damageDone = Random.Range(activeItemDetails.projectileDamageMin, activeItemDetails.projectileDamageMax);
             }
 
+            if (isPenetrationArrow)
+            {
+                float incresedDamage = damageDone * 1.25f;
+                damageDone = (int)incresedDamage;
+            }
 
             int inflictedDamage = 0;
 
@@ -414,7 +427,7 @@ public class Projectile : MonoBehaviour, IFireable
     /// projectile is part of a pattern the projectile movement can be overriden by setting overrideAmmoMovement to true - PROJECTILE
     /// </summary>
     public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, 
-        float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false)
+        float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false, bool fallingFromSkies = false, bool isPenetrationArrow = false)
     {
         #region Projectile
 
@@ -422,6 +435,9 @@ public class Projectile : MonoBehaviour, IFireable
 
         // Set head shot bool
         this.headShotHappened = headShotHappened;
+
+        // Set penetration arrow bool
+        this.isPenetrationArrow = isPenetrationArrow;
 
         // Initialize isColliding
         isColliding = false;
@@ -447,8 +463,21 @@ public class Projectile : MonoBehaviour, IFireable
             isProjectileMaterialSet = true;
         }
 
+        if (headShotHappened)
+        {
+            spriteRenderer.material = GameManager.Instance.GetPlayer().playerDetails.headShotMaterial;
+        }
+
         // Set projectile range
-        projectileRange = projectileDetails.projectileRange;
+        if (isPenetrationArrow)
+        {
+            projectileRange = 200;
+            spriteRenderer.material = GameManager.Instance.GetPlayer().playerDetails.penetrateMaterial;
+        }
+        else
+        {
+            projectileRange = projectileDetails.projectileRange;
+        }
 
         // Set projectile speed
         this.projectileSpeed = projectileSpeed;
@@ -644,9 +673,19 @@ public class Projectile : MonoBehaviour, IFireable
                 default:
                     break;
             }
-        } 
+        }
 
-        gameObject.SetActive(false);
+        if (tag == "meteor")
+        {
+            GetComponentInChildren<Animator>().SetTrigger("impact");
+            StaticEventHandler.CallCameraShakeEvent(GameManager.Instance.GetPlayer().playerDetails.shakeIntensity, GameManager.Instance.GetPlayer().playerDetails.shakeDuration);
+            SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.specialMoveThreeSoundEffect);
+        }
+
+        if (!isPenetrationArrow)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     /// <summary>

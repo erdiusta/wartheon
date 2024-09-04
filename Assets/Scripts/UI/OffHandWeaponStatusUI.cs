@@ -242,16 +242,14 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     {
         while (currentWeapon.onCooldown)
         {
-            // Set bar color as green
-            barImage.color = Color.red;
-
             // Update cooldown bar
             float barFill = cooldownTimer / currentWeapon.weaponDetails.weaponCooldownDuration;
 
             // Update bar fill
             if (barFill > 0f)
             {
-                cooldownBar.transform.localScale = new Vector3(barFill, 1f, 1f);
+                barImage.color = new Color(1f, 1f, 1f, 0.4f);
+                barImage.transform.localScale = new Vector3(barFill, 1f, 1f);
             }
 
             yield return null;
@@ -267,11 +265,9 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     {
         cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration;
 
-        // Set bar color as green
-        barImage.color = Color.green;
-
         // Set bar scale to 1
-        cooldownBar.transform.localScale = new Vector3(1f, 1f, 1f);
+        barImage.transform.localScale = new Vector3(1f, 1f, 1f);
+        barImage.color = new Color(1f, 1f, 1f, 0f);
     }
 
     #region Validation

@@ -20,9 +20,9 @@ public class SetActiveWeaponEvent : MonoBehaviour
 
     public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnSetActiveOffHandWeapon;
 
-    public void CallSetActiveWeaponAtOffHandEvent(Weapon weapon)
+    public void CallSetActiveWeaponAtOffHandEvent(Weapon weapon, int weaponSetIndex)
     {
-        OnSetActiveOffHandWeapon?.Invoke(this, new SetActiveWeaponEventArgs { weapon = weapon });
+        OnSetActiveOffHandWeapon?.Invoke(this, new SetActiveWeaponEventArgs { weapon = weapon, weaponSetIndex = weaponSetIndex });
     }
 
     public event Action<SetActiveWeaponEvent> OnSetInactiveOffHandWeapon;

@@ -18,8 +18,7 @@ public class EnemyMovementAI : MonoBehaviour
     [HideInInspector] public Coroutine attackMoveEnemyRoutine;
     [HideInInspector] public Coroutine chaseMoveEnemyRoutine;
     [HideInInspector] public Coroutine patrolMoveEnemyRoutine;
-    [HideInInspector] public float enemyStartingMinSpeed;
-    [HideInInspector] public float enemyStartingMaxSpeed;
+    [HideInInspector] public float enemyStartingSpeed;
     [HideInInspector] public EnemyPhase enemyPhase;
 
     Enemy enemy;
@@ -47,8 +46,7 @@ public class EnemyMovementAI : MonoBehaviour
     {
         enemy = GetComponent<Enemy>();
         moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
-        enemyStartingMinSpeed = enemyDetails.movementDetails.minMoveSpeed;
-        enemyStartingMaxSpeed = enemyDetails.movementDetails.maxMoveSpeed;
+        enemyStartingSpeed = enemyDetails.movementDetails.moveSpeed;
     }
 
     private void OnEnable()
@@ -305,7 +303,7 @@ public class EnemyMovementAI : MonoBehaviour
                 // Check distance to player to see if enemy should start chasing
                 if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
                 {
-                    if (!GameManager.Instance.GetPlayer().playerDetails.onStealth)
+                    if (!GameManager.Instance.GetPlayer().onStealth)
                     {
                         enemyPhase = EnemyPhase.Chase;
                     }
@@ -340,7 +338,7 @@ public class EnemyMovementAI : MonoBehaviour
                 // Check distance to player to see if enemy should start chasing
                 if (Vector3.Distance(transform.position, nonSummonedEnemyList[0].transform.position) < enemy.enemyDetails.chaseDistance)
                 {
-                    if (!GameManager.Instance.GetPlayer().playerDetails.onStealth)
+                    if (!GameManager.Instance.GetPlayer().onStealth)
                     {
                         enemyPhase = EnemyPhase.Chase;
                     }
@@ -598,6 +596,8 @@ public class EnemyMovementAI : MonoBehaviour
     /// </summary>
     IEnumerator ChaseMoveEnemyRoutine()
     {
+        if (movementSteps == null) yield return waitForFixedUpdate;
+
         while (movementSteps.Count > 0)
         {
             Vector3 nextPosition = movementSteps.Pop();

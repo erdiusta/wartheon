@@ -47,14 +47,14 @@ public class MainHandWeaponStatusUI : MonoBehaviour
 
     private void OnEnable()
     {
-        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
+        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
         player.setActiveWeaponEvent.OnSetInactiveMainHandWeapon += SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
         player.weaponFiredEvent.OnWeaponFired += WeaponFiredEvent_OnWeaponFired;
     }
 
     private void OnDisable()
     {
-        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveWeaponEvent_OnSetActiveRightHandWeapon;
+        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
         player.setActiveWeaponEvent.OnSetInactiveMainHandWeapon -= SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
         player.weaponFiredEvent.OnWeaponFired -= WeaponFiredEvent_OnWeaponFired;
     }
@@ -84,7 +84,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// <summary>
     /// Handle set active weapon event on the UI
     /// </summary>
-    private void SetActiveWeaponEvent_OnSetActiveRightHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    private void SetActiveWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
         SetActiveWeapon(setActiveWeaponEventArgs.weapon);
     }
@@ -108,6 +108,11 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void WeaponFired(Weapon weapon)
     {
+        if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
+        {
+            if (ReferenceEquals(player.activeWeapon.GetCurrentOffHandWeapon(), weapon)) return;
+        }
+    
         UpdateProjectileText(weapon);
         UpdateCooldownBar(weapon);
     }
@@ -178,18 +183,21 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     IEnumerator CooldownRoutine(Weapon currentWeapon)
     {
+        if (currentWeapon.onMaindHand)
+        {
+            cooldownBarParent.gameObject.SetActive(true);
+        }
+
         while (currentWeapon.onCooldown)
         {
-            // Set bar color as green
-            barImage.color = Color.red;
-
             // Update cooldown bar
             float barFill = cooldownTimer / currentWeapon.weaponDetails.weaponCooldownDuration;
 
             // Update bar fill
             if (barFill > 0f)
             {
-                cooldownBar.transform.localScale = new Vector3(barFill, 1f, 1f);
+                barImage.color = new Color(1f, 1f, 1f, 0.4f);
+                barImage.transform.localScale = new Vector3(barFill, 1f, 1f);
             }
 
             yield return null;
@@ -211,11 +219,9 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     {
         cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration;
 
-        // Set bar color as green
-        barImage.color = Color.green;
-
         // Set bar scale to 1
-        cooldownBar.transform.localScale = new Vector3(1f, 1f, 1f);
+        barImage.transform.localScale = new Vector3(1f, 1f, 1f);
+        barImage.color = new Color(1f, 1f, 1f, 0f);
     }
 
     #region Validation
@@ -225,7 +231,6 @@ public class MainHandWeaponStatusUI : MonoBehaviour
         HelperUtilities.ValidateCheckNullValue(this, nameof(weaponImage), weaponImage);
         HelperUtilities.ValidateCheckNullValue(this, nameof(projectileRemainingText), projectileRemainingText);
         HelperUtilities.ValidateCheckNullValue(this, nameof(weaponNameText), weaponNameText);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(cooldownBar), cooldownBar);
         HelperUtilities.ValidateCheckNullValue(this, nameof(barImage), barImage);
     }
 #endif

@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be803c3d22954c743afeeadf2eb708fd, type: 3}
   m_Name: MovementDetails_Erebus
   m_EditorClassIdentifier: 
-  minMoveSpeed: 7
-  maxMoveSpeed: 7
+  moveSpeed: 6.5

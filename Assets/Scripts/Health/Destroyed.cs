@@ -27,9 +27,16 @@ public class Destroyed : MonoBehaviour
     {
         if (destroyedEventArgs.playerDied)
         {
-            GetComponent<PolygonCollider2D>().enabled = false;
-            gameObject.SetActive(false); 
-            SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.deathSoundEffect);
+            if (destroyedEventArgs.isClone)
+            {
+                Destroy(GameManager.Instance.GetPlayer().playerCloneObject);
+            }
+            else
+            {
+                GetComponent<PolygonCollider2D>().enabled = false;
+                gameObject.SetActive(false);
+                SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.deathSoundEffect);
+            }
         }
         else
         {

@@ -144,6 +144,12 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             Destroy(decoy.gameObject);
         }
 
+        if (Player.hasClone)
+        {
+            Destroy(player.playerCloneObject);
+            Player.hasClone = false;
+        }
+
         switch (roomChangedEventArgs.room.roomNodeType.roomNodeTypeName)
         {
             case "Corridor":

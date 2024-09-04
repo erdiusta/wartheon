@@ -77,7 +77,7 @@ public class FireWeapon : MonoBehaviour
                 if (IsWeaponReadyToFire())
                 {
                     FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
-                        fireWeaponEventArgs.headShotHappened);
+                        fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow);
                     ResetCooldownTimer();
                     ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
                 }
@@ -147,7 +147,7 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Set up ammo using an ammo gameObject and component from the object pool.
     /// </summary>
-    private void FireProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false)
+    private void FireProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false, bool isPenetrationArrow = false)
     {
         if (!isActiveItem)
         {
@@ -156,7 +156,7 @@ public class FireWeapon : MonoBehaviour
             if (currentProjectile != null)
             {
                 // Fire projectile routine
-                StartCoroutine(FireProjectileRoutine(currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, headShotHappened));
+                StartCoroutine(FireProjectileRoutine(currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, headShotHappened, false, isPenetrationArrow));
             }
         }
         else
@@ -183,7 +183,7 @@ public class FireWeapon : MonoBehaviour
     /// Coroutine to spawn multiple ammo per shot if specified in the ammo details - PROJECTILE
     /// </summary>
     IEnumerator FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, 
-        Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false)
+        Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false)
     {      
         int projectileCounter = 0;
 
@@ -230,7 +230,7 @@ public class FireWeapon : MonoBehaviour
                 Quaternion.identity);
 
             // Initialize projectile
-            projectile.InitializeProjectile(headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector);
+            projectile.InitializeProjectile(headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, false, false, isPenetrationArrow);
 
             // Wait for projectile per shot timegap
             yield return new WaitForSeconds(projectileSpawnInterval);
@@ -342,14 +342,20 @@ public class FireWeapon : MonoBehaviour
     private void ResetPrechargeTimer(bool firePreviousFrame)
     {
         // Reset precharge timer
-        firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime;
+        if (activeWeapon.GetCurrentMainHandWeapon() != null)
+        {
+            firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime;
+        }
 
         // Reset bar fill and disable the bar container
         prechargeBar.transform.localScale = new Vector3(1f, 1f, 1f);
         prechargeBarContainer.gameObject.SetActive(false);
 
         // Set weapon's precharge flag to false
-        activeWeapon.GetCurrentMainHandWeapon().onPrecharge = false;
+        if (activeWeapon.GetCurrentMainHandWeapon() != null)
+        {
+            activeWeapon.GetCurrentMainHandWeapon().onPrecharge = false;
+        }
 
         if (tag == Settings.playerTag && activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
         {

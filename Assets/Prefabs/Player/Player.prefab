@@ -1641,6 +1641,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1a7b6e0a31fe714cbc2cb62fcaa1c50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isClone: 0
+  forcefieldTransform: {fileID: 0}
   playerDetails: {fileID: 0}
   healthEvent: {fileID: 0}
   health: {fileID: 0}
@@ -1693,8 +1695,10 @@ MonoBehaviour:
   mainHandSlotFilled: 0
   offHandSlotFilled: 0
   specialSkillNumber: 0
+  onStealth: 0
   isBlockingActive: 0
   isGemSkinActive: 0
+  playerCloneObject: {fileID: 0}
 --- !u!114 &3362413763628156882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2274,7 +2278,7 @@ Transform:
   m_GameObject: {fileID: 6046041847095502540}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.125, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2976,11 +2980,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7108554895873799015, guid: 9e1e12b38f4aaa94db184b78672ad703, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.01
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7108554895873799015, guid: 9e1e12b38f4aaa94db184b78672ad703, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.31875
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7108554895873799015, guid: 9e1e12b38f4aaa94db184b78672ad703, type: 3}
       propertyPath: m_LocalPosition.z

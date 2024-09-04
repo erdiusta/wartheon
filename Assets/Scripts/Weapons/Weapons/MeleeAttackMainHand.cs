@@ -21,6 +21,7 @@ public class MeleeAttackMainHand : MonoBehaviour
     Health enemyHealth;
     Player player;
     bool rightHandAttackBlocked;
+    bool isSpecialMeleeAttack;
 
     private void Awake()
     {
@@ -34,18 +35,17 @@ public class MeleeAttackMainHand : MonoBehaviour
 
     private void OnEnable()
     {
-        meleeAttackEvent.OnRightHandMeleeAttack += MeleeAttackEvent_OnRightHandMeleeAttack;
+        meleeAttackEvent.OnRightHandMeleeAttack += MeleeAttackEvent_MainHandMeleeAttack;
         rightHandAnimationEventHelper.OnAnimationMainHandEventTriggered.AddListener(ResetIsAttackingRightHand);
         rightHandAnimationEventHelper.OnAttackOffHandPerformed.AddListener(DetectColliders);
     }
 
     private void OnDisable()
     {
-        meleeAttackEvent.OnRightHandMeleeAttack -= MeleeAttackEvent_OnRightHandMeleeAttack;
+        meleeAttackEvent.OnRightHandMeleeAttack -= MeleeAttackEvent_MainHandMeleeAttack;
         rightHandAnimationEventHelper.OnAnimationMainHandEventTriggered.RemoveListener(ResetIsAttackingRightHand);
         rightHandAnimationEventHelper.OnAttackOffHandPerformed.RemoveListener(DetectColliders);
     }
-
 
     void Start()
     {
@@ -53,9 +53,9 @@ public class MeleeAttackMainHand : MonoBehaviour
         boxOriginTransform = boxOrigin.transform;
     }
 
-    private void MeleeAttackEvent_OnRightHandMeleeAttack(MeleeAttackEvent meleeAttackEvent, MeleeAttackEventArgs meleeAttackEventArgs)
+    private void MeleeAttackEvent_MainHandMeleeAttack(MeleeAttackEvent meleeAttackEvent, MeleeAttackEventArgs meleeAttackEventArgs)
     {
-        AttackAtRightHand(meleeAttackEventArgs.weapon, meleeAttackEventArgs.meleeAttackType);
+        AttackAtMainHand(meleeAttackEventArgs.weapon, meleeAttackEventArgs.meleeAttackType, meleeAttackEventArgs.specialMeleeMove);
     }
 
     /// <summary>
@@ -96,7 +96,24 @@ public class MeleeAttackMainHand : MonoBehaviour
                             else
                             {
                                 int inflictedDamage = CalculateDamageAmount(enemy);
-                                enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+
+                                if (isSpecialMeleeAttack)
+                                {
+                                    int inflictedProportionalDamage = (int)(enemy.enemyDetails.enemyHealthDetailsArray[GameManager.Instance.GetCurrentDungeonLevel().levelNumber - 1]
+                                        .enemyHealthAmount * 0.15f);
+                                    if (inflictedDamage > inflictedProportionalDamage )
+                                    {
+                                        enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+                                    }
+                                    else
+                                    {
+                                        enemyHealth.TakeDamage(inflictedProportionalDamage, transform.position, enemy.transform.position, false);
+                                    }
+                                }
+                                else
+                                {
+                                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+                                }
                             }
 
                             SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
@@ -104,7 +121,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                             CheckAcidStatus(enemy);
                             CheckStunStatus(enemy);
 
-                            if (player.playerDetails.playerCharacterName == Settings.erebus && player.playerDetails.onStealth)
+                            if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
                             {
                                 player.playerControl.Unstealth();
                             }
@@ -142,8 +159,16 @@ public class MeleeAttackMainHand : MonoBehaviour
                             }
                             else
                             {
-                                int inflictedDamage = CalculateDamageAmount(enemy);
-                                enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+                                 if (isSpecialMeleeAttack)
+                                {
+                                    int inflictedProportionalDamage = (int)(enemyHealth.currentHealth * 0.15f);
+                                    enemyHealth.TakeDamage(inflictedProportionalDamage, transform.position, enemy.transform.position, false); 
+                                }
+                                else
+                                {
+                                    int inflictedDamage = CalculateDamageAmount(enemy);
+                                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+                                }
                             }
 
                             SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
@@ -151,7 +176,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                             CheckAcidStatus(enemy);
                             CheckStunStatus(enemy);
 
-                            if (player.playerDetails.playerCharacterName == Settings.erebus && player.playerDetails.onStealth)
+                            if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
                             {
                                 player.playerControl.Unstealth();
                             }
@@ -200,7 +225,7 @@ public class MeleeAttackMainHand : MonoBehaviour
     private bool CriticalHitHappened()
     {
         bool criticalHitHappened;
-        if (player.playerDetails.onStealth)
+        if (player.onStealth)
         {
             criticalHitHappened = true;
         }
@@ -300,34 +325,6 @@ public class MeleeAttackMainHand : MonoBehaviour
         yield return new WaitForFixedUpdate();
     }
 
-    public IEnumerator PlayerAttackAnimRoutine()
-    {
-        // Adjust animator layer weights
-        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
-        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 1f);
-        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
-        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
-
-        switch (player.playerControl.GetAimDirection())
-        {
-            case AimDirection.Up:
-            case AimDirection.UpLeft:
-            case AimDirection.UpRight:
-                break;
-
-            case AimDirection.Right:
-            case AimDirection.Left:
-            case AimDirection.Down:
-                player.animator.SetTrigger(Settings.attackMotion);
-                break;
-            default:
-                break;
-        }
-
-        yield return new WaitForSeconds(0.25f);
-
-        playerAttackMotionRoutine = null;
-    }
 
     public void ResetIsAttackingRightHand()
     {
@@ -336,9 +333,11 @@ public class MeleeAttackMainHand : MonoBehaviour
         player.health.isDamageable = true;
     }
 
-    void AttackAtRightHand(Weapon weapon, MeleeAttackType meleeAttackType)
+    private void AttackAtMainHand(Weapon weapon, MeleeAttackType meleeAttackType, bool specialMeleeMove)
     {
         if (rightHandAttackBlocked) return;
+
+        isSpecialMeleeAttack = specialMeleeMove;
 
         player.health.isDamageable = false;
         rightHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtRightHand);
@@ -360,11 +359,6 @@ public class MeleeAttackMainHand : MonoBehaviour
                 break;
             default:
                 break;
-        }
-
-        if (playerAttackMotionRoutine == null)
-        {
-            playerAttackMotionRoutine = StartCoroutine(PlayerAttackAnimRoutine());
         }
 
         IsAttackingAtRightHand = true;

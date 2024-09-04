@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 
 #region REQUIRE COMPONENTS
@@ -42,6 +41,9 @@ using System.Linq;
 [DisallowMultipleComponent]
 public class Player : MonoBehaviour
 {
+    public bool isClone;
+    public Transform forcefieldTransform;
+
     [HideInInspector] public PlayerDetailsSO playerDetails;
     [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public Health health;
@@ -93,16 +95,17 @@ public class Player : MonoBehaviour
     [HideInInspector] public Weapon[][] weaponSlotSetArray = new Weapon[3][] { new Weapon[2] {null, null}, new Weapon[2] {null, null}, new Weapon[2] {null, null}};
     [HideInInspector] public int currentWeaponSlotSetIndex = 1;
     [HideInInspector] public List<PassiveItem> passiveItemList = new List<PassiveItem>();
-    [HideInInspector] public HashSet<Sprite> weaponBookMainHandHashSet = new HashSet<Sprite>();
-    [HideInInspector] public HashSet<Sprite> weaponBookOffHandHashSet = new HashSet<Sprite>();
     [HideInInspector] public List<GameObject> summonedEnemies = new List<GameObject>();
 
     [HideInInspector] public bool mainHandSlotFilled = false;
     [HideInInspector] public bool offHandSlotFilled = false;
     [HideInInspector] public short specialSkillNumber = 0;
 
+    [HideInInspector] public bool onStealth;
     [HideInInspector] public bool isBlockingActive;
     [HideInInspector] public bool isGemSkinActive;
+    [HideInInspector] public static bool hasClone;
+    [HideInInspector] public GameObject playerCloneObject;
 
     private void Awake()
     {
@@ -176,7 +179,15 @@ public class Player : MonoBehaviour
         // If player has died
         if (healthEventArgs.healthAmount <= 0f)
         {
-            destroyedEvent.CallDestroyedEvent(true);
+            if (!isClone)
+            {
+                destroyedEvent.CallDestroyedEvent(true);
+            }
+            else
+            {
+                destroyedEvent.CallDestroyedEvent(true, true);
+
+            }
         }   
     }
 
@@ -309,7 +320,7 @@ public class Player : MonoBehaviour
                         {
                             ActivateWeapon(weapon, !weapon.onMaindHand, 1);
                         }
-                        if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon addition are excluded
+                        if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
                         {
                             playerControl.PopulateOffHandWeaponsToBook(weapon);
                         }
@@ -369,6 +380,22 @@ public class Player : MonoBehaviour
                     weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
                     onMaindHand = true
                 };
+
+                // Exceptional for Erebus onStart offHand dagger wield then return
+                if (playerDetails.playerCharacterIndex == Character.Erebus)
+                {
+                    if (onStart)
+                    {
+                        if (weaponSlotSetArray[0][1] == null)
+                        {
+                            weapon.onMaindHand = false;
+                            weaponSlotSetArray[0][1] = weapon;
+                            weapon.weaponBelongingToWhichOffHandSet = 1;
+                            ActivateWeapon(weapon, true, 1);
+                            return;
+                        }
+                    }
+                }
 
                 if (weaponSlotSetArray[0][0] == null)
                 {
@@ -470,7 +497,7 @@ public class Player : MonoBehaviour
             }
         }
     }
-
+    
     //public void AddLeftHandWeaponForSameOneHandedTypesWithRightHand(bool onStart)
     //{
     //    List<Weapon> uniqueRightHandWeapons = new List<Weapon>();
@@ -551,6 +578,7 @@ public class Player : MonoBehaviour
             // Set the added weapon as active - main hand
             setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, setIndex);
 
+            // This section is for enabling/disabling lock icon based on weapon's one-hand or two-hand wield
             if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
             {
                 setActiveWeaponEvent.CallOneHandWeaponEquipEvent();
@@ -563,7 +591,7 @@ public class Player : MonoBehaviour
         else
         {
             // Set the added weapon as active - main hand
-            setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(weapon);
+            setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(weapon, setIndex);
         }
     }
 

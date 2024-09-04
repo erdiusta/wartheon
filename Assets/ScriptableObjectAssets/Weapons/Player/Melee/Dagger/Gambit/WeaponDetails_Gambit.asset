@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Gambit
   weaponTitle: 12
-  weaponFrontSprite: {fileID: 1716864224, guid: 183de742a99d6a540b8709e5a27f2de9, type: 3}
-  weaponRearSprite: {fileID: 1716864224, guid: 183de742a99d6a540b8709e5a27f2de9, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: 1d014ed845af8d64b957a60042eb126a, type: 2}
+  weaponFrontSprite: {fileID: 74980293, guid: 2c8ae9095db54094192749a65b1fb087, type: 3}
+  weaponRearSprite: {fileID: 74980293, guid: 2c8ae9095db54094192749a65b1fb087, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: 8d7e0eef950bc034d8d4d35e0929d23f, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: c2e67091a9236644f8fc21c91544b807, type: 2}
   weaponClass: 7
   wieldType: 0

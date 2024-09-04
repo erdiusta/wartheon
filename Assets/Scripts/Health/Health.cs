@@ -54,7 +54,7 @@ public class Health : MonoBehaviour
         player = GetComponent<Player>();
         enemy = GetComponent<Enemy>();
         decoy = GetComponent<Decoy>();
-       
+
         // Get player / enemy hit immunity details
         if (player != null)
         {
@@ -133,7 +133,7 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Public method called when damage is taken - Projectile
     /// </summary>
-    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, Collider2D collider, 
+    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, Collider2D collider,
         bool headShotHappened)
     {
         // Check if the collider is a projectile
@@ -148,7 +148,7 @@ public class Health : MonoBehaviour
         if (isDamageable)
         {
             currentHealth -= damageAmount;
-            if(player != null)
+            if (player != null)
             {
                 StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
             }
@@ -161,6 +161,14 @@ public class Health : MonoBehaviour
                     {
                         getHitCoroutine = StartCoroutine(PlayerGetHitRoutine());
                         PostHitImmunity();
+                    }
+                    else
+                    {
+                        if (player.isClone)
+                        {
+                            Player.hasClone = false;
+                            Destroy(player.gameObject);
+                        }
                     }
                 }
             }
@@ -582,7 +590,7 @@ public class Health : MonoBehaviour
             }
             else if (player.armorStatus == ArmorStatus.SilverArmor)
             {
-                currentArmorValue = 5 + (int) (player.playerDetails.playerArmorValue * 1.5f);
+                currentArmorValue = 5 + (int)(player.playerDetails.playerArmorValue * 1.5f);
             }
             else if (player.armorStatus == ArmorStatus.GoldenArmor)
             {

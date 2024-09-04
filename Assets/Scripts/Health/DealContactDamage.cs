@@ -92,7 +92,7 @@ public class DealContactDamage : MonoBehaviour
                                 return;
                             }
 
-                            if (player.playerDetails.onStealth) return;
+                            if (player.onStealth) return;
 
                             CheckPoisonStatus(player);
                             CheckAcidStatus(player);

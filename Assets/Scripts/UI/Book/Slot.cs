@@ -295,6 +295,11 @@ public class Slot : MonoBehaviour, IDropHandler
 
     private void BackgroundAndEquippedSlotTransactions(DraggableItem draggableItem)
     {
+        if (draggableItem.weapon == null)
+        {
+            Debug.Log("Drag item is null");
+        }
+
         if (draggableItem.weapon.onMaindHand)
         {
             if (isMainHand)
@@ -334,8 +339,8 @@ public class Slot : MonoBehaviour, IDropHandler
                 player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
 
                 // Put draggable item to current slot
-                draggableItem.weapon.onMaindHand = false;
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
+                draggableItem.weapon.onMaindHand = false;
 
                 draggableItem.weapon.weaponBelongingToWhichMainHandSet = 0;
                 draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
@@ -356,8 +361,8 @@ public class Slot : MonoBehaviour, IDropHandler
                 player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
 
                 // Put draggable item to current slot
-                draggableItem.weapon.onMaindHand = true;
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
+                draggableItem.weapon.onMaindHand = true;
 
                 draggableItem.weapon.weaponBelongingToWhichOffHandSet = 0;
                 draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
@@ -384,12 +389,12 @@ public class Slot : MonoBehaviour, IDropHandler
             }
         }
 
-        // Activate equipped transform and disable background
-        backgroundTransform.gameObject.SetActive(false);
-        equippedTransform.gameObject.SetActive(true);
+        //// Activate equipped transform and disable background
+        //backgroundTransform.gameObject.SetActive(false);
+        //equippedTransform.gameObject.SetActive(true);
 
-        // Move the dragged item to the empty slot
-        draggableItem.transform.SetParent(equippedTransform);
-        draggableItem.transform.localPosition = Vector3.zero;
+        //// Move the dragged item to the empty slot
+        //draggableItem.transform.SetParent(equippedTransform);
+        //draggableItem.transform.localPosition = Vector3.zero;
     }
 }

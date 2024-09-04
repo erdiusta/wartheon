@@ -6,9 +6,9 @@ public class MeleeAttackEvent : MonoBehaviour
     public event Action<MeleeAttackEvent, MeleeAttackEventArgs> OnRightHandMeleeAttack;
     public event Action<MeleeAttackEvent, MeleeAttackEventArgs> OnLeftHandMeleeAttack;
 
-    public void CallMainHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon, MeleeAttackType meleeAttackType)
+    public void CallMainHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon, MeleeAttackType meleeAttackType, bool specialMeleeMove = false)
     {
-        OnRightHandMeleeAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon, meleeAttackType = meleeAttackType });
+        OnRightHandMeleeAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon, meleeAttackType = meleeAttackType, specialMeleeMove = specialMeleeMove });
     }
 
     public void CallOffHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon, MeleeAttackType meleeAttackType)
@@ -22,4 +22,5 @@ public class MeleeAttackEventArgs : EventArgs
     public AimDirection aimDirection;
     public Weapon weapon;
     public MeleeAttackType meleeAttackType;
+    public bool specialMeleeMove;
 }

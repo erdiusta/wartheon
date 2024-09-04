@@ -25,7 +25,7 @@ public class ProjectilePattern : MonoBehaviour, IFireable
 
     // FOR PROJECTILE
     public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, 
-        float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement)
+        float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement, bool fallingFromSkies = false, bool isPenetrationArrow = false)
     {
         this.projectileDetails = projectileDetails;
         this.projectileSpeed = projectileSpeed;

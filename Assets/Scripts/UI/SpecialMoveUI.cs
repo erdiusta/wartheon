@@ -45,6 +45,14 @@ public class SpecialMoveUI : MonoBehaviour
         player.specialMoveEvent.OnSpecialMoveUsed -= SpecialMoveEvent_OnSpecialMoveUsed;
     }
 
+    private void Start()
+    {
+        // Populate special move imagaes based on selected character
+        firstSpecialMoveContainer.GetChild(1).GetComponent<Image>().sprite = player.playerDetails.specialMoveOneImage;
+        secondSpecialMoveContainer.GetChild(1).GetComponent<Image>().sprite = player.playerDetails.specialMoveTwoImage;
+        thirdSpecialMoveContainer.GetChild(1).GetComponent<Image>().sprite = player.playerDetails.specialMoveThreeImage;
+    }
+
     private void Update()
     {
         if (player.specialMoveOneOnCooldown)
@@ -78,10 +86,31 @@ public class SpecialMoveUI : MonoBehaviour
             {
                 player.specialMoveTwoDurationTimer += Time.deltaTime;
 
-                if (player.specialMoveTwoDurationTimer >= player.playerDetails.specialMoveTwoDuration)
+                switch (player.playerDetails.playerCharacterIndex)
                 {
-                    player.isBlockingActive = false;
-                    player.healthEvent.CallArmorWoreOffEvent();
+                    case Character.Astraeus:
+                        if (player.specialMoveTwoDurationTimer >= player.playerDetails.specialMoveTwoDuration)
+                        {
+                            player.isBlockingActive = false;
+                            player.healthEvent.CallArmorWoreOffEvent();
+                        }
+                        break;
+                    case Character.Erebus:
+                        break;
+                    case Character.Orion:
+                        if (player.specialMoveTwoDurationTimer >= player.playerDetails.specialMoveTwoDuration)
+                        {
+                            player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetMoveSpeed();
+                        }
+                        break;
+                    case Character.Lyrisa:
+                        if (player.specialMoveTwoDurationTimer >= player.playerDetails.specialMoveTwoDuration)
+                        {
+                            player.forcefieldTransform.gameObject.SetActive(false);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -108,9 +137,7 @@ public class SpecialMoveUI : MonoBehaviour
                 if (player.specialMoveThreeDurationTimer >= player.playerDetails.specialMoveThreeDuration)
                 {
                     player.healthEvent.CallGemSkinSpecialMoveEndEvent();
-                    Debug.Log("Current armor value is " + GameManager.Instance.GetPlayer().health.currentArmorValue);
                     GameManager.Instance.GetPlayer().health.currentArmorValue = GameManager.Instance.GetPlayer().playerDetails.playerArmorValue; // Reset armor value
-                    Debug.Log("Current armor value is " + GameManager.Instance.GetPlayer().health.currentArmorValue);
                 }
             }
 
@@ -127,22 +154,34 @@ public class SpecialMoveUI : MonoBehaviour
 
     private void SpecialMoveEvent_OnSpecialMoveUsed(SpecialMoveEvent specialMoveEvent, SpecialMoveEventArgs specialMoveEventArgs)
     {
-        switch (specialMoveEventArgs.specialMoveNumber)
+        if (specialMoveEventArgs.onlyChangeAlpha)
         {
-            case 1:
-                StopSpecialMoveCoroutine(specialMoveOneCooldownCoroutine);
-                specialMoveOneCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(1));
-                break;
-            case 2:
-                StopSpecialMoveCoroutine(specialMoveTwoCooldownCoroutine);
-                specialMoveTwoCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(2));
-                break;
-            case 3:
-                StopSpecialMoveCoroutine(specialMoveThreeCooldownCoroutine);
-                specialMoveThreeCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(3));
-                break;
-            default:
-                break;
+            Image specialMoveCooldownBackground = firstSpecialMoveContainer.GetChild(0).GetComponent<Image>(); ;
+            Image specialMoveCooldownImage = firstSpecialMoveContainer.GetChild(1).GetComponent<Image>();
+
+            // update cooldownCircle
+            specialMoveCooldownBackground.fillAmount = 0;
+            specialMoveCooldownImage.color = new Color(1f, 1f, 1f, 0.3f);
+        }
+        else
+        {
+            switch (specialMoveEventArgs.specialMoveNumber)
+            {
+                case 1:
+                    StopSpecialMoveCoroutine(specialMoveOneCooldownCoroutine);
+                    specialMoveOneCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(1));
+                    break;
+                case 2:
+                    StopSpecialMoveCoroutine(specialMoveTwoCooldownCoroutine);
+                    specialMoveTwoCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(2));
+                    break;
+                case 3:
+                    StopSpecialMoveCoroutine(specialMoveThreeCooldownCoroutine);
+                    specialMoveThreeCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(3));
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -210,9 +249,6 @@ public class SpecialMoveUI : MonoBehaviour
                 default:
                     break;
             }
-
-            //specialMoveCooldownBackground.color = new Color(1f, 1f, 1f);
-            //specialMoveImage.color = new Color(0.5f, 0f, 0f);
 
             yield return null;
         }

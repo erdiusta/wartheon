@@ -15,6 +15,7 @@ MonoBehaviour:
   playerCharacterName: Astraeus
   playerCharacterIndex: 0
   playerPrefab: {fileID: 38858171499291080, guid: af0377fdaae0f9149837404546914c2a, type: 3}
+  playerClonePrefab: {fileID: 38858171499291080, guid: 346ad554c5e0aae41adf3cae0cc87e16, type: 3}
   collectibleWeaponsArray:
   - {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
   - {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
@@ -27,17 +28,22 @@ MonoBehaviour:
   hitImmunityTime: 2
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
-  specialMoveName: SEISMIC SLAM
+  specialMoveOneImage: {fileID: 21300000, guid: 8382a280217407c45a5d379f1e1fa89a, type: 3}
   specialMoveOneSoundEffect: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
   specialMoveOneCooldownDuration: 25
   specialMoveOneDuration: 0
+  specialMoveTwoImage: {fileID: 21300000, guid: 7e206eb66e3011e4988cd84fda6c6a24, type: 3}
   specialMoveTwoSoundEffect: {fileID: 11400000, guid: 31e1b327278476749be5bee20fd1b280, type: 2}
   specialMoveTwoCooldownDuration: 15
   specialMoveTwoDuration: 8
+  specialMoveThreeImage: {fileID: 21300000, guid: b818baaf0c97d73459e3fb39d89617d3, type: 3}
   specialMoveThreeSoundEffect: {fileID: 11400000, guid: 78ff5393a05efd8459a875c9ee1760d7, type: 2}
   specialMoveThreeCooldownDuration: 35
   specialMoveThreeDuration: 12
-  onStealth: 0
+  cataclysmMeteor: {fileID: 0}
+  standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  headShotMaterial: {fileID: 0}
+  penetrateMaterial: {fileID: 0}
   applyScreenShake: 1
   shakeIntensity: 5
   shakeDuration: 1.5

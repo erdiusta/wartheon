@@ -71,8 +71,7 @@ public class BookUI : MonoBehaviour
         healthText.text = $"Health : {player.health.GetCurrentHealth()} / {player.health.GetStartingHealth()}"; 
         weaponText.text = $"Pr.Weapon : {player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponName}";
         speedText.text = $"Speed : {player.movementByVelocity.GetCurrentMoveSpeed()}";
-        specialMoveText.text = $"Sp.Move : {player.playerDetails.specialMoveName}";       
-
+      
         switch (player.playerDetails.playerCharacterName)
         {
             case Settings.astraeus:

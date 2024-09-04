@@ -15,6 +15,7 @@ MonoBehaviour:
   playerCharacterName: Erebus
   playerCharacterIndex: 1
   playerPrefab: {fileID: 38858171499291080, guid: dd7a903ea8b0ca44e8877d7b30e01d9f, type: 3}
+  playerClonePrefab: {fileID: 38858171499291080, guid: 70b22c5bcd48a8f4d94cb4d32de4146a, type: 3}
   collectibleWeaponsArray:
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
   - {fileID: 11400000, guid: 6cb3c4a1b97dd484a8e9af133ff54615, type: 2}
@@ -27,14 +28,22 @@ MonoBehaviour:
   hitImmunityTime: 2
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
-  specialMoveName: STEALTH
+  specialMoveOneImage: {fileID: 21300000, guid: 10d7cf1878b58fc40ba9c90b8761b93a, type: 3}
   specialMoveOneSoundEffect: {fileID: 11400000, guid: 65771ccd5a8ddb44bbeb1d4b0f60aeeb, type: 2}
+  specialMoveOneCooldownDuration: 20
   specialMoveOneDuration: 20
-  specialMoveTwoSoundEffect: {fileID: 0}
-  specialMoveTwoDuration: 20
-  specialMoveThreeSoundEffect: {fileID: 0}
+  specialMoveTwoImage: {fileID: 21300000, guid: 61bc19d0581b7de45a2d0cef367620e7, type: 3}
+  specialMoveTwoSoundEffect: {fileID: 11400000, guid: 725854e135951404ba8a84c0a0ca4735, type: 2}
+  specialMoveTwoCooldownDuration: 15
+  specialMoveTwoDuration: 1
+  specialMoveThreeImage: {fileID: 21300000, guid: 23af30a22fb3a2246b3d8cc9d19df1a5, type: 3}
+  specialMoveThreeSoundEffect: {fileID: 11400000, guid: 65771ccd5a8ddb44bbeb1d4b0f60aeeb, type: 2}
+  specialMoveThreeCooldownDuration: 20
   specialMoveThreeDuration: 20
-  onStealth: 0
+  cataclysmMeteor: {fileID: 0}
+  standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  headShotMaterial: {fileID: 0}
+  penetrateMaterial: {fileID: 0}
   applyScreenShake: 0
   shakeIntensity: 0
   shakeDuration: 0

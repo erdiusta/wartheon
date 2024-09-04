@@ -21,6 +21,10 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public GameObject playerPrefab;
     #region Tooltip
+    [Tooltip("Prefab gameobject for the player clone")]
+    #endregion
+    public GameObject playerClonePrefab;
+    #region Tooltip
     [Tooltip("Collectible weapons array for the specific selected character")]
     #endregion
     public WeaponDetailsSO[] collectibleWeaponsArray;
@@ -66,15 +70,14 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public SoundEffectSO deathSoundEffect;
 
-
     #region SPECIAL MOVE SETTINGS
     [Space(10)]
     [Header("Special Move Settings")]
     #endregion
-    #region
-    [Tooltip("Spacial move name")]
+    #region Tooltip
+    [Tooltip("Special move image")]
     #endregion
-    public string specialMoveName = "";
+    public Sprite specialMoveOneImage;
     #region Tooltip
     [Tooltip("Special move sound effect")]
     #endregion
@@ -88,6 +91,10 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public float specialMoveOneDuration = 0f;
     #region Tooltip
+    [Tooltip("Special move image")]
+    #endregion
+    public Sprite specialMoveTwoImage;
+    #region Tooltip
     [Tooltip("Special move sound effect")]
     #endregion
     public SoundEffectSO specialMoveTwoSoundEffect;
@@ -99,6 +106,10 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Spacial move duration")]
     #endregion
     public float specialMoveTwoDuration = 0f;
+    #region Tooltip
+    [Tooltip("Special move image")]
+    #endregion
+    public Sprite specialMoveThreeImage;
     #region Tooltip
     [Tooltip("Special move sound effect")]
     #endregion
@@ -112,9 +123,21 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public float specialMoveThreeDuration = 0f;
     #region
-    [Tooltip("Check if on stealth mode")]
+    [Tooltip("Cataclysm meteor prefab")]
     #endregion
-    public bool onStealth = false;
+    public ProjectileDetailsSO cataclysmMeteor;
+    #region
+    [Tooltip("Standard material")]
+    #endregion
+    public Material standardMaterial;
+    #region
+    [Tooltip("Head Shot material")]
+    #endregion
+    public Material headShotMaterial;
+    #region
+    [Tooltip("Penetrate material")]
+    #endregion
+    public Material penetrateMaterial;
 
     #region SCREEN SHAKE SETTINGS
     [Space(10)]
@@ -203,6 +226,7 @@ public class PlayerDetailsSO : ScriptableObject
     {
         HelperUtilities.ValidateCheckEmptyString(this, nameof(playerCharacterName), playerCharacterName);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerPrefab), playerPrefab);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(playerClonePrefab), playerClonePrefab);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(playerHealthAmount), playerHealthAmount, false);
         HelperUtilities.ValidateCheckNullValue(this, nameof(startingWeapon), startingWeapon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerMiniMapIcon), playerMiniMapIcon);

@@ -25,7 +25,6 @@ public class PlayerControl : MonoBehaviour
     Coroutine healthPotionDrinkCoroutine;
     bool particlePlayed;
     float unstealthImmunityTime = 2f;
-    bool startStealth = true;
     AimDirection aimDirection;
 
     // Attack member variables
@@ -83,18 +82,25 @@ public class PlayerControl : MonoBehaviour
                 break;
             case MoveStatus.Stagger:
                 player.polygonCollider2D.enabled = false;
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
                 {
-                    // Trigger fire weapon event for precharge weapons
-                    player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                    {
+                        // Trigger fire weapon event for precharge weapons
+                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+                    }
                 }
                 StartCoroutine(Stagger());
                 break;
             case MoveStatus.Stun:
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
                 {
-                    // Trigger fire weapon event for precharge weapons
-                    player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                    {
+                        // Trigger fire weapon event for precharge weapons
+                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+                    }
                 }
                 StartCoroutine(StunRoutine());
                 break;
@@ -281,7 +287,6 @@ public class PlayerControl : MonoBehaviour
                 }
 
                 player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), meleeAttackTypeMainHand);
-
             }
 
             // Return after moves finished if off-hand weapon is free or a shield
@@ -367,8 +372,6 @@ public class PlayerControl : MonoBehaviour
         // Fire when left mouse button is clicked
         if (InputManager.Instance.attack.action.WasPerformedThisFrame())
         {
-            StartCoroutine(PlayerAttackAnimRoutine());
-
             //Reset precharge for loading again
             fireCompletedDuringPressed = false;
             isSoundPlayed = false;
@@ -592,25 +595,6 @@ public class PlayerControl : MonoBehaviour
         player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
     }
 
-    /// <summary>
-    /// Player character attack motivation
-    /// </summary>
-    IEnumerator PlayerAttackAnimRoutine()
-    {
-        // Adjust animator layer weights
-        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 0f);
-        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 1f);
-        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
-        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
-
-        yield return new WaitForSeconds(0.5f);
-
-        player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
-        player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
-        player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
-        player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
-    }
-
     private void SwitchWeaponInput()
     {
         float scrollValue = (InputManager.Instance.switchWeapon.action.ReadValue<Vector2>().normalized).y;
@@ -642,7 +626,6 @@ public class PlayerControl : MonoBehaviour
             {
                 player.currentWeaponSlotSetIndex = 1;
             }
-
 
             SetWeaponSetByIndex(onlySwitch);
         }
@@ -680,8 +663,6 @@ public class PlayerControl : MonoBehaviour
 
     public void SetWeaponSetByIndex(bool onlySwitch)
     {
-        Debug.Log(player.currentWeaponSlotSetIndex);
-
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
         {
             player.setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], 
@@ -706,7 +687,7 @@ public class PlayerControl : MonoBehaviour
 
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null)
         {
-            player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]);
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1], player.currentWeaponSlotSetIndex);
             PopulateOffHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]);
         }
         else
@@ -721,6 +702,11 @@ public class PlayerControl : MonoBehaviour
                 {
                     RemoveOffHandWeaponsFromBook();
                 }
+            }
+            else
+            {
+                player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+                RemoveOffHandWeaponsFromBook();
             }
         }
     }
@@ -791,7 +777,11 @@ public class PlayerControl : MonoBehaviour
                     break;
 
                 case Character.Erebus:
-                    Stealth();
+                    if (!player.onStealth)
+                    {
+                        Stealth();
+                        player.specialMoveEvent.CallSpecialMoveUsedEvent(1, true);
+                    }
                     break;
 
                 case Character.Lyrisa:
@@ -815,10 +805,19 @@ public class PlayerControl : MonoBehaviour
                     player.specialMoveEvent.CallSpecialMoveUsedEvent(2);
                     break;
                 case Character.Erebus:
+                    BloodDrain();
+                    player.specialMoveTwoOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent(2);
                     break;
                 case Character.Orion:
+                    LightFeet();
+                    player.specialMoveTwoOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent(2);
                     break;
                 case Character.Lyrisa:
+                    ForceField();
+                    player.specialMoveTwoOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent(2);
                     break;
                 default:
                     break;
@@ -834,10 +833,19 @@ public class PlayerControl : MonoBehaviour
                     player.specialMoveEvent.CallSpecialMoveUsedEvent(3);
                     break;
                 case Character.Erebus:
+                    DoubleTeam();
+                    player.specialMoveThreeOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent(3);
                     break;
                 case Character.Orion:
+                    Penetrate();
+                    player.specialMoveThreeOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent(3);
                     break;
                 case Character.Lyrisa:
+                    Cataclysm();
+                    player.specialMoveThreeOnCooldown = true;
+                    player.specialMoveEvent.CallSpecialMoveUsedEvent(3);
                     break;
                 default:
                     break;
@@ -867,6 +875,26 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Execute Cataclysm special move
+    /// </summary>
+    private void Cataclysm()
+    {
+        // Get mouse world position and teleport the character
+        Vector3 pointerWorldPosition = HelperUtilities.GetMouseWorldPosition();
+
+        // Locate the position where meteor starts to fall
+        Vector3 meteorStartsToFallPosition = pointerWorldPosition + new Vector3(0f, 10f, 0f);
+
+        // Calculate direction vector of mouse cursor from fall position
+        Vector3 direction = (pointerWorldPosition - meteorStartsToFallPosition);
+
+        // Calculate angle based on the vector
+        float angle = HelperUtilities.GetAngleFromVector(direction);
+
+        StartCoroutine(FireCataclysmMeteorRoutine(player.playerDetails.cataclysmMeteor, angle, angle, direction, meteorStartsToFallPosition));
+    }
+
     private void OnTeleportInput(InputAction.CallbackContext context)
     {
         if (particlePlayed)
@@ -892,6 +920,53 @@ public class PlayerControl : MonoBehaviour
                 InputManager.Instance.pointerPosition.action.performed -= OnTeleportInput;
             }
         }
+    }
+
+    /// <summary>
+    /// Coroutine to spawn multiple ammo per shot if specified in the ammo details - PROJECTILE
+    /// </summary>
+    IEnumerator FireCataclysmMeteorRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle,
+        Vector3 direction, Vector3 meteorStartsToFallPosition)
+    {
+        int projectileCounter = 0;
+
+        // Get random projectile per shot
+        int projectilePerShot = Random.Range(currentProjectile.projectileSpawnAmountMin, currentProjectile.projectileSpawnAmountMax + 1);
+
+        // Get random interval between projectile
+        float projectileSpawnInterval;
+
+        projectileSpawnInterval = Random.Range(currentProjectile.projectileSpawnIntervalMin, currentProjectile.projectileSpawnIntervalMax);
+
+        // Loop for number of projectile per shot
+        while (projectileCounter < projectilePerShot)
+        {
+            projectileCounter++;
+
+            // Get projectile prefab from array
+            GameObject projectilePrefab = currentProjectile.projectilePrefabArray[Random.Range(0, currentProjectile.projectilePrefabArray.Length)];
+
+            // Get random speed value
+            float projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin, currentProjectile.projectileSpeedMax);
+
+            // Get Gameobject with IFireable component
+            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, meteorStartsToFallPosition, Quaternion.identity);
+
+            // Initialize projectile
+            projectile.InitializeProjectile(false, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, direction, false, true);
+
+            Projectile meteor = (Projectile)projectile;
+            meteor.GetComponentInChildren<SpriteRenderer>().transform.eulerAngles = Vector3.zero;
+
+            // Wait for projectile per shot timegap
+            yield return new WaitForSeconds(projectileSpawnInterval);
+        }
+
+        //// Set weapon's onCooldown status to true for triggering Weapon status UI
+        //if (!activeWeapon.GetCurrentMainHandWeapon().onPrecharge)
+        //{
+        //    activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
+        //}
     }
 
     IEnumerator ParticleSystemRoutine()
@@ -927,8 +1002,7 @@ public class PlayerControl : MonoBehaviour
     private void Stealth()
     {
         // Set player's stealth status to true
-        player.playerDetails.onStealth = true;
-        startStealth = false;
+        player.onStealth = true;
 
         // Get the current color of the sprite renderer
         Color currentColor = player.spriteRenderer.color;
@@ -946,7 +1020,7 @@ public class PlayerControl : MonoBehaviour
 
     IEnumerator MaintainStealthAlpha()
     {
-        while (player.playerDetails.onStealth)
+        while (player.onStealth)
         {
             // Get the current color of the sprite renderer
             Color currentColor = player.spriteRenderer.color;
@@ -966,7 +1040,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     public void Unstealth()
     {
-        if (startStealth) return;
+        //if (stealthStarted) return;
 
         if (unstealthRoutine != null) return;
 
@@ -983,7 +1057,7 @@ public class PlayerControl : MonoBehaviour
         player.health.isDamageable = false;
 
         // Set player's stealth status to false
-        player.playerDetails.onStealth = false;
+        player.onStealth = false;
 
         // Get the current color of the sprite renderer
         Color currentColor = player.spriteRenderer.color;
@@ -1068,12 +1142,45 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
+    /// Execute Blood Drain speical move
+    /// </summary>
+    private void BloodDrain()
+    {
+        player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+        meleeAttackTypeMainHand = MeleeAttackType.Thrust;
+        player.meleeAttackEvent.CallMainHandWeaponAnimEvent(AimDirection.Up, player.activeWeapon.GetCurrentMainHandWeapon(), meleeAttackTypeMainHand, true);
+    }
+
+    /// <summary>
+    /// Execute Double Team speical move
+    /// </summary>
+    private void DoubleTeam()
+    {
+        if (!Player.hasClone)
+        {
+            player.playerCloneObject = Instantiate(player.playerDetails.playerClonePrefab, transform.position + new Vector3(0f, 2f, 0f), Quaternion.identity);
+            player.playerCloneObject.GetComponent<Player>().Initialize(player.playerDetails);
+            player.playerCloneObject.GetComponent<Health>().currentHealth = 1;
+            player.playerCloneObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.4f);
+            Player.hasClone = true;
+        }
+    }
+
+    /// <summary>
+    /// Execute Force Field special move
+    /// </summary>
+    private void ForceField()
+    {
+        GameObject forceFieldObject = player.forcefieldTransform.gameObject;
+        forceFieldObject.SetActive(true);
+        SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
+    }
+
+    /// <summary>
     /// Execute Head Shot special move
     /// </summary>
     private void HeadShot()
     {
-        StartCoroutine(PlayerAttackAnimRoutine());
-
         Vector3 weaponDirection;
         float weaponAngleDegrees, playerAngleDegrees;
         AimDirection playerAimDirection;
@@ -1090,6 +1197,38 @@ public class PlayerControl : MonoBehaviour
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, true);
+    }
+
+    /// <summary>
+    /// Execute Light Feet special move
+    /// </summary>
+    private void LightFeet()
+    {
+        player.movementByVelocity.moveSpeed += 1.5f;
+        SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
+    }
+
+    /// <summary>
+    /// Execute Penetrate special move
+    /// </summary>
+    private void Penetrate()
+    {
+        Vector3 weaponDirection;
+        float weaponAngleDegrees, playerAngleDegrees;
+        AimDirection playerAimDirection;
+
+        // Aim weapon input
+        AimWeaponInput(out weaponDirection, out weaponAngleDegrees, out playerAngleDegrees, out playerAimDirection);
+
+        //Reset precharge for loading again
+        fireCompletedDuringPressed = false;
+        isSoundPlayed = false;
+
+        player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+        player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
+
+        // Trigger fire weapon event
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, false, true);
     }
 
     /// <summary>
@@ -1336,7 +1475,7 @@ public class PlayerControl : MonoBehaviour
     public void EnablePlayer()
     {
         isPlayerMovementDisabled = false;
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.maxMoveSpeed;
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.moveSpeed;
     }
 
     /// <summary>

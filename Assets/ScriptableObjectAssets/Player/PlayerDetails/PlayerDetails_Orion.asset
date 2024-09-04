@@ -15,6 +15,7 @@ MonoBehaviour:
   playerCharacterName: Orion
   playerCharacterIndex: 2
   playerPrefab: {fileID: 38858171499291080, guid: 99e6d53686669c243b844a3ade267a1e, type: 3}
+  playerClonePrefab: {fileID: 38858171499291080, guid: 46f1237210b49064d9c8a4b11531fed5, type: 3}
   collectibleWeaponsArray:
   - {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
   - {fileID: 11400000, guid: b415640f0d1ca4d41b24898c8eab10bd, type: 2}
@@ -27,14 +28,22 @@ MonoBehaviour:
   hitImmunityTime: 2
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
-  specialMoveName: HEADSHOT
+  specialMoveOneImage: {fileID: 21300000, guid: b41da492a31c20a42999b6ff0e3c82f3, type: 3}
   specialMoveOneSoundEffect: {fileID: 11400000, guid: 371fa797b2be9e342804b8ad3958bdf4, type: 2}
-  specialMoveOneDuration: 20
-  specialMoveTwoSoundEffect: {fileID: 0}
+  specialMoveOneCooldownDuration: 20
+  specialMoveOneDuration: 4
+  specialMoveTwoImage: {fileID: 21300000, guid: 1bd30f02479e972429caf083f275ddfd, type: 3}
+  specialMoveTwoSoundEffect: {fileID: 11400000, guid: 65771ccd5a8ddb44bbeb1d4b0f60aeeb, type: 2}
+  specialMoveTwoCooldownDuration: 30
   specialMoveTwoDuration: 20
-  specialMoveThreeSoundEffect: {fileID: 0}
-  specialMoveThreeDuration: 20
-  onStealth: 0
+  specialMoveThreeImage: {fileID: 21300000, guid: 13aaa8f2fc43b404d9321589742bc82a, type: 3}
+  specialMoveThreeSoundEffect: {fileID: 11400000, guid: 371fa797b2be9e342804b8ad3958bdf4, type: 2}
+  specialMoveThreeCooldownDuration: 30
+  specialMoveThreeDuration: 4
+  cataclysmMeteor: {fileID: 0}
+  standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  headShotMaterial: {fileID: 2100000, guid: 789c835ce053eff46aa9989263c4fd54, type: 2}
+  penetrateMaterial: {fileID: 2100000, guid: 7250dc13c7f24a4449c612f48de0589e, type: 2}
   applyScreenShake: 0
   shakeIntensity: 0
   shakeDuration: 0
