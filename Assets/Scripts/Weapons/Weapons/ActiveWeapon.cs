@@ -126,9 +126,9 @@ public class ActiveWeapon : MonoBehaviour
                 player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
                 player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
                 playerAnimator.runtimeAnimatorController = player.playerDetails.staffRuntimeAnimatorController;
-                thirdHandGameObject.SetActive(true);
-                weaponOffHandAnimator.enabled = false;
-                offHandAnchorPosition.gameObject.SetActive(false);
+                thirdHandGameObject.SetActive(false);
+                weaponOffHandAnimator.enabled = true;
+                offHandAnchorPosition.gameObject.SetActive(true);
             }
             else if (currentMainHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded && currentMainHandWeapon.weaponDetails.weaponName != "Crossbow")
             {

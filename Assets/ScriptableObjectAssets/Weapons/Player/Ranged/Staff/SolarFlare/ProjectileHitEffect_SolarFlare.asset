@@ -45,7 +45,7 @@ MonoBehaviour:
   duration: 0.4
   startParticleSize: 0.35
   startParticleSpeed: 4
-  startLifetime: 0.45
+  startLifetime: 0.4
   maxParticleNumber: 30
   emissionRate: 0
   burstParticleNumber: 30

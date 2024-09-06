@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6316016757709079695}
   - component: {fileID: 9140885954065316800}
   - component: {fileID: 1811340605408123545}
+  - component: {fileID: -4914099511344872128}
   m_Layer: 15
   m_Name: PlayerFire
   m_TagString: playerProjectile
@@ -49,6 +50,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trailRenderer: {fileID: 2893936929755227308}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!212 &6316016757709079695
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -181,6 +185,27 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!95 &-4914099511344872128
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2585463276777236944}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 82bb5639db9557b4bbfbb299b0f7306b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &9055822871429997481
 GameObject:
   m_ObjectHideFlags: 0

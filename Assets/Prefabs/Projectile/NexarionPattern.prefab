@@ -57,6 +57,8 @@ MonoBehaviour:
   - {fileID: 9188396542315061860}
   - {fileID: 4625097352918333640}
   - {fileID: 2652179778761665693}
+  boomerangPhase: 0
+  shirukenPhase: 0
 --- !u!1001 &922219093613264014
 PrefabInstance:
   m_ObjectHideFlags: 0

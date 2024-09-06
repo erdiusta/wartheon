@@ -87,6 +87,9 @@ public static class Settings
     public const string bookCover = "bookCover";
     public const string weaponSetButton = "weaponSetButton";
     public const string dropButton = "dropButton";
+    public const string playerProjectile = "playerProjectile";
+    public const string meteor = "meteor";
+    public const string enemyProjectile = "enemyProjectile";
     #endregion
 
     #region FIRING CONTROL

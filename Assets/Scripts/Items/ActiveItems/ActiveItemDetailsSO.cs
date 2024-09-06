@@ -185,14 +185,6 @@ public class ActiveItemDetailsSO : ScriptableObject
     #endregion
     [Range(0f, 1f)] public float poisonChance = 0.2f;
     #region Tooltip
-    [Tooltip("Check if item has bleeding damage")]
-    #endregion Tooltip
-    public bool hasBleedingDamage;
-    #region Tooltip
-    [Tooltip("The chance of item's bleeding damage")]
-    #endregion Tooltip
-    [Range(0f, 1f)] public float bleedingChance = 0.2f;
-    #region Tooltip
     [Tooltip("Check if item has stun damage")]
     #endregion Tooltip
     public bool hasStunDamage;
@@ -201,13 +193,14 @@ public class ActiveItemDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float stunChance = 0.2f;
     #region Tooltip
-    [Tooltip("Check if item has slow damage")]
+    [Tooltip("Check if item has curse damage")]
     #endregion Tooltip
-    public bool hasSlowDamage;
+    public bool hasCurseDamage;
     #region Tooltip
-    [Tooltip("The chance of item's slow damage")]
+    [Tooltip("The chance of item's curse")]
     #endregion Tooltip
-    [Range(0f, 1f)] public float slowChance = 0.2f;
+    [Range(0f, 1f)] public float curseChance = 0f;
+
 
     #region Header PROJECTILE TRAIL DETAILS
     [Space(10)]

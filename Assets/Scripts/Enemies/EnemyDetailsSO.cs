@@ -102,9 +102,14 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public bool hasStunDamage = false;
     #region Tooltip
-    [Tooltip("Check enemy's bleeding chance")]
+    [Tooltip("Check enemy's stun chance")]
     #endregion
     [Range(0f, 1f)] public float stunChance = 0.4f;
+    public bool hasCurseDamage = false;
+    #region Tooltip
+    [Tooltip("Check enemy's curse chance")]
+    #endregion
+    [Range(0f, 1f)] public float curseChance = 0f;
 
     #region Header ENEMY MATERIAL
     [Space(10)]

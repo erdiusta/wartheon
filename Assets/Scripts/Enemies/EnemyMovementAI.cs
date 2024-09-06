@@ -84,6 +84,11 @@ public class EnemyMovementAI : MonoBehaviour
         Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
             enemyCellPosition.y - currentRoom.templateLowerBounds.y);
 
+        if (true)
+        {
+
+        }
+
         // If enemy is in wall or pool tile, make enemy go away from there
         if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 0 || currentRoom.instantiatedRoom.
             GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) > 1)
@@ -616,7 +621,10 @@ public class EnemyMovementAI : MonoBehaviour
                     idleRoutine != null)
                 {
                     nextPosition = transform.position;
-                    movementSteps.Clear();
+                    if (movementSteps != null)
+                    {
+                        movementSteps.Clear();
+                    }
                     chaseMoveEnemyRoutine = null;
                 }
             }

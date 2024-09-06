@@ -13,8 +13,6 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference attackOffHand;
     public InputActionReference switchWeapon;
     public InputActionReference overviewMapFullView;
-    public InputActionReference reload;
-    public InputActionReference resetWeaponIndex;
     public InputActionReference nextLevel;
     public InputActionReference interaction;
     public InputActionReference specialMoveOne;
@@ -24,7 +22,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference activeItem;
     public InputActionReference dropActiveItem;
     public InputActionReference pause;
-    public InputActionReference shiftButton;
+    public InputActionReference OKButton;
 
     [HideInInspector] public bool isPressedPreviousFrame;
 }

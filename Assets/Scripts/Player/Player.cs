@@ -107,6 +107,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public static bool hasClone;
     [HideInInspector] public GameObject playerCloneObject;
 
+    [HideInInspector] public bool isCursed;
+
     private void Awake()
     {
         healthEvent = GetComponent<HealthEvent>();

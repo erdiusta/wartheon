@@ -12,6 +12,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public bool transactionOnTheSameSet;
     [HideInInspector] public bool contactSuccessful;
     [HideInInspector] public bool justMoveNotSwap;
+    [HideInInspector] public bool isLockIcon;
 
     CanvasGroup canvasGroup;
     RectTransform rectTransform;

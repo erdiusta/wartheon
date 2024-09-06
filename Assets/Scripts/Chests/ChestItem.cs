@@ -41,7 +41,7 @@ public class ChestItem : MonoBehaviour
         boxCollider2D = GetComponent<BoxCollider2D>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
         if (transform.parent != null)
         {
@@ -54,6 +54,9 @@ public class ChestItem : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
+        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.meteor ||
+            collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile) return;
+
         if (collision.tag == Settings.playerTag || collision.tag == Settings.playerWeapon)
         {
             Player player = collision.GetComponent<Player>();
@@ -182,6 +185,9 @@ public class ChestItem : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.meteor ||
+            collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile) return;
+
         if (collision.tag == Settings.playerTag || collision.tag == Settings.playerWeapon)
         {
             animator.SetBool(Settings.hovered, false);

@@ -105,7 +105,7 @@ public class ActiveItemUI : MonoBehaviour
     private IEnumerator UpdateAvailabilityBarRoutine(ActiveItem currentActiveItem)
     {
         // Set the reload bar to red
-        barImage.color = Color.yellow;
+        barImage.color = new Color32(0x24, 0x8C, 0x18, 0xFF);
 
         if (currentActiveItem.activeItemDetails.hasNoProjectileNumberLimit)
         {

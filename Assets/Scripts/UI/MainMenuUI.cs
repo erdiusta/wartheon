@@ -13,10 +13,18 @@ public class MainMenuUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Called from the Play Game / Enter the Dungeon Button
+    /// Called from the Play Game Button
     /// </summary>
     public void PlayGame()
     {
         SceneManager.LoadScene("MainGameScene");
+    }
+
+    /// <summary>
+    /// Called from the Exit Game Button
+    /// </summary>
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }

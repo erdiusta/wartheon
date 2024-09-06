@@ -97,10 +97,6 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("The impact sound effect SO for the weapon")]
     #endregion Tooltip
     public SoundEffectSO weaponImpactSoundEffect;
-    #region Tooltip
-    [Tooltip("The reloading sound effect SO for the weapon")]
-    #endregion Tooltip
-    public SoundEffectSO weaponReloadingSoundEffect;
 
     #region Header WEAPON RANGED/MELEE/SHIELD CHECK
     [Space(10)]

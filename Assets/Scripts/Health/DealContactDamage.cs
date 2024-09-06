@@ -97,6 +97,7 @@ public class DealContactDamage : MonoBehaviour
                             CheckPoisonStatus(player);
                             CheckAcidStatus(player);
                             CheckStunStatus(player);
+                            CheckCurseStatus(player);
 
                             // Damage inflicted to enemy after deducting enemy armor
                             int inflictedDamage = damageDone > player.health.GetArmorValue() ? damageDone - player.health.GetArmorValue() : 1;
@@ -207,6 +208,22 @@ public class DealContactDamage : MonoBehaviour
                 player.healthEvent.CallGetStunEvent();
                 player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
                 player.animator.SetBool(Settings.isStunned, true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check curse status - Player
+    /// </summary>
+    private void CheckCurseStatus(Player player)
+    {
+        if (enemy.enemyDetails.hasCurseDamage)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.curseChance)
+            {
+                player.isCursed = true;
+                player.healthEvent.CallGetCurseEvent();
             }
         }
     }

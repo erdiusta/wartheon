@@ -1,11 +1,11 @@
-    using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class DropOnDestroy : MonoBehaviour
 {
-    public GameObject chestItemGameObject;
+    [HideInInspector] public GameObject chestItemGameObject;
 
     List<SpawnableObjectsByLevel<WeaponDetailsSO>> enemyWeaponDropList;
     List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> enemyPassiveItemDropList;
@@ -31,9 +31,6 @@ public class DropOnDestroy : MonoBehaviour
         player = GameManager.Instance.GetPlayer();
 
         SetDropList();
-
-        // Instantiate container
-        InstantiateChestItem();
     }
 
     public void DropProcess()
@@ -44,6 +41,9 @@ public class DropOnDestroy : MonoBehaviour
             Destroy(chestItemGameObject);
             return;
         }
+
+        // Instantiate container
+        InstantiateChestItem();
 
         // Set collider to true
         chestItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
@@ -62,20 +62,20 @@ public class DropOnDestroy : MonoBehaviour
         if (weaponDetails != null)
         {
             InstantiateWeaponItem(weaponDetails);
+            chestItem.transform.SetParent(null);
         }
 
         if (passiveItemDetails != null)
         {
             InstantiatePassiveItem(passiveItemDetails);
+            chestItem.transform.SetParent(null);
         }
 
         if (activeItemDetails != null)
         {
             InstantiateActiveItem(activeItemDetails);
+            chestItem.transform.SetParent(null);
         }
-
-        // Break drop free from parent
-        chestItem.transform.SetParent(null);
     }
 
     private void SetDropList()
@@ -169,6 +169,7 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiateChestItem()
     {
+        chestItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
         chestItemGameObject.GetComponent<BoxCollider2D>().enabled = false;
         chestItem = chestItemGameObject.GetComponent<ChestItem>();
         chestItem.droppedByPlayer = false;
@@ -182,6 +183,7 @@ public class DropOnDestroy : MonoBehaviour
         if (chestItem == null) return;
 
         chestItem.hasWeaponDrop = true;
+        chestItem.hasActiveDrop = false;
         chestItem.Initialize(weaponDetails, null, null, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, transform.position);
     }
 
@@ -194,10 +196,14 @@ public class DropOnDestroy : MonoBehaviour
 
         if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
         {
+            chestItem.hasWeaponDrop = false;
+            chestItem.hasActiveDrop = false;
             chestItem.hasPrimaryPassiveDrop = true;
         }
         else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
         {
+            chestItem.hasWeaponDrop = false;
+            chestItem.hasActiveDrop = false;
             chestItem.hasSecondaryPassiveDrop = true;
         }
 
@@ -231,7 +237,15 @@ public class DropOnDestroy : MonoBehaviour
 
         WeaponDetailsSO weaponDetails = weaponRandom.GetItem();
 
-        return IsWeaponAvailableForTheCharacter(weaponDetails) ? weaponDetails : null;
+        if (IsWeaponAvailableForTheCharacter(weaponDetails))
+        {
+            return weaponDetails;
+        }
+        else
+        {
+            Destroy(chestItemGameObject);
+            return null;
+        }
     }
 
     private bool IsWeaponAvailableForTheCharacter(WeaponDetailsSO weaponDetails)

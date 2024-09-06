@@ -18,13 +18,6 @@ public class HealthEvent : MonoBehaviour
         GetPoisoned?.Invoke(this);
     }
 
-    public event Action<HealthEvent> GetBleeding;
-
-    public void CallGetBleedingEvent()
-    {
-        GetBleeding?.Invoke(this);
-    }
-
     public event Action<HealthEvent> GetAcid;
 
     public void CallGetAcidEvent()
@@ -39,14 +32,12 @@ public class HealthEvent : MonoBehaviour
         GetStun?.Invoke(this);
     }
 
-    public event Action<HealthEvent> GetSlow;
+    public event Action<HealthEvent> GetCursed;
 
-    public void CallGetSlowEvent()
+    public void CallGetCurseEvent()
     {
-        GetSlow?.Invoke(this);
+        GetCursed?.Invoke(this);
     }
-
-
 
     public event Action<HealthEvent> GetDeath;
 
@@ -60,13 +51,6 @@ public class HealthEvent : MonoBehaviour
     public void CallPoisonCuredEvent()
     {
         PoisonCured?.Invoke(this);
-    }
-
-    public event Action<HealthEvent> BleedingCured;
-
-    public void CallBleedingCuredEvent()
-    {
-        BleedingCured?.Invoke(this);
     }
 
     public event Action<HealthEvent> AcidCured;
@@ -83,11 +67,11 @@ public class HealthEvent : MonoBehaviour
         StunCured?.Invoke(this);
     }
 
-    public event Action<HealthEvent> SlowCured;
+    public event Action<HealthEvent> CurseCured;
 
-    public void CallSlowCuredEvent()
+    public void CallCurseCuredEvent()
     {
-        SlowCured?.Invoke(this);
+        CurseCured?.Invoke(this);
     }
 
     public event Action<HealthEvent> GetBlockSpecialMove;

@@ -47,9 +47,9 @@ MonoBehaviour:
   applyScreenShake: 1
   shakeIntensity: 5
   shakeDuration: 1.5
-  selectedActiveItem: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
+  selectedActiveItem: {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
   activeItemsList:
-  - {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
+  - {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
   playerArmorValue: 2
   passiveItemsList:
   - {fileID: 11400000, guid: 02b65729f69cc0e4cb30894fdcb1a9d0, type: 2}
@@ -59,8 +59,7 @@ MonoBehaviour:
   startingWeaponList:
   - {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
   - {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
-  - {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
-  - {fileID: 11400000, guid: 8393f6d104b5bb44ab472c1447da1818, type: 2}
+  - {fileID: 11400000, guid: dc70bba435344054aa98ff671fae1024, type: 2}
   - {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: 3640f47ca78384741a1cfa06c932e212, type: 3}
   playerHandSprite: {fileID: 21300000, guid: 61f9f1056a5486644b029259a89f6cce, type: 3}

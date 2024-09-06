@@ -82,24 +82,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Reload"",
-                    ""type"": ""Button"",
-                    ""id"": ""7f00accf-2c83-4a68-9877-ab6e6d16bf63"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Reset Weapon Index"",
-                    ""type"": ""Button"",
-                    ""id"": ""9b39d46b-e649-4168-9b60-bf06aa12e632"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Next Level"",
                     ""type"": ""Button"",
                     ""id"": ""3b0e4693-45cd-4916-a40b-cd72c5b3fd82"",
@@ -181,9 +163,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ShiftButton"",
+                    ""name"": ""OK"",
                     ""type"": ""Button"",
-                    ""id"": ""b8836972-45a8-42f0-96f0-4c86833d04a8"",
+                    ""id"": ""31262818-23d1-4859-bfcc-3e1d071d4a34"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -358,30 +340,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""579c34c0-70ad-40fc-b85f-6688d3e1cd12"",
-                    ""path"": ""<Keyboard>/r"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Reload"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""596e6d5c-c130-4071-9d20-0e05000b585e"",
-                    ""path"": ""<Keyboard>/equals"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Reset Weapon Index"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""216c61bc-6459-40d3-ad95-18ab2ddb2eb2"",
-                    ""path"": ""<Keyboard>/backspace"",
+                    ""path"": ""<Keyboard>/enter"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -457,17 +417,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""402c267e-7555-44bd-84a7-3fb134fb5ba9"",
-                    ""path"": ""<Keyboard>/leftShift"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ShiftButton"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""53fcfa54-f0e4-48fa-804e-4e62c8b2ad69"",
                     ""path"": ""<Keyboard>/x"",
                     ""interactions"": """",
@@ -487,6 +436,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Special Move3"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""59830bbf-568c-4d8e-ae29-5c33d79af385"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OK"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -501,8 +461,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_AttackOffHand = m_PlayerInput.FindAction("AttackOffHand", throwIfNotFound: true);
         m_PlayerInput_SwitchWeapon = m_PlayerInput.FindAction("Switch Weapon", throwIfNotFound: true);
         m_PlayerInput_OverviewMapFullView = m_PlayerInput.FindAction("Overview Map Full View", throwIfNotFound: true);
-        m_PlayerInput_Reload = m_PlayerInput.FindAction("Reload", throwIfNotFound: true);
-        m_PlayerInput_ResetWeaponIndex = m_PlayerInput.FindAction("Reset Weapon Index", throwIfNotFound: true);
         m_PlayerInput_NextLevel = m_PlayerInput.FindAction("Next Level", throwIfNotFound: true);
         m_PlayerInput_Interaction = m_PlayerInput.FindAction("Interaction", throwIfNotFound: true);
         m_PlayerInput_SpecialMove1 = m_PlayerInput.FindAction("Special Move1", throwIfNotFound: true);
@@ -512,7 +470,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_ActiveItem = m_PlayerInput.FindAction("Active Item", throwIfNotFound: true);
         m_PlayerInput_DropActiveItem = m_PlayerInput.FindAction("Drop Active Item", throwIfNotFound: true);
         m_PlayerInput_Pause = m_PlayerInput.FindAction("Pause", throwIfNotFound: true);
-        m_PlayerInput_ShiftButton = m_PlayerInput.FindAction("ShiftButton", throwIfNotFound: true);
+        m_PlayerInput_OK = m_PlayerInput.FindAction("OK", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -580,8 +538,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_AttackOffHand;
     private readonly InputAction m_PlayerInput_SwitchWeapon;
     private readonly InputAction m_PlayerInput_OverviewMapFullView;
-    private readonly InputAction m_PlayerInput_Reload;
-    private readonly InputAction m_PlayerInput_ResetWeaponIndex;
     private readonly InputAction m_PlayerInput_NextLevel;
     private readonly InputAction m_PlayerInput_Interaction;
     private readonly InputAction m_PlayerInput_SpecialMove1;
@@ -591,7 +547,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_ActiveItem;
     private readonly InputAction m_PlayerInput_DropActiveItem;
     private readonly InputAction m_PlayerInput_Pause;
-    private readonly InputAction m_PlayerInput_ShiftButton;
+    private readonly InputAction m_PlayerInput_OK;
     public struct PlayerInputActions
     {
         private @Controls m_Wrapper;
@@ -602,8 +558,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @AttackOffHand => m_Wrapper.m_PlayerInput_AttackOffHand;
         public InputAction @SwitchWeapon => m_Wrapper.m_PlayerInput_SwitchWeapon;
         public InputAction @OverviewMapFullView => m_Wrapper.m_PlayerInput_OverviewMapFullView;
-        public InputAction @Reload => m_Wrapper.m_PlayerInput_Reload;
-        public InputAction @ResetWeaponIndex => m_Wrapper.m_PlayerInput_ResetWeaponIndex;
         public InputAction @NextLevel => m_Wrapper.m_PlayerInput_NextLevel;
         public InputAction @Interaction => m_Wrapper.m_PlayerInput_Interaction;
         public InputAction @SpecialMove1 => m_Wrapper.m_PlayerInput_SpecialMove1;
@@ -613,7 +567,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @ActiveItem => m_Wrapper.m_PlayerInput_ActiveItem;
         public InputAction @DropActiveItem => m_Wrapper.m_PlayerInput_DropActiveItem;
         public InputAction @Pause => m_Wrapper.m_PlayerInput_Pause;
-        public InputAction @ShiftButton => m_Wrapper.m_PlayerInput_ShiftButton;
+        public InputAction @OK => m_Wrapper.m_PlayerInput_OK;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -641,12 +595,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @OverviewMapFullView.started += instance.OnOverviewMapFullView;
             @OverviewMapFullView.performed += instance.OnOverviewMapFullView;
             @OverviewMapFullView.canceled += instance.OnOverviewMapFullView;
-            @Reload.started += instance.OnReload;
-            @Reload.performed += instance.OnReload;
-            @Reload.canceled += instance.OnReload;
-            @ResetWeaponIndex.started += instance.OnResetWeaponIndex;
-            @ResetWeaponIndex.performed += instance.OnResetWeaponIndex;
-            @ResetWeaponIndex.canceled += instance.OnResetWeaponIndex;
             @NextLevel.started += instance.OnNextLevel;
             @NextLevel.performed += instance.OnNextLevel;
             @NextLevel.canceled += instance.OnNextLevel;
@@ -674,9 +622,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
-            @ShiftButton.started += instance.OnShiftButton;
-            @ShiftButton.performed += instance.OnShiftButton;
-            @ShiftButton.canceled += instance.OnShiftButton;
+            @OK.started += instance.OnOK;
+            @OK.performed += instance.OnOK;
+            @OK.canceled += instance.OnOK;
         }
 
         private void UnregisterCallbacks(IPlayerInputActions instance)
@@ -699,12 +647,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @OverviewMapFullView.started -= instance.OnOverviewMapFullView;
             @OverviewMapFullView.performed -= instance.OnOverviewMapFullView;
             @OverviewMapFullView.canceled -= instance.OnOverviewMapFullView;
-            @Reload.started -= instance.OnReload;
-            @Reload.performed -= instance.OnReload;
-            @Reload.canceled -= instance.OnReload;
-            @ResetWeaponIndex.started -= instance.OnResetWeaponIndex;
-            @ResetWeaponIndex.performed -= instance.OnResetWeaponIndex;
-            @ResetWeaponIndex.canceled -= instance.OnResetWeaponIndex;
             @NextLevel.started -= instance.OnNextLevel;
             @NextLevel.performed -= instance.OnNextLevel;
             @NextLevel.canceled -= instance.OnNextLevel;
@@ -732,9 +674,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
-            @ShiftButton.started -= instance.OnShiftButton;
-            @ShiftButton.performed -= instance.OnShiftButton;
-            @ShiftButton.canceled -= instance.OnShiftButton;
+            @OK.started -= instance.OnOK;
+            @OK.performed -= instance.OnOK;
+            @OK.canceled -= instance.OnOK;
         }
 
         public void RemoveCallbacks(IPlayerInputActions instance)
@@ -760,8 +702,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnAttackOffHand(InputAction.CallbackContext context);
         void OnSwitchWeapon(InputAction.CallbackContext context);
         void OnOverviewMapFullView(InputAction.CallbackContext context);
-        void OnReload(InputAction.CallbackContext context);
-        void OnResetWeaponIndex(InputAction.CallbackContext context);
         void OnNextLevel(InputAction.CallbackContext context);
         void OnInteraction(InputAction.CallbackContext context);
         void OnSpecialMove1(InputAction.CallbackContext context);
@@ -771,6 +711,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnActiveItem(InputAction.CallbackContext context);
         void OnDropActiveItem(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
-        void OnShiftButton(InputAction.CallbackContext context);
+        void OnOK(InputAction.CallbackContext context);
     }
 }

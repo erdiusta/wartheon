@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Linq;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -18,6 +17,8 @@ public class Projectile : MonoBehaviour, IFireable
     float projectileRange = 0f;
     float projectileSpeed;
     Vector3 fireDirectionVector;
+    Vector3 stoppedPosition;
+    bool isStopped;
     float fireDirectionAngle;
     SpriteRenderer spriteRenderer;
     ProjectileDetailsSO projectileDetails;
@@ -36,6 +37,7 @@ public class Projectile : MonoBehaviour, IFireable
     float blastRadius = 5f;
     Coroutine explosionRoutine;
     Decoy decoy;
+    int damageDone = 0;
 
     private void Awake()
     {
@@ -69,6 +71,14 @@ public class Projectile : MonoBehaviour, IFireable
 
     }
 
+    private void Start()
+    {
+        if (projectileDetails != null)
+        {
+            damageDone = Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+        }
+    }
+
     private void Update()
     {
         // Projectile charge effect
@@ -90,7 +100,6 @@ public class Projectile : MonoBehaviour, IFireable
             isProjectileMaterialSet = true;
         }
 
-
         if (activeItemDetails != null)
         {
             // Start countdown until explosion if this is an active item bomb
@@ -108,13 +117,13 @@ public class Projectile : MonoBehaviour, IFireable
             }
         }
 
-        // Don't move projectile if movement has been overriden - e.g. this projectile is part of an ammo pattern
+        // Don't move projectile if movement has been overriden - e.g. this projectile is part of an projectile pattern
         if (!overrideProjectileMovement)
         {
             // Disable after max range reached
             projectileRange -= velocity.magnitude * Time.deltaTime;
 
-            // Don't move projectile if movement has been overriden - e.g. this projectile is part of an ammo pattern
+            // Don't move projectile if movement has been overriden - e.g. this projectile is part of an projectile pattern
             if (!overrideProjectileMovement)
             {
                 // Move the projectile based on its velocity
@@ -138,6 +147,13 @@ public class Projectile : MonoBehaviour, IFireable
                         velocity = Vector3.zero;
                     }
                 }
+            }
+        }
+        else
+        {
+            if (isStopped)
+            {
+                transform.position = stoppedPosition;
             }
         }
     }
@@ -182,6 +198,7 @@ public class Projectile : MonoBehaviour, IFireable
                     CheckPoisonStatus(player);
                     CheckAcidStatus(player);
                     CheckStunStatus(player);
+                    CheckCurseStatus(player);
 
                     // Deal Damage To Collision Object
                     DealDamage(collision);
@@ -195,6 +212,7 @@ public class Projectile : MonoBehaviour, IFireable
                         CheckPoisonStatus(player);
                         CheckAcidStatus(player);
                         CheckStunStatus(player);
+                        CheckCurseStatus(player);
 
                         // Deal Damage To Collision Object
                         DealDamage(collision);
@@ -215,6 +233,7 @@ public class Projectile : MonoBehaviour, IFireable
                 CheckPoisonStatus(player);
                 CheckAcidStatus(player);
                 CheckStunStatus(player);
+                CheckCurseStatus(player);
 
                 // Deal Damage To Collision Object
                 DealDamage(collision);
@@ -261,6 +280,7 @@ public class Projectile : MonoBehaviour, IFireable
                             CheckPoisonStatus(enemy);
                             CheckAcidStatus(enemy);
                             CheckStunStatus(enemy);
+                            CheckCurseStatus(enemy);
                         }
                         else
                         {
@@ -268,6 +288,7 @@ public class Projectile : MonoBehaviour, IFireable
                             CheckPoisonStatus(enemy, true);
                             CheckAcidStatus(enemy, true);
                             CheckStunStatus(enemy, true);
+                            CheckCurseStatus(enemy, true);
                         }
 
                         // Deal Damage To Collision Object
@@ -282,6 +303,7 @@ public class Projectile : MonoBehaviour, IFireable
                         CheckPoisonStatus(enemy);
                         CheckAcidStatus(enemy);
                         CheckStunStatus(enemy);
+                        CheckCurseStatus(enemy);
                     }
                     else
                     {
@@ -289,6 +311,7 @@ public class Projectile : MonoBehaviour, IFireable
                         CheckPoisonStatus(enemy, true);
                         CheckAcidStatus(enemy, true);
                         CheckStunStatus(enemy, true);
+                        CheckCurseStatus(enemy, true);
                     }
 
                     // Deal Damage To Collision Object
@@ -303,6 +326,7 @@ public class Projectile : MonoBehaviour, IFireable
                     CheckPoisonStatus(enemy);
                     CheckAcidStatus(enemy);
                     CheckStunStatus(enemy);
+                    CheckCurseStatus(enemy);
                 }
                 else
                 {
@@ -310,6 +334,7 @@ public class Projectile : MonoBehaviour, IFireable
                     CheckPoisonStatus(enemy, true);
                     CheckAcidStatus(enemy, true);
                     CheckStunStatus(enemy, true);
+                    CheckCurseStatus(enemy, true);
                 }
 
                 // Deal Damage To Collision Object
@@ -376,7 +401,6 @@ public class Projectile : MonoBehaviour, IFireable
         {
             // Set isColliding to prevent ammo dealing damage multiple times
             isColliding = true;
-            int damageDone = 0;
 
             // Damage produced by player
             if (activeItemDetails == null)
@@ -384,7 +408,7 @@ public class Projectile : MonoBehaviour, IFireable
                 damageDone = Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
             }
             else
-            {
+            { 
                 damageDone = Random.Range(activeItemDetails.projectileDamageMin, activeItemDetails.projectileDamageMax);
             }
 
@@ -398,6 +422,13 @@ public class Projectile : MonoBehaviour, IFireable
 
             if (collision != null && collision.GetComponent<Enemy>() != null)
             {
+                if (projectileDetails.isPlayerProjectile)
+                {
+                    // LOWER DAMAGE IF PLAYER IS CURSED
+                    damageDone = GameManager.Instance.GetPlayer().isCursed ? projectileDetails.projectileDamageMin : 
+                        Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+                }
+
                 // Damage inflicted to enemy after deducting enemy armor
                 inflictedDamage = damageDone > health.GetArmorValue() ? damageDone - health.GetArmorValue() : 1;
 
@@ -675,17 +706,37 @@ public class Projectile : MonoBehaviour, IFireable
             }
         }
 
+        velocity = Vector2.zero;
+        isStopped = true;
+        stoppedPosition = transform.position;
+
         if (tag == "meteor")
         {
             GetComponentInChildren<Animator>().SetTrigger("impact");
             StaticEventHandler.CallCameraShakeEvent(GameManager.Instance.GetPlayer().playerDetails.shakeIntensity, GameManager.Instance.GetPlayer().playerDetails.shakeDuration);
             SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.specialMoveThreeSoundEffect);
+            StartCoroutine(DisableProcess());
+        }
+        else
+        {
+            if (transform.GetComponentInParent<ProjectilePattern>() != null)
+            {
+
+            }
+            GetComponent<Animator>().SetTrigger("impact");
         }
 
         if (!isPenetrationArrow)
         {
-            gameObject.SetActive(false);
+            StartCoroutine(DisableProcess());
         }
+    }
+
+    IEnumerator DisableProcess()
+    {
+        yield return new WaitForSeconds(0.3f);
+
+        gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -923,6 +974,68 @@ public class Projectile : MonoBehaviour, IFireable
         }
     }
 
+    /// <summary>
+    /// Check curse status - Player
+    /// </summary>
+    private void CheckCurseStatus(Player player, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            if (projectileDetails.hasCurseDamage && !player.isCursed)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.curseChance)
+                {
+                    player.isCursed = true;
+                    player.healthEvent.CallGetCurseEvent();
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasCurseDamage && player.isCursed)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.curseChance)
+                {
+                    player.isCursed = true;
+                    player.healthEvent.CallGetCurseEvent();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check curse status - Enemy
+    /// </summary>
+    private void CheckCurseStatus(Enemy enemy, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+
+            if (projectileDetails.hasCurseDamage && !enemy.isCursed)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.curseChance)
+                {
+                    enemy.isCursed = true;
+                    enemy.healthEvent.CallGetCurseEvent();
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasCurseDamage && enemy.isCursed)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.curseChance)
+                {
+                    enemy.isCursed = true;
+                    enemy.healthEvent.CallGetCurseEvent();
+                }
+            }
+        }
+    }
 
     IEnumerator StunRoutine(Enemy enemy)
     {

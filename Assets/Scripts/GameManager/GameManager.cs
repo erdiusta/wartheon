@@ -272,6 +272,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void Update()
     {
         HandleBook();
+        HandlePopUp();
         HandleGameState();
     }
 
@@ -318,6 +319,17 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 glossaryBookOpen = true;
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
                 bookView.GetComponent<Animator>().SetTrigger(Settings.zoomIn);
+            }
+        }
+    }
+
+    private void HandlePopUp()
+    {
+        if (popUpWindowOpen)
+        {
+            if (InputManager.Instance.OKButton.action.WasPressedThisFrame())
+            {
+                CloseWarningPopUpMenu();
             }
         }
     }
@@ -463,6 +475,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
         else if (gameState == GameState.gamePaused)
         {
+            BackFromAudioMenu(); // If inside the audio menu then esc is clicked return to the default pause menu when esc clicked again
+
             pauseMenu.SetActive(false);
             GetPlayer().playerControl.EnablePlayer();
 
@@ -470,6 +484,75 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             gameState = previousGameState;
             previousGameState = GameState.gamePaused;
         }
+    }
+
+    /// <summary>
+    /// Called from Audio button
+    /// </summary>
+    public void OpenAudioMenu()
+    {
+        // Clear buttons on pause menu
+        Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
+
+        for (int i = 0; i < pauseContainer.childCount; i++)
+        {
+            if (i == 0 || i == 1) continue;
+
+            pauseContainer.GetChild(i).gameObject.SetActive(false);
+        }
+
+        // Open audio menu
+
+        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Audio";
+        Transform audioContainer = pauseContainer.GetChild(3);
+        audioContainer.GetChild(0).gameObject.SetActive(false); // Disable audio text
+        audioContainer.GetChild(1).gameObject.SetActive(true); // Enable music volume contents
+        audioContainer.GetChild(2).gameObject.SetActive(true); // Enable sound volume contents
+        audioContainer.GetComponent<Image>().enabled = false;
+        audioContainer.GetComponent<Button>().enabled = false;
+        audioContainer.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called from Back button in Audio menu
+    /// </summary>
+    public void BackFromAudioMenu()
+    {
+        Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
+
+        // Close audio menu
+        Transform audioContainer = pauseContainer.GetChild(3);
+        audioContainer.GetChild(0).gameObject.SetActive(true); // Enable audio text
+        audioContainer.GetChild(1).gameObject.SetActive(false); // Disable music volume contents
+        audioContainer.GetChild(2).gameObject.SetActive(false); // Disable sound volume contents
+        audioContainer.GetComponent<Image>().enabled = true;
+        audioContainer.GetComponent<Button>().enabled = true;
+        audioContainer.gameObject.SetActive(false);
+
+        for (int i = 0; i < pauseContainer.childCount; i++)
+        {
+            if (i == 0 || i == 1) continue;
+
+            pauseContainer.GetChild(i).gameObject.SetActive(true);
+        }
+
+        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Options";
+    }
+
+    /// <summary>
+    /// Called from Play Game button
+    /// </summary>
+    public void QuitGame()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+    }
+
+    /// <summary>
+    /// Called from Exit button
+    /// </summary>
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 
     private void ControlDisplayDungeonOverviewMap(InputAction.CallbackContext context)
@@ -649,7 +732,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE DEFEATED THE DUNGEON", 
             Color.white, 3f));
 
-        yield return StartCoroutine(DisplayMessageRoutine("PRESS RETURN TO RESTART THE GAME", Color.white, 0f));
+        yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.white, 0f));
 
         // Set game state to restart game
         gameState = GameState.restartGame;
@@ -682,7 +765,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         yield return StartCoroutine(DisplayMessageRoutine("BAD LUCK " + player.playerDetails.playerCharacterName + 
             "! YOU HAVE SUCCUMBED TO THE DUNGEON", Color.white, 2f));
 
-        yield return StartCoroutine(DisplayMessageRoutine("PRESS RETURN TO RESTART THE GAME", Color.white, 0f));
+        yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.white, 0f));
 
         // Set game state to restart game
         gameState = GameState.restartGame;

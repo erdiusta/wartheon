@@ -57,6 +57,8 @@ public class Slot : MonoBehaviour, IDropHandler
     {
         DraggableItem currentSlotsDraggableItem = currentChild.GetComponent<DraggableItem>();
 
+        if (currentSlotsDraggableItem.isLockIcon) return;
+
         // Move slot's weapon to draggable item's previous slot
         // Draggable item is on main hand
         if (draggableItem.weapon.onMaindHand)

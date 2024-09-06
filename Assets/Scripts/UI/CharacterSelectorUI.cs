@@ -71,15 +71,19 @@ public class CharacterSelectorUI : MonoBehaviour
             if (playerDetails.startingWeaponList[1].weaponClass == WeaponClass.Shield)
             {
                 playerSelection.playerOffHandSpriteRenderer.sortingOrder = 0;
+                playerSelection.playerWeaponOffHandSpriteRenderer.sprite = playerDetails.startingWeaponList[1].weaponFrontSprite;
             }
-            playerSelection.playerWeaponOffHandSpriteRenderer.sprite = playerDetails.startingWeaponList[1].weaponFrontSprite;
+            else if (playerDetails.startingWeaponList[1].weaponClass == WeaponClass.Dagger)
+            {
+                playerSelection.playerWeaponOffHandSpriteRenderer.sprite = playerDetails.startingWeaponList[1].weaponFrontSprite;
+            }
         }
 
-        if (playerDetails.playerCharacterName == Settings.astraeus)
+        if (playerDetails.playerCharacterIndex == Character.Astraeus)
         {
             playerSelection.animator.runtimeAnimatorController = playerDetails.oneHandRuntimeAnimatorController;
         }
-        else if (playerDetails.playerCharacterName == Settings.orion)
+        else if (playerDetails.playerCharacterIndex == Character.Orion)
         {
             playerSelection.thirdHandGameObject.SetActive(true);
             playerSelection.thirdHandGameObject.GetComponent<SpriteRenderer>().sprite = playerDetails.playerHandSprite;
@@ -90,18 +94,18 @@ public class CharacterSelectorUI : MonoBehaviour
             playerSelection.playerOffHandWeaponAnimator.enabled = false;
             playerSelection.offHandWeaponAnchorTransform.gameObject.SetActive(false);
         }
-        else if (playerDetails.playerCharacterName == Settings.erebus)
+        else if (playerDetails.playerCharacterIndex == Character.Erebus)
         {
             playerSelection.animator.runtimeAnimatorController = playerDetails.oneHandRuntimeAnimatorController;
         }
-        else if (playerDetails.playerCharacterName == Settings.lyrisa)
+        else if (playerDetails.playerCharacterIndex == Character.Lyrisa)
         {
             playerSelection.thirdHandGameObject.SetActive(false);
             playerSelection.animator.runtimeAnimatorController = playerDetails.staffRuntimeAnimatorController;
 
-            playerSelection.thirdHandGameObject.SetActive(true);
-            playerSelection.playerOffHandWeaponAnimator.enabled = false;
-            playerSelection.offHandWeaponAnchorTransform.gameObject.SetActive(false);
+            playerSelection.thirdHandGameObject.SetActive(false);
+            playerSelection.offHandWeaponAnchorTransform.gameObject.SetActive(true);
+            playerSelection.playerOffHandWeaponAnimator.enabled = true;
         }
     }
 

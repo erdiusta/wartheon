@@ -27,7 +27,7 @@ MonoBehaviour:
   activeItemUseSoundEffect: {fileID: 0}
   hasNoProjectileNumberLimit: 0
   activeItemMaxCharge: 1
-  activeItemChargeRegenerationPerFourRooms: 1
+  activeItemChargeRegenerationPerSixRooms: 1
   projectileDamageMin: 0
   projectileDamageMax: 2
   countDown: 0

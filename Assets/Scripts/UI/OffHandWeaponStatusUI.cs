@@ -97,7 +97,11 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void SetActiveWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-
+        if (setActiveWeaponEventArgs.weapon.weaponDetails.wieldType == WieldType.TwoHanded)
+        {
+            MakeWeaponInactive();
+            cooldownBarParent.gameObject.SetActive(false);
+        }
     }
 
     /// <summary>

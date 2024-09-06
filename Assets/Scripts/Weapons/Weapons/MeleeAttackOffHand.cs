@@ -174,8 +174,8 @@ public class MeleeAttackOffHand : MonoBehaviour
     private int CalculateDamageAmount(Enemy enemy)
     {
         // Damage produced by player
-        int damageDone = Random.Range(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin,
-            player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax);
+        int damageDone = player.isCursed ? player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin :
+            Random.Range(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin, player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax);
 
         // Critical hit check
         if (CriticalHitHappened())

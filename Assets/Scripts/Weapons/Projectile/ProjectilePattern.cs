@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class ProjectilePattern : MonoBehaviour, IFireable
@@ -132,7 +133,7 @@ public class ProjectilePattern : MonoBehaviour, IFireable
                     {
                         // Boomerang has returned to the player
                         ResetBoomerang();
-                        DisableProjectile();
+                        gameObject.SetActive(false);
                     }
                 }
 
@@ -191,12 +192,12 @@ public class ProjectilePattern : MonoBehaviour, IFireable
                 }
                 else
                 {
-                    DisableProjectile();
+                    StartCoroutine(DisableProcess());
                 }
             }
             else
             {
-                DisableProjectile();
+                StartCoroutine(DisableProcess());
             }
         }
     }
@@ -258,9 +259,10 @@ public class ProjectilePattern : MonoBehaviour, IFireable
     /// <summary>
     /// Disable the projectile - thus returning it to the object pool
     /// </summary>
-    private void DisableProjectile()
+    IEnumerator DisableProcess()
     {
-        // Disable the projectile pattern game object
+        yield return new WaitForSeconds(0.3f);
+
         gameObject.SetActive(false);
     }
 

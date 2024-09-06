@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_SnakeSpit
+  m_EditorClassIdentifier: 
+  weaponName: Snake Spit
+  weaponTitle: 0
+  weaponFrontSprite: {fileID: 0}
+  weaponRearSprite: {fileID: 0}
+  weaponAnimatorController: {fileID: 0}
+  weaponHoverAnimatorController: {fileID: 0}
+  weaponClass: 5
+  wieldType: 1
+  price: 0
+  canKillSuddenly: 0
+  suddenKillChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
+  stunChance: 0
+  weaponShootPosition: {x: 0.09375, y: 1.0625, z: 0}
+  weaponCurrentProjectile: {fileID: 11400000, guid: 08a15f768e14d714b824d38be840f8e3, type: 2}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 0}
+  weaponImpactSoundEffect: {fileID: 0}
+  isMeleeWeapon: 0
+  isShield: 0
+  weaponCooldownDuration: 0.2
+  weaponBaseHandling: 0.8
+  projectileDeflectRatio: 0
+  circleRadius: 0
+  meleeDamageMin: 0
+  meleeDamageMax: 0
+  criticalHitChance: 0.1
+  criticalHitDamageMultiplier: 2
+  hasSwing: 0
+  hasSweep: 0
+  hasThrust: 0
+  hasInfiniteProjectile: 1
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0

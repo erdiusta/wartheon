@@ -35296,7 +35296,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  - {fileID: 6030368061921504907, guid: 23d878bd39bb1414087aecf71bce91df, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -35340,8 +35340,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 23d878bd39bb1414087aecf71bce91df, type: 2}
+  m_sharedMaterial: {fileID: 6030368061921504907, guid: 23d878bd39bb1414087aecf71bce91df, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -46097,7 +46097,6 @@ Transform:
   - {fileID: 4239920569477357429}
   - {fileID: 8668691372778860321}
   - {fileID: 2515402824410474405}
-  - {fileID: 8496929186276841058}
   - {fileID: 1273379931405193202}
   - {fileID: 4214307536645877505}
   - {fileID: 4589956830810753142}
@@ -46141,6 +46140,7 @@ MonoBehaviour:
   dropOnDestroy: {fileID: 0}
   healthStatus: 0
   armorStatus: 0
+  isCursed: 0
   statusManager: {fileID: 0}
   damageDisplay: {fileID: 0}
   rightHandWeaponDamageHappened: 0
@@ -46364,8 +46364,7 @@ MonoBehaviour:
   moveSpeed: 0
   updateFrameNumber: 1
   chasePlayer: 0
-  enemyStartingMinSpeed: 0
-  enemyStartingMaxSpeed: 0
+  enemyStartingSpeed: 0
   enemyPhase: 0
 --- !u!114 &2505844984895068139
 MonoBehaviour:
@@ -46645,7 +46644,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72d6baaf3c1be12408c8b6d9511c2c17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chestItemGameObject: {fileID: 5135288035861418495}
+  chestItemGameObject: {fileID: 0}
 --- !u!114 &4716338610028615223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46661,8 +46660,11 @@ MonoBehaviour:
   poisonImage: {fileID: 7396973610872839575}
   acidImage: {fileID: 3217616161218783392}
   stunImage: {fileID: 5244188265297830613}
-  silverArmorImage: {fileID: 3265223387113222126}
+  curseImage: {fileID: 0}
+  blockSpecialMoveImage: {fileID: 0}
+  gemSkinSpecialMoveImage: {fileID: 0}
   deathImage: {fileID: 1558117876368005248}
+  statusLogText: {fileID: 0}
 --- !u!114 &9183617335226411885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51828,87 +51830,4 @@ MonoBehaviour:
 Transform:
   m_CorrespondingSourceObject: {fileID: 3443082307543425517, guid: dc2d6b9b1c93a4746abeba67b406bf07, type: 3}
   m_PrefabInstance: {fileID: 945976474652821064}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &1355805019248401224
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 3146469945750014307}
-    m_Modifications:
-    - target: {fileID: 3862346107794283166, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6166831115549756087, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_Name
-      value: ChestItem
-      objectReference: {fileID: 0}
-    - target: {fileID: 6166831115549756087, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_Layer
-      value: 23
-      objectReference: {fileID: 0}
-    - target: {fileID: 6166831115549756087, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_TagString
-      value: Chest Item
-      objectReference: {fileID: 0}
-    - target: {fileID: 6777748807740845358, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
---- !u!1 &5135288035861418495 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6166831115549756087, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-  m_PrefabInstance: {fileID: 1355805019248401224}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &8496929186276841058 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-  m_PrefabInstance: {fileID: 1355805019248401224}
   m_PrefabAsset: {fileID: 0}

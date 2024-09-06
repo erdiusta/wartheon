@@ -50,7 +50,7 @@ MonoBehaviour:
   emissionRate: 0
   burstParticleNumber: 25
   effectGravity: -0.01
-  sprite: {fileID: 21300000, guid: 913939d3305163b42af7ac7d37218381, type: 3}
+  sprite: {fileID: 21300000, guid: 1dcb15e5e19fefd40956f26ae70322bb, type: 3}
   velocityOverLifetimeMin: {x: 0, y: 0, z: 0}
   velocityOverLifetimeMax: {x: 0, y: 0, z: 0}
   projectileHitEffectPrefab: {fileID: 9017448095421764182, guid: 3376823ee23e7b94ba950cb2230ebb14, type: 3}

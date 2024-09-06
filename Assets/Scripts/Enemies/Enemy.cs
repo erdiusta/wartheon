@@ -55,6 +55,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public DropOnDestroy dropOnDestroy;
     [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
     [HideInInspector] public ArmorStatus armorStatus = ArmorStatus.Normal;
+    [HideInInspector] public bool isCursed;
     [HideInInspector] public StatusManager statusManager;
     [HideInInspector] public DamageDisplay damageDisplay;
     [HideInInspector] public bool rightHandWeaponDamageHappened;

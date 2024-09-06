@@ -27,7 +27,7 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  weaponShootPosition: {x: 0.018750012, y: 1.13575, z: 0}
+  weaponShootPosition: {x: 0.018749997, y: 1.44825, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 07792028ffe74674b9f070484b18710a, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: e1c8591c71ab89d448879b0d39d25d09, type: 2}
@@ -35,9 +35,9 @@ MonoBehaviour:
   weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 0
-  weaponCooldownDuration: 2
+  weaponCooldownDuration: 1
   weaponBaseHandling: 0.8
-  projectileDeflectRatio: 0.4
+  projectileDeflectRatio: 0
   circleRadius: 0
   meleeDamageMin: 0
   meleeDamageMax: 0
@@ -48,4 +48,4 @@ MonoBehaviour:
   hasThrust: 0
   hasInfiniteProjectile: 1
   weaponProjectileCapacity: 0
-  weaponPrechargeTime: 0.3
+  weaponPrechargeTime: 0

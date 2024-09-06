@@ -60,24 +60,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Reload",
-                    "type": "Button",
-                    "id": "7f00accf-2c83-4a68-9877-ab6e6d16bf63",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Reset Weapon Index",
-                    "type": "Button",
-                    "id": "9b39d46b-e649-4168-9b60-bf06aa12e632",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Next Level",
                     "type": "Button",
                     "id": "3b0e4693-45cd-4916-a40b-cd72c5b3fd82",
@@ -159,9 +141,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ShiftButton",
+                    "name": "OK",
                     "type": "Button",
-                    "id": "b8836972-45a8-42f0-96f0-4c86833d04a8",
+                    "id": "31262818-23d1-4859-bfcc-3e1d071d4a34",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -336,30 +318,8 @@
                 },
                 {
                     "name": "",
-                    "id": "579c34c0-70ad-40fc-b85f-6688d3e1cd12",
-                    "path": "<Keyboard>/r",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Reload",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "596e6d5c-c130-4071-9d20-0e05000b585e",
-                    "path": "<Keyboard>/equals",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Reset Weapon Index",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "216c61bc-6459-40d3-ad95-18ab2ddb2eb2",
-                    "path": "<Keyboard>/backspace",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -435,17 +395,6 @@
                 },
                 {
                     "name": "",
-                    "id": "402c267e-7555-44bd-84a7-3fb134fb5ba9",
-                    "path": "<Keyboard>/leftShift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ShiftButton",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "53fcfa54-f0e4-48fa-804e-4e62c8b2ad69",
                     "path": "<Keyboard>/x",
                     "interactions": "",
@@ -463,6 +412,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Special Move3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "59830bbf-568c-4d8e-ae29-5c33d79af385",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OK",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
