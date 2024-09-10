@@ -38,6 +38,7 @@ public class Projectile : MonoBehaviour, IFireable
     Coroutine explosionRoutine;
     Decoy decoy;
     int damageDone = 0;
+    bool isHittingWall; // Flag is for wall hit check for penetration arrow
 
     private void Awake()
     {
@@ -161,7 +162,7 @@ public class Projectile : MonoBehaviour, IFireable
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // If already colliding with something return
-        if (isColliding) return;
+            if (isColliding) return;
 
         if (activeItemDetails != null)
         {
@@ -173,8 +174,7 @@ public class Projectile : MonoBehaviour, IFireable
         {
             Player player = collision.GetComponent<Player>();
 
-            if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().
-                weaponDetails.weaponClass == WeaponClass.Shield)
+            if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
             {
                 // Get enemy projectile direction
                 Vector2 enemyProjectileDirection = (player.transform.position - transform.position).normalized;
@@ -238,6 +238,15 @@ public class Projectile : MonoBehaviour, IFireable
                 // Deal Damage To Collision Object
                 DealDamage(collision);
             }
+
+            // Show ammo hit effect
+            DoProjectileHitEffect();
+
+            DisableProjectile();
+        }
+        else if (collision.tag == Settings.playerWeapon)
+        {
+
         }
         else if(collision.tag == Settings.enemyTag)
         {
@@ -340,11 +349,20 @@ public class Projectile : MonoBehaviour, IFireable
                 // Deal Damage To Collision Object
                 DealDamage(collision);
             }
+
+            // Show ammo hit effect
+            DoProjectileHitEffect();
+
+            DisableProjectile();
         }
         else if (collision.tag == Settings.decoyTag)
         {
             // Deal Damage To Collision Object
             DealDamage(collision);
+            // Show ammo hit effect
+            DoProjectileHitEffect();
+
+            DisableProjectile();
         }
         else if (collision.tag == "playerWeapon")
         {
@@ -352,11 +370,11 @@ public class Projectile : MonoBehaviour, IFireable
         }
         else // HIT WALL CHECK
         {
-            // Deal Damage To Collision Object
-            DealDamage(collision);
+            isHittingWall = true;
 
             if (activeItemDetails != null)
             {
+
                 if (activeItemDetails.activeItemType == ActiveItemType.Boomerang)
                 {
                     ProjectilePattern projectilePattern = GetComponentInParent<ProjectilePattern>();
@@ -370,12 +388,15 @@ public class Projectile : MonoBehaviour, IFireable
                 //    return;
                 //}
             }
-        }
-   
-        // Show ammo hit effect
-        DoProjectileHitEffect();
 
-        DisableProjectile();
+            // Deal Damage To Collision Object
+            DealDamage(collision);
+
+            // Show ammo hit effect
+            DoProjectileHitEffect();
+
+            DisableProjectile();
+        }
     }
 
     IEnumerator PlayerBlockAnimRoutine(Collider2D collision)
@@ -400,7 +421,14 @@ public class Projectile : MonoBehaviour, IFireable
         if (health != null)
         {
             // Set isColliding to prevent ammo dealing damage multiple times
-            isColliding = true;
+            if (isPenetrationArrow)
+            {
+                StartCoroutine(ColliderTimeThreshold());
+            }
+            else
+            {
+                isColliding = true;
+            }
 
             // Damage produced by player
             if (activeItemDetails == null)
@@ -422,12 +450,22 @@ public class Projectile : MonoBehaviour, IFireable
 
             if (collision != null && collision.GetComponent<Enemy>() != null)
             {
-                if (projectileDetails.isPlayerProjectile)
+                if (projectileDetails != null)
                 {
-                    // LOWER DAMAGE IF PLAYER IS CURSED
-                    damageDone = GameManager.Instance.GetPlayer().isCursed ? projectileDetails.projectileDamageMin : 
-                        Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+                    if (projectileDetails.isPlayerProjectile)
+                    {
+                        // LOWER DAMAGE IF PLAYER IS CURSED - PROJECTILE
+                        damageDone = GameManager.Instance.GetPlayer().isCursed ? projectileDetails.projectileDamageMin :
+                            Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+                    }
                 }
+                else if (activeItemDetails != null)
+                {
+                    // LOWER DAMAGE IF PLAYER IS CURSED - ACTIVE ITEM
+                    damageDone = GameManager.Instance.GetPlayer().isCursed ? activeItemDetails.projectileDamageMin :
+                        Random.Range(activeItemDetails.projectileDamageMin, activeItemDetails.projectileDamageMax);
+                }
+
 
                 // Damage inflicted to enemy after deducting enemy armor
                 inflictedDamage = damageDone > health.GetArmorValue() ? damageDone - health.GetArmorValue() : 1;
@@ -451,6 +489,13 @@ public class Projectile : MonoBehaviour, IFireable
 
             health.TakeDamage(inflictedDamage, transform.position, health.transform.position, polygonCollider2D, headShotHappened);
         }
+    }
+
+    IEnumerator ColliderTimeThreshold()
+    {
+        yield return new WaitForSeconds(0.04f);
+
+        isColliding = false;
     }
 
     /// <summary>
@@ -502,7 +547,7 @@ public class Projectile : MonoBehaviour, IFireable
         // Set projectile range
         if (isPenetrationArrow)
         {
-            projectileRange = 200;
+            projectileRange = 100;
             spriteRenderer.material = GameManager.Instance.GetPlayer().playerDetails.penetrateMaterial;
         }
         else
@@ -706,9 +751,21 @@ public class Projectile : MonoBehaviour, IFireable
             }
         }
 
-        velocity = Vector2.zero;
-        isStopped = true;
-        stoppedPosition = transform.position;
+        if (!isPenetrationArrow )
+        {
+            velocity = Vector2.zero;
+            isStopped = true;
+            stoppedPosition = transform.position;
+        }
+        else
+        {
+            if (isHittingWall)
+            {
+                velocity = Vector2.zero;
+                isStopped = true;
+                stoppedPosition = transform.position;
+            }
+        }
 
         if (tag == "meteor")
         {
@@ -730,12 +787,20 @@ public class Projectile : MonoBehaviour, IFireable
         {
             StartCoroutine(DisableProcess());
         }
+        else
+        {
+            if (isHittingWall)
+            {
+                StartCoroutine(DisableProcess());
+            }
+        }
     }
 
     IEnumerator DisableProcess()
     {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.2f);
 
+        isHittingWall = false;
         gameObject.SetActive(false);
     }
 
@@ -841,7 +906,7 @@ public class Projectile : MonoBehaviour, IFireable
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < projectileDetails.acidEfficiency)
                 {
-                    if (player.armorStatus == ArmorStatus.SilverArmor || player.armorStatus == ArmorStatus.GoldenArmor)
+                    if (player.armorStatus == ArmorStatus.SilverArmor)
                     {
                         player.healthEvent.CallArmorWoreOffEvent();
                     }
@@ -860,7 +925,7 @@ public class Projectile : MonoBehaviour, IFireable
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < activeItemDetails.acidEfficiency)
                 {
-                    if (player.armorStatus == ArmorStatus.SilverArmor || player.armorStatus == ArmorStatus.GoldenArmor)
+                    if (player.armorStatus == ArmorStatus.SilverArmor)
                     {
                         player.healthEvent.CallArmorWoreOffEvent();
                     }
@@ -874,7 +939,7 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check stun status - Enemy
+    /// Check acid status - Enemy
     /// </summary>
     private void CheckAcidStatus(Enemy enemy, bool isActiveItem = false)
     {

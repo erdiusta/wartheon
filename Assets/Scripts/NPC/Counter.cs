@@ -57,7 +57,10 @@ public class Counter : MonoBehaviour
         if (chestItem == null) return;
 
         chestItem.hasWeaponDrop = true;
-        chestItem.Initialize(weaponDetails, null, null, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, chestItem.transform.position);
+        Weapon weapon = new Weapon();
+        weapon.weaponDetails = weaponDetails;
+
+        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, chestItem.transform.position);
 
         chestItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + weaponDetails.price.ToString();
     }

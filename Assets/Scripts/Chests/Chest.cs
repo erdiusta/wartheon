@@ -72,7 +72,7 @@ public class Chest : MonoBehaviour, IUsable
                 {
                     if (chestLockSoundRoutine == null)
                     {
-                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.chestLock);
+                        chestLockSoundRoutine = StartCoroutine(PlayLockRoutine());
                     }
                 }
 
@@ -124,83 +124,25 @@ public class Chest : MonoBehaviour, IUsable
     }
 
     /// <summary>
-    /// Instantiate a chest item
-    /// </summary>
-    private void InstantiateItem()
-    {
-        chestItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-
-        chestItem = chestItemGameObject.GetComponent<ChestItem>();
-    }
-
-    /// <summary>
-    /// Instantiate a health item for the player to collect
-    /// </summary>
-    private void InstantiateHealthItem()
-    {
-        InstantiateItem();
-
-        chestItem.Initialize(null, null, null, GameResources.Instance.heartIcon, healthPercent.ToString() + "%", itemSpawnPoint.position);
-    }
-
-    /// <summary>
-    /// Collect the health item and add it to the players health
-    /// </summary>
-    private void CollectHealthItem()
-    {
-        // Check item exists and has been materialized
-        if (chestItem == null) return;
-
-        // Add health to player
-        GameManager.Instance.GetPlayer().health.AddHealth(healthPercent);
-
-        // Play pickup sound effect
-        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
-
-        healthPercent = 0;
-
-        Destroy(chestItemGameObject);
-
-        UpdateChestState();
-    }
-
-    /// <summary>
-    /// Instantiate a ammo item for the player to collect
-    /// </summary>
-    private void InstantiateAmmoItem()
-    {
-        InstantiateItem();
-
-        chestItem.Initialize(null, null, null, GameResources.Instance.ammoDropIcon, ammoPercent.ToString() + "%", itemSpawnPoint.position);
-    }
-
-    /// <summary>
-    /// Collect an ammo item and add it to the ammo in the players current weapon
-    /// </summary>
-    private void CollectAmmoItem()
-    {
-        // Check item exists and has been materialized
-        if (chestItem == null) return;
-
-        // Play pickup sound effect
-        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
-
-        ammoPercent = 0;
-
-        Destroy(chestItemGameObject);
-
-        UpdateChestState();
-    }
-
-    /// <summary>
     /// Instantiate a weapon item for the player to collect
     /// </summary>
     private void InstantiateWeaponItem()
     {
         InstantiateItem();
+        chestItem.hasWeaponDrop = true;
+        Weapon weapon = new Weapon();
+        weapon.weaponDetails = weaponDetails;
 
-        chestItemGameObject.GetComponent<ChestItem>().Initialize(weaponDetails, null, null, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, 
-            itemSpawnPoint.position);
+        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, itemSpawnPoint.position);
+    }
+
+    /// <summary>
+    /// Instantiate a chest item
+    /// </summary>
+    private void InstantiateItem()
+    {
+        chestItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+        chestItem = chestItemGameObject.GetComponent<ChestItem>();
     }
 
     public void PlayLock()

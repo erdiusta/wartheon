@@ -560,24 +560,6 @@ public class Health : MonoBehaviour
 
 
     /// <summary>
-    /// Set current armor value - Silver or Golden Armors
-    /// </summary>
-    public void SetArmorValue()
-    {
-        if (player != null)
-        {
-            if (player.armorStatus == ArmorStatus.SilverArmor)
-            {
-                currentArmorValue = 5 + (int)(player.playerDetails.playerArmorValue * 1.5f);
-            }
-            else if (player.armorStatus == ArmorStatus.GoldenArmor)
-            {
-                currentArmorValue = 10 + player.playerDetails.playerArmorValue * 2;
-            }
-        }
-    }
-
-    /// <summary>
     /// Set current armor value - Acid
     /// </summary>
     public void SetArmorValue(int armorValue)
@@ -591,10 +573,6 @@ public class Health : MonoBehaviour
             else if (player.armorStatus == ArmorStatus.SilverArmor)
             {
                 currentArmorValue = 5 + (int)(player.playerDetails.playerArmorValue * 1.5f);
-            }
-            else if (player.armorStatus == ArmorStatus.GoldenArmor)
-            {
-                currentArmorValue = 10 + player.playerDetails.playerArmorValue * 2;
             }
         }
 

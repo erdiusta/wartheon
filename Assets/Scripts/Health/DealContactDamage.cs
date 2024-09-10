@@ -182,7 +182,7 @@ public class DealContactDamage : MonoBehaviour
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < enemy.enemyDetails.acidEfficiency)
             {
-                if (player.armorStatus == ArmorStatus.SilverArmor || player.armorStatus == ArmorStatus.GoldenArmor)
+                if (player.armorStatus == ArmorStatus.SilverArmor)
                 {
                     player.healthEvent.CallArmorWoreOffEvent();
                 }

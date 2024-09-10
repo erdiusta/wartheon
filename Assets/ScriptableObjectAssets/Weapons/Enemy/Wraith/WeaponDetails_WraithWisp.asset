@@ -27,7 +27,7 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  weaponShootPosition: {x: 0.09375, y: 1.0625, z: 0}
+  weaponShootPosition: {x: 0.4375, y: 0.875, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 0bb09e251e014054ba4107f23208c77f, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 0}

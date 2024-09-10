@@ -1,5 +1,5 @@
 
-public class ActiveItem
+public class ActiveItem : IReceivable
 {
     public ActiveItemDetailsSO activeItemDetails;
     public int activeItemRemainingCharge;

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -189781082466348286}
   - component: {fileID: 5019234470273229002}
   - component: {fileID: 2285997187599971802}
-  m_Layer: 20
+  m_Layer: 27
   m_Name: StandardChest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 131405815743530647}
-  m_Layer: 20
+  m_Layer: 27
   m_Name: ItemSpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}

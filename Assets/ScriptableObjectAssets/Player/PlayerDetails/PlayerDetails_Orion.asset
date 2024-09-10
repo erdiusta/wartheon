@@ -47,9 +47,9 @@ MonoBehaviour:
   applyScreenShake: 0
   shakeIntensity: 0
   shakeDuration: 0
-  selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  selectedActiveItem: {fileID: 11400000, guid: f7ff6f667f3e7514b99c64d2b56351da, type: 2}
   activeItemsList:
-  - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  - {fileID: 11400000, guid: f7ff6f667f3e7514b99c64d2b56351da, type: 2}
   playerArmorValue: 2
   passiveItemsList:
   - {fileID: 11400000, guid: d4563c3575593ca4a810b8b8be56285d, type: 2}

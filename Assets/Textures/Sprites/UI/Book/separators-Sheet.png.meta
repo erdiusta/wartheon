@@ -152,12 +152,12 @@ TextureImporter:
       name: separators-Sheet_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 8
-        height: 34
+        x: 58
+        y: 117
+        width: 19
+        height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -173,12 +173,12 @@ TextureImporter:
       name: separators-Sheet_1
       rect:
         serializedVersion: 2
-        x: 8
-        y: 0
-        width: 8
-        height: 34
+        x: 58
+        y: 97
+        width: 19
+        height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -194,12 +194,12 @@ TextureImporter:
       name: separators-Sheet_2
       rect:
         serializedVersion: 2
-        x: 16
-        y: 0
-        width: 8
-        height: 34
+        x: 58
+        y: 78
+        width: 19
+        height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -215,12 +215,12 @@ TextureImporter:
       name: separators-Sheet_3
       rect:
         serializedVersion: 2
-        x: 24
-        y: 0
-        width: 8
-        height: 34
+        x: 58
+        y: 59
+        width: 19
+        height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -236,12 +236,12 @@ TextureImporter:
       name: separators-Sheet_4
       rect:
         serializedVersion: 2
-        x: 32
-        y: 0
-        width: 8
-        height: 34
+        x: 58
+        y: 42
+        width: 19
+        height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -269,6 +269,7 @@ TextureImporter:
       separators-Sheet_2: -1991687056
       separators-Sheet_3: -523515706
       separators-Sheet_4: 43075546
+      separators-Sheet_5: -1301212556
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -37,7 +37,15 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     // Book members
     public GameObject bookView;
     public GameObject bookCover;
+
+    // Pop-ups
     public GameObject warningPopUp;
+
+    [SerializeField]GameObject introductionPopUp;
+    [SerializeField] TextMeshProUGUI weaponText;
+    [SerializeField] TextMeshProUGUI introductionText;
+    [SerializeField] Image introductionItemImage;
+
     [HideInInspector] public bool glossaryBookOpen;
     [HideInInspector] public bool turnPageCompleted;
     [HideInInspector] public bool zoomOutFinished;
@@ -63,8 +71,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [HideInInspector] public GameState previousGameState;
     [HideInInspector] public Decoy decoy;
     [HideInInspector] public int exploredRoomCount = 0;
-    [HideInInspector] public ChestItem toBeDroppedChestItem;
 
+    Coroutine introductionTextRoutine;
     const int ROOM_CONST = 6;
     Room currentRoom;
     Room previousRoom;
@@ -103,6 +111,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void OnEnable()
     {
         StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
+        StaticEventHandler.OnDropPickedUp += StaticEventHandler_OnDropPickedUp;
         StaticEventHandler.OnRoomEnemiesDefeated += StaticEventHandler_OnRoomEnemiesDefeated;
         StaticEventHandler.OnDecoySpawned += StaticEventHandler_OnDecoySpawned;
         StaticEventHandler.OnHourglassSpawned += StaticEventHandler_OnHourglassSpawned;
@@ -119,6 +128,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void OnDisable()
     {
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
+        StaticEventHandler.OnDropPickedUp -= StaticEventHandler_OnDropPickedUp;
         StaticEventHandler.OnRoomEnemiesDefeated -= StaticEventHandler_OnRoomEnemiesDefeated;
         StaticEventHandler.OnDecoySpawned -= StaticEventHandler_OnDecoySpawned;
         StaticEventHandler.OnHourglassSpawned -= StaticEventHandler_OnHourglassSpawned;
@@ -195,6 +205,218 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         visitedRooms.Add(currentRoom);
     }
 
+    private void StaticEventHandler_OnDropPickedUp(IntroductionPopUpUIArgs introductionPopUpUIArgs)
+    {
+        switch (introductionPopUpUIArgs.dropType)
+        {
+            case DropType.PassiveItem:
+                PassiveItem passiveItem = (PassiveItem)introductionPopUpUIArgs.receivable;
+
+                // PRIMARY PASSIVES
+                if (passiveItem.passiveItemDetails.passiveItemName == "Silver Coin")
+                {
+                    IntroductionPopUpProcess("SILVER\nCOIN" ,"Coin for buying things.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                if (passiveItem.passiveItemDetails.passiveItemName == "Golden Coin")
+                {
+                    IntroductionPopUpProcess("GOLDEN\nCOIN", "Worth 5 silver coins.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemName == "Quiver")
+                {
+                    IntroductionPopUpProcess("QUIVER", "Refills projectiles for bow class weapons.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemName == "Medicine")
+                {
+                    IntroductionPopUpProcess("MEDICINE", "Cures basic negative status effects.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemName == "Holy Water")
+                {
+                    IntroductionPopUpProcess("HOLY\nWATER", "Cures curse.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemName == "Health")
+                {
+                    IntroductionPopUpProcess("HEALTH", "Recovers one heart - 20 hp.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemName == "Key")
+                {
+                    IntroductionPopUpProcess("KEY", "You will need it for opening chests.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+
+                // SECONDARY PASSIVES
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
+                {
+                    IntroductionPopUpProcess("BELT OF\nSORCERY", "Shiny look.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
+                {
+                    IntroductionPopUpProcess("RING OF\nFORTUNE", "More drop chance.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
+                {
+                    IntroductionPopUpProcess("SHADOW\nCLOAK", "More critical chance.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
+                {
+                    IntroductionPopUpProcess("WARDEN OF\nFOREST", "More projectile accuracy.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+
+                break;
+            case DropType.ActiveItem:
+                ActiveItem activeItem = (ActiveItem)introductionPopUpUIArgs.receivable;
+
+                if (activeItem.activeItemDetails.activeItemName == "Bobby Pin")
+                {
+                    IntroductionPopUpProcess("BOBBY PIN", "Can open chest without key.. sometimes.", activeItem.activeItemDetails.activeItemSprite);
+                }
+                else if (activeItem.activeItemDetails.activeItemName == "Bomb")
+                {
+                    IntroductionPopUpProcess("BOMB", "Obvious. It's a bomb. No more no less.", activeItem.activeItemDetails.activeItemSprite);
+                }
+                else if (activeItem.activeItemDetails.activeItemName == "Boomerang")
+                {
+                    IntroductionPopUpProcess("BOOMERANG", "Strike and return.", activeItem.activeItemDetails.activeItemSprite);
+                }
+                else if (activeItem.activeItemDetails.activeItemName == "Chronos Hourglass")
+                {
+                    IntroductionPopUpProcess("CHRONOS\nHOURGLASS", "Slow down timeflow.", activeItem.activeItemDetails.activeItemSprite);
+                }
+                else if (activeItem.activeItemDetails.activeItemName == "Dummy")
+                {
+                    IntroductionPopUpProcess("DUMMY", "Throw and distract mobs.", activeItem.activeItemDetails.activeItemSprite);
+                }
+                else if (activeItem.activeItemDetails.activeItemName == "Elysian Elixir")
+                {
+                    IntroductionPopUpProcess("ELYSIAN\nELIXIR", "Slowly regenates health.", activeItem.activeItemDetails.activeItemSprite);
+                }
+                else if (activeItem.activeItemDetails.activeItemName == "Oracle's Compass")
+                {
+                    IntroductionPopUpProcess("ORACLE'S\nCOMPASS", "Shows the directin of where the boss is.", activeItem.activeItemDetails.activeItemSprite);
+                }
+                else if (activeItem.activeItemDetails.activeItemName == "Pentagram")
+                {
+                    IntroductionPopUpProcess("PENTAGRAM", "Throw then wait for mobs to step on", activeItem.activeItemDetails.activeItemSprite);
+                }
+                else if (activeItem.activeItemDetails.activeItemName == "Shiruken")
+                {
+                    IntroductionPopUpProcess("SHIRUKEN", "Limited number of ninja star projectiles", activeItem.activeItemDetails.activeItemSprite);
+                }
+                else if (activeItem.activeItemDetails.activeItemName == "Bronze Summoner")
+                {
+                    IntroductionPopUpProcess("BRONZE\nSUMMONER", "Summons a lower class of ally mob", activeItem.activeItemDetails.activeItemSprite);
+                }
+
+                break;
+            case DropType.Weapon:
+                Weapon weapon = (Weapon)introductionPopUpUIArgs.receivable;
+
+                if (weapon.weaponDetails.weaponName == "Carnage")
+                {
+                    IntroductionPopUpProcess("CARNAGE", "A two-handed axe.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Hatchet")
+                {
+                    IntroductionPopUpProcess("HATCHET", "Basic one-handed axe.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Dirk")
+                {
+                    IntroductionPopUpProcess("DIRK", "Basic dagger.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Gambit")
+                {
+                    IntroductionPopUpProcess("GAMBIT", "A critical effective dagger.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Clobbering Time")
+                {
+                    IntroductionPopUpProcess("CLOBBERING\nTIME", "A kind of one-hand hammer. Can stun mobs", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Crusher")
+                {
+                    IntroductionPopUpProcess("CRUSHER", "A stunning two-handed hammer", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Phalanx Spear")
+                {
+                    IntroductionPopUpProcess("PHALANX\nSPEAR", "A basic spear", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Gladius")
+                {
+                    IntroductionPopUpProcess("GLADIUS", "Basic one-handed sword", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Scimitar")
+                {
+                    IntroductionPopUpProcess("SCIMITAR", "Can't pierce but effective", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Sizzling Sword")
+                {
+                    IntroductionPopUpProcess("SIZZLING\nSWORD", "Can acidify mobs", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Ancient Katana")
+                {
+                    IntroductionPopUpProcess("ANCIENT\nKATANA", "Two-handed sword which can have instant death on mobs directly", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Holy Sword")
+                {
+                    IntroductionPopUpProcess("HOLY\nSWORD", "Sword of the light.. Especially well against undeads", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Bow")
+                {
+                    IntroductionPopUpProcess("BOW", "A basic bow", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Crossbow")
+                {
+                    IntroductionPopUpProcess("CROSSBOW", "Takes time to load but more deadly than bow", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Staff")
+                {
+                    IntroductionPopUpProcess("STAFF", "Ordinary staff but no precharge time to fire", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Heaven's Gale")
+                {
+                    IntroductionPopUpProcess("HEAVEN'S\nGALE", "Fires patterned light projectiles.. Especially effective against undeads", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Solar Flare")
+                {
+                    IntroductionPopUpProcess("SOLAR\nFLARE", "Fires dispersed fire projectiles.. Especially effective against vermins", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Shield")
+                {
+                    IntroductionPopUpProcess("SHIELD", "Basic shield", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponName == "Apollo Shield")
+                {
+                    IntroductionPopUpProcess("APOLLO\nSHIELD", "High-deflect rate from projectiles", weapon.weaponDetails.weaponFrontSprite);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void IntroductionPopUpProcess(string weaponTextContent, string introductionTextContent, Sprite itemSprite)
+    {
+        if (introductionTextRoutine == null)
+        {
+            introductionTextRoutine = StartCoroutine(IntroductionTextRoutine(weaponTextContent, introductionTextContent, itemSprite));
+        }
+        else
+        {
+            StopCoroutine(introductionTextRoutine);
+            introductionTextRoutine = StartCoroutine(IntroductionTextRoutine(weaponTextContent, introductionTextContent, itemSprite));
+        }
+    }
+
+    IEnumerator IntroductionTextRoutine(string weaponTextContent, string introductionTextContent, Sprite itemSprite)
+    {
+        introductionPopUp.SetActive(true);
+        weaponText.text = weaponTextContent;
+        introductionText.text = introductionTextContent;
+        introductionItemImage.sprite = itemSprite;
+
+        yield return new WaitForSeconds(4f);
+
+        introductionPopUp.SetActive(false);
+        introductionTextRoutine = null;
+    }
+
     private void StaticEventHandler_OnRoomEnemiesDefeated(RoomEnemiesDefeatedArgs roomEnemiesDefeatedArgs)
     {
         if (roomEnemiesDefeatedArgs.summonedEnemies.Count < 1) return;
@@ -254,6 +476,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         bookCover.SetActive(false);
         bookView.SetActive(false);
         warningPopUp.SetActive(false);
+        introductionPopUp.SetActive(false);
 
         // Set screen to black
         StartCoroutine(Fade(0f, 1f, 0f, Color.black));
@@ -838,15 +1061,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         return null;
     }
 
-    public void SetToBeDroppedChestItem(ChestItem chestItem) 
-    {
-        toBeDroppedChestItem = chestItem;
-    }
-
-    public ChestItem GetToBeDroppedChestItem()
-    {
-        return toBeDroppedChestItem;
-    }
+    //public ChestItem GetToBeDroppedChestItem()
+    //{
+    //    return toBeDroppedChestItem;
+    //}
 
     public void GoToWeaponSetWithIndex(int setIndex)
     {
@@ -915,18 +1133,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             default:
                 break;
         }
-    }
-
-    public Transform GetMainHandEquippedSlot()
-    {
-        return bookView.transform.GetChild(1).GetChild(3).GetChild(1).GetChild(1);
-    }
-    
-    public Transform GetOffHandEquippedSlot()
-    {
-        return bookView.transform.GetChild(1).GetChild(4).GetChild(1).GetChild(1);
-    }
-        
+    }  
     public void CloseWarningPopUpMenu()
     {
         warningPopUp.SetActive(false);

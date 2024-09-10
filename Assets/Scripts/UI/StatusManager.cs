@@ -272,7 +272,10 @@ public class StatusManager : MonoBehaviour
 
     private void ClearLog()
     {
-        statusLogText.text = string.Empty;
+        if (statusLogText != null)
+        {
+            statusLogText.text = string.Empty;
+        }
     }
 
     IEnumerator WriteLog(string text, Color color)

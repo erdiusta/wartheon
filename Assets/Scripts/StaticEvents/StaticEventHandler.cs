@@ -96,7 +96,7 @@ public static class StaticEventHandler
     // Item added to passiveitem slot on book event
     public static event Action<ItemAddedToBookArgs> OnItemAddedToPassiveItemSlot;
 
-    public static void CallItemAddedToPassiveItemSlot(Sprite itemSprite, ItemSlotName itemSlotName)
+    public static void CallItemAddedToPassiveItemSlot(Sprite itemSprite, PassiveItemSlotName itemSlotName)
     {
         OnItemAddedToPassiveItemSlot?.Invoke(new ItemAddedToBookArgs { itemSprite = itemSprite, itemSlotName = itemSlotName });
     }
@@ -104,7 +104,7 @@ public static class StaticEventHandler
     // Item removed from passive item slot on book event
     public static event Action<ItemRemovedFromBookArgs> OnItemRemovedFromPassiveItemSlot;
 
-    public static void CallItemRemovedFromPassiveItemSlot(Sprite itemSprite, ItemSlotName itemSlotName)
+    public static void CallItemRemovedFromPassiveItemSlot(Sprite itemSprite, PassiveItemSlotName itemSlotName)
     {
         OnItemRemovedFromPassiveItemSlot?.Invoke(new ItemRemovedFromBookArgs { itemSprite = itemSprite, itemSlotName = itemSlotName});
     }
@@ -115,6 +115,14 @@ public static class StaticEventHandler
     public static void CallBookHealthChangedEvent(int currentHealth)
     {
         OnBookHealthChanged?.Invoke(new HealthChangedArgs { currentHealth = currentHealth });
+    }
+
+    // Introduction ui screen opened event
+    public static event Action<IntroductionPopUpUIArgs> OnDropPickedUp;
+
+    public static void CallIntroductionPopUpEvent(DropType dropType, IReceivable receivable)
+    {
+        OnDropPickedUp?.Invoke(new IntroductionPopUpUIArgs { dropType = dropType, receivable = receivable });
     }
 
     // Decoy added to the room event
@@ -185,13 +193,13 @@ public class WeaponAddedToBookArgs : EventArgs
 public class ItemAddedToBookArgs : EventArgs
 {
     public Sprite itemSprite;
-    public ItemSlotName itemSlotName;
+    public PassiveItemSlotName itemSlotName;
 }
 
 public class ItemRemovedFromBookArgs : EventArgs
 {
     public Sprite itemSprite;
-    public ItemSlotName itemSlotName;
+    public PassiveItemSlotName itemSlotName;
 }
 
 public class HealthChangedArgs : EventArgs
@@ -202,4 +210,10 @@ public class HealthChangedArgs : EventArgs
 public class DecoySpawnedArgs : EventArgs 
 {
     public Decoy decoy;
+}
+
+public class IntroductionPopUpUIArgs : EventArgs
+{
+    public DropType dropType;
+    public IReceivable receivable;
 }

@@ -183,8 +183,10 @@ public class DropOnDestroy : MonoBehaviour
         if (chestItem == null) return;
 
         chestItem.hasWeaponDrop = true;
-        chestItem.hasActiveDrop = false;
-        chestItem.Initialize(weaponDetails, null, null, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, transform.position);
+        Weapon weapon = new Weapon();
+        weapon.weaponDetails = weaponDetails;
+
+        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, transform.position);
     }
 
     /// <summary>
@@ -196,18 +198,17 @@ public class DropOnDestroy : MonoBehaviour
 
         if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
         {
-            chestItem.hasWeaponDrop = false;
-            chestItem.hasActiveDrop = false;
             chestItem.hasPrimaryPassiveDrop = true;
         }
         else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
         {
-            chestItem.hasWeaponDrop = false;
-            chestItem.hasActiveDrop = false;
             chestItem.hasSecondaryPassiveDrop = true;
         }
 
-        chestItem.Initialize(null, null, passiveItemDetails, passiveItemDetails.passiveItemSprite, passiveItemDetails.passiveItemName, transform.position);
+        PassiveItem passiveItem = new PassiveItem();
+        passiveItem.passiveItemDetails = passiveItemDetails;
+
+        chestItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, passiveItemDetails.passiveItemName, transform.position);
     }
 
     /// <summary>
@@ -215,14 +216,13 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiateActiveItem(ActiveItemDetailsSO activeItemDetails)
     {
-        int ammoPercent = 0;
-
         if (chestItem == null) return;
 
         chestItem.hasActiveDrop = true;
+        ActiveItem activeItem = new ActiveItem();
+        activeItem.activeItemDetails = activeItemDetails;
 
-        //chestItem.Initialize(null, GameResources.Instance.ammoDropIcon, ammoPercent.ToString() + "%", transform.position);
-        chestItem.Initialize(null, activeItemDetails, null, activeItemDetails.activeItemSprite, activeItemDetails.activeItemName, transform.position);
+        chestItem.Initialize(activeItem, activeItemDetails.activeItemSprite, activeItemDetails.activeItemName, transform.position);
     }
 
     /// <summary>
@@ -289,16 +289,5 @@ public class DropOnDestroy : MonoBehaviour
         ActiveItemDetailsSO activeItemDetails = activeItemRandom.GetItem();
 
         return activeItemDetails;
-    }
-
-    /// <summary>
-    /// Get ammo percent to spawn
-    /// </summary>
-    private int GetAmmoPercentToSpawn(int ammoNumber, int ammoPercent)
-    {
-        if (ammoNumber == 0)
-            return 0;
-
-        return ammoPercent;
     }
 }

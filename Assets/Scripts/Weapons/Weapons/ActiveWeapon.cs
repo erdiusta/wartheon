@@ -6,8 +6,9 @@ using UnityEngine;
 public class ActiveWeapon : MonoBehaviour
 {
     [HideInInspector] public bool isSwitching;
+    [HideInInspector] public Weapon weaponToBeDropped; // Cache it for clearing lock icon two-handed dropping issues 
 
-    [Header("RIGHT HAND")]
+    [Header("MAIN HAND")]
     [Space(10)]
     #region Tooltip
     [Tooltip("Populate with the SpriteRenderer on the child Weapon gameobject")]
@@ -26,7 +27,7 @@ public class ActiveWeapon : MonoBehaviour
     #endregion
     [SerializeField] Transform weaponMainHandEffectPositionTransform;
 
-    [Header("LEFT HAND")]
+    [Header("OFF-HAND")]
     [Space(10)]
     #region Tooltip
     [Tooltip("Populate with the SpriteRenderer on the child Weapon Left Hand gameobject")]
@@ -48,6 +49,7 @@ public class ActiveWeapon : MonoBehaviour
     Weapon currentMainHandWeapon;
     Weapon currentOffHandWeapon;
     Transform offHandWeaponTransform;
+
 
     private void Awake()
     {
@@ -108,6 +110,7 @@ public class ActiveWeapon : MonoBehaviour
     {
         isSwitching = true;
         currentMainHandWeapon = weapon;
+        weaponToBeDropped = weapon; // for removing lock icon during two-handed weapon drop issue
 
         if (player != null)
         {

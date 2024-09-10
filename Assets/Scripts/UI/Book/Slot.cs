@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 public class Slot : MonoBehaviour, IDropHandler
 {
-    public bool isMainHand;
+    public SlotType slotType;
 
     Player player;
     Transform backgroundTransform;
@@ -23,6 +23,9 @@ public class Slot : MonoBehaviour, IDropHandler
 
         if (draggableItem != null)
         {
+            // If dragged item is not a weapon, cancel the swap or move
+            if (draggableItem.receivable is not Weapon) return;
+
             Transform currentChild = null;
 
             draggableItem.contactSuccessful = true;
@@ -59,11 +62,14 @@ public class Slot : MonoBehaviour, IDropHandler
 
         if (currentSlotsDraggableItem.isLockIcon) return;
 
+        Weapon draggableItemWeapon = (Weapon)draggableItem.receivable;
+        Weapon currentSlotsDraggableItemWeapon = (Weapon)currentSlotsDraggableItem.receivable;
+
         // Move slot's weapon to draggable item's previous slot
         // Draggable item is on main hand
-        if (draggableItem.weapon.onMaindHand)
+        if (draggableItemWeapon.onMaindHand)
         {
-            if (currentSlotsDraggableItem.weapon == null)
+            if (currentSlotsDraggableItemWeapon == null)
             {
                 // Draggable item is two-handed weapon, so swap is canceled
 
@@ -71,13 +77,13 @@ public class Slot : MonoBehaviour, IDropHandler
                 return;
             }
             // Slot and draggable items are both main hands
-            else if (currentSlotsDraggableItem.weapon.onMaindHand)
+            else if (currentSlotsDraggableItemWeapon.onMaindHand)
             {
                 // Draggable item doesn't have an off-hand weapon
-                if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][1] == null)
+                if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] == null)
                 {
                     // Slot's current set doesn't have an off-hand weapon
-                    if (player.weaponSlotSetArray[currentSlotsDraggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][1] == null)
+                    if (player.weaponSlotSetArray[currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] == null)
                     {
                         // Both set's off-hand slots are empty so swap is successful
                         SwapProcess(draggableItem, currentSlotsDraggableItem, ItemSwapPos.DragMainSlotMain);
@@ -85,7 +91,7 @@ public class Slot : MonoBehaviour, IDropHandler
                     else // Slot's current set has an off-hand weapon
                     {
                         // Draggable item is two-handed weapon
-                        if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
+                        if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
                         {
                             // Draggable item is two-handed weapon, so swap is canceled
                             draggableItem.swapCanceled = true;
@@ -102,10 +108,10 @@ public class Slot : MonoBehaviour, IDropHandler
                 else
                 {
                     // Slot's current set doesn't have an off-hand weapon
-                    if (player.weaponSlotSetArray[currentSlotsDraggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][1] == null)
+                    if (player.weaponSlotSetArray[currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] == null)
                     {
                         // Slot's current weapon is a two-handed weapon
-                        if (player.weaponSlotSetArray[currentSlotsDraggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
+                        if (player.weaponSlotSetArray[currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
                         {
                             // Draggable item has an off-hand and slot item is a two-handed weapon, so swap is canceled
                             draggableItem.swapCanceled = true;
@@ -129,7 +135,7 @@ public class Slot : MonoBehaviour, IDropHandler
             else
             {
                 // Slot item is a shield
-                if (player.weaponSlotSetArray[currentSlotsDraggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
+                if (player.weaponSlotSetArray[currentSlotsDraggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
                 {
                     // Slot item is a shield, so swap is canceled
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
@@ -137,7 +143,7 @@ public class Slot : MonoBehaviour, IDropHandler
                     return;
                 }
                 // Draggable item is a two-handed weapon
-                else if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
+                else if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
                 {
                     // Draggable item is two-handed weapon, so swap is canceled
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandCantBeAddedToTwoHanded);
@@ -155,10 +161,10 @@ public class Slot : MonoBehaviour, IDropHandler
         else
         {
             // Draggable item is on off-hand and slot item is on main hand
-            if (currentSlotsDraggableItem.weapon.onMaindHand)
+            if (currentSlotsDraggableItemWeapon.onMaindHand)
             {
                 // Draggable item is a shield
-                if (draggableItem.weapon.weaponDetails.weaponClass == WeaponClass.Shield)
+                if (draggableItemWeapon.weaponDetails.weaponClass == WeaponClass.Shield)
                 {
                     // Draggable item is a shield, so swap is canceled
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
@@ -166,7 +172,7 @@ public class Slot : MonoBehaviour, IDropHandler
                     return;
                 }
                 // Slot item is a two-handed weapon
-                else if (player.weaponSlotSetArray[currentSlotsDraggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
+                else if (player.weaponSlotSetArray[currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
                 {
                     // Slot item is two-handed weapon, so swap is canceled
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandCantBeAddedToTwoHanded);
@@ -187,24 +193,24 @@ public class Slot : MonoBehaviour, IDropHandler
             }
         }
 
-        Debug.Log("Dragging " + draggableItem.weapon.weaponDetails.weaponName + " onto " + currentChild.GetComponent<DraggableItem>().weapon.weaponDetails.weaponName);
+        Debug.Log("Dragging " + draggableItemWeapon.weaponDetails.weaponName + " onto " + currentSlotsDraggableItemWeapon.weaponDetails.weaponName);
 
-        if (isMainHand)
+        if (slotType == SlotType.WeaponMainHand)
         {
-            Debug.Log(draggableItem.weapon.weaponDetails.weaponName + " is main Hand");
+            Debug.Log(draggableItemWeapon.weaponDetails.weaponName + " is main Hand");
         }
         else
         {
-            Debug.Log(draggableItem.weapon.weaponDetails.weaponName + " is off-Hand");
+            Debug.Log(draggableItemWeapon.weaponDetails.weaponName + " is off-Hand");
         }
 
-        if (currentChild.GetComponent<DraggableItem>().belongingSlot.isMainHand)
+        if (currentChild.GetComponent<DraggableItem>().belongingSlot.slotType == SlotType.WeaponMainHand)
         {
-            Debug.Log(currentChild.GetComponent<DraggableItem>().weapon.weaponDetails.weaponName + " is main Hand");
+            Debug.Log(currentSlotsDraggableItemWeapon.weaponDetails.weaponName + " is main Hand");
         }
         else
         {
-            Debug.Log(currentChild.GetComponent<DraggableItem>().weapon.weaponDetails.weaponName + " is off-Hand");
+            Debug.Log(currentSlotsDraggableItemWeapon.weaponDetails.weaponName + " is off-Hand");
         }
     }
 
@@ -215,34 +221,37 @@ public class Slot : MonoBehaviour, IDropHandler
 
     private void SwapProcess(DraggableItem draggableItem, DraggableItem currentSlotsDraggableItem, ItemSwapPos itemSwapPos)
     {
+        Weapon draggableItemWeapon = (Weapon)draggableItem.receivable;
+        Weapon currentSlotsDraggableItemWeapon = (Weapon)currentSlotsDraggableItem.receivable;
+
         switch (itemSwapPos)
         {
             case ItemSwapPos.None:
                 break;
             case ItemSwapPos.DragMainSlotMain:
                 // Put current slots child to draggable item slot
-                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0] = currentSlotsDraggableItem.weapon;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = currentSlotsDraggableItemWeapon;
 
                 // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
-                currentSlotsDraggableItem.weapon.weaponBelongingToWhichMainHandSet = draggableItem.weapon.weaponBelongingToWhichMainHandSet;
-                currentSlotsDraggableItem.weapon.onMaindHand = true;
-                draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                draggableItem.weapon.onMaindHand = true;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
+                currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet = draggableItemWeapon.weaponBelongingToWhichMainHandSet;
+                currentSlotsDraggableItemWeapon.onMaindHand = true;
+                draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                draggableItemWeapon.onMaindHand = true;
                 player.playerControl.SetWeaponSetByIndex(true);
                 break;
             case ItemSwapPos.DragMainSlotOff:
                 // Put current slots child to draggable item slot
-                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0] = currentSlotsDraggableItem.weapon;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = currentSlotsDraggableItemWeapon;
 
                 // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
-                currentSlotsDraggableItem.weapon.weaponBelongingToWhichOffHandSet = 0;
-                currentSlotsDraggableItem.weapon.weaponBelongingToWhichMainHandSet = draggableItem.weapon.weaponBelongingToWhichMainHandSet;
-                currentSlotsDraggableItem.weapon.onMaindHand = true;
-                draggableItem.weapon.weaponBelongingToWhichMainHandSet = 0;
-                draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                draggableItem.weapon.onMaindHand = false;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
+                currentSlotsDraggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
+                currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet = draggableItemWeapon.weaponBelongingToWhichMainHandSet;
+                currentSlotsDraggableItemWeapon.onMaindHand = true;
+                draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
+                draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                draggableItemWeapon.onMaindHand = false;
 
                 if (draggableItem.transactionOnTheSameSet)
                 {
@@ -251,21 +260,21 @@ public class Slot : MonoBehaviour, IDropHandler
                 else
                 {
                     Destroy(equippedTransform.GetChild(0).gameObject);
-                    StaticEventHandler.CallWeaponAddedToOffHandBook(draggableItem.weapon);
+                    StaticEventHandler.CallWeaponAddedToOffHandBook(draggableItemWeapon);
                 }
                 break;
             case ItemSwapPos.DragOffSlotMain:
                 // Put current slots child to draggable item slot
-                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1] = currentSlotsDraggableItem.weapon;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = currentSlotsDraggableItemWeapon;
 
                 // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
-                currentSlotsDraggableItem.weapon.weaponBelongingToWhichMainHandSet = 0;
-                currentSlotsDraggableItem.weapon.weaponBelongingToWhichOffHandSet = draggableItem.weapon.weaponBelongingToWhichOffHandSet;
-                currentSlotsDraggableItem.weapon.onMaindHand = false;
-                draggableItem.weapon.weaponBelongingToWhichOffHandSet = 0;
-                draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                draggableItem.weapon.onMaindHand = true;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
+                currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
+                currentSlotsDraggableItemWeapon.weaponBelongingToWhichOffHandSet = draggableItemWeapon.weaponBelongingToWhichOffHandSet;
+                currentSlotsDraggableItemWeapon.onMaindHand = false;
+                draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
+                draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                draggableItemWeapon.onMaindHand = true;
 
                 if (draggableItem.transactionOnTheSameSet)
                 {
@@ -274,20 +283,20 @@ public class Slot : MonoBehaviour, IDropHandler
                 else
                 {
                     Destroy(equippedTransform.GetChild(0).gameObject);
-                    StaticEventHandler.CallWeaponAddedToMainHandBook(draggableItem.weapon, false);
+                    StaticEventHandler.CallWeaponAddedToMainHandBook(draggableItemWeapon, false);
                 }
 
                 break;
             case ItemSwapPos.DragOffSlotOff:
                 // Put current slots child to draggable item slot
-                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1] = currentSlotsDraggableItem.weapon;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = currentSlotsDraggableItemWeapon;
 
                 // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
-                currentSlotsDraggableItem.weapon.weaponBelongingToWhichOffHandSet = draggableItem.weapon.weaponBelongingToWhichOffHandSet;
-                draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                draggableItem.weapon.onMaindHand = false;
-                currentSlotsDraggableItem.weapon.onMaindHand = false;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
+                currentSlotsDraggableItemWeapon.weaponBelongingToWhichOffHandSet = draggableItemWeapon.weaponBelongingToWhichOffHandSet;
+                draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                draggableItemWeapon.onMaindHand = false;
+                currentSlotsDraggableItemWeapon.onMaindHand = false;
                 player.playerControl.SetWeaponSetByIndex(true);
                 break;
             default:
@@ -297,34 +306,36 @@ public class Slot : MonoBehaviour, IDropHandler
 
     private void BackgroundAndEquippedSlotTransactions(DraggableItem draggableItem)
     {
-        if (draggableItem.weapon == null)
+        Weapon draggableItemWeapon = (Weapon)draggableItem.receivable;
+
+        if (draggableItemWeapon == null)
         {
             Debug.Log("Drag item is null");
         }
 
-        if (draggableItem.weapon.onMaindHand)
+        if (draggableItemWeapon.onMaindHand)
         {
-            if (isMainHand)
+            if (slotType == SlotType.WeaponMainHand)
             {
-                if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
+                if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EmptyOffHandFirst);
                     draggableItem.swapCanceled = true;
                     return;
                 }
 
-                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
 
                 // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
 
-                draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                player.ActivateWeapon(draggableItem.weapon, false, player.currentWeaponSlotSetIndex);
+                draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                player.ActivateWeapon(draggableItemWeapon, false, player.currentWeaponSlotSetIndex);
                 player.playerControl.SetWeaponSetByIndex(true);
             }
             else
             {
-                if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
+                if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EmptyOffHandFirst);
                     draggableItem.swapCanceled = true;
@@ -338,37 +349,37 @@ public class Slot : MonoBehaviour, IDropHandler
                     return;
                 }
 
-                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
 
                 // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
-                draggableItem.weapon.onMaindHand = false;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
+                draggableItemWeapon.onMaindHand = false;
 
-                draggableItem.weapon.weaponBelongingToWhichMainHandSet = 0;
-                draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                player.ActivateWeapon(draggableItem.weapon, false, player.currentWeaponSlotSetIndex);
+                draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
+                draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                player.ActivateWeapon(draggableItemWeapon, false, player.currentWeaponSlotSetIndex);
                 player.playerControl.SetWeaponSetByIndex(true);
             }
         }
         else
         {
-            if (isMainHand)
+            if (slotType == SlotType.WeaponMainHand)
             {
-                if (player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
+                if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
                     draggableItem.swapCanceled = true;
                     return;
                 }
-                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
 
                 // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItem.weapon;
-                draggableItem.weapon.onMaindHand = true;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
+                draggableItemWeapon.onMaindHand = true;
 
-                draggableItem.weapon.weaponBelongingToWhichOffHandSet = 0;
-                draggableItem.weapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                player.ActivateWeapon(draggableItem.weapon, true, player.currentWeaponSlotSetIndex);
+                draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
+                draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                player.ActivateWeapon(draggableItemWeapon, true, player.currentWeaponSlotSetIndex);
                 player.playerControl.SetWeaponSetByIndex(true);
             }
             else
@@ -380,23 +391,15 @@ public class Slot : MonoBehaviour, IDropHandler
                     return;
                 }
 
-                player.weaponSlotSetArray[draggableItem.weapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
 
                 // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItem.weapon;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
 
-                draggableItem.weapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                player.ActivateWeapon(draggableItem.weapon, true, player.currentWeaponSlotSetIndex);
+                draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                player.ActivateWeapon(draggableItemWeapon, true, player.currentWeaponSlotSetIndex);
                 player.playerControl.SetWeaponSetByIndex(true);
             }
         }
-
-        //// Activate equipped transform and disable background
-        //backgroundTransform.gameObject.SetActive(false);
-        //equippedTransform.gameObject.SetActive(true);
-
-        //// Move the dragged item to the empty slot
-        //draggableItem.transform.SetParent(equippedTransform);
-        //draggableItem.transform.localPosition = Vector3.zero;
     }
 }

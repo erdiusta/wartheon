@@ -171,6 +171,8 @@ public class Player : MonoBehaviour
     private void Start()
     {
         specialMoveOneCooldownTimer = 0;
+
+        keyCount = 1;
     }
 
     /// <summary>
@@ -259,7 +261,7 @@ public class Player : MonoBehaviour
         chestItem.hasActiveDrop = true; 
 
         // Initialize chest item
-        chestItem.Initialize(null, activeItemDetails, null, activeItemDetails.activeItemSprite, activeItemDetails.activeItemName, transform.position);
+        chestItem.Initialize(activeItem, activeItemDetails.activeItemSprite, activeItemDetails.activeItemName, transform.position);
 
         // Disable some components during equipped
         chestItem.textTMP.enabled = false;
@@ -267,8 +269,8 @@ public class Player : MonoBehaviour
         chestItem.animator.enabled = false;
 
         // Declare this chest item as to-be-dropped chest item
-        GameManager.Instance.SetToBeDroppedChestItem(chestItem);
-        GameManager.Instance.GetToBeDroppedChestItem().toBeDroppedActiveItem = activeItem;
+        ChestItem.toBeDroppedChestItem = chestItem;
+        ChestItem.toBeDroppedChestItem.toBeDroppedActiveItem = activeItem;
 
         return activeItem;
     }
@@ -290,7 +292,7 @@ public class Player : MonoBehaviour
         }
 
         passiveItemList.Add(passiveItem);
-        playerControl.PopulatePassiveItemsToBook(passiveItemDetails.passiveItemSprite, passiveItemDetails.itemSlotName);
+        playerControl.PopulatePassiveItemsToBook(passiveItemDetails.passiveItemSprite, passiveItemDetails.passiveItemSlotName);
 
         return passiveItem;
     }
@@ -611,100 +613,5 @@ public class Player : MonoBehaviour
     public Vector3 GetPlayerPosition()
     {
         return transform.position;
-    }
-
-    /// <summary>
-    /// Create a chest item for to-be-dropped weapon
-    /// </summary>
-    public ChestItem CreateChestItemForWeapon(Weapon weapon)
-    {
-        if (weapon.onMaindHand)
-        {
-            if (IsMainHandDropNotPossible())
-            {
-                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.LessThanOneMainHandWeapon);
-                return null;
-            }
-            else
-            {
-                switch (weapon.weaponBelongingToWhichMainHandSet)
-                {
-                    case 1:
-                        if (weaponSlotSetArray[0][1] == null) // Drop main hand if only off-hand slot is empty
-                        {
-                            weaponSlotSetArray[0][0] = null;
-                        }
-                        else
-                        {
-                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
-                            return null;
-                        }
-                        break;
-                    case 2:
-                        if (weaponSlotSetArray[1][1] == null)
-                        {
-                            weaponSlotSetArray[1][0] = null;
-                        }
-                        else
-                        {
-                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
-                            return null;
-                        }
-                        break;
-                    case 3:
-                        if (weaponSlotSetArray[2][1] == null)
-                        {
-                            weaponSlotSetArray[2][0] = null;
-                        }
-                        else
-                        {
-                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
-                            return null;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
-
-        chestItem.remainingItemCharge = playerDetails.selectedActiveItem.activeItemMaxCharge;
-        chestItem.boxCollider2D.enabled = false;
-
-        // Set hasActiveDrop flag to true
-        chestItem.hasWeaponDrop = true;
-
-        // Initialize chest item
-        chestItem.Initialize(weapon.weaponDetails, null, null, weapon.weaponDetails.weaponFrontSprite, weapon.weaponDetails.weaponName, transform.position);
-
-        // Disable some components during equipped
-        chestItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
-        chestItem.textTMP.enabled = false;
-        chestItem.spriteRenderer.enabled = false;
-        chestItem.animator.enabled = false;
-
-        return chestItem;
-    }
-
-    private bool IsMainHandDropNotPossible()
-    {
-        int gauge = 0;
-
-        for (int i = 0; i < 3; i++)
-        {
-            if (weaponSlotSetArray[i][0] != null)
-            {
-                gauge++;
-            }
-            else
-            {
-                continue;
-            }
-        }
-
-        return gauge <= 1;
     }
 }

@@ -426,14 +426,13 @@ public class EnemyMovementAI : MonoBehaviour
                 // Move the enemy using AStar pathfinding - Trigger rebuild of path to player
                 CreatePath();
 
+                if (movementSteps == null) return;
+
                 // If a path has been found move the enemy
-                if (movementSteps != null)
+                if (chaseMoveEnemyRoutine == null)
                 {
-                    if (chaseMoveEnemyRoutine == null)
-                    {
-                        // Move enemy along the path using a coroutine
-                        chaseMoveEnemyRoutine = StartCoroutine(ChaseMoveEnemyRoutine());
-                    }
+                    // Move enemy along the path using a coroutine
+                    chaseMoveEnemyRoutine = StartCoroutine(ChaseMoveEnemyRoutine());
                 }
 
                 // Switch to attack if chase distance is lower than trigger distance
@@ -467,14 +466,13 @@ public class EnemyMovementAI : MonoBehaviour
                 // Move the enemy using AStar pathfinding - Trigger rebuild of path to player
                 CreatePath();
 
+                if (movementSteps == null) return;
+
                 // If a path has been found move the enemy
-                if (movementSteps != null)
+                if (chaseMoveEnemyRoutine == null)
                 {
-                    if (chaseMoveEnemyRoutine == null)
-                    {
-                        // Move enemy along the path using a coroutine
-                        chaseMoveEnemyRoutine = StartCoroutine(ChaseMoveEnemyRoutine());
-                    }
+                    // Move enemy along the path using a coroutine
+                    chaseMoveEnemyRoutine = StartCoroutine(ChaseMoveEnemyRoutine());
                 }
 
                 // Switch to attack if chase distance is lower than trigger distance
@@ -601,8 +599,6 @@ public class EnemyMovementAI : MonoBehaviour
     /// </summary>
     IEnumerator ChaseMoveEnemyRoutine()
     {
-        if (movementSteps == null) yield return waitForFixedUpdate;
-
         while (movementSteps.Count > 0)
         {
             Vector3 nextPosition = movementSteps.Pop();

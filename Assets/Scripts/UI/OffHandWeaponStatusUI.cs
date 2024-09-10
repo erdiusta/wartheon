@@ -46,6 +46,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
         player.setActiveWeaponEvent.OnSetActiveOffHandWeapon += SetActiveWeaponEvent_OnSetActiveOffHandWeapon;
         player.setActiveWeaponEvent.OnSetInactiveOffHandWeapon += SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
         player.setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
+        player.setActiveWeaponEvent.OnSetInactiveMainHandWeapon += SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
         player.setActiveWeaponEvent.OnTwoHandWeaponEquipped += SetActiveWeaponEvent_OnTwoHandWeaponEquipped;
         player.setActiveWeaponEvent.OnOneHandWeaponEquipped += SetActiveWeaponEvent_OnOneHandWeaponEquipped;
         player.weaponFiredEvent.OnWeaponFired += WeaponFiredEvent_OnWeaponFired;
@@ -56,6 +57,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
         player.setActiveWeaponEvent.OnSetActiveOffHandWeapon -= SetActiveWeaponEvent_OnSetActiveOffHandWeapon;
         player.setActiveWeaponEvent.OnSetInactiveOffHandWeapon -= SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
         player.setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
+        player.setActiveWeaponEvent.OnSetInactiveMainHandWeapon -= SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
         player.setActiveWeaponEvent.OnTwoHandWeaponEquipped -= SetActiveWeaponEvent_OnTwoHandWeaponEquipped;
         player.setActiveWeaponEvent.OnOneHandWeaponEquipped -= SetActiveWeaponEvent_OnOneHandWeaponEquipped;
         player.weaponFiredEvent.OnWeaponFired -= WeaponFiredEvent_OnWeaponFired;
@@ -102,6 +104,14 @@ public class OffHandWeaponStatusUI : MonoBehaviour
             MakeWeaponInactive();
             cooldownBarParent.gameObject.SetActive(false);
         }
+    }
+
+    /// <summary>
+    /// Remove lock placeholder if right hand hold two-handed weapon
+    /// </summary>
+    private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
+    {
+        RemoveLockImage();
     }
 
     /// <summary>

@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    [HideInInspector] public Weapon weapon;
+    [HideInInspector] public IReceivable receivable;
     [HideInInspector] public Transform originalParent;
     [HideInInspector] public Transform bookStatsPageContainer;
     [HideInInspector] public bool swapCanceled;
@@ -37,20 +37,38 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         originalIndexNum = player.currentWeaponSlotSetIndex;
         transactionOnTheSameSet = true;
 
-        if (IsWeaponOnMainHand())
+        GetReceivableInfo();
+    }
+
+    private IReceivable GetReceivableInfo()
+    {
+        if (belongingSlot != null)
         {
-            weapon = GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon();
+            switch (belongingSlot.slotType)
+            {
+                case SlotType.Passive:
+                    break;
+                case SlotType.Active:
+                    receivable = GameManager.Instance.GetPlayer().selectedActiveItem.GetCurrentActiveItem();
+                    break;
+                case SlotType.WeaponMainHand:
+                    receivable = GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon();
+                    break;
+                case SlotType.WeaponOffHand:
+                    receivable = GameManager.Instance.GetPlayer().activeWeapon.GetCurrentOffHandWeapon();
+                    break;
+                default:
+                    break;
+            }
         }
-        else
-        {
-            weapon = GameManager.Instance.GetPlayer().activeWeapon.GetCurrentOffHandWeapon();
-        }
+
+        return receivable;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
         originalPosition = rectTransform.anchoredPosition;
-        originalParent = transform.parent;
+        originalParent = transform.parent;  
         canvasGroup.alpha = 0.6f;
         canvasGroup.blocksRaycasts = false;
         transform.SetParent(bookStatsPageContainer); // Go 4 level up for preventing drag interruption while set change
@@ -63,6 +81,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         // Check if the item is dropped on one of the weapon set buttons
         if (eventData.pointerEnter != null && eventData.pointerEnter.CompareTag(Settings.weaponSetButton))
         {
+            if (belongingSlot.slotType == SlotType.Active || belongingSlot.slotType == SlotType.Passive) return;
+
             WeaponSetButton weaponSetButton = eventData.pointerEnter.GetComponent<WeaponSetButton>();
             int setIndex;
 
@@ -110,14 +130,18 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         // Check if the drag was canceled due to an invalid swap
         if (swapCanceled)
         {
-            // Return to original parent if not dropped on a valid slot
-            if (IsWeaponOnMainHand())
+            if (belongingSlot != null)
             {
-                player.weaponSlotSetArray[weapon.weaponBelongingToWhichMainHandSet - 1][0] = weapon;
-            }
-            else
-            {
-                player.weaponSlotSetArray[weapon.weaponBelongingToWhichOffHandSet - 1][1] = weapon;
+                if (belongingSlot.slotType == SlotType.WeaponMainHand)
+                {
+                    Weapon weapon = (Weapon)receivable;
+                    player.weaponSlotSetArray[weapon.weaponBelongingToWhichMainHandSet - 1][0] = weapon;
+                }
+                else if (belongingSlot.slotType == SlotType.WeaponOffHand)
+                {
+                    Weapon weapon = (Weapon)receivable;
+                    player.weaponSlotSetArray[weapon.weaponBelongingToWhichOffHandSet - 1][1] = weapon;
+                }
             }
 
             if (!transactionOnTheSameSet)
@@ -138,14 +162,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             if (eventData.pointerEnter.CompareTag(Settings.weaponSetButton))
             {
                 // Return to original parent if not dropped on a valid slot
-                if (IsWeaponOnMainHand())
-                {
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = weapon;
-                }
-                else
-                {
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
-                }
+                RevertWeaponBackToBelongingSlots();
+
                 ResetPosition();
             }
             else if (eventData.pointerEnter.CompareTag(Settings.dropButton))
@@ -157,17 +175,26 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                     Destroy(belongingSlot.transform.GetChild(1).GetChild(belongingSlot.transform.GetChild(1).childCount - 1).gameObject);
                     Destroy(this);
                 }
+                if (belongingSlot != null)
+                {
+                    if (belongingSlot.slotType == SlotType.WeaponMainHand)
+                    {
+                        if (player.activeWeapon.weaponToBeDropped.weaponDetails.wieldType == WieldType.TwoHanded)
+                        {
+                            // Clear lock icon at off-hand slot when dropping two-handed weapon
+                            InventoryManager.Instance.ClearIntendedElementInOffHandEquippedSlot(0);
+                        }
+                    }
+                    else if (belongingSlot.slotType == SlotType.Active)
+                    {
+                        // Clear children duplicate slots if has
+                        InventoryManager.Instance.ClearIntendedElementInActiveItemEquippedSlot();
+                    }
+                }
             }
             else if (eventData.pointerEnter.CompareTag(Settings.bookCover))
             {
-                if (IsWeaponOnMainHand())
-                {
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = weapon;
-                }
-                else
-                {
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
-                }
+                RevertWeaponBackToBelongingSlots();
             }
             else if (eventData.pointerEnter.transform.parent.CompareTag(Settings.mainHandSlot) || eventData.pointerEnter.transform.parent.CompareTag(Settings.offHandSlot) ||
                 eventData.pointerEnter.transform.CompareTag(Settings.mainHandSlot) || eventData.pointerEnter.transform.CompareTag(Settings.offHandSlot))
@@ -177,28 +204,14 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             else
             {
                 // Return to original parent if not dropped on a valid slot
-                if (IsWeaponOnMainHand())
-                {
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = weapon;
-                }
-                else
-                {
-                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
-                }
+                RevertWeaponBackToBelongingSlots();
                 ResetPosition();
             }
         }
         else
         {
             // Return to original parent if not dropped on a valid slot
-            if (IsWeaponOnMainHand())
-            {
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = weapon;
-            }
-            else
-            {
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
-            }
+            RevertWeaponBackToBelongingSlots();
             ResetPosition();
         }
 
@@ -206,6 +219,23 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         contactSuccessful = false;
         justMoveNotSwap = false;
+    }
+
+    private void RevertWeaponBackToBelongingSlots()
+    {
+        if (belongingSlot != null)
+        {
+            if (belongingSlot.slotType == SlotType.WeaponMainHand)
+            {
+                Weapon weapon = (Weapon)receivable;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = weapon;
+            }
+            else if (belongingSlot.slotType == SlotType.WeaponOffHand)
+            {
+                Weapon weapon = (Weapon)receivable;
+                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
+            }
+        }
     }
 
     private void BackGroundAndEquippedSlotTransactions()
@@ -224,52 +254,47 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void EnableEquippedParentAndDisableBackgroundForOffHand()
     {
-        Transform offHandWeaponBackground = bookStatsPageContainer.GetChild(4).GetChild(1).GetChild(0);
-        Transform offHandWeaponEquipped = bookStatsPageContainer.GetChild(4).GetChild(1).GetChild(1);
+        Transform offHandWeaponBackground = bookStatsPageContainer.GetChild(4).GetChild(0).GetChild(0);
+        Transform offHandWeaponEquipped = bookStatsPageContainer.GetChild(4).GetChild(0).GetChild(1);
         offHandWeaponBackground.gameObject.SetActive(false);
         offHandWeaponEquipped.gameObject.SetActive(true);
     }
 
-    public bool IsWeaponOnMainHand()
-    {
-        if (belongingSlot != null)
-        {
-            if (belongingSlot.isMainHand)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    public Weapon GetDraggedWeapon() => weapon;
+    public Weapon GetDraggedWeapon() => (Weapon)receivable;
 
     public int GetSetNumber()
     {
-        if (IsWeaponOnMainHand())
+        if (belongingSlot != null)
         {
-            return weapon.weaponBelongingToWhichMainHandSet;
+            if (belongingSlot.slotType == SlotType.WeaponMainHand)
+            {
+                Weapon weapon = (Weapon)receivable;
+                return weapon.weaponBelongingToWhichMainHandSet;
+            }
+            else if (belongingSlot.slotType == SlotType.WeaponOffHand)
+            {
+                Weapon weapon = (Weapon)receivable;
+                return weapon.weaponBelongingToWhichOffHandSet;
+            }
         }
-        else
-        {
-            return weapon.weaponBelongingToWhichOffHandSet;
-        }
+
+        return -1;
     }
 
     public void UpdateSetNumber(int newSetIndex)
     {
-        if (IsWeaponOnMainHand())
+        if (belongingSlot != null)
         {
-            weapon.weaponBelongingToWhichMainHandSet = newSetIndex;
-        }
-        else
-        {
-            weapon.weaponBelongingToWhichOffHandSet = newSetIndex;
+            if (belongingSlot.slotType == SlotType.WeaponMainHand)
+            {
+                Weapon weapon = (Weapon)receivable;
+                weapon.weaponBelongingToWhichMainHandSet = newSetIndex;
+            }
+            else if (belongingSlot.slotType == SlotType.WeaponOffHand)
+            {
+                Weapon weapon = (Weapon)receivable;
+                weapon.weaponBelongingToWhichOffHandSet = newSetIndex;
+            }
         }
     }
 

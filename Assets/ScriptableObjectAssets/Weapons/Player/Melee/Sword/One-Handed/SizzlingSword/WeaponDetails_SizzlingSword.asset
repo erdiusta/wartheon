@@ -24,7 +24,7 @@ MonoBehaviour:
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 1
-  acidEfficiency: 0.6
+  acidEfficiency: 0.3
   hasStunDamage: 0
   stunChance: 0
   weaponShootPosition: {x: 0, y: 0, z: 0}
@@ -32,7 +32,6 @@ MonoBehaviour:
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 3900fd10105b8fc4eb3ceacea2a5cc5b, type: 2}
   weaponImpactSoundEffect: {fileID: 11400000, guid: eaf74e25edc124043a8cd50c981d16df, type: 2}
-  weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 1
   isShield: 0
   weaponCooldownDuration: 0.85

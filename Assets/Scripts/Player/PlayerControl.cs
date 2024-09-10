@@ -26,6 +26,7 @@ public class PlayerControl : MonoBehaviour
     bool particlePlayed;
     float unstealthImmunityTime = 2f;
     AimDirection aimDirection;
+    int previousIndex = 1;
 
     // Attack member variables
     [HideInInspector] public MeleeAttackType meleeAttackTypeMainHand = MeleeAttackType.None;
@@ -619,6 +620,9 @@ public class PlayerControl : MonoBehaviour
             // Cache previous weapon slot index
             InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
 
+            // Set previous index
+            previousIndex = player.currentWeaponSlotSetIndex;
+
             // Increment the current weapon slot set index
             player.currentWeaponSlotSetIndex++;
 
@@ -648,6 +652,8 @@ public class PlayerControl : MonoBehaviour
         // Cache previous weapon slot index
         InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
 
+        previousIndex = player.currentWeaponSlotSetIndex;
+
         // Decrease the current weapon slot set index
         player.currentWeaponSlotSetIndex--;
 
@@ -663,12 +669,17 @@ public class PlayerControl : MonoBehaviour
 
     public void SetWeaponSetByIndex(bool onlySwitch)
     {
+        // ACTIVE WEAPON VARIABLES SWITCH
+        if (player.weaponSlotSetArray[previousIndex - 1][1] != null)
+        {
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+        }
+
+        // WEAPON SLOTS SWITCH
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
         {
-            player.setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], 
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0],
                 player.currentWeaponSlotSetIndex);
-
-            PopulateMainHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], onlySwitch);
 
             if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
             {
@@ -682,13 +693,11 @@ public class PlayerControl : MonoBehaviour
         else
         {
             player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
-            RemoveMainHandWeaponFromBook();
         }
 
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null)
         {
             player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1], player.currentWeaponSlotSetIndex);
-            PopulateOffHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]);
         }
         else
         {
@@ -698,14 +707,38 @@ public class PlayerControl : MonoBehaviour
                 {
                     player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
                 }
-                else
+            }
+            else
+            {
+                player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+            }
+        }
+
+        // BOOK UI SWITCH
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+        {
+            PopulateMainHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], onlySwitch);
+        }
+        else
+        {
+            RemoveMainHandWeaponFromBook();
+        }
+
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null)
+        {
+            PopulateOffHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]);
+        }
+        else
+        {
+            if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+            {
+                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
                 {
                     RemoveOffHandWeaponsFromBook();
                 }
             }
             else
             {
-                player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
                 RemoveOffHandWeaponsFromBook();
             }
         }
@@ -1305,13 +1338,13 @@ public class PlayerControl : MonoBehaviour
     {
         if (InputManager.Instance.dropActiveItem.action.WasPressedThisFrame())
         {
-            DropProcess(GameManager.Instance.GetToBeDroppedChestItem(), false);
+            DropProcess(ChestItem.toBeDroppedChestItem, DropType.ActiveItem);
         }
     }
 
-    public void DropProcess(ChestItem chestItem, bool isWeaponDrop, Weapon weapon = null)
+    public void DropProcess(ChestItem toBeDroppedChestItem, DropType dropType, IReceivable receivable = null, PassiveItemSlotName passiveItemSlotName = PassiveItemSlotName.None)
     {
-        if (!isWeaponDrop)
+        if (dropType == DropType.ActiveItem)
         {
             if (player.selectedActiveItem.GetCurrentActiveItem() != null)
             {
@@ -1320,66 +1353,142 @@ public class PlayerControl : MonoBehaviour
                     StaticEventHandler.CallCompassDisabled();
                 }
 
-                chestItem.Initialize(null, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails, null, player.selectedActiveItem.GetCurrentActiveItem().
+                GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+                ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
+                toBeDroppedChestItem = chestItem;
+
+                toBeDroppedChestItem.hasActiveDrop = true;
+                toBeDroppedChestItem.droppedByPlayer = true;
+                toBeDroppedChestItem.isColliding = true;
+
+                toBeDroppedChestItem.Initialize(player.selectedActiveItem.GetCurrentActiveItem(), player.selectedActiveItem.GetCurrentActiveItem().
                     activeItemDetails.activeItemSprite, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemName, transform.position);
 
-                chestItem.hasActiveDrop = true;
-                chestItem.droppedByPlayer = true;
+                toBeDroppedChestItem.boxCollider2D.enabled = false;
 
                 // Break free from the player object
-                chestItem.spriteRenderer.enabled = true;
-                chestItem.animator.enabled = true;
-                chestItem.textTMP.enabled = true;
+                toBeDroppedChestItem.spriteRenderer.enabled = true;
+                toBeDroppedChestItem.animator.enabled = true;
+                toBeDroppedChestItem.textTMP.enabled = true;
+                toBeDroppedChestItem.animator.runtimeAnimatorController = player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemAnimatorController;
 
                 // Store remaining charge count during drop process
-                chestItem.remainingItemCharge = player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge;
+                toBeDroppedChestItem.remainingItemCharge = player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge;
 
                 player.setActiveWeaponEvent.CallRemovedActiveItem();
                 RemoveActiveItemFromBook();
 
-                chestItem.gameObject.transform.SetParent(null);
-                chestItem.boxCollider2D.enabled = true;
-                chestItem.isPickedUp = false;
-
-                if (dropCoroutine == null)
-                {
-                    dropCoroutine = StartCoroutine(MoveItemDown(chestItem));
-                }
+                toBeDroppedChestItem.transform.SetParent(null);
+                toBeDroppedChestItem.isPickedUp = false;
             }
         }
-        else
+        else if (dropType == DropType.PassiveItem)
         {
-            chestItem.droppedByPlayer = true;
+            PassiveItem passiveItem = (PassiveItem)receivable;
+
+            GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+            ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
+            toBeDroppedChestItem = chestItem;
+
+            toBeDroppedChestItem.hasSecondaryPassiveDrop = true;
+            toBeDroppedChestItem.droppedByPlayer = true;
+            toBeDroppedChestItem.isColliding = true;
+
+            toBeDroppedChestItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, passiveItem.passiveItemDetails.passiveItemName, transform.position);
+
+            toBeDroppedChestItem.boxCollider2D.enabled = false;
+
+            // Disable some components during equipped
+            toBeDroppedChestItem.spriteRenderer.enabled = true;
+            toBeDroppedChestItem.animator.enabled = true;
+            toBeDroppedChestItem.textTMP.enabled = true;
+            toBeDroppedChestItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
+
+            player.setActiveWeaponEvent.CallRemovedPassiveItem();
+            RemovePassiveItemFromBook(passiveItem.passiveItemDetails.passiveItemSprite, passiveItemSlotName);
+
+            toBeDroppedChestItem.transform.SetParent(null);
+            toBeDroppedChestItem.isPickedUp = false;
+        }
+        else if(dropType == DropType.Weapon)
+        {
+            Weapon weapon = (Weapon)receivable;
 
             if (weapon.onMaindHand)
             {
-                switch (weapon.weaponBelongingToWhichMainHandSet)
+                if (IsMainHandDropNotPossible())
                 {
-                    case 1:
-                        player.weaponSlotSetArray[0][1] = null;
-                        break;
-                    case 2:
-                        player.weaponSlotSetArray[1][1] = null;
-                        break;
-                    case 3:
-                        player.weaponSlotSetArray[2][1] = null;
-                        break;
-                    default:
-                        break;
+                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.LessThanOneMainHandWeapon);
+                    return;
                 }
+                else
+                {
+                    switch (weapon.weaponBelongingToWhichMainHandSet)
+                    {
+                        case 1:
+                            if (player.weaponSlotSetArray[0][1] == null) // Drop main hand if only off-hand slot is empty
+                            {
+                                player.weaponSlotSetArray[0][0] = null;
+                            }
+                            else
+                            {
+                                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
+                                return;
+                            }
+                            break;
+                        case 2:
+                            if (player.weaponSlotSetArray[1][1] == null)
+                            {
+                                player.weaponSlotSetArray[1][0] = null;
+                            }
+                            else
+                            {
+                                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
+                                return;
+                            }
+                            break;
+                        case 3:
+                            if (player.weaponSlotSetArray[2][1] == null)
+                            {
+                                player.weaponSlotSetArray[2][0] = null;
+                            }
+                            else
+                            {
+                                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
+                                return;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
 
-                // Break free from the player object
-                chestItem.spriteRenderer.enabled = true;
-                chestItem.animator.enabled = true;
-                chestItem.textTMP.enabled = true;
-                chestItem.gameObject.transform.SetParent(null);
-                chestItem.boxCollider2D.enabled = true;
-                chestItem.isPickedUp = false;
+                    GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+                    ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
+                    toBeDroppedChestItem = chestItem;
 
-                // De-active dropped main hand weapon
-                RemoveMainHandWeaponFromBook();
-                player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
-                player.mainHandSlotFilled = false;
+                    toBeDroppedChestItem.hasWeaponDrop = true;
+                    toBeDroppedChestItem.droppedByPlayer = true;
+                    toBeDroppedChestItem.isColliding = true;
+
+                    toBeDroppedChestItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, weapon.weaponDetails.weaponName, transform.position);
+
+                    toBeDroppedChestItem.boxCollider2D.enabled = false;
+
+                    // Break free from the player object
+                    toBeDroppedChestItem.spriteRenderer.enabled = true;
+                    toBeDroppedChestItem.animator.enabled = true;
+                    toBeDroppedChestItem.textTMP.enabled = true;
+                    toBeDroppedChestItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
+
+                    // De-active dropped main hand weapon
+                    player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+                    RemoveMainHandWeaponFromBook();
+
+                    toBeDroppedChestItem.transform.SetParent(null);
+                    toBeDroppedChestItem.isPickedUp = false;
+
+                    player.mainHandSlotFilled = false;
+                }
             }
             else
             {
@@ -1398,21 +1507,57 @@ public class PlayerControl : MonoBehaviour
                         break;
                 }
 
-                chestItem.droppedByPlayer = true;
+                GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+                ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
+                toBeDroppedChestItem = chestItem;
+
+                toBeDroppedChestItem.hasWeaponDrop = true;
+                toBeDroppedChestItem.droppedByPlayer = true;
+                toBeDroppedChestItem.isColliding = true;
+
+                toBeDroppedChestItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, weapon.weaponDetails.weaponName, transform.position);
+
+                toBeDroppedChestItem.boxCollider2D.enabled = false;
 
                 // Break free from the player object
-                chestItem.spriteRenderer.enabled = true;
-                chestItem.animator.enabled = true;
-                chestItem.textTMP.enabled = true;
-                chestItem.gameObject.transform.SetParent(null);
-                chestItem.boxCollider2D.enabled = true;
-                chestItem.isPickedUp = false;
+                toBeDroppedChestItem.spriteRenderer.enabled = true;
+                toBeDroppedChestItem.animator.enabled = true;
+                toBeDroppedChestItem.textTMP.enabled = true;
+                toBeDroppedChestItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
 
-                RemoveOffHandWeaponsFromBook();
                 player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+                RemoveOffHandWeaponsFromBook();
+
+                toBeDroppedChestItem.transform.SetParent(null);
+                toBeDroppedChestItem.isPickedUp = false;
+
                 player.offHandSlotFilled = false;
             }
         }
+
+        if (dropCoroutine == null)
+        {
+            dropCoroutine = StartCoroutine(MoveItemDown(toBeDroppedChestItem));
+        }
+    }
+
+    public bool IsMainHandDropNotPossible()
+    {
+        int gauge = 0;
+
+        for (int i = 0; i < 3; i++)
+        {
+            if (player.weaponSlotSetArray[i][0] != null)
+            {
+                gauge++;
+            }
+            else
+            {
+                continue;
+            }
+        }
+
+        return gauge <= 1;
     }
 
     /// <summary>
@@ -1467,6 +1612,8 @@ public class PlayerControl : MonoBehaviour
 
         // Make sure drop completed
         dropCoroutine = null;
+        chestItem.boxCollider2D.enabled = true;
+        chestItem.isColliding = false;
     }
 
     /// <summary>
@@ -1531,12 +1678,12 @@ public class PlayerControl : MonoBehaviour
         StaticEventHandler.CallItemRemovedFromActiveItemSlot();
     }
 
-    public void PopulatePassiveItemsToBook(Sprite sprite, ItemSlotName itemSlotName)
+    public void PopulatePassiveItemsToBook(Sprite sprite, PassiveItemSlotName itemSlotName)
     {
         StaticEventHandler.CallItemAddedToPassiveItemSlot(sprite, itemSlotName);
     }
 
-    public void RemovePassiveItemFromBook(Sprite sprite, ItemSlotName itemSlotName)
+    public void RemovePassiveItemFromBook(Sprite sprite, PassiveItemSlotName itemSlotName)
     {
         StaticEventHandler.CallItemRemovedFromPassiveItemSlot(sprite, itemSlotName);
     }

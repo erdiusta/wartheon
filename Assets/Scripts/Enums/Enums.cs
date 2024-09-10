@@ -88,7 +88,6 @@ public enum ArmorStatus
 {
     Normal,
     SilverArmor,
-    GoldenArmor,
     Acid
 }
 
@@ -229,7 +228,7 @@ public enum BookPage
     Bosses
 }
 
-public enum ItemSlotName
+public enum PassiveItemSlotName
 {
     None,
     Head,
@@ -239,8 +238,15 @@ public enum ItemSlotName
     Back,
     Waist,
     Arm,
-    Leg,
-    Accessory
+    Leg
+}
+
+public enum SlotType
+{
+    Passive,
+    Active,
+    WeaponMainHand,
+    WeaponOffHand
 }
 
 public enum ItemSwapPos
@@ -266,4 +272,11 @@ public enum PopUpReason
     EquipMainHandFirst,
     CantMoveYourMainHandWithEmptyOffHand,
     YourHandsFull
+}
+
+public enum DropType
+{
+    PassiveItem,
+    ActiveItem,
+    Weapon
 }

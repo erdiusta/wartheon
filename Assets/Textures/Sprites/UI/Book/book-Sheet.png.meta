@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 256
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -152,12 +152,12 @@ TextureImporter:
       name: book-Sheet_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 66
         y: 0
-        width: 256
+        width: 252
         height: 192
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -173,12 +173,12 @@ TextureImporter:
       name: book-Sheet_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 386
         y: 0
-        width: 256
+        width: 252
         height: 192
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -194,12 +194,12 @@ TextureImporter:
       name: book-Sheet_2
       rect:
         serializedVersion: 2
-        x: 512
+        x: 706
         y: 0
-        width: 256
+        width: 252
         height: 192
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -215,12 +215,12 @@ TextureImporter:
       name: book-Sheet_3
       rect:
         serializedVersion: 2
-        x: 768
+        x: 1026
         y: 0
-        width: 256
+        width: 252
         height: 192
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -236,12 +236,12 @@ TextureImporter:
       name: book-Sheet_4
       rect:
         serializedVersion: 2
-        x: 1024
+        x: 1346
         y: 0
-        width: 256
+        width: 252
         height: 192
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -257,12 +257,12 @@ TextureImporter:
       name: book-Sheet_5
       rect:
         serializedVersion: 2
-        x: 1280
+        x: 1666
         y: 0
-        width: 256
+        width: 252
         height: 192
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -278,12 +278,12 @@ TextureImporter:
       name: book-Sheet_6
       rect:
         serializedVersion: 2
-        x: 1536
+        x: 1986
         y: 0
-        width: 256
+        width: 252
         height: 192
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -299,12 +299,12 @@ TextureImporter:
       name: book-Sheet_7
       rect:
         serializedVersion: 2
-        x: 1792
+        x: 2306
         y: 0
-        width: 256
+        width: 252
         height: 192
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -320,12 +320,12 @@ TextureImporter:
       name: book-Sheet_8
       rect:
         serializedVersion: 2
-        x: 2048
+        x: 2626
         y: 0
-        width: 256
+        width: 252
         height: 192
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

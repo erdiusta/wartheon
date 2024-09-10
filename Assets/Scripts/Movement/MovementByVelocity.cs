@@ -136,7 +136,7 @@ public class MovementByVelocity : MonoBehaviour
             Debug.Log("Player's current armor value is " + player.health.currentArmorValue);
         }
 
-        if (player.armorStatus == ArmorStatus.SilverArmor || player.armorStatus == ArmorStatus.GoldenArmor)
+        if (player.armorStatus == ArmorStatus.SilverArmor)
         {
             player.health.ResetArmorValue();
             player.healthEvent.CallArmorWoreOffEvent();

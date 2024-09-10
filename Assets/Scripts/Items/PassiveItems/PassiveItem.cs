@@ -1,6 +1,5 @@
-using UnityEngine;
 
-public class PassiveItem : MonoBehaviour
+public class PassiveItem : IReceivable
 {
     public PassiveItemDetailsSO passiveItemDetails;
 }
