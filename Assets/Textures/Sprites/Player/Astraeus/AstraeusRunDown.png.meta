@@ -152,10 +152,17 @@ TextureImporter:
       name: AstraeusRunDown_0
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunDown.png.meta
         x: 0
         y: 6
         width: 48
         height: 58
+=======
+        x: 6
+        y: 0
+        width: 18
+        height: 30
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveDown.png.meta
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -173,10 +180,17 @@ TextureImporter:
       name: AstraeusRunDown_1
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunDown.png.meta
         x: 48
         y: 5
         width: 48
         height: 59
+=======
+        x: 38
+        y: 0
+        width: 18
+        height: 31
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveDown.png.meta
       alignment: 9
       pivot: {x: 0.52, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,10 +208,17 @@ TextureImporter:
       name: AstraeusRunDown_2
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunDown.png.meta
         x: 96
         y: 4
         width: 48
         height: 60
+=======
+        x: 70
+        y: 0
+        width: 18
+        height: 32
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveDown.png.meta
       alignment: 9
       pivot: {x: 0.55, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,10 +236,17 @@ TextureImporter:
       name: AstraeusRunDown_3
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunDown.png.meta
         x: 144
         y: 5
         width: 48
         height: 59
+=======
+        x: 102
+        y: 0
+        width: 18
+        height: 31
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveDown.png.meta
       alignment: 9
       pivot: {x: 0.52, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -236,10 +264,17 @@ TextureImporter:
       name: AstraeusRunDown_4
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunDown.png.meta
         x: 192
         y: 6
         width: 48
         height: 58
+=======
+        x: 134
+        y: 0
+        width: 18
+        height: 30
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveDown.png.meta
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -257,10 +292,17 @@ TextureImporter:
       name: AstraeusRunDown_5
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunDown.png.meta
         x: 240
         y: 6
         width: 48
         height: 58
+=======
+        x: 166
+        y: 0
+        width: 18
+        height: 31
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveDown.png.meta
       alignment: 9
       pivot: {x: 0.48, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -278,10 +320,17 @@ TextureImporter:
       name: AstraeusRunDown_6
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunDown.png.meta
         x: 288
         y: 4
         width: 48
         height: 60
+=======
+        x: 198
+        y: 0
+        width: 18
+        height: 32
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveDown.png.meta
       alignment: 9
       pivot: {x: 0.48, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -299,10 +348,17 @@ TextureImporter:
       name: AstraeusRunDown_7
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunDown.png.meta
         x: 336
         y: 6
         width: 48
         height: 58
+=======
+        x: 230
+        y: 0
+        width: 18
+        height: 31
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveDown.png.meta
       alignment: 9
       pivot: {x: 0.48, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

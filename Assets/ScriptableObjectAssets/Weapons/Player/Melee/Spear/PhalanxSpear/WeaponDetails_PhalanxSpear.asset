@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_PhalanxSpear
+  m_EditorClassIdentifier: 
+  weaponName: Phalanx Spear
+  weaponTitle: 5
+  weaponFrontSprite: {fileID: 1230032176, guid: ce303d2404321da4e870e4c5bfc59d3b, type: 3}
+  weaponRearSprite: {fileID: 1230032176, guid: ce303d2404321da4e870e4c5bfc59d3b, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: 3eeb7901bc4c98640937a7fd82d248c9, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 7b95804964c7e2c488ad54857a7be2bb, type: 2}
+  weaponClass: 4
+  wieldType: 0
+  price: 6
+  canKillSuddenly: 0
+  suddenKillChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
+  stunChance: 0
+  weaponShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 725854e135951404ba8a84c0a0ca4735, type: 2}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: 05f4834c93baa084aa8d96b1654caa0e, type: 2}
+  isMeleeWeapon: 1
+  isShield: 0
+  projectileDeflectRatio: 0
+  circleRadius: 0.95
+  hasPhysicalDamage: 1
+  meleeDamageMin: 7
+  meleeDamageMax: 11
+  criticalHitChance: 0.1
+  criticalHitDamageMultiplier: 1.5
+  weaponCooldownDuration: 1.7
+  weaponBaseHandling: 0.5
+  hasSwing: 0
+  hasSweep: 0
+  hasThrust: 1
+  hasInfiniteProjectile: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0

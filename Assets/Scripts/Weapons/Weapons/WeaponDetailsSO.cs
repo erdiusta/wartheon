@@ -54,6 +54,76 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public bool isMeleeWeapon = false;
     #region Tooltip
+<<<<<<< Updated upstream
+=======
+    [Tooltip("Select if the weapon is a shield")]
+    #endregion Tooltip
+    public bool isShield = false;
+
+    #region Header SHIELD OPERATING VALUES
+    [Space(10)]
+    [Header("SHIELD OPERATING VALUES")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Probability of deflecting projectiles")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float projectileDeflectRatio = 0.4f;
+
+    #region Header MELEE WEAPON OPERATING VALUES
+    [Space(10)]
+    [Header("MELEE WEAPON OPERATING VALUES")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Select radius amount if weapon is a melee weapon")]
+    #endregion Tooltip
+    public float circleRadius = 0.8f;
+    #region Tooltip
+    [Tooltip("Check if the weapon is physical damaged weapon or not")]
+    #endregion Tooltip
+    public bool hasPhysicalDamage = false;
+    #region Tooltip
+    [Tooltip("Min melee damage of the weapon")]
+    #endregion
+    public int meleeDamageMin = 4;
+    #region Tooltip
+    [Tooltip("Max melee damage of the weapon")]
+    #endregion
+    public int meleeDamageMax = 7;
+    #region Tooltip
+    [Tooltip("Critical hit chance of the weapon")]
+    #endregion
+    public float criticalHitChance = 0.1f;
+    #region Tooltip
+    [Tooltip("Critical hit damage multiplier")]
+    #endregion
+    public float criticalHitDamageMultiplier = 2f;
+    #region Tooltip
+    [Tooltip("Weapon Fire Rate - 0.2 means 5 shots a second")]
+    #endregion Tooltip
+    public float weaponCooldownDuration = 0.2f;
+    #region Tooltip
+    [Tooltip("Weapon base handling rate to hit enemy successfully")]
+    #endregion Tooltip
+    public float weaponBaseHandling = 0.8f;
+    #region Tooltip
+    [Tooltip("Check if melee weapon has slash fx")]
+    #endregion
+    public bool hasSwing = false;
+    #region Tooltip
+    [Tooltip("Check if melee weapon has sweep fx")]
+    #endregion
+    public bool hasSweep = false;
+    #region Tooltip
+    [Tooltip("Check if melee weapon has thrust fx")]
+    #endregion
+    public bool hasThrust = false;
+
+    #region Header RANGED WEAPON OPERATING VALUES
+    [Space(10)]
+    [Header("RANGED WEAPON OPERATING VALUES")]
+    #endregion
+    #region Tooltip
+>>>>>>> Stashed changes
     [Tooltip("Select if the weapon has infinite projectile")]
     #endregion Tooltip
     public bool hasInfiniteProjectile = false;

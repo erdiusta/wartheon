@@ -14,11 +14,48 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Bat
   enemyPrefab: {fileID: 7183228443647751644, guid: 5b47e0efa440e0443a327bd01a1d9035, type: 3}
+<<<<<<< Updated upstream
   chaseDistance: 30
+=======
+  enemyRace: 0
+  movementDetails: {fileID: 11400000, guid: 0fec25a507abd7d44965f2276a63e9fe, type: 2}
+  experiencePoint: 30
+  chaseDistance: 9
+  hasAttackMove: 0
+  preAttackDuration: 1
+  attackMoveTriggerDistance: 0
+  attackMoveEfficentDistance: 0
+  attackMoveBaseCooldown: 8
+  deflectionValue: 0.1
+  enemyBehaviour: 0
+  isEnemyBoss: 0
+  enemyArmorValue: 2
+  hasShield: 0
+  deflectChance: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+>>>>>>> Stashed changes
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 3.987934, g: 0, b: 0.07809851, a: 0}
+<<<<<<< Updated upstream
+=======
+  suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
+  getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
+  criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: 8520316363d6f1f459f854b545c0ab3f, type: 2}
+  attackSoundEffect: {fileID: 0}
+  deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
+  stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
+  poisonSoundEffect: {fileID: 0}
+>>>>>>> Stashed changes
   enemyWeapon: {fileID: 0}
   firingIntervalMin: 0.1
   firingIntervalMax: 1
@@ -27,7 +64,13 @@ MonoBehaviour:
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+<<<<<<< Updated upstream
     enemyHealthAmount: 5
+=======
+    enemyHealthAmount: 20
+  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
+    enemyHealthAmount: 20
+>>>>>>> Stashed changes
   isImmuneAfterHit: 1
   hitImmunityTime: 1.5
   isHealthBarDisplayed: 0

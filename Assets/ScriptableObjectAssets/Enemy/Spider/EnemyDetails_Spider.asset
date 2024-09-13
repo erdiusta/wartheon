@@ -1,0 +1,162 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
+  m_Name: EnemyDetails_Spider
+  m_EditorClassIdentifier: 
+  enemyName: Spider
+  enemyPrefab: {fileID: 7183228443647751644, guid: 6e739ab4ccc3c494eaba2e414a0151b4, type: 3}
+  enemyRace: 6
+  movementDetails: {fileID: 11400000, guid: 355c7e033e92d284b98a59710ec9735e, type: 2}
+  experiencePoint: 40
+  chaseDistance: 8
+  hasAttackMove: 0
+  preAttackDuration: 1
+  attackMoveTriggerDistance: 0
+  attackMoveEfficentDistance: 0
+  attackMoveBaseCooldown: 8
+  deflectionValue: 0
+  enemyBehaviour: 0
+  isEnemyBoss: 0
+  enemyArmorValue: 2
+  hasShield: 0
+  deflectChance: 0
+  isPoisonous: 1
+  poisonChance: 0.4
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  enemyMaterializeTime: 2
+  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
+  enemyMaterializeColor: {r: 1.8584491, g: 0.02629876, b: 0.9415037, a: 0}
+  suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
+  getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
+  criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: bb4cdfaa3e5c20b4d87687e7b68870c7, type: 2}
+  attackSoundEffect: {fileID: 0}
+  deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
+  stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
+  poisonSoundEffect: {fileID: 0}
+  enemyWeapon: {fileID: 0}
+  firingIntervalMin: 0.1
+  firingIntervalMax: 1
+  firingDurationMin: 1
+  firingDurationMax: 2
+  firingLineOfSightRequired: 0
+  enemyHealthDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    enemyHealthAmount: 25
+  isImmuneAfterHit: 1
+  hitImmunityTime: 0.4
+  isHealthBarDisplayed: 0
+  hasKnockbackResistance: 0
+  weaponsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: f452683b8567bc84d8dc35c734b37e7c, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: 107b06428c3ac0746aa44728b775af01, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+      ratio: 10
+    - dungeonObject: {fileID: 11400000, guid: 6cb3c4a1b97dd484a8e9af133ff54615, type: 2}
+      ratio: 15
+    - dungeonObject: {fileID: 11400000, guid: b415640f0d1ca4d41b24898c8eab10bd, type: 2}
+      ratio: 25
+    - dungeonObject: {fileID: 11400000, guid: 7e3b41f2a27597c4d9a1b212d49e9ff0, type: 2}
+      ratio: 25
+  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: f452683b8567bc84d8dc35c734b37e7c, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: 107b06428c3ac0746aa44728b775af01, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+      ratio: 10
+    - dungeonObject: {fileID: 11400000, guid: 6cb3c4a1b97dd484a8e9af133ff54615, type: 2}
+      ratio: 15
+    - dungeonObject: {fileID: 11400000, guid: b415640f0d1ca4d41b24898c8eab10bd, type: 2}
+      ratio: 25
+    - dungeonObject: {fileID: 11400000, guid: 7e3b41f2a27597c4d9a1b212d49e9ff0, type: 2}
+      ratio: 25
+  passiveItemsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: e87d6cab4dd029648b79abd7d75ca6e6, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
+      ratio: 1
+  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: e87d6cab4dd029648b79abd7d75ca6e6, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
+      ratio: 5
+    - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
+      ratio: 1
+  activeItemsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 85ccad2c87365d94a9c7007bb20296b9, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: de3069107c9b24d449fb00b8754c0be5, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
+      ratio: 1
+  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 85ccad2c87365d94a9c7007bb20296b9, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: de3069107c9b24d449fb00b8754c0be5, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
+      ratio: 1
+  ammoPercent: 40
+  dropSpawnChanceMin: 100
+  dropSpawnChanceMax: 100
+  numberOfItemsToSpawnMin: 1
+  numberOfItemsToSpawnMax: 1

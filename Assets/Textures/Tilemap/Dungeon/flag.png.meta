@@ -154,10 +154,17 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
+<<<<<<< Updated upstream:Assets/Textures/Tilemap/Dungeon/flag.png.meta
         width: 16
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
+=======
+        width: 19
+        height: 30
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUp.png.meta
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -175,10 +182,17 @@ TextureImporter:
         serializedVersion: 2
         x: 16
         y: 0
+<<<<<<< Updated upstream:Assets/Textures/Tilemap/Dungeon/flag.png.meta
         width: 16
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
+=======
+        width: 19
+        height: 31
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUp.png.meta
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -217,10 +231,17 @@ TextureImporter:
         serializedVersion: 2
         x: 48
         y: 0
+<<<<<<< Updated upstream:Assets/Textures/Tilemap/Dungeon/flag.png.meta
         width: 16
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
+=======
+        width: 19
+        height: 31
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUp.png.meta
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -238,10 +259,17 @@ TextureImporter:
         serializedVersion: 2
         x: 64
         y: 0
+<<<<<<< Updated upstream:Assets/Textures/Tilemap/Dungeon/flag.png.meta
         width: 16
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
+=======
+        width: 19
+        height: 30
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUp.png.meta
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -259,10 +287,17 @@ TextureImporter:
         serializedVersion: 2
         x: 80
         y: 0
+<<<<<<< Updated upstream:Assets/Textures/Tilemap/Dungeon/flag.png.meta
         width: 16
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
+=======
+        width: 19
+        height: 31
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUp.png.meta
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -301,10 +336,17 @@ TextureImporter:
         serializedVersion: 2
         x: 112
         y: 0
+<<<<<<< Updated upstream:Assets/Textures/Tilemap/Dungeon/flag.png.meta
         width: 16
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
+=======
+        width: 19
+        height: 31
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUp.png.meta
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

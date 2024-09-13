@@ -14,7 +14,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCharacterName: Astraeus
   playerPrefab: {fileID: 38858171499291080, guid: af0377fdaae0f9149837404546914c2a, type: 3}
+<<<<<<< Updated upstream
   runtimeAnimatorController: {fileID: 9100000, guid: b9faaa81f817ad14085bdb08607495d1, type: 2}
+=======
+  playerClonePrefab: {fileID: 38858171499291080, guid: 346ad554c5e0aae41adf3cae0cc87e16, type: 3}
+  collectibleWeaponsArray:
+  - {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
+  - {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
+  oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 836fd2be91cb18a48a7e9b5427b0fb5c, type: 2}
+  twoHandRuntimeAnimatorController: {fileID: 9100000, guid: c51aa5637f38c474d8e672f7f9cc7cfd, type: 2}
+  bowRuntimeAnimatorController: {fileID: 9100000, guid: b9faaa81f817ad14085bdb08607495d1, type: 2}
+  staffRuntimeAnimatorController: {fileID: 9100000, guid: 935ad94154ca7444bb5103851adb3b5b, type: 2}
+  strength: 6
+  constitution: 8
+  dexterity: 3
+  intelligence: 3
+  agility: 5
+  physicalResistance: 0
+  fireResistance: 0
+  waterResistance: 0
+  airResistance: 0
+  earthResistance: 0
+  lightResistance: 0
+  darkResistance: 0
+>>>>>>> Stashed changes
   playerHealthAmount: 100
   isImmuneAfterHit: 1
   hitImmunityTime: 2

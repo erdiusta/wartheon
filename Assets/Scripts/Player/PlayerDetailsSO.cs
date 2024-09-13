@@ -22,6 +22,59 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public RuntimeAnimatorController runtimeAnimatorController;
 
+    #region Header
+    [Space(10)]
+    [Header("PRIMARY STATS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Player strength value")]
+    #endregion
+    public int strength = 5;
+    #region Tooltip
+    [Tooltip("Player constitution value")]
+    #endregion
+    public int constitution = 5;
+    #region Tooltip
+    [Tooltip("Player dexterity value")]
+    #endregion
+    public int dexterity = 5;
+    #region Tooltip
+    [Tooltip("Player intelligence value")]
+    #endregion
+    public int intelligence = 5;
+    #region Tooltip
+    [Tooltip("Player agility value")]
+    #endregion
+    public int agility = 5;
+    #region Tooltip
+    [Tooltip("Player physical resistance value")]
+    #endregion
+    public float physicalResistance = 0f;
+    #region Tooltip
+    [Tooltip("Player fire resistance value")]
+    #endregion
+    public float fireResistance = 0f;
+    #region Tooltip
+    [Tooltip("Player water resistance value")]
+    #endregion
+    public float waterResistance = 0f;
+    #region Tooltip
+    [Tooltip("Player air resistance value")]
+    #endregion
+    public float airResistance = 0f;
+    #region Tooltip
+    [Tooltip("Player earth resistance value")]
+    #endregion
+    public float earthResistance = 0f;
+    #region Tooltip
+    [Tooltip("Player light resistance value")]
+    #endregion
+    public float lightResistance = 0f;
+    #region Tooltip
+    [Tooltip("Player dark resistance value")]
+    #endregion
+    public float darkResistance = 0f;
+
     #region Header HEALTH
     [Space(10)]
     [Header("HEALTH")]

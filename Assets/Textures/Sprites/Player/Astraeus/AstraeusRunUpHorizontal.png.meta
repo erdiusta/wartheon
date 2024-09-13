@@ -152,10 +152,17 @@ TextureImporter:
       name: AstraeusRunUpHorizontal_0
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunUpHorizontal.png.meta
         x: 0
         y: 7
         width: 48
         height: 57
+=======
+        x: 7
+        y: 0
+        width: 18
+        height: 30
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUpHorizontal.png.meta
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -173,10 +180,17 @@ TextureImporter:
       name: AstraeusRunUpHorizontal_1
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunUpHorizontal.png.meta
         x: 48
         y: 6
         width: 48
         height: 58
+=======
+        x: 39
+        y: 0
+        width: 18
+        height: 31
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUpHorizontal.png.meta
       alignment: 9
       pivot: {x: 0.52, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,10 +229,17 @@ TextureImporter:
       name: AstraeusRunUpHorizontal_3
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunUpHorizontal.png.meta
         x: 144
         y: 6
         width: 48
         height: 58
+=======
+        x: 103
+        y: 0
+        width: 18
+        height: 31
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUpHorizontal.png.meta
       alignment: 9
       pivot: {x: 0.52, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -236,10 +257,17 @@ TextureImporter:
       name: AstraeusRunUpHorizontal_4
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunUpHorizontal.png.meta
         x: 192
         y: 7
         width: 48
         height: 57
+=======
+        x: 135
+        y: 0
+        width: 18
+        height: 30
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUpHorizontal.png.meta
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -257,10 +285,17 @@ TextureImporter:
       name: AstraeusRunUpHorizontal_5
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunUpHorizontal.png.meta
         x: 240
         y: 5
         width: 48
         height: 59
+=======
+        x: 167
+        y: 0
+        width: 18
+        height: 31
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUpHorizontal.png.meta
       alignment: 9
       pivot: {x: 0.48, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -299,10 +334,17 @@ TextureImporter:
       name: AstraeusRunUpHorizontal_7
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Player/Astraeus/AstraeusRunUpHorizontal.png.meta
         x: 336
         y: 6
         width: 48
         height: 58
+=======
+        x: 231
+        y: 0
+        width: 18
+        height: 31
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonMoveUpHorizontal.png.meta
       alignment: 9
       pivot: {x: 0.48, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

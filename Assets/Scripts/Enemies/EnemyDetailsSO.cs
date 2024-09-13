@@ -19,6 +19,87 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Distance to the player before enemy starts chasing")]
     #endregion
     public float chaseDistance = 50f;
+<<<<<<< Updated upstream
+=======
+    #region Tooltip
+    [Tooltip("Check if enemy has an attack move in a certain distance")]
+    #endregion
+    public bool hasAttackMove;
+    #region Tooltip
+    [Tooltip("Check the duration of the enemy prepare for attack")]
+    #endregion
+    public float preAttackDuration = 1f;
+    #region Tooltip
+    [Tooltip("Distance to the player for attack triggering")]
+    #endregion
+    public float attackMoveTriggerDistance = 3f;
+    #region Tooltip
+    [Tooltip("Efficient distance of attack move performed")]
+    #endregion
+    public float attackMoveEfficentDistance = 8f;
+    #region Tooltip
+    [Tooltip("Cooldown duration after special attack performed")]
+    #endregion
+    public float attackMoveBaseCooldown = 8f;
+    #region Tooltip
+    [Tooltip("Base evasivenes of the enemy to dodge player")]
+    #endregion
+    public float deflectionValue = .8f;
+    #region Tooltip
+    [Tooltip("Enemy behaviour type")]
+    #endregion
+    public EnemyBehaviour enemyBehaviour;
+    #region Tooltip
+    [Tooltip("Check if enemy is a boss")]
+    #endregion
+    public bool isEnemyBoss = false;
+
+    #region Header PASSIVE
+    [Space(10)]
+    [Header("PASSIVE")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Enemy starting armor amount")]
+    #endregion
+    public int enemyArmorValue = 0;
+    #region Tooltip
+    [Tooltip("Check if enemy has a shield")]
+    #endregion
+    public bool hasShield = false;
+    #region Tooltip
+    [Tooltip("Check enemy's deflect chance")]
+    #endregion
+    [Range(0f, 1f)] public float deflectChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if enemy is a poisonous")]
+    #endregion
+    public bool isPoisonous = false;
+    #region Tooltip
+    [Tooltip("Check enemy's poison chance")]
+    #endregion
+    [Range(0f, 1f)] public float poisonChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if enemy has acid")]
+    #endregion
+    public bool hasAcid = false;
+    #region Tooltip
+    [Tooltip("Check acid efficiency which absorbes enemy defense")]
+    #endregion
+    [Range(0f, 1f)] public float acidEfficiency = 0.4f;
+    #region Tooltip
+    [Tooltip("Check if enemy has stun damage")]
+    #endregion
+    public bool hasStunDamage = false;
+    #region Tooltip
+    [Tooltip("Check enemy's stun chance")]
+    #endregion
+    [Range(0f, 1f)] public float stunChance = 0.4f;
+    public bool hasCurseDamage = false;
+    #region Tooltip
+    [Tooltip("Check enemy's curse chance")]
+    #endregion
+    [Range(0f, 1f)] public float curseChance = 0f;
+>>>>>>> Stashed changes
 
     #region Header ENEMY MATERIAL
     [Space(10)]

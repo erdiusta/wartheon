@@ -59,7 +59,228 @@ public class Projectile : MonoBehaviour, IFireable
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // If already colliding with something return
+<<<<<<< Updated upstream
         if (isColliding) 
+=======
+            if (isColliding) return;
+
+        if (activeItemDetails != null)
+        {
+            if (activeItemDetails.activeItemType == ActiveItemType.Bomb) return;
+        }
+
+        // Block process if shield equipped
+        if (collision.tag == Settings.playerTag)
+        {
+            Player player = collision.GetComponent<Player>();
+
+            int diceRoll = Random.Range(0, 100);
+            bool deflectHappened = 100 - player.currentDeflectionValue * 100 < diceRoll ? true : false;
+
+            if (deflectHappened)
+            {
+                player.health.isBlocking = true;
+                player.healthEvent.CallDeflectionEvent();
+                player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
+            }
+            else
+            {
+
+                if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+                {
+                    // Get enemy projectile direction
+                    Vector2 enemyProjectileDirection = (player.transform.position - transform.position).normalized;
+
+                    // Get weapon pointer direction
+                    Vector2 cursorPosition = InputManager.Instance.pointerPosition.action.ReadValue<Vector2>();
+                    Vector2 cursorWorldPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
+
+                    Vector2 pointerDirection = (cursorWorldPosition - new Vector2(player.transform.position.x, player.transform.position.y)).
+                        normalized;
+
+                    // Calculate the dot product between the shield's forward direction and the projectile direction
+                    float dotProduct = Vector2.Dot(pointerDirection, enemyProjectileDirection);
+
+                    float blockingThreshold = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.projectileDeflectRatio;
+
+                    // Check if the dot product is greater than the threshold, deflection fails
+                    if (dotProduct > blockingThreshold - 1f)
+                    {
+                        // Status checks
+                        CheckPoisonStatus(player);
+                        CheckAcidStatus(player);
+                        CheckStunStatus(player);
+                        CheckCurseStatus(player);
+
+                        // Deal Damage To Collision Object
+                        DealDamage(collision);
+                    }
+                    else
+                    {
+                        // If the player is attacking, guard is down so block is disabled
+                        if (player.meleeAttackRightHand.IsAttackingAtRightHand)
+                        {
+                            // Status checks
+                            CheckPoisonStatus(player);
+                            CheckAcidStatus(player);
+                            CheckStunStatus(player);
+                            CheckCurseStatus(player);
+
+                            // Deal Damage To Collision Object
+                            DealDamage(collision);
+                        }
+                        else
+                        {
+                            if (playerBlockCoroutine == null)
+                            {
+                                // The projectile is within the blocking angle
+                                playerBlockCoroutine = StartCoroutine(PlayerBlockAnimRoutine(collision));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // Status checks
+                    CheckPoisonStatus(player);
+                    CheckAcidStatus(player);
+                    CheckStunStatus(player);
+                    CheckCurseStatus(player);
+
+                    // Deal Damage To Collision Object
+                    DealDamage(collision);
+                }
+            }
+
+            // Show ammo hit effect
+            DoProjectileHitEffect();
+
+            DisableProjectile();
+        }
+        else if (collision.tag == Settings.playerWeapon)
+        {
+
+        }
+        else if(collision.tag == Settings.enemyTag)
+        {
+            Enemy enemy = collision.GetComponent<Enemy>();
+
+            if (collision.GetComponent<Enemy>() != null)
+            {
+                if (activeItemDetails != null)
+                {
+                    if (activeItemDetails.activeItemType == ActiveItemType.Boomerang)
+                    {
+                        ProjectilePattern projectilePattern = GetComponentInParent<ProjectilePattern>();
+                        projectilePattern.boomerangPhase = BoomerangPhase.Return;
+                    }
+                    else if (activeItemDetails.activeItemType == ActiveItemType.Trap)
+                    {
+                        if (explosionRoutine == null)
+                        {
+                            explosionRoutine = StartCoroutine(ExplosionRoutine());
+                            return;
+                        }
+                    }
+                }
+
+                if (enemy.enemyDetails.hasShield && !headShotHappened)
+                {
+                    int diceRoll = Random.Range(0, 100);
+                    bool deflectHappened = 100 - enemy.enemyDetails.deflectionValue * 100 < diceRoll ? true : false;
+                  
+                    if (deflectHappened)
+                    {
+                        enemy.health.isBlocking = true;
+                        enemy.healthEvent.CallDeflectionEvent();
+                        enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
+                    }
+                    else
+                    {
+                        if (activeItemDetails == null)
+                        {
+                            // Status checks - PROJECTILE
+                            CheckPoisonStatus(enemy);
+                            CheckAcidStatus(enemy);
+                            CheckStunStatus(enemy);
+                            CheckCurseStatus(enemy);
+                        }
+                        else
+                        {
+                            // Status checks - ACTIVE ITEM
+                            CheckPoisonStatus(enemy, true);
+                            CheckAcidStatus(enemy, true);
+                            CheckStunStatus(enemy, true);
+                            CheckCurseStatus(enemy, true);
+                        }
+
+                        // Deal Damage To Collision Object
+                        DealDamage(collision);
+                    }
+                }
+                else
+                {
+                    if (activeItemDetails == null)
+                    {
+                        // Status checks - PROJECTILE
+                        CheckPoisonStatus(enemy);
+                        CheckAcidStatus(enemy);
+                        CheckStunStatus(enemy);
+                        CheckCurseStatus(enemy);
+                    }
+                    else
+                    {
+                        // Status checks - ACTIVE ITEM
+                        CheckPoisonStatus(enemy, true);
+                        CheckAcidStatus(enemy, true);
+                        CheckStunStatus(enemy, true);
+                        CheckCurseStatus(enemy, true);
+                    }
+
+                    // Deal Damage To Collision Object
+                    DealDamage(collision);
+                }
+            }
+            else
+            {
+                if (activeItemDetails == null)
+                {
+                    // Status checks - PROJECTILE
+                    CheckPoisonStatus(enemy);
+                    CheckAcidStatus(enemy);
+                    CheckStunStatus(enemy);
+                    CheckCurseStatus(enemy);
+                }
+                else
+                {
+                    // Status checks - ACTIVE ITEM
+                    CheckPoisonStatus(enemy, true);
+                    CheckAcidStatus(enemy, true);
+                    CheckStunStatus(enemy, true);
+                    CheckCurseStatus(enemy, true);
+                }
+
+                // Deal Damage To Collision Object
+                DealDamage(collision);
+            }
+
+            // Show ammo hit effect
+            DoProjectileHitEffect();
+
+            DisableProjectile();
+        }
+        else if (collision.tag == Settings.decoyTag)
+        {
+            // Deal Damage To Collision Object
+            DealDamage(collision);
+            // Show ammo hit effect
+            DoProjectileHitEffect();
+
+            DisableProjectile();
+        }
+        else if (collision.tag == "playerWeapon")
+        {
+>>>>>>> Stashed changes
             return;
 
         // Deal Damage To Collision Object

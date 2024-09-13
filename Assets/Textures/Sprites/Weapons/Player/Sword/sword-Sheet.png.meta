@@ -152,6 +152,7 @@ TextureImporter:
       name: sword-Sheet_0
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Weapons/Player/Sword/sword-Sheet.png.meta
         x: 52
         y: 18
         width: 12
@@ -347,13 +348,47 @@ TextureImporter:
         height: 28
       alignment: 9
       pivot: {x: 0.728, y: 0.105}
+=======
+        x: 4
+        y: 0
+        width: 28
+        height: 30
+      alignment: 9
+      pivot: {x: 0.3, y: 0}
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonAttack.png.meta
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Weapons/Player/Sword/sword-Sheet.png.meta
       spriteID: b295d1eed9c6c7f4e840dac17cf9c98d
       internalID: 2099511795
+=======
+      spriteID: 37506730345d09e4c8b01b79bd19f1f4
+      internalID: -784781005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SkeletonAttack_1
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 0
+        width: 18
+        height: 30
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a736799303c406647b3d9e9b0dcd300b
+      internalID: -1068386151
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonAttack.png.meta
       vertices: []
       indices: 
       edges: []
@@ -369,6 +404,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Weapons/Player/Sword/sword-Sheet.png.meta
       sword-Sheet_0: -1467170279
       sword-Sheet_1: -618701605
       sword-Sheet_2: -777629031
@@ -379,6 +415,10 @@ TextureImporter:
       sword-Sheet_7: 1620060559
       sword-Sheet_8: 1650565452
       sword-Sheet_9: 2099511795
+=======
+      SkeletonAttack_0: -784781005
+      SkeletonAttack_1: -1068386151
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonAttack.png.meta
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

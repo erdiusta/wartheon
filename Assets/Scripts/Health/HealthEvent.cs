@@ -10,6 +10,121 @@ public class HealthEvent : MonoBehaviour
     {
         OnHealthChanged?.Invoke(this, new HealthEventArgs { healthPercent = healthPercent, healthAmount = healthAmount, damageAmount = damageAmount });
     }
+<<<<<<< Updated upstream
+=======
+
+    public event Action<HealthEvent> GetPoisoned;
+
+    public void CallGetPoisonedEvent()
+    {
+        GetPoisoned?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetAcid;
+
+    public void CallGetAcidEvent()
+    {
+        GetAcid?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetStun;
+
+    public void CallGetStunEvent()
+    {
+        GetStun?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetCursed;
+
+    public void CallGetCurseEvent()
+    {
+        GetCursed?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetDeath;
+
+    public void CallGetDeathEvent()
+    {
+        GetDeath?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> PoisonCured;
+
+    public void CallPoisonCuredEvent()
+    {
+        PoisonCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> AcidCured;
+
+    public void CallAcidCuredEvent()
+    {
+        AcidCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> StunCured;
+
+    public void CallStunCuredEvent()
+    {
+        StunCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> CurseCured;
+
+    public void CallCurseCuredEvent()
+    {
+        CurseCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetBlockSpecialMove;
+
+    public void CallGetBlockSpecialMoveEvent()
+    {
+        GetBlockSpecialMove?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> BlockSpecialMoveDurationEnded;
+
+    public void CallArmorWoreOffEvent()
+    {
+        BlockSpecialMoveDurationEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetGemSkinSpecialMove;
+
+    public void CallGetGemSkinSpecialMoveEvent()
+    {
+        GetGemSkinSpecialMove?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnGemSkinSpecialMoveEnded;
+
+    public void CallGemSkinSpecialMoveEndEvent()
+    {
+        OnGemSkinSpecialMoveEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnDeflected;
+
+    public void CallDeflectionEvent()
+    {
+        OnDeflected?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnCriticalHit;
+
+    public void CallCriticalHitEvent()
+    {
+        OnCriticalHit?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnHeadShot;
+
+    public void CallHeadShotEvent()
+    {
+        OnHeadShot?.Invoke(this);
+    }
+>>>>>>> Stashed changes
 }
 
 public class HealthEventArgs : EventArgs

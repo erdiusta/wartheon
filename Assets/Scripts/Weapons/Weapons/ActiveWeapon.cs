@@ -42,7 +42,25 @@ public class ActiveWeapon : MonoBehaviour
 
     private void OnDisable()
     {
+<<<<<<< Updated upstream
         setActiveWeaponEvent.OnSetActiveWeapon -= SetActiveWeaponEvent_OnSetActiveWeapon;
+=======
+        setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveMainWeaponEvent_OnSetActiveMainHandWeapon;
+        setActiveWeaponEvent.OnSetInactiveMainHandWeapon -= SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
+        setActiveWeaponEvent.OnSetActiveOffHandWeapon -= SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon;
+        setActiveWeaponEvent.OnSetInactiveOffHandWeapon -= SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
+    }
+    private void SetActiveMainWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
+        SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    {
+        SetMainHandWeapon(setActiveWeaponEventArgs.weapon);
+        weaponMainHandAnimator.SetBool(Settings.isLeft, false);
+
+        // Update new weapon values
+        player?.UpdateDamageValues();
+        player?.UpdateWeaponHandlingAndCriticalValues();
+        player?.UpdateEvasivenessValue();
+>>>>>>> Stashed changes
     }
 
     private void SetActiveWeaponEvent_OnSetActiveWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
@@ -52,7 +70,74 @@ public class ActiveWeapon : MonoBehaviour
 
     private void SetWeapon(Weapon weapon)
     {
+<<<<<<< Updated upstream
         currentWeapon = weapon;
+=======
+        SetOffHandWeapon(setActiveWeaponEventArgs.weapon);
+        weaponOffHandAnimator.SetBool(Settings.isLeft, true);
+
+        // Update new weapon values
+        player.UpdateDamageValues();
+        player.UpdateWeaponHandlingAndCriticalValues();
+        player.UpdateEvasivenessValue();
+    }
+
+    private void SetActiveWeaponEvent_OnSetInactiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
+    {
+        DeselectOffHandWeapon();
+    }
+
+    private void SetMainHandWeapon(Weapon weapon)
+    {
+        isSwitching = true;
+        currentMainHandWeapon = weapon;
+        weaponToBeDropped = weapon; // for removing lock icon during two-handed weapon drop issue
+
+        if (player != null)
+        {
+            // If equipped weapon is two-handed, temporarily disable animator and change the position and enable again
+            if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Bow && currentMainHandWeapon.weaponDetails.weaponName != "Crossbow")
+            {
+                player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
+                player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
+                playerAnimator.runtimeAnimatorController = player.playerDetails.bowRuntimeAnimatorController;
+                thirdHandGameObject.SetActive(true);
+                weaponOffHandAnimator.enabled = false;
+                offHandAnchorPosition.gameObject.SetActive(false);
+            }
+            else if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Staff)
+            {
+                player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
+                player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
+                playerAnimator.runtimeAnimatorController = player.playerDetails.staffRuntimeAnimatorController;
+                thirdHandGameObject.SetActive(false);
+                weaponOffHandAnimator.enabled = true;
+                offHandAnchorPosition.gameObject.SetActive(true);
+            }
+            else if (currentMainHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded && currentMainHandWeapon.weaponDetails.weaponName != "Crossbow")
+            {
+                player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
+                player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
+                playerAnimator.runtimeAnimatorController = player.playerDetails.twoHandRuntimeAnimatorController;
+                thirdHandGameObject.SetActive(true);
+                weaponOffHandAnimator.enabled = false;
+                offHandAnchorPosition.gameObject.SetActive(false);
+            }
+            // If equipped one - hand, revert position and animator settings to default
+            else
+            {
+                player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
+                player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
+                playerAnimator.runtimeAnimatorController = player.playerDetails.oneHandRuntimeAnimatorController;
+                thirdHandGameObject.SetActive(false);
+                offHandAnchorPosition.gameObject.SetActive(true);
+                weaponOffHandAnimator.enabled = true;
+            }
+        }
+
+        // Set animator controller to the weapon animator
+        weaponMainHandAnimator.runtimeAnimatorController = currentMainHandWeapon.weaponDetails.weaponAnimatorController;
+>>>>>>> Stashed changes
 
         // Set current weapon sprite
         weaponSpriteRenderer.sprite = currentWeapon.weaponDetails.weaponSprite;

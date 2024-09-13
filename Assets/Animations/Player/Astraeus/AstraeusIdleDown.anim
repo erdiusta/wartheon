@@ -91,7 +91,86 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
+<<<<<<< Updated upstream:Assets/Animations/Player/Astraeus/AstraeusIdleDown.anim
         value: 0
+=======
+        value: 1
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_FlipX
+    path: 
+    classID: 212
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.07
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.1
+        value: 0.07
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.3
+        value: 0.07
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.4
+        value: 0.07
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5
+        value: 0.07
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6
+        value: 0.07
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.7
+        value: 0.07
+>>>>>>> Stashed changes:Assets/Animations/Enemies/Skeleton/SkeletonMoveUpLeft.anim
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -129,8 +208,58 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+<<<<<<< Updated upstream:Assets/Animations/Player/Astraeus/AstraeusIdleDown.anim
         time: 0.25
         value: 0.08
+=======
+        time: 0.2
+        value: 0.48
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.3
+        value: 0.35
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.4
+        value: 0.27
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5
+        value: 0.35
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6
+        value: 0.44
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.7
+        value: 0.32
+>>>>>>> Stashed changes:Assets/Animations/Enemies/Skeleton/SkeletonMoveUpLeft.anim
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -323,7 +452,11 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
+<<<<<<< Updated upstream:Assets/Animations/Player/Astraeus/AstraeusIdleDown.anim
         value: 0.5
+=======
+        value: 0.07
+>>>>>>> Stashed changes:Assets/Animations/Enemies/Skeleton/SkeletonMoveUpLeft.anim
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -331,8 +464,13 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+<<<<<<< Updated upstream:Assets/Animations/Player/Astraeus/AstraeusIdleDown.anim
         time: 0.125
         value: 0.5
+=======
+        time: 0.1
+        value: 0.07
+>>>>>>> Stashed changes:Assets/Animations/Enemies/Skeleton/SkeletonMoveUpLeft.anim
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -340,8 +478,13 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+<<<<<<< Updated upstream:Assets/Animations/Player/Astraeus/AstraeusIdleDown.anim
         time: 0.25
         value: 0.5625
+=======
+        time: 0.3
+        value: 0.07
+>>>>>>> Stashed changes:Assets/Animations/Enemies/Skeleton/SkeletonMoveUpLeft.anim
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -349,6 +492,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+<<<<<<< Updated upstream:Assets/Animations/Player/Astraeus/AstraeusIdleDown.anim
         time: 0.375
         value: 0.5
         inSlope: Infinity
@@ -372,6 +516,10 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 0
+=======
+        time: 0.4
+        value: 0.07
+>>>>>>> Stashed changes:Assets/Animations/Enemies/Skeleton/SkeletonMoveUpLeft.anim
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -379,8 +527,13 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+<<<<<<< Updated upstream:Assets/Animations/Player/Astraeus/AstraeusIdleDown.anim
         time: 0.125
         value: 0
+=======
+        time: 0.5
+        value: 0.07
+>>>>>>> Stashed changes:Assets/Animations/Enemies/Skeleton/SkeletonMoveUpLeft.anim
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -388,8 +541,13 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+<<<<<<< Updated upstream:Assets/Animations/Player/Astraeus/AstraeusIdleDown.anim
         time: 0.25
         value: 0
+=======
+        time: 0.6
+        value: 0.07
+>>>>>>> Stashed changes:Assets/Animations/Enemies/Skeleton/SkeletonMoveUpLeft.anim
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -397,6 +555,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+<<<<<<< Updated upstream:Assets/Animations/Player/Astraeus/AstraeusIdleDown.anim
         time: 0.375
         value: 0
         inSlope: Infinity
@@ -510,6 +669,10 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 0
+=======
+        time: 0.7
+        value: 0.07
+>>>>>>> Stashed changes:Assets/Animations/Enemies/Skeleton/SkeletonMoveUpLeft.anim
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -547,8 +710,58 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+<<<<<<< Updated upstream:Assets/Animations/Player/Astraeus/AstraeusIdleDown.anim
         time: 0.25
         value: 0.08
+=======
+        time: 0.2
+        value: 0.48
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.3
+        value: 0.35
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.4
+        value: 0.27
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5
+        value: 0.35
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6
+        value: 0.44
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.7
+        value: 0.32
+>>>>>>> Stashed changes:Assets/Animations/Enemies/Skeleton/SkeletonMoveUpLeft.anim
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103

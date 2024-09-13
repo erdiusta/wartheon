@@ -152,10 +152,17 @@ TextureImporter:
       name: BatMove_0
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Enemies/Bat/BatMove.png.meta
         x: 4
         y: 10
         width: 25
         height: 13
+=======
+        x: 6
+        y: 0
+        width: 18
+        height: 30
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonPreAttack.png.meta
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -173,10 +180,17 @@ TextureImporter:
       name: BatMove_1
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Enemies/Bat/BatMove.png.meta
         x: 36
         y: 10
         width: 25
         height: 13
+=======
+        x: 41
+        y: 0
+        width: 18
+        height: 32
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonPreAttack.png.meta
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,12 +208,19 @@ TextureImporter:
       name: BatMove_2
       rect:
         serializedVersion: 2
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Enemies/Bat/BatMove.png.meta
         x: 68
         y: 10
         width: 25
         height: 12
+=======
+        x: 67
+        y: 0
+        width: 27
+        height: 30
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonPreAttack.png.meta
       alignment: 9
-      pivot: {x: 0.5, y: 0}
+      pivot: {x: 0.6, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -211,6 +232,7 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Enemies/Bat/BatMove.png.meta
     - serializedVersion: 2
       name: BatMove_3
       rect:
@@ -232,6 +254,8 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+=======
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonPreAttack.png.meta
     outline: []
     physicsShape: []
     bones: []
@@ -243,10 +267,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+<<<<<<< Updated upstream:Assets/Textures/Sprites/Enemies/Bat/BatMove.png.meta
       BatMove_0: -288758098
       BatMove_1: 690757167
       BatMove_2: 596601795
       BatMove_3: -1162980908
+=======
+      SkeletonPreAttack_0: 1291629936
+      SkeletonPreAttack_1: -907730346
+      SkeletonPreAttack_2: -448095007
+>>>>>>> Stashed changes:Assets/Textures/Sprites/Enemies/Skeleton/SkeletonPreAttack.png.meta
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
