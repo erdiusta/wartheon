@@ -1,10 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
-<<<<<<< Updated upstream
-=======
 using System.Linq;
->>>>>>> Stashed changes
 using System;
 
 #region REQUIRE COMPONENTS
@@ -15,20 +12,19 @@ using System;
 [RequireComponent(typeof(DestroyedEvent))]
 [RequireComponent(typeof(Destroyed))]
 [RequireComponent(typeof(PlayerControl))]
-[RequireComponent(typeof(MovementByVelocityEvent))]
 [RequireComponent(typeof(MovementByVelocity))]
-[RequireComponent(typeof(IdleEvent))]
 [RequireComponent(typeof(Idle))]
-[RequireComponent(typeof(AimWeaponEvent))]
 [RequireComponent(typeof(AimWeapon))]
 [RequireComponent(typeof(FireWeaponEvent))]
 [RequireComponent(typeof(FireWeapon))]
+[RequireComponent(typeof(MeleeAttackEvent))]
+[RequireComponent(typeof(MeleeAttackMainHand))]
+[RequireComponent(typeof(MeleeAttackOffHand))]
 [RequireComponent(typeof(SetActiveWeaponEvent))]
 [RequireComponent(typeof(ActiveWeapon))]
+[RequireComponent(typeof(SelectedActiveItem))]
+[RequireComponent(typeof(FireWeaponEvent))]
 [RequireComponent(typeof(WeaponFiredEvent))]
-[RequireComponent(typeof(WeaponFiredEvent))]
-[RequireComponent(typeof(ReloadWeaponEvent))]
-[RequireComponent(typeof(ReloadWeapon))]
 [RequireComponent(typeof(AnimatePlayer))]
 [RequireComponent(typeof(SortingGroup))]
 [RequireComponent(typeof(SpriteRenderer))]
@@ -36,30 +32,63 @@ using System;
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(PolygonCollider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Knockback))]
+[RequireComponent(typeof(Coins))]
+[RequireComponent(typeof(StatusManager))]
+[RequireComponent(typeof(SpecialMoveEvent))]
+[RequireComponent(typeof(BranchMastery))]
+[RequireComponent(typeof(WeaponMastery))]
 #endregion
 [DisallowMultipleComponent]
 public class Player : MonoBehaviour
 {
+    public bool isClone;
+    public Transform forcefieldTransform;
+
     [HideInInspector] public PlayerDetailsSO playerDetails;
     [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public Health health;
+    [HideInInspector] public MoveStatus moveStatus = MoveStatus.Idle;
+    [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
+    [HideInInspector] public ArmorStatus armorStatus = ArmorStatus.Normal;
     [HideInInspector] public DestroyedEvent destroyedEvent;
     [HideInInspector] public PlayerControl playerControl;
-    [HideInInspector] public MovementByVelocityEvent movementByVelocityEvent;
-    [HideInInspector] public IdleEvent idleEvent;
-    [HideInInspector] public AimWeaponEvent aimWeaponEvent;
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
+    [HideInInspector] public MeleeAttackEvent meleeAttackEvent;
+    [HideInInspector] public MeleeAttackMainHand meleeAttackRightHand;
+    [HideInInspector] public MeleeAttackOffHand meleeAttackLeftHand;
     [HideInInspector] public SetActiveWeaponEvent setActiveWeaponEvent;
+    [HideInInspector] public AimWeapon aimWeapon;
     [HideInInspector] public ActiveWeapon activeWeapon;
+    [HideInInspector] public SelectedActiveItem selectedActiveItem;
     [HideInInspector] public WeaponFiredEvent weaponFiredEvent;
-    [HideInInspector] public ReloadWeaponEvent reloadWeaponEvent;
-    [HideInInspector] public WeaponReloadedEvent weaponReloadedEvent;
     [HideInInspector] public SpriteRenderer spriteRenderer;
+    [HideInInspector] public PolygonCollider2D polygonCollider2D;
+    [HideInInspector] public Rigidbody2D rb2D;
     [HideInInspector] public Animator animator;
+    [HideInInspector] public AnimatePlayer animatePlayer;
+    [HideInInspector] public Knockback knockback;
+    [HideInInspector] public Coins coins;
+    [HideInInspector] public Idle idle;
+    [HideInInspector] public MovementByVelocity movementByVelocity;
+    [HideInInspector] public bool isDead;
+    [HideInInspector] public StatusManager statusManager;
+    [HideInInspector] public SpecialMoveEvent specialMoveEvent;
+    [HideInInspector] public bool specialMoveOneOnCooldown = false;
+    [HideInInspector] public bool specialMoveTwoOnCooldown = false;
+    [HideInInspector] public bool specialMoveThreeOnCooldown = false;
+    [HideInInspector] public float specialMoveOneCooldownTimer;
+    [HideInInspector] public float specialMoveTwoCooldownTimer;
+    [HideInInspector] public float specialMoveThreeCooldownTimer;
+    [HideInInspector] public float specialMoveOneDurationTimer;
+    [HideInInspector] public float specialMoveTwoDurationTimer;
+    [HideInInspector] public float specialMoveThreeDurationTimer;
+    [HideInInspector] public int keyCount = 0;
+    [HideInInspector] public BranchMastery branchMastery;
+    [HideInInspector] public WeaponMastery weaponMastery;
+    [HideInInspector] public ChestItem activeItemChestItem;
+    [HideInInspector] public bool hasRingOfFortune;
 
-<<<<<<< Updated upstream
-    public List<Weapon> weaponList = new List<Weapon>();
-=======
     // PLAYER PRIMARY STATS
     [HideInInspector] public int currentStrengthValue;
     [HideInInspector] public int currentConstitutionValue;
@@ -106,7 +135,6 @@ public class Player : MonoBehaviour
     [HideInInspector] public GameObject playerCloneObject;
 
     [HideInInspector] public bool isCursed;
->>>>>>> Stashed changes
 
     private void Awake()
     {
@@ -114,19 +142,29 @@ public class Player : MonoBehaviour
         health = GetComponent<Health>();
         destroyedEvent = GetComponent<DestroyedEvent>();
         playerControl = GetComponent<PlayerControl>();
-        movementByVelocityEvent = GetComponent<MovementByVelocityEvent>();
-        idleEvent = GetComponent<IdleEvent>();
-        aimWeaponEvent = GetComponent<AimWeaponEvent>();
         fireWeaponEvent = GetComponent<FireWeaponEvent>();
+        meleeAttackEvent = GetComponent<MeleeAttackEvent>();
+        meleeAttackRightHand = GetComponent<MeleeAttackMainHand>();
+        meleeAttackLeftHand = GetComponent<MeleeAttackOffHand>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
+        aimWeapon = GetComponent<AimWeapon>();
         activeWeapon = GetComponent<ActiveWeapon>();
+        selectedActiveItem = GetComponent<SelectedActiveItem>();
         weaponFiredEvent = GetComponent<WeaponFiredEvent>();
-        reloadWeaponEvent = GetComponent<ReloadWeaponEvent>();
-        weaponReloadedEvent = GetComponent<WeaponReloadedEvent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        polygonCollider2D = GetComponent<PolygonCollider2D>();
+        rb2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        animatePlayer = GetComponent<AnimatePlayer>();
+        knockback = GetComponent<Knockback>();
+        coins = GetComponent<Coins>();
+        idle = GetComponent<Idle>();
+        movementByVelocity = GetComponent<MovementByVelocity>();
+        specialMoveEvent = GetComponent<SpecialMoveEvent>();
+        branchMastery = GetComponent<BranchMastery>();
+        weaponMastery = GetComponent<WeaponMastery>();
     }
-
+    
     /// <summary>
     /// Initialize the player
     /// </summary>
@@ -136,6 +174,12 @@ public class Player : MonoBehaviour
 
         //Create player starting weapons
         CreatePlayerStartingWeapons();
+
+        //Create player active item
+        CreatePlayerStartingActiveItem();
+
+        //Create player active item
+        CreatePlayerStartingPassiveItem();
 
         // Set player starting health
         SetPlayerHealth();
@@ -154,6 +198,13 @@ public class Player : MonoBehaviour
         healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
     }
 
+    private void Start()
+    {
+        specialMoveOneCooldownTimer = 0;
+
+        keyCount = 1;
+    }
+
     /// <summary>
     /// Handle health changed event
     /// </summary>
@@ -162,7 +213,15 @@ public class Player : MonoBehaviour
         // If player has died
         if (healthEventArgs.healthAmount <= 0f)
         {
-            destroyedEvent.CallDestroyedEvent(true);
+            if (!isClone)
+            {
+                destroyedEvent.CallDestroyedEvent(true);
+            }
+            else
+            {
+                destroyedEvent.CallDestroyedEvent(true, true);
+
+            }
         }   
     }
 
@@ -171,16 +230,9 @@ public class Player : MonoBehaviour
     /// </summary>
     private void CreatePlayerStartingWeapons()
     {
-        // Clear list
-        weaponList.Clear();
-
-        // Populate weapon list from starting weapons
+        // Populate weapon list from starting weapons for right hand and shield for left hand if have any
         foreach (WeaponDetailsSO weaponDetails in playerDetails.startingWeaponList)
         {
-<<<<<<< Updated upstream
-            // Add weapon to player
-            AddWeaponToPlayer(weaponDetails);
-=======
             // Add weapon to right hand list of player
             AddNextWeaponToPlayer(weaponDetails, false, true, false);
         }
@@ -642,7 +694,6 @@ public class Player : MonoBehaviour
         {
             // Set the added weapon as active - main hand
             setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(weapon, setIndex);
->>>>>>> Stashed changes
         }
     }
 
@@ -660,46 +711,5 @@ public class Player : MonoBehaviour
     public Vector3 GetPlayerPosition()
     {
         return transform.position;
-    }
-
-    /// <summary>
-    /// Add a weapon to the player weapon dictionary
-    /// </summary>
-    public Weapon AddWeaponToPlayer(WeaponDetailsSO weaponDetails)
-    {
-        Weapon weapon = new Weapon { weaponDetails = weaponDetails, weaponReloadTimer = 0f, 
-            weaponClipRemainingProjectile = weaponDetails.weaponClipProjectileCapacity, 
-            weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity, isWeaponReloading = false };
-
-        // Add the weapon to the list
-        weaponList.Add(weapon);
-
-        // Set weapon position in list
-        weapon.weaponListPosition = weaponList.Count;
-
-        // Set the added weapon as active
-        if (weaponDetails.isMeleeWeapon)
-        {
-            setActiveWeaponEvent.CallSetActiveWeaponEvent(weapon, weaponDetails.weaponAnimatorController);
-        }
-        else
-        {
-            setActiveWeaponEvent.CallSetActiveWeaponEvent(weapon, null);
-        }
-
-        return weapon;
-    }
-
-    /// <summary>
-    /// Returns true if the weapon is held by the player - otherwise returns false
-    /// </summary>
-    public bool IsWeaponHeldByPlayer(WeaponDetailsSO weaponDetails)
-    {
-        foreach (Weapon weapon in weaponList)
-        {
-            if (weapon.weaponDetails == weaponDetails) return true;
-        }
-
-        return false;
     }
 }

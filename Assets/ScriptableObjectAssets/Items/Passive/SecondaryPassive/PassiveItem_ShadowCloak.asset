@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e767738e70a8b4386de512a7ff92be, type: 3}
+  m_Name: PassiveItem_ShadowCloak
+  m_EditorClassIdentifier: 
+  passiveItemName: Shadow Cloak
+  passiveItemSprite: {fileID: -859460399, guid: ffeef3e9c4e3703459da4ed3aefb4970, type: 3}
+  passiveItemCategory: 1
+  passiveItemType: 2
+  passiveItemSlotName: 5
+  passiveItemAnimatorController: {fileID: 9100000, guid: 0f18c733e46bf4c4786db2356372dc1e, type: 2}

@@ -4,13 +4,10 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class SetActiveWeaponEvent : MonoBehaviour
 {
-    public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnSetActiveWeapon;
+    public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnSetActiveMainHandWeapon;
 
-    public void CallSetActiveWeaponEvent(Weapon weapon, RuntimeAnimatorController weaponAnimatorController)
+    public void CallSetActiveWeaponAtMainHandEvent(Weapon weapon, int weaponSetIndex)
     {
-<<<<<<< Updated upstream
-        OnSetActiveWeapon?.Invoke(this, new SetActiveWeaponEventArgs { weapon = weapon, weaponAnimatorController = weaponAnimatorController});
-=======
         OnSetActiveMainHandWeapon?.Invoke(this, new SetActiveWeaponEventArgs { weapon = weapon, weaponSetIndex = weaponSetIndex }); 
     }
 
@@ -75,12 +72,21 @@ public class SetActiveWeaponEvent : MonoBehaviour
     public void CallRemovedPassiveItem()
     {
         OnRemovedPassiveItem?.Invoke(this);
->>>>>>> Stashed changes
     }
 }
 
 public class SetActiveWeaponEventArgs : EventArgs
 {
     public Weapon weapon;
-    public RuntimeAnimatorController weaponAnimatorController;
+    public int weaponSetIndex;
+}
+
+public class SetSelectedActiveItemArgs : EventArgs
+{
+    public ActiveItem activeItem;
+}
+
+public class SetSelectedPassiveItemArgs : EventArgs
+{
+    public PassiveItem passiveItem;
 }

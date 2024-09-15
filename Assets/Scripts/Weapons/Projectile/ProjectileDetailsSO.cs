@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ProjectileDetails_", menuName = "Scriptable Objects/Weapons/Projectile Details")]
@@ -55,9 +53,13 @@ public class ProjectileDetailsSO : ScriptableObject
     [Header("PROJECTILE BASE PARAMETERS")]
     #endregion
     #region Tooltip
-    [Tooltip("The damage each projectile deals")]
+    [Tooltip("The min damage each projectile deals")]
     #endregion
-    public int projectileDamage = 1;
+    public int projectileDamageMin = 0;
+    #region Tooltip
+    [Tooltip("The max damage each projectile deals")]
+    #endregion
+    public int projectileDamageMax = 1;
     #region Tooltip
     [Tooltip("The minimum speed of the projectile - the speed will be a random value between the min and max")]
     #endregion
@@ -74,6 +76,40 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip("The rotation speed in degrees per second of the projectile pattern")]
     #endregion
     public float projectileRotationSpeed = 1f;
+
+    #region Header PASSIVE
+    [Space(10)]
+    [Header("PROJECTILE PASSIVE EFFECT")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Check if projectile has acid")]
+    #endregion Tooltip
+    public bool hasAcid;
+    #region Tooltip
+    [Tooltip("The efficiency of projectile's acid")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float acidEfficiency = 0.4f;
+    #region Tooltip
+    [Tooltip("Check if projectile has poison damage")]
+    #endregion Tooltip
+    public bool isPoisonous;
+    #region Tooltip
+    [Tooltip("The chance of projectile's poison damage")]
+    #endregion
+    [Range(0f, 1f)] public float poisonChance = 0.2f;
+    #region Tooltip
+    [Tooltip("Check if projectile has stun damage")]
+    #endregion Tooltip
+    public bool hasStunDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's stun")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float stunChance = 0.2f;
+    public bool hasCurseDamage = false;
+    #region Tooltip
+    [Tooltip("Check enemy's curse chance")]
+    #endregion
+    [Range(0f, 1f)] public float curseChance = 0f;
 
     #region Header PROJECTILE SPREAD DETAILS
     [Space(10)]
@@ -145,7 +181,8 @@ public class ProjectileDetailsSO : ScriptableObject
         HelperUtilities.ValidateCheckNullValue(this, nameof(projectileMaterial), projectileMaterial);
         if (projectileChargeTime > 0)
             HelperUtilities.ValidateCheckNullValue(this, nameof(projectileChargeMaterial), projectileChargeMaterial);
-        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamage), projectileDamage, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamageMin), projectileDamageMin, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamageMax), projectileDamageMax, false);
         HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpeedMin), projectileSpeedMin, nameof(projectileSpeedMax), projectileSpeedMax, false);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileRange), projectileRange, false);
         HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpreadMin), projectileSpreadMin, nameof(projectileSpreadMax), projectileSpreadMax, true);

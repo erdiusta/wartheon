@@ -10,8 +10,6 @@ public class HealthEvent : MonoBehaviour
     {
         OnHealthChanged?.Invoke(this, new HealthEventArgs { healthPercent = healthPercent, healthAmount = healthAmount, damageAmount = damageAmount });
     }
-<<<<<<< Updated upstream
-=======
 
     public event Action<HealthEvent> GetPoisoned;
 
@@ -124,7 +122,6 @@ public class HealthEvent : MonoBehaviour
     {
         OnHeadShot?.Invoke(this);
     }
->>>>>>> Stashed changes
 }
 
 public class HealthEventArgs : EventArgs
@@ -133,3 +130,4 @@ public class HealthEventArgs : EventArgs
     public int healthAmount;
     public int damageAmount;
 }
+

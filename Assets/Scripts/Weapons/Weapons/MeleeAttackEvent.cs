@@ -3,10 +3,24 @@ using System;
 
 public class MeleeAttackEvent : MonoBehaviour
 {
-    public event Action<MeleeAttackEvent> OnMeleeAttack;
+    public event Action<MeleeAttackEvent, MeleeAttackEventArgs> OnRightHandMeleeAttack;
+    public event Action<MeleeAttackEvent, MeleeAttackEventArgs> OnLeftHandMeleeAttack;
 
-    public void CallMeleeAttackEvent()
+    public void CallMainHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon, MeleeAttackType meleeAttackType, bool specialMeleeMove = false)
     {
-        OnMeleeAttack?.Invoke(this);
+        OnRightHandMeleeAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon, meleeAttackType = meleeAttackType, specialMeleeMove = specialMeleeMove });
     }
+
+    public void CallOffHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon, MeleeAttackType meleeAttackType)
+    {
+        OnLeftHandMeleeAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon, meleeAttackType = meleeAttackType});
+    }
+}
+
+public class MeleeAttackEventArgs : EventArgs
+{
+    public AimDirection aimDirection;
+    public Weapon weapon;
+    public MeleeAttackType meleeAttackType;
+    public bool specialMeleeMove;
 }

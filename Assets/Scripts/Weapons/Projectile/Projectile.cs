@@ -1,4 +1,7 @@
+using System.Collections;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [DisallowMultipleComponent]
 public class Projectile : MonoBehaviour, IFireable
@@ -7,21 +10,74 @@ public class Projectile : MonoBehaviour, IFireable
     [Tooltip("Populate with child TrailRenderer component")]
     #endregion Tooltip
     [SerializeField] TrailRenderer trailRenderer;
+    [SerializeField] LayerMask layerMask;
+
+    [HideInInspector] public Coroutine playerBlockCoroutine;
 
     float projectileRange = 0f;
     float projectileSpeed;
     Vector3 fireDirectionVector;
+    Vector3 stoppedPosition;
+    bool isStopped;
     float fireDirectionAngle;
     SpriteRenderer spriteRenderer;
     ProjectileDetailsSO projectileDetails;
+    ActiveItemDetailsSO activeItemDetails;
     float projectileChargeTimer;
     bool isProjectileMaterialSet;
     bool overrideProjectileMovement;
     bool isColliding;
+    Vector3 velocity;
+    bool isProjectile = true;
+    PolygonCollider2D polygonCollider2D;
+    Rigidbody2D rb2d;
+    bool headShotHappened;
+    bool isPenetrationArrow;
+    float countDown = 3f;
+    float blastRadius = 5f;
+    Coroutine explosionRoutine;
+    Decoy decoy;
+    int damageDone = 0;
+    bool isHittingWall; // Flag is for wall hit check for penetration arrow
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        polygonCollider2D = GetComponent<PolygonCollider2D>();
+        rb2d = GetComponent<Rigidbody2D>();
+        decoy = GetComponent<Decoy>();
+    }
+
+    private void OnEnable()
+    {
+        velocity = fireDirectionVector.normalized * projectileSpeed;
+
+        if (activeItemDetails != null)
+        {
+            if (activeItemDetails.activeItemType == ActiveItemType.Bomb)
+            {
+                countDown = activeItemDetails.countDown;
+                blastRadius = activeItemDetails.blastRadius;
+            }
+            else if (activeItemDetails.activeItemType == ActiveItemType.Trap)
+            {
+                blastRadius = activeItemDetails.blastRadius;
+            }
+        }
+
+        if (tag == "meteor")
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+
+    }
+
+    private void Start()
+    {
+        if (projectileDetails != null)
+        {
+            damageDone = Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+        }
     }
 
     private void Update()
@@ -34,24 +90,71 @@ public class Projectile : MonoBehaviour, IFireable
         }
         else if (!isProjectileMaterialSet)
         {
-            SetProjectileMaterial(projectileDetails.projectileMaterial);
+            if (activeItemDetails == null)
+            {
+                SetProjectileMaterial(projectileDetails.projectileMaterial);
+            }
+            else
+            {
+                SetProjectileMaterial(activeItemDetails.projectileMaterial);
+            }
             isProjectileMaterialSet = true;
         }
 
-        // Don't move projectile if movement has been overriden - e.g. this projectile is part of an ammo pattern
+        if (activeItemDetails != null)
+        {
+            // Start countdown until explosion if this is an active item bomb
+            if (activeItemDetails.activeItemType == ActiveItemType.Bomb)
+            {
+                countDown -= Time.deltaTime;
+
+                if (countDown < 0f)
+                {
+                    if (explosionRoutine == null)
+                    {
+                        explosionRoutine = StartCoroutine(ExplosionRoutine());
+                    }
+                }
+            }
+        }
+
+        // Don't move projectile if movement has been overriden - e.g. this projectile is part of an projectile pattern
         if (!overrideProjectileMovement)
         {
-            // Calculate distance vector to move projectile
-            Vector3 distanceVector = fireDirectionVector * projectileSpeed * Time.deltaTime;
-
-            transform.position += distanceVector;
-
             // Disable after max range reached
-            projectileRange -= distanceVector.magnitude;
+            projectileRange -= velocity.magnitude * Time.deltaTime;
 
-            if (projectileRange < 0f)
+            // Don't move projectile if movement has been overriden - e.g. this projectile is part of an projectile pattern
+            if (!overrideProjectileMovement)
             {
-                DisableProjectile();
+                // Move the projectile based on its velocity
+                transform.position += velocity * Time.deltaTime;
+
+                // Disable after max range reached
+                projectileRange -= velocity.magnitude * Time.deltaTime;
+
+                if (projectileRange < 0f)
+                {
+                    if (activeItemDetails == null)
+                    {
+                        DisableProjectile();
+                    }
+                    else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb && activeItemDetails.activeItemType != ActiveItemType.Dummy)
+                    {
+                        DisableProjectile();
+                    }
+                    else
+                    {
+                        velocity = Vector3.zero;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (isStopped)
+            {
+                transform.position = stoppedPosition;
             }
         }
     }
@@ -59,9 +162,6 @@ public class Projectile : MonoBehaviour, IFireable
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // If already colliding with something return
-<<<<<<< Updated upstream
-        if (isColliding) 
-=======
             if (isColliding) return;
 
         if (activeItemDetails != null)
@@ -280,16 +380,52 @@ public class Projectile : MonoBehaviour, IFireable
         }
         else if (collision.tag == "playerWeapon")
         {
->>>>>>> Stashed changes
             return;
+        }
+        else // HIT WALL CHECK
+        {
+            isHittingWall = true;
 
-        // Deal Damage To Collision Object
-        DealDamage(collision);
+            if (activeItemDetails != null)
+            {
 
-        // Show ammo hit effect
-        DoProjectileHitEffect();
+                if (activeItemDetails.activeItemType == ActiveItemType.Boomerang)
+                {
+                    ProjectilePattern projectilePattern = GetComponentInParent<ProjectilePattern>();
+                    projectilePattern.boomerangPhase = BoomerangPhase.Return;
+                }
+                //else if (activeItemDetails.activeItemType == ActiveItemType.Shiruken)
+                //{
+                //    ProjectilePattern projectilePattern = GetComponentInParent<ProjectilePattern>();
+                //    projectilePattern.shirukenPhase = ShirukenPhase.Ricochet;
+                //    DoProjectileHitEffect();
+                //    return;
+                //}
+            }
 
-        DisableProjectile();
+            // Deal Damage To Collision Object
+            DealDamage(collision);
+
+            // Show ammo hit effect
+            DoProjectileHitEffect();
+
+            DisableProjectile();
+        }
+    }
+
+    IEnumerator PlayerBlockAnimRoutine(Collider2D collision)
+    {
+        Player player = collision.GetComponent<Player>();
+
+        // Adjust animator layer weights
+        player.animatePlayer.SetGetHitAnimationParameters();
+        player.transform.GetChild(1).GetComponent<Animator>().SetTrigger(Settings.block);
+        SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponSwingSoundEffect);
+
+        yield return new WaitForSeconds(0.6f);
+
+        playerBlockCoroutine = null;
+        player.animatePlayer.SetIdleAnimationParameters();
     }
 
     private void DealDamage(Collider2D collision)
@@ -299,22 +435,99 @@ public class Projectile : MonoBehaviour, IFireable
         if (health != null)
         {
             // Set isColliding to prevent ammo dealing damage multiple times
-            isColliding = true;
+            if (isPenetrationArrow)
+            {
+                StartCoroutine(ColliderTimeThreshold());
+            }
+            else
+            {
+                isColliding = true;
+            }
 
-            health.TakeDamage(projectileDetails.projectileDamage);
+            // Damage produced by player
+            if (activeItemDetails == null)
+            {
+                damageDone = Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+            }
+            else
+            { 
+                damageDone = Random.Range(activeItemDetails.projectileDamageMin, activeItemDetails.projectileDamageMax);
+            }
+
+            if (isPenetrationArrow)
+            {
+                float incresedDamage = damageDone * 1.25f;
+                damageDone = (int)incresedDamage;
+            }
+
+            int inflictedDamage = 0;
+
+            if (collision != null && collision.GetComponent<Enemy>() != null)
+            {
+                if (projectileDetails != null)
+                {
+                    if (projectileDetails.isPlayerProjectile)
+                    {
+                        // LOWER DAMAGE IF PLAYER IS CURSED - PROJECTILE
+                        damageDone = GameManager.Instance.GetPlayer().isCursed ? projectileDetails.projectileDamageMin :
+                            Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+                    }
+                }
+                else if (activeItemDetails != null)
+                {
+                    // LOWER DAMAGE IF PLAYER IS CURSED - ACTIVE ITEM
+                    damageDone = GameManager.Instance.GetPlayer().isCursed ? activeItemDetails.projectileDamageMin :
+                        Random.Range(activeItemDetails.projectileDamageMin, activeItemDetails.projectileDamageMax);
+                }
+
+
+                // Damage inflicted to enemy after deducting enemy armor
+                inflictedDamage = damageDone > health.GetArmorValue() ? damageDone - health.GetArmorValue() : 1;
+
+                if (headShotHappened)
+                {
+                    // x3 damage if used headshot
+                    inflictedDamage *= 3;
+                }
+            }
+            else if (collision != null && collision.GetComponent<Player>() != null)
+            {
+                // Damage inflicted to enemy after deducting enemy armor
+                inflictedDamage = damageDone > health.GetArmorValue() ? damageDone - health.GetArmorValue() : 1;
+            }
+            else if (collision != null && collision.GetComponent<Environment>() != null)
+            {
+                // Damage inflicted equals damage done for environment objects
+                inflictedDamage = damageDone;
+            }
+
+            health.TakeDamage(inflictedDamage, transform.position, health.transform.position, polygonCollider2D, headShotHappened);
         }
+    }
+
+    IEnumerator ColliderTimeThreshold()
+    {
+        yield return new WaitForSeconds(0.04f);
+
+        isColliding = false;
     }
 
     /// <summary>
     /// Initialize the projectile being fired - using the projectileDetails, the aimangle, weaponAngle, and weaponAimDirectionVector. If this 
-    /// projectile is part of a pattern the projectile movement can be overriden by setting overrideAmmoMovement to true
+    /// projectile is part of a pattern the projectile movement can be overriden by setting overrideAmmoMovement to true - PROJECTILE
     /// </summary>
-    public void InitializeProjectile(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, float projectileSpeed, 
-        Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false)
+    public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, 
+        float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false, bool fallingFromSkies = false, bool isPenetrationArrow = false)
     {
         #region Projectile
 
         this.projectileDetails = projectileDetails;
+
+        // Set head shot bool
+        this.headShotHappened = headShotHappened;
+
+        // Set penetration arrow bool
+        this.isPenetrationArrow = isPenetrationArrow;
 
         // Initialize isColliding
         isColliding = false;
@@ -340,8 +553,21 @@ public class Projectile : MonoBehaviour, IFireable
             isProjectileMaterialSet = true;
         }
 
+        if (headShotHappened)
+        {
+            spriteRenderer.material = GameManager.Instance.GetPlayer().playerDetails.headShotMaterial;
+        }
+
         // Set projectile range
-        projectileRange = projectileDetails.projectileRange;
+        if (isPenetrationArrow)
+        {
+            projectileRange = 100;
+            spriteRenderer.material = GameManager.Instance.GetPlayer().playerDetails.penetrateMaterial;
+        }
+        else
+        {
+            projectileRange = projectileDetails.projectileRange;
+        }
 
         // Set projectile speed
         this.projectileSpeed = projectileSpeed;
@@ -375,12 +601,125 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
+    /// Initialize the projectile being fired - using the projectileDetails, the aimangle, weaponAngle, and weaponAimDirectionVector. If this 
+    /// projectile is part of a pattern the projectile movement can be overriden by setting overrideAmmoMovement to true - ACTIVEITEM
+    /// </summary>
+    public void InitializeProjectile(bool headShotHappened, ActiveItemDetailsSO activeItemDetails, float aimAngle, 
+        float weaponAimAngle, float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false)
+    {
+        #region Projectile - Active Item
+
+        this.activeItemDetails = activeItemDetails;
+
+        // Set head shot bool
+        this.headShotHappened = headShotHappened;
+
+        // Initialize isColliding
+        isColliding = false;
+
+        // Set fire direction
+        SetFireDirection(activeItemDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector);
+
+        // Set projectile sprite
+        spriteRenderer.sprite = activeItemDetails.activeItemSprite;
+
+        // Set initial projectile material depending on whether there is an projectile charge period
+        if (activeItemDetails.projectileChargeTime > 0f)
+        {
+            // Set ammo charge timer
+            projectileChargeTimer = activeItemDetails.projectileChargeTime;
+            SetProjectileMaterial(activeItemDetails.projectileChargeMaterial);
+            isProjectileMaterialSet = false;
+        }
+        else
+        {
+            projectileChargeTimer = 0f;
+            SetProjectileMaterial(activeItemDetails.projectileMaterial);
+            isProjectileMaterialSet = true;
+        }
+
+        // Set projectile range
+        projectileRange = activeItemDetails.projectileRange;
+
+        // Set projectile speed
+        this.projectileSpeed = projectileSpeed;
+
+        // Override projectile movement
+        this.overrideProjectileMovement = overrideProjectileMovement;
+
+        // Activate projectile gameObject
+        gameObject.SetActive(true);
+
+        #endregion
+
+        #region Trail
+
+        if (activeItemDetails.isProjectileTrail)
+        {
+            trailRenderer.gameObject.SetActive(true);
+            trailRenderer.emitting = true;
+            trailRenderer.material = activeItemDetails.projectileTrailMaterial;
+            trailRenderer.startWidth = activeItemDetails.projectileTrailStartWidth;
+            trailRenderer.endWidth = activeItemDetails.projectileTrailEndWidth;
+            trailRenderer.time = activeItemDetails.projectileTrailTime;
+        }
+        else
+        {
+            trailRenderer.emitting = false;
+            trailRenderer.gameObject.SetActive(false);
+        }
+
+        #endregion
+    }
+
+    /// <summary>
     /// Set projectile fire direction and angle based on the input angle and direction adjusted by the
-    /// random spread
+    /// random spread - PROJECTILE
     private void SetFireDirection(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector)
     {
+        float projectileSpreadModifier;
+
+        if (GameManager.Instance.GetPlayer().passiveItemList.Any(item => item.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest))
+        {
+            projectileSpreadModifier = 0.5f;
+        }
+        else
+        {
+            projectileSpreadModifier = 1f;
+        }
+
         // Calculate random spread angle between min and max
-        float randomSpread = Random.Range(projectileDetails.projectileSpreadMin, projectileDetails.projectileSpreadMax);
+        float randomSpread = Random.Range(projectileDetails.projectileSpreadMin * projectileSpreadModifier, projectileDetails.projectileSpreadMax * projectileSpreadModifier);
+
+        // Get a random spread toggle of 1 or -1
+        int spreadToggle = Random.Range(0, 2) * 2 - 1;
+
+        if (weaponAimDirectionVector.magnitude < Settings.useAimAngleDistance)
+        {
+            fireDirectionAngle = aimAngle;
+        }
+        else
+        {
+            fireDirectionAngle = weaponAimAngle;
+        }
+
+        // Adjust projectile fire angle by random spread
+        fireDirectionAngle += spreadToggle * randomSpread;
+
+        // Set projectile rotation
+        transform.eulerAngles = new Vector3(0f, 0f, fireDirectionAngle);
+
+        // Set projectile fire direction
+        fireDirectionVector = HelperUtilities.GetDirectionVectorFromAngle(fireDirectionAngle);
+    }
+
+    /// <summary>
+    /// Set projectile fire direction and angle based on the input angle and direction adjusted by the
+    /// random spread - ACTIVE ITEM
+    private void SetFireDirection(ActiveItemDetailsSO activeItemDetails, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector)
+    {
+        // Calculate random spread angle between min and max
+        float randomSpread = Random.Range(activeItemDetails.projectileSpreadMin, activeItemDetails.projectileSpreadMax);
 
         // Get a random spread toggle of 1 or -1
         int spreadToggle = Random.Range(0, 2) * 2 - 1;
@@ -409,6 +748,73 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void DisableProjectile()
     {
+        if (activeItemDetails != null)
+        {
+            switch (activeItemDetails.activeItemType)
+            {
+                case ActiveItemType.Boomerang:
+                case ActiveItemType.Bomb:
+                case ActiveItemType.Dummy:
+                    return;
+                case ActiveItemType.Generic:
+                case ActiveItemType.Shiruken:
+                case ActiveItemType.Trap:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (!isPenetrationArrow )
+        {
+            velocity = Vector2.zero;
+            isStopped = true;
+            stoppedPosition = transform.position;
+        }
+        else
+        {
+            if (isHittingWall)
+            {
+                velocity = Vector2.zero;
+                isStopped = true;
+                stoppedPosition = transform.position;
+            }
+        }
+
+        if (tag == "meteor")
+        {
+            GetComponentInChildren<Animator>().SetTrigger("impact");
+            StaticEventHandler.CallCameraShakeEvent(GameManager.Instance.GetPlayer().playerDetails.shakeIntensity, GameManager.Instance.GetPlayer().playerDetails.shakeDuration);
+            SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.specialMoveThreeSoundEffect);
+            StartCoroutine(DisableProcess());
+        }
+        else
+        {
+            if (transform.GetComponentInParent<ProjectilePattern>() != null)
+            {
+
+            }
+            GetComponent<Animator>().SetTrigger("impact");
+        }
+
+        if (!isPenetrationArrow)
+        {
+            StartCoroutine(DisableProcess());
+        }
+        else
+        {
+            if (isHittingWall)
+            {
+                StartCoroutine(DisableProcess());
+            }
+        }
+    }
+
+    IEnumerator DisableProcess()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        isHittingWall = false;
         gameObject.SetActive(false);
     }
 
@@ -417,19 +823,373 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void DoProjectileHitEffect()
     {
-        // Process if a hit effect has been specified
-        if (projectileDetails.projectileHitEffect != null && projectileDetails.projectileHitEffect.projectileHitEffectPrefab != null)
+        if (activeItemDetails == null)
         {
-            // Get ammo hit effect gameobject from the pool (with particle system component)
-            ProjectileHitEffect projectileHitEffect = (ProjectileHitEffect)PoolManager.Instance.ReuseComponent(projectileDetails.projectileHitEffect.
-                projectileHitEffectPrefab, transform.position, Quaternion.identity);
+            // Process if a hit effect has been specified
+            if (projectileDetails.projectileHitEffect != null && projectileDetails.projectileHitEffect.projectileHitEffectPrefab != null)
+            {
+                // Get ammo hit effect gameobject from the pool (with particle system component)
+                ProjectileHitEffect projectileHitEffect = (ProjectileHitEffect)PoolManager.Instance.ReuseComponent(projectileDetails.projectileHitEffect.
+                    projectileHitEffectPrefab, transform.position, Quaternion.identity);
 
-            // Set Hit Effect
-            projectileHitEffect.SetHitEffect(projectileDetails.projectileHitEffect);
+                // Set Hit Effect
+                projectileHitEffect.SetHitEffect(projectileDetails.projectileHitEffect);
 
-            // Set gameobject active (the particle system is set to automatically disable the gameobject once finished)
-            projectileHitEffect.gameObject.SetActive(true);
+                // Set gameobject active (the particle system is set to automatically disable the gameobject once finished)
+                projectileHitEffect.gameObject.SetActive(true);
+            }
         }
+    }
+
+    /// <summary>
+    /// Check poison status - Player
+    /// </summary>
+    private void CheckPoisonStatus(Player player, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            if (projectileDetails.isPoisonous)
+            {
+                // Check get poisoned
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.poisonChance)
+                {
+                    player.healthEvent.CallGetPoisonedEvent();
+                    player.healthStatus = HealthStatus.Poisoned;
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.isPoisonous)
+            {
+                // Check get poisoned
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.poisonChance)
+                {
+                    player.healthEvent.CallGetPoisonedEvent();
+                    player.healthStatus = HealthStatus.Poisoned;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check poison status - Enemy
+    /// </summary>
+    private void CheckPoisonStatus(Enemy enemy, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            if (projectileDetails.isPoisonous)
+            {
+                // Check get bleeding
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.poisonChance)
+                {
+                    enemy.healthEvent.CallGetPoisonedEvent();
+                    enemy.healthStatus = HealthStatus.Poisoned;
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.isPoisonous)
+            {
+                // Check get bleeding
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.poisonChance)
+                {
+                    enemy.healthEvent.CallGetPoisonedEvent();
+                    enemy.healthStatus = HealthStatus.Poisoned;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check acid status - Player
+    /// </summary>
+    private void CheckAcidStatus(Player player, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            if (projectileDetails.hasAcid && player.armorStatus != ArmorStatus.Acid)
+            {
+                // Check get acid
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.acidEfficiency)
+                {
+                    if (player.armorStatus == ArmorStatus.SilverArmor)
+                    {
+                        player.healthEvent.CallArmorWoreOffEvent();
+                    }
+
+                    player.armorStatus = ArmorStatus.Acid;
+                    player.health.SetArmorValue((int)(player.playerDetails.playerArmorValue * (1 - projectileDetails.acidEfficiency)));
+                    player.healthEvent.CallGetAcidEvent();
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasAcid && player.armorStatus != ArmorStatus.Acid)
+            {
+                // Check get acid
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.acidEfficiency)
+                {
+                    if (player.armorStatus == ArmorStatus.SilverArmor)
+                    {
+                        player.healthEvent.CallArmorWoreOffEvent();
+                    }
+
+                    player.armorStatus = ArmorStatus.Acid;
+                    player.health.SetArmorValue((int)(player.playerDetails.playerArmorValue * (1 - activeItemDetails.acidEfficiency)));
+                    player.healthEvent.CallGetAcidEvent();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check acid status - Enemy
+    /// </summary>
+    private void CheckAcidStatus(Enemy enemy, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            if (projectileDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid && enemy.health.currentHealth > 0)
+            {
+                float randomAcidNum = Random.Range(0f, 1f);
+                if (randomAcidNum < projectileDetails.acidEfficiency)
+                {
+                    enemy.armorStatus = ArmorStatus.Acid;
+                    enemy.health.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue * (1 - projectileDetails.acidEfficiency)));
+                    enemy.healthEvent.CallGetAcidEvent();
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasAcid && enemy.armorStatus != ArmorStatus.Acid && enemy.health.currentHealth > 0)
+            {
+                float randomAcidNum = Random.Range(0f, 1f);
+                if (randomAcidNum < activeItemDetails.acidEfficiency)
+                {
+                    enemy.armorStatus = ArmorStatus.Acid;
+                    enemy.health.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue * (1 - activeItemDetails.acidEfficiency)));
+                    enemy.healthEvent.CallGetAcidEvent();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check stun status - Player
+    /// </summary>
+    private void CheckStunStatus(Player player, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            if (projectileDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.stunChance)
+                {
+                    player.moveStatus = MoveStatus.Stun;
+                    player.healthEvent.CallGetStunEvent();
+                    player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+                    player.animator.SetBool(Settings.isStunned, true);
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.stunChance)
+                {
+                    player.moveStatus = MoveStatus.Stun;
+                    player.healthEvent.CallGetStunEvent();
+                    player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+                    player.animator.SetBool(Settings.isStunned, true);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check stun status - Enemy
+    /// </summary>
+    private void CheckStunStatus(Enemy enemy, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
+
+            if (projectileDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemy.health.currentHealth > 0)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.stunChance)
+                {
+                    StartCoroutine(StunRoutine(enemy));
+                }
+            }
+        }
+        else
+        {
+            EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
+
+            if (activeItemDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemy.health.currentHealth > 0)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.stunChance)
+                {
+                    StartCoroutine(StunRoutine(enemy));
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check curse status - Player
+    /// </summary>
+    private void CheckCurseStatus(Player player, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            if (projectileDetails.hasCurseDamage && !player.isCursed)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.curseChance)
+                {
+                    player.isCursed = true;
+                    player.healthEvent.CallGetCurseEvent();
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasCurseDamage && player.isCursed)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.curseChance)
+                {
+                    player.isCursed = true;
+                    player.healthEvent.CallGetCurseEvent();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check curse status - Enemy
+    /// </summary>
+    private void CheckCurseStatus(Enemy enemy, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+
+            if (projectileDetails.hasCurseDamage && !enemy.isCursed)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.curseChance)
+                {
+                    enemy.isCursed = true;
+                    enemy.healthEvent.CallGetCurseEvent();
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasCurseDamage && enemy.isCursed)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.curseChance)
+                {
+                    enemy.isCursed = true;
+                    enemy.healthEvent.CallGetCurseEvent();
+                }
+            }
+        }
+    }
+
+    IEnumerator StunRoutine(Enemy enemy)
+    {
+        enemy.enemyMovementAI.moveStatus = MoveStatus.Stun;
+        enemy.healthEvent.CallGetStunEvent();
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+        enemy.animator.SetBool(Settings.isStunned, true);
+        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
+
+        yield return new WaitForFixedUpdate();
+    }
+
+
+    IEnumerator ExplosionRoutine()
+    {
+        Animator animator = GetComponent<Animator>();
+        animator.SetTrigger("burst");
+        SoundEffectManager.Instance.PlaySoundEffect(activeItemDetails.activeItemImpactSoundEffect);
+        Explosion();
+        yield return new WaitForSeconds(0.5f);
+
+        DisableProjectile();
+    }
+
+    /// <summary>
+    /// Based on circle radius of the bomb, detect all enemy colliders for damage
+    /// </summary>
+    public void Explosion()
+    {
+        StaticEventHandler.CallCameraShakeEvent(4, 0.6f);
+
+        foreach (Collider2D collider in Physics2D.OverlapCircleAll(transform.position, blastRadius, layerMask))
+        {
+            if (collider.GetType() == typeof(PolygonCollider2D))
+            {
+                // Don't hit yourself if player is also in the collider list
+                if (collider.tag == Settings.playerTag) continue;
+
+                if (collider.tag == Settings.enemyTag)
+                {
+                    Enemy enemy = collider.GetComponent<Enemy>();
+
+                    int inflictedDamage = CalculateDamageAmount(enemy);
+                    enemy.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+
+                    CheckAcidStatus(enemy, true);
+                    CheckStunStatus(enemy, true);
+
+                    if (!enemy.enemyDetails.hasKnockbackResistance && enemy.GetComponent<Health>().currentHealth > 0)
+                    {
+                        enemy.enemyMovementAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                    }
+                }
+            }
+            else
+            {
+                collider.GetComponent<Health>().TakeDamage(Random.Range(activeItemDetails.burstDamageMin, activeItemDetails.burstDamageMax),
+                    transform.position, collider.transform.position, false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Calculate damage amount
+    /// </summary>
+    private int CalculateDamageAmount(Enemy enemy)
+    {
+        // Damage produced by player
+        int damageDone = Random.Range(activeItemDetails.burstDamageMin, activeItemDetails.burstDamageMax);
+
+        // Damage inflicted to enemy after deducting enemy armor
+        Health enemyHealth = enemy.GetComponent<Health>();
+
+        int inflictedDamage = damageDone > enemyHealth.GetArmorValue() ? damageDone - enemyHealth.GetArmorValue() : 1;
+        return inflictedDamage;
     }
 
     public void SetProjectileMaterial(Material material)

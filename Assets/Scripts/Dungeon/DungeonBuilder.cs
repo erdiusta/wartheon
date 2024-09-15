@@ -1,4 +1,4 @@
-    using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -209,7 +209,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 return false;
             }
 
-            Doorway doorwayParent = unconnectedAvailableParentDoorways[UnityEngine.Random.Range(0, unconnectedAvailableParentDoorways.Count)];
+            Doorway doorwayParent = unconnectedAvailableParentDoorways[Random.Range(0, unconnectedAvailableParentDoorways.Count)];
 
             // Get a random room template for room node that is consistent with the parent door orientation
             RoomTemplateSO roomTemplate = GetRandomTemplateForRoomConsistentWithParent(roomNode, doorwayParent);
@@ -459,7 +459,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             return null;
 
         // Select random room template from list and return
-        return matchingRoomTemplateList[UnityEngine.Random.Range(0, matchingRoomTemplateList.Count)];
+        return matchingRoomTemplateList[Random.Range(0, matchingRoomTemplateList.Count)];
     }
 
     /// <summary>
@@ -486,6 +486,8 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
         room.templateID = roomTemplate.guid;
         room.id = roomNode.id;
         room.prefab = roomTemplate.prefab;
+        room.battleMusic = roomTemplate.battleMusic;
+        room.ambientMusic = roomTemplate.ambientMusic;
         room.roomNodeType = roomTemplate.roomNodeType;
         room.lowerBounds = roomTemplate.lowerBounds;
         room.upperBounds = roomTemplate.upperBounds;
@@ -521,7 +523,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     {
         if (roomNodeGraphList.Count > 0)
         {
-            return roomNodeGraphList[UnityEngine.Random.Range(0, roomNodeGraphList.Count)];
+            return roomNodeGraphList[Random.Range(0, roomNodeGraphList.Count)];
         }
         else
         {

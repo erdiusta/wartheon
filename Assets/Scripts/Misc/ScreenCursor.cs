@@ -2,14 +2,12 @@ using UnityEngine;
 
 public class ScreenCursor : MonoBehaviour
 {
-    private void Awake()
-    {
-        // Set hardware cursor off
-        Cursor.visible = false;
-    }
+    public Texture2D cursorTexture; // Your custom cursor texture
+    public Vector2 cursorHotspot; // The hotspot of the cursor
 
-    private void Update()
+    void Start()
     {
-        transform.position = Input.mousePosition;
+        // Set the custom cursor with the specified hotspot
+        Cursor.SetCursor(cursorTexture, cursorHotspot, CursorMode.Auto);
     }
 }

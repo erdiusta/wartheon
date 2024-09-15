@@ -222,17 +222,19 @@ public class MeleeAttackMainHand : MonoBehaviour
         // Damage produced by player
         int damageDone = player.isCursed ? player.currentMainHandMinDamageValue : Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
 
+        bool criticalHitHappened = CriticalHitHappened();
+
         // Critical hit check
-        if (CriticalHitHappened())
+        if (criticalHitHappened)
         {
             enemy.healthEvent.CallCriticalHitEvent();
             SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.criticalHitSoundEffect);
         }
 
-        damageDone = CriticalHitHappened() == true ? (int)(damageDone * player.currentMainHandCriticalHitChance) : damageDone;
-
-        // Damage inflicted to enemy after deducting enemy armor
+        damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier) : damageDone;
         int inflictedDamage = damageDone > enemyHealth.GetArmorValue() ? damageDone - enemyHealth.GetArmorValue() : 1;
+        Debug.Log("Damage inflicted is " + inflictedDamage);
+
         return inflictedDamage;
     }
 

@@ -19,10 +19,9 @@ MonoBehaviour:
   experiencePoint: 60
   chaseDistance: 8
   hasAttackMove: 1
-  preAttackDuration: 0.6
   attackMoveTriggerDistance: 3.5
-  attackMoveEfficentDistance: 2
-  attackMoveBaseCooldown: 8
+  attackMoveEfficentDistance: 4.5
+  attackMoveBaseCooldown: 5
   deflectionValue: 0.3
   enemyBehaviour: 2
   isEnemyBoss: 0

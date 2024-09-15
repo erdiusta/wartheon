@@ -26,6 +26,10 @@ public class RoomNodeTypeSO : ScriptableObject
     #endregion Header
     public bool isEntrance;
     #region Header
+    [Header("One Type Should Be A Shop Room")]
+    #endregion Header
+    public bool isShopRoom;
+    #region Header
     [Header("One Type Should Be A Boss Room")]
     #endregion Header
     public bool isBossRoom;

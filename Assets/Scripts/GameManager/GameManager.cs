@@ -4,6 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
@@ -12,6 +15,12 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Space(10)]
     [Header("GAMEOBJECT REFERENCES")]
     #endregion Header GAMEOBJECT REFERENCES
+
+    #region Tooltip
+    [Tooltip("Populate with pause menu gameobject in the hierarchy")]
+    #endregion
+    [SerializeField] GameObject pauseMenu;
+
     #region Tooltip
     [Tooltip("Populate with the MessageText textmeshpro component in the FadeScreenUI")]
     #endregion Tooltip
@@ -20,6 +29,30 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Tooltip("Populate with the FadeImage canvasgroup component in the FadeScreenUI")]
     #endregion Tooltip
     [SerializeField] CanvasGroup canvasGroup;
+    #region Tooltip
+    [Tooltip("Populate with the Post processing volume")]
+    #endregion Tooltip
+    [SerializeField] Volume volume;
+
+    // Book members
+    public GameObject bookView;
+    public GameObject bookCover;
+
+    // Pop-ups
+    public GameObject warningPopUp;
+
+    [SerializeField]GameObject introductionPopUp;
+    [SerializeField] TextMeshProUGUI weaponText;
+    [SerializeField] TextMeshProUGUI introductionText;
+    [SerializeField] Image introductionItemImage;
+
+    [HideInInspector] public bool glossaryBookOpen;
+    [HideInInspector] public bool turnPageCompleted;
+    [HideInInspector] public bool zoomOutFinished;
+    [HideInInspector] public bool zoomInFinished;
+    [HideInInspector] public bool statsPageChanged;
+
+    [HideInInspector] public bool popUpWindowOpen;
 
     #region Header DUNGEON LEVELS
     [Space(10)]
@@ -28,20 +61,27 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     #region Tooltip
     [Tooltip("Populate with the dungeon level scriptable objects")]
     #endregion Tooltip
-    [SerializeField] List<DungeonLevelSO> dungeonLevelList;
+    public List<DungeonLevelSO> dungeonLevelList;
     #region Tooltip
     [Tooltip("Populate with the starting dungeon level for testing , first level = 0")]
     #endregion Tooltip
-    [SerializeField] int currentDungeonLevelListIndex = 0;
+    public int currentDungeonLevelListIndex = 0;
 
+    [HideInInspector] public GameState gameState;
+    [HideInInspector] public GameState previousGameState;
+    [HideInInspector] public Decoy decoy;
+    [HideInInspector] public int exploredRoomCount = 0;
+
+    Coroutine introductionTextRoutine;
+    const int ROOM_CONST = 6;
     Room currentRoom;
     Room previousRoom;
     PlayerDetailsSO playerDetails;
     Player player;
+    InstantiatedRoom bossRoom;
     bool isFading = false;
-
-    [HideInInspector] public GameState gameState;
-    [HideInInspector] public GameState previousGameState;
+    Vignette vignette;
+    HashSet<Room> visitedRooms = new HashSet<Room>();
 
     protected override void Awake()
     {
@@ -71,13 +111,35 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void OnEnable()
     {
         StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
+        StaticEventHandler.OnDropPickedUp += StaticEventHandler_OnDropPickedUp;
+        StaticEventHandler.OnRoomEnemiesDefeated += StaticEventHandler_OnRoomEnemiesDefeated;
+        StaticEventHandler.OnDecoySpawned += StaticEventHandler_OnDecoySpawned;
+        StaticEventHandler.OnHourglassSpawned += StaticEventHandler_OnHourglassSpawned;
+        StaticEventHandler.OnHourglasExpired += StaticEventHandler_OnHourglasExpired;
         player.destroyedEvent.OnDestroyed += Player_OnDestroyed;
+
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.overviewMapFullView.action.started += ControlDisplayDungeonOverviewMap;
+            InputManager.Instance.overviewMapFullView.action.canceled += ControlClearDungeonOverviewMap;
+        }
     }
 
     private void OnDisable()
     {
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
+        StaticEventHandler.OnDropPickedUp -= StaticEventHandler_OnDropPickedUp;
+        StaticEventHandler.OnRoomEnemiesDefeated -= StaticEventHandler_OnRoomEnemiesDefeated;
+        StaticEventHandler.OnDecoySpawned -= StaticEventHandler_OnDecoySpawned;
+        StaticEventHandler.OnHourglassSpawned -= StaticEventHandler_OnHourglassSpawned;
+        StaticEventHandler.OnHourglasExpired -= StaticEventHandler_OnHourglasExpired;
         player.destroyedEvent.OnDestroyed -= Player_OnDestroyed;
+
+        if (InputManager.Instance  != null)
+        {
+            InputManager.Instance.overviewMapFullView.action.started -= ControlDisplayDungeonOverviewMap;
+            InputManager.Instance.overviewMapFullView.action.canceled -= ControlClearDungeonOverviewMap;
+        }
     }
 
     /// <summary>
@@ -86,8 +148,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void StaticEventHandler_OnRoomChanged(RoomChangedEventArgs roomChangedEventArgs)
     {
         SetCurrentRoom(roomChangedEventArgs.room);
-<<<<<<< Updated upstream
-=======
 
         if (decoy != null)
         {
@@ -390,7 +450,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         vignette.color.value = new Color(1f, 1f, 1f);
         vignette.intensity.value = 0f;
->>>>>>> Stashed changes
     }
 
     /// <summary>
@@ -402,18 +461,116 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         gameState = GameState.gameLost;
     }
 
+    /// <summary>
+    /// Handle decoy set
+    /// </summary>
+    private void SetDecoy(Decoy decoy)
+    {
+        this.decoy = decoy;
+    }
+
+    public Decoy GetDecoy()
+    {
+        return decoy;
+    }
+
     private void Start()
     {
         previousGameState = GameState.gameStarted;
         gameState = GameState.gameStarted;
 
+        bookCover.SetActive(false);
+        bookView.SetActive(false);
+        warningPopUp.SetActive(false);
+        introductionPopUp.SetActive(false);
+
         // Set screen to black
         StartCoroutine(Fade(0f, 1f, 0f, Color.black));
+
+        // Ensure the volume has a Vignette effect and store a reference to it
+        if (volume != null && volume.profile.TryGet(out vignette))
+        {
+            vignette.intensity.value = 0f; // Set initial intensity if needed
+        }
+        else
+        {
+            Debug.LogError("Vignette effect not found on the Volume component.");
+        }
     }
 
     private void Update()
     {
+        HandleBook();
+        HandlePopUp();
         HandleGameState();
+    }
+
+    private void HandleBook()
+    {
+        if (pauseMenu.activeSelf) return;
+
+        if (zoomInFinished)
+        {
+            zoomInFinished = false;
+            bookView.GetComponent<Animator>().enabled = false;
+            bookView.GetComponent<Animator>().enabled = true;
+        }
+
+        if (zoomOutFinished)
+        {
+            zoomOutFinished = false;
+            bookView.GetComponent<Animator>().enabled = false;
+            bookView.GetComponent<Animator>().enabled = true;
+            bookView.SetActive(false);
+            bookCover.SetActive(false);
+            glossaryBookOpen = false;
+        }
+
+        if (turnPageCompleted)
+        {
+            bookView.GetComponent<Animator>().SetBool(Settings.turnPage, false);
+            turnPageCompleted = false;
+            bookView.GetComponent<Animator>().enabled = false;
+            bookView.GetComponent<Animator>().enabled = true;
+        }
+
+        if (InputManager.Instance.bookView.action.WasPressedThisFrame())
+        {
+            if (bookView.activeSelf)
+            {
+                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+                bookView.GetComponent<Animator>().SetTrigger(Settings.zoomOut);
+            }
+            else
+            {
+                bookView.SetActive(true);
+                bookCover.SetActive(true);
+                glossaryBookOpen = true;
+                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+                bookView.GetComponent<Animator>().SetTrigger(Settings.zoomIn);
+            }
+        }
+    }
+
+    private void HandlePopUp()
+    {
+        if (popUpWindowOpen)
+        {
+            if (InputManager.Instance.OKButton.action.WasPressedThisFrame())
+            {
+                CloseWarningPopUpMenu();
+            }
+        }
+    }
+
+    public void CloseBookInCasePauseClick()
+    {
+        zoomOutFinished = false;
+        bookView.GetComponent<Animator>().enabled = false;
+        bookView.GetComponent<Animator>().enabled = true;
+        bookView.SetActive(false);
+        bookCover.SetActive(false);
+        glossaryBookOpen = false;
     }
 
     /// <summary>
@@ -428,34 +585,45 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 // Play first level
                 PlayDungeonLevel(currentDungeonLevelListIndex);
                 gameState = GameState.playingLevel;
+
+                // Trigger room enemies defeated since we start in the entrance where there are no enemies (just in case you have a level with just a boss room)
+                RoomEnemiesDefeated();
                 break;
 
-            // While playing the level handle the tab key for the dungeon overview map.
+            // While playing the level handle the tab key for the dungeon overview map
             case GameState.playingLevel:
+                if (InputManager.Instance.pause.action.WasPressedThisFrame())
+                {
+                    PauseGameMenu();
+                }
 
-                if (Input.GetKeyDown(KeyCode.Tab))
+                if (InputManager.Instance.overviewMapFullView.action.WasPressedThisFrame())
                 {
                     DisplayDungeonOverviewMap();
                 }
                 break;
 
-            // if in the dungeon overview map handle the release of the tab key to clear the map
-            case GameState.dungeonOverviewMap:
+            case GameState.engagingEnemies:
+                if (InputManager.Instance.pause.action.WasPressedThisFrame())
+                {
+                    PauseGameMenu();
+                }
+                break;
 
+            case GameState.engagingBoss:
+                if (InputManager.Instance.pause.action.WasPressedThisFrame())
+                {
+                    PauseGameMenu();
+                }
+                break;
+
+            // If in the dungeon overview map handle the release of the tab key to clear the map
+            case GameState.dungeonOverviewMap:
                 // Key released
-                if (Input.GetKeyUp(KeyCode.Tab))
+                if (InputManager.Instance.overviewMapFullView.action.WasReleasedThisFrame())
                 {
                     // Clear dungeonOverviewMap
                     DungeonMap.Instance.ClearDungeonOverViewMap();
-                }
-                break;
-
-            // While playing the level and before the boss is engaged, handle the tab key for the dungeon overview map.
-            case GameState.bossStage:
-
-                if (Input.GetKeyDown(KeyCode.Tab))
-                {
-                    DisplayDungeonOverviewMap();
                 }
                 break;
 
@@ -484,6 +652,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case GameState.restartGame:
                 RestartGame();
                 break;
+
+            case GameState.gamePaused:
+                if (InputManager.Instance.pause.action.WasPressedThisFrame())
+                {
+                    PauseGameMenu();
+                }
+                break;
         }
     }
 
@@ -497,13 +672,144 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     }
 
     /// <summary>
+    /// Room enemies defeated - test if all dungeon rooms have been cleared of enemies - if so load next dungeon game level
+    /// </summary>
+    private void RoomEnemiesDefeated()
+    {
+        // Loop through all dungeon rooms to see if cleared of enemies
+        foreach (KeyValuePair<string, Room> keyValuePair in DungeonBuilder.Instance.dungeonBuilderRoomDictionary)
+        {
+            // Detect boss room
+            if (keyValuePair.Value.roomNodeType.isBossRoom)
+            {
+                bossRoom = keyValuePair.Value.instantiatedRoom;
+                break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Pause game menu - also called from resume game button on pause menu
+    /// </summary>
+    public void PauseGameMenu()
+    {
+        if (gameState != GameState.gamePaused)
+        {
+            pauseMenu.SetActive(true);
+            GetPlayer().playerControl.DisablePlayer();
+
+            // Set game state
+            previousGameState = gameState;
+            gameState = GameState.gamePaused;
+        }
+        else if (gameState == GameState.gamePaused)
+        {
+            BackFromAudioMenu(); // If inside the audio menu then esc is clicked return to the default pause menu when esc clicked again
+
+            pauseMenu.SetActive(false);
+            GetPlayer().playerControl.EnablePlayer();
+
+            // Set game state
+            gameState = previousGameState;
+            previousGameState = GameState.gamePaused;
+        }
+    }
+
+    /// <summary>
+    /// Called from Audio button
+    /// </summary>
+    public void OpenAudioMenu()
+    {
+        // Clear buttons on pause menu
+        Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
+
+        for (int i = 0; i < pauseContainer.childCount; i++)
+        {
+            if (i == 0 || i == 1) continue;
+
+            pauseContainer.GetChild(i).gameObject.SetActive(false);
+        }
+
+        // Open audio menu
+
+        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Audio";
+        Transform audioContainer = pauseContainer.GetChild(3);
+        audioContainer.GetChild(0).gameObject.SetActive(false); // Disable audio text
+        audioContainer.GetChild(1).gameObject.SetActive(true); // Enable music volume contents
+        audioContainer.GetChild(2).gameObject.SetActive(true); // Enable sound volume contents
+        audioContainer.GetComponent<Image>().enabled = false;
+        audioContainer.GetComponent<Button>().enabled = false;
+        audioContainer.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called from Back button in Audio menu
+    /// </summary>
+    public void BackFromAudioMenu()
+    {
+        Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
+
+        // Close audio menu
+        Transform audioContainer = pauseContainer.GetChild(3);
+        audioContainer.GetChild(0).gameObject.SetActive(true); // Enable audio text
+        audioContainer.GetChild(1).gameObject.SetActive(false); // Disable music volume contents
+        audioContainer.GetChild(2).gameObject.SetActive(false); // Disable sound volume contents
+        audioContainer.GetComponent<Image>().enabled = true;
+        audioContainer.GetComponent<Button>().enabled = true;
+        audioContainer.gameObject.SetActive(false);
+
+        for (int i = 0; i < pauseContainer.childCount; i++)
+        {
+            if (i == 0 || i == 1) continue;
+
+            pauseContainer.GetChild(i).gameObject.SetActive(true);
+        }
+
+        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Options";
+    }
+
+    /// <summary>
+    /// Called from Play Game button
+    /// </summary>
+    public void QuitGame()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+    }
+
+    /// <summary>
+    /// Called from Exit button
+    /// </summary>
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+
+    private void ControlDisplayDungeonOverviewMap(InputAction.CallbackContext context)
+    {
+        // While playing the level handle the tab key for the dungeon overview map.
+        if (gameState == GameState.playingLevel)
+        {
+            DisplayDungeonOverviewMap();
+        }
+    }
+
+    private void ControlClearDungeonOverviewMap(InputAction.CallbackContext context)
+    {
+        // If in the dungeon overview map handle the release of the tab key to clear the map
+        if (gameState == GameState.dungeonOverviewMap)
+        {
+            // Clear dungeonOverviewMap
+            DungeonMap.Instance.ClearDungeonOverViewMap();
+        }
+    }
+
+    /// <summary>
     /// Dungeon Map Screen Display
     /// </summary>
     private void DisplayDungeonOverviewMap()
     {
         // return if fading
-        if (isFading)
-            return;
+        if (isFading) return;
 
         // Display dungeonOverviewMap
         DungeonMap.Instance.DisplayDungeonOverViewMap();
@@ -569,7 +875,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             float timer = displaySeconds;
 
-            while (timer > 0f && !Input.GetKeyDown(KeyCode.Return))
+            while (timer > 0f && !InputManager.Instance.nextLevel.action.WasPerformedThisFrame())
             {
                 timer -= Time.deltaTime;
                 yield return null;
@@ -578,7 +884,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         else
         // else display the message until the return button is pressed
         {
-            while (!Input.GetKeyDown(KeyCode.Return))
+            while (!InputManager.Instance.nextLevel.action.WasPerformedThisFrame())
             {
                 yield return null;
             }
@@ -601,15 +907,15 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Wait 2 seconds
         yield return new WaitForSeconds(2f);
 
-        Debug.Log("Level Completed - Press Return To Progress To The Next Level");
+        // Fade in canvas to display text message
+        yield return StartCoroutine(Fade(0f, 1f, 2f, new Color(0f, 0f, 0f, 0.4f)));
 
-        // When player presses the return key proceed to the next level
-        while (!Input.GetKeyDown(KeyCode.Return))
-        {
-            yield return null;
-        }
+        // Display level completed
+        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! \n\nYOU'VE SURVIVED THIS DUNGEON " +
+            "LEVEL", Color.white, 5f));
 
-        yield return null; // to avoid enter being detected twice
+        // Fade out canvas
+        yield return StartCoroutine(Fade(1f, 0f, 2f, new Color(0f, 0f, 0f, 0.4f)));
 
         // Increase index to next level
         currentDungeonLevelListIndex++;
@@ -652,10 +958,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         yield return StartCoroutine(Fade(0f, 1f, 2f, Color.black));
 
         // Display game won
-        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + GameResources.Instance.currentPlayer.playerName + "! YOU HAVE DEFEATED THE DUNGEON", 
+        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE DEFEATED THE DUNGEON", 
             Color.white, 3f));
 
-        yield return StartCoroutine(DisplayMessageRoutine("PRESS RETURN TO RESTART THE GAME", Color.white, 0f));
+        yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.white, 0f));
 
         // Set game state to restart game
         gameState = GameState.restartGame;
@@ -685,10 +991,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
 
         // Display game lost
-        yield return StartCoroutine(DisplayMessageRoutine("BAD LUCK " + GameResources.Instance.currentPlayer.playerName + "! YOU HAVE SUCCUMBED TO THE DUNGEON", 
-            Color.white, 2f));
+        yield return StartCoroutine(DisplayMessageRoutine("BAD LUCK " + player.playerDetails.playerCharacterName + 
+            "! YOU HAVE SUCCUMBED TO THE DUNGEON", Color.white, 2f));
 
-        yield return StartCoroutine(DisplayMessageRoutine("PRESS RETURN TO RESTART THE GAME", Color.white, 0f));
+        yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.white, 0f));
 
         // Set game state to restart game
         gameState = GameState.restartGame;
@@ -699,7 +1005,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     private void RestartGame()
     {
-        SceneManager.LoadScene("MainGameScene");
+        SceneManager.LoadScene("MainMenuScene");
     }
 
     /// <summary>
@@ -734,10 +1040,117 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         return dungeonLevelList[currentDungeonLevelListIndex];
     }
 
+    /// <summary>
+    /// Spawn object
+    /// </summary>
+    public Transform SpawnObject(Vector3 position, GameObject toDrop)
+    {
+        Transform t = Instantiate(toDrop, transform).transform;
+        t.position = position;
+
+        return t;
+    }
+
+    /// <summary>
+    /// Get Boss room
+    /// </summary>
+    public Room GetBossRoom()
+    {
+        foreach (KeyValuePair<string, Room> item in DungeonBuilder.Instance.dungeonBuilderRoomDictionary)
+        {
+            if (item.Value.roomNodeType.isBossRoom)
+            {
+                return item.Value;
+            }
+        }
+
+        return null;
+    }
+
+    //public ChestItem GetToBeDroppedChestItem()
+    //{
+    //    return toBeDroppedChestItem;
+    //}
+
+    public void GoToWeaponSetWithIndex(int setIndex)
+    {
+        player.playerControl.NextWeaponSet(false, false, setIndex);
+    }
+
+    public void WeaponSetOne()
+    {
+        player.playerControl.NextWeaponSet(false, false, 1);
+    }
+
+    public void WeaponSetTwo()
+    {
+        player.playerControl.NextWeaponSet(false, false, 2);
+    }
+
+    public void WeaponSetThree()
+    {
+        player.playerControl.NextWeaponSet(false, false, 3);
+    }
+
+    public void OpenWarningPopUpMenu(PopUpReason popUpReason)
+    {
+        warningPopUp.SetActive(true);
+        popUpWindowOpen = true; // It's used for disabling mouse fire button while window is open
+
+        TextMeshProUGUI warningText = warningPopUp.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
+
+        switch (popUpReason)
+        {
+            case PopUpReason.None:
+                break;
+            case PopUpReason.LessThanOneMainHandWeapon:
+                warningText.text = "Equipped main hand weapon can't be less than 1 in 3 sets.";
+                break;
+            case PopUpReason.DontHaveWeaponOnSelectedSet:
+                warningText.text = "Can't switch to next set because there is no weapon.";
+                break;
+            case PopUpReason.OffHandFull:
+                warningText.text = "You can't drop main weapon. Active weapon set's off-hand is full.";
+                break;
+            case PopUpReason.ShieldCantBePutOnMainHand:
+                warningText.text = "Shield can not be equipped on the main hand.";
+                break;
+            case PopUpReason.OffHandCantBeAddedToTwoHanded:
+                warningText.text = "Off-hand weapon can't be added while main hand has a two-handed weapon.";
+                break;
+            case PopUpReason.TwoHandCantBeEquippedToOffHand:
+                warningText.text = "Two-hand weapon can't be equipped to off-hand.";
+                break;
+            case PopUpReason.OffHandCatBeAddedToEmptyMainHand:
+                warningText.text = "Off-hand weapon can't be addet to the set not having weapon on main hand.";
+                break;
+            case PopUpReason.EmptyOffHandFirst:
+                warningText.text = "Empty your off-hand first.";
+                break;
+            case PopUpReason.EquipMainHandFirst:
+                warningText.text = "Equip your main first.";
+                break;
+            case PopUpReason.CantMoveYourMainHandWithEmptyOffHand:
+                warningText.text = "You can't move your main hand weapon if your off-hand weapon is empty at the same set.";
+                break;
+            case PopUpReason.YourHandsFull:
+                warningText.text = "All sets in main hand is full. Drop one of your weapons first.";
+                break;
+            default:
+                break;
+        }
+    }  
+    public void CloseWarningPopUpMenu()
+    {
+        warningPopUp.SetActive(false);
+        popUpWindowOpen = false;
+    }
+
     #region Validation
 #if UNITY_EDITOR
     private void OnValidate()
     {
+        HelperUtilities.ValidateCheckNullValue(this, nameof(pauseMenu), pauseMenu);
         HelperUtilities.ValidateCheckNullValue(this, nameof(messageTextTMP), messageTextTMP);
         HelperUtilities.ValidateCheckNullValue(this, nameof(canvasGroup), canvasGroup);
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(dungeonLevelList), dungeonLevelList);

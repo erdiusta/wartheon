@@ -7,12 +7,19 @@ public enum Orientation
     None
 }
 
+public enum Character
+{
+    Astraeus,
+    Erebus,
+    Orion,
+    Lyrisa
+}
+
 public enum GameState
 {
     gameStarted,
     playingLevel,
     engagingEnemies,
-    bossStage,
     engagingBoss,
     levelCompleted,
     gameWon,
@@ -20,6 +27,68 @@ public enum GameState
     gamePaused,
     dungeonOverviewMap,
     restartGame
+}
+
+public enum ActiveItemType
+{
+    Generic,
+    Boomerang,
+    Bomb,
+    Shiruken,
+    Trap,
+    Dummy,
+    Hourglass,
+    Compass,
+    Potion,
+    Summoner
+}
+
+public enum PassiveItemCategory
+{
+    Primary,
+    Secondary
+}
+
+public enum PassiveItemType
+{
+    Generic,
+    RingOfFortune,
+    ShadowCloak,
+    WardenOfForest,
+    BeltOfSorcery
+}
+
+public enum BoomerangPhase
+{
+    Aim,
+    Fire,
+    Return
+}
+
+public enum ShirukenPhase
+{
+    Fire,
+    Ricochet
+}
+
+public enum MoveStatus
+{
+    Idle,
+    Stagger,
+    Stun,
+}
+
+public enum HealthStatus
+{
+    Normal,
+    Poisoned,
+}
+
+public enum ArmorStatus
+{
+    Normal,
+    SilverArmor,
+    Acid
 }
 
 public enum AimDirection
@@ -32,8 +101,6 @@ public enum AimDirection
     Down
 }
 
-<<<<<<< Updated upstream
-=======
 public enum WeaponTitle
 {
     None,
@@ -106,7 +173,6 @@ public enum AttackType
     Gradual
 }
 
->>>>>>> Stashed changes
 public enum ChestSpawnEvent
 {
     onRoomEntry,
@@ -122,8 +188,96 @@ public enum ChestSpawnPosition
 public enum ChestState
 {
     closed,
-    healthItem,
-    ammoItem,
     weaponItem,
     empty
+}
+
+public enum EnemyBehaviour
+{
+    Pursuit,
+    AimAndShoot,
+    PrepareAndDash
+}
+
+public enum EnemyPhase
+{
+    Patrol,
+    Chase,
+    GetHit,
+    Attack,
+    Death
+}
+
+public enum EnemyRace
+{
+    Critter,
+    Beast,
+    Eldritch,
+    Elemental,
+    Demon,
+    Undead,
+    Vermin,
+    Reptile
+}
+
+public enum BookPage
+{
+    Stats,
+    Weapons,
+    Items,
+    Beastiary,
+    Bosses
+}
+
+public enum PassiveItemSlotName
+{
+    None,
+    Head,
+    Chest,
+    Neck,
+    Finger,
+    Back,
+    Waist,
+    Arm,
+    Leg
+}
+
+public enum SlotType
+{
+    Passive,
+    Active,
+    WeaponMainHand,
+    WeaponOffHand
+}
+
+public enum ItemSwapPos
+{
+    None,
+    DragMainSlotMain,
+    DragMainSlotOff,
+    DragOffSlotMain,
+    DragOffSlotOff
+}
+
+public enum PopUpReason
+{
+    None,
+    LessThanOneMainHandWeapon,
+    DontHaveWeaponOnSelectedSet,
+    OffHandFull,
+    ShieldCantBePutOnMainHand,
+    OffHandCantBeAddedToTwoHanded,
+    TwoHandCantBeEquippedToOffHand,
+    OffHandCatBeAddedToEmptyMainHand,
+    EmptyOffHandFirst,
+    EquipMainHandFirst,
+    CantMoveYourMainHandWithEmptyOffHand,
+    YourHandsFull
+}
+
+public enum DropType
+{
+    PassiveItem,
+    ActiveItem,
+    Weapon
 }

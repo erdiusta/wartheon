@@ -1,47 +1,51 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(MovementToPositionEvent))]
 [DisallowMultipleComponent]
 public class MovementToPosition : MonoBehaviour
 {
     Rigidbody2D rb2D;
-    MovementToPositionEvent movementToPositionEvent;
+    Enemy enemy;
 
     private void Awake()
     {
         // Load components
         rb2D = GetComponent<Rigidbody2D>();
-        movementToPositionEvent = GetComponent<MovementToPositionEvent>();
-    }
-
-    private void OnEnable()
-    {
-        // Subscribe to movement to position event
-        movementToPositionEvent.OnMovementToPosition += MovementToPositionEvent_OnMovementToPosition;
-    }
-
-    private void OnDisable()
-    {
-        // Unsubscribe from movement to position event
-        movementToPositionEvent.OnMovementToPosition -= MovementToPositionEvent_OnMovementToPosition;
-    }
-
-    // On movement event
-    private void MovementToPositionEvent_OnMovementToPosition(MovementToPositionEvent movementToPositionEvent, MovementToPositionArgs
-        movementToPositionArgs)
-    {
-        MoveRigidbody(movementToPositionArgs.movePosition, movementToPositionArgs.currentPosition, movementToPositionArgs.moveSpeed);
+        enemy = GetComponent<Enemy>();
     }
 
     /// <summary>
-    /// Move the rigidbody component
+    /// Move the rigidbody component - Chase
     /// </summary>
-    private void MoveRigidbody(Vector3 movePosition, Vector3 currentPosition, float moveSpeed)
+    public void ChaseMoveRigidbodyByPosition(Vector3 movePosition, Vector3 currentPosition, float moveSpeed)
+    {
+        Vector2 unitVector = Vector3.Normalize(movePosition - currentPosition);
+        rb2D.velocity = unitVector * moveSpeed;
+    }
+
+    /// <summary>
+    /// Move the rigidbody component - Patrol
+    /// </summary>
+    public void PatrolMoveRigidbodyByPosition(Vector3 movePosition, Vector3 currentPosition, float moveSpeed)
     {
         Vector2 unitVector = Vector3.Normalize(movePosition - currentPosition);
 
-        rb2D.MovePosition(rb2D.position + (unitVector * moveSpeed * Time.fixedDeltaTime));
+        // Initialize vectors, angles, directions and aim
+        float unitAngle = HelperUtilities.GetAngleFromVector(unitVector);
+        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
+        enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
+        enemy.animateEnemy.ResetAimAnimationParameters();
+        enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
+        rb2D.velocity = unitVector * moveSpeed;
+    }
+
+    /// <summary>
+    /// Move the rigidbody component - Attack Move
+    /// </summary>
+    public void AttackMoveRigidbodyByPosition(Vector3 unitVector, float moveSpeed)
+    {
+        Vector2 unitVector2D = new Vector2(unitVector.x, unitVector.y);
+
+        rb2D.MovePosition(rb2D.position + (unitVector2D * moveSpeed * Time.fixedDeltaTime));
     }
 }

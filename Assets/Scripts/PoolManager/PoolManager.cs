@@ -96,6 +96,11 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
             componentToReuse.gameObject.SetActive(false);
         }
 
+        if (componentToReuse.tag == Settings.enemyTag)
+        {
+            componentToReuse.gameObject.SetActive(true);
+        }
+
         return componentToReuse;
     }
 

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +7,8 @@ public class Room
     public string templateID;
     public GameObject prefab;
     public RoomNodeTypeSO roomNodeType;
+    public MusicTrackSO battleMusic;
+    public MusicTrackSO ambientMusic;
     public Vector2Int lowerBounds;
     public Vector2Int upperBounds;
     public Vector2Int templateLowerBounds;
@@ -35,11 +36,11 @@ public class Room
     /// </summary>
     public int GetNumberOfEnemiesToSpawn(DungeonLevelSO dungeonLevel)
     {
-        foreach (RoomEnemySpawnParameters roomEnemySpawnParameters in roomLevelEnemySpawnParametersList)
+        for (int i = 0; i < roomLevelEnemySpawnParametersList.Count; i++)
         {
-            if (roomEnemySpawnParameters.dungeonLevel == dungeonLevel)
+            if (roomLevelEnemySpawnParametersList[i].dungeonLevel == dungeonLevel)
             {
-                return Random.Range(roomEnemySpawnParameters.minTotalEnemiesToSpawn, roomEnemySpawnParameters.maxTotalEnemiesToSpawn);
+                return Random.Range(roomLevelEnemySpawnParametersList[i].minTotalEnemiesToSpawn, roomLevelEnemySpawnParametersList[i].maxTotalEnemiesToSpawn);
             }
         }
 
@@ -51,13 +52,14 @@ public class Room
     /// </summary>
     public RoomEnemySpawnParameters GetRoomEnemySpawnParameters(DungeonLevelSO dungeonLevel)
     {
-        foreach (RoomEnemySpawnParameters roomEnemySpawnParameters in roomLevelEnemySpawnParametersList)
+        for (int i = 0; i < roomLevelEnemySpawnParametersList.Count; i++)
         {
-            if (roomEnemySpawnParameters.dungeonLevel == dungeonLevel)
+            if (roomLevelEnemySpawnParametersList[i].dungeonLevel == dungeonLevel)
             {
-                return roomEnemySpawnParameters;
+                return roomLevelEnemySpawnParametersList[i];
             }
         }
+
         return null;
     }
 }

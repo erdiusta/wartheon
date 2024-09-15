@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,45 +5,78 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class ActiveWeapon : MonoBehaviour
 {
+    [HideInInspector] public bool isSwitching;
+    [HideInInspector] public Weapon weaponToBeDropped; // Cache it for clearing lock icon two-handed dropping issues 
+
+    [Header("MAIN HAND")]
+    [Space(10)]
     #region Tooltip
     [Tooltip("Populate with the SpriteRenderer on the child Weapon gameobject")]
     #endregion
-    [SerializeField] SpriteRenderer weaponSpriteRenderer;
+    [SerializeField] SpriteRenderer weaponMainHandSpriteRenderer;
     #region Tooltip
     [Tooltip("Populate with the PolygonCollider2D on the child Weapon gameobject")]
     #endregion
-    [SerializeField] PolygonCollider2D weaponPolygonCollider2D;
+    [SerializeField] PolygonCollider2D weaponMainHandPolygonCollider2D;
     #region Tooltip
     [Tooltip("Populate with the Transform on the WeaponShootPosition gameobject")]
     #endregion
-    [SerializeField] Transform weaponShootPositionTransform;
+    [SerializeField] Transform weaponMainHandShootPositionTransform;
     #region Tooltip
     [Tooltip("Populate with the Transform on the WeaponEffectPosition gameobject")]
     #endregion
-    [SerializeField] Transform weaponEffectPositionTransform;
-    #region Tooltip
-    [Tooltip("Populate with the Animatior in the WeaponAnchorPosition gameobject")]
-    #endregion
-    [SerializeField] Animator weaponAnimator;
+    [SerializeField] Transform weaponMainHandEffectPositionTransform;
 
+    [Header("OFF-HAND")]
+    [Space(10)]
+    #region Tooltip
+    [Tooltip("Populate with the SpriteRenderer on the child Weapon Left Hand gameobject")]
+    #endregion
+    [SerializeField] SpriteRenderer weaponOffHandSpriteRenderer;
+    #region Tooltip
+    [Tooltip("Populate with the PolygonCollider2D on the child Weapon Left Hand gameobject")]
+    #endregion
+    [SerializeField] PolygonCollider2D weaponOffHandPolygonCollider2D;
+
+    Player player;
+    Transform offHandAnchorPosition;
+    GameObject thirdHandGameObject;
+    Vector3 startRightHandPosition;
     SetActiveWeaponEvent setActiveWeaponEvent;
-    Weapon currentWeapon;
+    Animator playerAnimator;
+    Animator weaponMainHandAnimator;
+    Animator weaponOffHandAnimator;
+    Weapon currentMainHandWeapon;
+    Weapon currentOffHandWeapon;
+    Transform offHandWeaponTransform;
+
 
     private void Awake()
     {
+        player = GetComponent<Player>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
+        playerAnimator = GetComponent<Animator>();
+        weaponMainHandAnimator = transform.GetChild(0).GetComponent<Animator>();
+
+        if (player != null)
+        {
+            thirdHandGameObject = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(3).gameObject;
+            weaponOffHandAnimator = transform.GetChild(1).GetComponent<Animator>();
+            offHandAnchorPosition = weaponOffHandAnimator.transform;
+            offHandWeaponTransform = offHandAnchorPosition.GetChild(0).GetChild(0);
+        }
     }
 
     private void OnEnable()
     {
-        setActiveWeaponEvent.OnSetActiveWeapon += SetActiveWeaponEvent_OnSetActiveWeapon;
+        setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveMainWeaponEvent_OnSetActiveMainHandWeapon;
+        setActiveWeaponEvent.OnSetInactiveMainHandWeapon += SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
+        setActiveWeaponEvent.OnSetActiveOffHandWeapon += SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon;
+        setActiveWeaponEvent.OnSetInactiveOffHandWeapon += SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
     }
 
     private void OnDisable()
     {
-<<<<<<< Updated upstream
-        setActiveWeaponEvent.OnSetActiveWeapon -= SetActiveWeaponEvent_OnSetActiveWeapon;
-=======
         setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveMainWeaponEvent_OnSetActiveMainHandWeapon;
         setActiveWeaponEvent.OnSetInactiveMainHandWeapon -= SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
         setActiveWeaponEvent.OnSetActiveOffHandWeapon -= SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon;
@@ -60,19 +92,16 @@ public class ActiveWeapon : MonoBehaviour
         player?.UpdateDamageValues();
         player?.UpdateWeaponHandlingAndCriticalValues();
         player?.UpdateEvasivenessValue();
->>>>>>> Stashed changes
     }
 
-    private void SetActiveWeaponEvent_OnSetActiveWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
     {
-        SetWeapon(setActiveWeaponEventArgs.weapon);
+        DeselectMainHandWeapon();
     }
 
-    private void SetWeapon(Weapon weapon)
+    private void SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
+        SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-<<<<<<< Updated upstream
-        currentWeapon = weapon;
-=======
         SetOffHandWeapon(setActiveWeaponEventArgs.weapon);
         weaponOffHandAnimator.SetBool(Settings.isLeft, true);
 
@@ -137,69 +166,125 @@ public class ActiveWeapon : MonoBehaviour
 
         // Set animator controller to the weapon animator
         weaponMainHandAnimator.runtimeAnimatorController = currentMainHandWeapon.weaponDetails.weaponAnimatorController;
->>>>>>> Stashed changes
 
         // Set current weapon sprite
-        weaponSpriteRenderer.sprite = currentWeapon.weaponDetails.weaponSprite;
+        weaponMainHandSpriteRenderer.sprite = currentMainHandWeapon.weaponDetails.weaponFrontSprite;
 
         // If the weapon has a polygon collider and a sprite then set it to the weapon sprite physics shape
-        if (weaponPolygonCollider2D != null && weaponSpriteRenderer.sprite != null)
+        if (weaponMainHandPolygonCollider2D != null && weaponMainHandSpriteRenderer.sprite != null)
         {
             // Get sprite physics shape - this returns the sprite physics shape points as a list of Vector2s
             List<Vector2> spritePhysicsShapePointsList = new List<Vector2>();
-            weaponSpriteRenderer.sprite.GetPhysicsShape(0, spritePhysicsShapePointsList);
+            weaponMainHandSpriteRenderer.sprite.GetPhysicsShape(0, spritePhysicsShapePointsList);
 
             // Set polygon collider on weapon to pick up physics shape for sprite - set collider points to sprite physics shape points
-            weaponPolygonCollider2D.points = spritePhysicsShapePointsList.ToArray();
-        }
-
-        // If weapon is a melee weapon, set the animator controller
-        if (weapon.weaponDetails.isMeleeWeapon)
-        {
-            weaponAnimator.runtimeAnimatorController = weapon.weaponDetails.weaponAnimatorController;
-        }
-        else
-        {
-            weaponAnimator.runtimeAnimatorController = null;
+            weaponMainHandPolygonCollider2D.points = spritePhysicsShapePointsList.ToArray();
         }
 
         // Set weapon shoot position
-        weaponShootPositionTransform.localPosition = currentWeapon.weaponDetails.weaponShootPosition;
+        weaponMainHandShootPositionTransform.localPosition = currentMainHandWeapon.weaponDetails.weaponShootPosition;
+
+        isSwitching = false;
     }
 
-    public ProjectileDetailsSO GetCurrentProjectile()
+    private void SetOffHandWeapon(Weapon weapon)
     {
-        return currentWeapon.weaponDetails.weaponCurrentProjectile;
+        currentOffHandWeapon = weapon;
+
+        // Set animator controller to the weapon animator
+        weaponOffHandAnimator.runtimeAnimatorController = currentOffHandWeapon.weaponDetails.weaponAnimatorController;
+
+        // Set current weapon sprite
+        weaponOffHandSpriteRenderer.sprite = currentOffHandWeapon.weaponDetails.weaponFrontSprite;
+
+        // If the weapon has a polygon collider and a sprite then set it to the weapon sprite physics shape
+        if (weaponOffHandPolygonCollider2D != null && weaponOffHandSpriteRenderer.sprite != null)
+        {
+            // Get sprite physics shape - this returns the sprite physics shape points as a list of Vector2s
+            List<Vector2> spritePhysicsShapePointsList = new List<Vector2>();
+            weaponOffHandSpriteRenderer.sprite.GetPhysicsShape(0, spritePhysicsShapePointsList);
+
+            // Set polygon collider on weapon to pick up physics shape for sprite - set collider points to sprite physics shape points
+            weaponOffHandPolygonCollider2D.points = spritePhysicsShapePointsList.ToArray();
+        }
+
+        if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
+        {
+            offHandWeaponTransform.localEulerAngles = Vector3.zero;
+        }
     }
 
-    public Weapon GetCurrentWeapon()
+    private void DeselectMainHandWeapon()
     {
-        return currentWeapon;
+        currentMainHandWeapon = null;
+
+        // Set current weapon sprite
+        weaponMainHandSpriteRenderer.sprite = null;
+
+        // Set very small bounds for the Polygon Collider 2D
+        Vector2[] smallBounds = new Vector2[]
+        {
+            new Vector2(0.1f, 0.1f),
+            new Vector2(0.1f, -0.1f),
+            new Vector2(-0.1f, -0.1f),
+            new Vector2(-0.1f, 0.1f)
+        };
+        weaponMainHandPolygonCollider2D.SetPath(0, smallBounds);
+
+        weaponMainHandAnimator.runtimeAnimatorController = null;
     }
 
-    public Vector3 GetShootPosition()
+    private void DeselectOffHandWeapon()
     {
-        return weaponShootPositionTransform.position;
+        currentOffHandWeapon = null;
+
+        // Set current weapon sprite
+        weaponOffHandSpriteRenderer.sprite = null;
+
+        // Set very small bounds for the Polygon Collider 2D
+        Vector2[] smallBounds = new Vector2[]
+        {
+            new Vector2(0.1f, 0.1f),
+            new Vector2(0.1f, -0.1f),
+            new Vector2(-0.1f, -0.1f),
+            new Vector2(-0.1f, 0.1f)
+        };
+        weaponOffHandPolygonCollider2D.SetPath(0, smallBounds);
+
+        weaponOffHandAnimator.runtimeAnimatorController = null;
     }
 
-    public Vector3 GetShootEffectPosition()
+    public ProjectileDetailsSO GetCurrentProjectile() => currentMainHandWeapon.weaponDetails.weaponCurrentProjectile;
+
+    public Weapon GetCurrentMainHandWeapon() => currentMainHandWeapon;
+
+    public Vector3 GetRightHandShootPosition() => weaponMainHandShootPositionTransform.position;
+
+    public Vector3 GetRightHandShootEffectPosition() => weaponMainHandEffectPositionTransform.position;
+
+    public void RemoveCurrentRightHandWeapon()
     {
-        return weaponEffectPositionTransform.position;
+        currentMainHandWeapon = null;
     }
 
-    public void RemoveCurrentWeapon()
+    public Weapon GetCurrentOffHandWeapon()
     {
-        currentWeapon = null;
+        return currentOffHandWeapon;
+    }
+
+    public void RemoveCurrentLeftHandWeapon()
+    {
+        currentOffHandWeapon = null;
     }
 
     #region Validation
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponSpriteRenderer), weaponSpriteRenderer);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponPolygonCollider2D), weaponPolygonCollider2D);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponShootPositionTransform), weaponShootPositionTransform);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponEffectPositionTransform), weaponEffectPositionTransform);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponMainHandSpriteRenderer), weaponMainHandSpriteRenderer);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponMainHandPolygonCollider2D), weaponMainHandPolygonCollider2D);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponMainHandShootPositionTransform), weaponMainHandShootPositionTransform);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponMainHandEffectPositionTransform), weaponMainHandEffectPositionTransform);
     }
 #endif
     #endregion

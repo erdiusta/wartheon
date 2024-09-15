@@ -1,9 +1,26 @@
-public class Weapon
+using System.Collections.Generic;
+
+public class Weapon : IReceivable
 {
     public WeaponDetailsSO weaponDetails;
-    public int weaponListPosition;
-    public float weaponReloadTimer;
-    public int weaponClipRemainingProjectile;
+    public float activeWeaponHandling;
+    public bool onMaindHand;
+    public int weaponBelongingToWhichMainHandSet;
+    public int weaponBelongingToWhichOffHandSet;
     public int weaponRemainingProjectile;
-    public bool isWeaponReloading;
+    public bool onPrecharge;
+    public bool onCooldown;
+}
+
+public class WeaponNameComparer : IEqualityComparer<Weapon>
+{
+    public bool Equals(Weapon x, Weapon y)
+    {
+        return x.weaponDetails.weaponName == y.weaponDetails.weaponName;
+    }
+
+    public int GetHashCode(Weapon obj)
+    {
+        return obj.weaponDetails.weaponName.GetHashCode();
+    }
 }

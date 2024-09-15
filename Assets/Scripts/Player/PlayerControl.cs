@@ -1,55 +1,56 @@
-using System;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Player))]
 [DisallowMultipleComponent]
 public class PlayerControl : MonoBehaviour
 {
-    #region Tooltip
-    [Tooltip("MovementDetailsSO scriptable object containing movement details such as speed")]
-    #endregion Tooltip
-    [SerializeField] private MovementDetailsSO movementDetails;
+    [SerializeField] float seismicSlamCircleRadius = 5f;
+    int seismicSlamDamage = 10;
 
+    [HideInInspector] public bool fireCompletedDuringPressed = false;
+    [HideInInspector] public bool isSoundPlayed = false;
+    [HideInInspector] public Coroutine unstealthRoutine;
+    [HideInInspector] public float movementTimer = 0;
+
+    Vector2 movementInput;
     Player player;
     bool leftMouseDownPreviousFrame = false;
-    int currentWeaponIndex = 1;
-    float moveSpeed;
+    bool rightMouseDownPreviousFrame = false;
     bool isPlayerMovementDisabled = false;
+    Coroutine teleportParticleRoutine;
+    Coroutine dropCoroutine;
+    Coroutine healthPotionDrinkCoroutine;
+    bool particlePlayed;
+    float unstealthImmunityTime = 2f;
+    AimDirection aimDirection;
+    int previousIndex = 1;
+
+    // Attack member variables
+    [HideInInspector] public MeleeAttackType meleeAttackTypeMainHand = MeleeAttackType.None;
+    [HideInInspector] public MeleeAttackType meleeAttackTypeOffHand = MeleeAttackType.None;
 
     private void Awake()
     {
         player = GetComponent<Player>();
+    }
 
-        moveSpeed = movementDetails.GetMoveSpeed();
+    private void OnEnable()
+    {
+        player.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
+    }
+
+    private void OnDisable()
+    {
+        player.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
     }
 
     private void Start()
     {
-        // Set starting weapon
-        SetStartingWeapon();
-
         // Set player animation speed
         SetPlayerAnimationSpeed();
-    }
-
-    /// <summary>
-    /// Set the player starting weapon
-    /// </summary>
-    private void SetStartingWeapon()
-    {
-        int index = 1;
-
-        foreach (Weapon weapon in player.weaponList)
-        {
-            if (weapon.weaponDetails == player.playerDetails.startingWeapon)
-            {
-                SetWeaponByIndex(index);
-                break;
-            }
-
-            index++;
-        }
     }
 
     /// <summary>
@@ -58,20 +59,55 @@ public class PlayerControl : MonoBehaviour
     private void SetPlayerAnimationSpeed()
     {
         // Set animator speed to match movement speed
-        player.animator.speed = moveSpeed / Settings.baseSpeedForPlayerAnimations;
+        player.animator.speed = player.movementByVelocity.moveSpeed / Settings.baseSpeedForPlayerAnimations;
     }
 
     private void Update()
     {
         // If player movement disabled then return
-        if (isPlayerMovementDisabled)
-            return;
+        if (isPlayerMovementDisabled) return;
 
-        // Process the player movement input
-        MovementInput();
+        switch (player.moveStatus)
+        {
+            case MoveStatus.Idle:
+                // Process the player weapon input
+                WeaponAndActiveItemInput();
+                // Process the player movement input
+                MovementInput();
+                // Process the player use item input
+                UseItemInput();
+                // Process the player use special move input
+                SpecialMoveInput();
+                // Drop the player's active item if have
+                DropActiveItemInput();
+                break;
+            case MoveStatus.Stagger:
+                player.polygonCollider2D.enabled = false;
+                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+                {
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                    {
+                        // Trigger fire weapon event for precharge weapons
+                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+                    }
+                }
+                StartCoroutine(Stagger());
+                break;
+            case MoveStatus.Stun:
+                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+                {
 
-        // Process the player weapon input
-        WeaponInput();
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                    {
+                        // Trigger fire weapon event for precharge weapons
+                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+                    }
+                }
+                StartCoroutine(StunRoutine());
+                break;
+            default:
+                break;
+        }     
     }
 
     /// <summary>
@@ -80,9 +116,21 @@ public class PlayerControl : MonoBehaviour
     private void MovementInput()
     {
         // Get movement input
-        float horizontalMovement = Input.GetAxisRaw("Horizontal");
-        float verticalMovement = Input.GetAxisRaw("Vertical");
-        bool rightMouseButtonDown = Input.GetMouseButtonDown(1);
+        movementInput = InputManager.Instance.movement.action.ReadValue<Vector2>().normalized;
+
+        float horizontalMovement = movementInput.x;
+        float verticalMovement = movementInput.y;
+
+        player.movementByVelocity.MovementInput = movementInput;
+
+        if (Mathf.Abs(movementInput.x) > 0.1f || Mathf.Abs(movementInput.y) > 0.1f)
+        {
+            movementTimer += Time.deltaTime;
+        }
+        else
+        {
+            movementTimer = 0;
+        }
 
         // Create a direction vector based on the input
         Vector2 direction = new Vector2(horizontalMovement, verticalMovement);
@@ -97,19 +145,31 @@ public class PlayerControl : MonoBehaviour
         if (direction != Vector2.zero)
         {
             // Trigger movement event
-            player.movementByVelocityEvent.CallMovementByVelocityEvent(direction, moveSpeed);
+            player.movementByVelocity.MoveRigidbody(direction, player.movementByVelocity.moveSpeed);
+
+            // Trigger move animations
+            player.animatePlayer.SetMovementAnimationParameters();
         }
         // Else trigger idle event
         else
         {
-            player.idleEvent.CallIdleEvent();
+            player.idle.StopVelocity();
+            player.animatePlayer.SetIdleAnimationParameters();
         }
+    }
+
+    IEnumerator Stagger()
+    {
+        yield return new WaitForSeconds(player.knockback.knockbackTimeWeight);
+
+        player.moveStatus = MoveStatus.Idle;
+        player.polygonCollider2D.enabled = true;
     }
 
     /// <summary>
     /// Weapon Input
     /// </summary>
-    private void WeaponInput()
+    private void WeaponAndActiveItemInput()
     {
         Vector3 weaponDirection;
         float weaponAngleDegrees, playerAngleDegrees;
@@ -121,11 +181,11 @@ public class PlayerControl : MonoBehaviour
         // Fire weapon input
         FireWeaponInput(weaponDirection, weaponAngleDegrees, playerAngleDegrees, playerAimDirection);
 
+        // Process the player active item input
+        FireActiveItemInput(weaponDirection, weaponAngleDegrees, playerAngleDegrees, playerAimDirection);
+
         // Switch weapon input
         SwitchWeaponInput();
-
-        // Reload weapon input
-        ReloadWeaponInput();
     }
 
     private void AimWeaponInput(out Vector3 weaponDirection, out float weaponAngleDegrees, out float playerAngleDegrees, out AimDirection playerAimDirection)
@@ -134,7 +194,7 @@ public class PlayerControl : MonoBehaviour
         Vector3 mouseWorldPosition = HelperUtilities.GetMouseWorldPosition();
 
         // Calculate direction vector of mouse cursor from weapon shoot position
-        weaponDirection = (mouseWorldPosition - player.activeWeapon.GetShootPosition());
+        weaponDirection = (mouseWorldPosition - player.activeWeapon.GetRightHandShootPosition());
 
         // Calculate direction vector of mouse cursor from player transform position
         Vector3 playerDirection = (mouseWorldPosition - transform.position);
@@ -147,163 +207,561 @@ public class PlayerControl : MonoBehaviour
 
         // Set player aim direction
         playerAimDirection = HelperUtilities.GetAimDirection(playerAngleDegrees);
+        aimDirection = playerAimDirection;
 
-        // Trigger weapon aim event
-        player.aimWeaponEvent.CallAimWeaponEvent(playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection);
+        // Trigger weapon aim methods
+        player.aimWeapon.Aim(playerAimDirection, playerAngleDegrees);
+        player.animatePlayer.InitializeAimAnimationParameters();
+        player.animatePlayer.SetAimWeaponAnimationParameters(playerAimDirection);
     }
 
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
-        // Fire when left mouse button is clicked
-        if (Input.GetMouseButton(0))
+        // If glossary book is open, disable attack
+        if (GameManager.Instance.glossaryBookOpen) return;
+
+        // If pop-up window is open, disable attack
+        if (GameManager.Instance.popUpWindowOpen) return;
+
+        if (player.activeWeapon.GetCurrentMainHandWeapon() == null) return;
+
+        // Fire when left mouse button is clicked - melee
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
         {
+            // Check for quick tap input
+            if (InputManager.Instance.attack.action.WasPerformedThisFrame())
+            {
+                player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+
+                diceAgainForMainHand:
+
+                int randomNum = Random.Range(1, 101);
+                int selectedWeaponMoveIndex;
+
+                if (randomNum <= 40)
+                {
+                    selectedWeaponMoveIndex = 1;
+                }
+                else if (randomNum <= 70)
+                {
+                    selectedWeaponMoveIndex = 2;
+                }
+                else
+                {
+                    selectedWeaponMoveIndex = 3;
+                }
+
+                switch (selectedWeaponMoveIndex)
+                {
+                    case 1:
+                        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasSwing)
+                        {
+                            meleeAttackTypeMainHand = MeleeAttackType.Swing;
+                        }
+                        else
+                        {
+                            goto diceAgainForMainHand;
+                        }
+                        break;
+                    case 2:
+                        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasSweep)
+                        {
+                            meleeAttackTypeMainHand = MeleeAttackType.Sweep;
+                        }
+                        else
+                        {
+                            goto diceAgainForMainHand;
+                        }
+                        break;
+                    case 3:
+                        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasThrust)
+                        {
+                            meleeAttackTypeMainHand = MeleeAttackType.Thrust;
+                        }
+                        else
+                        {
+                            goto diceAgainForMainHand;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), meleeAttackTypeMainHand);
+            }
+
+            // Return after moves finished if off-hand weapon is free or a shield
+            if (player.activeWeapon.GetCurrentOffHandWeapon() == null || player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+            {
+                return;
+            }
+        }
+
+        if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
+        {
+            // Fire when right mouse button is clicked - melee off-hand
+            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon)
+            {
+                // Check for quick tap input
+                if (InputManager.Instance.attackOffHand.action.WasPerformedThisFrame())
+                {
+                    player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
+
+                    diceAgainForOffHand:
+
+                    int randomNum = Random.Range(1, 101);
+                    int selectedWeaponMoveIndex;
+
+                    if (randomNum <= 40)
+                    {
+                        selectedWeaponMoveIndex = 1;
+                    }
+                    else if (randomNum <= 70)
+                    {
+                        selectedWeaponMoveIndex = 2;
+                    }
+                    else
+                    {
+                        selectedWeaponMoveIndex = 3;
+                    }
+
+                    switch (selectedWeaponMoveIndex)
+                    {
+                        case 1:
+                            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasSwing)
+                            {
+                                meleeAttackTypeOffHand = MeleeAttackType.Swing;
+                            }
+                            else
+                            {
+                                goto diceAgainForOffHand;
+                            }
+                            break;
+                        case 2:
+                            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasSweep)
+                            {
+                                meleeAttackTypeOffHand = MeleeAttackType.Sweep;
+                            }
+                            else
+                            {
+                                goto diceAgainForOffHand;
+                            }
+                            break;
+                        case 3:
+                            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasThrust)
+                            {
+                                meleeAttackTypeOffHand = MeleeAttackType.Thrust;
+                            }
+                            else
+                            {
+                                goto diceAgainForOffHand;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), meleeAttackTypeOffHand);
+
+                }
+
+                // Don't pass to the ranged weapon elements so finish method here while returning
+                return;
+            }
+        }
+
+        // Fire when left mouse button is clicked
+        if (InputManager.Instance.attack.action.WasPerformedThisFrame())
+        {
+            //Reset precharge for loading again
+            fireCompletedDuringPressed = false;
+            isSoundPlayed = false;
+
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f) return;
+
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
+            {
+                player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+                player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
+            }
+
             // Trigger fire weapon event
-            player.fireWeaponEvent.CallFireWeaponEvent(true, leftMouseDownPreviousFrame, playerAimDirection, playerAngleDegrees, 
-                weaponAngleDegrees, weaponDirection);
-            leftMouseDownPreviousFrame = true;
+            player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
+        }
+
+        // Fire for precharge weapons
+        if (InputManager.Instance.attack.action.IsPressed())
+        {
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f && !fireCompletedDuringPressed)
+            {
+                leftMouseDownPreviousFrame = true;
+
+                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                {
+                    player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection,player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
+                }
+
+                // Trigger fire weapon event for precharge weapons
+                player.fireWeaponEvent.CallFireWeaponEvent(true, leftMouseDownPreviousFrame, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
+            }
+
+            if (fireCompletedDuringPressed) return;
         }
         else
         {
+            // Reset hasFired when the mouse button is released
             leftMouseDownPreviousFrame = false;
+
+            // Trigger fire weapon event for precharge weapons
+            player.fireWeaponEvent.CallFireWeaponEvent(false, leftMouseDownPreviousFrame, playerAimDirection, playerAngleDegrees,weaponAngleDegrees, weaponDirection, false);
         }
+
+        // Fire when right mouse button is clicked
+        if (InputManager.Instance.attackOffHand.action.WasPerformedThisFrame())
+        {
+            if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
+                return;
+
+            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass != WeaponClass.Shield ||
+                player.activeWeapon.GetCurrentOffHandWeapon() != null)
+            {
+                if (!player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon)
+                {
+                    rightMouseDownPreviousFrame = true;
+                }
+            }
+        }
+        else
+        {
+            rightMouseDownPreviousFrame = false;
+        }
+    }
+
+    /// <summary>
+    /// Active Item Input
+    /// </summary>
+    private void FireActiveItemInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
+    {
+        if (player.selectedActiveItem.GetCurrentActiveItem() != null)
+        {
+            // Use active item when clicked if it is a static item like a dummy
+            if (InputManager.Instance.activeItem.action.WasPressedThisFrame())
+            {
+                if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Dummy)
+                {
+                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
+                    {
+                        if (player.selectedActiveItem.GetCurrentActiveItem().decoyUsed == false)
+                        {
+                            player.selectedActiveItem.GetCurrentActiveItem().decoyUsed = true;
+
+                            GameObject decoyObject = Instantiate(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray[0],
+                                transform.position, Quaternion.identity);
+
+                            StaticEventHandler.CallDecoySpawned(decoyObject.GetComponent<Decoy>());
+                            player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
+
+                            // Call weapon fired event
+                            player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                        }
+                    }
+                }
+                else if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Hourglass)
+                {
+                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
+                    {
+                        if (player.selectedActiveItem.GetCurrentActiveItem().hourGlassUsed == false)
+                        {
+                            player.selectedActiveItem.GetCurrentActiveItem().hourGlassUsed = true;
+
+                            GameObject hourGlassObject = Instantiate(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray[0],
+                            transform.position, Quaternion.identity);
+
+                            hourGlassObject.GetComponent<Animator>().SetTrigger("burst");
+                            SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemSwingSoundEffect);
+                            Time.timeScale = 0.5f;
+
+                            StaticEventHandler.CallHourglassSpawned();
+                            player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
+
+                            // Call weapon fired event
+                            player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                        }
+                    }
+                }
+                else if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Compass)
+                {
+                    StaticEventHandler.CallCompassEnabled();
+                }
+                else if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Potion &&
+                    !player.selectedActiveItem.GetCurrentActiveItem().potionDrank)
+                {
+                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
+                    {
+                        if (healthPotionDrinkCoroutine == null)
+                        {
+                            SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemUseSoundEffect);
+                            player.selectedActiveItem.GetCurrentActiveItem().potionDrank = true;
+                            healthPotionDrinkCoroutine = StartCoroutine(AddHealthCoroutine((int)(50f / player.health.GetStartingHealth() * 100)));
+
+                            player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
+
+                            // Call weapon fired event
+                            player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                        }
+                    }
+                }
+                else if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Summoner)
+                {
+                    switch (GameManager.Instance.GetCurrentRoom().roomNodeType.roomNodeTypeName)
+                    {
+                        // If player is in these below room types, summon is not allowed.
+                        case "Boss Foyer":
+                        case "Chest Room":
+                        case "Corridor":
+                        case "Corridor EW":
+                        case "Corridor NS":
+                        case "Entrance":
+                        case "Shop Room":
+                            return;
+
+                        default:
+                            break;
+                    }
+
+                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
+                    {
+                        int selectedIndex = Random.Range(0, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray.Length);
+                        GameObject summonedEnemyPrefab = player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemPrefabArray[selectedIndex];
+
+                        GameObject summonedEnemyObject = Instantiate(summonedEnemyPrefab, transform.position, Quaternion.identity);
+                        Enemy enemy = summonedEnemyObject.GetComponent<Enemy>();
+                        SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemUseSoundEffect);
+
+                        enemy.EnemyInitialization(enemy.enemyMovementAI.enemyDetails, 15, GameManager.Instance.GetCurrentDungeonLevel());
+                        player.summonedEnemies.Add(summonedEnemyObject);
+
+                        player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
+
+                        if (GameManager.Instance.GetCurrentRoom().isClearedOfEnemies)
+                        {
+                            Destroy(summonedEnemyObject);
+                        }
+
+                        // Call weapon fired event
+                        player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                    }
+                }
+                else if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Potion)
+                {
+                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
+                    {
+                        player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
+
+                        // Call weapon fired event
+                        player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
+                    }
+                }
+                // Trigger fire weapon event if item is treated as a projectile
+                else
+                {
+                    player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, true);
+                }
+            }
+        }
+    }
+
+    IEnumerator AddHealthCoroutine(float healthAmount)
+    {
+        float healthForEachStep = 3f;
+        float accumulatedHealth = 0f;
+
+        while (healthAmount > accumulatedHealth)
+        {
+            accumulatedHealth += healthForEachStep;
+            player.health.AddHealth((int)healthForEachStep);
+            StaticEventHandler.CallBookHealthChangedEvent(player.health.currentHealth);
+
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        healthPotionDrinkCoroutine = null;
+
+        yield return null;
+    }
+
+    private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
+    {
+        // Trigger reset prechager mechanism in case a hit taken during the precharge
+        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
     }
 
     private void SwitchWeaponInput()
     {
+        float scrollValue = (InputManager.Instance.switchWeapon.action.ReadValue<Vector2>().normalized).y;
+
         // Switch weapon if mouse scroll wheel selecetd
-        if (Input.mouseScrollDelta.y < 0f)
+        if (scrollValue < 0f)
         {
-            PreviousWeapon();
+            PreviousWeaponSet(true);
         }
 
-        if (Input.mouseScrollDelta.y > 0f)
+        if (scrollValue > 0f)
         {
-            NextWeapon();
-        }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SetWeaponByIndex(1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SetWeaponByIndex(2);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SetWeaponByIndex(3);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            SetWeaponByIndex(4);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            SetWeaponByIndex(5);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            SetWeaponByIndex(6);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            SetWeaponByIndex(7);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            SetWeaponByIndex(8);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            SetWeaponByIndex(9);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            SetWeaponByIndex(10);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Minus))
-        {
-            SetCurrentWeaponToFirstInTheList();
+            NextWeaponSet(true, true);
         }
     }
 
-    private void NextWeapon()
+    public void NextWeaponSet(bool onlySwitch, bool mouseWheel, int setNumber = 0)
     {
-        currentWeaponIndex++;
-
-        if (currentWeaponIndex > player.weaponList.Count)
+        if (mouseWheel)
         {
-            currentWeaponIndex = 1;
-        }
+            // Cache previous weapon slot index
+            InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
 
-        SetWeaponByIndex(currentWeaponIndex);
+            // Set previous index
+            previousIndex = player.currentWeaponSlotSetIndex;
 
-    }
+            // Increment the current weapon slot set index
+            player.currentWeaponSlotSetIndex++;
 
-    private void PreviousWeapon()
-    {
-        currentWeaponIndex--;
-
-        if (currentWeaponIndex < 1)
-        {
-            currentWeaponIndex = player.weaponList.Count;
-        }
-
-        SetWeaponByIndex(currentWeaponIndex);
-    }
-
-    private void SetWeaponByIndex(int weaponIndex)
-    {
-        if (weaponIndex - 1 < player.weaponList.Count)
-        {
-            currentWeaponIndex = weaponIndex;
-
-            if (player.weaponList[weaponIndex - 1].weaponDetails.isMeleeWeapon)
+            if (player.currentWeaponSlotSetIndex > 3)
             {
-                player.setActiveWeaponEvent.CallSetActiveWeaponEvent(player.weaponList[weaponIndex - 1], 
-                    player.weaponList[weaponIndex - 1].weaponDetails.weaponAnimatorController);
+                player.currentWeaponSlotSetIndex = 1;
+            }
+
+            SetWeaponSetByIndex(onlySwitch);
+        }
+        else
+        {
+            if (player.currentWeaponSlotSetIndex == setNumber) return;
+
+            // Cache previous weapon slot index
+            InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+
+            player.currentWeaponSlotSetIndex = setNumber;
+            SetWeaponSetByIndex(onlySwitch);
+        }
+
+        HighlightWeaponSetButton();
+    }
+
+    public void PreviousWeaponSet(bool onlySwitch)
+    {
+        // Cache previous weapon slot index
+        InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+
+        previousIndex = player.currentWeaponSlotSetIndex;
+
+        // Decrease the current weapon slot set index
+        player.currentWeaponSlotSetIndex--;
+
+        if (player.currentWeaponSlotSetIndex < 1)
+        {
+            player.currentWeaponSlotSetIndex = 3;
+        }
+
+        SetWeaponSetByIndex(onlySwitch);
+
+        HighlightWeaponSetButton();
+    }
+
+    public void SetWeaponSetByIndex(bool onlySwitch)
+    {
+        // ACTIVE WEAPON VARIABLES SWITCH
+        if (player.weaponSlotSetArray[previousIndex - 1][1] != null)
+        {
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+        }
+
+        // WEAPON SLOTS SWITCH
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+        {
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0],
+                player.currentWeaponSlotSetIndex);
+
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
+            {
+                player.setActiveWeaponEvent.CallOneHandWeaponEquipEvent();
+            }
+            else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+            {
+                player.setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
+            }
+        }
+        else
+        {
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+        }
+
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null)
+        {
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1], player.currentWeaponSlotSetIndex);
+        }
+        else
+        {
+            if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+            {
+                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                {
+                    player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+                }
             }
             else
             {
-                player.setActiveWeaponEvent.CallSetActiveWeaponEvent(player.weaponList[weaponIndex - 1], null);
+                player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+            }
+        }
+
+        // BOOK UI SWITCH
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+        {
+            PopulateMainHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], onlySwitch);
+        }
+        else
+        {
+            RemoveMainHandWeaponFromBook();
+        }
+
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null)
+        {
+            PopulateOffHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]);
+        }
+        else
+        {
+            if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+            {
+                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
+                {
+                    RemoveOffHandWeaponsFromBook();
+                }
+            }
+            else
+            {
+                RemoveOffHandWeaponsFromBook();
             }
         }
     }
 
-    private void ReloadWeaponInput()
+    /// <summary>
+    /// Highlight weapon set button to be seen clearly
+    /// </summary>
+    private void HighlightWeaponSetButton()
     {
-        Weapon currentWeapon = player.activeWeapon.GetCurrentWeapon();
+        // Get the button container
+        Transform buttonContainer = GameManager.Instance.bookView.transform.GetChild(1).GetChild(3).GetChild(0);
 
-        // If current weapon is reloading return
-        if (currentWeapon.isWeaponReloading) 
-            return;
+        // Clamp the index within the valid range (assuming 3 weapon slots)
+        player.currentWeaponSlotSetIndex = Mathf.Clamp(player.currentWeaponSlotSetIndex, 1, 3);
 
-        // If remaining projectile is less than clip capacity then return and not infinite projectile then return
-        if (currentWeapon.weaponRemainingProjectile < currentWeapon.weaponDetails.weaponClipProjectileCapacity && 
-            !currentWeapon.weaponDetails.hasInfiniteProjectile) 
-            return;
-
-        // if projectile in clip equals clip capacity then return
-        if (currentWeapon.weaponClipRemainingProjectile == currentWeapon.weaponDetails.weaponClipProjectileCapacity) 
-            return;
-
-        if (Input.GetKeyDown(KeyCode.R))
+        // Loop through all buttons to reset them to the normal state
+        for (int i = 0; i < buttonContainer.childCount; i++)
         {
-            // Call the reload weapon event
-            player.reloadWeaponEvent.CallReloadWeaponEvent(player.activeWeapon.GetCurrentWeapon(), 0);
+            Button button = buttonContainer.GetChild(i).GetComponent<Button>();
+            ColorBlock cb = button.colors;
+            button.image.color = cb.normalColor;  // Reset to normal color
         }
-<<<<<<< Updated upstream
-=======
 
         // Highlight the current button
         Button highlightedButton = buttonContainer.GetChild(player.currentWeaponSlotSetIndex - 1).GetComponent<Button>();
@@ -1164,7 +1622,6 @@ public class PlayerControl : MonoBehaviour
         dropCoroutine = null;
         chestItem.boxCollider2D.enabled = true;
         chestItem.isColliding = false;
->>>>>>> Stashed changes
     }
 
     /// <summary>
@@ -1173,6 +1630,7 @@ public class PlayerControl : MonoBehaviour
     public void EnablePlayer()
     {
         isPlayerMovementDisabled = false;
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.moveSpeed;
     }
 
     /// <summary>
@@ -1181,49 +1639,60 @@ public class PlayerControl : MonoBehaviour
     public void DisablePlayer()
     {
         isPlayerMovementDisabled = true;
-        player.idleEvent.CallIdleEvent();
+        player.movementByVelocity.moveSpeed = 0f;
+        player.idle.StopVelocity();
+        player.animatePlayer.SetIdleAnimationParameters();
     }
 
-    /// <summary>
-    /// Set the current weapon to be first in the player weapon list
-    /// </summary>
-    private void SetCurrentWeaponToFirstInTheList()
+    public AimDirection GetAimDirection()
     {
-        // Create new temporary list
-        List<Weapon> tempWeaponList = new List<Weapon>();
-
-        // Add the current weapon to first in the temp list
-        Weapon currentWeapon = player.weaponList[currentWeaponIndex - 1];
-        currentWeapon.weaponListPosition = 1;
-        tempWeaponList.Add(currentWeapon);
-
-        // Loop through existing weapon list and add - skipping current weapon
-        int index = 2;
-
-        foreach (Weapon weapon in player.weaponList)
-        {
-            if (weapon == currentWeapon) continue;
-
-            tempWeaponList.Add(weapon);
-            weapon.weaponListPosition = index;
-            index++;
-        }
-
-        // Assign new list
-        player.weaponList = tempWeaponList;
-
-        currentWeaponIndex = 1;
-
-        // Set current weapon
-        SetWeaponByIndex(currentWeaponIndex);
+        return aimDirection;
     }
 
-    #region Validation
-#if UNITY_EDITOR
-    private void OnValidate()
+    // This method visualizes the radius of the seismic slam for debugging purposes.
+    private void OnDrawGizmosSelected()
     {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(movementDetails), movementDetails);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, seismicSlamCircleRadius);
     }
-#endif
-    #endregion
+
+    public void PopulateMainHandWeaponsToBook(Weapon weapon, bool onlySwitch)
+    {
+        StaticEventHandler.CallWeaponAddedToMainHandBook(weapon, onlySwitch);
+    }
+
+    public void RemoveMainHandWeaponFromBook()
+    {
+        StaticEventHandler.CallWeaponRemovedFromMainHandBook();
+    }
+
+    public void PopulateOffHandWeaponsToBook(Weapon weapon)
+    {
+        StaticEventHandler.CallWeaponAddedToOffHandBook(weapon);
+    }
+
+    public void RemoveOffHandWeaponsFromBook()
+    {
+        StaticEventHandler.CallWeaponRemovedFromOffHandBook();
+    }
+
+    public void PopulateActiveItemsToBook(Sprite sprite)
+    {
+        StaticEventHandler.CallItemAddedToActiveItemSlot(sprite);
+    }
+
+    public void RemoveActiveItemFromBook()
+    {
+        StaticEventHandler.CallItemRemovedFromActiveItemSlot();
+    }
+
+    public void PopulatePassiveItemsToBook(Sprite sprite, PassiveItemSlotName itemSlotName)
+    {
+        StaticEventHandler.CallItemAddedToPassiveItemSlot(sprite, itemSlotName);
+    }
+
+    public void RemovePassiveItemFromBook(Sprite sprite, PassiveItemSlotName itemSlotName)
+    {
+        StaticEventHandler.CallItemRemovedFromPassiveItemSlot(sprite, itemSlotName);
+    }
 }
