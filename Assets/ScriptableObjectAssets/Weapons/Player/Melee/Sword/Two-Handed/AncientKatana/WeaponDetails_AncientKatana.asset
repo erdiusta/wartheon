@@ -14,13 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Ancient Katana
   weaponTitle: 8
+  weaponLevel: 2
+  weaponClass: 0
+  weaponHitSpeed: 0
+  wieldType: 1
+  elementalBias: 4
+  elementalForgeRate: 0.3
+  price: 8
   weaponFrontSprite: {fileID: 437882294, guid: 9457e2a908b446143be8f66c689e482b, type: 3}
   weaponRearSprite: {fileID: 437882294, guid: 9457e2a908b446143be8f66c689e482b, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: 620e6efab460df34683eb9aa7eac3bde, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: 0bdb90476edb4b94f9d3c2c117425bf9, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 21e16997976246844b6585ed4994d05f, type: 2}
-  weaponClass: 0
-  wieldType: 1
-  price: 8
   canKillSuddenly: 1
   suddenKillChance: 0.1
   hasAcid: 0

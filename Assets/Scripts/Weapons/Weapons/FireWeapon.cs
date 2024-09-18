@@ -357,7 +357,7 @@ public class FireWeapon : MonoBehaviour
             activeWeapon.GetCurrentMainHandWeapon().onPrecharge = false;
         }
 
-        if (tag == Settings.playerTag && activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
+        if (tag == Settings.playerTag && activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponPrechargeTime > 0f)
         {
             // Check for first frame for not jumping to fire completed
             if (firePreviousFrame == true)

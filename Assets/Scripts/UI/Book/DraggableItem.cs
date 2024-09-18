@@ -13,6 +13,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public bool contactSuccessful;
     [HideInInspector] public bool justMoveNotSwap;
     [HideInInspector] public bool isLockIcon;
+    [HideInInspector] public bool dragMainSlotOff;
 
     CanvasGroup canvasGroup;
     RectTransform rectTransform;
@@ -117,6 +118,11 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         if (contactSuccessful)
         {
+            if (dragMainSlotOff)
+            {
+                Destroy(InventoryManager.Instance.mainHandEquippedSlot.GetChild(1)?.gameObject); // Destroy unnecessary duplicate weapon image on slots if has
+            }
+
             if (justMoveNotSwap) return; // This is only valid for swaps
 
             if(belongingSlot.transform.GetChild(1).childCount > 1)
@@ -173,6 +179,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                     player.weaponSlotSetArray[InventoryManager.Instance.GetOriginalSlotIndex() - 1][1] == null)
                 {
                     Destroy(belongingSlot.transform.GetChild(1).GetChild(belongingSlot.transform.GetChild(1).childCount - 1).gameObject);
+                    receivable = null;
                     Destroy(this);
                 }
                 if (belongingSlot != null)
@@ -190,6 +197,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                         // Clear children duplicate slots if has
                         InventoryManager.Instance.ClearIntendedElementInActiveItemEquippedSlot();
                     }
+
+                    receivable = null;
                 }
             }
             else if (eventData.pointerEnter.CompareTag(Settings.bookCover))
@@ -261,6 +270,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     }
 
     public Weapon GetDraggedWeapon() => (Weapon)receivable;
+
+    public ActiveItem GetDraggedActiveItem() => (ActiveItem)receivable;
 
     public int GetSetNumber()
     {

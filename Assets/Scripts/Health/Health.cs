@@ -58,8 +58,6 @@ public class Health : MonoBehaviour
         // Get player / enemy hit immunity details
         if (player != null)
         {
-            currentArmorValue = player.playerDetails.playerArmorValue;
-
             if (player.playerDetails.isImmuneAfterHit)
             {
                 isImmuneAfterHit = true;
@@ -570,7 +568,7 @@ public class Health : MonoBehaviour
             }
             else if (player.armorStatus == ArmorStatus.SilverArmor)
             {
-                currentArmorValue = 5 + (int)(player.playerDetails.playerArmorValue * 1.5f);
+                player.currentPhysicalResistanceValue = 5 + (int)(player.playerDetails.physicalResistance * 1.5f);
             }
         }
 
@@ -594,7 +592,7 @@ public class Health : MonoBehaviour
     {
         if (player != null)
         {
-            currentArmorValue = player.playerDetails.playerArmorValue;
+            player.currentPhysicalResistanceValue = player.playerDetails.physicalResistance;
         }
     }
 

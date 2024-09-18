@@ -2,13 +2,6 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Tilemaps;
 
-[System.Serializable]
-public class WeaponAnimator
-{
-    public string weaponName;
-    public RuntimeAnimatorController weaponHoverAnimatorController;
-}
-
 public class GameResources : MonoBehaviour
 {
     private static GameResources instance;

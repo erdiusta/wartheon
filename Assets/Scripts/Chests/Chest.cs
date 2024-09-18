@@ -79,7 +79,6 @@ public class Chest : MonoBehaviour, IUsable
                 break;
 
             case ChestState.weaponItem:
-                //CollectWeaponItem();
                 break;
 
             case ChestState.empty:
@@ -133,7 +132,7 @@ public class Chest : MonoBehaviour, IUsable
         Weapon weapon = new Weapon();
         weapon.weaponDetails = weaponDetails;
 
-        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, itemSpawnPoint.position);
+        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, itemSpawnPoint.position);
     }
 
     /// <summary>

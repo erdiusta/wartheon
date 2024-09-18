@@ -31,19 +31,16 @@ MonoBehaviour:
   acidEfficiency: 0.2
   isPoisonous: 0
   poisonChance: 0
-  hasBleedingDamage: 0
-  bleedingChance: 0
   hasStunDamage: 0
   stunChance: 0
-  hasSlowDamage: 0
-  slowChance: 0
-  gravity: 0
+  hasCurseDamage: 0
+  curseChance: 0
   projectileSpreadMin: 9
   projectileSpreadMax: 15
-  projectileSpawnAmountMin: 2
-  projectileSpawnAmountMax: 5
-  projectileSpawnIntervalMin: 2
-  projectileSpawnIntervalMax: 3
+  projectileSpawnAmountMin: 1
+  projectileSpawnAmountMax: 3
+  projectileSpawnIntervalMin: 3
+  projectileSpawnIntervalMax: 4
   isProjectileTrail: 0
   projectileTrailTime: 0
   projectileTrailMaterial: {fileID: 0}

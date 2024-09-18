@@ -14,13 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Scimitar
   weaponTitle: 2
+  weaponLevel: 1
+  weaponClass: 0
+  weaponHitSpeed: 3
+  wieldType: 0
+  elementalBias: 1
+  elementalForgeRate: 0.15
+  price: 5
   weaponFrontSprite: {fileID: -1563044547, guid: 7dbf7b58221d0454c95d77b126efc0eb, type: 3}
   weaponRearSprite: {fileID: -1563044547, guid: 7dbf7b58221d0454c95d77b126efc0eb, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: 6b0919a94ef424041b0130085cb6429e, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: ebf33c8a4d54dd84a8afba37c172e5bb, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: f145ce2e6c24b0543964f14a5a2b7bb6, type: 2}
-  weaponClass: 0
-  wieldType: 0
-  price: 5
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0

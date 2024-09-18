@@ -14,13 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Solar Flare
   weaponTitle: 16
+  weaponLevel: 1
+  weaponClass: 5
+  wieldType: 1
+  elementalBias: 1
+  elementalForgeRate: 1
+  price: 10
   weaponFrontSprite: {fileID: 893488457, guid: 0065d7bbd45b1b84784808c6480a6ea9, type: 3}
   weaponRearSprite: {fileID: 893488457, guid: 0065d7bbd45b1b84784808c6480a6ea9, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: a8b1afc85b8001746872cd67709aef9b, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: b85240d0397e1da439abe0652fed15a8, type: 2}
-  weaponClass: 5
-  wieldType: 1
-  price: 10
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0

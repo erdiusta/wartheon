@@ -137,7 +137,7 @@ public class SpecialMoveUI : MonoBehaviour
                 if (player.specialMoveThreeDurationTimer >= player.playerDetails.specialMoveThreeDuration)
                 {
                     player.healthEvent.CallGemSkinSpecialMoveEndEvent();
-                    GameManager.Instance.GetPlayer().health.currentArmorValue = GameManager.Instance.GetPlayer().playerDetails.playerArmorValue; // Reset armor value
+                    GameManager.Instance.GetPlayer().currentPhysicalResistanceValue= GameManager.Instance.GetPlayer().playerDetails.physicalResistance; // Reset physical res value
                 }
             }
 

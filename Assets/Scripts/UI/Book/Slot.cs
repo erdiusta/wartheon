@@ -1,19 +1,293 @@
+using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Slot : MonoBehaviour, IDropHandler
+public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public SlotType slotType;
+    public RectTransform tooltipPanel;
 
     Player player;
     Transform backgroundTransform;
     Transform equippedTransform;
+
+    // Tooltip Panel Weapon Texts
+    [Header("TOOLTIP PANEL FOR WEAPONS")]
+    [Space(10)]
+    [SerializeField] TextMeshProUGUI headerText;
+    [SerializeField] TextMeshProUGUI levelText;
+    [SerializeField] TextMeshProUGUI weaponClassText;
+    [SerializeField] TextMeshProUGUI hitSpeedText;
+    [SerializeField] TextMeshProUGUI weaponWieldText;
+    [SerializeField] TextMeshProUGUI damageText;
+    [SerializeField] TextMeshProUGUI baseHandlingText;
+    [SerializeField] TextMeshProUGUI crHitChanceText;
+    [SerializeField] TextMeshProUGUI crHitDamageText;
+    [SerializeField] TextMeshProUGUI elementalBiasText;
+    [SerializeField] TextMeshProUGUI elementText;
+    [SerializeField] TextMeshProUGUI elementalForgeRateText;
+    [SerializeField] TextMeshProUGUI masteryText1;
+    [SerializeField] TextMeshProUGUI masteryText2;
+    [SerializeField] TextMeshProUGUI masteryText3;
+
+    // Weapon Level 
+    [Header("WEAPON LEVEL COLORS")]
+    [Space(10)]
+    Color basicLevelColor1 = new Color(1, 1, 1);
+    Color basicLevelColor2 = new Color(0.2196078f, 0.172549f, 0.172549f);
+    Color enchantedLevelColor1 = new Color(1, 1, 1);
+    Color enchantedLevelColor2 = new Color(0f, 0.4588235f, 1f);
+    Color mythicLevelColor1 = new Color(1, 1, 1);
+    Color mythicLevelColor2 = new Color(0.6745098f, 0, 1);
+    Color legendaryLevelColor1 = new Color(1, 1, 1);
+    Color legendaryLevelColor2 = new Color(1f, 0.09411765f, 0f);
+
+    // Weapon Level 
+    [Header("ELEMENTAL COLORS")]
+    [Space(10)]
+    Color noneElementalColor1 = new Color(1, 1, 1);
+    Color noneElementalColor2 = new Color(1, 1, 1);
+    Color fireColor1 = new Color(0.9686275f, 1, 0.2980392f);
+    Color fireColor2 = new Color(1f, 0.1921569f, 0.2431373f);
+    Color waterColor1 = new Color(0.8431373f, 0.9647059f, 1);
+    Color waterColor2 = new Color(0, 0.5882353f, 1);
+    Color airColor1 = new Color(1, 1, 1);
+    Color airColor2 = new Color(0.4235294f, 0.4235294f, 0.4235294f);
+    Color earthColor1 = new Color(0.5647059f, 1f, 0.2509804f);
+    Color earthColor2 = new Color(0.02352941f, 0.4352941f, 0.03529412f);
+    Color lightColor1 = new Color(1, 1, 1);
+    Color lightColor2 = new Color(0.9716981f, 0.8067644f, 0f);
+    Color darkColor1 = new Color(0.627451f, 0, 1);
+    Color darkColor2 = new Color(0.6784314f, 0.01568628f, 0.5607843f);
 
     private void OnEnable()
     {
         player = GameManager.Instance.GetPlayer();
         backgroundTransform = transform.GetChild(0);
         equippedTransform = transform.GetChild(1);
+
+        tooltipPanel.transform.localPosition = new Vector3(60f, 30f, 0f);
+        UpdateTooltipPanelInfo();
+    }
+
+    private void UpdateTooltipPanelInfo()
+    {
+        Transform currentChild = null;
+
+        if (slotType == SlotType.Passive) return;
+
+        if (slotType == SlotType.Active)
+        {
+            // Check if the slot is occupied
+            if (equippedTransform.childCount > 0)
+            {
+                currentChild = equippedTransform.GetChild(0);
+
+                // Retrieve draggable item and weapon from current child
+                DraggableItem slotDragggableItem = currentChild.GetComponent<DraggableItem>();
+                ActiveItem activeItem = slotDragggableItem.GetDraggedActiveItem();
+
+                if (activeItem != null)
+                {
+                    headerText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.black, Color.black);
+                    headerText.text = activeItem.activeItemDetails.activeItemName;
+                    levelText.text = $"(Active Item)";
+                }
+
+                //levelText.text = $"({weapon.weaponDetails.weaponLevel.ToString()})";
+                //weaponClassText.text = $"Class: {weapon.weaponDetails.weaponClass.ToString()}";
+
+                //if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
+                //{
+                //    weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
+                //    damageText.text = $"Deflect Rate: {weapon.weaponDetails.projectileDeflectRatio * 100}%";
+                //}
+                //else
+                //{
+                //    hitSpeedText.text = $"Speed: {weapon.weaponDetails.weaponHitSpeed.ToString()}";
+                //    weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
+                //    damageText.text = $"Damage: {weapon.weaponDetails.meleeDamageMin}-{weapon.weaponDetails.meleeDamageMax}";
+                //}
+
+                //baseHandlingText.text = $"Base Handling: {weapon.weaponDetails.weaponBaseHandling * 100}%";
+                //crHitChanceText.text = $"Base Cr. Hit Chance: {weapon.weaponDetails.criticalHitChance * 100}%";
+                //crHitDamageText.text = $"Base Cr. Hit Damage: {weapon.weaponDetails.criticalHitDamageMultiplier * 100}%";
+                //elementalBiasText.text = "Elemental Bias";
+            }
+        }
+
+        if (slotType == SlotType.WeaponMainHand || slotType == SlotType.WeaponOffHand)
+        {
+            if (slotType == SlotType.WeaponMainHand)
+            {
+                if (player.activeWeapon.GetCurrentMainHandWeapon() == null)
+                {
+                    tooltipPanel.gameObject.SetActive(false);
+                    return;
+                }
+            }
+            else if (slotType == SlotType.WeaponOffHand)
+            {
+                // Cancel tooltip panel transaction if hovered image is lock image at off-hand
+                if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.wieldType == WieldType.TwoHanded)
+                {
+                    tooltipPanel.gameObject.SetActive(false);
+                    return;
+                }
+
+                if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
+                {
+                    tooltipPanel.gameObject.SetActive(false);
+                    return;
+                }
+            }
+
+            // Check if the slot is occupied
+            if (equippedTransform.childCount > 0)
+            {
+                currentChild = equippedTransform.GetChild(0);
+
+                // Retrieve draggable item and weapon from current child
+                DraggableItem slotDragggableItem = currentChild.GetComponent<DraggableItem>();
+                Weapon weapon = slotDragggableItem.GetDraggedWeapon();
+
+                if (weapon != null)
+                {
+                    // Populate text field based on the related weapon info
+                    switch (weapon.weaponDetails.weaponLevel)
+                    {
+                        case WeaponLevel.Basic:
+                            headerText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                            levelText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                            break;
+                        case WeaponLevel.Enchanted:
+                            headerText.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                            levelText.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                            break;
+                        case WeaponLevel.Mythic:
+                            headerText.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                            levelText.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                            break;
+                        case WeaponLevel.Legendary:
+                            headerText.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
+                            levelText.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    headerText.text = weapon.weaponDetails.weaponName;
+                    levelText.text = $"({weapon.weaponDetails.weaponLevel.ToString()})";
+                    weaponClassText.text = $"Class: {weapon.weaponDetails.weaponClass.ToString()}";
+
+                    if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
+                    {
+                        weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
+                        damageText.text = $"Deflect Rate: {weapon.weaponDetails.projectileDeflectRatio * 100}%";
+                    }
+                    else
+                    {
+                        hitSpeedText.text = $"Speed: {weapon.weaponDetails.weaponHitSpeed.ToString()}";
+                        weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
+
+                        if (weapon.weaponDetails.isMeleeWeapon)
+                        {
+                            damageText.text = $"Damage: {weapon.weaponDetails.meleeDamageMin}-{weapon.weaponDetails.meleeDamageMax}";
+                        }
+                        else
+                        {
+                            damageText.text = $"Damage: {weapon.weaponDetails.weaponCurrentProjectile.projectileDamageMin}-{weapon.weaponDetails.weaponCurrentProjectile.projectileDamageMax}";
+                        }
+                    }
+
+                    baseHandlingText.text = $"Base Handling: {weapon.weaponDetails.weaponBaseHandling * 100}%";
+                    crHitChanceText.text = $"Base Cr. Hit Chance: {weapon.weaponDetails.criticalHitChance * 100}%";
+                    crHitDamageText.text = $"Base Cr. Hit Damage: {weapon.weaponDetails.criticalHitDamageMultiplier * 100}%";
+                    elementalBiasText.text = "Elemental Bias:";
+
+                    // Populate text field based on the related elemental info
+                    switch (weapon.weaponDetails.elementalBias)
+                    {
+                        case ElementalBias.None:
+                            elementText.colorGradient = new VertexGradient(noneElementalColor1, noneElementalColor1, noneElementalColor2, noneElementalColor2);
+                            break;
+                        case ElementalBias.Fire:
+                            elementText.colorGradient = new VertexGradient(fireColor1, fireColor1, fireColor2, fireColor2);
+                            break;
+                        case ElementalBias.Water:
+                            elementText.colorGradient = new VertexGradient(waterColor1, waterColor1, waterColor2, waterColor2);
+                            break;
+                        case ElementalBias.Earth:
+                            elementText.colorGradient = new VertexGradient(earthColor1, earthColor1, earthColor2, earthColor2);
+                            break;
+                        case ElementalBias.Air:
+                            elementText.colorGradient = new VertexGradient(airColor1, airColor1, airColor2, airColor2);
+                            break;
+                        case ElementalBias.Dark:
+                            elementText.colorGradient = new VertexGradient(darkColor1, darkColor1, darkColor2, darkColor2);
+                            break;
+                        case ElementalBias.Light:
+                            elementText.colorGradient = new VertexGradient(lightColor1, lightColor1, lightColor2, lightColor2);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    elementText.text = weapon.weaponDetails.elementalBias.ToString();
+                    elementalForgeRateText.text = $"El. Forge Rate: {weapon.weaponDetails.elementalForgeRate * 100}%";
+
+                    switch (weapon.weaponDetails.weaponLevel)
+                    {
+                        case WeaponLevel.Basic:
+                            masteryText1.gameObject.SetActive(false);
+                            masteryText2.gameObject.SetActive(false);
+                            masteryText3.gameObject.SetActive(false);
+                            break;
+                        case WeaponLevel.Enchanted:
+                            masteryText1.gameObject.SetActive(true);
+                            masteryText1.text = "Enchanted Mastery: Locked";
+                            masteryText2.gameObject.SetActive(false);
+                            masteryText3.gameObject.SetActive(false);
+                            break;
+                        case WeaponLevel.Mythic:
+                            masteryText1.gameObject.SetActive(true);
+                            masteryText1.text = "Enchanted Mastery: Locked";
+                            masteryText2.gameObject.SetActive(true);
+                            masteryText2.text = "Mythic Mastery: Locked";
+                            masteryText3.gameObject.SetActive(false);
+                            break;
+                        case WeaponLevel.Legendary:
+                            masteryText1.gameObject.SetActive(true);
+                            masteryText1.text = "Enchanted Mastery: Locked";
+                            masteryText2.gameObject.SetActive(true);
+                            masteryText2.text = "Mythic Mastery: Locked";
+                            masteryText3.gameObject.SetActive(true);
+                            masteryText3.text = "Legendary Mastery: Locked";
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Open tooltip panel when hovering over the related item or weapon
+    /// </summary>
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        tooltipPanel.gameObject.SetActive(true);
+        UpdateTooltipPanelInfo();
+    }
+
+    /// <summary>
+    /// Close tooltip panel when stop hovering over the related item or weapon
+    /// </summary>
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        tooltipPanel.gameObject.SetActive(false);
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -104,7 +378,7 @@ public class Slot : MonoBehaviour, IDropHandler
                         }
                     }
                 }
-                // Draggable item has an off-hand weapon
+                // Slot item has an off-hand weapon
                 else
                 {
                     // Slot's current set doesn't have an off-hand weapon
@@ -305,7 +579,7 @@ public class Slot : MonoBehaviour, IDropHandler
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
 
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                player.ActivateWeapon(draggableItemWeapon, false, player.currentWeaponSlotSetIndex);
+                //player.ActivateWeapon(draggableItemWeapon, false, player.currentWeaponSlotSetIndex);
                 player.playerControl.SetWeaponSetByIndex(true);
             }
             else
@@ -341,8 +615,9 @@ public class Slot : MonoBehaviour, IDropHandler
 
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                player.ActivateWeapon(draggableItemWeapon, false, player.currentWeaponSlotSetIndex);
-                player.playerControl.SetWeaponSetByIndex(true);
+                //player.ActivateWeapon(draggableItemWeapon, true, player.currentWeaponSlotSetIndex);
+                player.playerControl.SetWeaponSetByIndex(true, true);
+                draggableItem.dragMainSlotOff = true;
             }
         }
         else
@@ -363,7 +638,7 @@ public class Slot : MonoBehaviour, IDropHandler
 
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                player.ActivateWeapon(draggableItemWeapon, true, player.currentWeaponSlotSetIndex);
+                //player.ActivateWeapon(draggableItemWeapon, true, player.currentWeaponSlotSetIndex);
                 player.playerControl.SetWeaponSetByIndex(true);
             }
             else
@@ -381,7 +656,7 @@ public class Slot : MonoBehaviour, IDropHandler
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
 
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                player.ActivateWeapon(draggableItemWeapon, true, player.currentWeaponSlotSetIndex);
+                //player.ActivateWeapon(draggableItemWeapon, true, player.currentWeaponSlotSetIndex);
                 player.playerControl.SetWeaponSetByIndex(true);
             }
         }

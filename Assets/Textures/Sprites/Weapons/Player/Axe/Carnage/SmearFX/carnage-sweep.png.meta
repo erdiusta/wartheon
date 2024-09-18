@@ -257,12 +257,12 @@ TextureImporter:
       name: carnage-sweep_5
       rect:
         serializedVersion: 2
-        x: 351
+        x: 353
         y: 4
-        width: 32
+        width: 31
         height: 56
       alignment: 9
-      pivot: {x: 0.685, y: 0.44}
+      pivot: {x: 0.6468004, y: 0.43004894}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -362,12 +362,12 @@ TextureImporter:
       name: carnage-sweep_10
       rect:
         serializedVersion: 2
-        x: 645
-        y: 9
-        width: 34
-        height: 51
+        x: 643
+        y: 7
+        width: 36
+        height: 53
       alignment: 9
-      pivot: {x: 0.296, y: 0.39}
+      pivot: {x: 0.3343506, y: 0.40289816}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -384,11 +384,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 709
-        y: 22
+        y: 10
         width: 30
-        height: 38
+        height: 50
       alignment: 9
-      pivot: {x: 0.336, y: 0.17}
+      pivot: {x: 0.33188275, y: 0.37011436}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

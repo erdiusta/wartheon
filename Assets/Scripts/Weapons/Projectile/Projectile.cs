@@ -926,7 +926,7 @@ public class Projectile : MonoBehaviour, IFireable
                     }
 
                     player.armorStatus = ArmorStatus.Acid;
-                    player.health.SetArmorValue((int)(player.playerDetails.playerArmorValue * (1 - projectileDetails.acidEfficiency)));
+                    player.health.SetArmorValue((int)(player.currentPhysicalResistanceValue * (1 - projectileDetails.acidEfficiency)));
                     player.healthEvent.CallGetAcidEvent();
                 }
             }
@@ -945,7 +945,7 @@ public class Projectile : MonoBehaviour, IFireable
                     }
 
                     player.armorStatus = ArmorStatus.Acid;
-                    player.health.SetArmorValue((int)(player.playerDetails.playerArmorValue * (1 - activeItemDetails.acidEfficiency)));
+                    player.health.SetArmorValue((int)(player.currentPhysicalResistanceValue * (1 - activeItemDetails.acidEfficiency)));
                     player.healthEvent.CallGetAcidEvent();
                 }
             }

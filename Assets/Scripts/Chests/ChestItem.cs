@@ -1,31 +1,35 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
 
-public class ChestItem : MonoBehaviour
+public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [SerializeField] Transform tooltipPanel;
+
     [HideInInspector] public bool hasWeaponDrop = false;
     [HideInInspector] public bool hasActiveDrop = false;
     [HideInInspector] public bool hasPrimaryPassiveDrop = false;
     [HideInInspector] public bool hasSecondaryPassiveDrop = false;
-    [HideInInspector] public TextMeshPro textTMP;
-    [HideInInspector] public WeaponAnimator weaponAnimator;
     [HideInInspector] public SpriteRenderer spriteRenderer;
     [HideInInspector] public bool isPickedUp = false;
     [HideInInspector] public Animator animator;
     [HideInInspector] public BoxCollider2D boxCollider2D;
     [HideInInspector] public int remainingItemCharge;
     [HideInInspector] public bool droppedByPlayer = false;
-    [HideInInspector] public Weapon toBeDroppedWeapon;
     [HideInInspector] public ActiveItem toBeDroppedActiveItem;
     [HideInInspector] public PassiveItem toBeDroppedPassiveItem;
     [HideInInspector] public bool isColliding;
+    [HideInInspector] public bool hasMainHandWeapon;
+    [HideInInspector] public bool hasOffHandWeapon;
     [HideInInspector] public static ChestItem toBeDroppedChestItem;
     [HideInInspector] public static ChestItem nearestChestItem = null;
 
     Chest chest;
     Enemy enemy;
+    WeaponDetailsSO toBeDroppedMainWeaponDetails;
+    WeaponDetailsSO toBeDroppedOffWeaponDetails;
     WeaponDetailsSO weaponDetails;
     PassiveItemDetailsSO passiveItemDetails;
     ActiveItemDetailsSO activeItemDetails;
@@ -33,12 +37,30 @@ public class ChestItem : MonoBehaviour
     bool isPurchasing;
     Animator pickUpAnimator;
 
+    // Tooltip Panel Weapon Texts
+    [Header("TOOLTIP PANEL FOR WEAPONS")]
+    [Space(10)]
+    [SerializeField] TextMeshPro headerText;
+    [SerializeField] TextMeshPro levelText;
+    [SerializeField] TextMeshPro weaponClassText;
+    [SerializeField] TextMeshPro hitSpeedText;
+    [SerializeField] TextMeshPro weaponWieldText;
+    [SerializeField] TextMeshPro damageText;
+    [SerializeField] TextMeshPro baseHandlingText;
+    [SerializeField] TextMeshPro crHitChanceText;
+    [SerializeField] TextMeshPro crHitDamageText;
+    [SerializeField] TextMeshPro elementalBiasText;
+    [SerializeField] TextMeshPro elementText;
+    [SerializeField] TextMeshPro elementalForgeRateText;
+    [SerializeField] TextMeshPro masteryText1;
+    [SerializeField] TextMeshPro masteryText2;
+    [SerializeField] TextMeshPro masteryText3;
+
     private void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         animator = transform.GetChild(0).GetComponent<Animator>();
-        pickUpAnimator = transform.GetChild(2).GetComponent<Animator>();
-        textTMP = GetComponentInChildren<TextMeshPro>();
+        pickUpAnimator = transform.GetChild(1).GetComponent<Animator>();
         chest = GetComponentInParent<Chest>();
         boxCollider2D = GetComponent<BoxCollider2D>();
     }
@@ -52,6 +74,20 @@ public class ChestItem : MonoBehaviour
                 enemy = GetComponentInParent<Enemy>();
             }
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (eventData.pointerEnter.GetComponent<ChestItem>() == this && eventData.pointerEnter.GetComponentInParent<Player>() == null)
+        {
+            tooltipPanel.gameObject.SetActive(true);
+            UpdateTooltipPanelInfo();
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        tooltipPanel.gameObject.SetActive(false);
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -110,8 +146,62 @@ public class ChestItem : MonoBehaviour
                                 }
                                 else
                                 {
-                                    CollectWeaponItem(player);
+                                    if (!InputManager.Instance.isPressedPreviousFrame)
+                                    {
+                                        // Drop process
+                                        if (player.activeWeapon.GetCurrentMainHandWeapon() != null && !isPickedUp)
+                                        {
+                                            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded &&
+                                                weaponDetails.weaponClass == WeaponClass.Shield)
+                                            {
+                                                goto shieldContinue; // Skip drop process because you equip one-handed weapon and chest contains a shield
+                                            }
+
+                                            if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
+                                            {
+                                                toBeDroppedOffWeaponDetails = weaponDetails;
+                                                player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon());
+                                            }
+
+                                            if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+                                            {
+
+                                                toBeDroppedMainWeaponDetails = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails;
+                                                player.playerControl.DropProcess(DropType.Weapon,player.activeWeapon.GetCurrentMainHandWeapon());
+                                            }
+
+                                        }
+
+                                        shieldContinue:
+                                        // Pick up process
+                                        if (player.activeWeapon.GetCurrentMainHandWeapon() == null)
+                                        {
+                                            isColliding = false;
+
+                                            if (weaponDetails.weaponClass == WeaponClass.Shield)
+                                            {
+                                                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
+                                            }
+                                            else
+                                            {
+                                                CollectWeaponItem(player);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            CollectWeaponItem(player);
+                                        }
+                                    }
+
+                                    if (isPickedUp)
+                                    {
+                                        InputManager.Instance.isPressedPreviousFrame = true;
+                                    }
                                 }
+                            }
+                            else
+                            {
+                                InputManager.Instance.isPressedPreviousFrame = false;
                             }
                         }
                         else if (hasActiveDrop)
@@ -124,8 +214,7 @@ public class ChestItem : MonoBehaviour
                                     // Drop process
                                     if (player.selectedActiveItem.GetCurrentActiveItem() != null && !isPickedUp)
                                     {
-                                        Debug.Log("Dropping item from ChestItem.");
-                                        player.playerControl.DropProcess(toBeDroppedChestItem, DropType.ActiveItem);
+                                        player.playerControl.DropProcess(DropType.ActiveItem);
                                     }
 
                                     // Pick up process
@@ -256,11 +345,10 @@ public class ChestItem : MonoBehaviour
     /// <summary>
     /// Initialize for enemy drops
     /// </summary>
-    public void Initialize(IReceivable receivable, Sprite sprite, string text, Vector3 spawnPosition)
+    public void Initialize(IReceivable receivable, Sprite sprite, Vector3 spawnPosition)
     {
         spriteRenderer.sprite = sprite;
         transform.position = spawnPosition;
-        textTMP.text = text;
 
         // Check for animation - Active Item
         if (hasActiveDrop)
@@ -358,6 +446,7 @@ public class ChestItem : MonoBehaviour
         // Introduction pop-up
         StaticEventHandler.CallIntroductionPopUpEvent(DropType.Weapon, weapon);
 
+        isPickedUp = true;
         isColliding = true;
         weaponDetails = null;
         animator.runtimeAnimatorController = null;
@@ -379,27 +468,27 @@ public class ChestItem : MonoBehaviour
 
         if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
         {
-            if (textTMP.text == "Key")
+            if (passiveItem.passiveItemDetails.passiveItemName == "Key")
             {
                 player.keyCount++;
             }
 
-            if (textTMP.text == "Silver Coin")
+            if (passiveItem.passiveItemDetails.passiveItemName == "Silver Coin")
             {
                 player.GetComponent<Coins>().Add(1);
             }
 
-            if (textTMP.text == "Golden Coin")
+            if (passiveItem.passiveItemDetails.passiveItemName == "Golden Coin")
             {
                 player.GetComponent<Coins>().Add(5);
             }
 
-            if (textTMP.text == "Health")
+            if (passiveItem.passiveItemDetails.passiveItemName == "Health")
             {
                 player.health.AddHealth((int)(20f / player.health.GetStartingHealth() * 100));
             }
 
-            if (textTMP.text == "Medicine")
+            if (passiveItem.passiveItemDetails.passiveItemName == "Medicine")
             {
                 // HEALTH STATUS CHECKS
                 if (player.healthStatus == HealthStatus.Poisoned)
@@ -420,7 +509,7 @@ public class ChestItem : MonoBehaviour
                 }
             }
 
-            if (textTMP.text == "Holy Water")
+            if (passiveItem.passiveItemDetails.passiveItemName == "Holy Water")
             {
                 if (player.isCursed)
                 {
@@ -429,22 +518,23 @@ public class ChestItem : MonoBehaviour
                 }
             }
 
-            if (textTMP.text == "Quiver")
+            if (passiveItem.passiveItemDetails.passiveItemName == "Quiver")
             {
-                ammoPercent = Random.Range(0, 101);
-
-                // Update ammo for current weapon
-                if (!player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile &&
-                    !player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
                 {
-                    player.activeWeapon.GetCurrentMainHandWeapon().weaponRemainingProjectile =
-                        player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponProjectileCapacity;
+                    // Update ammo for current weapon
+                    if (!player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile &&
+                        !player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+                    {
+                        player.activeWeapon.GetCurrentMainHandWeapon().weaponRemainingProjectile =
+                            player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponProjectileCapacity;
 
-                    player.weaponFiredEvent.CallWeaponFiredEvent(player.activeWeapon.GetCurrentMainHandWeapon(), true);
+                        player.weaponFiredEvent.CallWeaponFiredEvent(player.activeWeapon.GetCurrentMainHandWeapon(), true);
+                    }
+
+                    // Play pickup sound effect
+                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
                 }
-
-                // Play pickup sound effect
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
             }
         }
         else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
@@ -500,5 +590,161 @@ public class ChestItem : MonoBehaviour
         //spriteRenderer.sprite = null;
 
         transform.SetParent(player.transform);
+    }
+
+    private void UpdateTooltipPanelInfo()
+    {
+        if (passiveItemDetails != null)
+        {
+            if (hasSecondaryPassiveDrop)
+            {
+                headerText.colorGradient = new VertexGradient(Color.blue, Color.blue, Color.blue, Color.blue);
+                levelText.colorGradient = new VertexGradient(Color.blue, Color.blue, Color.blue, Color.blue);
+                headerText.text = passiveItemDetails.passiveItemName;
+                levelText.text = $"(Passive Item)";
+            }
+        }
+
+        if (activeItemDetails != null)
+        {
+            headerText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
+            levelText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
+            headerText.text = activeItemDetails.activeItemName;
+            levelText.text = $"(Active Item)";
+        }
+
+        if (weaponDetails != null)
+        {
+            // Populate text field based on the related weapon info
+            switch (weaponDetails.weaponLevel)
+            {
+                case WeaponLevel.Basic:
+                    headerText.colorGradient = new VertexGradient(GameManager.Instance.basicLevelColor1, GameManager.Instance.basicLevelColor1,
+                        GameManager.Instance.basicLevelColor2, GameManager.Instance.basicLevelColor2);
+                    levelText.colorGradient = new VertexGradient(GameManager.Instance.basicLevelColor1, GameManager.Instance.basicLevelColor1,
+                        GameManager.Instance.basicLevelColor2, GameManager.Instance.basicLevelColor2);
+                    break;
+                case WeaponLevel.Enchanted:
+                    headerText.colorGradient = new VertexGradient(GameManager.Instance.enchantedLevelColor1, GameManager.Instance.enchantedLevelColor1,
+                        GameManager.Instance.enchantedLevelColor2, GameManager.Instance.enchantedLevelColor2);
+                    levelText.colorGradient = new VertexGradient(GameManager.Instance.enchantedLevelColor1, GameManager.Instance.enchantedLevelColor1,
+                        GameManager.Instance.enchantedLevelColor2, GameManager.Instance.enchantedLevelColor2);
+                    break;
+                case WeaponLevel.Mythic:
+                    headerText.colorGradient = new VertexGradient(GameManager.Instance.mythicLevelColor1, GameManager.Instance.mythicLevelColor1,
+                        GameManager.Instance.mythicLevelColor2, GameManager.Instance.mythicLevelColor2);
+                    levelText.colorGradient = new VertexGradient(GameManager.Instance.mythicLevelColor1, GameManager.Instance.mythicLevelColor1,
+                        GameManager.Instance.mythicLevelColor2, GameManager.Instance.mythicLevelColor2);
+                    break;
+                case WeaponLevel.Legendary:
+                    headerText.colorGradient = new VertexGradient(GameManager.Instance.legendaryLevelColor1, GameManager.Instance.legendaryLevelColor1,
+                        GameManager.Instance.legendaryLevelColor2, GameManager.Instance.legendaryLevelColor2);
+                    levelText.colorGradient = new VertexGradient(GameManager.Instance.legendaryLevelColor1, GameManager.Instance.legendaryLevelColor1,
+                        GameManager.Instance.legendaryLevelColor2, GameManager.Instance.legendaryLevelColor2);
+                    break;
+                default:
+                    break;
+            }
+
+            headerText.text = weaponDetails.weaponName;
+            levelText.text = $"({weaponDetails.weaponLevel.ToString()})";
+            weaponClassText.text = $"Class: {weaponDetails.weaponClass.ToString()}";
+
+            if (weaponDetails.weaponClass == WeaponClass.Shield)
+            {
+                weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
+                damageText.text = $"Deflect Rate: {weaponDetails.projectileDeflectRatio * 100}%";
+            }
+            else
+            {
+                hitSpeedText.text = $"Speed: {weaponDetails.weaponHitSpeed.ToString()}";
+                weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
+                if (weaponDetails.isMeleeWeapon)
+                {
+                    damageText.text = $"Damage: {weaponDetails.meleeDamageMin}-{weaponDetails.meleeDamageMax}";
+                }
+                else
+                {
+                    damageText.text = $"Damage: {weaponDetails.weaponCurrentProjectile.projectileDamageMin}-{weaponDetails.weaponCurrentProjectile.projectileDamageMax}";
+                }
+            }
+
+            baseHandlingText.text = $"Base Handling: {weaponDetails.weaponBaseHandling * 100}%";
+            crHitChanceText.text = $"Base Cr. Hit Chance: {weaponDetails.criticalHitChance * 100}%";
+            crHitDamageText.text = $"Base Cr. Hit Damage: {weaponDetails.criticalHitDamageMultiplier * 100}%";
+            elementalBiasText.text = "Elemental Bias:";
+        
+
+            // Populate text field based on the related elemental info
+            switch (weaponDetails.elementalBias)
+            {
+                case ElementalBias.None:
+                    elementText.colorGradient = new VertexGradient(GameManager.Instance.noneElementalColor1, GameManager.Instance.noneElementalColor1,
+                        GameManager.Instance.noneElementalColor2, GameManager.Instance.noneElementalColor2);
+                    break;
+                case ElementalBias.Fire:
+                    elementText.colorGradient = new VertexGradient(GameManager.Instance.fireColor1, GameManager.Instance.fireColor1,
+                        GameManager.Instance.fireColor2, GameManager.Instance.fireColor2);
+                    break;
+                case ElementalBias.Water:
+                    elementText.colorGradient = new VertexGradient(GameManager.Instance.waterColor1, GameManager.Instance.waterColor1,
+                        GameManager.Instance.waterColor2, GameManager.Instance.waterColor2);
+                    break;
+                case ElementalBias.Earth:
+                    elementText.colorGradient = new VertexGradient(GameManager.Instance.earthColor1, GameManager.Instance.earthColor1,
+                        GameManager.Instance.earthColor2, GameManager.Instance.earthColor2);
+                    break;
+                case ElementalBias.Air:
+                    elementText.colorGradient = new VertexGradient(GameManager.Instance.airColor1, GameManager.Instance.airColor1,
+                        GameManager.Instance.airColor2, GameManager.Instance.airColor2);
+                    break;
+                case ElementalBias.Dark:
+                    elementText.colorGradient = new VertexGradient(GameManager.Instance.darkColor1, GameManager.Instance.darkColor1,
+                        GameManager.Instance.darkColor2, GameManager.Instance.darkColor2);
+                    break;
+                case ElementalBias.Light:
+                    elementText.colorGradient = new VertexGradient(GameManager.Instance.lightColor1, GameManager.Instance.lightColor1,
+                        GameManager.Instance.lightColor2, GameManager.Instance.lightColor2);
+                    break;
+                default:
+                    break;
+            }
+
+            elementText.text = weaponDetails.elementalBias.ToString();
+            elementalForgeRateText.text = $"El. Forge Rate: {weaponDetails.elementalForgeRate * 100}%";
+
+            switch (weaponDetails.weaponLevel)
+            {
+                case WeaponLevel.Basic:
+                    masteryText1.gameObject.SetActive(false);
+                    masteryText2.gameObject.SetActive(false);
+                    masteryText3.gameObject.SetActive(false);
+                    break;
+                case WeaponLevel.Enchanted:
+                    masteryText1.gameObject.SetActive(true);
+                    masteryText1.text = "Enchanted Mastery: Locked";
+                    masteryText2.gameObject.SetActive(false);
+                    masteryText3.gameObject.SetActive(false);
+                    break;
+                case WeaponLevel.Mythic:
+                    masteryText1.gameObject.SetActive(true);
+                    masteryText1.text = "Enchanted Mastery: Locked";
+                    masteryText2.gameObject.SetActive(true);
+                    masteryText2.text = "Mythic Mastery: Locked";
+                    masteryText3.gameObject.SetActive(false);
+                    break;
+                case WeaponLevel.Legendary:
+                    masteryText1.gameObject.SetActive(true);
+                    masteryText1.text = "Enchanted Mastery: Locked";
+                    masteryText2.gameObject.SetActive(true);
+                    masteryText2.text = "Mythic Mastery: Locked";
+                    masteryText3.gameObject.SetActive(true);
+                    masteryText3.text = "Legendary Mastery: Locked";
+                    break;
+                default:
+                    break;
+
+            }
+        }
     }
 }

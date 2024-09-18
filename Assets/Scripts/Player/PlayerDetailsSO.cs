@@ -227,10 +227,6 @@ public class PlayerDetailsSO : ScriptableObject
     [Header("PASSIVE")]
     #endregion
     #region Tooltip
-    [Tooltip("Player starting armor amount")]
-    #endregion
-    public int playerArmorValue = 0;
-    #region Tooltip
     [Tooltip("Player's passive items list")]
     #endregion
     public List<PassiveItemDetailsSO> passiveItemsList;
@@ -287,7 +283,6 @@ public class PlayerDetailsSO : ScriptableObject
         HelperUtilities.ValidateCheckNullValue(this, nameof(oneHandRuntimeAnimatorController), oneHandRuntimeAnimatorController);
         HelperUtilities.ValidateCheckNullValue(this, nameof(twoHandRuntimeAnimatorController), twoHandRuntimeAnimatorController);
         HelperUtilities.ValidateCheckNullValue(this, nameof(bowRuntimeAnimatorController), bowRuntimeAnimatorController);
-        HelperUtilities.ValidateCheckPositiveValue(this, nameof(playerArmorValue), playerArmorValue, true);
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(startingWeaponList), startingWeaponList);
 
         if (isImmuneAfterHit)

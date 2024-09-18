@@ -263,9 +263,9 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Update weapons list if a new one acquired
     /// </summary>
-    public void UpdateWieldedWeapons(WeaponDetailsSO weaponDetails, bool updateHappenedAfterNewItemCollected, bool onStart)
+    public void UpdateWieldedWeapons(WeaponDetailsSO weaponDetails, bool pickingUp, bool onStart)
     {
-        AddNextWeaponToPlayer(weaponDetails, updateHappenedAfterNewItemCollected, onStart, false);
+        AddNextWeaponToPlayer(weaponDetails, pickingUp, onStart, false);
     }
 
     /// <summary>
@@ -432,10 +432,9 @@ public class Player : MonoBehaviour
         chestItem.hasActiveDrop = true; 
 
         // Initialize chest item
-        chestItem.Initialize(activeItem, activeItemDetails.activeItemSprite, activeItemDetails.activeItemName, transform.position);
+        chestItem.Initialize(activeItem, activeItemDetails.activeItemSprite, transform.position);
 
         // Disable some components during equipped
-        chestItem.textTMP.enabled = false;
         chestItem.spriteRenderer.enabled = false;
         chestItem.animator.enabled = false;
 
@@ -485,132 +484,188 @@ public class Player : MonoBehaviour
                     onMaindHand = false
                 };
 
-                if (weaponSlotSetArray[0][1] == null)
+                if (pickingUp)
                 {
-                    if (weaponSlotSetArray[0][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                    if (weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] == null)
                     {
-                        weaponSlotSetArray[0][1] = weapon;
-                        weapon.weaponBelongingToWhichOffHandSet = 1;
-                        if (currentWeaponSlotSetIndex == 1)
+                        if (weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] != null)
                         {
-                            ActivateWeapon(weapon, !weapon.onMaindHand, 1);
+                            if (weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                            {
+                                weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] = weapon;
+                                weapon.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;
+
+                                ActivateWeapon(weapon, !weapon.onMaindHand, currentWeaponSlotSetIndex);
+                                if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
+                                {
+                                    playerControl.PopulateOffHandWeaponsToBook(weapon);
+                                }
+                                return;
+                            }
                         }
-                        if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
-                        {
-                            playerControl.PopulateOffHandWeaponsToBook(weapon);
-                        }
+                    }
+
+                    if(weaponSlotSetArray[0][1] != null && weaponSlotSetArray[1][1] != null && weaponSlotSetArray[2][1] != null)
+                    {
+                        offHandSlotFilled = true;
                         return;
-                    }
-                }
-                else if (weaponSlotSetArray[1][1] == null)
-                {
-                    if (weaponSlotSetArray[1][0] != null)
-                    {
-                        if (weaponSlotSetArray[1][0].weaponDetails.wieldType != WieldType.TwoHanded)
-                        {
-                            weaponSlotSetArray[1][1] = weapon;
-                            if (currentWeaponSlotSetIndex == 2)
-                            {
-                                ActivateWeapon(weapon, !weapon.onMaindHand, 2);
-                            }
-                            weapon.weaponBelongingToWhichOffHandSet = 2;
-                            playerControl.PopulateOffHandWeaponsToBook(weapon);
-                            return;
-                        }
-                    }
-                }
-                else if (weaponSlotSetArray[2][1] == null)
-                {
-                    if (weaponSlotSetArray[2][0] != null)
-                    {
-                        if (weaponSlotSetArray[2][0].weaponDetails.wieldType != WieldType.TwoHanded)
-                        {
-                            weaponSlotSetArray[2][1] = weapon;
-                            if (currentWeaponSlotSetIndex == 3)
-                            {
-                                ActivateWeapon(weapon, !weapon.onMaindHand, 3);
-                            }
-                            weapon.weaponBelongingToWhichOffHandSet = 3;
-                            playerControl.PopulateOffHandWeaponsToBook(weapon);
-                            offHandSlotFilled = true;
-                            return;
-                        }
                     }
                 }
                 else
                 {
-                    offHandSlotFilled = true;
-                    return;
+                    if (weaponSlotSetArray[0][1] == null)
+                    {
+                        if (weaponSlotSetArray[0][0] != null)
+                        {
+                            if (weaponSlotSetArray[0][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                            {
+                                weaponSlotSetArray[0][1] = weapon;
+                                weapon.weaponBelongingToWhichOffHandSet = 1;
+                                if (currentWeaponSlotSetIndex == 1)
+                                {
+                                    ActivateWeapon(weapon, !weapon.onMaindHand, 1);
+                                }
+                                if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
+                                {
+                                    playerControl.PopulateOffHandWeaponsToBook(weapon);
+                                }
+                                return;
+                            }
+                        }
+                    }
+                    else if (weaponSlotSetArray[1][1] == null)
+                    {
+                        if (weaponSlotSetArray[1][0] != null)
+                        {
+                            if (weaponSlotSetArray[1][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                            {
+                                weaponSlotSetArray[1][1] = weapon;
+                                if (currentWeaponSlotSetIndex == 2)
+                                {
+                                    ActivateWeapon(weapon, !weapon.onMaindHand, 2);
+                                }
+                                weapon.weaponBelongingToWhichOffHandSet = 2;
+                                playerControl.PopulateOffHandWeaponsToBook(weapon);
+                                return;
+                            }
+                        }
+                    }
+                    else if (weaponSlotSetArray[2][1] == null)
+                    {
+                        if (weaponSlotSetArray[2][0] != null)
+                        {
+                            if (weaponSlotSetArray[2][0].weaponDetails.wieldType != WieldType.TwoHanded)
+                            {
+                                weaponSlotSetArray[2][1] = weapon;
+                                if (currentWeaponSlotSetIndex == 3)
+                                {
+                                    ActivateWeapon(weapon, !weapon.onMaindHand, 3);
+                                }
+                                weapon.weaponBelongingToWhichOffHandSet = 3;
+                                playerControl.PopulateOffHandWeaponsToBook(weapon);
+                                offHandSlotFilled = true;
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        offHandSlotFilled = true;
+                        return;
+                    }
                 }
             }
         }
 
         if (!mainHandSlotFilled)
         {
+            Weapon weapon = new Weapon
+            {
+                weaponDetails = weaponDetails,
+                weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
+                onMaindHand = true
+            };
+
             if (weaponDetails.weaponClass != WeaponClass.Shield)
             {
-                Weapon weapon = new Weapon
+                if (pickingUp)
                 {
-                    weaponDetails = weaponDetails,
-                    weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
-                    onMaindHand = true
-                };
-
-                // Exceptional for Erebus onStart offHand dagger wield then return
-                if (playerDetails.playerCharacterIndex == Character.Erebus)
-                {
-                    if (onStart)
+                    if (weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] == null)
                     {
-                        if (weaponSlotSetArray[0][1] == null)
+                        weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] = weapon;
+                        weapon.weaponBelongingToWhichMainHandSet = currentWeaponSlotSetIndex;
+
+                        ActivateWeapon(weapon, !weapon.onMaindHand, currentWeaponSlotSetIndex);
+                        if (!onStart)
                         {
-                            weapon.onMaindHand = false;
-                            weaponSlotSetArray[0][1] = weapon;
-                            weapon.weaponBelongingToWhichOffHandSet = 1;
-                            ActivateWeapon(weapon, true, 1);
-                            return;
+                            playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
                         }
                     }
-                }
 
-                if (weaponSlotSetArray[0][0] == null)
-                {
-                    weaponSlotSetArray[0][0] = weapon;
-                    weapon.weaponBelongingToWhichMainHandSet = 1;
-                    if (currentWeaponSlotSetIndex == 1)
+                    if (weaponSlotSetArray[0][0] != null && weaponSlotSetArray[1][0] != null && weaponSlotSetArray[2][0] != null)
                     {
-                        ActivateWeapon(weapon, !weapon.onMaindHand, 1);
-                    }
-                    if (!onStart)
-                    {
-                        playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                        mainHandSlotFilled = true;
+                        return;
                     }
                 }
-                else if (weaponSlotSetArray[1][0] == null)
+                else
                 {
-                    weaponSlotSetArray[1][0] = weapon;
-                    weapon.weaponBelongingToWhichMainHandSet = 2;
-                    if (currentWeaponSlotSetIndex == 2)
+                    // Exceptional for Erebus onStart offHand dagger wield then return
+                    if (playerDetails.playerCharacterIndex == Character.Erebus)
                     {
-                        ActivateWeapon(weapon, !weapon.onMaindHand, 2);
+                        if (onStart)
+                        {
+                            if (weaponSlotSetArray[0][1] == null)
+                            {
+                                weapon.onMaindHand = false;
+                                weaponSlotSetArray[0][1] = weapon;
+                                weapon.weaponBelongingToWhichOffHandSet = 1;
+                                ActivateWeapon(weapon, true, 1);
+                                return;
+                            }
+                        }
                     }
-                    if (!onStart)
+
+                    if (weaponSlotSetArray[0][0] == null)
                     {
-                        playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                        weaponSlotSetArray[0][0] = weapon;
+                        weapon.weaponBelongingToWhichMainHandSet = 1;
+                        if (currentWeaponSlotSetIndex == 1)
+                        {
+                            ActivateWeapon(weapon, !weapon.onMaindHand, 1);
+                        }
+                        if (!onStart)
+                        {
+                            playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                        }
                     }
-                }
-                else if (weaponSlotSetArray[2][0] == null)
-                {
-                    weaponSlotSetArray[2][0] = weapon;
-                    weapon.weaponBelongingToWhichMainHandSet = 3;
-                    if (currentWeaponSlotSetIndex == 3)
+                    else if (weaponSlotSetArray[1][0] == null)
                     {
-                        ActivateWeapon(weapon, !weapon.onMaindHand, 3);
+                        weaponSlotSetArray[1][0] = weapon;
+                        weapon.weaponBelongingToWhichMainHandSet = 2;
+                        if (currentWeaponSlotSetIndex == 2)
+                        {
+                            ActivateWeapon(weapon, !weapon.onMaindHand, 2);
+                        }
+                        if (!onStart)
+                        {
+                            playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                        }
                     }
-                    if (!onStart)
+                    else if (weaponSlotSetArray[2][0] == null)
                     {
-                        playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                        weaponSlotSetArray[2][0] = weapon;
+                        weapon.weaponBelongingToWhichMainHandSet = 3;
+                        if (currentWeaponSlotSetIndex == 3)
+                        {
+                            ActivateWeapon(weapon, !weapon.onMaindHand, 3);
+                        }
+                        if (!onStart)
+                        {
+                            playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                        }
+                        mainHandSlotFilled = true; // All 3 main hand slots filled at start
                     }
-                    mainHandSlotFilled = true; // All 3 main hand slots filled at start
                 }
             }
         }

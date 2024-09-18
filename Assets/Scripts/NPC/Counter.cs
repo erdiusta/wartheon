@@ -60,7 +60,7 @@ public class Counter : MonoBehaviour
         Weapon weapon = new Weapon();
         weapon.weaponDetails = weaponDetails;
 
-        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, chestItem.transform.position);
+        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, chestItem.transform.position);
 
         chestItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + weaponDetails.price.ToString();
     }

@@ -21,8 +21,8 @@ MonoBehaviour:
   projectileChargeTime: 0.05
   projectileChargeMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   projectileHitEffect: {fileID: 11400000, guid: 9e888f32de5d60a429c75fb52a068ded, type: 2}
-  projectileDamageMin: 6
-  projectileDamageMax: 10
+  projectileDamageMin: 8
+  projectileDamageMax: 12
   projectileSpeedMin: 13
   projectileSpeedMax: 16
   projectileRange: 16
@@ -31,12 +31,10 @@ MonoBehaviour:
   acidEfficiency: 0
   isPoisonous: 0
   poisonChance: 0
-  hasBleedingDamage: 0
-  bleedingChance: 0
   hasStunDamage: 0
   stunChance: 0
-  hasSlowDamage: 1
-  slowChance: 0.05
+  hasCurseDamage: 0
+  curseChance: 0
   projectileSpreadMin: 0.5
   projectileSpreadMax: 3
   projectileSpawnAmountMin: 1

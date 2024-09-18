@@ -31,6 +31,7 @@ public class EnemyMovementAI : MonoBehaviour
     Coroutine stunEnemyRoutine;
     Coroutine aimAndShootRoutine;
     Coroutine dashRoutine;
+    Coroutine attackAnimationRoutine;
     GameObject selectedTargetEnemy;
     float attackMoveTimer;
     float dashTimer;
@@ -109,7 +110,7 @@ public class EnemyMovementAI : MonoBehaviour
             enemyCellPosition.y - currentRoom.templateLowerBounds.y);
 
         // If enemy is in wall or pool tile, make enemy go away from there
-        if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 0 || currentRoom.instantiatedRoom.
+        if (currentRoom.instantiatedRoom?.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 0 || currentRoom.instantiatedRoom.
             GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) > 1)
         {
             if (chaseMoveEnemyRoutine != null)
@@ -373,6 +374,8 @@ public class EnemyMovementAI : MonoBehaviour
     /// </summary>
     private void Patrol()
     {
+        attackMoveEnemyRoutine = null;
+
         // Reset path rebuild cooldown timer
         currentEnemyPatrolPathRebuildCooldown = Settings.enemyPathRebuildCooldown;
 
@@ -380,12 +383,6 @@ public class EnemyMovementAI : MonoBehaviour
         if (movementSteps != null)
         {
             movementSteps.Clear();
-        }
-
-        // Reset the current patrol index to 0 if it exceeds the array length
-        if (currentPatrolIndex >= currentRoom.spawnPositionArray.Length)
-        {
-            currentPatrolIndex = 0;
         }
 
         // Move to the next patrol point for the next iteration randomly
@@ -409,7 +406,15 @@ public class EnemyMovementAI : MonoBehaviour
     /// Chase the player
     /// </summary>
     private void Chase()
-    {
+    {     
+        // Check distance is too far away from far away, reset patrol state
+        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) >= enemy.enemyDetails.chaseDistance)
+        {
+            enemyPhase = EnemyPhase.Patrol;
+            Patrol();
+            return;
+        }
+
         if (tag == Settings.enemyTag)
         {
             // If the movement cooldown timer reached or player has moved more than required distance then rebuild the enemy path and move the enemy
@@ -434,13 +439,14 @@ public class EnemyMovementAI : MonoBehaviour
                 // Move the enemy using AStar pathfinding - Trigger rebuild of path to player
                 CreatePath();
 
-                if (movementSteps == null) return;
-
-                // If a path has been found move the enemy
-                if (chaseMoveEnemyRoutine == null)
+                if (movementSteps != null)
                 {
-                    // Move enemy along the path using a coroutine
-                    chaseMoveEnemyRoutine = StartCoroutine(ChaseMoveEnemyRoutine());
+                    // If a path has been found move the enemy
+                    if (chaseMoveEnemyRoutine == null)
+                    {
+                        // Move enemy along the path using a coroutine
+                        chaseMoveEnemyRoutine = StartCoroutine(ChaseMoveEnemyRoutine());
+                    }
                 }
 
                 // Switch to attack if chase distance is lower than trigger distance
@@ -449,6 +455,10 @@ public class EnemyMovementAI : MonoBehaviour
                     enemyPhase = EnemyPhase.Attack;
                     enemy.animateEnemy.ResetAnimatonParameters();
                 }
+            }
+            else
+            {
+                enemyPhase = EnemyPhase.Patrol;
             }
         }
         else if (tag == Settings.summonedEnemyTag)
@@ -565,21 +575,21 @@ public class EnemyMovementAI : MonoBehaviour
             {
                 // Trigger movement and animations
                 enemy.animateEnemy.ResetAnimatonParameters();
-                enemy.movementToPosition.PatrolMoveRigidbodyByPosition(nextPosition, transform.position, moveSpeed);
                 enemy.animateEnemy.SetMovementAnimationParameters();
+
+                enemy.movementToPosition.PatrolMoveRigidbodyByPosition(nextPosition, transform.position, moveSpeed);
 
                 // Moving the enemy using 2D physics so wait until the next fixed update
                 yield return waitForFixedUpdate;
 
                 if (enemy.enemyWeaponAI.enemyAttackCoroutine != null || enemy.health.getHitCoroutine != null || attackMoveEnemyRoutine != null)
                 {
-                    //nextPosition = transform.position;
+                    nextPosition = transform.position;
 
                     if (patrolSteps != null)    
                     {
                         patrolSteps.Clear();
                     }
-                    patrolMoveEnemyRoutine = null;
                 }
             }
 
@@ -653,13 +663,38 @@ public class EnemyMovementAI : MonoBehaviour
         {
             // Prepare for the attack
             enemy.animateEnemy.SetAttackAnimationParameters();
-            enemy.animator.SetBool(Settings.isAttacking, true);
+
+            if (attackAnimationRoutine == null)
+            {
+                attackAnimationRoutine = StartCoroutine(AttackAnimation());
+            }
+            else
+            {
+                StopCoroutine(attackAnimationRoutine);
+                attackAnimationRoutine = StartCoroutine(AttackAnimation());
+            }
 
             // Wait for the attack preparation animation to finish (handled via Unity Event)
             yield return new WaitUntil(() => dashRoutine != null);  // Wait until dashRoutine starts
         }
 
         attackMoveEnemyRoutine = null;
+    }
+
+    IEnumerator AttackAnimation()
+    {
+        // Set the animator's isAttacking parameter to true to start the attack animation
+        enemy.animator.SetBool(Settings.isAttacking, true);
+
+        // Wait until the attack animation ends
+        AnimatorStateInfo stateInfo = enemy.animator.GetCurrentAnimatorStateInfo(0);
+        float animationDuration = stateInfo.length; // Get the length of the current animation
+
+        yield return new WaitForSeconds(animationDuration);
+
+        // Set the animator's isAttacking parameter to true to start the attack animation
+        enemy.animator.SetBool(Settings.isAttacking, false);
+        attackAnimationRoutine = null;
     }
 
     /// <summary>
@@ -705,6 +740,7 @@ public class EnemyMovementAI : MonoBehaviour
                 // If the enemy collides with an obstacle or second-choice tile, transition to the appropriate phase
                 enemyPhase = EnemyPhase.Patrol;
                 attackMoveEnemyRoutine = null;
+                isDashing = false;
                 break;
             }
 
@@ -720,12 +756,11 @@ public class EnemyMovementAI : MonoBehaviour
 
         // Reset the coroutine reference
         enemy.animator.SetBool(Settings.isAttacking, false);
-        attackMoveEnemyRoutine = null;
-        dashRoutine = null;
-
-        yield return null;
-
         isDashing = false;
+
+        yield return waitForFixedUpdate;
+
+        dashRoutine = null;
     }
 
     /// <summary>

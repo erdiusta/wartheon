@@ -19,6 +19,8 @@ MonoBehaviour:
   collectibleWeaponsArray:
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
   - {fileID: 11400000, guid: 6cb3c4a1b97dd484a8e9af133ff54615, type: 2}
+  - {fileID: 11400000, guid: bba05607ec78139438ec83b847d254ee, type: 2}
+  - {fileID: 11400000, guid: 93d2d24fb15c92447ad3eaf7a564ee4c, type: 2}
   oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 4102ba67a73173f4eade31c0a46ffc1a, type: 2}
   twoHandRuntimeAnimatorController: {fileID: 9100000, guid: 3bde3ff582fce72409ca00143dda2347, type: 2}
   bowRuntimeAnimatorController: {fileID: 9100000, guid: d298c1ca77072b445ac610f3466c2319, type: 2}
@@ -28,7 +30,7 @@ MonoBehaviour:
   dexterity: 8
   intelligence: 4
   agility: 7
-  physicalResistance: 0
+  physicalResistance: 0.05
   fireResistance: 0
   waterResistance: 0
   airResistance: 0
@@ -62,7 +64,6 @@ MonoBehaviour:
   selectedActiveItem: {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
   activeItemsList:
   - {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
-  playerArmorValue: 1
   passiveItemsList:
   - {fileID: 11400000, guid: ea43c30395e36ed4dad1c912b02fe8ee, type: 2}
   startingWeapon: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
@@ -71,6 +72,8 @@ MonoBehaviour:
   startingWeaponList:
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+  - {fileID: 11400000, guid: 93d2d24fb15c92447ad3eaf7a564ee4c, type: 2}
+  - {fileID: 11400000, guid: 93d2d24fb15c92447ad3eaf7a564ee4c, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: f10364e9e25cea94e8f0ec8d6826ca20, type: 3}
   playerHandSprite: {fileID: 21300000, guid: 61f9f1056a5486644b029259a89f6cce, type: 3}
   playerBookSprite: {fileID: 1770967855, guid: df96b7638c152474e8af466b7833c3a1, type: 3}

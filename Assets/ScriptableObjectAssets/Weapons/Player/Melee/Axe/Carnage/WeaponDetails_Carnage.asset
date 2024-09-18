@@ -14,13 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Carnage
   weaponTitle: 9
+  weaponLevel: 1
+  weaponClass: 1
+  weaponHitSpeed: 1
+  wieldType: 1
+  elementalBias: 1
+  elementalForgeRate: 0.15
+  price: 6
   weaponFrontSprite: {fileID: -841119055, guid: 5c960803439d0284a808cc018ba71710, type: 3}
   weaponRearSprite: {fileID: -841119055, guid: 5c960803439d0284a808cc018ba71710, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: c32169d2179d0e9449e33af11362afd1, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: 44114f5e1c42e4e47af2ed2ca3e8b8f1, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: a1992abc3f12c034ab96b276d0b6ef76, type: 2}
-  weaponClass: 1
-  wieldType: 1
-  price: 6
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0

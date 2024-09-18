@@ -257,12 +257,12 @@ TextureImporter:
       name: holy_sword-sweep_5
       rect:
         serializedVersion: 2
-        x: 353
+        x: 349
         y: 8
-        width: 31
+        width: 35
         height: 54
       alignment: 9
-      pivot: {x: 0.662, y: 0.325}
+      pivot: {x: 0.7018982, y: 0.32363886}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -278,12 +278,12 @@ TextureImporter:
       name: holy_sword-sweep_6
       rect:
         serializedVersion: 2
-        x: 418
-        y: 14
-        width: 29
-        height: 48
+        x: 413
+        y: 8
+        width: 34
+        height: 54
       alignment: 9
-      pivot: {x: 0.67, y: 0.24}
+      pivot: {x: 0.72070223, y: 0.3205694}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -362,12 +362,12 @@ TextureImporter:
       name: holy_sword-sweep_10
       rect:
         serializedVersion: 2
-        x: 642
+        x: 640
         y: 8
-        width: 32
+        width: 34
         height: 54
       alignment: 9
-      pivot: {x: 0.3, y: 0.325}
+      pivot: {x: 0.34151682, y: 0.32499993}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -384,11 +384,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 706
-        y: 20
-        width: 31
-        height: 42
+        y: 8
+        width: 33
+        height: 54
       alignment: 9
-      pivot: {x: 0.3, y: 0.135}
+      pivot: {x: 0.281803, y: 0.32244042}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

@@ -14,13 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Bow
   weaponTitle: 13
+  weaponLevel: 0
+  weaponClass: 6
+  weaponHitSpeed: 1
+  wieldType: 1
+  elementalBias: 0
+  elementalForgeRate: 0
+  price: 3
   weaponFrontSprite: {fileID: -307606160, guid: e0bcd719966f1944e9da0f3472e85601, type: 3}
   weaponRearSprite: {fileID: -307606160, guid: e0bcd719966f1944e9da0f3472e85601, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: fdb61ba75457ab049a7d1bcf42030730, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 5e566620eb78e4b46bac5180639b01f4, type: 2}
-  weaponClass: 6
-  wieldType: 1
-  price: 3
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0

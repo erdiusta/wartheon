@@ -257,12 +257,12 @@ TextureImporter:
       name: hatchet-sweep_5
       rect:
         serializedVersion: 2
-        x: 359
+        x: 354
         y: 19
-        width: 22
+        width: 27
         height: 42
       alignment: 9
-      pivot: {x: 0.55, y: 0.46}
+      pivot: {x: 0.632, y: 0.46}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -283,7 +283,7 @@ TextureImporter:
         width: 26
         height: 40
       alignment: 9
-      pivot: {x: 0.616, y: 0.435}
+      pivot: {x: 0.615, y: 0.435}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -384,11 +384,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 707
-        y: 33
+        y: 21
         width: 31
-        height: 28
+        height: 40
       alignment: 9
-      pivot: {x: 0.322, y: 0.18}
+      pivot: {x: 0.322, y: 0.43}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

@@ -257,12 +257,12 @@ TextureImporter:
       name: ancient_katana-sweep_5
       rect:
         serializedVersion: 2
-        x: 355
-        y: 9
-        width: 29
-        height: 52
+        x: 349
+        y: 7
+        width: 35
+        height: 54
       alignment: 9
-      pivot: {x: 0.722, y: 0.287}
+      pivot: {x: 0.76690763, y: 0.30963883}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -278,12 +278,12 @@ TextureImporter:
       name: ancient_katana-sweep_6
       rect:
         serializedVersion: 2
-        x: 419
-        y: 13
-        width: 26
-        height: 48
+        x: 415
+        y: 7
+        width: 33
+        height: 54
       alignment: 9
-      pivot: {x: 0.805, y: 0.22639684}
+      pivot: {x: 0.7573705, y: 0.30563262}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -362,12 +362,12 @@ TextureImporter:
       name: ancient_katana-sweep_10
       rect:
         serializedVersion: 2
-        x: 645
+        x: 640
         y: 5
-        width: 26
+        width: 35
         height: 55
       alignment: 9
-      pivot: {x: 0.192, y: 0.327}
+      pivot: {x: 0.2831107, y: 0.32555047}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -383,12 +383,12 @@ TextureImporter:
       name: ancient_katana-sweep_11
       rect:
         serializedVersion: 2
-        x: 709
-        y: 17
-        width: 25
-        height: 43
+        x: 704
+        y: 7
+        width: 33
+        height: 53
       alignment: 9
-      pivot: {x: 0.2, y: 0.14}
+      pivot: {x: 0.3038811, y: 0.2949344}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

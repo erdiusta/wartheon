@@ -14,13 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Hatchet
   weaponTitle: 4
+  weaponLevel: 0
+  weaponClass: 1
+  weaponHitSpeed: 3
+  wieldType: 0
+  elementalBias: 0
+  elementalForgeRate: 0
+  price: 3
   weaponFrontSprite: {fileID: -1802949229, guid: 737be57268f770d43960b382419110f0, type: 3}
   weaponRearSprite: {fileID: -1802949229, guid: 737be57268f770d43960b382419110f0, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 763046c15b6ac0a4db7e14a096c4ace1, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 3f97019750b21be44bf20ae63f574c6d, type: 2}
-  weaponClass: 1
-  wieldType: 0
-  price: 3
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0

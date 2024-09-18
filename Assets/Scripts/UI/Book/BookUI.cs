@@ -245,6 +245,7 @@ public class BookUI : MonoBehaviour
         }
 
         // Destroy previous main hand slot before new weapon replaces it
+
         Transform mainHandWeaponBackground = mainHandWeaponSlot.GetChild(0);
         Transform mainHandWeaponEquipped = mainHandWeaponSlot.GetChild(1);
         mainHandWeaponBackground.gameObject.SetActive(true);
@@ -304,6 +305,7 @@ public class BookUI : MonoBehaviour
         // OFF-HAND WEAPON EQUIP AT START - SLOT
         Transform offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
         Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
+
         offHandWeaponBackground.gameObject.SetActive(false);
         offHandWeaponEquipped.gameObject.SetActive(true);
         GameObject offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);

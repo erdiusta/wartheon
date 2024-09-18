@@ -56,8 +56,6 @@ public class DropOnDestroy : MonoBehaviour
         passiveItemDetails = GetPassiveItemDetailsToSpawn(passiveItemNum);
         activeItemDetails = GetActiveItemDetailsToSpawn(activeItemNum);
 
-        //ammoPercent = GetAmmoPercentToSpawn(activeItemNum, enemy.enemyDetails.ammoPercent);
-
         // Instantiate items if not null
         if (weaponDetails != null)
         {
@@ -186,7 +184,7 @@ public class DropOnDestroy : MonoBehaviour
         Weapon weapon = new Weapon();
         weapon.weaponDetails = weaponDetails;
 
-        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, weaponDetails.weaponName, transform.position);
+        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position);
     }
 
     /// <summary>
@@ -208,7 +206,7 @@ public class DropOnDestroy : MonoBehaviour
         PassiveItem passiveItem = new PassiveItem();
         passiveItem.passiveItemDetails = passiveItemDetails;
 
-        chestItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, passiveItemDetails.passiveItemName, transform.position);
+        chestItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position);
     }
 
     /// <summary>
@@ -222,7 +220,7 @@ public class DropOnDestroy : MonoBehaviour
         ActiveItem activeItem = new ActiveItem();
         activeItem.activeItemDetails = activeItemDetails;
 
-        chestItem.Initialize(activeItem, activeItemDetails.activeItemSprite, activeItemDetails.activeItemName, transform.position);
+        chestItem.Initialize(activeItem, activeItemDetails.activeItemSprite, transform.position);
     }
 
     /// <summary>

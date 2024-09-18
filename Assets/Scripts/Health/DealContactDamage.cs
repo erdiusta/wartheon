@@ -200,7 +200,7 @@ public class DealContactDamage : MonoBehaviour
                 }
 
                 player.armorStatus = ArmorStatus.Acid;
-                player.health.SetArmorValue((int)(player.playerDetails.playerArmorValue * (1 - enemy.enemyDetails.acidEfficiency)));
+                player.health.SetArmorValue((int)(player.currentPhysicalResistanceValue * (1 - enemy.enemyDetails.acidEfficiency)));
                 player.healthEvent.CallGetAcidEvent();
             }
         }

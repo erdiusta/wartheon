@@ -101,6 +101,23 @@ public enum AimDirection
     Down
 }
 
+public enum WeaponLevel
+{
+    Basic,
+    Enchanted,
+    Mythic,
+    Legendary
+}
+
+public enum WeaponHitSpeed
+{
+    VerySlow,
+    Slow,
+    Medium,
+    Fast,
+    VeryFast
+}
+
 public enum WeaponTitle
 {
     None,
@@ -122,7 +139,13 @@ public enum WeaponTitle
     SolarFlare,
     HeavensGale,
     Shield,
-    ApolloShield
+    ApolloShield,
+    BronzeHuntingBow,
+    ChordOfTheSerpent,
+    EbonLongbow,
+    Netherstrand,
+    BlackTalon,
+    HailstormSculptor
 }
 
 public enum WeaponClass
@@ -135,6 +158,7 @@ public enum WeaponClass
     Staff,
     Bow,
     Dagger,
+    Claw
 }
 
 public enum WieldType
@@ -143,11 +167,9 @@ public enum WieldType
     TwoHanded
 }
 
-public enum DamageType
+public enum ElementalBias
 {
-    Slashing,
-    Piercing,
-    Crushing,
+    None,
     Fire,
     Water,
     Earth,

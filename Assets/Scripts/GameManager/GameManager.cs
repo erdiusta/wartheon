@@ -83,6 +83,36 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     Vignette vignette;
     HashSet<Room> visitedRooms = new HashSet<Room>();
 
+    // Weapon Level 
+    [Header("WEAPON LEVEL COLORS")]
+    [Space(10)]
+    [HideInInspector] public Color basicLevelColor1 = new Color(1, 1, 1);
+    [HideInInspector] public Color basicLevelColor2 = new Color(0.2196078f, 0.172549f, 0.172549f);
+    [HideInInspector] public Color enchantedLevelColor1 = new Color(1, 1, 1);
+    [HideInInspector] public Color enchantedLevelColor2 = new Color(0f, 0.4588235f, 1f);
+    [HideInInspector] public Color mythicLevelColor1 = new Color(1, 1, 1);
+    [HideInInspector] public Color mythicLevelColor2 = new Color(0.6745098f, 0, 1);
+    [HideInInspector] public Color legendaryLevelColor1 = new Color(1, 1, 1);
+    [HideInInspector] public Color legendaryLevelColor2 = new Color(1f, 0.09411765f, 0f);
+
+    // Weapon Level 
+    [Header("ELEMENTAL COLORS")]
+    [Space(10)]
+    [HideInInspector] public Color noneElementalColor1 = new Color(1, 1, 1);
+    [HideInInspector] public Color noneElementalColor2 = new Color(1, 1, 1);
+    [HideInInspector] public Color fireColor1 = new Color(0.9686275f, 1, 0.2980392f);
+    [HideInInspector] public Color fireColor2 = new Color(1f, 0.1921569f, 0.2431373f);
+    [HideInInspector] public Color waterColor1 = new Color(0.8431373f, 0.9647059f, 1);
+    [HideInInspector] public Color waterColor2 = new Color(0, 0.5882353f, 1);
+    [HideInInspector] public Color airColor1 = new Color(1, 1, 1);
+    [HideInInspector] public Color airColor2 = new Color(0.4235294f, 0.4235294f, 0.4235294f);
+    [HideInInspector] public Color earthColor1 = new Color(0.5647059f, 1f, 0.2509804f);
+    [HideInInspector] public Color earthColor2 = new Color(0.02352941f, 0.4352941f, 0.03529412f);
+    [HideInInspector] public Color lightColor1 = new Color(1, 1, 1);
+    [HideInInspector] public Color lightColor2 = new Color(0.9716981f, 0.8067644f, 0f);
+    [HideInInspector] public Color darkColor1 = new Color(0.627451f, 0, 1);
+    [HideInInspector] public Color darkColor2 = new Color(0.6784314f, 0.01568628f, 0.5607843f);
+
     protected override void Awake()
     {
         base.Awake();
@@ -327,6 +357,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 {
                     IntroductionPopUpProcess("DIRK", "Basic dagger.", weapon.weaponDetails.weaponFrontSprite);
                 }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.BlackTalon)
+                {
+                    IntroductionPopUpProcess("BLACK TALON", "Claw from the darkness.", weapon.weaponDetails.weaponFrontSprite);
+                }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Gambit)
                 {
                     IntroductionPopUpProcess("GAMBIT", "A critical effective dagger.", weapon.weaponDetails.weaponFrontSprite);
@@ -363,9 +397,29 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 {
                     IntroductionPopUpProcess("HOLY\nSWORD", "Sword of the light.. Especially well against undeads", weapon.weaponDetails.weaponFrontSprite);
                 }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HailstormSculptor)
+                {
+                    IntroductionPopUpProcess("HAILSTORM\nSCULPTOR", "Biting frost is on my hand.", weapon.weaponDetails.weaponFrontSprite);
+                }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Bow)
                 {
                     IntroductionPopUpProcess("BOW", "A basic bow", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.BronzeHuntingBow)
+                {
+                    IntroductionPopUpProcess("BRONZE\nHUNTING BOW", "An acidifying glazing bow", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ChordOfTheSerpent)
+                {
+                    IntroductionPopUpProcess("CHORD\nOF THE SERPENT", "Can poison mobs", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.EbonLongbow)
+                {
+                    IntroductionPopUpProcess("EBON LONGBOW", "Long range bow", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Netherstrand)
+                {
+                    IntroductionPopUpProcess("NETHERSTRAND", "An ethereal bow. Can curse.", weapon.weaponDetails.weaponFrontSprite);
                 }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Crossbow)
                 {

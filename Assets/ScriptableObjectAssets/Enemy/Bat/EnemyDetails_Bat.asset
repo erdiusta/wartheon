@@ -17,9 +17,8 @@ MonoBehaviour:
   enemyRace: 0
   movementDetails: {fileID: 11400000, guid: 0fec25a507abd7d44965f2276a63e9fe, type: 2}
   experiencePoint: 30
-  chaseDistance: 9
+  chaseDistance: 12
   hasAttackMove: 0
-  preAttackDuration: 1
   attackMoveTriggerDistance: 0
   attackMoveEfficentDistance: 0
   attackMoveBaseCooldown: 8
@@ -77,8 +76,14 @@ MonoBehaviour:
       ratio: 5
     - dungeonObject: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
       ratio: 25
-    - dungeonObject: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
-      ratio: 25
+    - dungeonObject: {fileID: 11400000, guid: 7d667d84917d5cd48a742ff0880df489, type: 2}
+      ratio: 7
+    - dungeonObject: {fileID: 11400000, guid: 909d1ed58ac664841b30108d5f5101be, type: 2}
+      ratio: 6
+    - dungeonObject: {fileID: 11400000, guid: 5dafc78b029006e49908fade5f342a62, type: 2}
+      ratio: 6
+    - dungeonObject: {fileID: 11400000, guid: 42616934b2ccbfb4c848cdb16fef5705, type: 2}
+      ratio: 6
     - dungeonObject: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
       ratio: 25
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
@@ -93,8 +98,14 @@ MonoBehaviour:
       ratio: 5
     - dungeonObject: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
       ratio: 25
-    - dungeonObject: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
-      ratio: 25
+    - dungeonObject: {fileID: 11400000, guid: 7d667d84917d5cd48a742ff0880df489, type: 2}
+      ratio: 7
+    - dungeonObject: {fileID: 11400000, guid: 909d1ed58ac664841b30108d5f5101be, type: 2}
+      ratio: 6
+    - dungeonObject: {fileID: 11400000, guid: 5dafc78b029006e49908fade5f342a62, type: 2}
+      ratio: 6
+    - dungeonObject: {fileID: 11400000, guid: 42616934b2ccbfb4c848cdb16fef5705, type: 2}
+      ratio: 6
     - dungeonObject: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
       ratio: 25
   passiveItemsByLevelList:

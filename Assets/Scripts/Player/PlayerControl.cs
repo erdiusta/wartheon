@@ -667,12 +667,15 @@ public class PlayerControl : MonoBehaviour
         HighlightWeaponSetButton();
     }
 
-    public void SetWeaponSetByIndex(bool onlySwitch)
+    public void SetWeaponSetByIndex(bool onlySwitch, bool dragMainSlotOff = false)
     {
         // ACTIVE WEAPON VARIABLES SWITCH
         if (player.weaponSlotSetArray[previousIndex - 1][1] != null)
         {
-            player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+            if (!dragMainSlotOff)
+            {
+                player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+            }
         }
 
         // WEAPON SLOTS SWITCH
@@ -717,7 +720,14 @@ public class PlayerControl : MonoBehaviour
         // BOOK UI SWITCH
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
         {
-            PopulateMainHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], onlySwitch);
+            if (!dragMainSlotOff)
+            {
+                PopulateMainHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], onlySwitch);
+            }
+            else
+            {
+
+            }
         }
         else
         {
@@ -742,6 +752,11 @@ public class PlayerControl : MonoBehaviour
                 RemoveOffHandWeaponsFromBook();
             }
         }
+
+        //if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] == null)
+        //{
+        //    ChestItem.toBeDroppedOffHandChestItem = null;
+        //}
     }
 
     /// <summary>
@@ -1338,11 +1353,11 @@ public class PlayerControl : MonoBehaviour
     {
         if (InputManager.Instance.dropActiveItem.action.WasPressedThisFrame())
         {
-            DropProcess(ChestItem.toBeDroppedChestItem, DropType.ActiveItem);
+            DropProcess(DropType.ActiveItem);
         }
     }
 
-    public void DropProcess(ChestItem toBeDroppedChestItem, DropType dropType, IReceivable receivable = null, PassiveItemSlotName passiveItemSlotName = PassiveItemSlotName.None)
+    public void DropProcess(DropType dropType, IReceivable receivable = null, PassiveItemSlotName passiveItemSlotName = PassiveItemSlotName.None)
     {
         if (dropType == DropType.ActiveItem)
         {
@@ -1355,23 +1370,22 @@ public class PlayerControl : MonoBehaviour
 
                 GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
                 ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
-                toBeDroppedChestItem = chestItem;
+                ChestItem.toBeDroppedChestItem = chestItem;
 
-                toBeDroppedChestItem.hasActiveDrop = true;
-                toBeDroppedChestItem.droppedByPlayer = true;
-                toBeDroppedChestItem.isColliding = true;
+                ChestItem.toBeDroppedChestItem.hasActiveDrop = true;
+                ChestItem.toBeDroppedChestItem.droppedByPlayer = true;
+                ChestItem.toBeDroppedChestItem.isColliding = true;
 
-                toBeDroppedChestItem.Initialize(player.selectedActiveItem.GetCurrentActiveItem(), player.selectedActiveItem.GetCurrentActiveItem().
-                    activeItemDetails.activeItemSprite, player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemName, transform.position);
+                ChestItem.toBeDroppedChestItem.Initialize(player.selectedActiveItem.GetCurrentActiveItem(), player.selectedActiveItem.GetCurrentActiveItem().
+                    activeItemDetails.activeItemSprite, transform.position);
 
                 // Break free from the player object
-                toBeDroppedChestItem.spriteRenderer.enabled = true;
-                toBeDroppedChestItem.animator.enabled = true;
-                toBeDroppedChestItem.textTMP.enabled = true;
-                toBeDroppedChestItem.animator.runtimeAnimatorController = player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemAnimatorController;
+                ChestItem.toBeDroppedChestItem.spriteRenderer.enabled = true;
+                ChestItem.toBeDroppedChestItem.animator.enabled = true;
+                ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemAnimatorController;
 
                 // Store remaining charge count during drop process
-                toBeDroppedChestItem.remainingItemCharge = player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge;
+                ChestItem.toBeDroppedChestItem.remainingItemCharge = player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge;
 
                 player.setActiveWeaponEvent.CallRemovedActiveItem();
 
@@ -1382,8 +1396,12 @@ public class PlayerControl : MonoBehaviour
 
                 RemoveActiveItemFromBook();
 
-                toBeDroppedChestItem.transform.SetParent(null);
-                toBeDroppedChestItem.isPickedUp = false;
+                ChestItem.toBeDroppedChestItem.transform.SetParent(null);
+                ChestItem.toBeDroppedChestItem.isPickedUp = false;
+
+                // Make sure drop completed
+                ChestItem.toBeDroppedChestItem.boxCollider2D.enabled = true;
+                ChestItem.toBeDroppedChestItem.isColliding = false;
             }
         }
         else if (dropType == DropType.PassiveItem)
@@ -1392,19 +1410,18 @@ public class PlayerControl : MonoBehaviour
 
             GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
             ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
-            toBeDroppedChestItem = chestItem;
+            ChestItem.toBeDroppedChestItem = chestItem;
 
-            toBeDroppedChestItem.hasSecondaryPassiveDrop = true;
-            toBeDroppedChestItem.droppedByPlayer = true;
-            toBeDroppedChestItem.isColliding = true;
+            ChestItem.toBeDroppedChestItem.hasSecondaryPassiveDrop = true;
+            ChestItem.toBeDroppedChestItem.droppedByPlayer = true;
+            ChestItem.toBeDroppedChestItem.isColliding = true;
 
-            toBeDroppedChestItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, passiveItem.passiveItemDetails.passiveItemName, transform.position);
+            ChestItem.toBeDroppedChestItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, transform.position);
 
             // Disable some components during equipped
-            toBeDroppedChestItem.spriteRenderer.enabled = true;
-            toBeDroppedChestItem.animator.enabled = true;
-            toBeDroppedChestItem.textTMP.enabled = true;
-            toBeDroppedChestItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
+            ChestItem.toBeDroppedChestItem.spriteRenderer.enabled = true;
+            ChestItem.toBeDroppedChestItem.animator.enabled = true;
+            ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
 
             player.setActiveWeaponEvent.CallRemovedPassiveItem();
             
@@ -1415,8 +1432,12 @@ public class PlayerControl : MonoBehaviour
 
             RemovePassiveItemFromBook(passiveItem.passiveItemDetails.passiveItemSprite, passiveItemSlotName);
 
-            toBeDroppedChestItem.transform.SetParent(null);
-            toBeDroppedChestItem.isPickedUp = false;
+            ChestItem.toBeDroppedChestItem.transform.SetParent(null);
+            ChestItem.toBeDroppedChestItem.isPickedUp = false;
+
+            // Make sure drop completed
+            ChestItem.toBeDroppedChestItem.boxCollider2D.enabled = true;
+            ChestItem.toBeDroppedChestItem.isColliding = false;
         }
         else if(dropType == DropType.Weapon)
         {
@@ -1472,19 +1493,19 @@ public class PlayerControl : MonoBehaviour
 
                     GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
                     ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
-                    toBeDroppedChestItem = chestItem;
+                    ChestItem.toBeDroppedChestItem = chestItem;
 
-                    toBeDroppedChestItem.hasWeaponDrop = true;
-                    toBeDroppedChestItem.droppedByPlayer = true;
-                    toBeDroppedChestItem.isColliding = true;
+                    ChestItem.toBeDroppedChestItem.hasWeaponDrop = true;
+                    ChestItem.toBeDroppedChestItem.droppedByPlayer = true;
+                    ChestItem.toBeDroppedChestItem.isColliding = true;
+                    ChestItem.toBeDroppedChestItem.hasMainHandWeapon = true;
 
-                    toBeDroppedChestItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, weapon.weaponDetails.weaponName, transform.position);
+                    ChestItem.toBeDroppedChestItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
 
                     // Break free from the player object
-                    toBeDroppedChestItem.spriteRenderer.enabled = true;
-                    toBeDroppedChestItem.animator.enabled = true;
-                    toBeDroppedChestItem.textTMP.enabled = true;
-                    toBeDroppedChestItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
+                    ChestItem.toBeDroppedChestItem.spriteRenderer.enabled = true;
+                    ChestItem.toBeDroppedChestItem.animator.enabled = true;
+                    ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
 
                     // De-active dropped main hand weapon
                     player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
@@ -1496,10 +1517,19 @@ public class PlayerControl : MonoBehaviour
 
                     RemoveMainHandWeaponFromBook();
 
-                    toBeDroppedChestItem.transform.SetParent(null);
-                    toBeDroppedChestItem.isPickedUp = false;
+                    ChestItem.toBeDroppedChestItem.transform.SetParent(null);
+                    ChestItem.toBeDroppedChestItem.isPickedUp = false;
 
                     player.mainHandSlotFilled = false;
+
+                    // Make sure drop completed
+                    ChestItem.toBeDroppedChestItem.boxCollider2D.enabled = true;
+                    ChestItem.toBeDroppedChestItem.isColliding = false;
+
+                    if (dropCoroutine == null)
+                    {
+                        dropCoroutine = StartCoroutine(MoveItemDown(ChestItem.toBeDroppedChestItem));
+                    }
                 }
             }
             else
@@ -1509,19 +1539,19 @@ public class PlayerControl : MonoBehaviour
 
                 GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
                 ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
-                toBeDroppedChestItem = chestItem;
+                ChestItem.toBeDroppedChestItem = chestItem;
 
-                toBeDroppedChestItem.hasWeaponDrop = true;
-                toBeDroppedChestItem.droppedByPlayer = true;
-                toBeDroppedChestItem.isColliding = true;
+                ChestItem.toBeDroppedChestItem.hasWeaponDrop = true;
+                ChestItem.toBeDroppedChestItem.droppedByPlayer = true;
+                ChestItem.toBeDroppedChestItem.isColliding = true;
+                ChestItem.toBeDroppedChestItem.hasOffHandWeapon = true;
 
-                toBeDroppedChestItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, weapon.weaponDetails.weaponName, transform.position);
+                ChestItem.toBeDroppedChestItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
 
                 // Break free from the player object
-                toBeDroppedChestItem.spriteRenderer.enabled = true;
-                toBeDroppedChestItem.animator.enabled = true;
-                toBeDroppedChestItem.textTMP.enabled = true;
-                toBeDroppedChestItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
+                ChestItem.toBeDroppedChestItem.spriteRenderer.enabled = true;
+                ChestItem.toBeDroppedChestItem.animator.enabled = true;
+                ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
 
                 player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
 
@@ -1532,21 +1562,21 @@ public class PlayerControl : MonoBehaviour
 
                 RemoveOffHandWeaponsFromBook();
 
-                toBeDroppedChestItem.transform.SetParent(null);
-                toBeDroppedChestItem.isPickedUp = false;
+                ChestItem.toBeDroppedChestItem.transform.SetParent(null);
+                ChestItem.toBeDroppedChestItem.isPickedUp = false;
 
                 player.offHandSlotFilled = false;
+
+                // Make sure drop completed
+                ChestItem.toBeDroppedChestItem.boxCollider2D.enabled = true;
+                ChestItem.toBeDroppedChestItem.isColliding = false;
+
+                if (dropCoroutine == null)
+                {
+                    dropCoroutine = StartCoroutine(MoveItemDown(ChestItem.toBeDroppedChestItem));
+                }
             }
         }
-
-        // Make sure drop completed
-        toBeDroppedChestItem.boxCollider2D.enabled = true;
-        toBeDroppedChestItem.isColliding = false;
-
-        //if (dropCoroutine == null)
-        //{
-        //    dropCoroutine = StartCoroutine(MoveItemDown(toBeDroppedChestItem));
-        //}
     }
 
     public bool IsMainHandDropNotPossible()
@@ -1579,36 +1609,38 @@ public class PlayerControl : MonoBehaviour
         float yPos = 0f;
 
         // Drop x position adjustment
-        if (initialPosition.x - HelperUtilities.GetMouseWorldPosition().x > -1.5f && initialPosition.x - HelperUtilities.GetMouseWorldPosition().x < 1.5f)
+        if (initialPosition.x - HelperUtilities.GetMouseWorldPosition().x > -0.5f && initialPosition.x - HelperUtilities.GetMouseWorldPosition().x < 0.5f)
         {
             xPos = HelperUtilities.GetMouseWorldPosition().x;
         }
-        else if (initialPosition.x - HelperUtilities.GetMouseWorldPosition().x > 1.5f)
+        else if (initialPosition.x - HelperUtilities.GetMouseWorldPosition().x > 0.5f)
         {
-            xPos = initialPosition.x - 1.5f;
+            xPos = initialPosition.x - 0.5f;
         }
-        else if (initialPosition.x - HelperUtilities.GetMouseWorldPosition().x < -1.5f)
+        else if (initialPosition.x - HelperUtilities.GetMouseWorldPosition().x < -0.5f)
         {
-            xPos = initialPosition.x + 1.5f;
+            xPos = initialPosition.x + 0.5f;
         }
 
         // Drop y position adjustment
-        if (initialPosition.y - HelperUtilities.GetMouseWorldPosition().y > -1.5f && initialPosition.y - HelperUtilities.GetMouseWorldPosition().y < 1.5f)
+        if (initialPosition.y - HelperUtilities.GetMouseWorldPosition().y > -0.5f && initialPosition.y - HelperUtilities.GetMouseWorldPosition().y < 0.5f)
         {
             yPos = HelperUtilities.GetMouseWorldPosition().y;
         }
-        else if (initialPosition.y - HelperUtilities.GetMouseWorldPosition().y > 1.5f)
+        else if (initialPosition.y - HelperUtilities.GetMouseWorldPosition().y > 0.5f)
         {
-            yPos = initialPosition.y - 1.5f;
+            yPos = initialPosition.y - 0.5f;
         }
-        else if (initialPosition.y - HelperUtilities.GetMouseWorldPosition().y < -1.5f)
+        else if (initialPosition.y - HelperUtilities.GetMouseWorldPosition().y < -0.5f)
         {
-            yPos = initialPosition.y + 1.5f;
+            yPos = initialPosition.y + 0.5f;
         }
 
         Vector3 targetPosition = new Vector3(xPos, yPos, 0f);
 
-        while (elapsedTime < 0.9f)
+        float dropDuration = Random.Range(0.05f, 0.5f);
+
+        while (elapsedTime < dropDuration)
         {
             elapsedTime += Time.deltaTime; // Increment time based on frame rate
             chestItem.transform.position = Vector3.Lerp(initialPosition, targetPosition, elapsedTime);

@@ -14,13 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Clobbering Time
   weaponTitle: 6
+  weaponLevel: 1
+  weaponClass: 2
+  weaponHitSpeed: 2
+  wieldType: 0
+  elementalBias: 2
+  elementalForgeRate: 0.15
+  price: 4
   weaponFrontSprite: {fileID: 1259814964, guid: 77be0b9347560c84ca598d345eebca8e, type: 3}
   weaponRearSprite: {fileID: 1259814964, guid: 77be0b9347560c84ca598d345eebca8e, type: 3}
-  weaponAnimatorController: {fileID: 9100000, guid: 94f1ebbd0af8dd549b3ce20e72d3de80, type: 2}
+  weaponAnimatorController: {fileID: 9100000, guid: f2cd1c7a31c4db74fbe82733da9b805d, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 8d50f9dfcd86b91438e4c4868d290b2f, type: 2}
-  weaponClass: 2
-  wieldType: 0
-  price: 4
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0

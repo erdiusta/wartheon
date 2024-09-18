@@ -16,6 +16,34 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public WeaponTitle weaponTitle;
     #region Tooltip
+    [Tooltip("Weapon level")]
+    #endregion Tooltip
+    public WeaponLevel weaponLevel;
+    #region Tooltip
+    [Tooltip("Weapon class for the weapon")]
+    #endregion Tooltip
+    public WeaponClass weaponClass;
+    #region Tooltip
+    [Tooltip("Weapon hit speed")]
+    #endregion Tooltip
+    public WeaponHitSpeed weaponHitSpeed;
+    #region Tooltip
+    [Tooltip("Weapon wield type")]
+    #endregion Tooltip
+    public WieldType wieldType;
+    #region Tooltip
+    [Tooltip("Weapon elemental bias")]
+    #endregion Tooltip
+    public ElementalBias elementalBias;
+    #region Tooltip
+    [Tooltip("Weapon elemental compound rate")]
+    #endregion Tooltip
+    public float elementalForgeRate;
+    #region Tooltip
+    [Tooltip("Price of the weapon")]
+    #endregion Tooltip
+    public int price;
+    #region Tooltip
     [Tooltip("The front sprite for the weapon - the sprite should have the 'generate physics shape' option selected ")]
     #endregion Tooltip
     public Sprite weaponFrontSprite;
@@ -31,18 +59,7 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("The animator controller fot hovering during the drop")]
     #endregion Tooltip
     public RuntimeAnimatorController weaponHoverAnimatorController;
-    #region Tooltip
-    [Tooltip("Weapon class for the weapon")]
-    #endregion Tooltip
-    public WeaponClass weaponClass;
-    #region Tooltip
-    [Tooltip("Weapon wield type")]
-    #endregion Tooltip
-    public WieldType wieldType;
-    #region Tooltip
-    [Tooltip("Price of the weapon")]
-    #endregion Tooltip
-    public int price;
+
 
     #region Header PASSIVE
     [Space(10)]

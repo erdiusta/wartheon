@@ -14,13 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Heaven's Gale
   weaponTitle: 17
+  weaponLevel: 2
+  weaponClass: 5
+  wieldType: 1
+  elementalBias: 6
+  elementalForgeRate: 1
+  price: 10
   weaponFrontSprite: {fileID: -212045767, guid: 9e1f66994c4aa8a41a296dfb3477466c, type: 3}
   weaponRearSprite: {fileID: -212045767, guid: 9e1f66994c4aa8a41a296dfb3477466c, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 63a046d9da4fb8f4380deed4adee0f99, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 4ec36ae544cb71b40ac93c30ebba9600, type: 2}
-  weaponClass: 5
-  wieldType: 1
-  price: 10
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0
