@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,6 +5,7 @@ using UnityEngine.EventSystems;
 public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public SlotType slotType;
+    public PassiveItemSlotName passiveItemSlotName;
     public RectTransform tooltipPanel;
 
     Player player;
@@ -75,9 +75,64 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     {
         Transform currentChild = null;
 
-        if (slotType == SlotType.Passive) return;
+        if (slotType == SlotType.Passive) 
+        {
+            headerText.colorGradient = new VertexGradient(Color.blue, Color.blue, Color.blue, Color.blue);
+            headerText.text = string.Empty;
+            levelText.colorGradient = new VertexGradient(Color.blue, Color.blue, Color.blue, Color.blue);
+            levelText.text = string.Empty;
+            weaponClassText.text = string.Empty;
+            hitSpeedText.text = string.Empty;
+            weaponWieldText.text = string.Empty;
+            damageText.text = string.Empty;
+            baseHandlingText.text = string.Empty;
+            crHitChanceText.text = string.Empty;
+            crHitDamageText.text = string.Empty;
+            elementalBiasText.text = string.Empty;
+            elementText.text = string.Empty;
+            elementalForgeRateText.text = string.Empty;
+            masteryText1.text = string.Empty;
+            masteryText2.text = string.Empty;
+            masteryText3.text = string.Empty;
 
-        if (slotType == SlotType.Active)
+            // Check if the slot is occupied
+            if (equippedTransform.childCount > 0)
+            {
+                currentChild = equippedTransform.GetChild(0);
+
+                // Retrieve draggable item and weapon from current child
+                DraggableItem slotDragggableItem = currentChild?.GetComponent<DraggableItem>();
+                PassiveItem passiveItem = slotDragggableItem?.GetDraggedPassiveItem();
+
+                if (passiveItem != null)
+                {
+                    headerText.text = passiveItem.passiveItemDetails.passiveItemName;
+                    levelText.text = $"(Passive Item)";
+
+                    if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
+                    {
+                        weaponClassText.text = "Shiny look.";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
+                    {
+                        weaponClassText.text = "More drop chance.";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
+                    {
+                        weaponClassText.text = "More critical chance\nfor dual-wield daggers.";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
+                    {
+                        weaponClassText.text = "More projectile accuracy\nfor bows.";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
+                    {
+                        weaponClassText.text = "Increased speed.";
+                    }
+                }
+            }
+        }
+        else if (slotType == SlotType.Active)
         {
             // Check if the slot is occupied
             if (equippedTransform.childCount > 0)
@@ -116,8 +171,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 //elementalBiasText.text = "Elemental Bias";
             }
         }
-
-        if (slotType == SlotType.WeaponMainHand || slotType == SlotType.WeaponOffHand)
+        else if (slotType == SlotType.WeaponMainHand || slotType == SlotType.WeaponOffHand)
         {
             if (slotType == SlotType.WeaponMainHand)
             {
@@ -299,6 +353,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         {
             // If dragged item is not a weapon, cancel the swap or move
             if (draggableItem.receivable is not Weapon) return;
+
+            if (draggableItem.receivable is Weapon && (slotType == SlotType.Active || slotType == SlotType.Passive)) return;
 
             Transform currentChild = null;
 

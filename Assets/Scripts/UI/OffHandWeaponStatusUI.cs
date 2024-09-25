@@ -273,14 +273,4 @@ public class OffHandWeaponStatusUI : MonoBehaviour
         barImage.transform.localScale = new Vector3(1f, 1f, 1f);
         barImage.color = new Color(1f, 1f, 1f, 0f);
     }
-
-    #region Validation
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponImage), weaponImage);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponNameText), weaponNameText);
-    }
-#endif
-    #endregion
 }

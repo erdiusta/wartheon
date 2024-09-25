@@ -20,7 +20,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Tooltip("Populate with pause menu gameobject in the hierarchy")]
     #endregion
     [SerializeField] GameObject pauseMenu;
-
     #region Tooltip
     [Tooltip("Populate with the MessageText textmeshpro component in the FadeScreenUI")]
     #endregion Tooltip
@@ -66,7 +65,12 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Tooltip("Populate with the starting dungeon level for testing , first level = 0")]
     #endregion Tooltip
     public int currentDungeonLevelListIndex = 0;
+    #region Tooltip
+    [Tooltip("Populate with the health bar")]
+    #endregion Tooltip
+    public GameObject healthBarContainer;
 
+    [HideInInspector] public GameObject healthBar;
     [HideInInspector] public GameState gameState;
     [HideInInspector] public GameState previousGameState;
     [HideInInspector] public Decoy decoy;
@@ -82,6 +86,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     bool isFading = false;
     Vignette vignette;
     HashSet<Room> visitedRooms = new HashSet<Room>();
+    Enemy bossEnemy;
 
     // Weapon Level 
     [Header("WEAPON LEVEL COLORS")]
@@ -112,6 +117,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [HideInInspector] public Color lightColor2 = new Color(0.9716981f, 0.8067644f, 0f);
     [HideInInspector] public Color darkColor1 = new Color(0.627451f, 0, 1);
     [HideInInspector] public Color darkColor2 = new Color(0.6784314f, 0.01568628f, 0.5607843f);
+
+    [HideInInspector] public Color passiveItemColor = new Color(0f, 0.7f, 1f);
 
     protected override void Awake()
     {
@@ -146,6 +153,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         StaticEventHandler.OnDecoySpawned += StaticEventHandler_OnDecoySpawned;
         StaticEventHandler.OnHourglassSpawned += StaticEventHandler_OnHourglassSpawned;
         StaticEventHandler.OnHourglasExpired += StaticEventHandler_OnHourglasExpired;
+
         player.destroyedEvent.OnDestroyed += Player_OnDestroyed;
 
         if (InputManager.Instance != null)
@@ -163,6 +171,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         StaticEventHandler.OnDecoySpawned -= StaticEventHandler_OnDecoySpawned;
         StaticEventHandler.OnHourglassSpawned -= StaticEventHandler_OnHourglassSpawned;
         StaticEventHandler.OnHourglasExpired -= StaticEventHandler_OnHourglasExpired;
+
         player.destroyedEvent.OnDestroyed -= Player_OnDestroyed;
 
         if (InputManager.Instance  != null)
@@ -285,11 +294,15 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                 {
-                    IntroductionPopUpProcess("SHADOW\nCLOAK", "More critical chance.", passiveItem.passiveItemDetails.passiveItemSprite);
+                    IntroductionPopUpProcess("SHADOW\nCLOAK", "More critical chance\nwith equipped dual-wield daggers.", passiveItem.passiveItemDetails.passiveItemSprite);
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
                 {
                     IntroductionPopUpProcess("WARDEN OF\nFOREST", "More projectile accuracy.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
+                {
+                    IntroductionPopUpProcess("WINGED SANDALS", "Increased speed.", passiveItem.passiveItemDetails.passiveItemSprite);
                 }
 
                 break;
@@ -533,6 +546,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         previousGameState = GameState.gameStarted;
         gameState = GameState.gameStarted;
 
+        healthBar = healthBarContainer.transform.GetChild(1).GetChild(1).GetChild(0).gameObject;
+
         bookCover.SetActive(false);
         bookView.SetActive(false);
         warningPopUp.SetActive(false);
@@ -557,6 +572,16 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         HandleBook();
         HandlePopUp();
         HandleGameState();
+
+        if (EnemySpawner.Instance.isBossInstantiated)
+        {
+            bossEnemy = EnemySpawner.Instance.GetBoss();
+            healthBarContainer.SetActive(true);
+        }
+        else
+        {
+            healthBarContainer.SetActive(false);
+        }
     }
 
     private void HandleBook()
@@ -1121,10 +1146,24 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         return null;
     }
 
-    //public ChestItem GetToBeDroppedChestItem()
-    //{
-    //    return toBeDroppedChestItem;
-    //}
+    /// <summary>
+    /// Set health bar value with health percent between 0 and 1
+    /// </summary>
+    public void SetHealthBarValue(float healthPercent, Enemy enemy)
+    {
+        if (enemy != null)
+        {
+            if (enemy.enemyDetails.isEnemyBoss)
+            {
+                healthBar.transform.localScale = new Vector3(healthPercent * -1f, 1f, 1f);
+
+                if (enemy.health.GetCurrentHealth() <= 0f)
+                {
+                    healthBar.transform.localScale = new Vector3(0f, 1f, 1f);
+                }
+            }
+        }
+    }
 
     public void GoToWeaponSetWithIndex(int setIndex)
     {

@@ -160,10 +160,14 @@ public class Destroyed : MonoBehaviour
             }
 
             enemy.isDead = true;
-            enemy.enemyMovementAI.StopAllCoroutines();
-            enemy.enemyMovementAI.enabled = false;
-            enemy.enemyWeaponAI.StopAllCoroutines();
-            enemy.enemyWeaponAI.enabled = false;
+
+            if (enemy.enemyDetails.isEnemyBoss)
+            {
+                EnemySpawner.Instance.isBossInstantiated = false;
+            }
+
+            enemy.enemyAI.StopAllCoroutines();
+            enemy.enemyAI.enabled = false;
             enemy.health.StopAllCoroutines();
             enemy.health.ResetStatusInCaseOfDeath();
             enemy.health.enabled = false;

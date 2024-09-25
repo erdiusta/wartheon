@@ -104,9 +104,9 @@ public static class StaticEventHandler
     // Item removed from passive item slot on book event
     public static event Action<ItemRemovedFromBookArgs> OnItemRemovedFromPassiveItemSlot;
 
-    public static void CallItemRemovedFromPassiveItemSlot(Sprite itemSprite, PassiveItemSlotName itemSlotName)
+    public static void CallItemRemovedFromPassiveItemSlot(PassiveItemSlotName itemSlotName)
     {
-        OnItemRemovedFromPassiveItemSlot?.Invoke(new ItemRemovedFromBookArgs { itemSprite = itemSprite, itemSlotName = itemSlotName});
+        OnItemRemovedFromPassiveItemSlot?.Invoke(new ItemRemovedFromBookArgs { itemSlotName = itemSlotName});
     }
 
     // Health change on book event

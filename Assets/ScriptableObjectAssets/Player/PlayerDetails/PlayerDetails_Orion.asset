@@ -66,8 +66,7 @@ MonoBehaviour:
   selectedActiveItem: {fileID: 11400000, guid: f7ff6f667f3e7514b99c64d2b56351da, type: 2}
   activeItemsList:
   - {fileID: 11400000, guid: f7ff6f667f3e7514b99c64d2b56351da, type: 2}
-  passiveItemsList:
-  - {fileID: 11400000, guid: d4563c3575593ca4a810b8b8be56285d, type: 2}
+  passiveItemsList: []
   startingWeapon: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
   mainHandAnimatorController: {fileID: 9100000, guid: fdb61ba75457ab049a7d1bcf42030730, type: 2}
   offHandAnimatorController: {fileID: 0}

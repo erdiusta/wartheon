@@ -36,7 +36,13 @@ public static class Settings
     public static int aimLeft = Animator.StringToHash("aimLeft");
     public static int isIdle = Animator.StringToHash("isIdle");
     public static int isMoving = Animator.StringToHash("isMoving");
+    public static int rollUp = Animator.StringToHash("rollUp");
+    public static int rollDown = Animator.StringToHash("rollDown");
+    public static int rollRight = Animator.StringToHash("rollRight");
+    public static int rollLeft = Animator.StringToHash("rollLeft");
     public static int use = Animator.StringToHash("use");
+    public static int isPrecharging = Animator.StringToHash("precharge");
+    public static int isPrechargingProjectile = Animator.StringToHash("projectilePrecharge");
     public static int isAttacking = Animator.StringToHash("attack");
     public const float baseSpeedForPlayerAnimations = 6f;
 

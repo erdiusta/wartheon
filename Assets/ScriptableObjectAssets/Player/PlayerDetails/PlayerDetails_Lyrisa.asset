@@ -63,9 +63,7 @@ MonoBehaviour:
   selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
   activeItemsList:
   - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
-  playerArmorValue: 0
-  passiveItemsList:
-  - {fileID: 11400000, guid: 021aeb4586ce4d04baf855c55d1060ad, type: 2}
+  passiveItemsList: []
   startingWeapon: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
   mainHandAnimatorController: {fileID: 9100000, guid: a9f6b3580707cd749861dcb2fc4d7f34, type: 2}
   offHandAnimatorController: {fileID: 0}

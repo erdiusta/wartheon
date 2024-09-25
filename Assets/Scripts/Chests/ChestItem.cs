@@ -295,10 +295,67 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
                         if (hasWeaponDrop)
                         {
-                            if (InputManager.Instance.interaction.action.IsPressed())
+                            if (InputManager.Instance.interaction.action.IsPressed()) 
                             {
-                                CollectWeaponItem(player);
-                                chest.chestState = ChestState.empty;
+                                if (!InputManager.Instance.isPressedPreviousFrame)
+                                {
+                                    // Drop process
+                                    if (player.activeWeapon.GetCurrentMainHandWeapon() != null && !isPickedUp)
+                                    {
+                                        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded &&
+                                            weaponDetails.weaponClass == WeaponClass.Shield)
+                                        {
+                                            goto shieldContinue; // Skip drop process because you equip one-handed weapon and chest contains a shield
+                                        }
+
+                                        if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
+                                        {
+                                            toBeDroppedOffWeaponDetails = weaponDetails;
+                                            player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon());
+                                        }
+
+                                        if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+                                        {
+
+                                            toBeDroppedMainWeaponDetails = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails;
+                                            player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentMainHandWeapon());
+                                        }
+
+                                    }
+
+                                shieldContinue:
+                                    // Pick up process
+                                    if (player.activeWeapon.GetCurrentMainHandWeapon() == null)
+                                    {
+                                        isColliding = false;
+
+                                        if (weaponDetails.weaponClass == WeaponClass.Shield)
+                                        {
+                                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
+                                        }
+                                        else
+                                        {
+                                            CollectWeaponItem(player);
+                                            chest.chestState = ChestState.empty;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        CollectWeaponItem(player);
+                                        chest.chestState = ChestState.empty;
+                                    }
+                                }
+
+                                if (isPickedUp)
+                                {
+                                    InputManager.Instance.isPressedPreviousFrame = true;
+                                }
+
+                                //if (InputManager.Instance.interaction.action.IsPressed())
+                                //{
+                                //    CollectWeaponItem(player);
+                                //    chest.chestState = ChestState.empty;
+                                //}
                             }
                         }
                         else if (hasActiveDrop)
@@ -539,6 +596,8 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
         else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
         {
+            Debug.Log("Current physical resistance " + player.currentPhysicalResistanceValue);
+            Debug.Log("Current air resistance " + player.currentAirResistanceValue);
             player.AddPassiveItemToPlayer(passiveItemDetails);
 
             isPickedUp = true;
@@ -598,8 +657,10 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         {
             if (hasSecondaryPassiveDrop)
             {
-                headerText.colorGradient = new VertexGradient(Color.blue, Color.blue, Color.blue, Color.blue);
-                levelText.colorGradient = new VertexGradient(Color.blue, Color.blue, Color.blue, Color.blue);
+                headerText.colorGradient = new VertexGradient(GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor,
+                        GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor);
+                levelText.colorGradient = new VertexGradient(GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor,
+                        GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor);
                 headerText.text = passiveItemDetails.passiveItemName;
                 levelText.text = $"(Passive Item)";
             }

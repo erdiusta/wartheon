@@ -112,7 +112,7 @@ public class MeleeAttackOffHand : MonoBehaviour
 
                                 if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
                                 {
-                                    enemy.enemyMovementAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                                    enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
                                 }
                             }
                             else
@@ -168,7 +168,7 @@ public class MeleeAttackOffHand : MonoBehaviour
 
                                 if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
                                 {
-                                    enemy.enemyMovementAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                                    enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
                                 }
                             }
                             else
@@ -229,9 +229,9 @@ public class MeleeAttackOffHand : MonoBehaviour
 
             if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
             {
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger &&
-                    player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger &&
-                    player.passiveItemList.Any(item => item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak))
+                if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Dagger &&
+                    player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Dagger &&
+                    player.selectedPassiveItem.GetCurrentBackPassiveItem()?.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                 {
                     criticalHitModifier = 0.15f;
                 }
@@ -294,7 +294,7 @@ public class MeleeAttackOffHand : MonoBehaviour
     /// </summary>
     private void CheckStunStatus(Enemy enemy)
     {
-        EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
+        EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
 
         if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun
             && enemy.health.currentHealth > 0)
@@ -309,7 +309,7 @@ public class MeleeAttackOffHand : MonoBehaviour
 
     IEnumerator StunRoutine(Enemy enemy)
     {
-        enemy.enemyMovementAI.moveStatus = MoveStatus.Stun;
+        enemy.enemyAI.moveStatus = MoveStatus.Stun;
         enemy.healthEvent.CallGetStunEvent();
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         enemy.animator.SetBool(Settings.isStunned, true);

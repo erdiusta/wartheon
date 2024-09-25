@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(DealContactDamage))]
 [RequireComponent(typeof(DestroyedEvent))]
 [RequireComponent(typeof(Destroyed))]
-[RequireComponent(typeof(EnemyMovementAI))]
+[RequireComponent(typeof(EnemyAI))]
 [RequireComponent(typeof(AimWeapon))]
 [RequireComponent(typeof(FireWeaponEvent))]
 [RequireComponent(typeof(FireWeapon))]
@@ -45,7 +45,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public Animator animator;
     [HideInInspector] public Rigidbody2D rb2D;
     [HideInInspector] public MovementToPosition movementToPosition;
-    [HideInInspector] public EnemyMovementAI enemyMovementAI;
+    [HideInInspector] public EnemyAI enemyAI;
     [HideInInspector] public DealContactDamage dealContactDamage;
     [HideInInspector] public EnemyWeaponAI enemyWeaponAI;
     [HideInInspector] public Knockback knockback;
@@ -74,12 +74,13 @@ public class Enemy : MonoBehaviour
     {
         healthEvent = GetComponent<HealthEvent>();
         health = GetComponent<Health>();
+        activeWeapon = GetComponent<ActiveWeapon>();
         fireWeaponEvent = GetComponent<FireWeaponEvent>();
         fireWeapon = GetComponent<FireWeapon>();
         weaponFiredEvent = GetComponent<WeaponFiredEvent>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
         destroyedEvent = GetComponent<DestroyedEvent>();
-        enemyMovementAI = GetComponent<EnemyMovementAI>();
+        enemyAI = GetComponent<EnemyAI>();
         dealContactDamage = GetComponent<DealContactDamage>();
         enemyWeaponAI = GetComponent<EnemyWeaponAI>();
         materializeEffect = GetComponent<MaterializeEffect>();
@@ -147,7 +148,7 @@ public class Enemy : MonoBehaviour
     private void SetEnemyMovementUpdateFrame(int enemySpawnNumber)
     {
         // Set frame number that enemy should process it's updates
-        enemyMovementAI.SetUpdateFrameNumber(enemySpawnNumber % Settings.targetFrameRateToSpreadPathfindingOver);
+        enemyAI.SetUpdateFrameNumber(enemySpawnNumber % Settings.targetFrameRateToSpreadPathfindingOver);
     }
 
     /// <summary>
@@ -171,7 +172,7 @@ public class Enemy : MonoBehaviour
     /// <summary>
     /// Set enemy starting weapon as per the weapon details SO
     /// </summary>
-    private void SetEnemyStartingWeapon()
+    private void SetEnemyStartingWeapon(bool animatorRequired = false)
     {
         // Process if enemy has a weapon
         if (enemyDetails.enemyWeapon != null)
@@ -189,7 +190,7 @@ public class Enemy : MonoBehaviour
     private void SetEnemyAnimationSpeed()
     {
         // Set animator speed to match movement speed
-        animator.speed = enemyMovementAI.moveSpeed / Settings.baseSpeedForEnemyAnimations;
+        animator.speed = enemyAI.moveSpeed / Settings.baseSpeedForEnemyAnimations;
     }
 
     IEnumerator MaterializeEnemy()
@@ -211,7 +212,7 @@ public class Enemy : MonoBehaviour
         polygonCollider2D.enabled = isEnabled;
 
         // Enable/Disable movement AI
-        enemyMovementAI.enabled = isEnabled;
+        enemyAI.enabled = isEnabled;
 
         // Enable / Disable Fire Weapon
         fireWeapon.enabled = isEnabled;

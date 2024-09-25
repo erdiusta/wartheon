@@ -6,14 +6,6 @@ using Random = UnityEngine.Random;
 [DisallowMultipleComponent]
 public class Health : MonoBehaviour
 {
-    #region Header References
-    [Space(10)]
-    [Header("References")]
-    #endregion
-    #region Tooltip
-    [Tooltip("Populate with the HealthBar component on the HealthBar gameobject")]
-    #endregion
-    [SerializeField] HealthBar healthBar;
 
     [HideInInspector] public int currentHealth;
     [HideInInspector] public bool isDamageable = true;
@@ -84,16 +76,6 @@ public class Health : MonoBehaviour
             immunityTime = 1.5f;
             spriteRenderer = decoy.spriteRenderer;
         }
-
-        // Enable the health bar if required
-        if (enemy != null && enemy.enemyDetails.isHealthBarDisplayed == true && healthBar != null)
-        {
-            healthBar.EnableHealthBar();
-        }
-        else if (healthBar != null)
-        {
-            healthBar.DisableHealthBar();
-        }
     }
 
     private void Update()
@@ -134,6 +116,13 @@ public class Health : MonoBehaviour
     public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, Collider2D collider,
         bool headShotHappened)
     {
+        bool isRolling = false;
+
+        if (player != null)
+        {
+            isRolling = player.playerControl.isPlayerRolling;
+        }
+
         // Check if the collider is a projectile
         bool isProjectile = collider.CompareTag("playerProjectile");
 
@@ -143,7 +132,7 @@ public class Health : MonoBehaviour
             isProjectileHit = true;
         }
 
-        if (isDamageable)
+        if (isDamageable && !isRolling)
         {
             currentHealth -= damageAmount;
             if (player != null)
@@ -196,10 +185,13 @@ public class Health : MonoBehaviour
                 }
             }
 
-            // Set health bar as the percentage of health remaining
-            if (healthBar != null)
+            if (enemy != null)
             {
-                healthBar.SetHealthBarValue((float)currentHealth / (float)startingHealth);
+                // Set health bar as the percentage of health remaining
+                if (GameManager.Instance.healthBarContainer.activeSelf)
+                {
+                    GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)startingHealth, enemy);
+                }
             }
 
             CallHealthEvent(damageAmount);
@@ -211,7 +203,14 @@ public class Health : MonoBehaviour
     /// </summary>
     public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, bool headShotHappened)
     {
-        if (isDamageable)
+        bool isRolling = false;
+
+        if (player != null)
+        {
+            isRolling = player.playerControl.isPlayerRolling;
+        }
+
+        if (isDamageable && !isRolling)
         {
             currentHealth -= damageAmount;
             if (player != null)
@@ -269,10 +268,13 @@ public class Health : MonoBehaviour
                 }
             }
 
-            // Set health bar as the percentage of health remaining
-            if (healthBar != null)
+            if (enemy != null)
             {
-                healthBar.SetHealthBarValue((float)currentHealth / (float)startingHealth);
+                // Set health bar as the percentage of health remaining
+                if (GameManager.Instance.healthBarContainer.activeSelf)
+                {
+                    GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)startingHealth, enemy);
+                }
             }
 
             CallHealthEvent(damageAmount);
@@ -311,7 +313,7 @@ public class Health : MonoBehaviour
     {
         if (!isBlocking)
         {
-            enemy.enemyMovementAI.enemyPhase = EnemyPhase.GetHit;
+            enemy.enemyAI.enemyPhase = EnemyPhase.GetHit;
 
             if (enemy.health.GetCurrentHealth() > 0f)
             {
@@ -355,7 +357,7 @@ public class Health : MonoBehaviour
         enemy.animator.SetBool(Settings.block, false);
         isBlocking = false;
         getHitCoroutine = null;
-        enemy.enemyMovementAI.enemyPhase = EnemyPhase.Chase;
+        enemy.enemyAI.enemyPhase = EnemyPhase.Chase;
     }
 
     /// <summary>

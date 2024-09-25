@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
-using System.Linq;
 using System;
 
 #region REQUIRE COMPONENTS
@@ -13,6 +12,8 @@ using System;
 [RequireComponent(typeof(Destroyed))]
 [RequireComponent(typeof(PlayerControl))]
 [RequireComponent(typeof(MovementByVelocity))]
+[RequireComponent(typeof(MovementToPositionEvent))]
+[RequireComponent(typeof(MovementToPosition))]
 [RequireComponent(typeof(Idle))]
 [RequireComponent(typeof(AimWeapon))]
 [RequireComponent(typeof(FireWeaponEvent))]
@@ -23,6 +24,8 @@ using System;
 [RequireComponent(typeof(SetActiveWeaponEvent))]
 [RequireComponent(typeof(ActiveWeapon))]
 [RequireComponent(typeof(SelectedActiveItem))]
+[RequireComponent(typeof(SetPassiveItemEvent))]
+[RequireComponent(typeof(SelectedPassiveItem))]
 [RequireComponent(typeof(FireWeaponEvent))]
 [RequireComponent(typeof(WeaponFiredEvent))]
 [RequireComponent(typeof(AnimatePlayer))]
@@ -58,9 +61,11 @@ public class Player : MonoBehaviour
     [HideInInspector] public MeleeAttackMainHand meleeAttackRightHand;
     [HideInInspector] public MeleeAttackOffHand meleeAttackLeftHand;
     [HideInInspector] public SetActiveWeaponEvent setActiveWeaponEvent;
+    [HideInInspector] public SetPassiveItemEvent setPassiveItemEvent; 
     [HideInInspector] public AimWeapon aimWeapon;
     [HideInInspector] public ActiveWeapon activeWeapon;
     [HideInInspector] public SelectedActiveItem selectedActiveItem;
+    [HideInInspector] public SelectedPassiveItem selectedPassiveItem;
     [HideInInspector] public WeaponFiredEvent weaponFiredEvent;
     [HideInInspector] public SpriteRenderer spriteRenderer;
     [HideInInspector] public PolygonCollider2D polygonCollider2D;
@@ -71,6 +76,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public Coins coins;
     [HideInInspector] public Idle idle;
     [HideInInspector] public MovementByVelocity movementByVelocity;
+    [HideInInspector] public MovementToPositionEvent movementToPositionEvent;
     [HideInInspector] public bool isDead;
     [HideInInspector] public StatusManager statusManager;
     [HideInInspector] public SpecialMoveEvent specialMoveEvent;
@@ -121,7 +127,6 @@ public class Player : MonoBehaviour
     [HideInInspector] public ParticleSystem specialMoveParticlesSystem;
     [HideInInspector] public Weapon[][] weaponSlotSetArray = new Weapon[3][] { new Weapon[2] {null, null}, new Weapon[2] {null, null}, new Weapon[2] {null, null}};
     [HideInInspector] public int currentWeaponSlotSetIndex = 1;
-    [HideInInspector] public List<PassiveItem> passiveItemList = new List<PassiveItem>();
     [HideInInspector] public List<GameObject> summonedEnemies = new List<GameObject>();
 
     [HideInInspector] public bool mainHandSlotFilled = false;
@@ -147,9 +152,11 @@ public class Player : MonoBehaviour
         meleeAttackRightHand = GetComponent<MeleeAttackMainHand>();
         meleeAttackLeftHand = GetComponent<MeleeAttackOffHand>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
+        setPassiveItemEvent = GetComponent<SetPassiveItemEvent>();
         aimWeapon = GetComponent<AimWeapon>();
         activeWeapon = GetComponent<ActiveWeapon>();
         selectedActiveItem = GetComponent<SelectedActiveItem>();
+        selectedPassiveItem = GetComponent<SelectedPassiveItem>();
         weaponFiredEvent = GetComponent<WeaponFiredEvent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         polygonCollider2D = GetComponent<PolygonCollider2D>();
@@ -160,6 +167,7 @@ public class Player : MonoBehaviour
         coins = GetComponent<Coins>();
         idle = GetComponent<Idle>();
         movementByVelocity = GetComponent<MovementByVelocity>();
+        movementToPositionEvent = GetComponent<MovementToPositionEvent>();
         specialMoveEvent = GetComponent<SpecialMoveEvent>();
         branchMastery = GetComponent<BranchMastery>();
         weaponMastery = GetComponent<WeaponMastery>();
@@ -255,9 +263,12 @@ public class Player : MonoBehaviour
     /// </summary>
     private void CreatePlayerStartingPassiveItem()
     {
-        passiveItemList.Clear();
-
-        AddPassiveItemToPlayer(playerDetails.passiveItemsList[0]);
+        for (int i = 0; i < playerDetails.passiveItemsList.Count; i++)
+        {
+            PassiveItem passiveItem = new PassiveItem();
+            passiveItem.passiveItemDetails = playerDetails.passiveItemsList[i];
+            AddPassiveItemToPlayer(passiveItem.passiveItemDetails);
+        }
     }
 
     /// <summary>
@@ -286,6 +297,7 @@ public class Player : MonoBehaviour
         currentEarthResistanceValue = playerDetails.earthResistance;
         currentLightResistanceValue = playerDetails.lightResistance;
         currentDarkResistanceValue = playerDetails.darkResistance;
+
 
         UpdateDamageValues();
         UpdateWeaponHandlingAndCriticalValues();
@@ -452,17 +464,7 @@ public class Player : MonoBehaviour
             passiveItemDetails = passiveItemDetails
         };
 
-        foreach (PassiveItem item in passiveItemList)
-        {
-            // If the passive item is already equipped then return null
-            if (passiveItemList.Any(item => item.passiveItemDetails.passiveItemName == passiveItem.passiveItemDetails.passiveItemName))
-            {
-                return null;
-            }
-        }
-
-        passiveItemList.Add(passiveItem);
-        playerControl.PopulatePassiveItemsToBook(passiveItemDetails.passiveItemSprite, passiveItemDetails.passiveItemSlotName);
+        setPassiveItemEvent.CallEquipPassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
 
         return passiveItem;
     }

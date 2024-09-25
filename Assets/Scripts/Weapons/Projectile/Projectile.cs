@@ -253,7 +253,7 @@ public class Projectile : MonoBehaviour, IFireable
             }
 
             // Show ammo hit effect
-            DoProjectileHitEffect();
+            ProjectileHitEffect();
 
             DisableProjectile();
         }
@@ -365,7 +365,7 @@ public class Projectile : MonoBehaviour, IFireable
             }
 
             // Show ammo hit effect
-            DoProjectileHitEffect();
+            ProjectileHitEffect();
 
             DisableProjectile();
         }
@@ -374,7 +374,7 @@ public class Projectile : MonoBehaviour, IFireable
             // Deal Damage To Collision Object
             DealDamage(collision);
             // Show ammo hit effect
-            DoProjectileHitEffect();
+            ProjectileHitEffect();
 
             DisableProjectile();
         }
@@ -407,7 +407,7 @@ public class Projectile : MonoBehaviour, IFireable
             DealDamage(collision);
 
             // Show ammo hit effect
-            DoProjectileHitEffect();
+            ProjectileHitEffect();
 
             DisableProjectile();
         }
@@ -516,8 +516,9 @@ public class Projectile : MonoBehaviour, IFireable
     /// Initialize the projectile being fired - using the projectileDetails, the aimangle, weaponAngle, and weaponAimDirectionVector. If this 
     /// projectile is part of a pattern the projectile movement can be overriden by setting overrideAmmoMovement to true - PROJECTILE
     /// </summary>
-    public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, 
-        float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false, bool fallingFromSkies = false, bool isPenetrationArrow = false)
+    public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
+        float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false, bool fallingFromSkies = false,
+        bool isPenetrationArrow = false, int projectileCounter = 0, int totalProjectiles = 0,CentaurPhase centaurPhase = CentaurPhase.None)
     {
         #region Projectile
 
@@ -533,7 +534,7 @@ public class Projectile : MonoBehaviour, IFireable
         isColliding = false;
 
         // Set fire direction
-        SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector);
+        SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, totalProjectiles, centaurPhase);
 
         // Set projectile sprite
         spriteRenderer.sprite = projectileDetails.projectileSprite;
@@ -675,11 +676,12 @@ public class Projectile : MonoBehaviour, IFireable
     /// <summary>
     /// Set projectile fire direction and angle based on the input angle and direction adjusted by the
     /// random spread - PROJECTILE
-    private void SetFireDirection(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector)
+    private void SetFireDirection(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
+        int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None)
     {
         float projectileSpreadModifier;
 
-        if (GameManager.Instance.GetPlayer().passiveItemList.Any(item => item.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest))
+        if (GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentHeadPassiveItem()?.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
         {
             projectileSpreadModifier = 0.5f;
         }
@@ -688,23 +690,40 @@ public class Projectile : MonoBehaviour, IFireable
             projectileSpreadModifier = 1f;
         }
 
-        // Calculate random spread angle between min and max
-        float randomSpread = Random.Range(projectileDetails.projectileSpreadMin * projectileSpreadModifier, projectileDetails.projectileSpreadMax * projectileSpreadModifier);
-
-        // Get a random spread toggle of 1 or -1
-        int spreadToggle = Random.Range(0, 2) * 2 - 1;
-
-        if (weaponAimDirectionVector.magnitude < Settings.useAimAngleDistance)
+        if (centaurPhase == CentaurPhase.SpreadArrowShot)
         {
-            fireDirectionAngle = aimAngle;
+            // Define the total angle spread (e.g., 45 degrees spread)
+            float totalSpreadAngle = 45f;
+
+            // Calculate the angle increment between projectiles
+            float angleIncrement = (totalProjectiles > 1) ? totalSpreadAngle / (totalProjectiles - 1) : 0f;
+
+            // Adjust the starting angle to center the spread
+            float startAngle = aimAngle - (totalSpreadAngle / 2);
+
+            // Set the fire direction angle based on the projectile index
+            fireDirectionAngle = startAngle + (angleIncrement * projectileCounter);
         }
         else
         {
-            fireDirectionAngle = weaponAimAngle;
-        }
+            // Calculate random spread angle between min and max
+            float randomSpread = Random.Range(projectileDetails.projectileSpreadMin * projectileSpreadModifier, projectileDetails.projectileSpreadMax * projectileSpreadModifier);
 
-        // Adjust projectile fire angle by random spread
-        fireDirectionAngle += spreadToggle * randomSpread;
+            // Get a random spread toggle of 1 or -1
+            int spreadToggle = Random.Range(0, 2) * 2 - 1;
+
+            if (weaponAimDirectionVector.magnitude < Settings.useAimAngleDistance)
+            {
+                fireDirectionAngle = aimAngle;
+            }
+            else
+            {
+                fireDirectionAngle = weaponAimAngle;
+            }
+
+            // Adjust projectile fire angle by random spread
+            fireDirectionAngle += spreadToggle * randomSpread;
+        }
 
         // Set projectile rotation
         transform.eulerAngles = new Vector3(0f, 0f, fireDirectionAngle);
@@ -821,7 +840,7 @@ public class Projectile : MonoBehaviour, IFireable
     /// <summary>
     /// Display the ammo hit effect
     /// </summary>
-    private void DoProjectileHitEffect()
+    private void ProjectileHitEffect()
     {
         if (activeItemDetails == null)
         {
@@ -1027,7 +1046,7 @@ public class Projectile : MonoBehaviour, IFireable
     {
         if (!isActiveItem)
         {
-            EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
+            EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
 
             if (projectileDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemy.health.currentHealth > 0)
             {
@@ -1040,7 +1059,7 @@ public class Projectile : MonoBehaviour, IFireable
         }
         else
         {
-            EnemyMovementAI enemyMovementAI = enemy.GetComponent<EnemyMovementAI>();
+            EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
 
             if (activeItemDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun && enemy.health.currentHealth > 0)
             {
@@ -1118,7 +1137,7 @@ public class Projectile : MonoBehaviour, IFireable
 
     IEnumerator StunRoutine(Enemy enemy)
     {
-        enemy.enemyMovementAI.moveStatus = MoveStatus.Stun;
+        enemy.enemyAI.moveStatus = MoveStatus.Stun;
         enemy.healthEvent.CallGetStunEvent();
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         enemy.animator.SetBool(Settings.isStunned, true);
@@ -1126,7 +1145,6 @@ public class Projectile : MonoBehaviour, IFireable
 
         yield return new WaitForFixedUpdate();
     }
-
 
     IEnumerator ExplosionRoutine()
     {
@@ -1165,7 +1183,7 @@ public class Projectile : MonoBehaviour, IFireable
 
                     if (!enemy.enemyDetails.hasKnockbackResistance && enemy.GetComponent<Health>().currentHealth > 0)
                     {
-                        enemy.enemyMovementAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                        enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
                     }
                 }
             }

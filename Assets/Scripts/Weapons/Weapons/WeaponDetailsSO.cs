@@ -95,9 +95,21 @@ public class WeaponDetailsSO : ScriptableObject
     [Header("WEAPON CONFIGURATION")]
     #endregion Header WEAPON CONFIGURATION
     #region Tooltip
-    [Tooltip("Weapon Shoot Position - the offset position for the end of the weapon from the sprite pivot pont")]
+    [Tooltip("Weapon Right Shoot Position - the offset position for the end of the weapon from the sprite pivot pont")]
     #endregion Tooltip
-    public Vector3 weaponShootPosition;
+    public Vector3 weaponRightShootPosition;
+    #region Tooltip
+    [Tooltip("Weapon Left Shoot Position - the offset position for the end of the weapon from the sprite pivot pont")]
+    #endregion Tooltip
+    public Vector3 weaponLeftShootPosition;
+    #region Tooltip
+    [Tooltip("Weapon Up Shoot Position - the offset position for the end of the weapon from the sprite pivot pont")]
+    #endregion Tooltip
+    public Vector3 weaponUpShootPosition;
+    #region Tooltip
+    [Tooltip("Weapon Down Shoot Position - the offset position for the end of the weapon from the sprite pivot pont")]
+    #endregion Tooltip
+    public Vector3 weaponDownShootPosition;
     #region Tooltip
     [Tooltip("Weapon current projectile")]
     #endregion Tooltip

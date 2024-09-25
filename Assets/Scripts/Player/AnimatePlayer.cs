@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Player))]
@@ -16,6 +17,18 @@ public class AnimatePlayer : MonoBehaviour
         player = GetComponent<Player>();
     }
 
+    private void OnEnable()
+    {
+        // Subscribe to movement to position event
+        player.movementToPositionEvent.OnMovementToPosition += MovementToPositionEvent_OnMovementToPosition;
+    }
+
+    private void OnDisable()
+    {
+        // Unsubscribe from movement to position event
+        player.movementToPositionEvent.OnMovementToPosition -= MovementToPositionEvent_OnMovementToPosition;
+    }
+
     private void Start()
     {
         baseLayerIndex = player.animator.GetLayerIndex("Base Layer");
@@ -30,8 +43,15 @@ public class AnimatePlayer : MonoBehaviour
         player.animator.SetLayerWeight(deathLayerIndex, 0f);
     }
 
+    private void MovementToPositionEvent_OnMovementToPosition(MovementToPositionEvent movementToPositionEvent, MovementToPositionArgs movementToPositionArgs)
+    {
+        InitializeAimAnimationParameters();
+        InitializeRollAnimationParameters();
+        SetToMovementToPositionAnimationParameters(movementToPositionArgs);
+    }
+
     /// <summary>
-    /// Initialise aim animation parameters
+    /// Initialize aim animation parameters
     /// </summary>
     public void InitializeAimAnimationParameters()
     {
@@ -41,6 +61,44 @@ public class AnimatePlayer : MonoBehaviour
         player.animator.SetBool(Settings.aimRight, false);
         player.animator.SetBool(Settings.aimLeft, false);
         player.animator.SetBool(Settings.aimDown, false);
+    }
+
+    /// <summary>
+    /// Initialize roll animation parameters
+    /// </summary>
+    public void InitializeRollAnimationParameters()
+    {
+        player.animator.SetBool(Settings.rollDown, false);
+        player.animator.SetBool(Settings.rollRight, false);
+        player.animator.SetBool(Settings.rollLeft, false);
+        player.animator.SetBool(Settings.rollUp, false);
+    }
+
+    /// <summary>
+    /// Set movement to position animation parameters
+    /// </summary>
+    private void SetToMovementToPositionAnimationParameters(MovementToPositionArgs movementToPositionArgs)
+    {
+        // Animate roll
+        if (movementToPositionArgs.isRolling)
+        {
+            if (movementToPositionArgs.moveDirection.x > 0f)
+            {
+                player.animator.SetBool(Settings.rollRight, true);
+            }
+            else if (movementToPositionArgs.moveDirection.x < 0f)
+            {
+                player.animator.SetBool(Settings.rollLeft, true);
+            }
+            else if (movementToPositionArgs.moveDirection.y > 0f)
+            {
+                player.animator.SetBool(Settings.rollUp, true);
+            }
+            else if (movementToPositionArgs.moveDirection.y < 0f)
+            {
+                player.animator.SetBool(Settings.rollDown, true);
+            }
+        }
     }
 
     /// <summary>

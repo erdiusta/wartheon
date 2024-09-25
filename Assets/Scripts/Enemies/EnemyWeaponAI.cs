@@ -6,13 +6,14 @@ using UnityEngine;
 public class EnemyWeaponAI : MonoBehaviour
 {
     #region Tooltip
+    [Tooltip("Populate this with the WeaponShootPosition child gameobject transform")]
+    #endregion Tooltip
+    public Vector3 weaponShootPosition;
+
+    #region Tooltip
     [Tooltip("Select the layers that the enemy bullets will hit")]
     #endregion Tooltip
     [SerializeField] LayerMask layerMask;
-    #region Tooltip
-    [Tooltip("Populate this with the WeaponShootPosition child gameobject transform")]
-    #endregion Tooltip
-    [SerializeField] Transform weaponShootPosition;
 
     [HideInInspector] public Coroutine enemyAttackCoroutine;
 
@@ -38,11 +39,11 @@ public class EnemyWeaponAI : MonoBehaviour
     {
         if (GameManager.Instance.GetPlayer().onStealth) return;
 
-        if (enemy.enemyMovementAI.moveStatus == MoveStatus.Stun) return;
+        if (enemy.enemyAI.moveStatus == MoveStatus.Stun) return;
 
-        if (enemy.enemyMovementAI.moveStatus == MoveStatus.Stagger) return;
+        if (enemy.enemyAI.moveStatus == MoveStatus.Stagger) return;
 
-        if (enemy.enemyMovementAI.attackMoveEnemyRoutine != null) return;
+        if (enemy.enemyAI.attackMoveEnemyRoutine != null) return;
 
         if (enemy.health.getHitCoroutine != null) return;
 
@@ -55,7 +56,7 @@ public class EnemyWeaponAI : MonoBehaviour
             if (firingDurationTimer >= 0)
             {
                 firingDurationTimer -= Time.deltaTime;
-                DoFireWeapon();
+                FireWeapon();
             }
             else
             {
@@ -87,7 +88,7 @@ public class EnemyWeaponAI : MonoBehaviour
     /// <summary>
     /// Fire the weapon
     /// </summary>
-    private void DoFireWeapon()
+    private void FireWeapon()
     {
         if (enemy.isDead) return;
 
@@ -122,14 +123,14 @@ public class EnemyWeaponAI : MonoBehaviour
         }
     }
 
-    public void Aim(out Vector3 playerDirectionVector, out Vector3 weaponDirection, out float weaponAngleDegrees, out float enemyAngleDegrees, 
+    public void Aim(out Vector3 playerDirectionVector, out Vector3 weaponDirection, out float weaponAngleDegrees, out float enemyAngleDegrees,
         out AimDirection enemyAimDirection)
     {
         // Player distance
         playerDirectionVector = GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position;
 
         // Calculate direction vector of player from weapon shoot position
-        weaponDirection = GameManager.Instance.GetPlayer().GetPlayerPosition() - weaponShootPosition.position;
+        weaponDirection = GameManager.Instance.GetPlayer().GetPlayerPosition() - weaponShootPosition;
 
         // Get weapon to player angle
         weaponAngleDegrees = HelperUtilities.GetAngleFromVector(weaponDirection);
@@ -140,6 +141,27 @@ public class EnemyWeaponAI : MonoBehaviour
         // Set enemy aim direction
         enemyAimDirection = HelperUtilities.GetAimDirection(enemyAngleDegrees);
 
+        // Adjust weapon shoot position
+        switch (enemyAimDirection)
+        {
+            case AimDirection.Up:
+                weaponShootPosition = enemy.enemyDetails.enemyWeapon.weaponUpShootPosition;
+                break;
+            case AimDirection.Down:
+                weaponShootPosition = enemy.enemyDetails.enemyWeapon.weaponDownShootPosition;
+                break;
+            case AimDirection.Left:
+            case AimDirection.UpLeft:
+                weaponShootPosition = enemy.enemyDetails.enemyWeapon.weaponLeftShootPosition;
+                break;
+            case AimDirection.Right:
+            case AimDirection.UpRight:
+                weaponShootPosition = enemy.enemyDetails.enemyWeapon.weaponRightShootPosition;
+                break;
+            default:
+                break;
+        }
+
         // Trigger weapon aim methods
         enemy.aimWeapon.Aim(enemyAimDirection, enemyAngleDegrees);
         enemy.animateEnemy.ResetAimAnimationParameters();
@@ -148,7 +170,7 @@ public class EnemyWeaponAI : MonoBehaviour
 
     private bool IsPlayerInLineOfSight(Vector3 weaponDirection, float enemyProjectileRange)
     {
-        RaycastHit2D raycastHit2D = Physics2D.Raycast(weaponShootPosition.position, (Vector2)weaponDirection, enemyProjectileRange, layerMask);
+        RaycastHit2D raycastHit2D = Physics2D.Raycast(weaponShootPosition, (Vector2)weaponDirection, enemyProjectileRange, layerMask);
 
         if (raycastHit2D && raycastHit2D.transform.CompareTag(Settings.playerTag))
         {
@@ -163,7 +185,7 @@ public class EnemyWeaponAI : MonoBehaviour
     /// </summary>
     IEnumerator EnemyAttackAnimRoutine()
     {
-        enemy.enemyMovementAI.enemyPhase = EnemyPhase.Attack;
+        enemy.enemyAI.enemyPhase = EnemyPhase.Attack;
 
         if (enemy.health.currentHealth > 0f)
         {
@@ -171,15 +193,6 @@ public class EnemyWeaponAI : MonoBehaviour
         }
 
         enemyAttackCoroutine = null;
-        enemy.enemyMovementAI.enemyPhase = EnemyPhase.Patrol;
+        enemy.enemyAI.enemyPhase = EnemyPhase.Patrol;
     }
-
-    #region Validation
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponShootPosition), weaponShootPosition);
-    }
-#endif
-    #endregion Validation
 }

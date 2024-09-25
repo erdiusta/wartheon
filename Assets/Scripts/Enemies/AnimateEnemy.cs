@@ -110,9 +110,6 @@ public class AnimateEnemy : MonoBehaviour
         enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
         enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
 
-        // Set parameters for attack layer
-        enemy.animator.SetBool(Settings.isAttacking, true);
-
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, false);
         enemy.animator.SetBool(Settings.getHit, false);

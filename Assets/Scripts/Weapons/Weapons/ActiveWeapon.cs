@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(SetActiveWeaponEvent))]
 [DisallowMultipleComponent]
@@ -39,6 +40,7 @@ public class ActiveWeapon : MonoBehaviour
     [SerializeField] PolygonCollider2D weaponOffHandPolygonCollider2D;
 
     Player player;
+    Enemy enemy;
     Transform offHandAnchorPosition;
     GameObject thirdHandGameObject;
     Vector3 startRightHandPosition;
@@ -54,6 +56,7 @@ public class ActiveWeapon : MonoBehaviour
     private void Awake()
     {
         player = GetComponent<Player>();
+        enemy = GetComponent<Enemy>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
         playerAnimator = GetComponent<Animator>();
         weaponMainHandAnimator = transform.GetChild(0).GetComponent<Animator>();
@@ -86,7 +89,11 @@ public class ActiveWeapon : MonoBehaviour
         SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
         SetMainHandWeapon(setActiveWeaponEventArgs.weapon);
-        weaponMainHandAnimator.SetBool(Settings.isLeft, false);
+
+        if (player != null)
+        {
+            weaponMainHandAnimator.SetBool(Settings.isLeft, false);
+        }
 
         // Update new weapon values
         player?.UpdateDamageValues();
@@ -162,10 +169,10 @@ public class ActiveWeapon : MonoBehaviour
                 offHandAnchorPosition.gameObject.SetActive(true);
                 weaponOffHandAnimator.enabled = true;
             }
-        }
 
-        // Set animator controller to the weapon animator
-        weaponMainHandAnimator.runtimeAnimatorController = currentMainHandWeapon.weaponDetails.weaponAnimatorController;
+            // Set animator controller to the weapon animator
+            weaponMainHandAnimator.runtimeAnimatorController = currentMainHandWeapon.weaponDetails.weaponAnimatorController;
+        }
 
         // Set current weapon sprite
         weaponMainHandSpriteRenderer.sprite = currentMainHandWeapon.weaponDetails.weaponFrontSprite;
@@ -181,8 +188,7 @@ public class ActiveWeapon : MonoBehaviour
             weaponMainHandPolygonCollider2D.points = spritePhysicsShapePointsList.ToArray();
         }
 
-        // Set weapon shoot position
-        weaponMainHandShootPositionTransform.localPosition = currentMainHandWeapon.weaponDetails.weaponShootPosition;
+        weaponMainHandShootPositionTransform.localPosition = currentMainHandWeapon.weaponDetails.weaponRightShootPosition;
 
         isSwitching = false;
     }

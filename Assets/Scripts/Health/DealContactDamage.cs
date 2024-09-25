@@ -133,7 +133,7 @@ public class DealContactDamage : MonoBehaviour
             else if (collision.tag == Settings.decoyTag)
             {
                 receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
-                enemy.enemyMovementAI.TriggerKnockback((transform.position - collision.transform.position));
+                enemy.enemyAI.TriggerKnockback((transform.position - collision.transform.position));
             }
             else
             {
@@ -161,7 +161,7 @@ public class DealContactDamage : MonoBehaviour
             int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMin);
 
             // Apply knockback and damage the enemy
-            enemy.enemyMovementAI.TriggerKnockback(transform.position - collision.transform.position);
+            enemy.enemyAI.TriggerKnockback(transform.position - collision.transform.position);
             enemy.health.TakeDamage(damageDone, transform.position, collision.transform.position, false);
         }
     }

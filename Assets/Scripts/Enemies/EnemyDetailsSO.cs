@@ -60,6 +60,10 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check if enemy is a boss")]
     #endregion
     public bool isEnemyBoss = false;
+    #region Tooltip
+    [Tooltip("Check if weapon animator exists")]
+    #endregion
+    public bool hasAnimator = false;
 
     #region Header PASSIVE
     [Space(10)]
@@ -155,6 +159,10 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public SoundEffectSO deathSoundEffect;
     #region Tooltip
+    [Tooltip("The sound effect for this enemy's roar")]
+    #endregion
+    public SoundEffectSO roarSoundEffect;
+    #region Tooltip
     [Tooltip("The sound effect for this enemy to attack")]
     #endregion
     public SoundEffectSO attackSoundEffect;
@@ -247,10 +255,6 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("The enemy active drops list")]
     #endregion
     public List<SpawnableObjectsByLevel<ActiveItemDetailsSO>> activeItemsByLevelList;
-    #region Tooltip
-    [Tooltip("The range of ammo to spawn for each level")]
-    #endregion
-    public int ammoPercent;
 
     #region Header DROP SPAWN CHANCE
     [Space(10)]

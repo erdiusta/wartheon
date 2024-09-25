@@ -14,24 +14,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Centaur
   enemyPrefab: {fileID: 7183228443647751644, guid: e942b4fde2fcdae43bc95bb86569cd58, type: 3}
+  enemyRace: 0
   movementDetails: {fileID: 11400000, guid: f96faad51296e144eadcd7706aa0f43e, type: 2}
+  experiencePoint: 30
   chaseDistance: 50
   hasAttackMove: 0
-  preAttackDuration: 1
   attackMoveTriggerDistance: 3
   attackMoveEfficentDistance: 8
-  attackMoveCooldown: 8
-  enemyBehaviour: 1
+  attackMoveBaseCooldown: 8
+  deflectionValue: 0.1
+  enemyBehaviour: 3
   isEnemyBoss: 1
+  hasAnimator: 0
   enemyArmorValue: 2
   hasShield: 0
   deflectChance: 0
   isPoisonous: 0
   poisonChance: 0
   hasAcid: 0
-  acidEfficiency: 0.4
+  acidEfficiency: 0
   hasStunDamage: 0
-  stunChance: 0.4
+  stunChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 5
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -40,8 +45,9 @@ MonoBehaviour:
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 0}
+  roarSoundEffect: {fileID: 11400000, guid: 12253983c80540c47bd8dcee82351f89, type: 2}
   attackSoundEffect: {fileID: 0}
-  deflectSoundEffect: {fileID: 0}
+  deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
   poisonSoundEffect: {fileID: 0}
   enemyWeapon: {fileID: 11400000, guid: 771bc99da394ec141a442bbedeb56f53, type: 2}
@@ -52,9 +58,9 @@ MonoBehaviour:
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    enemyHealthAmount: 125
+    enemyHealthAmount: 150
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
-    enemyHealthAmount: 125
+    enemyHealthAmount: 150
   isImmuneAfterHit: 1
   hitImmunityTime: 2
   isHealthBarDisplayed: 1
@@ -62,7 +68,6 @@ MonoBehaviour:
   weaponsByLevelList: []
   passiveItemsByLevelList: []
   activeItemsByLevelList: []
-  ammoPercent: 0
   dropSpawnChanceMin: 0
   dropSpawnChanceMax: 0
   numberOfItemsToSpawnMin: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Wraith
   m_EditorClassIdentifier: 
   enemyName: Wraith
-  enemyPrefab: {fileID: 7183228443647751644, guid: bce63a2d64ee4f742ab7865aaa134eb5, type: 3}
+  enemyPrefab: {fileID: 7183228443647751644, guid: 913cc469d3c1a8a4bbf5516c97fbe315, type: 3}
   enemyRace: 5
   movementDetails: {fileID: 11400000, guid: 7b463c867d3fc6b43a7a40c0a426ff01, type: 2}
   experiencePoint: 70
@@ -164,7 +164,6 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: 44da56b0da740104f85243ed6b962b09, type: 2}
       ratio: 1
-  ammoPercent: 50
   dropSpawnChanceMin: 100
   dropSpawnChanceMax: 100
   numberOfItemsToSpawnMin: 1

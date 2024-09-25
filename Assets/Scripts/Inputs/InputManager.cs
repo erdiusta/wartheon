@@ -23,6 +23,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference dropActiveItem;
     public InputActionReference pause;
     public InputActionReference OKButton;
+    public InputActionReference jumpButton;
 
     [HideInInspector] public bool isPressedPreviousFrame;
 }

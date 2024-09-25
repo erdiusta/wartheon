@@ -1512,6 +1512,8 @@ GameObject:
   - component: {fileID: 3495262142536431903}
   - component: {fileID: 867631875859887099}
   - component: {fileID: 8675837940116119588}
+  - component: {fileID: 241583783252307007}
+  - component: {fileID: 6029770953779647084}
   - component: {fileID: 1795854068962728802}
   - component: {fileID: 8453197941048184293}
   - component: {fileID: 2050193959976247817}
@@ -1532,6 +1534,8 @@ GameObject:
   - component: {fileID: 3760601999533703318}
   - component: {fileID: -7766726267448648419}
   - component: {fileID: 8582659391090279790}
+  - component: {fileID: 4129974003213523600}
+  - component: {fileID: 448431427010442839}
   - component: {fileID: -9133217020520152176}
   - component: {fileID: 6815216415085289844}
   m_Layer: 11
@@ -1575,7 +1579,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d4e9dff447ef649a71b93436f1041f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBar: {fileID: 0}
   currentHealth: 0
   isDamageable: 1
   enemy: {fileID: 0}
@@ -1827,9 +1830,11 @@ MonoBehaviour:
   meleeAttackRightHand: {fileID: 0}
   meleeAttackLeftHand: {fileID: 0}
   setActiveWeaponEvent: {fileID: 0}
+  setPassiveItemEvent: {fileID: 0}
   aimWeapon: {fileID: 0}
   activeWeapon: {fileID: 0}
   selectedActiveItem: {fileID: 0}
+  selectedPassiveItem: {fileID: 0}
   weaponFiredEvent: {fileID: 0}
   spriteRenderer: {fileID: 0}
   polygonCollider2D: {fileID: 0}
@@ -1840,6 +1845,7 @@ MonoBehaviour:
   coins: {fileID: 0}
   idle: {fileID: 0}
   movementByVelocity: {fileID: 0}
+  movementToPositionEvent: {fileID: 0}
   isDead: 0
   statusManager: {fileID: 0}
   specialMoveEvent: {fileID: 0}
@@ -1857,11 +1863,27 @@ MonoBehaviour:
   weaponMastery: {fileID: 0}
   activeItemChestItem: {fileID: 0}
   hasRingOfFortune: 0
-  playerWeaponHandlingModifier: 0
-  playerEvasivenessModifier: 0
+  currentStrengthValue: 0
+  currentConstitutionValue: 0
+  currentDexterityValue: 0
+  currentIntelligenceValue: 0
+  currentAgilityValue: 0
+  currentPhysicalResistanceValue: 0
+  currentFireResistanceValue: 0
+  currentWaterResistanceValue: 0
+  currentAirResistanceValue: 0
+  currentEarthResistanceValue: 0
+  currentLightResistanceValue: 0
+  currentDarkResistanceValue: 0
+  isPhysicalDamage: 0
+  currentMainHandMinDamageValue: 0
+  currentMainHandMaxDamageValue: 0
+  currentOffHandMinDamageValue: 0
+  currentOffHandMaxDamageValue: 0
+  currentMainHandCriticalHitChance: 0
+  currentOffHandCriticalHitChance: 0
   specialMoveParticlesSystem: {fileID: 0}
   currentWeaponSlotSetIndex: 1
-  passiveItemList: []
   summonedEnemies: []
   mainHandSlotFilled: 0
   offHandSlotFilled: 0
@@ -1929,6 +1951,7 @@ MonoBehaviour:
   fireCompletedDuringPressed: 0
   isSoundPlayed: 0
   movementTimer: 0
+  isPlayerRolling: 0
   meleeAttackTypeMainHand: 0
   meleeAttackTypeOffHand: 0
 --- !u!114 &8675837940116119588
@@ -1949,6 +1972,30 @@ MonoBehaviour:
   playerStartingSpeed: 0
   dustTrailAnimator: {fileID: 0}
   moveSpeed: 0
+--- !u!114 &241583783252307007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c2ed32ad203fff4393d6798838cf04f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6029770953779647084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0b90085e8b366143ac6ad3981428535, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1795854068962728802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2102,6 +2149,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b01cb0468074684fa9e46317c6c6d6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnDeathAnimationFinished:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2592639511934198954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2217,6 +2267,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3152a0b0bab69846ad02b521e8e5289, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4129974003213523600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d4032a6cf34b984d8934f2faae1a36a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &448431427010442839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33964304c5784b145b0637b968810e33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &-9133217020520152176

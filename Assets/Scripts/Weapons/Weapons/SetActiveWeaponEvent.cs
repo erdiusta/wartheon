@@ -59,20 +59,6 @@ public class SetActiveWeaponEvent : MonoBehaviour
     {
         OnRemovedActiveItem?.Invoke(this);
     }
-
-    public event Action<SetActiveWeaponEvent, SetSelectedPassiveItemArgs> OnSelectedPassiveItem;
-
-    public void CallSelectedPassiveItem(PassiveItem passiveItem)
-    {
-        OnSelectedPassiveItem?.Invoke(this, new SetSelectedPassiveItemArgs { passiveItem = passiveItem });
-    }
-
-    public event Action<SetActiveWeaponEvent> OnRemovedPassiveItem;
-
-    public void CallRemovedPassiveItem()
-    {
-        OnRemovedPassiveItem?.Invoke(this);
-    }
 }
 
 public class SetActiveWeaponEventArgs : EventArgs
@@ -84,9 +70,4 @@ public class SetActiveWeaponEventArgs : EventArgs
 public class SetSelectedActiveItemArgs : EventArgs
 {
     public ActiveItem activeItem;
-}
-
-public class SetSelectedPassiveItemArgs : EventArgs
-{
-    public PassiveItem passiveItem;
 }

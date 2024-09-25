@@ -64,16 +64,14 @@ MonoBehaviour:
   selectedActiveItem: {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
   activeItemsList:
   - {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
-  passiveItemsList:
-  - {fileID: 11400000, guid: ea43c30395e36ed4dad1c912b02fe8ee, type: 2}
+  passiveItemsList: []
   startingWeapon: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
   mainHandAnimatorController: {fileID: 9100000, guid: fe2632354abf80540ae561908fd9d705, type: 2}
   offHandAnimatorController: {fileID: 9100000, guid: fe2632354abf80540ae561908fd9d705, type: 2}
   startingWeaponList:
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
-  - {fileID: 11400000, guid: 93d2d24fb15c92447ad3eaf7a564ee4c, type: 2}
-  - {fileID: 11400000, guid: 93d2d24fb15c92447ad3eaf7a564ee4c, type: 2}
+  - {fileID: 11400000, guid: bba05607ec78139438ec83b847d254ee, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: f10364e9e25cea94e8f0ec8d6826ca20, type: 3}
   playerHandSprite: {fileID: 21300000, guid: 61f9f1056a5486644b029259a89f6cce, type: 3}
   playerBookSprite: {fileID: 1770967855, guid: df96b7638c152474e8af466b7833c3a1, type: 3}

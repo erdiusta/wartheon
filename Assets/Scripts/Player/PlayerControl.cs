@@ -14,6 +14,7 @@ public class PlayerControl : MonoBehaviour
     [HideInInspector] public bool isSoundPlayed = false;
     [HideInInspector] public Coroutine unstealthRoutine;
     [HideInInspector] public float movementTimer = 0;
+    [HideInInspector] public bool isPlayerRolling;
 
     Vector2 movementInput;
     Player player;
@@ -23,6 +24,9 @@ public class PlayerControl : MonoBehaviour
     Coroutine teleportParticleRoutine;
     Coroutine dropCoroutine;
     Coroutine healthPotionDrinkCoroutine;
+    Coroutine playerRollCoroutine;
+    WaitForFixedUpdate waitForFixedUpdate;
+    float playerRollCooldownTimer = 0f;
     bool particlePlayed;
     float unstealthImmunityTime = 2f;
     AimDirection aimDirection;
@@ -49,6 +53,8 @@ public class PlayerControl : MonoBehaviour
 
     private void Start()
     {
+        waitForFixedUpdate = new WaitForFixedUpdate();
+
         // Set player animation speed
         SetPlayerAnimationSpeed();
     }
@@ -67,6 +73,18 @@ public class PlayerControl : MonoBehaviour
         // If player movement disabled then return
         if (isPlayerMovementDisabled) return;
 
+        if (!isPlayerRolling)
+        {
+            // Reset roll animation parameters
+            player.animatePlayer.InitializeRollAnimationParameters();
+
+        }
+        // If player is rolling then return
+        else
+        {
+            return;
+        }
+
         switch (player.moveStatus)
         {
             case MoveStatus.Idle:
@@ -74,6 +92,8 @@ public class PlayerControl : MonoBehaviour
                 WeaponAndActiveItemInput();
                 // Process the player movement input
                 MovementInput();
+                // Player roll cooldown timer
+                PlayerRollCooldownTimer();
                 // Process the player use item input
                 UseItemInput();
                 // Process the player use special move input
@@ -120,6 +140,7 @@ public class PlayerControl : MonoBehaviour
 
         float horizontalMovement = movementInput.x;
         float verticalMovement = movementInput.y;
+        bool jumpButtonDown = InputManager.Instance.jumpButton.action.WasPerformedThisFrame();
 
         player.movementByVelocity.MovementInput = movementInput;
 
@@ -141,14 +162,22 @@ public class PlayerControl : MonoBehaviour
             direction *= 0.7f;
         }
 
-        // If there is movement
+        // If there is movement either move or roll
         if (direction != Vector2.zero)
         {
-            // Trigger movement event
-            player.movementByVelocity.MoveRigidbody(direction, player.movementByVelocity.moveSpeed);
+            if (!jumpButtonDown)
+            {
+                // Trigger movement event
+                player.movementByVelocity.MoveRigidbody(direction, player.movementByVelocity.moveSpeed);
 
-            // Trigger move animations
-            player.animatePlayer.SetMovementAnimationParameters();
+                // Trigger move animations
+                player.animatePlayer.SetMovementAnimationParameters();
+            }
+            // Else player roll if not cooling down
+            else if(playerRollCooldownTimer <= 0f)
+            {
+                PlayerRoll((Vector3)direction);
+            }
         }
         // Else trigger idle event
         else
@@ -156,6 +185,47 @@ public class PlayerControl : MonoBehaviour
             player.idle.StopVelocity();
             player.animatePlayer.SetIdleAnimationParameters();
         }
+    }
+
+    private void PlayerRollCooldownTimer()
+    {
+        if (playerRollCooldownTimer >= 0f)
+        {
+            playerRollCooldownTimer -= Time.deltaTime;
+        }
+    }
+
+    private void PlayerRoll(Vector3 direction)
+    {
+        playerRollCoroutine = StartCoroutine(PlayerRollRoutine(direction));
+    }
+
+    /// <summary>
+    /// Player roll coroutine
+    /// </summary>
+    IEnumerator PlayerRollRoutine(Vector3 direction)
+    {
+        // minDistance used to decide when to exit coroutine loop
+        float minDistance = 0.2f;
+
+        isPlayerRolling = true;
+
+        Vector3 targetPosition = player.transform.position + (Vector3)direction * player.movementByVelocity.movementDetails.rollDistance;
+
+        while (Vector3.Distance(player.transform.position, targetPosition) > minDistance)
+        {
+            player.movementToPositionEvent.CallMovementToPositionEvent(targetPosition, player.transform.position, player.movementByVelocity.movementDetails.rollSpeed,
+                direction, isPlayerRolling);
+
+            yield return waitForFixedUpdate;
+        }
+
+        isPlayerRolling = false;
+
+        // Set cooldown timer
+        playerRollCooldownTimer = player.movementByVelocity.movementDetails.rollCooldownTime;
+
+        player.transform.position = targetPosition;
     }
 
     IEnumerator Stagger()
@@ -538,7 +608,7 @@ public class PlayerControl : MonoBehaviour
                         Enemy enemy = summonedEnemyObject.GetComponent<Enemy>();
                         SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemUseSoundEffect);
 
-                        enemy.EnemyInitialization(enemy.enemyMovementAI.enemyDetails, 15, GameManager.Instance.GetCurrentDungeonLevel());
+                        enemy.EnemyInitialization(enemy.enemyAI.enemyDetails, 15, GameManager.Instance.GetCurrentDungeonLevel());
                         player.summonedEnemies.Add(summonedEnemyObject);
 
                         player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
@@ -1153,7 +1223,7 @@ public class PlayerControl : MonoBehaviour
 
                 if (!enemy.enemyDetails.hasKnockbackResistance && enemy.health.currentHealth > 0)
                 {
-                    enemy.GetComponent<EnemyMovementAI>().TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                    enemy.GetComponent<EnemyAI>().TriggerKnockback((enemy.transform.position - transform.position).normalized);
                 }
 
                 if (enemy.health != null)
@@ -1422,15 +1492,13 @@ public class PlayerControl : MonoBehaviour
             ChestItem.toBeDroppedChestItem.spriteRenderer.enabled = true;
             ChestItem.toBeDroppedChestItem.animator.enabled = true;
             ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
-
-            player.setActiveWeaponEvent.CallRemovedPassiveItem();
-            
+         
             // Update stat values
             player.UpdateDamageValues();
             player.UpdateWeaponHandlingAndCriticalValues();
             player.UpdateEvasivenessValue();
 
-            RemovePassiveItemFromBook(passiveItem.passiveItemDetails.passiveItemSprite, passiveItemSlotName);
+            player.setPassiveItemEvent.CallRemovePassiveItem(passiveItemSlotName);
 
             ChestItem.toBeDroppedChestItem.transform.SetParent(null);
             ChestItem.toBeDroppedChestItem.isPickedUp = false;
@@ -1656,6 +1724,27 @@ public class PlayerControl : MonoBehaviour
         chestItem.isColliding = false;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // If collided with something stop player roll coroutine
+        StopPlayerRollRoutine();
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        // If collided with something stop player roll coroutine
+        StopPlayerRollRoutine();
+    }
+
+    private void StopPlayerRollRoutine()
+    {
+        if (playerRollCoroutine != null)
+        {
+            StopCoroutine(playerRollCoroutine);
+            isPlayerRolling = false;
+        }
+    }
+
     /// <summary>
     /// Enable the player movement
     /// </summary>
@@ -1723,8 +1812,8 @@ public class PlayerControl : MonoBehaviour
         StaticEventHandler.CallItemAddedToPassiveItemSlot(sprite, itemSlotName);
     }
 
-    public void RemovePassiveItemFromBook(Sprite sprite, PassiveItemSlotName itemSlotName)
+    public void RemovePassiveItemFromBook(PassiveItemSlotName itemSlotName)
     {
-        StaticEventHandler.CallItemRemovedFromPassiveItemSlot(sprite, itemSlotName);
+        StaticEventHandler.CallItemRemovedFromPassiveItemSlot(itemSlotName);
     }
 }

@@ -50,8 +50,6 @@ MonoBehaviour:
   attackOffHand: {fileID: -831659078736980469, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   switchWeapon: {fileID: -1489316078523976086, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   overviewMapFullView: {fileID: -4451642181129647435, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  reload: {fileID: -6482433486226854903, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  resetWeaponIndex: {fileID: 2391305962996221522, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   nextLevel: {fileID: -2122744234832147839, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   interaction: {fileID: -3128664531634483429, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   specialMoveOne: {fileID: 5077257753683033983, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
@@ -62,4 +60,5 @@ MonoBehaviour:
   dropActiveItem: {fileID: 3940752818712815275, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   pause: {fileID: 3463766678715258796, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   OKButton: {fileID: -1751478761642137596, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  jumpButton: {fileID: 7022676829501651627, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   isPressedPreviousFrame: 0

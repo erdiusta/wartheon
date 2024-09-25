@@ -48,6 +48,35 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             switch (belongingSlot.slotType)
             {
                 case SlotType.Passive:
+                    switch (belongingSlot.passiveItemSlotName)
+                    {
+                        case PassiveItemSlotName.Head:
+                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentHeadPassiveItem();
+                            break;
+                        case PassiveItemSlotName.Chest:
+                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentChestPassiveItem();
+                            break;
+                        case PassiveItemSlotName.Neck:
+                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentNeckPassiveItem();
+                            break;
+                        case PassiveItemSlotName.Finger:
+                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentFingerPassiveItem();
+                            break;
+                        case PassiveItemSlotName.Back:
+                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentBackPassiveItem();
+                            break;
+                        case PassiveItemSlotName.Waist:
+                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentWaistPassiveItem();
+                            break;
+                        case PassiveItemSlotName.Arm:
+                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentArmPassiveItem();
+                            break;
+                        case PassiveItemSlotName.Leg:
+                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentLegPassiveItem();
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case SlotType.Active:
                     receivable = GameManager.Instance.GetPlayer().selectedActiveItem.GetCurrentActiveItem();
@@ -164,7 +193,6 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         if (eventData.pointerEnter != null)
         {
-
             if (eventData.pointerEnter.CompareTag(Settings.weaponSetButton))
             {
                 // Return to original parent if not dropped on a valid slot
@@ -272,6 +300,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     public Weapon GetDraggedWeapon() => (Weapon)receivable;
 
     public ActiveItem GetDraggedActiveItem() => (ActiveItem)receivable;
+
+    public PassiveItem GetDraggedPassiveItem() => (PassiveItem)receivable;
 
     public int GetSetNumber()
     {

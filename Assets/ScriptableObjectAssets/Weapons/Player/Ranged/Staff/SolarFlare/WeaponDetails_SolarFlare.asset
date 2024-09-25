@@ -16,6 +16,7 @@ MonoBehaviour:
   weaponTitle: 16
   weaponLevel: 1
   weaponClass: 5
+  weaponHitSpeed: 0
   wieldType: 1
   elementalBias: 1
   elementalForgeRate: 1
@@ -30,7 +31,10 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  weaponShootPosition: {x: 0.018749997, y: 1.38575, z: 0}
+  weaponRightShootPosition: {x: 0, y: 1.23, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 4cc495af1e17de54a86c6187761f43df, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 7034ea9e051dccc42bbe500b288bf166, type: 2}

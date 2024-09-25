@@ -96,7 +96,7 @@ public class DropOnDestroy : MonoBehaviour
 
         int passiveItemModifier;
 
-        if (GameManager.Instance.GetPlayer().passiveItemList.Any(item => item.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune))
+        if (GameManager.Instance.GetPlayer().playerDetails.passiveItemsList.Any(item => item.passiveItemType == PassiveItemType.RingOfFortune))
         {
             // The player has a passive item of type RingOfFortune
             passiveItemModifier = 15;

@@ -55,7 +55,9 @@ public enum PassiveItemType
     RingOfFortune,
     ShadowCloak,
     WardenOfForest,
-    BeltOfSorcery
+    BeltOfSorcery,
+    WingedSandals,
+    OminousGripOfThunder
 }
 
 public enum BoomerangPhase
@@ -218,7 +220,8 @@ public enum EnemyBehaviour
 {
     Pursuit,
     AimAndShoot,
-    PrepareAndDash
+    PrepareAndDash,
+    Centaur
 }
 
 public enum EnemyPhase
@@ -228,6 +231,15 @@ public enum EnemyPhase
     GetHit,
     Attack,
     Death
+}
+
+public enum CentaurPhase
+{
+    None,
+    Wait,
+    StraightArrowShot,
+    ChargeAndRetreat,
+    SpreadArrowShot,
 }
 
 public enum EnemyRace

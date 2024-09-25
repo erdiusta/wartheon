@@ -11,6 +11,18 @@ public class MovementDetailsSO : ScriptableObject
     [Tooltip("The maximum move speed. The GetMoveSpeed method calculates a random value between the minimum and maximum")]
     #endregion Tooltip
     public float moveSpeed = 8f;
+    #region Tooltip
+    [Tooltip("If there is a roll movement - this is the roll speed")]
+    #endregion Tooltip
+    public float rollSpeed;
+    #region Tooltip
+    [Tooltip("If there is a roll movement - this is the roll distance")]
+    #endregion Tooltip
+    public float rollDistance;
+    #region Tooltip
+    [Tooltip("If there is a roll movement - this is the cooldown time in seconds between roll actions")]
+    #endregion Tooltip
+    public float rollCooldownTime;
 
     /// <summary>
     /// Get a random movement speed between the minimum and maximum values

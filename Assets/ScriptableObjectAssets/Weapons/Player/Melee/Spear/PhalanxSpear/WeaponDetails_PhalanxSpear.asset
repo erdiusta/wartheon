@@ -21,8 +21,8 @@ MonoBehaviour:
   elementalBias: 0
   elementalForgeRate: 0
   price: 6
-  weaponFrontSprite: {fileID: 1230032176, guid: ce303d2404321da4e870e4c5bfc59d3b, type: 3}
-  weaponRearSprite: {fileID: 1230032176, guid: ce303d2404321da4e870e4c5bfc59d3b, type: 3}
+  weaponFrontSprite: {fileID: -1146205104, guid: a2c155470e931a34fb25439521686bd7, type: 3}
+  weaponRearSprite: {fileID: -1146205104, guid: a2c155470e931a34fb25439521686bd7, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 3eeb7901bc4c98640937a7fd82d248c9, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 7b95804964c7e2c488ad54857a7be2bb, type: 2}
   canKillSuddenly: 0

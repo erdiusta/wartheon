@@ -5,6 +5,9 @@ using Random = UnityEngine.Random;
 [DisallowMultipleComponent]
 public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
 {
+    [HideInInspector] public Enemy bossEnemy;
+    [HideInInspector] public bool isBossInstantiated;
+
     int enemiesToSpawn;
     int currentEnemyCount;
     int enemiesSpawnedSoFar;
@@ -21,11 +24,6 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     private void OnDisable()
     {
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
-    }
-
-    private void Start()
-    {
-        
     }
 
     /// <summary>
@@ -165,9 +163,27 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         // Initialize Enemy
         enemy.GetComponent<Enemy>().EnemyInitialization(enemyDetails, enemiesSpawnedSoFar, dungeonLevel);
 
+        // Set boss 
+        if (currentRoom.roomNodeType.isBossRoom)
+        {
+            isBossInstantiated = true;
+            SetEnemyAsBoss(enemy.GetComponent<Enemy>());
+        }
+        else
+        {
+            isBossInstantiated = false;
+        }
+
         // Subscribe to enemy destroyed event
         enemy.GetComponent<DestroyedEvent>().OnDestroyed += Enemy_OnDestroyed;
     }
+
+    private void SetEnemyAsBoss(Enemy enemy)
+    {
+        bossEnemy = enemy;
+    }
+
+    public Enemy GetBoss() => bossEnemy;
 
     /// <summary>
     /// Process enemy destroyed

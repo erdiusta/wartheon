@@ -12,6 +12,7 @@ public class FireWeapon : MonoBehaviour
     public Transform prechargeBarContainer;
     public RectTransform prechargeBar;
 
+    Player player;
     Enemy enemy;
     float firePrechargeTimer = 0f;
     float fireRateCooldownTimer = 0f;
@@ -19,9 +20,11 @@ public class FireWeapon : MonoBehaviour
     SelectedActiveItem selectedActiveItem;
     FireWeaponEvent fireWeaponEvent;
     WeaponFiredEvent weaponFiredEvent;
+    int normalShotCounter = 0;
 
     private void Awake()
     {
+        player = GetComponent<Player>();
         enemy = GetComponent<Enemy>();
         activeWeapon = GetComponent<ActiveWeapon>();
         fireWeaponEvent = GetComponent<FireWeaponEvent>();
@@ -76,9 +79,16 @@ public class FireWeapon : MonoBehaviour
                 // Test if weapon is ready to fire
                 if (IsWeaponReadyToFire())
                 {
+                    if (enemy != null)
+                    {
+                        // Trigger fire weapon event
+                        enemy.animateEnemy.SetAttackAnimationParameters();
+                        enemy.animator.SetBool(Settings.isAttacking, true);
+                    }
+
                     FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
-                        fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow);
-                    ResetCooldownTimer();
+                        fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase);
+                    ResetCooldownTimer(fireWeaponEventArgs.centaurPhase);
                     ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
                 }
             }
@@ -147,7 +157,8 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Set up ammo using an ammo gameObject and component from the object pool.
     /// </summary>
-    private void FireProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false, bool isPenetrationArrow = false)
+    private void FireProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false, 
+        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None)
     {
         if (!isActiveItem)
         {
@@ -156,7 +167,8 @@ public class FireWeapon : MonoBehaviour
             if (currentProjectile != null)
             {
                 // Fire projectile routine
-                StartCoroutine(FireProjectileRoutine(currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, headShotHappened, false, isPenetrationArrow));
+                StartCoroutine(FireProjectileRoutine(currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, headShotHappened, 
+                    false, isPenetrationArrow, centaurPhase));
             }
         }
         else
@@ -183,19 +195,38 @@ public class FireWeapon : MonoBehaviour
     /// Coroutine to spawn multiple ammo per shot if specified in the ammo details - PROJECTILE
     /// </summary>
     IEnumerator FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, 
-        Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false)
+        Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, 
+        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None)
     {      
         int projectileCounter = 0;
 
-        // Get random projectile per shot
-        int projectilePerShot = Random.Range(currentProjectile.projectileSpawnAmountMin, currentProjectile.projectileSpawnAmountMax + 1);
+        int projectilePerShot = 1;
+
+        // CENTAUR
+
+        if (centaurPhase == CentaurPhase.SpreadArrowShot)
+        {
+            projectilePerShot = 7;
+        }
+        else
+        {
+            // Get random projectile per shot
+            projectilePerShot = Random.Range(currentProjectile.projectileSpawnAmountMin, currentProjectile.projectileSpawnAmountMax + 1);
+        }
 
         // Get random interval between projectile
         float projectileSpawnInterval;
 
         if (projectilePerShot > 1)
         {
-            projectileSpawnInterval = Random.Range(currentProjectile.projectileSpawnIntervalMin, currentProjectile.projectileSpawnIntervalMax);
+            if (centaurPhase == CentaurPhase.SpreadArrowShot)
+            {
+                projectileSpawnInterval = 0;
+            }
+            else
+            {
+                projectileSpawnInterval = Random.Range(currentProjectile.projectileSpawnIntervalMin, currentProjectile.projectileSpawnIntervalMax);
+            }
 
             // Reduce projectile clip count if not infinite clip capacity
             if (!activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile)
@@ -219,18 +250,33 @@ public class FireWeapon : MonoBehaviour
         {
             projectileCounter++;
 
+            GameObject projectilePrefab;
+
             // Get projectile prefab from array
-            GameObject projectilePrefab = currentProjectile.projectilePrefabArray[Random.Range(0, currentProjectile.projectilePrefabArray.Length)];
+            if (centaurPhase == CentaurPhase.SpreadArrowShot)
+            {
+                projectilePrefab = currentProjectile.projectilePrefabArray[1];
+            }
+            else
+            {
+                projectilePrefab = currentProjectile.projectilePrefabArray[0];
+            }
+
+            float projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin, currentProjectile.projectileSpeedMax);
 
             // Get random speed value
-            float projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin, currentProjectile.projectileSpeedMax);
+            if (centaurPhase == CentaurPhase.SpreadArrowShot)
+            {
+                projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin / 2, currentProjectile.projectileSpeedMax / 2);
+            }
 
             // Get Gameobject with IFireable component
             IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetRightHandShootPosition(), 
                 Quaternion.identity);
 
             // Initialize projectile
-            projectile.InitializeProjectile(headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, false, false, isPenetrationArrow);
+            projectile.InitializeProjectile(headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, false, false, 
+                isPenetrationArrow, projectileCounter - 1, projectilePerShot, centaurPhase);
 
             // Wait for projectile per shot timegap
             yield return new WaitForSeconds(projectileSpawnInterval);
@@ -242,13 +288,13 @@ public class FireWeapon : MonoBehaviour
             activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
          }
 
-        activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
+        //activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
 
         // Call weapon fired event
         weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentMainHandWeapon(), true);
 
         // Display weapon shoot effect
-        DoWeaponShootEffect(aimAngle);
+        WeaponShootEffect(aimAngle);
 
         // Weapon fired sound effect
         WeaponSoundEffect(isActiveItem);
@@ -313,13 +359,18 @@ public class FireWeapon : MonoBehaviour
         weaponFiredEvent.CallActiveItemFiredEvent(selectedActiveItem.GetCurrentActiveItem());
 
         // Display weapon shoot effect
-        DoWeaponShootEffect(aimAngle);
+        WeaponShootEffect(aimAngle);
 
         // Weapon fired sound effect
         WeaponSoundEffect(isActiveItem);
 
         if (enemy != null)
         {
+            if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Centaur)
+            {
+                normalShotCounter = 0;
+            }
+
             enemy.isFiring = false;
         }
     }
@@ -327,9 +378,14 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Reset cooldown timer
     /// </summary>
-    private void ResetCooldownTimer()
+    private void ResetCooldownTimer(CentaurPhase centaurPhase = CentaurPhase.None)
     {
         float coolDownTimerModifier = 1f;
+
+        if (centaurPhase == CentaurPhase.SpreadArrowShot)
+        {
+            coolDownTimerModifier = 3f;
+        }
 
         // Reset cooldown timer
         fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration * coolDownTimerModifier;
@@ -370,7 +426,7 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Display the weapon shoot effect
     /// </summary>
-    private void DoWeaponShootEffect(float aimAngle)
+    private void WeaponShootEffect(float aimAngle)
     {
         // Process if there is a shoot effect & prefab
         if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponShootEffect != null && activeWeapon.GetCurrentMainHandWeapon().
@@ -395,11 +451,21 @@ public class FireWeapon : MonoBehaviour
     {
         if (isActiveItem) return;
 
-        if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect != null &&
-            GetComponent<PlayerControl>().isSoundPlayed == false)
-        {           
-            GetComponent<PlayerControl>().isSoundPlayed = true;
-            SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
+        if (enemy != null)
+        {
+            if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect != null)
+            {
+                SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
+            }
+        }
+        else
+        {
+            if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect != null &&
+                GetComponent<PlayerControl>().isSoundPlayed == false)
+            {
+                GetComponent<PlayerControl>().isSoundPlayed = true;
+                SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
+            }
         }
     }
 }

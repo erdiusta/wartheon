@@ -170,6 +170,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""ba81aa0c-1493-458c-a89f-3607f09eba71"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -447,6 +456,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""OK"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a16c5117-9d98-43dd-a26c-0ed587577081"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -471,6 +491,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_DropActiveItem = m_PlayerInput.FindAction("Drop Active Item", throwIfNotFound: true);
         m_PlayerInput_Pause = m_PlayerInput.FindAction("Pause", throwIfNotFound: true);
         m_PlayerInput_OK = m_PlayerInput.FindAction("OK", throwIfNotFound: true);
+        m_PlayerInput_Jump = m_PlayerInput.FindAction("Jump", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -548,6 +569,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_DropActiveItem;
     private readonly InputAction m_PlayerInput_Pause;
     private readonly InputAction m_PlayerInput_OK;
+    private readonly InputAction m_PlayerInput_Jump;
     public struct PlayerInputActions
     {
         private @Controls m_Wrapper;
@@ -568,6 +590,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @DropActiveItem => m_Wrapper.m_PlayerInput_DropActiveItem;
         public InputAction @Pause => m_Wrapper.m_PlayerInput_Pause;
         public InputAction @OK => m_Wrapper.m_PlayerInput_OK;
+        public InputAction @Jump => m_Wrapper.m_PlayerInput_Jump;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -625,6 +648,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @OK.started += instance.OnOK;
             @OK.performed += instance.OnOK;
             @OK.canceled += instance.OnOK;
+            @Jump.started += instance.OnJump;
+            @Jump.performed += instance.OnJump;
+            @Jump.canceled += instance.OnJump;
         }
 
         private void UnregisterCallbacks(IPlayerInputActions instance)
@@ -677,6 +703,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @OK.started -= instance.OnOK;
             @OK.performed -= instance.OnOK;
             @OK.canceled -= instance.OnOK;
+            @Jump.started -= instance.OnJump;
+            @Jump.performed -= instance.OnJump;
+            @Jump.canceled -= instance.OnJump;
         }
 
         public void RemoveCallbacks(IPlayerInputActions instance)
@@ -712,5 +741,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnDropActiveItem(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnOK(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
     }
 }
