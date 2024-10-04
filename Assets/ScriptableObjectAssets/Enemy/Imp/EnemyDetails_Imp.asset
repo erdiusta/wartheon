@@ -19,12 +19,13 @@ MonoBehaviour:
   experiencePoint: 50
   chaseDistance: 13
   hasAttackMove: 1
-  attackMoveTriggerDistance: 4
-  attackMoveEfficentDistance: 7
-  attackMoveBaseCooldown: 3
+  attackMoveTriggerDistance: 3
+  attackMoveEfficentDistance: 9
+  attackMoveBaseCooldown: 2.5
   deflectionValue: 0
   enemyBehaviour: 2
   isEnemyBoss: 0
+  hasAnimator: 0
   enemyArmorValue: 2
   hasShield: 0
   deflectChance: 0
@@ -44,6 +45,7 @@ MonoBehaviour:
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 88c84bb85bc16ff47bf83c6ed6d9b4af, type: 2}
+  roarSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
@@ -168,7 +170,6 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
       ratio: 1
-  ammoPercent: 50
   dropSpawnChanceMin: 100
   dropSpawnChanceMax: 100
   numberOfItemsToSpawnMin: 1

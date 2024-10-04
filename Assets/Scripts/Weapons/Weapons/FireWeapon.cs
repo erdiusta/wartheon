@@ -81,9 +81,11 @@ public class FireWeapon : MonoBehaviour
                 {
                     if (enemy != null)
                     {
-                        // Trigger fire weapon event
-                        enemy.animateEnemy.SetAttackAnimationParameters();
-                        enemy.animator.SetBool(Settings.isAttacking, true);
+                        if (fireWeaponEventArgs.centaurPhase != CentaurPhase.SpreadArrowShot)
+                        {
+                            // Trigger fire weapon event
+                            enemy.animateEnemy.SetAttackAnimationParameters();
+                        }
                     }
 
                     FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
@@ -194,7 +196,7 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Coroutine to spawn multiple ammo per shot if specified in the ammo details - PROJECTILE
     /// </summary>
-    IEnumerator FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, 
+    IEnumerator  FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, 
         Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, 
         bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None)
     {      

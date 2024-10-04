@@ -35217,7 +35217,6 @@ Transform:
   m_Children:
   - {fileID: 4123643920755497414}
   - {fileID: 890442613261991278}
-  - {fileID: 2812488011572122476}
   m_Father: {fileID: 4239920569477357429}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3791151353030601834
@@ -35250,6 +35249,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 933830336492734321}
+  - {fileID: 2812488011572122476}
   m_Father: {fileID: 3146469945750014307}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4372519502995614186
@@ -35449,13 +35449,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4451039035051001256}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8845574466449883188}
-  m_Father: {fileID: 933830336492734321}
+  m_Father: {fileID: 4239920569477357429}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5044584427066220842
 GameObject:
@@ -46318,7 +46318,6 @@ MonoBehaviour:
   movementToPosition: {fileID: 0}
   enemyAI: {fileID: 0}
   dealContactDamage: {fileID: 0}
-  enemyWeaponAI: {fileID: 0}
   knockback: {fileID: 0}
   isDead: 0
   isFiring: 0
@@ -46547,19 +46546,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyDetails: {fileID: 0}
+  weaponShootPosition: {fileID: 2812488011572122476}
   layerMask:
     serializedVersion: 2
     m_Bits: 18432
-  weaponShootPosition: {fileID: 2812488011572122476}
+  OnReadyForDashAttack:
+    m_PersistentCalls:
+      m_Calls: []
   moveStatus: 0
   moveSpeed: 0
   updateFrameNumber: 1
   chasePlayer: 0
   enemyStartingSpeed: 0
   enemyPhase: 0
-  OnReadyForDashAttack:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &2505844984895068139
 MonoBehaviour:
   m_ObjectHideFlags: 0

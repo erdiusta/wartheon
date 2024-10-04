@@ -48,27 +48,10 @@ public class MovementToPosition : MonoBehaviour
     }
 
     /// <summary>
-    /// Move the rigidbody component - Chase
+    /// Move the rigidbody component
     /// </summary>
-    public void ChaseMoveRigidbodyByPosition(Vector3 movePosition, Vector3 currentPosition, float moveSpeed)
+    public void MoveRigidbodyByPosition(Vector2 unitVector, float moveSpeed)
     {
-        Vector2 unitVector = Vector3.Normalize(movePosition - currentPosition);
-        rb2D.velocity = unitVector * moveSpeed;
-    }
-
-    /// <summary>
-    /// Move the rigidbody component - Patrol
-    /// </summary>
-    public void PatrolMoveRigidbodyByPosition(Vector3 movePosition, Vector3 currentPosition, float moveSpeed)
-    {
-        Vector2 unitVector = Vector3.Normalize(movePosition - currentPosition);
-
-        // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(unitVector);
-        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-        enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
-        enemy.animateEnemy.ResetAimAnimationParameters();
-        enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
         rb2D.velocity = unitVector * moveSpeed;
     }
 

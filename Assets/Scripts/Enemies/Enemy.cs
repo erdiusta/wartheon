@@ -8,7 +8,6 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(DealContactDamage))]
 [RequireComponent(typeof(DestroyedEvent))]
 [RequireComponent(typeof(Destroyed))]
-[RequireComponent(typeof(EnemyAI))]
 [RequireComponent(typeof(AimWeapon))]
 [RequireComponent(typeof(FireWeaponEvent))]
 [RequireComponent(typeof(FireWeapon))]
@@ -47,7 +46,6 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public MovementToPosition movementToPosition;
     [HideInInspector] public EnemyAI enemyAI;
     [HideInInspector] public DealContactDamage dealContactDamage;
-    [HideInInspector] public EnemyWeaponAI enemyWeaponAI;
     [HideInInspector] public Knockback knockback;
     [HideInInspector] public bool isDead;
     [HideInInspector] public bool isFiring;
@@ -82,7 +80,6 @@ public class Enemy : MonoBehaviour
         destroyedEvent = GetComponent<DestroyedEvent>();
         enemyAI = GetComponent<EnemyAI>();
         dealContactDamage = GetComponent<DealContactDamage>();
-        enemyWeaponAI = GetComponent<EnemyWeaponAI>();
         materializeEffect = GetComponent<MaterializeEffect>();
         circleCollider2D = GetComponent<CircleCollider2D>();
         polygonCollider2D = GetComponent<PolygonCollider2D>();

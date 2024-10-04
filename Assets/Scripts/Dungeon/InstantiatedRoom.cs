@@ -473,7 +473,7 @@ public class InstantiatedRoom : MonoBehaviour
         {
             return aStarMovementPenalty[enemyZeroBasedCellPosition.x, enemyZeroBasedCellPosition.y];
         }
-        catch (System.ArgumentOutOfRangeException)
+        catch (System.IndexOutOfRangeException)
         {
             return Settings.defaultAStarMovementPenalty;
         }

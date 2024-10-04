@@ -58,7 +58,7 @@ public class Destroyed : MonoBehaviour
         }
         else
         {
-            if (gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect != null)
+            if (gameObject.GetComponent<Enemy>().enemyDetails?.deathSoundEffect != null)
             {
                 SoundEffectManager.Instance.PlaySoundEffect(gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect);
             }
@@ -70,7 +70,6 @@ public class Destroyed : MonoBehaviour
             {
                 case WeaponClass.Sword:
                     player.branchMastery.swordMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    Debug.Log("Player's new sword branch mastery point is " + player.branchMastery.swordMasteryPoints);
                     break;
                 case WeaponClass.Axe:
                     player.branchMastery.axeMasteryPoints += enemy.enemyDetails.experiencePoint;

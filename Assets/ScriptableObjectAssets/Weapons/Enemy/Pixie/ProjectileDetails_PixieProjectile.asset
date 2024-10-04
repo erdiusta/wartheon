@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad0d48074276e0640b14ec3640a668d8, type: 3}
+  m_Name: ProjectileDetails_PixieProjectile
+  m_EditorClassIdentifier: 
+  projectileName: Pixie Projectile
+  isPlayerProjectile: 0
+  projectileSprite: {fileID: 21300000, guid: 1dcb15e5e19fefd40956f26ae70322bb, type: 3}
+  projectilePrefabArray:
+  - {fileID: 2585463276777236944, guid: 796b076dc70c8484389ba4a810ab08c6, type: 3}
+  projectileMaterial: {fileID: 2100000, guid: 18b84b9cc8c777e4ea0d2d443fcf7a92, type: 2}
+  projectileChargeTime: 0
+  projectileChargeMaterial: {fileID: 0}
+  projectileHitEffect: {fileID: 11400000, guid: c878fe71ddf59bf45a3ce89fde7670cc, type: 2}
+  projectileDamageMin: 6
+  projectileDamageMax: 12
+  projectileSpeedMin: 7
+  projectileSpeedMax: 8
+  projectileRange: 14
+  projectileRotationSpeed: 1
+  hasAcid: 0
+  acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  projectileSpreadMin: 6
+  projectileSpreadMax: 12
+  projectileSpawnAmountMin: 4
+  projectileSpawnAmountMax: 4
+  projectileSpawnIntervalMin: 3
+  projectileSpawnIntervalMax: 5
+  isProjectileTrail: 0
+  projectileTrailTime: 0.5
+  projectileTrailMaterial: {fileID: 2100000, guid: 5b1210c7205efe84b9d8aaf7e6da652d, type: 2}
+  projectileTrailStartWidth: 0.4
+  projectileTrailEndWidth: 0

@@ -160,9 +160,18 @@ public class AnimateEnemy : MonoBehaviour
         enemy.animator.SetBool(Settings.isAttacking, false);
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, false);
-        enemy.animator.SetBool(Settings.getHit, false);
+
+        if (HasParameter(enemy.animator, Settings.getHit))
+        {
+            enemy.animator.SetBool(Settings.getHit, false);
+        }
+
+        if (HasParameter(enemy.animator, Settings.block))
+        {
+            enemy.animator.SetBool(Settings.block, false);
+        }
+
         enemy.animator.SetBool(Settings.death, false);
-        enemy.animator.SetBool(Settings.block, false);
     }
 
     /// <summary>
@@ -197,5 +206,18 @@ public class AnimateEnemy : MonoBehaviour
                 enemy.animator.SetBool(Settings.aimDown, true);
                 break;
         }
+    }
+
+    // Method to check if the Animator contains the specified parameter
+    bool HasParameter(Animator animator, int paramHashCode)
+    {
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.GetHashCode() == paramHashCode)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

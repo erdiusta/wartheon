@@ -133,14 +133,12 @@ public class MovementByVelocity : MonoBehaviour
         {
             player.health.ResetArmorValue();
             player.healthEvent.CallAcidCuredEvent();
-            Debug.Log("Player's current armor value is " + player.health.currentArmorValue);
         }
 
         if (player.armorStatus == ArmorStatus.SilverArmor)
         {
             player.health.ResetArmorValue();
             player.healthEvent.CallArmorWoreOffEvent();
-            Debug.Log("Player's current armor value is " + player.health.currentArmorValue);
         }
 
         player.armorStatus = ArmorStatus.Normal;

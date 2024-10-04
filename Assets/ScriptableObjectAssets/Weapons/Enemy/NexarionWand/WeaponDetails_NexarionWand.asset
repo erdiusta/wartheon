@@ -14,35 +14,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Nexarion Wand
   weaponTitle: 0
-  weaponFrontSprite: {fileID: 117954792, guid: 1e9c950e1e772ea49823f2f971e19594, type: 3}
-  weaponRearSprite: {fileID: 117954792, guid: 1e9c950e1e772ea49823f2f971e19594, type: 3}
+  weaponLevel: 0
+  weaponClass: 5
+  weaponHitSpeed: 0
+  wieldType: 1
+  elementalBias: 0
+  elementalForgeRate: 0
+  price: 0
+  weaponFrontSprite: {fileID: 0}
+  weaponRearSprite: {fileID: 0}
   weaponAnimatorController: {fileID: 0}
   weaponHoverAnimatorController: {fileID: 0}
-  weaponClass: 5
-  wieldType: 1
-  price: 0
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  weaponShootPosition: {x: 0.125, y: 0.9375, z: 0}
+  weaponRightShootPosition: {x: -0.03125, y: 0.75, z: 0}
+  weaponLeftShootPosition: {x: -0.875, y: 0.75, z: 0}
+  weaponUpShootPosition: {x: -0.09375, y: 0.9375, z: 0}
+  weaponDownShootPosition: {x: -0.15625, y: 0.6875, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: fcd5dc80321781b4ebeed460c7b2f4fb, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 0}
   weaponImpactSoundEffect: {fileID: 0}
-  weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 0
-  weaponCooldownDuration: 0.2
-  weaponBaseHandling: 0.8
   projectileDeflectRatio: 0
   circleRadius: 0
+  hasPhysicalDamage: 0
   meleeDamageMin: 0
   meleeDamageMax: 0
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 2
+  weaponCooldownDuration: 0.3
+  weaponBaseHandling: 0.8
   hasSwing: 0
   hasSweep: 0
   hasThrust: 0

@@ -104,11 +104,12 @@ public static class Settings
     #endregion
 
     #region ASTAR PATHFINDING PARAMETERS
-    public const int defaultAStarMovementPenalty = 35;
+    public const int defaultAStarMovementPenalty = 30;
     public const int preferredPathAStarMovementPenalty = 1;
-    public const int targetFrameRateToSpreadPathfindingOver = 60;
+    public const int targetFrameRateToSpreadPathfindingOver = 40;
     public const float playerMoveDistanceToRebuildPath = 3f;
-    public const float enemyPathRebuildCooldown = 1.5f;
+    public const float enemyPatrolPathRebuildCooldown = 1.5f;
+    public const float enemyChasePathRebuildCooldown = 0.3f;
     #endregion
 
     #region ENEMY PARAMETERS

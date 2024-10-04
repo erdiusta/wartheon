@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DungeonLevel_Level2
   m_EditorClassIdentifier: 
   levelNumber: 1
-  levelName: VERDANT ENCLAVE
+  levelName: FOLIAGE HALL
   roomTemplateList:
   - {fileID: 11400000, guid: 2bf236b951afe5c4eb1ec3d048a53256, type: 2}
   - {fileID: 11400000, guid: aade02a20938c7241824e006dad8b4d3, type: 2}
@@ -25,12 +25,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 00210c10de105464d9e616be13868033, type: 2}
   - {fileID: 11400000, guid: 20d71ef19b30a7540ac7520bdfd8a04a, type: 2}
   - {fileID: 11400000, guid: 5d1abec2cf420c949975b36bf673e96d, type: 2}
-  - {fileID: 11400000, guid: 66569f01b51dbb742af36040defaa02b, type: 2}
-  - {fileID: 11400000, guid: 987a6a806c89b424b80edd77b5843c1b, type: 2}
-  - {fileID: 11400000, guid: cd2180d63ee54f349a1d7a039a5170f9, type: 2}
-  - {fileID: 11400000, guid: 679a63a89766599469c191800cc8e9a1, type: 2}
-  - {fileID: 11400000, guid: 6569d90b9d3626e499f6f0adcb25ae4d, type: 2}
-  - {fileID: 11400000, guid: e6909dc2ec2fe444e84a390d9a59e322, type: 2}
+  - {fileID: 11400000, guid: 90c7be0bc6f560f45a774391e32dde86, type: 2}
+  - {fileID: 11400000, guid: 14d693bea3266db42bdb250b1c03fd5c, type: 2}
+  - {fileID: 11400000, guid: 7eeadb5fe21494f4d873f2258651aea7, type: 2}
+  - {fileID: 11400000, guid: 5255e6c7b4c894e49b5d903e2a7607e4, type: 2}
+  - {fileID: 11400000, guid: 68dd469d1536dae4d914b52f41971e62, type: 2}
+  - {fileID: 11400000, guid: 7eba8f6526e8e9947b9a0e8c692ee3c6, type: 2}
   - {fileID: 11400000, guid: a43a451ef9de87f4fb43af570bf7393c, type: 2}
   - {fileID: 11400000, guid: b0a4abad9251ba54183b7f495fbb4b0f, type: 2}
   - {fileID: 11400000, guid: 9a72fc6c61c7a6d4d849305b6bfce7de, type: 2}
@@ -38,7 +38,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 994fc03a9dae49148ace325604e3a457, type: 2}
   - {fileID: 11400000, guid: 9c05d148be8e71c49bdd0475ab251924, type: 2}
   - {fileID: 11400000, guid: 84a2a0e9344f111499e126330c0ceb69, type: 2}
-  - {fileID: 11400000, guid: 754cf82e26ded1848b4c0c6c3fb002cc, type: 2}
+  - {fileID: 11400000, guid: 6a959d38d77d59b4d80d53475133bfbe, type: 2}
   - {fileID: 11400000, guid: 29ada3c6b2c89004a8582af9cab3d064, type: 2}
   roomNodeGraphList:
   - {fileID: 11400000, guid: 5e2c46cfe5bf65b4cbd16f9a4b95ab3a, type: 2}

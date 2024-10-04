@@ -5,11 +5,10 @@ using Random = UnityEngine.Random;
 
 public class CentaurAI : EnemyAI
 {
-
     // BOSSES
     CentaurPhase currentCentaurPhase;
     private float phaseTimer;  // Timer to control phase duration
-    private float waitPhase = 1f;  // Adjust this to control how long each phase lasts
+    private float waitPhase = 0.5f;  // Adjust this to control how long each phase lasts
 
     Vector3 lockedPosition;
     bool chargeProcessStarted;
@@ -138,7 +137,7 @@ public class CentaurAI : EnemyAI
 
     private void TransitionToNextPhase()
     {
-        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 1f)
+        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 6f)
         {
             // If player is too close to centaur, automatically next phase will be chargeAndRetreat
             currentCentaurPhase = CentaurPhase.ChargeAndRetreat;
@@ -162,7 +161,7 @@ public class CentaurAI : EnemyAI
         if (centaurPhase == CentaurPhase.StraightArrowShot)
         {
             float fireTimer = 0f;
-            float fireProjectileDuration = 8f;
+            float fireProjectileDuration = 5f;
 
             yield return null;
 
@@ -229,11 +228,12 @@ public class CentaurAI : EnemyAI
             enemy.animateEnemy.SetMovementAnimationParameters();
 
             Vector3 direction = (lockedPosition - transform.position).normalized;
+            float chargeSpeed = 20f;
 
             while (chargeTimer < chargeDuration)
             {
                 chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, lockedPosition, 20f * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, lockedPosition, chargeSpeed * Time.deltaTime);
 
                 // Check if boss has reached the destination before the desired duration
                 if (Vector3.Distance(transform.position, lockedPosition) < 0.1f)  // Small threshold for accuracy
@@ -254,10 +254,9 @@ public class CentaurAI : EnemyAI
         else if (centaurPhase == CentaurPhase.SpreadArrowShot)
         {
             // PREPARE PRECHARGE PHASE
-            float prechargeDuration = 1f;
+            float prechargeDuration = 1.3f;
             float chargeTimer = 0f;
             enemy.animateEnemy.SetAttackAnimationParameters();
-            enemy.animator.SetBool(Settings.isAttacking, false);
             enemy.animator.SetTrigger(Settings.isPrechargingProjectile);
 
             yield return null;
@@ -305,9 +304,9 @@ public class CentaurAI : EnemyAI
             yield return null;
         }
 
-        TransitionToNextPhase();
-
         chargeProcessStarted = false;
         attackMoveEnemyRoutine = null;
+
+        TransitionToNextPhase();
     }
 }

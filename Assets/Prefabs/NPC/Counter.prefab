@@ -117,9 +117,31 @@ MonoBehaviour:
         ratio: 2
       - dungeonObject: {fileID: 11400000, guid: dc70bba435344054aa98ff671fae1024, type: 2}
         ratio: 2
+    - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
+      spawnableObjectRatioList:
+      - dungeonObject: {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
+        ratio: 2
+      - dungeonObject: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
+        ratio: 3
+      - dungeonObject: {fileID: 11400000, guid: 8393f6d104b5bb44ab472c1447da1818, type: 2}
+        ratio: 2
+      - dungeonObject: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
+        ratio: 2
+      - dungeonObject: {fileID: 11400000, guid: bba05607ec78139438ec83b847d254ee, type: 2}
+        ratio: 2
+      - dungeonObject: {fileID: 11400000, guid: dc70bba435344054aa98ff671fae1024, type: 2}
+        ratio: 2
   - characterName: 1
     weaponSpawnByLevelList:
     - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+      spawnableObjectRatioList:
+      - dungeonObject: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+        ratio: 3
+      - dungeonObject: {fileID: 11400000, guid: 6cb3c4a1b97dd484a8e9af133ff54615, type: 2}
+        ratio: 2
+      - dungeonObject: {fileID: 11400000, guid: bba05607ec78139438ec83b847d254ee, type: 2}
+        ratio: 2
+    - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
       spawnableObjectRatioList:
       - dungeonObject: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
         ratio: 3
@@ -135,6 +157,12 @@ MonoBehaviour:
         ratio: 2
       - dungeonObject: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
         ratio: 2
+    - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
+      spawnableObjectRatioList:
+      - dungeonObject: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
+        ratio: 2
+      - dungeonObject: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
+        ratio: 2
   - characterName: 3
     weaponSpawnByLevelList:
     - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
@@ -145,12 +173,17 @@ MonoBehaviour:
         ratio: 2
       - dungeonObject: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
         ratio: 3
+    - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
+      spawnableObjectRatioList:
+      - dungeonObject: {fileID: 11400000, guid: 9926f985354b71a4690cb034e554c091, type: 2}
+        ratio: 2
+      - dungeonObject: {fileID: 11400000, guid: 8393f6d104b5bb44ab472c1447da1818, type: 2}
+        ratio: 2
+      - dungeonObject: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+        ratio: 3
   firstChestItem: {fileID: 8011196073605545367}
   secondChestItem: {fileID: 1505181352504629207}
   thirdChestItem: {fileID: 7836859775069988154}
-  firstItemPriceText: {fileID: 3712308127147752496}
-  secondItemPriceText: {fileID: 5209189808122386032}
-  thirdItemPriceText: {fileID: 3489065410546164893}
 --- !u!1001 &4074728681544667431
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -240,17 +273,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
---- !u!114 &3489065410546164893 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 641761456179918266, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-  m_PrefabInstance: {fileID: 4074728681544667431}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &6897185096495848461 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
@@ -324,17 +346,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
---- !u!114 &3712308127147752496 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 641761456179918266, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-  m_PrefabInstance: {fileID: 4279328075697342858}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &6654309648563946656 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
@@ -440,14 +451,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7438787049702821162, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
   m_PrefabInstance: {fileID: 4660447310866310090}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5209189808122386032 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 641761456179918266, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
-  m_PrefabInstance: {fileID: 4660447310866310090}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,8 +18,7 @@ public static class AStar
         HashSet<Node> closedNodeHashSet = new HashSet<Node>();
 
         // Create gridnodes for pathfinding
-        GridNodes gridNodes = new GridNodes(room.templateUpperBounds.x - room.templateLowerBounds.x + 1, room.templateUpperBounds.y -
-            room.templateLowerBounds.y + 1);
+        GridNodes gridNodes = new GridNodes(room.templateUpperBounds.x - room.templateLowerBounds.x + 1, room.templateUpperBounds.y - room.templateLowerBounds.y + 1);
 
         Node startNode = gridNodes.GetGridNode(startGridPosition.x, startGridPosition.y);
         Node targetNode = gridNodes.GetGridNode(endGridPosition.x, endGridPosition.y);
@@ -114,12 +112,11 @@ public static class AStar
         {
             for (int j = -1; j <= 1; j++)
             {
-                if (i == 0 && j == 0)
-                    continue;
+                if (i == 0 && j == 0) continue;
 
-                validNeighborNode = GetValidNodeNeighbor(currentNodeGridPosition.x + i, currentNodeGridPosition.y + j, gridNodes,
-                    closedNodeHashSet, instantiatedRoom);
+                validNeighborNode = GetValidNodeNeighbor(currentNodeGridPosition.x + i, currentNodeGridPosition.y + j, gridNodes, closedNodeHashSet, instantiatedRoom);
 
+                // If valid neighbor node is not null, it means that neighbor node is valis
                 if (validNeighborNode != null)
                 {
                     // Calculate new gcost for neighbor
@@ -127,8 +124,7 @@ public static class AStar
 
                     // Get the movement penalty. Unwalkable paths have a value of 0. Default movement penalty is set in
                     // Settings and applies to other grid squares.
-                    int movementPenaltyForGridSpace = instantiatedRoom.aStarMovementPenalty[validNeighborNode.gridPosition.x,
-                        validNeighborNode.gridPosition.y];
+                    int movementPenaltyForGridSpace = instantiatedRoom.aStarMovementPenalty[validNeighborNode.gridPosition.x, validNeighborNode.gridPosition.y];
 
                     newCostToNeighbor = currentNode.gCost + GetDistance(currentNode, validNeighborNode) + movementPenaltyForGridSpace;
 

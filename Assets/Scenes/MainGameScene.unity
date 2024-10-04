@@ -11929,9 +11929,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.007259528
-    width: 1
-    height: 0.98616153
+    y: 0.6714032
+    width: 0.287
+    height: 0.28674513
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -14273,6 +14273,9 @@ MonoBehaviour:
   - poolSize: 300
     prefab: {fileID: 2585463276777236944, guid: 25b0df9a5d0f5824daa2a14040d0a116, type: 3}
     componentType: IFireable
+  - poolSize: 250
+    prefab: {fileID: 2585463276777236944, guid: 796b076dc70c8484389ba4a810ab08c6, type: 3}
+    componentType: IFireable
   - poolSize: 200
     prefab: {fileID: 2585463276777236944, guid: be71dc8921bf9184c8fab4ceb76b5878, type: 3}
     componentType: IFireable
@@ -14341,6 +14344,9 @@ MonoBehaviour:
     componentType: ProjectileHitEffect
   - poolSize: 30
     prefab: {fileID: 9017448095421764182, guid: 90ae5878019657a44914bc14f3991fb8, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 30
+    prefab: {fileID: 9017448095421764182, guid: 9086633182a6cb846a09f1916c7ec2f3, type: 3}
     componentType: ProjectileHitEffect
 --- !u!4 &673935430
 Transform:
@@ -34706,7 +34712,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 93b06912954b1664ab3b1b528cee80e4, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
@@ -47002,7 +47008,7 @@ MonoBehaviour:
   dungeonLevelList:
   - {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
   - {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
-  currentDungeonLevelListIndex: 0
+  currentDungeonLevelListIndex: 1
   healthBarContainer: {fileID: 103267384}
   healthBar: {fileID: 103267384}
   gameState: 0

@@ -12,49 +12,52 @@ public class EnemyAI : MonoBehaviour
     #endregion
     public EnemyDetailsSO enemyDetails;
     #region Tooltip
+    [Tooltip("Populate this with the WeaponShootPosition child gameobject transform")]
+    #endregion Tooltip
+    public Transform weaponShootPosition;
+    #region Tooltip
     [Tooltip("Select the layers that the enemy bullets will hit")]
     #endregion Tooltip
     [SerializeField] LayerMask layerMask;
-    #region Tooltip
-    [Tooltip("Populate this with the WeaponShootPosition child gameobject transform")]
-    #endregion Tooltip
-    [SerializeField] Transform weaponShootPosition;
 
+    public UnityEvent OnReadyForDashAttack;
 
     [HideInInspector] public MoveStatus moveStatus = MoveStatus.Idle;
     [HideInInspector] public float moveSpeed;
     [HideInInspector] public int updateFrameNumber = 1; // default value.  This is set by the enemy spawner
-    [HideInInspector] public bool chasePlayer = false;
     [HideInInspector] public Coroutine attackMoveEnemyRoutine;
     [HideInInspector] public Coroutine chaseMoveEnemyRoutine;
     [HideInInspector] public Coroutine patrolMoveEnemyRoutine;
     [HideInInspector] public float enemyStartingSpeed;
     [HideInInspector] public EnemyPhase enemyPhase;
-    [HideInInspector] public UnityEvent OnReadyForDashAttack;
 
     protected Enemy enemy;
     protected Coroutine attackAnimationRoutine;
     protected Coroutine dashRoutine;
     protected Coroutine stunEnemyRoutine;
     protected Vector3 lockedVector;
+    protected Room currentRoom;
+    protected Stack<Vector3> movementSteps = new Stack<Vector3>();
+    protected Stack<Vector3> patrolSteps = new Stack<Vector3>();
+    protected float currentEnemyChasePathRebuildCooldown;
+    protected float currentEnemyPatrolPathRebuildCooldown;
 
-    Room currentRoom;
-    Stack<Vector3> movementSteps = new Stack<Vector3>();
-    Stack<Vector3> patrolSteps = new Stack<Vector3>();
     int currentPatrolIndex = 0;
     Vector3 referencePosition;
     GameObject selectedTargetEnemy;
     float attackMoveTimer;
     float dashTimer;
-    float currentEnemyChasePathRebuildCooldown;
-    float currentEnemyPatrolPathRebuildCooldown;
     WaitForFixedUpdate waitForFixedUpdate;
     Vector3 knockbackVector;
     float knockbackForce;
     float knockbackTimeWeight;
+    bool patrolPathFound;
+    EnemyPhase enemyPhaseAtPreviousFrame;
 
     // PHYSICS
     bool isDashing;
+    bool isTargetLocked;
+    Vector3 lockedTargetPosition;
 
     // FIRING
     protected float firingIntervalTimer;
@@ -96,10 +99,13 @@ public class EnemyAI : MonoBehaviour
 
         // Default enemy phase
         enemyPhase = EnemyPhase.Patrol;
+        enemyPhaseAtPreviousFrame = EnemyPhase.Patrol;
     }
 
     protected virtual void FixedUpdate()
     {
+        dashTimer += Time.fixedDeltaTime;
+
         if (isDashing)
         {
             // Move towards the target position
@@ -110,7 +116,6 @@ public class EnemyAI : MonoBehaviour
     protected virtual void Update()
     {
         attackMoveTimer -= Time.deltaTime;
-        dashTimer += Time.deltaTime;
 
         // Movement cooldown timer
         currentEnemyChasePathRebuildCooldown -= Time.deltaTime;
@@ -121,6 +126,12 @@ public class EnemyAI : MonoBehaviour
             currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).y);
         Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
             enemyCellPosition.y - currentRoom.templateLowerBounds.y);
+
+        //// PHASE CHANGE CHECK DEBUG
+        //if (enemyPhase != enemyPhaseAtPreviousFrame && enemyPhase == EnemyPhase.Attack)
+        //{
+        //    Debug.Log(enemy.enemyDetails.enemyName + "'s " + enemyPhaseAtPreviousFrame.ToString() + " phase changed to " + enemyPhase.ToString());
+        //}
 
         // If enemy is in wall or pool tile, make enemy go away from there
         if (currentRoom.instantiatedRoom?.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 0 || currentRoom.instantiatedRoom?.
@@ -140,6 +151,7 @@ public class EnemyAI : MonoBehaviour
             {
                 // For safe pathfind, set enemy phase to chase until enemy settles normal poisiton again
                 enemy.animateEnemy.SetMovementAnimationParameters();
+                enemyPhaseAtPreviousFrame = enemyPhase;
                 enemyPhase = EnemyPhase.Chase;
             }
         }
@@ -147,12 +159,10 @@ public class EnemyAI : MonoBehaviour
         // Second check if enemy is on stun status
         if (moveStatus == MoveStatus.Stun)
         {
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
+            IdleProcess();
 
             if (stunEnemyRoutine == null)
             {
-                StopAllCoroutines();
                 stunEnemyRoutine = StartCoroutine(StunRoutine());
             }
         }
@@ -185,11 +195,6 @@ public class EnemyAI : MonoBehaviour
                 StopCoroutine(attackMoveEnemyRoutine);
                 attackMoveEnemyRoutine = null;
             }
-            if (chaseMoveEnemyRoutine != null)
-            {
-                StopCoroutine(chaseMoveEnemyRoutine);
-                chaseMoveEnemyRoutine = null;
-            }
         }
         else
         {
@@ -201,7 +206,6 @@ public class EnemyAI : MonoBehaviour
                 {
                     case EnemyPhase.Patrol:
 
-
                         if (chaseMoveEnemyRoutine != null)
                         {
                             StopCoroutine(chaseMoveEnemyRoutine);
@@ -209,10 +213,7 @@ public class EnemyAI : MonoBehaviour
                             movementSteps.Clear();
                         }
 
-                        if (currentEnemyPatrolPathRebuildCooldown <= 0f)
-                        {
-                            Patrol();
-                        }
+                        Patrol();
 
                         break;
 
@@ -225,7 +226,11 @@ public class EnemyAI : MonoBehaviour
                             patrolSteps.Clear();
                         }
 
-                        Chase();
+                        if (currentEnemyChasePathRebuildCooldown <= 0f)
+                        {
+
+                            Chase();
+                        }
 
                         break;
 
@@ -233,6 +238,7 @@ public class EnemyAI : MonoBehaviour
 
                         enemy.animateEnemy.ResetAnimatonParameters();
                         enemy.animateEnemy.SetGetHitAnimationParameters();
+                        attackMoveEnemyRoutine = null;
 
                         if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.PrepareAndDash)
                         {
@@ -243,25 +249,38 @@ public class EnemyAI : MonoBehaviour
 
                     case EnemyPhase.Attack:
 
-                        enemy.animateEnemy.ResetAnimatonParameters();
+                        enemy.animateEnemy.SetAttackAnimationParameters();
 
-                        if (attackMoveTimer > 0f) return;
+                        if (attackMoveTimer > 0f) return; // Prevent executing if still in attack timer
 
-                        if (tag == Settings.enemyTag)
+                        if (enemy.enemyDetails.enemyBehaviour != EnemyBehaviour.AimAndShoot)
                         {
-                            Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-                                (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
-                            lockedVector = direction;
+                            if (tag == Settings.enemyTag)
+                            {
+                                Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
+                                    (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
+                                lockedVector = direction;
+                            }
+                            else if (tag == Settings.summonedEnemyTag)
+                            {
+                                Vector3 direction = selectedTargetEnemy != null ? (selectedTargetEnemy.transform.position - transform.position).normalized :
+                                    (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
+                            }
                         }
-                        else if (tag == Settings.summonedEnemyTag)
-                        {
-                            Vector3 direction = selectedTargetEnemy != null ? (selectedTargetEnemy.transform.position - transform.position).normalized :
-                                (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
-                        }
 
-                        if (attackMoveEnemyRoutine == null)
+                        if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.PrepareAndDash)
                         {
-                            attackMoveEnemyRoutine = StartCoroutine(AttackMoveRoutine());
+                            if (dashRoutine == null)
+                            {
+                                attackMoveEnemyRoutine = StartCoroutine(AttackMoveRoutine());
+                            }
+                        }           
+                        else
+                        {
+                            if (attackMoveEnemyRoutine == null)
+                            {
+                                attackMoveEnemyRoutine = StartCoroutine(AttackMoveRoutine());
+                            }
                         }
 
                         break;
@@ -273,18 +292,21 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void Perform()
+    protected void Perform()
     {
         // Only process A Star path rebuild on certain frames to spread the load between enemies
         if (Time.frameCount % Settings.targetFrameRateToSpreadPathfindingOver != updateFrameNumber) return;
+
+        if (dashRoutine != null) return;
 
         if (tag == Settings.enemyTag)
         {
             // Check if there is any decoy(dummy)
             if (GameManager.Instance.GetDecoy() != null)
             {
-                if (Vector3.Distance(transform.position, GameManager.Instance.GetDecoy().GetDecoyPosition()) < enemy.enemyDetails.chaseDistance)
+                if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
                 {
+                    enemyPhaseAtPreviousFrame = enemyPhase;
                     enemyPhase = EnemyPhase.Chase;
                 }
             }
@@ -295,10 +317,16 @@ public class EnemyAI : MonoBehaviour
                 {
                     if (!GameManager.Instance.GetPlayer().onStealth)
                     {
-                        enemyPhase = EnemyPhase.Chase;
+                        if (enemyPhase != EnemyPhase.Attack)
+                        {
+                            enemyPhaseAtPreviousFrame = enemyPhase;
+                            enemyPhase = EnemyPhase.Patrol;
+                            Patrol();
+                        }
                     }
                     else
                     {
+                        enemyPhaseAtPreviousFrame = enemyPhase;
                         enemyPhase = EnemyPhase.Patrol;
                     }
                 }
@@ -330,16 +358,19 @@ public class EnemyAI : MonoBehaviour
                 {
                     if (!GameManager.Instance.GetPlayer().onStealth)
                     {
+                        enemyPhaseAtPreviousFrame = enemyPhase;
                         enemyPhase = EnemyPhase.Chase;
                     }
                     else
                     {
+                        enemyPhaseAtPreviousFrame = enemyPhase;
                         enemyPhase = EnemyPhase.Patrol;
                     }
                 }
             }
             else
             {
+                enemyPhaseAtPreviousFrame = enemyPhase;
                 enemyPhase = EnemyPhase.Patrol;
             }
         }
@@ -348,12 +379,20 @@ public class EnemyAI : MonoBehaviour
     /// <summary>
     /// Patrol 
     /// </summary>
-    private void Patrol()
+    protected void Patrol()
     {
         attackMoveEnemyRoutine = null;
 
+        // Check distance is too close to the player, reset patrol state
+        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
+        {
+            enemyPhaseAtPreviousFrame = enemyPhase;
+            enemyPhase = EnemyPhase.Chase;
+            return;
+        }
+
         // Reset path rebuild cooldown timer
-        currentEnemyPatrolPathRebuildCooldown = Settings.enemyPathRebuildCooldown;
+        currentEnemyPatrolPathRebuildCooldown = Settings.enemyPatrolPathRebuildCooldown;
 
         // Clear chase stack
         if (movementSteps != null)
@@ -361,8 +400,11 @@ public class EnemyAI : MonoBehaviour
             movementSteps.Clear();
         }
 
-        // Move to the next patrol point for the next iteration randomly
-        currentPatrolIndex = Random.Range(0, currentRoom.spawnPositionArray.Length);
+        if (!patrolPathFound)
+        {
+            // Move to the next patrol point for the next iteration randomly
+            currentPatrolIndex = Random.Range(0, currentRoom.spawnPositionArray.Length);
+        }
 
         // Create path for patrol
         CreatePath(currentPatrolIndex);
@@ -375,21 +417,29 @@ public class EnemyAI : MonoBehaviour
                 // Move enemy along the path using a coroutine
                 patrolMoveEnemyRoutine = StartCoroutine(PatrolMoveEnemyRoutine());
             }
+            else
+            {
+                StopCoroutine(patrolMoveEnemyRoutine);
+                patrolMoveEnemyRoutine = StartCoroutine(PatrolMoveEnemyRoutine());
+            }
         }
     }
 
     /// <summary>
     /// Chase the player
     /// </summary>
-    private void Chase()
-    {     
-        // Check distance is too far away from player, reset patrol state
-        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) >= enemy.enemyDetails.chaseDistance)
-        {
-            enemyPhase = EnemyPhase.Patrol;
-            Patrol();
-            return;
-        }
+    protected void Chase()
+    {
+        patrolPathFound = false;
+
+        //// Check distance is too far away from player, reset patrol state
+        //if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) >= enemy.enemyDetails.chaseDistance)
+        //{
+        //    enemyPhaseAtPreviousFrame = enemyPhase;
+        //    enemyPhase = EnemyPhase.Patrol;
+        //    Patrol();
+        //    return;
+        //}
 
         if (tag == Settings.enemyTag)
         {
@@ -400,7 +450,7 @@ public class EnemyAI : MonoBehaviour
             if (currentEnemyChasePathRebuildCooldown <= 0f || (Vector3.Distance(referencePosition, updatedTargetPosition) > Settings.playerMoveDistanceToRebuildPath))
             {
                 // Reset path rebuild cooldown timer
-                currentEnemyChasePathRebuildCooldown = Settings.enemyPathRebuildCooldown;
+                currentEnemyChasePathRebuildCooldown = Settings.enemyPatrolPathRebuildCooldown;
 
                 // Clear patrol stack
                 if (patrolSteps != null)
@@ -429,12 +479,19 @@ public class EnemyAI : MonoBehaviour
                 if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot || (enemy.enemyDetails.hasAttackMove && Vector3.Distance(updatedTargetPosition, transform.position) < 
                     enemy.enemyDetails.attackMoveTriggerDistance))
                 {
+                    enemyPhaseAtPreviousFrame = enemyPhase;
                     enemyPhase = EnemyPhase.Attack;
-                    enemy.animateEnemy.ResetAnimatonParameters();
+                    //enemy.animateEnemy.ResetAnimatonParameters();
                 }
+            }
+            else if ((Vector3.Distance(transform.position, referencePosition) < enemy.enemyDetails.chaseDistance))
+            {
+                enemyPhaseAtPreviousFrame = enemyPhase;
+                enemyPhase = EnemyPhase.Chase;
             }
             else
             {
+                enemyPhaseAtPreviousFrame = enemyPhase;
                 enemyPhase = EnemyPhase.Patrol;
             }
         }
@@ -444,10 +501,10 @@ public class EnemyAI : MonoBehaviour
             Vector3 updatedTargetPosition = selectedTargetEnemy != null ? selectedTargetEnemy.transform.position :
                 GameManager.Instance.GetPlayer().GetPlayerPosition();
 
-            if (currentEnemyChasePathRebuildCooldown <= 0f || (Vector3.Distance(referencePosition, updatedTargetPosition) > Settings.playerMoveDistanceToRebuildPath))
+            if (Vector3.Distance(referencePosition, updatedTargetPosition) > Settings.playerMoveDistanceToRebuildPath)
             {
                 // Reset path rebuild cooldown timer
-                currentEnemyChasePathRebuildCooldown = Settings.enemyPathRebuildCooldown;
+                currentEnemyChasePathRebuildCooldown = Settings.enemyPatrolPathRebuildCooldown;
 
                 // Clear patrol stack
                 if (patrolSteps != null)
@@ -501,11 +558,8 @@ public class EnemyAI : MonoBehaviour
         {
             patrolSteps.Pop();
         }
-        else
-        {
-            // End of path steps - trigger the enemy idle event
-            IdleProcess();
-        }
+
+        patrolPathFound = true;
     }
 
     /// <summary>
@@ -531,11 +585,6 @@ public class EnemyAI : MonoBehaviour
         {
             movementSteps.Pop();
         }
-        else
-        {
-            // End of path steps - trigger the enemy idle event
-            IdleProcess();
-        }
     }
 
     /// <summary>
@@ -547,14 +596,23 @@ public class EnemyAI : MonoBehaviour
         {
             Vector3 nextPosition = patrolSteps.Pop();
 
+            // Trigger movement and animations
+            enemy.animateEnemy.ResetAnimatonParameters();
+            enemy.animateEnemy.SetMovementAnimationParameters();
+
             // while not very close continue to move - when close move onto the next step
             while (Vector3.Distance(nextPosition, transform.position) > 0.2f)
             {
-                // Trigger movement and animations
-                enemy.animateEnemy.ResetAnimatonParameters();
-                enemy.animateEnemy.SetMovementAnimationParameters();
+                Vector2 unitVector = Vector3.Normalize(nextPosition - transform.position);
 
-                enemy.movementToPosition.PatrolMoveRigidbodyByPosition(nextPosition, transform.position, moveSpeed);
+                // Initialize vectors, angles, directions and aim
+                float unitAngle = HelperUtilities.GetAngleFromVector(unitVector);
+                AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
+                enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
+                enemy.animateEnemy.ResetAimAnimationParameters();
+                enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
+
+                enemy.movementToPosition.MoveRigidbodyByPosition(unitVector, moveSpeed);
 
                 // Moving the enemy using 2D physics so wait until the next fixed update
                 yield return waitForFixedUpdate;
@@ -577,6 +635,7 @@ public class EnemyAI : MonoBehaviour
         IdleProcess();
 
         patrolMoveEnemyRoutine = null;
+        patrolPathFound = false;
     }
 
     /// <summary>
@@ -588,12 +647,24 @@ public class EnemyAI : MonoBehaviour
         {
             Vector3 nextPosition = movementSteps.Pop();
 
+            // Trigger movement and animations
+            enemy.animateEnemy.ResetAnimatonParameters();
+            enemy.animateEnemy.SetMovementAnimationParameters();
+
             // while not very close continue to move - when close move onto the next step
             while (Vector3.Distance(nextPosition, transform.position) > 0.2f)
             {
+                Vector2 unitVector = Vector3.Normalize(nextPosition - transform.position);
+
+                // Initialize vectors, angles, directions and aim
+                float unitAngle = HelperUtilities.GetAngleFromVector(unitVector);
+                AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
+                enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
+                enemy.animateEnemy.ResetAimAnimationParameters();
+                enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
+
                 // Trigger movement and animations
-                enemy.movementToPosition.ChaseMoveRigidbodyByPosition(nextPosition, transform.position, moveSpeed);
-                enemy.animateEnemy.SetMovementAnimationParameters();
+                enemy.movementToPosition.MoveRigidbodyByPosition(unitVector, moveSpeed);
 
                 // Moving the enemy using 2D physics so wait until the next fixed update
                 yield return waitForFixedUpdate;
@@ -618,7 +689,7 @@ public class EnemyAI : MonoBehaviour
         chaseMoveEnemyRoutine = null;
     }
 
-    private void IdleProcess()
+    protected void IdleProcess()
     {
         enemy.idle.StopVelocity();
         enemy.animateEnemy.SetIdleAnimationParameters();
@@ -629,6 +700,8 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     IEnumerator AttackMoveRoutine()
     {
+        patrolPathFound = false;
+
         // Skip aim and shoot because, there is more detail for aim and shoot behaviour below
         if (enemy.enemyDetails.enemyBehaviour != EnemyBehaviour.AimAndShoot)
         {
@@ -638,72 +711,44 @@ public class EnemyAI : MonoBehaviour
             enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
             enemy.animateEnemy.ResetAimAnimationParameters();
             enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
+            enemy.animateEnemy.SetAttackAnimationParameters();
         }
 
         if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.PrepareAndDash)
         {
-            // Prepare for the attack
-            enemy.animateEnemy.SetAttackAnimationParameters();
-
             if (attackAnimationRoutine == null)
             {
-                attackAnimationRoutine = StartCoroutine(AttackAnimation());
+                if (dashRoutine == null)
+                {
+                    attackAnimationRoutine = StartCoroutine(AttackAnimation());
+                }
             }
+
+            attackMoveEnemyRoutine = null;
 
             // Wait for the attack preparation animation to finish (handled via Unity Event)
             yield return new WaitUntil(() => dashRoutine != null);  // Wait until dashRoutine starts
         }
-        else if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot)
-        {
-            // Prepare for the attack
-            enemy.animateEnemy.SetAttackAnimationParameters();
-
-            if (attackAnimationRoutine == null)
-            {
-                attackAnimationRoutine = StartCoroutine(AttackAnimation());
-            }
-
-            // Interval Timer
-            if (firingIntervalTimer < 0f)
-            {
-                if (firingDurationTimer >= 0)
-                {
-                    firingDurationTimer -= Time.deltaTime;
-                    FireWeapon();
-                }
-                else
-                {
-                    // Reset timers
-                    firingIntervalTimer = WeaponShootInterval();
-                    firingDurationTimer = WeaponShootDuration();
-                }
-            }
-
-            if (enemy.health.currentHealth > 0f)
-            {
-                yield return new WaitForSeconds(1f);
-            }
-
-            enemyPhase = EnemyPhase.Patrol;
-            attackAnimationRoutine = null;
-        }
-
-        attackMoveEnemyRoutine = null;
     }
 
     IEnumerator AttackAnimation()
     {
         // Set the animator's isAttacking parameter to true to start the attack animation
+        enemy.animateEnemy.SetAttackAnimationParameters();
         enemy.animator.SetBool(Settings.isAttacking, true);
+        enemy.rb2D.velocity = Vector2.zero;
+
+        // Ensure correct animation state
+        yield return new WaitForEndOfFrame();
 
         // Wait until the attack animation ends
-        AnimatorStateInfo stateInfo = enemy.animator.GetCurrentAnimatorStateInfo(0);
+        AnimatorStateInfo stateInfo = enemy.animator.GetCurrentAnimatorStateInfo(enemy.animateEnemy.attackLayerIndex);
         float animationDuration = stateInfo.length; // Get the length of the current animation
 
-        yield return new WaitForSeconds(animationDuration);
+        float durationOffset = 1f;
+        yield return new WaitForSeconds(animationDuration + durationOffset);
 
         // Set the animator's isAttacking parameter to true to start the attack animation
-        enemy.animator.SetBool(Settings.isAttacking, false);
         attackAnimationRoutine = null;
     }
 
@@ -716,11 +761,6 @@ public class EnemyAI : MonoBehaviour
         {
             dashRoutine = StartCoroutine(DashRoutine());
         }
-        else
-        {
-            StopCoroutine(dashRoutine);
-            dashRoutine = StartCoroutine(DashRoutine());
-        }
     }
 
     IEnumerator DashRoutine()
@@ -728,31 +768,35 @@ public class EnemyAI : MonoBehaviour
         dashTimer = 0f;
         isDashing = true;
 
-        // Attack animation attack phase
-        enemy.animateEnemy.SetAttackAnimationParameters();
+        yield return null;
 
         // minDistance used to decide when to exit coroutine loop
-        float minDistance = 0.2f;
-        Vector3 targetPosition = transform.position + lockedVector * enemyDetails.attackMoveEfficentDistance;
+        float minDistance = 0.1f;
+
+        if (!isTargetLocked)
+        {
+            lockedTargetPosition = transform.position + lockedVector * enemyDetails.attackMoveEfficentDistance;
+            isTargetLocked = true;
+        }
 
         // Attack animation attack phase
-        while (Vector3.Distance(transform.position, targetPosition) > minDistance && dashTimer <= 0.3f)
+        while (Vector3.Distance(transform.position, lockedTargetPosition) > minDistance && dashTimer <= 0.4f)
         {
-            // Check if the current tile is an obstacle (penalty value = 0)
-            Vector3Int enemyCellPosition = new Vector3Int(currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).x,
-                currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).y);
-            Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
-                enemyCellPosition.y - currentRoom.templateLowerBounds.y);
+            //// Check if the current tile is an obstacle (penalty value = 0)
+            //Vector3Int enemyCellPosition = new Vector3Int(currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).x,
+            //    currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).y);
+            //Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
+            //    enemyCellPosition.y - currentRoom.templateLowerBounds.y);
 
-            // Break out of the loop if the stepped tile is not a preferred tile
-            if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) != 1)
-            {
-                // If the enemy collides with an obstacle or second-choice tile, transition to the appropriate phase
-                enemyPhase = EnemyPhase.Patrol;
-                attackMoveEnemyRoutine = null;
-                isDashing = false;
-                break;
-            }
+            //// Break out of the loop if the stepped tile is not a preferred tile
+            //if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) != 1)
+            //{
+            //    // If the enemy collides with an obstacle or second-choice tile, transition to the appropriate phase
+            //    enemyPhase = EnemyPhase.Chase;
+            //    attackMoveEnemyRoutine = null;
+            //    isDashing = false;
+            //    break;
+            //}
 
             // yield and wait for fixed update
             yield return waitForFixedUpdate;
@@ -761,15 +805,18 @@ public class EnemyAI : MonoBehaviour
         // Set cooldown timer
         attackMoveTimer = enemy.enemyDetails.attackMoveBaseCooldown;
 
+        yield return waitForFixedUpdate;
+
         // Check the previous phase and transition accordingly
-        enemyPhase = EnemyPhase.Chase;
+        enemyPhaseAtPreviousFrame = enemyPhase;
+        enemyPhase = EnemyPhase.Patrol;
 
         // Reset the coroutine reference
         enemy.animator.SetBool(Settings.isAttacking, false);
+
         isDashing = false;
-
-        yield return waitForFixedUpdate;
-
+        isTargetLocked = false;
+        attackMoveEnemyRoutine = null;
         dashRoutine = null;
     }
 

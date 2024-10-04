@@ -198,7 +198,7 @@ PrefabInstance:
       objectReference: {fileID: -330516370, guid: 91ab13cf2249e2942850895021833e3a, type: 3}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_MaskInteraction
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_WasSpriteAssigned
@@ -222,11 +222,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2812488011572122476, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.09375
+      value: 0.4375
       objectReference: {fileID: 0}
     - target: {fileID: 2812488011572122476, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.0625
+      value: 0.90625
       objectReference: {fileID: 0}
     - target: {fileID: 3146469945750014307, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_LocalScale.x
@@ -434,7 +434,46 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: e25b222183609b74bacb897ae988b255, type: 2}
     m_RemovedComponents:
     - {fileID: 0}
+    - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7736189416814370986, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      insertIndex: 8
+      addedObject: {fileID: 4922918901372136668}
   m_SourcePrefab: {fileID: 100100000, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+--- !u!4 &3455516063969396250 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2812488011572122476, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+  m_PrefabInstance: {fileID: 645003754541700470}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7183228443647751644 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7736189416814370986, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+  m_PrefabInstance: {fileID: 645003754541700470}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4922918901372136668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7183228443647751644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb03f3375d30bc043a3101830105b309, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyDetails: {fileID: 11400000, guid: cc0c95f8681ab9a4a9c223f3ffc76192, type: 2}
+  weaponShootPosition: {fileID: 3455516063969396250}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 18432
+  OnReadyForDashAttack:
+    m_PersistentCalls:
+      m_Calls: []
+  moveStatus: 0
+  moveSpeed: 0
+  updateFrameNumber: 1
+  enemyStartingSpeed: 0
+  enemyPhase: 0

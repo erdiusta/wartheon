@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be803c3d22954c743afeeadf2eb708fd, type: 3}
   m_Name: MovementDetails_Imp
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 4.75
+  rollSpeed: 0
+  rollDistance: 0
+  rollCooldownTime: 0

@@ -14,24 +14,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Basilisk
   enemyPrefab: {fileID: 7183228443647751644, guid: f69d1f74f812f34489b1a7865e25a5cb, type: 3}
+  enemyRace: 0
   movementDetails: {fileID: 11400000, guid: 19ac5efea72cf974893224b5985818bd, type: 2}
+  experiencePoint: 30
   chaseDistance: 50
   hasAttackMove: 0
-  preAttackDuration: 1
   attackMoveTriggerDistance: 3
   attackMoveEfficentDistance: 8
-  attackMoveCooldown: 8
+  attackMoveBaseCooldown: 8
+  deflectionValue: 0.8
   enemyBehaviour: 1
   isEnemyBoss: 1
+  hasAnimator: 0
   enemyArmorValue: 0
   hasShield: 0
   deflectChance: 0
   isPoisonous: 0
   poisonChance: 0
   hasAcid: 0
-  acidEfficiency: 0.4
+  acidEfficiency: 0
   hasStunDamage: 0
-  stunChance: 0.4
+  stunChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 5
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -40,6 +45,7 @@ MonoBehaviour:
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 0}
+  roarSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 0}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
@@ -62,7 +68,6 @@ MonoBehaviour:
   weaponsByLevelList: []
   passiveItemsByLevelList: []
   activeItemsByLevelList: []
-  ammoPercent: 0
   dropSpawnChanceMin: 0
   dropSpawnChanceMax: 0
   numberOfItemsToSpawnMin: 0
