@@ -509,6 +509,10 @@ PrefabInstance:
       value: Centaur
       objectReference: {fileID: 0}
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 17e317ca8a76f8b4395ec527a9a8378f, type: 2}
@@ -545,16 +549,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyDetails: {fileID: 11400000, guid: 6fc19b461edfa3f4d81f7215385a9c91, type: 2}
+  weaponShootPosition: {fileID: 3455516063969396250}
   layerMask:
     serializedVersion: 2
     m_Bits: 18432
-  weaponShootPosition: {fileID: 3455516063969396250}
-  moveStatus: 0
-  moveSpeed: 0
-  updateFrameNumber: 1
-  chasePlayer: 0
-  enemyStartingSpeed: 0
-  enemyPhase: 0
   OnReadyForDashAttack:
     m_PersistentCalls:
       m_Calls: []
+  moveStatus: 0
+  moveSpeed: 0
+  updateFrameNumber: 1
+  enemyStartingSpeed: 0
+  enemyPhase: 0

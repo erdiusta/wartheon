@@ -139,7 +139,7 @@ public class Destroyed : MonoBehaviour
                 case WeaponTitle.Gambit:
                     player.weaponMastery.gambitMasteryPoints += enemy.enemyDetails.experiencePoint;
                     break;
-                case WeaponTitle.Bow:
+                case WeaponTitle.CrudeBow:
                     player.weaponMastery.bowMasteryPoints += enemy.enemyDetails.experiencePoint;
                     break;
                 case WeaponTitle.Crossbow:

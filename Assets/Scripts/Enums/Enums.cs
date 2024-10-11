@@ -135,7 +135,7 @@ public enum WeaponTitle
     Crusher,
     Dirk,
     Gambit,
-    Bow,
+    CrudeBow,
     Crossbow,
     Staff,
     SolarFlare,
@@ -147,7 +147,11 @@ public enum WeaponTitle
     EbonLongbow,
     Netherstrand,
     BlackTalon,
-    HailstormSculptor
+    HailstormSculptor,
+    Trinity,
+    Blazefury,
+    Scarlet,
+    Doombringer
 }
 
 public enum WeaponClass
@@ -240,18 +244,6 @@ public enum CentaurPhase
     StraightArrowShot,
     ChargeAndRetreat,
     SpreadArrowShot,
-}
-
-public enum EnemyRace
-{
-    Critter,
-    Beast,
-    Eldritch,
-    Elemental,
-    Demon,
-    Undead,
-    Vermin,
-    Reptile
 }
 
 public enum BookPage

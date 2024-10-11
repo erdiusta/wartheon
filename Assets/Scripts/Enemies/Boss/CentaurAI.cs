@@ -162,6 +162,7 @@ public class CentaurAI : EnemyAI
         {
             float fireTimer = 0f;
             float fireProjectileDuration = 5f;
+            enemy.animator.SetBool(Settings.isAttacking, true);
 
             yield return null;
 
@@ -189,6 +190,8 @@ public class CentaurAI : EnemyAI
                 yield return null;
 
             }
+
+            enemy.animator.SetBool(Settings.isAttacking, false);
 
             yield return null;
 
@@ -257,6 +260,7 @@ public class CentaurAI : EnemyAI
             float prechargeDuration = 1.3f;
             float chargeTimer = 0f;
             enemy.animateEnemy.SetAttackAnimationParameters();
+            enemy.animator.SetBool(Settings.isAttacking, false);
             enemy.animator.SetTrigger(Settings.isPrechargingProjectile);
 
             yield return null;

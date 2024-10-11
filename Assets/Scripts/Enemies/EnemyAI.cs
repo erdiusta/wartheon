@@ -820,13 +820,11 @@ public class EnemyAI : MonoBehaviour
         dashRoutine = null;
     }
 
-    /// <summary>
+    /// <summary>   
     /// Fire the weapon
     /// </summary>
     protected void FireWeapon(CentaurPhase centaurPhase = CentaurPhase.None)
     {
-        if (enemy.isDead) return;
-
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
         AimDirection enemyAimDirection;

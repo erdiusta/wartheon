@@ -114,16 +114,21 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
-
                     isArmEquipped = true;
                 }
                 break;
             case PassiveItemSlotName.Leg:
                 if (!isLegEquipped)
                 {
+                    legPassiveItem = setPassiveItemEventArgs.passiveItem;
+
+                    if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
+                    {
+                        player.movementByVelocity.moveSpeed += 1f;
+                    }
+
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
-                    legPassiveItem = setPassiveItemEventArgs.passiveItem;
                     isLegEquipped = true;
                 }
                 break;
@@ -205,6 +210,12 @@ public class SelectedPassiveItem : MonoBehaviour
                 if (isLegEquipped)
                 {
                     player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
+
+                    if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
+                    {
+                        player.movementByVelocity.moveSpeed = player.movementByVelocity.playerStartingSpeed;
+                    }
+
                     legPassiveItem = null;
                     isLegEquipped = false;
                 }

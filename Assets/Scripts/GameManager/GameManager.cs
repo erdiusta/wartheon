@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering;
+using System;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
@@ -304,6 +305,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 {
                     IntroductionPopUpProcess("WINGED SANDALS", "Increased speed.", passiveItem.passiveItemDetails.passiveItemSprite);
                 }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.OminousGripOfThunder)
+                {
+                    IntroductionPopUpProcess("OMINOUS\nGRIP OF THUNDER", "More armor and\nair resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
 
                 break;
             case DropType.ActiveItem:
@@ -390,6 +395,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 {
                     IntroductionPopUpProcess("PHALANX\nSPEAR", "A basic spear", weapon.weaponDetails.weaponFrontSprite);
                 }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Trinity)
+                {
+                    IntroductionPopUpProcess("TRINITY", "The lord of the waters", weapon.weaponDetails.weaponFrontSprite);
+                }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Gladius)
                 {
                     IntroductionPopUpProcess("GLADIUS", "Basic one-handed sword", weapon.weaponDetails.weaponFrontSprite);
@@ -401,6 +410,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.SizzlingSword)
                 {
                     IntroductionPopUpProcess("SIZZLING\nSWORD", "Can acidify mobs", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Blazefury)
+                {
+                    IntroductionPopUpProcess("BLAZEFURY", "Sword on fire", weapon.weaponDetails.weaponFrontSprite);
                 }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.AncientKatana)
                 {
@@ -414,7 +427,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 {
                     IntroductionPopUpProcess("HAILSTORM\nSCULPTOR", "Biting frost is on my hand.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Bow)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.CrudeBow)
                 {
                     IntroductionPopUpProcess("BOW", "A basic bow", weapon.weaponDetails.weaponFrontSprite);
                 }

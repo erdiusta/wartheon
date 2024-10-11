@@ -138,6 +138,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                             {
                                 enemy.health.isBlocking = true;
                                 enemy.healthEvent.CallDeflectionEvent();
+                                enemy.health.PostHitImmunity(true);
                                 enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
                             }
                         }
@@ -203,6 +204,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                             {
                                 enemy.health.isBlocking = true;
                                 enemy.healthEvent.CallDeflectionEvent();
+                                enemy.health.PostHitImmunity(true);
                                 enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
                             }
                         }

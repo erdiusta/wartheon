@@ -68,11 +68,13 @@ MonoBehaviour:
       ratio: 6
     - dungeonObject: {fileID: 11400000, guid: 669eeea2e0efa024f81cb84e14941385, type: 2}
       ratio: 4
-    - dungeonObject: {fileID: 11400000, guid: a37b2f82156e3984490019f57e56e9a9, type: 2}
+    - dungeonObject: {fileID: 11400000, guid: c955b4e0116dd7046ae1405b3381ee8c, type: 2}
       ratio: 3
     - dungeonObject: {fileID: 11400000, guid: cc0c95f8681ab9a4a9c223f3ffc76192, type: 2}
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 3e7e3db75a901a445a2a877d3f030404, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 579fd9f19340d5c4899b0c3386d85857, type: 2}
       ratio: 2
   roomEnemySpawnParametersList:
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}

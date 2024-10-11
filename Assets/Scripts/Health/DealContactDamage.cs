@@ -63,7 +63,7 @@ public class DealContactDamage : MonoBehaviour
             isColliding = true;
 
             // Reset the contact collision after set time
-            Invoke("ResetContactCollision", Settings.contactDamageCollisionResetDelay);
+            Invoke(nameof(ResetContactCollision), Settings.contactDamageCollisionResetDelay);
 
             if (collision.tag == Settings.playerTag)
             {
@@ -155,7 +155,7 @@ public class DealContactDamage : MonoBehaviour
             Enemy enemy = collision.GetComponent<Enemy>();
 
             // Reset the contact collision after set time
-            Invoke("ResetContactCollision", Settings.contactDamageCollisionResetDelay);
+            Invoke(nameof(ResetContactCollision), Settings.contactDamageCollisionResetDelay);
 
             // Damage produced by enemy
             int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMin);

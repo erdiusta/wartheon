@@ -18,7 +18,7 @@ MonoBehaviour:
   weaponClass: 6
   weaponHitSpeed: 1
   wieldType: 1
-  elementalBias: 3
+  elementalBias: 4
   elementalForgeRate: 0.15
   price: 7
   weaponFrontSprite: {fileID: -957608624, guid: 25d57d34f8547564b9d8ccdeb22ff057, type: 3}
@@ -31,7 +31,10 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  weaponShootPosition: {x: 0.018750012, y: 0.042000055, z: 0}
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: b21b81619da41824fbaaed63c7441615, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 9e94351610df36548be272034fa0be42, type: 2}

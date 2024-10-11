@@ -17,10 +17,6 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public GameObject enemyPrefab;
     #region Tooltip
-    [Tooltip("The race of the enemy")]
-    #endregion
-    public EnemyRace enemyRace;
-    #region Tooltip
     [Tooltip("Movement details of enemy")]
     #endregion
     public MovementDetailsSO movementDetails;

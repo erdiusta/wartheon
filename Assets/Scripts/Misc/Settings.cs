@@ -62,7 +62,7 @@ public static class Settings
     public static int block = Animator.StringToHash("block");
 
     // Animator parameters - Enemy
-    public const float baseSpeedForEnemyAnimations = 2f;
+    public const float baseSpeedForEnemyAnimations = 2.5f;
 
     // Animator parameters - Door
     public static int open = Animator.StringToHash("open");

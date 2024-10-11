@@ -37,7 +37,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 082842b653910cd48b8c09ff8e672932, type: 2}
   - {fileID: 11400000, guid: 30b970d77eba6e044b8b81b8ee639beb, type: 2}
   - {fileID: 11400000, guid: 81c77312e2289394186bf6f964d743a5, type: 2}
-  - {fileID: 11400000, guid: 25e462b59fc14284c8f07ed5167b0696, type: 2}
   - {fileID: 11400000, guid: df444e471d76e3a499f91cd4cb9b9423, type: 2}
   - {fileID: 11400000, guid: 2c345dc9164253c4b8b9b914fc38bba9, type: 2}
   roomNodeGraphList:

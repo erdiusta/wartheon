@@ -88,6 +88,8 @@ public class EnemyAimAndShootAI : EnemyAI
 
                 case EnemyPhase.Attack:
 
+                    if (enemy.isDead) return;
+
                     enemy.animateEnemy.SetAttackAnimationParameters();
 
                     if (patrolSteps != null)

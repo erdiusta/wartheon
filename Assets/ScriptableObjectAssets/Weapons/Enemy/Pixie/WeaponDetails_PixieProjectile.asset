@@ -34,7 +34,7 @@ MonoBehaviour:
   weaponRightShootPosition: {x: 0.53125, y: 1, z: 0}
   weaponLeftShootPosition: {x: -0.53125, y: 1, z: 0}
   weaponUpShootPosition: {x: 0.46875, y: 0.8125, z: 0}
-  weaponDownShootPosition: {x: -0.46875, y: 0.8125, z: 0}
+  weaponDownShootPosition: {x: 0.03125, y: 0.875, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: e11fe0e71b5ebdf4296f0fb35b6a85c0, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 0}
