@@ -14295,6 +14295,15 @@ MonoBehaviour:
     prefab: {fileID: 2585463276777236944, guid: 57b7bf409d4b6f14fba3aa88ee752e35, type: 3}
     componentType: IFireable
   - poolSize: 100
+    prefab: {fileID: 2585463276777236944, guid: d22f60a616d93a04e99ab517374c2f82, type: 3}
+    componentType: IFireable
+  - poolSize: 100
+    prefab: {fileID: 2585463276777236944, guid: f293b336826f9a04682163df325d3475, type: 3}
+    componentType: IFireable
+  - poolSize: 100
+    prefab: {fileID: 2585463276777236944, guid: a125d230c967f8e4b9cd79f1d0bafc30, type: 3}
+    componentType: IFireable
+  - poolSize: 100
     prefab: {fileID: 5263536334675765252, guid: de090ebe75096d14698c8aaff77bf6e6, type: 3}
     componentType: IFireable
   - poolSize: 40
@@ -14337,7 +14346,13 @@ MonoBehaviour:
     prefab: {fileID: 9017448095421764182, guid: aa9be185344f4c8429aabe99074d832e, type: 3}
     componentType: ProjectileHitEffect
   - poolSize: 30
+    prefab: {fileID: 9017448095421764182, guid: 70e212ebf64e6eb4f82688ebe710bfd1, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 30
     prefab: {fileID: 9017448095421764182, guid: 09f5a9ca293110449aaeb4969a85bbde, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 30
+    prefab: {fileID: 9017448095421764182, guid: 1bf24f086b2c256429043178860291cb, type: 3}
     componentType: ProjectileHitEffect
   - poolSize: 30
     prefab: {fileID: 9017448095421764182, guid: 5c7f72ffa2200294981ac5dbe287e640, type: 3}
@@ -14347,6 +14362,12 @@ MonoBehaviour:
     componentType: ProjectileHitEffect
   - poolSize: 30
     prefab: {fileID: 9017448095421764182, guid: 9086633182a6cb846a09f1916c7ec2f3, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 30
+    prefab: {fileID: 9017448095421764182, guid: f22b679b7241411488f495759a0628f9, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 30
+    prefab: {fileID: 9017448095421764182, guid: e7556f90e97bee049adf84ec865e4e21, type: 3}
     componentType: ProjectileHitEffect
 --- !u!4 &673935430
 Transform:
@@ -47011,7 +47032,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}
   - {fileID: 11400000, guid: 2a9e0254a141aba41bdcd556b95beeb2, type: 2}
   - {fileID: 11400000, guid: c3413b0ad50f98a4ba7edfccd5230ccf, type: 2}
-  currentDungeonLevelListIndex: 4
+  - {fileID: 11400000, guid: 99c1ae446f4b95c4c9302a8443678c1d, type: 2}
+  - {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
+  - {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}
+  currentDungeonLevelListIndex: 2
   healthBarContainer: {fileID: 103267384}
   healthBar: {fileID: 103267384}
   gameState: 0

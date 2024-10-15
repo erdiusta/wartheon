@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be803c3d22954c743afeeadf2eb708fd, type: 3}
   m_Name: MovementDetails_Astraeus
   m_EditorClassIdentifier: 
-  moveSpeed: 5.75
+  moveSpeed: 6
   rollSpeed: 10
   rollDistance: 7
   rollCooldownTime: 0.2

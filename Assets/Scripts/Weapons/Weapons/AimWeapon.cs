@@ -99,8 +99,7 @@ public class AimWeapon : MonoBehaviour
             else
             {
                 // Bow aim
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow && player.activeWeapon.
-                    GetCurrentMainHandWeapon().weaponDetails.weaponName != "Crossbow")
+                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
                 {
                     // Set angle of the weapon transform
                     if (aimAngle > 0f && aimAngle < 22f) // RIGHT

@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_StaffOfTheWild
+  m_EditorClassIdentifier: 
+  weaponName: Staff Of The Wild
+  weaponTitle: 33
+  weaponLevel: 1
+  weaponClass: 5
+  weaponHitSpeed: 0
+  wieldType: 1
+  elementalBias: 3
+  elementalForgeRate: 1
+  price: 10
+  weaponFrontSprite: {fileID: -2001001810, guid: 78f3ea8e5c6e695419ce88cfea96753b, type: 3}
+  weaponRearSprite: {fileID: -2001001810, guid: 78f3ea8e5c6e695419ce88cfea96753b, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: 81f5dc28a092d5c4dbf1c8432078429b, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 5c935e1b8f8065b44b6ab90e39a247f3, type: 2}
+  canKillSuddenly: 0
+  suddenKillChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
+  stunChance: 0
+  weaponRightShootPosition: {x: 0.01875, y: 1.6045, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 11400000, guid: bfda1476d0721314890c8e33f2b237ea, type: 2}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 2b48803770907284d95203a58a27c7b7, type: 2}
+  weaponImpactSoundEffect: {fileID: 0}
+  isMeleeWeapon: 0
+  isShield: 0
+  projectileDeflectRatio: 0
+  circleRadius: 0
+  hasPhysicalDamage: 0
+  meleeDamageMin: 0
+  meleeDamageMax: 0
+  criticalHitChance: 0
+  criticalHitDamageMultiplier: 2
+  weaponCooldownDuration: 0.9
+  weaponBaseHandling: 0.65
+  hasSwing: 0
+  hasSweep: 0
+  hasThrust: 0
+  hasInfiniteProjectile: 1
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0.15

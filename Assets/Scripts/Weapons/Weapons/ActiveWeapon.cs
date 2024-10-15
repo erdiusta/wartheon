@@ -132,7 +132,7 @@ public class ActiveWeapon : MonoBehaviour
         if (player != null)
         {
             // If equipped weapon is two-handed, temporarily disable animator and change the position and enable again
-            if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Bow && currentMainHandWeapon.weaponDetails.weaponName != "Crossbow")
+            if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Bow)
             {
                 player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
                 player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
@@ -150,7 +150,7 @@ public class ActiveWeapon : MonoBehaviour
                 weaponOffHandAnimator.enabled = true;
                 offHandAnchorPosition.gameObject.SetActive(true);
             }
-            else if (currentMainHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded && currentMainHandWeapon.weaponDetails.weaponName != "Crossbow")
+            else if (currentMainHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded && currentMainHandWeapon.weaponDetails.weaponClass != WeaponClass.Crossbow)
             {
                 player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
                 player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;

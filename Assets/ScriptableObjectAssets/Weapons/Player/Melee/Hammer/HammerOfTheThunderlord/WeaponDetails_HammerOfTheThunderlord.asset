@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_HammerOfTheThunderlord
+  m_EditorClassIdentifier: 
+  weaponName: Hammer Of The Thunderlord
+  weaponTitle: 37
+  weaponLevel: 2
+  weaponClass: 2
+  weaponHitSpeed: 2
+  wieldType: 0
+  elementalBias: 4
+  elementalForgeRate: 0.3
+  price: 15
+  weaponFrontSprite: {fileID: -1544914121, guid: d8317277ecdfd0948b33c753871c805f, type: 3}
+  weaponRearSprite: {fileID: -1544914121, guid: d8317277ecdfd0948b33c753871c805f, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: 25a6cf8d1b3d9c34abbc8aed879faa2c, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 727db5785ea2dce49801dbd4e84b0522, type: 2}
+  canKillSuddenly: 0
+  suddenKillChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 1
+  stunChance: 0.2
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 3176c80157244664fab59f1b8d558b48, type: 2}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: bed68100ea2672d4cb53ed373cb2fdec, type: 2}
+  isMeleeWeapon: 1
+  isShield: 0
+  projectileDeflectRatio: 0
+  circleRadius: 0.65
+  hasPhysicalDamage: 1
+  meleeDamageMin: 11
+  meleeDamageMax: 15
+  criticalHitChance: 0.15
+  criticalHitDamageMultiplier: 1.5
+  weaponCooldownDuration: 1
+  weaponBaseHandling: 0.6
+  hasSwing: 1
+  hasSweep: 0
+  hasThrust: 0
+  hasInfiniteProjectile: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0

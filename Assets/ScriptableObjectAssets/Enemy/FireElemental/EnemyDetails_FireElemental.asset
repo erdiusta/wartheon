@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Fire Elemental
   enemyPrefab: {fileID: 7183228443647751644, guid: 8fea7a9db8fde704dab71124ec6d56b5, type: 3}
-  enemyRace: 3
   movementDetails: {fileID: 11400000, guid: 006bc7b24d185b148a452111f4c05600, type: 2}
   experiencePoint: 75
   chaseDistance: 7
@@ -57,18 +56,14 @@ MonoBehaviour:
   firingDurationMax: 2
   firingLineOfSightRequired: 1
   enemyHealthDetailsArray:
-  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    enemyHealthAmount: 40
-  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
-    enemyHealthAmount: 40
-  - dungeonLevel: {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     enemyHealthAmount: 40
   isImmuneAfterHit: 1
   hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
   weaponsByLevelList:
-  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: f452683b8567bc84d8dc35c734b37e7c, type: 2}
       ratio: 5
@@ -83,53 +78,13 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: 42616934b2ccbfb4c848cdb16fef5705, type: 2}
       ratio: 10
     - dungeonObject: {fileID: 11400000, guid: 5dafc78b029006e49908fade5f342a62, type: 2}
-      ratio: 10
-    - dungeonObject: {fileID: 11400000, guid: b415640f0d1ca4d41b24898c8eab10bd, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: 7e3b41f2a27597c4d9a1b212d49e9ff0, type: 2}
-      ratio: 25
-  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
-    spawnableObjectRatioList:
-    - dungeonObject: {fileID: 11400000, guid: f452683b8567bc84d8dc35c734b37e7c, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: bba05607ec78139438ec83b847d254ee, type: 2}
-      ratio: 10
-    - dungeonObject: {fileID: 11400000, guid: 6cb3c4a1b97dd484a8e9af133ff54615, type: 2}
-      ratio: 25
-    - dungeonObject: {fileID: 11400000, guid: 5dafc78b029006e49908fade5f342a62, type: 2}
-      ratio: 10
-    - dungeonObject: {fileID: 11400000, guid: 42616934b2ccbfb4c848cdb16fef5705, type: 2}
-      ratio: 10
-    - dungeonObject: {fileID: 11400000, guid: b415640f0d1ca4d41b24898c8eab10bd, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: 7e3b41f2a27597c4d9a1b212d49e9ff0, type: 2}
-      ratio: 25
-  - dungeonLevel: {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}
-    spawnableObjectRatioList:
-    - dungeonObject: {fileID: 11400000, guid: f452683b8567bc84d8dc35c734b37e7c, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: bba05607ec78139438ec83b847d254ee, type: 2}
-      ratio: 10
-    - dungeonObject: {fileID: 11400000, guid: 6cb3c4a1b97dd484a8e9af133ff54615, type: 2}
-      ratio: 25
-    - dungeonObject: {fileID: 11400000, guid: 5dafc78b029006e49908fade5f342a62, type: 2}
-      ratio: 10
-    - dungeonObject: {fileID: 11400000, guid: 42616934b2ccbfb4c848cdb16fef5705, type: 2}
       ratio: 10
     - dungeonObject: {fileID: 11400000, guid: b415640f0d1ca4d41b24898c8eab10bd, type: 2}
       ratio: 5
     - dungeonObject: {fileID: 11400000, guid: 7e3b41f2a27597c4d9a1b212d49e9ff0, type: 2}
       ratio: 25
   passiveItemsByLevelList:
-  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
       ratio: 2
@@ -147,50 +102,8 @@ MonoBehaviour:
       ratio: 3
     - dungeonObject: {fileID: 11400000, guid: 9257872b795a94e41a66d9c55b43cd9e, type: 2}
       ratio: 3
-  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
-    spawnableObjectRatioList:
-    - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
-      ratio: 2
-    - dungeonObject: {fileID: 11400000, guid: e87d6cab4dd029648b79abd7d75ca6e6, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
-      ratio: 2
-    - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 9257872b795a94e41a66d9c55b43cd9e, type: 2}
-      ratio: 3
-  - dungeonLevel: {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}
-    spawnableObjectRatioList:
-    - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
-      ratio: 2
-    - dungeonObject: {fileID: 11400000, guid: e87d6cab4dd029648b79abd7d75ca6e6, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
-      ratio: 2
-    - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 9257872b795a94e41a66d9c55b43cd9e, type: 2}
-      ratio: 3
   activeItemsByLevelList:
-  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    spawnableObjectRatioList:
-    - dungeonObject: {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 85ccad2c87365d94a9c7007bb20296b9, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 66f09157198b7884fad92eabfac49112, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: de3069107c9b24d449fb00b8754c0be5, type: 2}
-      ratio: 1
-  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
       ratio: 1

@@ -31,7 +31,7 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
-  weaponRightShootPosition: {x: 0, y: 1.23, z: 0}
+  weaponRightShootPosition: {x: 0, y: 1.5, z: 0}
   weaponLeftShootPosition: {x: 0, y: 0, z: 0}
   weaponUpShootPosition: {x: 0, y: 0, z: 0}
   weaponDownShootPosition: {x: 0, y: 0, z: 0}
@@ -48,7 +48,7 @@ MonoBehaviour:
   meleeDamageMax: 0
   criticalHitChance: 0
   criticalHitDamageMultiplier: 2
-  weaponCooldownDuration: 3
+  weaponCooldownDuration: 2.5
   weaponBaseHandling: 0.65
   hasSwing: 0
   hasSweep: 0

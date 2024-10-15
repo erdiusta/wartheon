@@ -47,7 +47,7 @@ MonoBehaviour:
   meleeDamageMin: 0
   meleeDamageMax: 0
   criticalHitChance: 0.1
-  criticalHitDamageMultiplier: 2
+  criticalHitDamageMultiplier: 1.5
   weaponCooldownDuration: 0.3
   weaponBaseHandling: 0.8
   hasSwing: 0

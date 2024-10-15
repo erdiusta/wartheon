@@ -151,7 +151,17 @@ public enum WeaponTitle
     Trinity,
     Blazefury,
     Scarlet,
-    Doombringer
+    Doombringer,
+    Stormblade,
+    Ravager,
+    ArcaneConduit,
+    StaffOfTheWild,
+    TwilightStaff,
+    VenomAxe,
+    PhoenixBolt,
+    HammerOfTheThunderlord,
+    VipersBite,
+    BloodfangClaw
 }
 
 public enum WeaponClass
@@ -164,7 +174,8 @@ public enum WeaponClass
     Staff,
     Bow,
     Dagger,
-    Claw
+    Claw,
+    Crossbow
 }
 
 public enum WieldType

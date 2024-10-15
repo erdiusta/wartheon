@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_Stormblade
+  m_EditorClassIdentifier: 
+  weaponName: Stormblade
+  weaponTitle: 30
+  weaponLevel: 1
+  weaponClass: 0
+  weaponHitSpeed: 3
+  wieldType: 0
+  elementalBias: 4
+  elementalForgeRate: 0.3
+  price: 8
+  weaponFrontSprite: {fileID: -425146114, guid: 356f6ad37f9b0ae40a944cb325bda3f5, type: 3}
+  weaponRearSprite: {fileID: -425146114, guid: 356f6ad37f9b0ae40a944cb325bda3f5, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: 4cd6c470b1b4a2748a6206552bfec9c1, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 99a7f7cf384374847813b96c57e0d848, type: 2}
+  canKillSuddenly: 0
+  suddenKillChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
+  stunChance: 0
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 3900fd10105b8fc4eb3ceacea2a5cc5b, type: 2}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: eaf74e25edc124043a8cd50c981d16df, type: 2}
+  isMeleeWeapon: 1
+  isShield: 0
+  projectileDeflectRatio: 0
+  circleRadius: 0.65
+  hasPhysicalDamage: 1
+  meleeDamageMin: 8
+  meleeDamageMax: 12
+  criticalHitChance: 0.1
+  criticalHitDamageMultiplier: 1.5
+  weaponCooldownDuration: 0.9
+  weaponBaseHandling: 0.65
+  hasSwing: 1
+  hasSweep: 1
+  hasThrust: 1
+  hasInfiniteProjectile: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0
