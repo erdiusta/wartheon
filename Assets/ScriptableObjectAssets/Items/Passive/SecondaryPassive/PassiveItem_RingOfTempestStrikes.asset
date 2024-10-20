@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e767738e70a8b4386de512a7ff92be, type: 3}
+  m_Name: PassiveItem_RingOfTempestStrikes
+  m_EditorClassIdentifier: 
+  passiveItemName: Ring of Tempest Strikes
+  passiveItemSprite: {fileID: -2059665674, guid: e74a9e73c95933d47ae99fff41eebca8, type: 3}
+  passiveItemCategory: 1
+  passiveItemType: 9
+  passiveItemSlotName: 4
+  passiveItemAnimatorController: {fileID: 9100000, guid: a35a16e5aaf7be34aa4d824151559c7d, type: 2}

@@ -23,8 +23,10 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     [HideInInspector] public bool isColliding;
     [HideInInspector] public bool hasMainHandWeapon;
     [HideInInspector] public bool hasOffHandWeapon;
+    [HideInInspector] public IReceivable receivable;
     [HideInInspector] public static ChestItem toBeDroppedChestItem;
     [HideInInspector] public static ChestItem nearestChestItem = null;
+
 
     Chest chest;
     Enemy enemy;
@@ -38,23 +40,21 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     Animator pickUpAnimator;
 
     // Tooltip Panel Weapon Texts
-    [Header("TOOLTIP PANEL FOR WEAPONS")]
-    [Space(10)]
-    [SerializeField] TextMeshPro headerText;
-    [SerializeField] TextMeshPro levelText;
-    [SerializeField] TextMeshPro weaponClassText;
-    [SerializeField] TextMeshPro hitSpeedText;
-    [SerializeField] TextMeshPro weaponWieldText;
-    [SerializeField] TextMeshPro damageText;
-    [SerializeField] TextMeshPro baseHandlingText;
-    [SerializeField] TextMeshPro crHitChanceText;
-    [SerializeField] TextMeshPro crHitDamageText;
-    [SerializeField] TextMeshPro elementalBiasText;
-    [SerializeField] TextMeshPro elementText;
-    [SerializeField] TextMeshPro elementalForgeRateText;
-    [SerializeField] TextMeshPro masteryText1;
-    [SerializeField] TextMeshPro masteryText2;
-    [SerializeField] TextMeshPro masteryText3;
+    [SerializeField] TextMeshProUGUI headerText;
+    [SerializeField] TextMeshProUGUI levelText;
+    [SerializeField] TextMeshProUGUI weaponClassText;
+    [SerializeField] TextMeshProUGUI hitSpeedText;
+    [SerializeField] TextMeshProUGUI weaponWieldText;
+    [SerializeField] TextMeshProUGUI damageText;
+    [SerializeField] TextMeshProUGUI baseHandlingText;
+    [SerializeField] TextMeshProUGUI crHitChanceText;
+    [SerializeField] TextMeshProUGUI crHitDamageText;
+    [SerializeField] TextMeshProUGUI elementalBiasText;
+    [SerializeField] TextMeshProUGUI elementText;
+    [SerializeField] TextMeshProUGUI elementalForgeRateText;
+    [SerializeField] TextMeshProUGUI masteryText1;
+    [SerializeField] TextMeshProUGUI masteryText2;
+    [SerializeField] TextMeshProUGUI masteryText3;
 
     private void Awake()
     {
@@ -63,6 +63,11 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         pickUpAnimator = transform.GetChild(1).GetComponent<Animator>();
         chest = GetComponentInParent<Chest>();
         boxCollider2D = GetComponent<BoxCollider2D>();
+    }
+
+    private void Start()
+    {
+        
     }
 
     private void OnEnable()
@@ -80,14 +85,15 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         if (eventData.pointerEnter.GetComponent<ChestItem>() == this && eventData.pointerEnter.GetComponentInParent<Player>() == null)
         {
-            tooltipPanel.gameObject.SetActive(true);
-            UpdateTooltipPanelInfo();
+            if (!hasWeaponDrop && !hasActiveDrop && !hasSecondaryPassiveDrop) return;
+
+            GameManager.Instance.UpdateTooltipPanelInfo(receivable, hasWeaponDrop, hasActiveDrop, hasSecondaryPassiveDrop, hasPrimaryPassiveDrop);
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        tooltipPanel.gameObject.SetActive(false);
+        GameManager.Instance.CloseTooltipPanel();
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -406,6 +412,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         spriteRenderer.sprite = sprite;
         transform.position = spawnPosition;
+        this.receivable = receivable;
 
         // Check for animation - Active Item
         if (hasActiveDrop)
@@ -649,163 +656,5 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         //spriteRenderer.sprite = null;
 
         transform.SetParent(player.transform);
-    }
-
-    private void UpdateTooltipPanelInfo()
-    {
-        if (passiveItemDetails != null)
-        {
-            if (hasSecondaryPassiveDrop)
-            {
-                headerText.colorGradient = new VertexGradient(GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor,
-                        GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor);
-                levelText.colorGradient = new VertexGradient(GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor,
-                        GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor);
-                headerText.text = passiveItemDetails.passiveItemName;
-                levelText.text = $"(Passive Item)";
-            }
-        }
-
-        if (activeItemDetails != null)
-        {
-            headerText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
-            levelText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
-            headerText.text = activeItemDetails.activeItemName;
-            levelText.text = $"(Active Item)";
-        }
-
-        if (weaponDetails != null)
-        {
-            // Populate text field based on the related weapon info
-            switch (weaponDetails.weaponLevel)
-            {
-                case WeaponLevel.Basic:
-                    headerText.colorGradient = new VertexGradient(GameManager.Instance.basicLevelColor1, GameManager.Instance.basicLevelColor1,
-                        GameManager.Instance.basicLevelColor2, GameManager.Instance.basicLevelColor2);
-                    levelText.colorGradient = new VertexGradient(GameManager.Instance.basicLevelColor1, GameManager.Instance.basicLevelColor1,
-                        GameManager.Instance.basicLevelColor2, GameManager.Instance.basicLevelColor2);
-                    break;
-                case WeaponLevel.Enchanted:
-                    headerText.colorGradient = new VertexGradient(GameManager.Instance.enchantedLevelColor1, GameManager.Instance.enchantedLevelColor1,
-                        GameManager.Instance.enchantedLevelColor2, GameManager.Instance.enchantedLevelColor2);
-                    levelText.colorGradient = new VertexGradient(GameManager.Instance.enchantedLevelColor1, GameManager.Instance.enchantedLevelColor1,
-                        GameManager.Instance.enchantedLevelColor2, GameManager.Instance.enchantedLevelColor2);
-                    break;
-                case WeaponLevel.Mythic:
-                    headerText.colorGradient = new VertexGradient(GameManager.Instance.mythicLevelColor1, GameManager.Instance.mythicLevelColor1,
-                        GameManager.Instance.mythicLevelColor2, GameManager.Instance.mythicLevelColor2);
-                    levelText.colorGradient = new VertexGradient(GameManager.Instance.mythicLevelColor1, GameManager.Instance.mythicLevelColor1,
-                        GameManager.Instance.mythicLevelColor2, GameManager.Instance.mythicLevelColor2);
-                    break;
-                case WeaponLevel.Legendary:
-                    headerText.colorGradient = new VertexGradient(GameManager.Instance.legendaryLevelColor1, GameManager.Instance.legendaryLevelColor1,
-                        GameManager.Instance.legendaryLevelColor2, GameManager.Instance.legendaryLevelColor2);
-                    levelText.colorGradient = new VertexGradient(GameManager.Instance.legendaryLevelColor1, GameManager.Instance.legendaryLevelColor1,
-                        GameManager.Instance.legendaryLevelColor2, GameManager.Instance.legendaryLevelColor2);
-                    break;
-                default:
-                    break;
-            }
-
-            headerText.text = weaponDetails.weaponName;
-            levelText.text = $"({weaponDetails.weaponLevel.ToString()})";
-            weaponClassText.text = $"Class: {weaponDetails.weaponClass.ToString()}";
-
-            if (weaponDetails.weaponClass == WeaponClass.Shield)
-            {
-                weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
-                damageText.text = $"Deflect Rate: {weaponDetails.projectileDeflectRatio * 100}%";
-            }
-            else
-            {
-                hitSpeedText.text = $"Speed: {weaponDetails.weaponHitSpeed.ToString()}";
-                weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
-                if (weaponDetails.isMeleeWeapon)
-                {
-                    damageText.text = $"Damage: {weaponDetails.meleeDamageMin}-{weaponDetails.meleeDamageMax}";
-                }
-                else
-                {
-                    damageText.text = $"Damage: {weaponDetails.weaponCurrentProjectile.projectileDamageMin}-{weaponDetails.weaponCurrentProjectile.projectileDamageMax}";
-                }
-            }
-
-            baseHandlingText.text = $"Base Handling: {weaponDetails.weaponBaseHandling * 100}%";
-            crHitChanceText.text = $"Base Cr. Hit Chance: {weaponDetails.criticalHitChance * 100}%";
-            crHitDamageText.text = $"Base Cr. Hit Damage: {weaponDetails.criticalHitDamageMultiplier * 100}%";
-            elementalBiasText.text = "Elemental Bias:";
-        
-
-            // Populate text field based on the related elemental info
-            switch (weaponDetails.elementalBias)
-            {
-                case ElementalBias.None:
-                    elementText.colorGradient = new VertexGradient(GameManager.Instance.noneElementalColor1, GameManager.Instance.noneElementalColor1,
-                        GameManager.Instance.noneElementalColor2, GameManager.Instance.noneElementalColor2);
-                    break;
-                case ElementalBias.Fire:
-                    elementText.colorGradient = new VertexGradient(GameManager.Instance.fireColor1, GameManager.Instance.fireColor1,
-                        GameManager.Instance.fireColor2, GameManager.Instance.fireColor2);
-                    break;
-                case ElementalBias.Water:
-                    elementText.colorGradient = new VertexGradient(GameManager.Instance.waterColor1, GameManager.Instance.waterColor1,
-                        GameManager.Instance.waterColor2, GameManager.Instance.waterColor2);
-                    break;
-                case ElementalBias.Earth:
-                    elementText.colorGradient = new VertexGradient(GameManager.Instance.earthColor1, GameManager.Instance.earthColor1,
-                        GameManager.Instance.earthColor2, GameManager.Instance.earthColor2);
-                    break;
-                case ElementalBias.Air:
-                    elementText.colorGradient = new VertexGradient(GameManager.Instance.airColor1, GameManager.Instance.airColor1,
-                        GameManager.Instance.airColor2, GameManager.Instance.airColor2);
-                    break;
-                case ElementalBias.Dark:
-                    elementText.colorGradient = new VertexGradient(GameManager.Instance.darkColor1, GameManager.Instance.darkColor1,
-                        GameManager.Instance.darkColor2, GameManager.Instance.darkColor2);
-                    break;
-                case ElementalBias.Light:
-                    elementText.colorGradient = new VertexGradient(GameManager.Instance.lightColor1, GameManager.Instance.lightColor1,
-                        GameManager.Instance.lightColor2, GameManager.Instance.lightColor2);
-                    break;
-                default:
-                    break;
-            }
-
-            elementText.text = weaponDetails.elementalBias.ToString();
-            elementalForgeRateText.text = $"El. Forge Rate: {weaponDetails.elementalForgeRate * 100}%";
-
-            switch (weaponDetails.weaponLevel)
-            {
-                case WeaponLevel.Basic:
-                    masteryText1.gameObject.SetActive(false);
-                    masteryText2.gameObject.SetActive(false);
-                    masteryText3.gameObject.SetActive(false);
-                    break;
-                case WeaponLevel.Enchanted:
-                    masteryText1.gameObject.SetActive(true);
-                    masteryText1.text = "Enchanted Mastery: Locked";
-                    masteryText2.gameObject.SetActive(false);
-                    masteryText3.gameObject.SetActive(false);
-                    break;
-                case WeaponLevel.Mythic:
-                    masteryText1.gameObject.SetActive(true);
-                    masteryText1.text = "Enchanted Mastery: Locked";
-                    masteryText2.gameObject.SetActive(true);
-                    masteryText2.text = "Mythic Mastery: Locked";
-                    masteryText3.gameObject.SetActive(false);
-                    break;
-                case WeaponLevel.Legendary:
-                    masteryText1.gameObject.SetActive(true);
-                    masteryText1.text = "Enchanted Mastery: Locked";
-                    masteryText2.gameObject.SetActive(true);
-                    masteryText2.text = "Mythic Mastery: Locked";
-                    masteryText3.gameObject.SetActive(true);
-                    masteryText3.text = "Legendary Mastery: Locked";
-                    break;
-                default:
-                    break;
-
-            }
-        }
     }
 }

@@ -21,8 +21,8 @@ MonoBehaviour:
   elementalBias: 2
   elementalForgeRate: 0.15
   price: 4
-  weaponFrontSprite: {fileID: 1259814964, guid: 77be0b9347560c84ca598d345eebca8e, type: 3}
-  weaponRearSprite: {fileID: 1259814964, guid: 77be0b9347560c84ca598d345eebca8e, type: 3}
+  weaponFrontSprite: {fileID: 1345734444, guid: 7c0ae1329256d0f42a906d3241d83455, type: 3}
+  weaponRearSprite: {fileID: 1345734444, guid: 7c0ae1329256d0f42a906d3241d83455, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: f2cd1c7a31c4db74fbe82733da9b805d, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 8d50f9dfcd86b91438e4c4868d290b2f, type: 2}
   canKillSuddenly: 0
@@ -31,7 +31,10 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 1
   stunChance: 0.15
-  weaponShootPosition: {x: 0, y: 0, z: 0}
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 3176c80157244664fab59f1b8d558b48, type: 2}

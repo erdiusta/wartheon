@@ -90,7 +90,6 @@ public class DamageDisplay : MonoBehaviour
         AnimateText(criticalText, criticalHitDuration);
     }
 
-
     /// <summary>
     /// Display head shot text
     /// </summary>
@@ -108,7 +107,7 @@ public class DamageDisplay : MonoBehaviour
     private void DisplayDeflected()
     {
         var deflectedText = Instantiate(damageDisplayTextPrefab, criticalTextSpawnPoint.position, Quaternion.identity, criticalTextSpawnPoint);
-        deflectedText.color = new Color(0.3f, 0.3f, 0.3f);
+        deflectedText.color = new Color(0f, 0f, 0f);
         deflectedText.text = "MISSED";
         AnimateText(deflectedText, criticalHitDuration);
     }

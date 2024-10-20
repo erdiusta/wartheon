@@ -41,7 +41,17 @@ public class CentaurAI : EnemyAI
         // Update timers - Fire Projectile
         firingIntervalTimer -= Time.deltaTime;
 
-        // Second check if enemy is on stun status
+        // Second check if enemy is on frost status
+        if (moveStatus == MoveStatus.Frost)
+        {
+            enemy.animateEnemy.SetIdleAnimationParameters();
+
+            if (frostEnemyRoutine == null)
+            {
+                frostEnemyRoutine = StartCoroutine(FrostRoutine());
+            }
+        }
+        // Third check if enemy is on stun status
         if (moveStatus == MoveStatus.Stun)
         {
             enemy.animateEnemy.SetIdleAnimationParameters();
@@ -51,7 +61,7 @@ public class CentaurAI : EnemyAI
                 stunEnemyRoutine = StartCoroutine(StunRoutine());
             }
         }
-        // Third check if enemy is on knockback status
+        // Fourth check if enemy is on knockback status
         else if (moveStatus == MoveStatus.Stagger)
         {
             StartCoroutine(KnockbackRoutine());

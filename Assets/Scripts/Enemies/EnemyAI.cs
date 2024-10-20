@@ -35,6 +35,7 @@ public class EnemyAI : MonoBehaviour
     protected Coroutine attackAnimationRoutine;
     protected Coroutine dashRoutine;
     protected Coroutine stunEnemyRoutine;
+    protected Coroutine frostEnemyRoutine;
     protected Vector3 lockedVector;
     protected Room currentRoom;
     protected Stack<Vector3> movementSteps = new Stack<Vector3>();
@@ -156,17 +157,28 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
-        // Second check if enemy is on stun status
-        if (moveStatus == MoveStatus.Stun)
+        // Third check if enemy is on stun status
+        if (moveStatus == MoveStatus.Frost)
         {
-            IdleProcess();
+            enemy.idle.StopVelocity();
+
+            if (frostEnemyRoutine == null)
+            {
+                StopAllCoroutines();
+                frostEnemyRoutine = StartCoroutine(FrostRoutine());
+            }
+        }
+        // Third check if enemy is on stun status
+        else if (moveStatus == MoveStatus.Stun)
+        {
+            enemy.idle.StopVelocity();
 
             if (stunEnemyRoutine == null)
             {
                 stunEnemyRoutine = StartCoroutine(StunRoutine());
             }
         }
-        // Third check if enemy is on knockback status
+        // Fourth check if enemy is on knockback status
         else if (moveStatus == MoveStatus.Stagger)
         {
             StartCoroutine(KnockbackRoutine());
@@ -927,8 +939,17 @@ public class EnemyAI : MonoBehaviour
 
         Vector3Int playerCellPosition = currentRoom.instantiatedRoom.grid.WorldToCell(targetPosition);
 
+        // Adjust the position to the room's lower bounds for indexing
         Vector2Int adjustedPlayerCellPosition = new Vector2Int(playerCellPosition.x - currentRoom.templateLowerBounds.x,
             playerCellPosition.y - currentRoom.templateLowerBounds.y);
+
+        // Clamp the adjusted position within the room bounds
+        adjustedPlayerCellPosition.x = Mathf.Clamp(adjustedPlayerCellPosition.x, 0, currentRoom.templateUpperBounds.x - currentRoom.templateLowerBounds.x);
+        adjustedPlayerCellPosition.y = Mathf.Clamp(adjustedPlayerCellPosition.y, 0, currentRoom.templateUpperBounds.y - currentRoom.templateLowerBounds.y);
+
+        // Now ensure the playerCellPosition is within bounds as well
+        playerCellPosition.x = adjustedPlayerCellPosition.x + currentRoom.templateLowerBounds.x;
+        playerCellPosition.y = adjustedPlayerCellPosition.y + currentRoom.templateLowerBounds.y;
 
         int obstacle = currentRoom.instantiatedRoom.aStarMovementPenalty[adjustedPlayerCellPosition.x, adjustedPlayerCellPosition.y];
 
@@ -978,6 +999,32 @@ public class EnemyAI : MonoBehaviour
         moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
         moveStatus = MoveStatus.Idle;
         stunEnemyRoutine = null;
+    }
+
+    public IEnumerator FrostRoutine()
+    {
+        moveSpeed = 0f;
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetAimAnimationParameters();
+        enemy.animateEnemy.SetGetHitAnimationParameters();
+
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+        enemy.healthEvent.CallGetFrostEvent();
+        enemy.animator.SetBool(Settings.isFrozen, true);
+        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
+
+        yield return new WaitForSeconds(3f);
+
+        enemy.healthEvent.CallFrostCuredEvent();
+        enemy.animateEnemy.SetIdleAnimationParameters();
+        enemy.animator.SetBool(Settings.isFrozen, false);
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        // Reset stun status and allow other stun coroutines to be started
+        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+        moveStatus = MoveStatus.Idle;
+        enemyPhase = EnemyPhase.Patrol;
+        frostEnemyRoutine = null;
     }
 
     public IEnumerator KnockbackRoutine()

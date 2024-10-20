@@ -82,6 +82,14 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float acidEfficiency = 0.4f;
     #region Tooltip
+    [Tooltip("Check if weapon has poison")]
+    #endregion Tooltip
+    public bool isPoisonous;
+    #region Tooltip
+    [Tooltip("The chance of weapon's poison")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float poisonChance = 0f;
+    #region Tooltip
     [Tooltip("Check if weapon has stun damage")]
     #endregion Tooltip
     public bool hasStunDamage;
@@ -89,6 +97,14 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("The chance of weapon's stun")]
     #endregion Tooltip
     [Range(0f, 1f)] public float stunChance = 0.2f;
+    #region Tooltip
+    [Tooltip("Check if weapon has frost damage")]
+    #endregion Tooltip
+    public bool hasFrostDamage;
+    #region Tooltip
+    [Tooltip("The chance of weapon's frost")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float frostChance = 0f;
 
     #region Header WEAPON CONFIGURATION
     [Space(10)]

@@ -32,6 +32,20 @@ public class HealthEvent : MonoBehaviour
         GetStun?.Invoke(this);
     }
 
+    public event Action<HealthEvent> GetFrost;
+
+    public void CallGetFrostEvent()
+    {
+        GetFrost?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetShattered;
+
+    public void CallGetShatteredEvent()
+    {
+        GetShattered?.Invoke(this);
+    }
+
     public event Action<HealthEvent> GetCursed;
 
     public void CallGetCurseEvent()
@@ -65,6 +79,13 @@ public class HealthEvent : MonoBehaviour
     public void CallStunCuredEvent()
     {
         StunCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> FrostCured;
+
+    public void CallFrostCuredEvent()
+    {
+        FrostCured?.Invoke(this);
     }
 
     public event Action<HealthEvent> CurseCured;

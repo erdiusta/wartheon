@@ -105,6 +105,17 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip("The chance of projectile's stun")]
     #endregion Tooltip
     [Range(0f, 1f)] public float stunChance = 0.2f;
+    #region Tooltip
+    [Tooltip("Check if projectile has frost damage")]
+    #endregion Tooltip
+    public bool hasFrostDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's frost")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float frostChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's curse")]
+    #endregion Tooltip
     public bool hasCurseDamage = false;
     #region Tooltip
     [Tooltip("Check enemy's curse chance")]

@@ -41,6 +41,27 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     // Pop-ups
     public GameObject warningPopUp;
 
+    [Space(10)]
+    [Header("TOOLTIP PANEL REFERENCES")]
+    // Tooltip panel
+    public GameObject tooltipPanel;
+    public TextMeshProUGUI headerText;
+    public TextMeshProUGUI levelText;
+    public TextMeshProUGUI weaponClassText;
+    public TextMeshProUGUI hitSpeedText;
+    public TextMeshProUGUI weaponWieldText;
+    public TextMeshProUGUI damageText;
+    public TextMeshProUGUI baseHandlingText;
+    public TextMeshProUGUI crHitChanceText;
+    public TextMeshProUGUI crHitDamageText;
+    public TextMeshProUGUI elementalBiasText;
+    public TextMeshProUGUI elementText;
+    public TextMeshProUGUI elementalForgeRateText;
+    public TextMeshProUGUI masteryText1;
+    public TextMeshProUGUI masteryText2;
+    public TextMeshProUGUI masteryText3;
+
+    [Space(10)]
     [SerializeField]GameObject introductionPopUp;
     [SerializeField] TextMeshProUGUI weaponText;
     [SerializeField] TextMeshProUGUI introductionText;
@@ -1245,7 +1266,181 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             default:
                 break;
         }
-    }  
+    }
+
+    public void UpdateTooltipPanelInfo(IReceivable receivable, bool hasWeaponDrop, bool hasActiveDrop, bool hasSecondaryPassiveDrop, bool hasPrimaryPassiveDrop)
+    {
+        tooltipPanel.SetActive(true);
+        ClearTooltipPanel();
+
+        if (hasPrimaryPassiveDrop) return;
+
+        if (hasSecondaryPassiveDrop)
+        {
+            if (receivable is PassiveItem)
+            {
+                headerText.colorGradient = new VertexGradient(passiveItemColor, passiveItemColor, passiveItemColor, passiveItemColor);
+                levelText.colorGradient = new VertexGradient(passiveItemColor, passiveItemColor, passiveItemColor, passiveItemColor);
+                PassiveItem passiveItem = (PassiveItem)receivable;
+                PassiveItemDetailsSO passiveItemDetails = passiveItem.passiveItemDetails;
+
+                headerText.text = passiveItemDetails.passiveItemName;
+                levelText.text = $"(Passive Item)";
+            }
+        }
+        if (hasActiveDrop)
+        {
+            if (receivable is ActiveItem)
+            {
+                headerText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
+                levelText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
+                ActiveItem passiveItem = (ActiveItem)receivable;
+                ActiveItemDetailsSO activeItemDetails = passiveItem.activeItemDetails;
+
+                headerText.text = activeItemDetails.activeItemName;
+                levelText.text = $"(Active Item)";
+            }
+        }
+
+        if (hasWeaponDrop)
+        {
+            if (receivable is Weapon)
+            {
+                Weapon weapon = (Weapon)receivable;
+                WeaponDetailsSO weaponDetails = weapon.weaponDetails;
+
+                // Populate text field based on the related weapon info
+                switch (weaponDetails.weaponLevel)
+                {
+                    case WeaponLevel.Basic:
+                        headerText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1,basicLevelColor2, basicLevelColor2);
+                        levelText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                        break;
+                    case WeaponLevel.Enchanted:
+                        headerText.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1,enchantedLevelColor2, enchantedLevelColor2);
+                        levelText.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                        break;
+                    case WeaponLevel.Mythic:
+                        headerText.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1,mythicLevelColor2, mythicLevelColor2);
+                        levelText.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                        break;
+                    case WeaponLevel.Legendary:
+                        headerText.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1,legendaryLevelColor2, legendaryLevelColor2);
+                        levelText.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1,legendaryLevelColor2, legendaryLevelColor2);
+                        break;
+                    default:
+                        break;
+                }
+
+                headerText.text = weaponDetails.weaponName;
+                levelText.text = $"({weaponDetails.weaponLevel.ToString()})";
+                weaponClassText.text = $"Class: {weaponDetails.weaponClass.ToString()}";
+
+                if (weaponDetails.weaponClass == WeaponClass.Shield)
+                {
+                    weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
+                    damageText.text = $"Deflect Rate: {weaponDetails.projectileDeflectRatio * 100}%";
+                }
+                else
+                {
+                    hitSpeedText.text = $"Speed: {weaponDetails.weaponHitSpeed.ToString()}";
+                    weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
+                    if (weaponDetails.isMeleeWeapon)
+                    {
+                        damageText.text = $"Damage: {weaponDetails.meleeDamageMin}-{weaponDetails.meleeDamageMax}";
+                    }
+                    else
+                    {
+                        damageText.text = $"Damage: {weaponDetails.weaponCurrentProjectile.projectileDamageMin}-{weaponDetails.weaponCurrentProjectile.projectileDamageMax}";
+                    }
+                }
+
+                baseHandlingText.text = $"Base Handling: {weaponDetails.weaponBaseHandling * 100}%";
+                crHitChanceText.text = $"Base Cr. Hit Chance: {weaponDetails.criticalHitChance * 100}%";
+                crHitDamageText.text = $"Base Cr. Hit Damage: {weaponDetails.criticalHitDamageMultiplier * 100}%";
+                elementalBiasText.text = "Elemental Bias:";
+
+
+                // Populate text field based on the related elemental info
+                switch (weaponDetails.elementalBias)
+                {
+                    case ElementalBias.None:
+                        elementText.colorGradient = new VertexGradient(noneElementalColor1, noneElementalColor1,noneElementalColor2, noneElementalColor2);
+                        break;
+                    case ElementalBias.Fire:
+                        elementText.colorGradient = new VertexGradient(fireColor1, fireColor1, fireColor2, fireColor2);
+                        break;
+                    case ElementalBias.Water:
+                        elementText.colorGradient = new VertexGradient(waterColor1, waterColor1, waterColor2, waterColor2);
+                        break;
+                    case ElementalBias.Earth:
+                        elementText.colorGradient = new VertexGradient(earthColor1, earthColor1, earthColor2, earthColor2);
+                        break;
+                    case ElementalBias.Air:
+                        elementText.colorGradient = new VertexGradient(airColor1, airColor1, airColor2, airColor2);
+                        break;
+                    case ElementalBias.Dark:
+                        elementText.colorGradient = new VertexGradient(darkColor1, darkColor1, darkColor2, darkColor2);
+                        break;
+                    case ElementalBias.Light:
+                        elementText.colorGradient = new VertexGradient(lightColor1, lightColor1, lightColor2, lightColor2);
+                        break;
+                    default:
+                        break;
+                }
+
+                elementText.text = weaponDetails.elementalBias.ToString();
+                elementalForgeRateText.text = $"El. Forge Rate: {weaponDetails.elementalForgeRate * 100}%";
+
+                switch (weaponDetails.weaponLevel)
+                {
+                    case WeaponLevel.Basic:
+                        masteryText1.gameObject.SetActive(false);
+                        masteryText2.gameObject.SetActive(false);
+                        masteryText3.gameObject.SetActive(false);
+                        break;
+                    case WeaponLevel.Enchanted:
+                        masteryText1.gameObject.SetActive(true);
+                        masteryText1.text = "Enchanted Mastery: Locked";
+                        masteryText2.gameObject.SetActive(false);
+                        masteryText3.gameObject.SetActive(false);
+                        break;
+                    case WeaponLevel.Mythic:
+                        masteryText1.gameObject.SetActive(true);
+                        masteryText1.text = "Enchanted Mastery: Locked";
+                        masteryText2.gameObject.SetActive(true);
+                        masteryText2.text = "Mythic Mastery: Locked";
+                        masteryText3.gameObject.SetActive(false);
+                        break;
+                    case WeaponLevel.Legendary:
+                        masteryText1.gameObject.SetActive(true);
+                        masteryText1.text = "Enchanted Mastery: Locked";
+                        masteryText2.gameObject.SetActive(true);
+                        masteryText2.text = "Mythic Mastery: Locked";
+                        masteryText3.gameObject.SetActive(true);
+                        masteryText3.text = "Legendary Mastery: Locked";
+                        break;
+                    default:
+                        break;
+
+                }
+            }
+        }
+    }
+
+    private void ClearTooltipPanel()
+    {
+        foreach (Transform child in tooltipPanel.transform)
+        {
+            child.GetComponent<TextMeshProUGUI>().text = string.Empty;
+        }
+    }
+
+    public void CloseTooltipPanel()
+    {
+        tooltipPanel.SetActive(false);
+    }
+
     public void CloseWarningPopUpMenu()
     {
         warningPopUp.SetActive(false);

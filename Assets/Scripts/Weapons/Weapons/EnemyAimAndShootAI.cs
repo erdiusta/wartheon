@@ -29,16 +29,26 @@ public class EnemyAimAndShootAI : EnemyAI
         firingIntervalTimer -= Time.deltaTime;
 
         // Second check if enemy is on stun status
-        if (moveStatus == MoveStatus.Stun)
+        if (moveStatus == MoveStatus.Frost)
         {
-            enemy.animateEnemy.SetIdleAnimationParameters();
+            enemy.idle.StopVelocity();
+
+            if (frostEnemyRoutine == null)
+            {
+                frostEnemyRoutine = StartCoroutine(FrostRoutine());
+            }
+        }
+        // Third check if enemy is on stun status
+        else if (moveStatus == MoveStatus.Stun)
+        {
+            enemy.idle.StopVelocity();
 
             if (stunEnemyRoutine == null)
             {
                 stunEnemyRoutine = StartCoroutine(StunRoutine());
             }
         }
-        // Third check if enemy is on knockback status
+        // Fourth check if enemy is on knockback status
         else if (moveStatus == MoveStatus.Stagger)
         {
             StartCoroutine(KnockbackRoutine());
@@ -136,7 +146,7 @@ public class EnemyAimAndShootAI : EnemyAI
     IEnumerator WaitAfterFiringRoutine()
     {
         // Wait for a while after firing
-        IdleProcess();
+        enemy.idle.StopVelocity();
 
         yield return new WaitForSeconds(enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration / 2f);
 

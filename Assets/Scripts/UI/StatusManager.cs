@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class StatusManager : MonoBehaviour
     public GameObject poisonImage;
     public GameObject acidImage;
     public GameObject stunImage;
+    public GameObject frostImage;
     public GameObject curseImage;
     public GameObject blockSpecialMoveImage;
     public GameObject gemSkinSpecialMoveImage;
@@ -29,6 +31,7 @@ public class StatusManager : MonoBehaviour
         {
             player.healthEvent.GetPoisoned += EnablePoisonImage;
             player.healthEvent.GetAcid += EnableAcidImage;
+            player.healthEvent.GetFrost += EnableFrostImage;
             player.healthEvent.GetStun += EnableStunImage;
             player.healthEvent.GetCursed += EnableCurseImage;
             player.healthEvent.GetBlockSpecialMove += EnableBlockSkillImage;
@@ -38,6 +41,7 @@ public class StatusManager : MonoBehaviour
 
             player.healthEvent.PoisonCured += DisablePoisonImage;
             player.healthEvent.AcidCured += DisableAcidImage;
+            player.healthEvent.FrostCured += DisableFrostImage;
             player.healthEvent.StunCured += DisableStunImage;
             player.healthEvent.CurseCured += DisableCurseImage;
             player.healthEvent.BlockSpecialMoveDurationEnded += DisableBlockSkillImage;
@@ -48,14 +52,17 @@ public class StatusManager : MonoBehaviour
         {
             enemy.healthEvent.GetPoisoned += EnablePoisonImage;
             enemy.healthEvent.GetAcid += EnableAcidImage;
+            enemy.healthEvent.GetFrost += EnableFrostImage;
             enemy.healthEvent.GetStun += EnableStunImage;
             enemy.healthEvent.GetCursed += EnableCurseImage;
             enemy.healthEvent.GetBlockSpecialMove += EnableBlockSkillImage;
             enemy.healthEvent.GetGemSkinSpecialMove += EnableGemSkinSkillImage;
             enemy.healthEvent.GetDeath += EnableDeathImage;
+            enemy.healthEvent.GetShattered += EnableShatterLog;
 
             enemy.healthEvent.PoisonCured += DisablePoisonImage;
             enemy.healthEvent.AcidCured += DisableAcidImage;
+            enemy.healthEvent.FrostCured += DisableFrostImage;
             enemy.healthEvent.StunCured += DisableStunImage;
             enemy.healthEvent.CurseCured += DisableCurseImage;
             enemy.healthEvent.BlockSpecialMoveDurationEnded += DisableBlockSkillImage;
@@ -69,6 +76,7 @@ public class StatusManager : MonoBehaviour
         {
             player.healthEvent.GetPoisoned -= EnablePoisonImage;
             player.healthEvent.GetAcid -= EnableAcidImage;
+            player.healthEvent.GetFrost -= EnableFrostImage;
             player.healthEvent.GetStun -= EnableStunImage;
             player.healthEvent.GetCursed -= EnableCurseImage;
             player.healthEvent.GetBlockSpecialMove -= EnableBlockSkillImage;
@@ -78,6 +86,7 @@ public class StatusManager : MonoBehaviour
 
             player.healthEvent.PoisonCured -= DisablePoisonImage;
             player.healthEvent.AcidCured -= DisableAcidImage;
+            player.healthEvent.FrostCured -= DisableFrostImage;
             player.healthEvent.StunCured -= DisableStunImage;
             player.healthEvent.CurseCured -= DisableCurseImage;
             player.healthEvent.BlockSpecialMoveDurationEnded -= DisableBlockSkillImage;
@@ -88,14 +97,17 @@ public class StatusManager : MonoBehaviour
         {
             enemy.healthEvent.GetPoisoned -= EnablePoisonImage;
             enemy.healthEvent.GetAcid -= EnableAcidImage;
+            enemy.healthEvent.GetFrost -= EnableFrostImage;
             enemy.healthEvent.GetStun -= EnableStunImage;
             enemy.healthEvent.GetCursed -= EnableCurseImage;
             enemy.healthEvent.GetBlockSpecialMove -= EnableBlockSkillImage;
             enemy.healthEvent.GetGemSkinSpecialMove -= EnableGemSkinSkillImage;
             enemy.healthEvent.GetDeath -= EnableDeathImage;
+            enemy.healthEvent.GetShattered -= EnableShatterLog;
 
             enemy.healthEvent.PoisonCured -= DisablePoisonImage;
             enemy.healthEvent.AcidCured -= DisableAcidImage;
+            enemy.healthEvent.FrostCured -= DisableFrostImage;
             enemy.healthEvent.StunCured -= DisableStunImage;
             enemy.healthEvent.CurseCured -= DisableCurseImage;
             enemy.healthEvent.BlockSpecialMoveDurationEnded -= DisableBlockSkillImage;
@@ -174,6 +186,20 @@ public class StatusManager : MonoBehaviour
         }
     }
 
+    private void EnableFrostImage(HealthEvent healthEvent)
+    {
+        frostImage.SetActive(true);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+        else
+        {
+            logRoutine = StartCoroutine(WriteLog("FROZEN", new Color(0.15f, 0.66f, 0.88f)));
+        }
+    }
+
     private void EnableStunImage(HealthEvent healthEvent)
     {
         stunImage.SetActive(true);
@@ -216,6 +242,20 @@ public class StatusManager : MonoBehaviour
         }
     }
 
+    private void EnableShatterLog(HealthEvent healthEvent)
+    {
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = StartCoroutine(WriteLog("SHATTERED", new Color(0.16f, 0.54f, 0.8f)));
+        }
+        else
+        {
+            logRoutine = StartCoroutine(WriteLog("SHATTERED", new Color(0.16f, 0.54f, 0.8f)));
+        }
+    }
+
     private void DisableBlockSkillImage(HealthEvent healthEvent)
     {
         blockSpecialMoveImage.SetActive(false);
@@ -250,6 +290,17 @@ public class StatusManager : MonoBehaviour
     private void DisableAcidImage(HealthEvent healthEvent)
     {
         acidImage.SetActive(false);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = null;
+        }
+    }
+
+    private void DisableFrostImage(HealthEvent healthEvent)
+    {
+        frostImage.SetActive(false);
         ClearLog();
         if (logRoutine != null)
         {

@@ -57,7 +57,23 @@ public enum PassiveItemType
     WardenOfForest,
     BeltOfSorcery,
     WingedSandals,
-    OminousGripOfThunder
+    OminousGripOfThunder,
+    HaloOfBlindingRadiance,
+    ChestplateOfTheLastLight,
+    RingOfTempestStrikes,
+    HelmOfTheEternalVigil,
+    InfernoSash,
+    GirdleOfFirmament,
+    BloodforgedGirdle,
+    SandweaversSash,
+    RubyPendant,
+    SapphirePendant,
+    TopazPendant,
+    EmeraldPendant,
+    GildedGuardian,
+    WhisperingHood,
+    EnchantersSpire,
+    RecantersCloak
 }
 
 public enum BoomerangPhase
@@ -78,6 +94,7 @@ public enum MoveStatus
     Idle,
     Stagger,
     Stun,
+    Frost
 }
 
 public enum HealthStatus
@@ -200,7 +217,7 @@ public enum MeleeAttackType
     None,
     Swing,
     Sweep,
-    Thrust,
+    Thrust
 }
 
 public enum AttackType

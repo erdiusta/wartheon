@@ -48,6 +48,7 @@ public static class Settings
 
     // Animator parameters - Status
     public static int isStunned = Animator.StringToHash("isStunned");
+    public static int isFrozen = Animator.StringToHash("isFrozen");
 
     // Animator parameters - Damage
     public static int death = Animator.StringToHash("death");

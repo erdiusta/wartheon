@@ -209,6 +209,7 @@ public class Projectile : MonoBehaviour, IFireable
                         // Status checks
                         CheckPoisonStatus(player);
                         CheckAcidStatus(player);
+                        CheckFrostStatus(player);
                         CheckStunStatus(player);
                         CheckCurseStatus(player);
 
@@ -223,6 +224,7 @@ public class Projectile : MonoBehaviour, IFireable
                             // Status checks
                             CheckPoisonStatus(player);
                             CheckAcidStatus(player);
+                            CheckFrostStatus(player);
                             CheckStunStatus(player);
                             CheckCurseStatus(player);
 
@@ -244,6 +246,7 @@ public class Projectile : MonoBehaviour, IFireable
                     // Status checks
                     CheckPoisonStatus(player);
                     CheckAcidStatus(player);
+                    CheckFrostStatus(player);
                     CheckStunStatus(player);
                     CheckCurseStatus(player);
 
@@ -302,6 +305,7 @@ public class Projectile : MonoBehaviour, IFireable
                             // Status checks - PROJECTILE
                             CheckPoisonStatus(enemy);
                             CheckAcidStatus(enemy);
+                            CheckFrostStatus(enemy);
                             CheckStunStatus(enemy);
                             CheckCurseStatus(enemy);
                         }
@@ -310,6 +314,7 @@ public class Projectile : MonoBehaviour, IFireable
                             // Status checks - ACTIVE ITEM
                             CheckPoisonStatus(enemy, true);
                             CheckAcidStatus(enemy, true);
+                            CheckFrostStatus(enemy, true);
                             CheckStunStatus(enemy, true);
                             CheckCurseStatus(enemy, true);
                         }
@@ -325,6 +330,7 @@ public class Projectile : MonoBehaviour, IFireable
                         // Status checks - PROJECTILE
                         CheckPoisonStatus(enemy);
                         CheckAcidStatus(enemy);
+                        CheckFrostStatus(enemy);
                         CheckStunStatus(enemy);
                         CheckCurseStatus(enemy);
                     }
@@ -333,6 +339,7 @@ public class Projectile : MonoBehaviour, IFireable
                         // Status checks - ACTIVE ITEM
                         CheckPoisonStatus(enemy, true);
                         CheckAcidStatus(enemy, true);
+                        CheckFrostStatus(enemy, true);
                         CheckStunStatus(enemy, true);
                         CheckCurseStatus(enemy, true);
                     }
@@ -348,6 +355,7 @@ public class Projectile : MonoBehaviour, IFireable
                     // Status checks - PROJECTILE
                     CheckPoisonStatus(enemy);
                     CheckAcidStatus(enemy);
+                    CheckFrostStatus(enemy);
                     CheckStunStatus(enemy);
                     CheckCurseStatus(enemy);
                 }
@@ -356,6 +364,7 @@ public class Projectile : MonoBehaviour, IFireable
                     // Status checks - ACTIVE ITEM
                     CheckPoisonStatus(enemy, true);
                     CheckAcidStatus(enemy, true);
+                    CheckFrostStatus(enemy, true);
                     CheckStunStatus(enemy, true);
                     CheckCurseStatus(enemy, true);
                 }
@@ -1073,6 +1082,76 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
+    /// Check frost status - Player
+    /// </summary>
+    private void CheckFrostStatus(Player player, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            if (projectileDetails.hasFrostDamage && player.moveStatus != MoveStatus.Frost)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.frostChance)
+                {
+                    player.moveStatus = MoveStatus.Frost;
+                    player.healthEvent.CallGetFrostEvent();
+                    player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+                    player.animatePlayer.SetGetHitAnimationParameters();
+                    player.animator.SetBool(Settings.isFrozen, true);
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasStunDamage && player.moveStatus != MoveStatus.Frost)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.frostChance)
+                {
+                    player.moveStatus = MoveStatus.Stun;
+                    player.healthEvent.CallGetFrostEvent();
+                    player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+                    player.animatePlayer.SetGetHitAnimationParameters();
+                    player.animator.SetBool(Settings.isFrozen, true);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check frost status - Enemy
+    /// </summary>
+    private void CheckFrostStatus(Enemy enemy, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
+
+            if (projectileDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frost && enemy.health.currentHealth > 0)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.frostChance)
+                {
+                    StartCoroutine(FrostRoutine(enemy));
+                }
+            }
+        }
+        else
+        {
+            EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
+
+            if (activeItemDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frost && enemy.health.currentHealth > 0)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.frostChance)
+                {
+                    StartCoroutine(FrostRoutine(enemy));
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Check curse status - Player
     /// </summary>
     private void CheckCurseStatus(Player player, bool isActiveItem = false)
@@ -1139,6 +1218,17 @@ public class Projectile : MonoBehaviour, IFireable
     {
         enemy.enemyAI.moveStatus = MoveStatus.Stun;
         enemy.healthEvent.CallGetStunEvent();
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+        enemy.animator.SetBool(Settings.isStunned, true);
+        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
+
+        yield return new WaitForFixedUpdate();
+    }
+
+    IEnumerator FrostRoutine(Enemy enemy)
+    {
+        enemy.enemyAI.moveStatus = MoveStatus.Frost;
+        enemy.healthEvent.CallGetFrostEvent();
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         enemy.animator.SetBool(Settings.isStunned, true);
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);

@@ -88,22 +88,19 @@ public class MeleeAttackOffHand : MonoBehaviour
                             if (player.currentWeaponHandlingValue * 100 - enemy.enemyDetails.deflectionValue * 100 > Random.Range(0, 100))
                             {
                                 CheckSuddenDeathStatus(enemy);
+                                CheckShatterStatus(enemy);
 
-                                if (enemyHealth.suddenDeathHappened)
-                                {
-                                    SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
-                                    enemyHealth.TakeDamage(enemy.health.currentHealth, transform.position, enemy.transform.position, false);
-                                }
-                                else
-                                {
-                                    int inflictedDamage = CalculateDamageAmount(enemy);
-                                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
-                                }
+                                if (enemyHealth.suddenDeathHappened) return;
+
+                                int inflictedDamage = CalculateDamageAmount(enemy);
+                                enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
 
                                 SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
                                 CheckAcidStatus(enemy);
+                                CheckFrostStatus(enemy);
                                 CheckStunStatus(enemy);
+                                CheckPoisonStatus(enemy);
 
                                 if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
                                 {
@@ -145,22 +142,19 @@ public class MeleeAttackOffHand : MonoBehaviour
                             if (player.currentWeaponHandlingValue * 100 - enemy.enemyDetails.deflectionValue * 100 > Random.Range(0, 100))
                             {
                                 CheckSuddenDeathStatus(enemy);
+                                CheckShatterStatus(enemy);
 
-                                if (enemyHealth.suddenDeathHappened)
-                                {
-                                    SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
-                                    enemyHealth.TakeDamage(enemy.health.currentHealth, transform.position, enemy.transform.position, false);
-                                }
-                                else
-                                {
-                                    int inflictedDamage = CalculateDamageAmount(enemy);
-                                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
-                                }
+                                if (enemyHealth.suddenDeathHappened) return;
+
+                                int inflictedDamage = CalculateDamageAmount(enemy);
+                                enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
 
                                 SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
                                 CheckAcidStatus(enemy);
+                                CheckFrostStatus(enemy);
                                 CheckStunStatus(enemy);
+                                CheckPoisonStatus(enemy);
 
                                 if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
                                 {
@@ -262,10 +256,34 @@ public class MeleeAttackOffHand : MonoBehaviour
         if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.canKillSuddenly && enemy.health.currentHealth > 0)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.suddenKillChance)
+            if (randomDice > player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.suddenKillChance)
             {
                 enemyHealth.suddenDeathHappened = true;
+                enemyHealth.TakeDamage(5000, transform.position, enemy.transform.position, false);
+                enemy.destroyedEvent.CallDestroyedEvent(false);
                 enemy.healthEvent.CallGetDeathEvent();
+                SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check shatter status
+    /// </summary>
+    private void CheckShatterStatus(Enemy enemy)
+    {
+        EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
+
+        if (enemyMovementAI.moveStatus == MoveStatus.Frost && enemy.health.currentHealth > 0)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < 0.25f)
+            {
+                enemyHealth.suddenDeathHappened = true;
+                enemyHealth.TakeDamage(5000, transform.position, enemy.transform.position, false);
+                enemy.destroyedEvent.CallDestroyedEvent(false);
+                enemy.healthEvent.CallGetShatteredEvent();
+                SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
             }
         }
     }
@@ -290,6 +308,42 @@ public class MeleeAttackOffHand : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// Check poison status
+    /// </summary>
+    private void CheckPoisonStatus(Enemy enemy)
+    {
+        if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isPoisonous)
+        {
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.poisonChance)
+            {
+                enemy.healthEvent.CallGetPoisonedEvent();
+                enemy.healthStatus = HealthStatus.Poisoned;
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Check frost status
+    /// </summary>
+    private void CheckFrostStatus(Enemy enemy)
+    {
+        EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
+
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frost
+            && enemy.health.currentHealth > 0)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.frostChance)
+            {
+                StartCoroutine(FrostRoutine(enemy));
+            }
+        }
+    }
+
 
     /// <summary>
     /// Check stun status
@@ -307,6 +361,13 @@ public class MeleeAttackOffHand : MonoBehaviour
                 StartCoroutine(StunRoutine(enemy));
             }
         }
+    }
+
+    IEnumerator FrostRoutine(Enemy enemy)
+    {
+        enemy.enemyAI.moveStatus = MoveStatus.Frost;
+
+        yield return new WaitForFixedUpdate();
     }
 
     IEnumerator StunRoutine(Enemy enemy)

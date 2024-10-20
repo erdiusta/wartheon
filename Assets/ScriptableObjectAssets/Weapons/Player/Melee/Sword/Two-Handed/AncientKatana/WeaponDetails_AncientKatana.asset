@@ -20,7 +20,7 @@ MonoBehaviour:
   wieldType: 1
   elementalBias: 4
   elementalForgeRate: 0.3
-  price: 8
+  price: 9
   weaponFrontSprite: {fileID: 437882294, guid: 9457e2a908b446143be8f66c689e482b, type: 3}
   weaponRearSprite: {fileID: 437882294, guid: 9457e2a908b446143be8f66c689e482b, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 0bdb90476edb4b94f9d3c2c117425bf9, type: 2}
@@ -29,8 +29,12 @@ MonoBehaviour:
   suddenKillChance: 0.1
   hasAcid: 0
   acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
   weaponRightShootPosition: {x: 0, y: 0, z: 0}
   weaponLeftShootPosition: {x: 0, y: 0, z: 0}
   weaponUpShootPosition: {x: 0, y: 0, z: 0}

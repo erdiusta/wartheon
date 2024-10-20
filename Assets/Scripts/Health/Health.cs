@@ -212,6 +212,8 @@ public class Health : MonoBehaviour
 
         if (isDamageable && !isRolling)
         {
+            isDamageable = false;
+
             currentHealth -= damageAmount;
             if (player != null)
             {
@@ -357,7 +359,7 @@ public class Health : MonoBehaviour
         enemy.animator.SetBool(Settings.block, false);
         isBlocking = false;
         getHitCoroutine = null;
-        enemy.enemyAI.enemyPhase = EnemyPhase.Chase;
+        enemy.enemyAI.enemyPhase = EnemyPhase.Patrol;
     }
 
     /// <summary>
