@@ -265,7 +265,7 @@ PrefabInstance:
     - target: {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: enemyDetails
       value: 
-      objectReference: {fileID: 11400000, guid: d9310b552f23add4ba3fc5d78262c472, type: 2}
+      objectReference: {fileID: 11400000, guid: 9f62127aa6035914291deee5ce3a8a7e, type: 2}
     - target: {fileID: 7736189416814370986, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Name
       value: CrimsonWing
@@ -285,7 +285,7 @@ PrefabInstance:
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 81322e446d7196d46831d520d29a31e3, type: 2}
+      objectReference: {fileID: 9100000, guid: 1227c892f179fbf4fb89a11eec32e9cf, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -48,8 +48,8 @@ MonoBehaviour:
   projectileDeflectRatio: 0
   circleRadius: 1.2
   hasPhysicalDamage: 1
-  meleeDamageMin: 0
-  meleeDamageMax: 1
+  meleeDamageMin: 11
+  meleeDamageMax: 15
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 1.5
   weaponCooldownDuration: 1.6

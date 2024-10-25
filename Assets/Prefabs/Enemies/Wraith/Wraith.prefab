@@ -431,7 +431,7 @@ PrefabInstance:
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: e25b222183609b74bacb897ae988b255, type: 2}
+      objectReference: {fileID: 9100000, guid: 20e3cae3f0213b34fa4eb3d221ac4f39, type: 2}
     m_RemovedComponents:
     - {fileID: 0}
     - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
@@ -469,11 +469,10 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 18432
-  OnReadyForDashAttack:
-    m_PersistentCalls:
-      m_Calls: []
+  debugText: {fileID: 0}
   moveStatus: 0
   moveSpeed: 0
   updateFrameNumber: 1
   enemyStartingSpeed: 0
   enemyPhase: 0
+  collideCircleRadius: 1

@@ -79,15 +79,6 @@ public class FireWeapon : MonoBehaviour
                 // Test if weapon is ready to fire
                 if (IsWeaponReadyToFire())
                 {
-                    if (enemy != null)
-                    {
-                        if (fireWeaponEventArgs.centaurPhase != CentaurPhase.SpreadArrowShot)
-                        {
-                            // Trigger fire weapon event
-                            enemy.animateEnemy.SetAttackAnimationParameters();
-                        }
-                    }
-
                     FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
                         fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase);
                     ResetCooldownTimer(fireWeaponEventArgs.centaurPhase);

@@ -71,55 +71,59 @@ public class DealContactDamage : MonoBehaviour
 
                 Player player = collision.GetComponent<Player>();
 
-                // Hit successful
-                if (100 - player.currentDeflectionValue * 100 > Random.Range(0, 100))
+                if (enemy.enemyAI.enemyPhase == EnemyPhase.Attack)
                 {
-                    // Damage produced by enemy
-                    int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMin);
 
-                    if (player.health.isDamageable)
+                    // Hit successful
+                    if (100 - player.currentDeflectionValue * 100 > Random.Range(0, 100))
                     {
-                        if (enemy != null)
+                        // Damage produced by enemy
+                        int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMin);
+
+                        if (player.health.isDamageable)
                         {
-                            if (player.isBlockingActive)
+                            if (enemy != null)
                             {
-                                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
-                                player.health.PostHitImmunity(true);
-                                player.isBlockingActive = false;
-                                player.healthEvent.CallArmorWoreOffEvent();
-                            }
-                            else
-                            {
-                                // Check if collider is a decoy
-                                if (collision.GetComponent<Decoy>() != null)
+                                if (player.isBlockingActive)
                                 {
-                                    receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
-                                    return;
+                                    SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
+                                    player.health.PostHitImmunity(true);
+                                    player.isBlockingActive = false;
+                                    player.healthEvent.CallArmorWoreOffEvent();
+                                }
+                                else
+                                {
+                                    // Check if collider is a decoy
+                                    if (collision.GetComponent<Decoy>() != null)
+                                    {
+                                        receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
+                                        return;
+                                    }
+
+                                    if (player.onStealth) return;
+
+                                    CheckPoisonStatus(player);
+                                    CheckAcidStatus(player);
+                                    CheckStunStatus(player);
+                                    CheckCurseStatus(player);
+
+                                    // Damage inflicted to enemy after deducting enemy armor
+                                    int inflictedDamage = damageDone > player.health.GetArmorValue() ? damageDone - player.health.GetArmorValue() : 1;
+
+                                    receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
                                 }
 
-                                if (player.onStealth) return;
-
-                                CheckPoisonStatus(player);
-                                CheckAcidStatus(player);
-                                CheckStunStatus(player);
-                                CheckCurseStatus(player);
-
-                                // Damage inflicted to enemy after deducting enemy armor
-                                int inflictedDamage = damageDone > player.health.GetArmorValue() ? damageDone - player.health.GetArmorValue() : 1;
-
-                                receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
+                                // Apply knockback
+                                //player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
                             }
-
-                            // Apply knockback
-                            player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
                         }
                     }
-                }
-                else
-                {
-                    player.health.isBlocking = true;
-                    player.healthEvent.CallDeflectionEvent();
-                    player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
+                    else
+                    {
+                        player.health.isBlocking = true;
+                        player.healthEvent.CallDeflectionEvent();
+                        player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
+                    }
                 }
             }
             else if (collision.tag == Settings.summonedEnemyTag)
@@ -133,7 +137,7 @@ public class DealContactDamage : MonoBehaviour
             else if (collision.tag == Settings.decoyTag)
             {
                 receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
-                enemy.enemyAI.TriggerKnockback((transform.position - collision.transform.position));
+                //enemy.enemyAI.TriggerKnockback((transform.position - collision.transform.position));
             }
             else
             {
@@ -161,7 +165,7 @@ public class DealContactDamage : MonoBehaviour
             int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMin);
 
             // Apply knockback and damage the enemy
-            enemy.enemyAI.TriggerKnockback(transform.position - collision.transform.position);
+            //enemy.enemyAI.TriggerKnockback(transform.position - collision.transform.position);
             enemy.health.TakeDamage(damageDone, transform.position, collision.transform.position, false);
         }
     }
@@ -218,8 +222,22 @@ public class DealContactDamage : MonoBehaviour
             {
                 player.moveStatus = MoveStatus.Stun;
                 player.healthEvent.CallGetStunEvent();
-                player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
-                player.animator.SetBool(Settings.isStunned, true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check frost status
+    /// </summary>
+    private void CheckFrostStatus(Player player)
+    {
+        if (enemy.enemyDetails.hasFrostDamage && player.moveStatus != MoveStatus.Frozen)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.frostChance)
+            {
+                player.moveStatus = MoveStatus.Frozen;
+                player.healthEvent.CallGetFrostEvent();
             }
         }
     }

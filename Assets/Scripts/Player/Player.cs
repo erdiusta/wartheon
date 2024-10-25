@@ -298,7 +298,6 @@ public class Player : MonoBehaviour
         currentLightResistanceValue = playerDetails.lightResistance;
         currentDarkResistanceValue = playerDetails.darkResistance;
 
-
         UpdateDamageValues();
         UpdateWeaponHandlingAndCriticalValues();
         UpdateEvasivenessValue();

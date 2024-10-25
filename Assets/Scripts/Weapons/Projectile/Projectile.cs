@@ -427,14 +427,14 @@ public class Projectile : MonoBehaviour, IFireable
         Player player = collision.GetComponent<Player>();
 
         // Adjust animator layer weights
-        player.animatePlayer.SetGetHitAnimationParameters();
         player.transform.GetChild(1).GetComponent<Animator>().SetTrigger(Settings.block);
         SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponSwingSoundEffect);
 
         yield return new WaitForSeconds(0.6f);
 
         playerBlockCoroutine = null;
-        player.animatePlayer.SetIdleAnimationParameters();
+        player.animatePlayer.ResetAnimatonParameters();
+        player.animator.SetBool(Settings.isIdle, true);
     }
 
     private void DealDamage(Collider2D collision)
@@ -1088,22 +1088,22 @@ public class Projectile : MonoBehaviour, IFireable
     {
         if (!isActiveItem)
         {
-            if (projectileDetails.hasFrostDamage && player.moveStatus != MoveStatus.Frost)
+            if (projectileDetails.hasFrostDamage && player.moveStatus != MoveStatus.Frozen)
             {
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < projectileDetails.frostChance)
                 {
-                    player.moveStatus = MoveStatus.Frost;
+                    player.moveStatus = MoveStatus.Frozen;
                     player.healthEvent.CallGetFrostEvent();
                     player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
-                    player.animatePlayer.SetGetHitAnimationParameters();
+                    player.animatePlayer.ResetAnimatonParameters();
                     player.animator.SetBool(Settings.isFrozen, true);
                 }
             }
         }
         else
         {
-            if (activeItemDetails.hasStunDamage && player.moveStatus != MoveStatus.Frost)
+            if (activeItemDetails.hasStunDamage && player.moveStatus != MoveStatus.Frozen)
             {
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < activeItemDetails.frostChance)
@@ -1111,7 +1111,7 @@ public class Projectile : MonoBehaviour, IFireable
                     player.moveStatus = MoveStatus.Stun;
                     player.healthEvent.CallGetFrostEvent();
                     player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
-                    player.animatePlayer.SetGetHitAnimationParameters();
+                    player.animatePlayer.ResetAnimatonParameters();
                     player.animator.SetBool(Settings.isFrozen, true);
                 }
             }
@@ -1127,7 +1127,7 @@ public class Projectile : MonoBehaviour, IFireable
         {
             EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
 
-            if (projectileDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frost && enemy.health.currentHealth > 0)
+            if (projectileDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frozen && enemy.health.currentHealth > 0)
             {
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < projectileDetails.frostChance)
@@ -1140,7 +1140,7 @@ public class Projectile : MonoBehaviour, IFireable
         {
             EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
 
-            if (activeItemDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frost && enemy.health.currentHealth > 0)
+            if (activeItemDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frozen && enemy.health.currentHealth > 0)
             {
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < activeItemDetails.frostChance)
@@ -1227,7 +1227,7 @@ public class Projectile : MonoBehaviour, IFireable
 
     IEnumerator FrostRoutine(Enemy enemy)
     {
-        enemy.enemyAI.moveStatus = MoveStatus.Frost;
+        enemy.enemyAI.moveStatus = MoveStatus.Frozen;
         enemy.healthEvent.CallGetFrostEvent();
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         enemy.animator.SetBool(Settings.isStunned, true);

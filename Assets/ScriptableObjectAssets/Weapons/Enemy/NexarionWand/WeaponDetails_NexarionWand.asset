@@ -29,8 +29,14 @@ MonoBehaviour:
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
   weaponRightShootPosition: {x: -0.03125, y: 0.75, z: 0}
   weaponLeftShootPosition: {x: -0.875, y: 0.75, z: 0}
   weaponUpShootPosition: {x: -0.09375, y: 0.9375, z: 0}
@@ -48,7 +54,7 @@ MonoBehaviour:
   meleeDamageMax: 0
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 1.5
-  weaponCooldownDuration: 0.3
+  weaponCooldownDuration: 2
   weaponBaseHandling: 0.8
   hasSwing: 0
   hasSweep: 0

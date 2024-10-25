@@ -332,6 +332,10 @@ PrefabInstance:
       propertyPath: m_Mass
       value: 2000
       objectReference: {fileID: 0}
+    - target: {fileID: -1344477452585567910, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_BodyType
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_FlipX
       value: 1
@@ -515,7 +519,7 @@ PrefabInstance:
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 17e317ca8a76f8b4395ec527a9a8378f, type: 2}
+      objectReference: {fileID: 9100000, guid: 3751e0a840afef4408bb99d002ab0647, type: 2}
     m_RemovedComponents:
     - {fileID: 0}
     - {fileID: 480008352441278276, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
@@ -553,11 +557,12 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 18432
-  OnReadyForDashAttack:
-    m_PersistentCalls:
-      m_Calls: []
+  debugText: {fileID: 0}
   moveStatus: 0
   moveSpeed: 0
   updateFrameNumber: 1
   enemyStartingSpeed: 0
   enemyPhase: 0
+  isAttacking: 0
+  isDashing: 0
+  collideCircleRadius: 1

@@ -67,7 +67,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         backgroundTransform = transform.GetChild(0);
         equippedTransform = transform.GetChild(1);
 
-        tooltipPanel.transform.localPosition = new Vector3(60f, 30f, 0f);
+        tooltipPanel.transform.localPosition = new Vector3(60f, 20f, 0f);
         UpdateTooltipPanelInfo();
     }
 
@@ -77,9 +77,11 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
         if (slotType == SlotType.Passive) 
         {
-            headerText.colorGradient = new VertexGradient(Color.blue, Color.blue, Color.blue, Color.blue);
+            headerText.colorGradient = new VertexGradient(GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor,
+                GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor);
             headerText.text = string.Empty;
-            levelText.colorGradient = new VertexGradient(Color.blue, Color.blue, Color.blue, Color.blue);
+            levelText.colorGradient = new VertexGradient(GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor,
+                GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor);
             levelText.text = string.Empty;
             weaponClassText.text = string.Empty;
             hitSpeedText.text = string.Empty;
@@ -94,6 +96,70 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             masteryText1.text = string.Empty;
             masteryText2.text = string.Empty;
             masteryText3.text = string.Empty;
+
+            switch (passiveItemSlotName)
+            {
+                case PassiveItemSlotName.None:
+                    break;
+                case PassiveItemSlotName.Head:
+                    if (player.selectedPassiveItem.headPassiveItem == null)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                        return;
+                    }
+                    break;
+                case PassiveItemSlotName.Chest:
+                    if (player.selectedPassiveItem.chestPassiveItem == null)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                        return;
+                    }
+                    break;
+                case PassiveItemSlotName.Neck:
+                    if (player.selectedPassiveItem.neckPassiveItem == null)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                        return;
+                    }
+                    break;
+                case PassiveItemSlotName.Finger:
+                    if (player.selectedPassiveItem.fingerPassiveItem == null)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                        return;
+                    }
+                    break;
+                case PassiveItemSlotName.Back:
+                    if (player.selectedPassiveItem.backPassiveItem == null)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                        return;
+                    }
+                    break;
+                case PassiveItemSlotName.Waist:
+                    if (player.selectedPassiveItem.waistPassiveItem == null)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                        return;
+                    }
+                    break;
+                case PassiveItemSlotName.Arm:
+                    if (player.selectedPassiveItem.armPassiveItem == null)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                        return;
+                    }
+                    break;
+                case PassiveItemSlotName.Leg:
+                    if (player.selectedPassiveItem.legPassiveItem == null)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                        return;
+                    }
+                    break;
+                default:
+                    break;
+            }
 
             // Check if the slot is occupied
             if (equippedTransform.childCount > 0)
@@ -134,6 +200,30 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         }
         else if (slotType == SlotType.Active)
         {
+            headerText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
+            headerText.text = string.Empty;
+            levelText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
+            levelText.text = string.Empty;
+            weaponClassText.text = string.Empty;
+            hitSpeedText.text = string.Empty;
+            weaponWieldText.text = string.Empty;
+            damageText.text = string.Empty;
+            baseHandlingText.text = string.Empty;
+            crHitChanceText.text = string.Empty;
+            crHitDamageText.text = string.Empty;
+            elementalBiasText.text = string.Empty;
+            elementText.text = string.Empty;
+            elementalForgeRateText.text = string.Empty;
+            masteryText1.text = string.Empty;
+            masteryText2.text = string.Empty;
+            masteryText3.text = string.Empty;
+
+            if (player.selectedActiveItem.GetCurrentActiveItem() == null)
+            {
+                tooltipPanel.gameObject.SetActive(false);
+                return;
+            }
+
             // Check if the slot is occupied
             if (equippedTransform.childCount > 0)
             {
@@ -145,7 +235,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 if (activeItem != null)
                 {
-                    headerText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.black, Color.black);
+                    headerText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
                     headerText.text = activeItem.activeItemDetails.activeItemName;
                     levelText.text = $"(Active Item)";
                 }

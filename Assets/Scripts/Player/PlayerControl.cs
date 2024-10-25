@@ -23,6 +23,8 @@ public class PlayerControl : MonoBehaviour
     bool isPlayerMovementDisabled = false;
     Coroutine teleportParticleRoutine;
     Coroutine dropCoroutine;
+    Coroutine stunCoroutine;
+    Coroutine frostCoroutine;
     Coroutine healthPotionDrinkCoroutine;
     Coroutine playerRollCoroutine;
     WaitForFixedUpdate waitForFixedUpdate;
@@ -114,16 +116,37 @@ public class PlayerControl : MonoBehaviour
                 StartCoroutine(Stagger());
                 break;
             case MoveStatus.Stun:
+                isPlayerRolling = false;
                 if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
                 {
-
                     if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
                     {
                         // Trigger fire weapon event for precharge weapons
                         player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
                     }
                 }
-                StartCoroutine(StunRoutine());
+
+                if (stunCoroutine == null)
+                {
+                    stunCoroutine = StartCoroutine(StunRoutine());
+                }
+
+                break;
+            case MoveStatus.Frozen:
+                isPlayerRolling = false;
+                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+                {
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
+                    {
+                        // Trigger fire weapon event for precharge weapons
+                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+                    }
+
+                    if (frostCoroutine == null)
+                    {
+                        frostCoroutine = StartCoroutine(FrostRoutine());
+                    }
+                }
                 break;
             default:
                 break;
@@ -183,7 +206,8 @@ public class PlayerControl : MonoBehaviour
         else
         {
             player.idle.StopVelocity();
-            player.animatePlayer.SetIdleAnimationParameters();
+            player.animator.SetBool(Settings.isMoving, false);
+            player.animator.SetBool(Settings.isIdle, true);
         }
     }
 
@@ -214,7 +238,7 @@ public class PlayerControl : MonoBehaviour
 
         while (Vector3.Distance(player.transform.position, targetPosition) > minDistance)
         {
-            player.movementToPositionEvent.CallMovementToPositionEvent(targetPosition, player.transform.position, player.movementByVelocity.movementDetails.rollSpeed,
+            player.movementToPositionEvent.CallMovementToPositionEvent(targetPosition, player.rb2D.position, player.movementByVelocity.movementDetails.rollSpeed,
                 direction, isPlayerRolling);
 
             yield return waitForFixedUpdate;
@@ -860,6 +884,8 @@ public class PlayerControl : MonoBehaviour
     IEnumerator StunRoutine()
     {
         player.movementByVelocity.moveSpeed = 0f;
+        player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+        player.animator.SetBool(Settings.isStunned, true);
 
         yield return new WaitForSeconds(3f);
 
@@ -868,6 +894,26 @@ public class PlayerControl : MonoBehaviour
         player.healthEvent.CallStunCuredEvent();
         player.animator.SetBool(Settings.isStunned, false);
         player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetMoveSpeed();
+        stunCoroutine = null;
+    }
+
+    /// <summary>
+    /// Frost routine
+    /// </summary>
+    IEnumerator FrostRoutine()
+    {
+        player.movementByVelocity.moveSpeed = 0f;
+        player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+        player.animator.SetBool(Settings.isFrozen, true);
+
+        yield return new WaitForSeconds(3f);
+
+        player.moveStatus = MoveStatus.Idle;
+        player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+        player.healthEvent.CallStunCuredEvent();
+        player.animator.SetBool(Settings.isFrozen, false);
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetMoveSpeed();
+        frostCoroutine = null;
     }
 
     /// <summary>
@@ -1762,7 +1808,8 @@ public class PlayerControl : MonoBehaviour
         isPlayerMovementDisabled = true;
         player.movementByVelocity.moveSpeed = 0f;
         player.idle.StopVelocity();
-        player.animatePlayer.SetIdleAnimationParameters();
+        player.animatePlayer.ResetAnimatonParameters();
+        player.animator.SetBool(Settings.isIdle, true);
     }
 
     public AimDirection GetAimDirection()

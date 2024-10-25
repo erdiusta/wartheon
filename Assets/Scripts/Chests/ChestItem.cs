@@ -1,8 +1,6 @@
 using System;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Random = UnityEngine.Random;
 
 public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -39,23 +37,6 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     bool isPurchasing;
     Animator pickUpAnimator;
 
-    // Tooltip Panel Weapon Texts
-    [SerializeField] TextMeshProUGUI headerText;
-    [SerializeField] TextMeshProUGUI levelText;
-    [SerializeField] TextMeshProUGUI weaponClassText;
-    [SerializeField] TextMeshProUGUI hitSpeedText;
-    [SerializeField] TextMeshProUGUI weaponWieldText;
-    [SerializeField] TextMeshProUGUI damageText;
-    [SerializeField] TextMeshProUGUI baseHandlingText;
-    [SerializeField] TextMeshProUGUI crHitChanceText;
-    [SerializeField] TextMeshProUGUI crHitDamageText;
-    [SerializeField] TextMeshProUGUI elementalBiasText;
-    [SerializeField] TextMeshProUGUI elementText;
-    [SerializeField] TextMeshProUGUI elementalForgeRateText;
-    [SerializeField] TextMeshProUGUI masteryText1;
-    [SerializeField] TextMeshProUGUI masteryText2;
-    [SerializeField] TextMeshProUGUI masteryText3;
-
     private void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -63,11 +44,6 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         pickUpAnimator = transform.GetChild(1).GetComponent<Animator>();
         chest = GetComponentInParent<Chest>();
         boxCollider2D = GetComponent<BoxCollider2D>();
-    }
-
-    private void Start()
-    {
-        
     }
 
     private void OnEnable()
@@ -85,9 +61,10 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         if (eventData.pointerEnter.GetComponent<ChestItem>() == this && eventData.pointerEnter.GetComponentInParent<Player>() == null)
         {
+            // If chest item contains primary passive drop or nothing, cancel the transaction
             if (!hasWeaponDrop && !hasActiveDrop && !hasSecondaryPassiveDrop) return;
 
-            GameManager.Instance.UpdateTooltipPanelInfo(receivable, hasWeaponDrop, hasActiveDrop, hasSecondaryPassiveDrop, hasPrimaryPassiveDrop);
+            GameManager.Instance.UpdateTooltipPanelInfo(receivable, hasWeaponDrop, hasActiveDrop, hasSecondaryPassiveDrop);
         }
     }
 
@@ -195,6 +172,12 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                         }
                                         else
                                         {
+                                            if (weaponDetails.weaponClass == WeaponClass.Shield && player.activeWeapon.GetCurrentOffHandWeapon() != null)
+                                            {
+                                                toBeDroppedOffWeaponDetails = weaponDetails;
+                                                player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon());
+                                            }
+                                            
                                             CollectWeaponItem(player);
                                         }
                                     }

@@ -165,6 +165,14 @@ public class Destroyed : MonoBehaviour
                 EnemySpawner.Instance.isBossInstantiated = false;
             }
 
+            if (enemy.enemyDetails.enemyName == "Skeleton")
+            {
+                enemy.animator.SetBool(Settings.block, false);
+            }
+
+            enemy.animateEnemy.ResetAnimatonParameters();
+            enemy.enemyAI.isDashing = false;
+            enemy.enemyAI.isAttacking = false;
             enemy.enemyAI.StopAllCoroutines();
             enemy.enemyAI.enabled = false;
             enemy.health.StopAllCoroutines();

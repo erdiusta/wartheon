@@ -212,20 +212,16 @@ public class Health : MonoBehaviour
 
         if (isDamageable && !isRolling)
         {
-            isDamageable = false;
-
             currentHealth -= damageAmount;
+
             if (player != null)
             {
                 StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
-            }
 
-            if (player != null)
-            {
                 if (getHitCoroutine == null)
                 {
                     if (currentHealth > 0)
-                    {                      
+                    {
                         PostHitImmunity();
                     }
                 }
@@ -253,29 +249,29 @@ public class Health : MonoBehaviour
                 }
                 else
                 {
-                    if (getHitCoroutine == null)
+                    // Set health bar as the percentage of health remaining
+                    if (GameManager.Instance.healthBarContainer.activeSelf)
                     {
-                        if (!isBlocking)
-                        {
-                            PostHitImmunity();
-                        }
-
-                        getHitCoroutine = StartCoroutine(EnemyGetHitRoutine(headShotHappened));
+                        GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)startingHealth, enemy);
                     }
+
+                    if (getHitCoroutine != null)
+                    {
+                        StopCoroutine(getHitCoroutine);
+                    }
+
+                    if (!isBlocking)
+                    {
+                        PostHitImmunity();
+                    }
+
+                    getHitCoroutine = StartCoroutine(EnemyGetHitRoutine(headShotHappened));
+
 
                     if (currentHealth <= 0)
                     {
                         enemy.dropOnDestroy.DropProcess();
                     }
-                }
-            }
-
-            if (enemy != null)
-            {
-                // Set health bar as the percentage of health remaining
-                if (GameManager.Instance.healthBarContainer.activeSelf)
-                {
-                    GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)startingHealth, enemy);
                 }
             }
 
@@ -287,13 +283,14 @@ public class Health : MonoBehaviour
     {
         if (player.health.GetCurrentHealth() > 0f)
         {
-            player.animatePlayer.SetGetHitAnimationParameters();
+            player.animatePlayer.ResetAnimatonParameters();
             player.animator.SetBool(Settings.getHit, true);
             SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
         }
         else
         {
-            player.animatePlayer.SetDeathAnimationParameters();
+            player.animatePlayer.ResetAnimatonParameters();
+            player.animator.SetBool(Settings.death, true);
         }
 
         yield return new WaitForSeconds(0.4f);
@@ -315,12 +312,11 @@ public class Health : MonoBehaviour
     {
         if (!isBlocking)
         {
-            enemy.enemyAI.enemyPhase = EnemyPhase.GetHit;
+            //enemy.enemyAI.enemyPhase = EnemyPhase.GetHit;
 
             if (enemy.health.GetCurrentHealth() > 0f)
             {
                 enemy.animateEnemy.ResetAnimatonParameters();
-                enemy.animateEnemy.SetGetHitAnimationParameters();
                 enemy.animator.SetBool(Settings.getHit, true);
                 enemy.animator.SetBool(Settings.block, false);
                 SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
@@ -345,13 +341,12 @@ public class Health : MonoBehaviour
         else
         {
             enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animateEnemy.SetGetHitAnimationParameters();
             enemy.animator.SetBool(Settings.getHit, false);
             enemy.animator.SetBool(Settings.block, true);
             SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.deflectSoundEffect);
         }
 
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(0.4f);
 
         enemy.hitFxParticles.Stop();
         enemy.headShotFxParticles.Stop();
@@ -359,7 +354,7 @@ public class Health : MonoBehaviour
         enemy.animator.SetBool(Settings.block, false);
         isBlocking = false;
         getHitCoroutine = null;
-        enemy.enemyAI.enemyPhase = EnemyPhase.Patrol;
+        //enemy.enemyAI.enemyPhase = EnemyPhase.Patrol;
     }
 
     /// <summary>

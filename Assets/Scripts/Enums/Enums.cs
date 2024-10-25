@@ -94,7 +94,7 @@ public enum MoveStatus
     Idle,
     Stagger,
     Stun,
-    Frost
+    Frozen
 }
 
 public enum HealthStatus

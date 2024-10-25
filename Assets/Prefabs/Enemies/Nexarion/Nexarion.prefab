@@ -212,6 +212,10 @@ PrefabInstance:
       propertyPath: m_MaskInteraction
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1473841332294187630, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
       value: 0.5
@@ -555,7 +559,7 @@ PrefabInstance:
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 35e69f9fa1b952a4cbe5f30fe501012c, type: 2}
+      objectReference: {fileID: 9100000, guid: fcce8d97ed0eeea4cac02d8c63c39eba, type: 2}
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
@@ -596,11 +600,21 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 18432
-  OnReadyForDashAttack:
-    m_PersistentCalls:
-      m_Calls: []
+  debugText: {fileID: 7910599782929872873}
   moveStatus: 0
   moveSpeed: 0
   updateFrameNumber: 1
   enemyStartingSpeed: 0
   enemyPhase: 0
+  collideCircleRadius: 1
+--- !u!114 &7910599782929872873 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7294595444096721567, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+  m_PrefabInstance: {fileID: 645003754541700470}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

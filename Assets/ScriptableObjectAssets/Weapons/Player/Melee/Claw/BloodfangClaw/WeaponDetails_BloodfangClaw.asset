@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WeaponDetails_BloodfangClaw
   m_EditorClassIdentifier: 
   weaponName: Bloodfang Claw
-  weaponTitle: 24
+  weaponTitle: 39
   weaponLevel: 2
   weaponClass: 8
   weaponHitSpeed: 3
@@ -29,8 +29,14 @@ MonoBehaviour:
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
   weaponRightShootPosition: {x: 0, y: 0, z: 0}
   weaponLeftShootPosition: {x: 0, y: 0, z: 0}
   weaponUpShootPosition: {x: 0, y: 0, z: 0}

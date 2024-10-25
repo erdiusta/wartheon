@@ -11989,9 +11989,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
+    y: 0.056410257
     width: 1
-    height: 1
+    height: 0.88846153
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -15538,9 +15538,6 @@ MonoBehaviour:
   - poolSize: 50
     prefab: {fileID: 3547249067481803369, guid: 13a20fa8a2a5e9041a5315a8bfc84ce9, type: 3}
     componentType: IFireable
-  - poolSize: 20
-    prefab: {fileID: 9215254846020591270, guid: 134f30ac9663ee04b96c23e8b7f6d55e, type: 3}
-    componentType: ProjectileHitEffect
   - poolSize: 150
     prefab: {fileID: 2585463276777236944, guid: 6a5368c795ec3214a9c5205ac2869442, type: 3}
     componentType: IFireable
@@ -15586,8 +15583,11 @@ MonoBehaviour:
   - poolSize: 30
     prefab: {fileID: 2585463276777236944, guid: 2af95e0b8d8395d48b8f1f33e4d524b9, type: 3}
     componentType: IFireable
-  - poolSize: 40
+  - poolSize: 60
     prefab: {fileID: 5263536334675765252, guid: 339536103c4f7b74995fd50408768bc1, type: 3}
+    componentType: IFireable
+  - poolSize: 300
+    prefab: {fileID: 2585463276777236944, guid: 2dc9759fb88f5044296a7a471473c307, type: 3}
     componentType: IFireable
   - poolSize: 40
     prefab: {fileID: 5263536334675765252, guid: 59e583c8581962145b11dfd8f2b08a6f, type: 3}
@@ -15642,6 +15642,9 @@ MonoBehaviour:
     componentType: ProjectileHitEffect
   - poolSize: 30
     prefab: {fileID: 9017448095421764182, guid: e7556f90e97bee049adf84ec865e4e21, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 20
+    prefab: {fileID: 9215254846020591270, guid: 134f30ac9663ee04b96c23e8b7f6d55e, type: 3}
     componentType: ProjectileHitEffect
 --- !u!4 &673935430
 Transform:
@@ -18073,7 +18076,7 @@ MonoBehaviour:
   m_fontSizeBase: 8
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 0
+  m_fontSizeMin: 5
   m_fontSizeMax: 18
   m_fontStyle: 0
   m_HorizontalAlignment: 32
@@ -19260,7 +19263,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -30.617493}
+  m_SizeDelta: {x: 0, y: -10.196228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &819143053
 MonoBehaviour:
@@ -28062,7 +28065,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -30.617493}
+  m_SizeDelta: {x: 0, y: -10.196228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1230210625
 MonoBehaviour:

@@ -7,11 +7,6 @@ public class AnimatePlayer : MonoBehaviour
 {
     Player player;
 
-    [HideInInspector] public int baseLayerIndex;
-    [HideInInspector] public int attackLayerIndex;
-    [HideInInspector] public int getHitLayerIndex;
-    [HideInInspector] public int deathLayerIndex;
-
     private void Awake()
     {
         player = GetComponent<Player>();
@@ -27,20 +22,6 @@ public class AnimatePlayer : MonoBehaviour
     {
         // Unsubscribe from movement to position event
         player.movementToPositionEvent.OnMovementToPosition -= MovementToPositionEvent_OnMovementToPosition;
-    }
-
-    private void Start()
-    {
-        baseLayerIndex = player.animator.GetLayerIndex("Base Layer");
-        attackLayerIndex = player.animator.GetLayerIndex("Attack Layer");
-        getHitLayerIndex = player.animator.GetLayerIndex("Get Hit Layer");
-        deathLayerIndex = player.animator.GetLayerIndex("Death Layer");
-
-        // Adjust animator layer weights
-        player.animator.SetLayerWeight(baseLayerIndex, 1f);
-        player.animator.SetLayerWeight(getHitLayerIndex, 0f);
-        player.animator.SetLayerWeight(attackLayerIndex, 0f);
-        player.animator.SetLayerWeight(deathLayerIndex, 0f);
     }
 
     private void MovementToPositionEvent_OnMovementToPosition(MovementToPositionEvent movementToPositionEvent, MovementToPositionArgs movementToPositionArgs)
@@ -68,6 +49,9 @@ public class AnimatePlayer : MonoBehaviour
     /// </summary>
     public void InitializeRollAnimationParameters()
     {
+        player.animator.SetBool(Settings.isMoving, false);
+        player.animator.SetBool(Settings.isIdle, false);
+
         player.animator.SetBool(Settings.rollDown, false);
         player.animator.SetBool(Settings.rollRight, false);
         player.animator.SetBool(Settings.rollLeft, false);
@@ -108,12 +92,6 @@ public class AnimatePlayer : MonoBehaviour
     {
         if (player.meleeAttackRightHand.playerAttackMotionRoutine == null || !player.isDead)
         {
-            // Adjust animator layer weights
-            player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
-            player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
-            player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
-            player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
-
             player.animator.SetBool(Settings.isMoving, true);
             player.animator.SetBool(Settings.isIdle, false);
             player.animator.SetBool(Settings.getHit, false);
@@ -122,59 +100,25 @@ public class AnimatePlayer : MonoBehaviour
     }
 
     /// <summary>
-    /// Set movement animation parameters
+    /// Reset all animation parameters
     /// </summary>
-    public void SetIdleAnimationParameters()
+    public void ResetAnimatonParameters()
     {
-        if (player.meleeAttackRightHand.playerAttackMotionRoutine == null)
+        player.animator.SetBool(Settings.isAttacking, false);
+        player.animator.SetBool(Settings.isMoving, false);
+        player.animator.SetBool(Settings.isIdle, false);
+
+        if (HasParameter(player.animator, Settings.getHit))
         {
-            // Adjust animator layer weights
-            player.animator.SetLayerWeight(player.animatePlayer.baseLayerIndex, 1f);
-            player.animator.SetLayerWeight(player.animatePlayer.attackLayerIndex, 0f);
-            player.animator.SetLayerWeight(player.animatePlayer.getHitLayerIndex, 0f);
-            player.animator.SetLayerWeight(player.animatePlayer.deathLayerIndex, 0f);
-
-            player.animator.SetBool(Settings.isMoving, false);
-            player.animator.SetBool(Settings.isIdle, true);
             player.animator.SetBool(Settings.getHit, false);
-            player.animator.SetBool(Settings.death, false);
         }
-    }
 
-    /// <summary>
-    /// Play get hit animation
-    /// </summary>
-    public void SetGetHitAnimationParameters()
-    {
-        // Adjust animator layer weights
-        player.animator.SetLayerWeight(baseLayerIndex, 0f);
-        player.animator.SetLayerWeight(attackLayerIndex, 0f);
-        player.animator.SetLayerWeight(getHitLayerIndex, 1f);
-        player.animator.SetLayerWeight(deathLayerIndex, 0f);
+        if (HasParameter(player.animator, Settings.block))
+        {
+            player.animator.SetBool(Settings.block, false);
+        }
 
-        player.animator.SetBool(Settings.isAttacking, false);
-        player.animator.SetBool(Settings.isMoving, false);
-        player.animator.SetBool(Settings.isIdle, false);
-        player.animator.SetBool(Settings.getHit, true);
         player.animator.SetBool(Settings.death, false);
-    }
-
-    /// <summary>
-    /// Play death animation
-    /// </summary>
-    public void SetDeathAnimationParameters()
-    {
-        // Adjust animator layer weights
-        player.animator.SetLayerWeight(baseLayerIndex, 0f);
-        player.animator.SetLayerWeight(attackLayerIndex, 0f);
-        player.animator.SetLayerWeight(getHitLayerIndex, 0f);
-        player.animator.SetLayerWeight(deathLayerIndex, 1f);
-
-        player.animator.SetBool(Settings.isAttacking, false);
-        player.animator.SetBool(Settings.isMoving, false);
-        player.animator.SetBool(Settings.isIdle, false);
-        player.animator.SetBool(Settings.getHit, false);
-        player.animator.SetBool(Settings.death, true);
     }
 
     /// <summary>
@@ -209,5 +153,18 @@ public class AnimatePlayer : MonoBehaviour
                 player.animator.SetBool(Settings.aimDown, true);
                 break;
         }
+    }
+
+    // Method to check if the Animator contains the specified parameter
+    bool HasParameter(Animator animator, int paramHashCode)
+    {
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.GetHashCode() == paramHashCode)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

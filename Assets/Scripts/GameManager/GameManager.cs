@@ -308,19 +308,83 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 // SECONDARY PASSIVES
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
                 {
-                    IntroductionPopUpProcess("BELT OF\nSORCERY", "Shiny look.", passiveItem.passiveItemDetails.passiveItemSprite);
+                    IntroductionPopUpProcess("BELT OF\nSORCERY", "Faster casting time.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
+                {
+                    IntroductionPopUpProcess("INFERNO SASH", "Resistance to fire and some burn effects during attack.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GirdleOfFirmament)
+                {
+                    IntroductionPopUpProcess("GIRDLE OF\nFIRMAMENT", "Small resistance to air and light and immunity to blind.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
+                {
+                    IntroductionPopUpProcess("BLOODFORGED\nGIRDLE", "More physical attack and agility.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
+                {
+                    IntroductionPopUpProcess("SANDWEAVER'S\nSASH", "More evasiveness and increasing attack per successful hits.", passiveItem.passiveItemDetails.passiveItemSprite);
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
                 {
                     IntroductionPopUpProcess("RING OF\nFORTUNE", "More drop chance.", passiveItem.passiveItemDetails.passiveItemSprite);
                 }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
+                {
+                    IntroductionPopUpProcess("RING OF\nTEMPEST STRIKES", "More evasiveness but less armor.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                 {
-                    IntroductionPopUpProcess("SHADOW\nCLOAK", "More critical chance\nwith equipped dual-wield daggers.", passiveItem.passiveItemDetails.passiveItemSprite);
+                    IntroductionPopUpProcess("SHADOW\nCLOAK", "More critical chance with equipped dual-wield daggers.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
+                {
+                    IntroductionPopUpProcess("RECANTER'S\nCLOAK", "More evasiveness and agility.", passiveItem.passiveItemDetails.passiveItemSprite);
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
                 {
                     IntroductionPopUpProcess("WARDEN OF\nFOREST", "More projectile accuracy.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HaloOfBlindingRadiance)
+                {
+                    IntroductionPopUpProcess("HALO OF\nBLINDING RADIANCE", "More light resistance and chance to blind enemies.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HelmOfTheEternalVigil)
+                {
+                    IntroductionPopUpProcess("HELM OF\nETERNAL VIGIL", "Reduces damage taken while standing still.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EnchantersSpire)
+                {
+                    IntroductionPopUpProcess("ENCHANTER'S\nSPIRE", "More elemental resistances and intelligence.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
+                {
+                    IntroductionPopUpProcess("WHISPERING\nHOOD", "More evasiveness and dexterity.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
+                {
+                    IntroductionPopUpProcess("GILDED\nGUARDIAN", "More physical resistance and constitution.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
+                {
+                    IntroductionPopUpProcess("CHESTPLATE OF\nTHE LAST LIGHT", "More armor and even more when health is low.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
+                {
+                    IntroductionPopUpProcess("RUBY PENDANT", "More fire resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmeraldPendant)
+                {
+                    IntroductionPopUpProcess("EMERALD PENDANT", "More earth resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.TopazPendant)
+                {
+                    IntroductionPopUpProcess("TOPAZ PENDANT", "More air resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SapphirePendant)
+                {
+                    IntroductionPopUpProcess("SAPPHIRE PENDANT", "More water resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
                 {
@@ -328,7 +392,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.OminousGripOfThunder)
                 {
-                    IntroductionPopUpProcess("OMINOUS\nGRIP OF THUNDER", "More armor and\nair resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
+                    IntroductionPopUpProcess("OMINOUS\nGRIP OF THUNDER", "More armor and air resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
                 }
 
                 break;
@@ -384,114 +448,159 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
                 if (weapon.weaponDetails == null) return;
 
-                if (weapon.weaponDetails.weaponTitle == WeaponTitle.Carnage)
+                if (weapon.weaponDetails.weaponTitle == WeaponTitle.AncientKatana)
                 {
-                    IntroductionPopUpProcess("CARNAGE", "A two-handed axe.", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("ANCIENT\nKATANA", "Two-handed sword which can have instant death on mobs directly.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Hatchet)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ApolloShield)
                 {
-                    IntroductionPopUpProcess("HATCHET", "Basic one-handed axe.", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("APOLLO\nSHIELD", "High-deflect rate from projectiles.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Dirk)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ArcaneConduit)
                 {
-                    IntroductionPopUpProcess("DIRK", "Basic dagger.", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("ARCANE\nCONDUIT", "A Swift casting staff.", weapon.weaponDetails.weaponFrontSprite);
                 }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.BlackTalon)
                 {
                     IntroductionPopUpProcess("BLACK TALON", "Claw from the darkness.", weapon.weaponDetails.weaponFrontSprite);
                 }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Blazefury)
+                {
+                    IntroductionPopUpProcess("BLAZEFURY", "Sword on fire.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.BloodfangClaw)
+                {
+                    IntroductionPopUpProcess("BLOODFANG\nCLAW", "Bleeding claws.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.BronzeHuntingBow)
+                {
+                    IntroductionPopUpProcess("BRONZE\nHUNTING BOW", "An acidifying glazing bow.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Carnage)
+                {
+                    IntroductionPopUpProcess("CARNAGE", "A two-handed axe.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ChordOfTheSerpent)
+                {
+                    IntroductionPopUpProcess("CHORD\nOF THE SERPENT", "Can poison enemies.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ClobberingTime)
+                {
+                    IntroductionPopUpProcess("CLOBBERING\nTIME", "A kind of one-hand hammer. Can stun enemies.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Crossbow)
+                {
+                    IntroductionPopUpProcess("CROSSBOW", "Takes time to load but more deadly than bow.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.CrudeBow)
+                {
+                    IntroductionPopUpProcess("BOW", "A basic bow.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Crusher)
+                {
+                    IntroductionPopUpProcess("CRUSHER", "A stunning two-handed hammer.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Dirk)
+                {
+                    IntroductionPopUpProcess("DIRK", "Basic dagger.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.EbonLongbow)
+                {
+                    IntroductionPopUpProcess("EBON LONGBOW", "Long range bow.", weapon.weaponDetails.weaponFrontSprite);
+                }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Gambit)
                 {
                     IntroductionPopUpProcess("GAMBIT", "A critical effective dagger.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ClobberingTime)
-                {
-                    IntroductionPopUpProcess("CLOBBERING\nTIME", "A kind of one-hand hammer. Can stun mobs", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Crusher)
-                {
-                    IntroductionPopUpProcess("CRUSHER", "A stunning two-handed hammer", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.PhalanxSpear)
-                {
-                    IntroductionPopUpProcess("PHALANX\nSPEAR", "A basic spear", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Trinity)
-                {
-                    IntroductionPopUpProcess("TRINITY", "The lord of the waters", weapon.weaponDetails.weaponFrontSprite);
-                }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Gladius)
                 {
-                    IntroductionPopUpProcess("GLADIUS", "Basic one-handed sword", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Scimitar)
-                {
-                    IntroductionPopUpProcess("SCIMITAR", "Can't pierce but effective", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.SizzlingSword)
-                {
-                    IntroductionPopUpProcess("SIZZLING\nSWORD", "Can acidify mobs", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Blazefury)
-                {
-                    IntroductionPopUpProcess("BLAZEFURY", "Sword on fire", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.AncientKatana)
-                {
-                    IntroductionPopUpProcess("ANCIENT\nKATANA", "Two-handed sword which can have instant death on mobs directly", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HolySword)
-                {
-                    IntroductionPopUpProcess("HOLY\nSWORD", "Sword of the light.. Especially well against undeads", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("GLADIUS", "Basic one-handed sword.", weapon.weaponDetails.weaponFrontSprite);
                 }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HailstormSculptor)
                 {
                     IntroductionPopUpProcess("HAILSTORM\nSCULPTOR", "Biting frost is on my hand.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.CrudeBow)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Hatchet)
                 {
-                    IntroductionPopUpProcess("BOW", "A basic bow", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("HATCHET", "Basic one-handed axe.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.BronzeHuntingBow)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HeavensGale)
                 {
-                    IntroductionPopUpProcess("BRONZE\nHUNTING BOW", "An acidifying glazing bow", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("HEAVEN'S\nGALE", "Fires patterned light projectiles.. Especially effective against undeads.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ChordOfTheSerpent)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HolySword)
                 {
-                    IntroductionPopUpProcess("CHORD\nOF THE SERPENT", "Can poison mobs", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("HOLY\nSWORD", "Sword of the light.. Especially well against undeads.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.EbonLongbow)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HammerOfTheThunderlord)
                 {
-                    IntroductionPopUpProcess("EBON LONGBOW", "Long range bow", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("HAMMER OF THE\nTHUNDERLORD", "Air biased hammer with stunning might.", weapon.weaponDetails.weaponFrontSprite);
                 }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Netherstrand)
                 {
                     IntroductionPopUpProcess("NETHERSTRAND", "An ethereal bow. Can curse.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Crossbow)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.PhalanxSpear)
                 {
-                    IntroductionPopUpProcess("CROSSBOW", "Takes time to load but more deadly than bow", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("PHALANX\nSPEAR", "A basic spear.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Staff)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.PhoenixBolt)
                 {
-                    IntroductionPopUpProcess("STAFF", "Ordinary staff but no precharge time to fire", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("PHOENIX\nBOLT", "Crossbow firing fire damage bolts.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HeavensGale)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Ravager)
                 {
-                    IntroductionPopUpProcess("HEAVEN'S\nGALE", "Fires patterned light projectiles.. Especially effective against undeads", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("RAVAGER", "Swift and easy to handle.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.SolarFlare)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Scarlet)
                 {
-                    IntroductionPopUpProcess("SOLAR\nFLARE", "Fires dispersed fire projectiles.. Especially effective against vermins", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("SCARLET", "Health draining dagger.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Scimitar)
+                {
+                    IntroductionPopUpProcess("SCIMITAR", "Can't pierce but effective.", weapon.weaponDetails.weaponFrontSprite);
                 }
                 else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Shield)
                 {
-                    IntroductionPopUpProcess("SHIELD", "Basic shield", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("SHIELD", "Basic shield.", weapon.weaponDetails.weaponFrontSprite);
                 }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ApolloShield)
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.SizzlingSword)
                 {
-                    IntroductionPopUpProcess("APOLLO\nSHIELD", "High-deflect rate from projectiles", weapon.weaponDetails.weaponFrontSprite);
+                    IntroductionPopUpProcess("SIZZLING\nSWORD", "Can acidify enemies.", weapon.weaponDetails.weaponFrontSprite);
                 }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.SolarFlare)
+                {
+                    IntroductionPopUpProcess("SOLAR\nFLARE", "Fires dispersed fire projectiles.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Staff)
+                {
+                    IntroductionPopUpProcess("STAFF", "Ordinary staff but no precharge time to fire.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.StaffOfTheWild)
+                {
+                    IntroductionPopUpProcess("STAFF OF\nTHE WILD", "Earth element biased staff.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Stormblade)
+                {
+                    IntroductionPopUpProcess("STORMBLADE", "Can both stun and freeze.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Trinity)
+                {
+                    IntroductionPopUpProcess("TRINITY", "The lord of the waters.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.TwilightStaff)
+                {
+                    IntroductionPopUpProcess("TWILIGHT\nSTAFF", "Staff from the darkness.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.VenomAxe)
+                {
+                    IntroductionPopUpProcess("VENOM AXE", "A poisonous axe.", weapon.weaponDetails.weaponFrontSprite);
+                }
+                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.VipersBite)
+                {
+                    IntroductionPopUpProcess("VIPER'S BITE", "A poisonous spear.", weapon.weaponDetails.weaponFrontSprite);
+                }
+
                 break;
             default:
                 break;
@@ -707,7 +816,16 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case GameState.playingLevel:
                 if (InputManager.Instance.pause.action.WasPressedThisFrame())
                 {
-                    PauseGameMenu();
+                    // If book is open, firstly close the book instead of opening pause menu
+                    if (bookView.activeSelf)
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+                        bookView.GetComponent<Animator>().SetTrigger(Settings.zoomOut);
+                    }
+                    else
+                    {
+                        PauseGameMenu();
+                    }
                 }
 
                 if (InputManager.Instance.overviewMapFullView.action.WasPressedThisFrame())
@@ -719,14 +837,32 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case GameState.engagingEnemies:
                 if (InputManager.Instance.pause.action.WasPressedThisFrame())
                 {
-                    PauseGameMenu();
+                    // If book is open, firstly close the book instead of opening pause menu
+                    if (bookView.activeSelf)
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+                        bookView.GetComponent<Animator>().SetTrigger(Settings.zoomOut);
+                    }
+                    else
+                    {
+                        PauseGameMenu();
+                    }
                 }
                 break;
 
             case GameState.engagingBoss:
                 if (InputManager.Instance.pause.action.WasPressedThisFrame())
                 {
-                    PauseGameMenu();
+                    // If book is open, firstly close the book instead of opening pause menu
+                    if (bookView.activeSelf)
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+                        bookView.GetComponent<Animator>().SetTrigger(Settings.zoomOut);
+                    }
+                    else
+                    {
+                        PauseGameMenu();
+                    }
                 }
                 break;
 
@@ -769,7 +905,16 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case GameState.gamePaused:
                 if (InputManager.Instance.pause.action.WasPressedThisFrame())
                 {
-                    PauseGameMenu();
+                    // If book is open, firstly close the book instead of opening pause menu
+                    if (bookView.activeSelf)
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+                        bookView.GetComponent<Animator>().SetTrigger(Settings.zoomOut);
+                    }
+                    else
+                    {
+                        PauseGameMenu();
+                    }
                 }
                 break;
         }
@@ -1268,12 +1413,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
     }
 
-    public void UpdateTooltipPanelInfo(IReceivable receivable, bool hasWeaponDrop, bool hasActiveDrop, bool hasSecondaryPassiveDrop, bool hasPrimaryPassiveDrop)
+    public void UpdateTooltipPanelInfo(IReceivable receivable, bool hasWeaponDrop, bool hasActiveDrop, bool hasSecondaryPassiveDrop)
     {
         tooltipPanel.SetActive(true);
         ClearTooltipPanel();
-
-        if (hasPrimaryPassiveDrop) return;
 
         if (hasSecondaryPassiveDrop)
         {

@@ -6,11 +6,6 @@ public class AnimateEnemy : MonoBehaviour
 {
     Enemy enemy;
 
-    [HideInInspector] public int baseLayerIndex;
-    [HideInInspector] public int attackLayerIndex;
-    [HideInInspector] public int getHitLayerIndex;
-    [HideInInspector] public int deathLayerIndex;
-
     private void Awake()
     {
         // Load components
@@ -25,20 +20,6 @@ public class AnimateEnemy : MonoBehaviour
     private void OnDisable()
     {
         enemy.destroyedEvent.OnDestroyed -= DestroyedEvent_OnDestroyed;
-    }
-
-    private void Start()
-    {
-        baseLayerIndex = enemy.animator.GetLayerIndex("Base Layer");
-        attackLayerIndex = enemy.animator.GetLayerIndex("Attack Layer");
-        getHitLayerIndex = enemy.animator.GetLayerIndex("Get Hit Layer");
-        deathLayerIndex = enemy.animator.GetLayerIndex("Death Layer");
-
-        // Adjust animator layer weights
-        enemy.animator.SetLayerWeight(baseLayerIndex, 1f);
-        enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
     }
 
     /// <summary>
@@ -67,12 +48,9 @@ public class AnimateEnemy : MonoBehaviour
     /// </summary>
     public void SetIdleAnimationParameters()
     {
-        // Set idle
-        enemy.animator.SetLayerWeight(baseLayerIndex, 1f);
-        enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
+        enemy.animator.SetFloat(Settings.motionType, 0f);
 
+        // Set idle
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, true);
         enemy.animator.SetBool(Settings.getHit, false);
@@ -85,52 +63,28 @@ public class AnimateEnemy : MonoBehaviour
     /// </summary>
     public void SetMovementAnimationParameters()
     {
-        // Set Moving
-        enemy.animator.SetLayerWeight(baseLayerIndex, 1f);
-        enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
+        enemy.animator.SetFloat(Settings.motionType, 1f);
 
+        // Set Moving
         enemy.animator.SetBool(Settings.isIdle, false);
         enemy.animator.SetBool(Settings.isMoving, true);
         enemy.animator.SetBool(Settings.getHit, false);
         enemy.animator.SetBool(Settings.isAttacking, false);
-        enemy.animator.SetBool(Settings.isAttacking, false);
         enemy.animator.SetBool(Settings.death, false);
     }
 
     /// <summary>
-    /// Play attack animation
+    /// Set attack animation parameters
     /// </summary>
     public void SetAttackAnimationParameters()
     {
-        // Adjust animator layer weights
-        enemy.animator.SetLayerWeight(baseLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(attackLayerIndex, 1f);
-        enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
+        enemy.animator.SetFloat(Settings.motionType, 2f);
 
-        enemy.animator.SetBool(Settings.isMoving, false);
+        // Set Moving
         enemy.animator.SetBool(Settings.isIdle, false);
+        enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.getHit, false);
-        enemy.animator.SetBool(Settings.death, false);
-    }
-
-    /// <summary>
-    /// Play get hit animation
-    /// </summary>
-    public void SetGetHitAnimationParameters()
-    {
-        // Adjust animator layer weights
-        enemy.animator.SetLayerWeight(baseLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(getHitLayerIndex, 1f);
-        enemy.animator.SetLayerWeight(deathLayerIndex, 0f);
-
-        enemy.animator.SetBool(Settings.isAttacking, false);
-        enemy.animator.SetBool(Settings.isIdle, false);
-        enemy.animator.SetBool(Settings.isMoving, false);
-        enemy.animator.SetBool(Settings.isIdle, false);
+        enemy.animator.SetBool(Settings.isAttacking, true);
         enemy.animator.SetBool(Settings.death, false);
     }
 
@@ -139,12 +93,6 @@ public class AnimateEnemy : MonoBehaviour
     /// </summary>
     public void SetDeathAnimationParameters()
     {
-        // Adjust animator layer weights
-        enemy.animator.SetLayerWeight(baseLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(attackLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(getHitLayerIndex, 0f);
-        enemy.animator.SetLayerWeight(deathLayerIndex, 1f);
-
         enemy.animator.SetBool(Settings.isAttacking, false);
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, false);
@@ -160,6 +108,7 @@ public class AnimateEnemy : MonoBehaviour
         enemy.animator.SetBool(Settings.isAttacking, false);
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, false);
+        enemy.animator.SetBool(Settings.isFrozen, false);
 
         if (HasParameter(enemy.animator, Settings.getHit))
         {
@@ -183,27 +132,39 @@ public class AnimateEnemy : MonoBehaviour
         switch (aimDirection)
         {
             case AimDirection.Up:
-                enemy.animator.SetBool(Settings.aimUp, true);
-                break;
-
-            case AimDirection.UpRight:
-                enemy.animator.SetBool(Settings.aimUpRight, true);
-                break;
-
-            case AimDirection.UpLeft:
-                enemy.animator.SetBool(Settings.aimUpLeft, true);
-                break;
-
-            case AimDirection.Right:
-                enemy.animator.SetBool(Settings.aimRight, true);
-                break;
-
-            case AimDirection.Left:
-                enemy.animator.SetBool(Settings.aimLeft, true);
+                //enemy.animator.SetBool(Settings.aimUp, true);
+                enemy.animator.SetFloat(Settings.axisX, 0f);
+                enemy.animator.SetFloat(Settings.axisY, 1f);
                 break;
 
             case AimDirection.Down:
-                enemy.animator.SetBool(Settings.aimDown, true);
+                //enemy.animator.SetBool(Settings.aimDown, true);
+                enemy.animator.SetFloat(Settings.axisX, 0f);
+                enemy.animator.SetFloat(Settings.axisY, -1f);
+                break;
+
+            case AimDirection.Right:
+                //enemy.animator.SetBool(Settings.aimRight, true);
+                enemy.animator.SetFloat(Settings.axisX, 1f);
+                enemy.animator.SetFloat(Settings.axisY, 0f);
+                break;
+
+            case AimDirection.Left:
+                //enemy.animator.SetBool(Settings.aimLeft, true);
+                enemy.animator.SetFloat(Settings.axisX, -1f);
+                enemy.animator.SetFloat(Settings.axisY, 0f);
+                break;
+
+            case AimDirection.UpRight:
+                //enemy.animator.SetBool(Settings.aimUpRight, true);
+                enemy.animator.SetFloat(Settings.axisX, 0.7f);
+                enemy.animator.SetFloat(Settings.axisY, 0.7f);
+                break;
+
+            case AimDirection.UpLeft:
+                //enemy.animator.SetBool(Settings.aimUpLeft, true);
+                enemy.animator.SetFloat(Settings.axisX, -0.7f);
+                enemy.animator.SetFloat(Settings.axisY, 0.7f);
                 break;
         }
     }

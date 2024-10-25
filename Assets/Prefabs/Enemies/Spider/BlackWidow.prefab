@@ -415,7 +415,7 @@ PrefabInstance:
     - target: {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: enemyDetails
       value: 
-      objectReference: {fileID: 11400000, guid: ed3cbae0dbf241a43bed7f179097efe3, type: 2}
+      objectReference: {fileID: 11400000, guid: 7003df06b6aeb2842b4af819308f3d97, type: 2}
     - target: {fileID: 7507656592768351270, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Layer
       value: 16
@@ -435,7 +435,7 @@ PrefabInstance:
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: ae63a6a42c42a6846814774f344b8dde, type: 2}
+      objectReference: {fileID: 9100000, guid: 8f74cb9940d083d40a98c66ad9f37211, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

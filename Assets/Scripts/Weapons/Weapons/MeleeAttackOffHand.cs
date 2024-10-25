@@ -107,10 +107,10 @@ public class MeleeAttackOffHand : MonoBehaviour
                                     player.playerControl.Unstealth();
                                 }
 
-                                if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
-                                {
-                                    enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
-                                }
+                                //if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
+                                //{
+                                //    enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                                //}
                             }
                             else
                             {
@@ -161,10 +161,10 @@ public class MeleeAttackOffHand : MonoBehaviour
                                     player.playerControl.Unstealth();
                                 }
 
-                                if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
-                                {
-                                    enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
-                                }
+                                //if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
+                                //{
+                                //    enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                                //}
                             }
                             else
                             {
@@ -274,7 +274,7 @@ public class MeleeAttackOffHand : MonoBehaviour
     {
         EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
 
-        if (enemyMovementAI.moveStatus == MoveStatus.Frost && enemy.health.currentHealth > 0)
+        if (enemyMovementAI.moveStatus == MoveStatus.Frozen && enemy.health.currentHealth > 0)
         {
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < 0.25f)
@@ -333,13 +333,13 @@ public class MeleeAttackOffHand : MonoBehaviour
     {
         EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
 
-        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frost
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frozen
             && enemy.health.currentHealth > 0)
         {
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.frostChance)
             {
-                StartCoroutine(FrostRoutine(enemy));
+                enemy.enemyAI.moveStatus = MoveStatus.Frozen;
             }
         }
     }
@@ -358,27 +358,10 @@ public class MeleeAttackOffHand : MonoBehaviour
             float randomStunNum = Random.Range(0f, 1f);
             if (randomStunNum > 0.6f)
             {
-                StartCoroutine(StunRoutine(enemy));
+                enemy.enemyAI.moveStatus = MoveStatus.Stun;
+                enemy.healthEvent.CallGetStunEvent();
             }
         }
-    }
-
-    IEnumerator FrostRoutine(Enemy enemy)
-    {
-        enemy.enemyAI.moveStatus = MoveStatus.Frost;
-
-        yield return new WaitForFixedUpdate();
-    }
-
-    IEnumerator StunRoutine(Enemy enemy)
-    {
-        enemy.enemyAI.moveStatus = MoveStatus.Stun;
-        enemy.healthEvent.CallGetStunEvent();
-        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
-        enemy.animator.SetBool(Settings.isStunned, true);
-        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
-
-        yield return new WaitForFixedUpdate();
     }
 
     public void ResetIsAttackingLeftHand()

@@ -431,7 +431,7 @@ PrefabInstance:
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 4c2c25cf4b1372d4f8676a75c0e5a8e1, type: 2}
+      objectReference: {fileID: 9100000, guid: c031cc5e71427fa49975100715b105ec, type: 2}
     m_RemovedComponents:
     - {fileID: 0}
     - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
@@ -464,16 +464,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb03f3375d30bc043a3101830105b309, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyDetails: {fileID: 11400000, guid: cc0c95f8681ab9a4a9c223f3ffc76192, type: 2}
+  enemyDetails: {fileID: 11400000, guid: d94ad4b57ac666845bf13d6f394737bf, type: 2}
   weaponShootPosition: {fileID: 3455516063969396250}
   layerMask:
     serializedVersion: 2
     m_Bits: 18432
-  OnReadyForDashAttack:
-    m_PersistentCalls:
-      m_Calls: []
+  debugText: {fileID: 0}
   moveStatus: 0
   moveSpeed: 0
   updateFrameNumber: 1
   enemyStartingSpeed: 0
   enemyPhase: 0
+  collideCircleRadius: 1

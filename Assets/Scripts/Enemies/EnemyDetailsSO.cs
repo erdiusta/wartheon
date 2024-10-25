@@ -101,6 +101,17 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check enemy's stun chance")]
     #endregion
     [Range(0f, 1f)] public float stunChance = 0.4f;
+    #region Tooltip
+    [Tooltip("Check if enemy has frost damage")]
+    #endregion
+    public bool hasFrostDamage = false;
+    #region Tooltip
+    [Tooltip("Check enemy's stun chance")]
+    #endregion
+    [Range(0f, 1f)] public float frostChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if enemy has curse damage")]
+    #endregion
     public bool hasCurseDamage = false;
     #region Tooltip
     [Tooltip("Check enemy's curse chance")]

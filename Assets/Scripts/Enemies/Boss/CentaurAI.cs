@@ -13,6 +13,8 @@ public class CentaurAI : EnemyAI
     Vector3 lockedPosition;
     bool chargeProcessStarted;
 
+    Coroutine centaurAttackMoveRoutine;
+
     protected override void Awake()
     {
         base.Awake();
@@ -42,7 +44,7 @@ public class CentaurAI : EnemyAI
         firingIntervalTimer -= Time.deltaTime;
 
         // Second check if enemy is on frost status
-        if (moveStatus == MoveStatus.Frost)
+        if (moveStatus == MoveStatus.Frozen)
         {
             enemy.animateEnemy.SetIdleAnimationParameters();
 
@@ -119,9 +121,9 @@ public class CentaurAI : EnemyAI
     {
         enemy.animateEnemy.ResetAnimatonParameters();
 
-        if (attackMoveEnemyRoutine == null)
+        if (centaurAttackMoveRoutine == null)
         {
-            attackMoveEnemyRoutine = StartCoroutine(AttackRoutine(CentaurPhase.StraightArrowShot));
+            centaurAttackMoveRoutine = StartCoroutine(AttackRoutine(CentaurPhase.StraightArrowShot));
         }
     }
 
@@ -129,9 +131,9 @@ public class CentaurAI : EnemyAI
     {
         enemy.animateEnemy.ResetAnimatonParameters();
 
-        if (attackMoveEnemyRoutine == null)
+        if (centaurAttackMoveRoutine == null)
         {
-            attackMoveEnemyRoutine = StartCoroutine(AttackRoutine(CentaurPhase.ChargeAndRetreat));
+            centaurAttackMoveRoutine = StartCoroutine(AttackRoutine(CentaurPhase.ChargeAndRetreat));
         }
     }
 
@@ -139,22 +141,23 @@ public class CentaurAI : EnemyAI
     {
         enemy.animateEnemy.ResetAnimatonParameters();
 
-        if (attackMoveEnemyRoutine == null)
+        if (centaurAttackMoveRoutine == null)
         {
-            attackMoveEnemyRoutine = StartCoroutine(AttackRoutine(CentaurPhase.SpreadArrowShot));
+            centaurAttackMoveRoutine = StartCoroutine(AttackRoutine(CentaurPhase.SpreadArrowShot));
         }
     }
 
     private void TransitionToNextPhase()
     {
-        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 6f)
+        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 4f)
         {
             // If player is too close to centaur, automatically next phase will be chargeAndRetreat
             currentCentaurPhase = CentaurPhase.ChargeAndRetreat;
             return;
         }
 
-        if (currentCentaurPhase == CentaurPhase.StraightArrowShot || currentCentaurPhase == CentaurPhase.ChargeAndRetreat || currentCentaurPhase == CentaurPhase.SpreadArrowShot)
+        if (currentCentaurPhase == CentaurPhase.StraightArrowShot || currentCentaurPhase == CentaurPhase.ChargeAndRetreat || 
+            currentCentaurPhase == CentaurPhase.SpreadArrowShot)
         {
             // If centaur made a move then next phase will be wait
             currentCentaurPhase = CentaurPhase.Wait;
@@ -170,9 +173,10 @@ public class CentaurAI : EnemyAI
     {
         if (centaurPhase == CentaurPhase.StraightArrowShot)
         {
+            enemyPhase = EnemyPhase.Chase;
+
             float fireTimer = 0f;
             float fireProjectileDuration = 5f;
-            enemy.animator.SetBool(Settings.isAttacking, true);
 
             yield return null;
 
@@ -186,6 +190,7 @@ public class CentaurAI : EnemyAI
                     if (firingDurationTimer >= 0)
                     {
                         firingDurationTimer -= Time.deltaTime;
+                        enemy.animateEnemy.SetAttackAnimationParameters();
                         FireWeapon();
                     }
                     else
@@ -208,6 +213,8 @@ public class CentaurAI : EnemyAI
         }
         else if (centaurPhase == CentaurPhase.ChargeAndRetreat)
         {
+            enemyPhase = EnemyPhase.Attack;
+
             // PREPARE PRECHARGE PHASE
             // Lock-on player position during the start of precharge
             if (!chargeProcessStarted)
@@ -219,9 +226,7 @@ public class CentaurAI : EnemyAI
 
             float prehargeDuration = 1.5f;
             float chargeTimer = 0f;
-            enemy.animateEnemy.SetAttackAnimationParameters();
-            enemy.animator.SetBool(Settings.isAttacking, false);
-            enemy.animator.SetTrigger(Settings.isPrecharging);
+            enemy.animator.SetFloat(Settings.motionType, 4f); // charge trigger to blend tree
             SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
 
             while (chargeTimer < prehargeDuration)
@@ -266,12 +271,15 @@ public class CentaurAI : EnemyAI
         }
         else if (centaurPhase == CentaurPhase.SpreadArrowShot)
         {
+            enemyPhase = EnemyPhase.Chase;
+
             // PREPARE PRECHARGE PHASE
-            float prechargeDuration = 1.3f;
+            float prechargeDuration = 1.15f;
             float chargeTimer = 0f;
-            enemy.animateEnemy.SetAttackAnimationParameters();
-            enemy.animator.SetBool(Settings.isAttacking, false);
-            enemy.animator.SetTrigger(Settings.isPrechargingProjectile);
+            enemy.animateEnemy.ResetAnimatonParameters();
+
+            // Set the motion type for the precharge phase
+            enemy.animator.SetFloat(Settings.motionType, 3f);
 
             yield return null;
 
@@ -309,6 +317,7 @@ public class CentaurAI : EnemyAI
                         // Reset timers
                         firingIntervalTimer = WeaponShootInterval();
                         firingDurationTimer = WeaponShootDuration();
+                        enemy.animateEnemy.SetIdleAnimationParameters();
                     }
                 }
 
@@ -319,7 +328,7 @@ public class CentaurAI : EnemyAI
         }
 
         chargeProcessStarted = false;
-        attackMoveEnemyRoutine = null;
+        centaurAttackMoveRoutine = null;
 
         TransitionToNextPhase();
     }
