@@ -20,7 +20,7 @@ MonoBehaviour:
   hasAttackMove: 1
   attackMoveTriggerDistance: 4
   attackMoveEfficentDistance: 5
-  attackMoveBaseCooldown: 3
+  attackMoveBaseCooldown: 2
   deflectionValue: 0.3
   enemyBehaviour: 2
   isEnemyBoss: 0

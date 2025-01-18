@@ -1672,7 +1672,7 @@ SortingGroup:
   m_Enabled: 1
   m_SortingLayerID: -257139871
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_SortAtRoot: 0
 --- !u!212 &7906384514217505790
 SpriteRenderer:
@@ -1865,7 +1865,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 500
+  m_Mass: 20
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 0

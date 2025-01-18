@@ -809,7 +809,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.5, y: 1.5}
+  m_Size: {x: 1.3333334, y: 1.3333334}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
@@ -2003,21 +2003,6 @@ MonoBehaviour:
   isColliding: 0
   hasMainHandWeapon: 0
   hasOffHandWeapon: 0
-  headerText: {fileID: 1327534878742678208}
-  levelText: {fileID: 4217109219800963605}
-  weaponClassText: {fileID: 6548570628190751777}
-  hitSpeedText: {fileID: 5466623245039738492}
-  weaponWieldText: {fileID: 4278279150316005192}
-  damageText: {fileID: 5583187624847777198}
-  baseHandlingText: {fileID: 8285028653649302252}
-  crHitChanceText: {fileID: 1120297322998924781}
-  crHitDamageText: {fileID: 8599754533099376720}
-  elementalBiasText: {fileID: 1542848741623726551}
-  elementText: {fileID: 2538524275839499570}
-  elementalForgeRateText: {fileID: 7310120390839882278}
-  masteryText1: {fileID: 5720273664598437358}
-  masteryText2: {fileID: 5783308404638829031}
-  masteryText3: {fileID: 673067937947236178}
 --- !u!61 &6777748807740845358
 BoxCollider2D:
   m_ObjectHideFlags: 0

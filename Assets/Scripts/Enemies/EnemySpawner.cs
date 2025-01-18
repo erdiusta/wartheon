@@ -98,7 +98,7 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     /// <summary>
     /// Spawn the enemies coroutine
     /// </summary>
-    IEnumerator SpawnEnemiesRoutine()
+    public IEnumerator SpawnEnemiesRoutine()
     {
         Grid grid = currentRoom.instantiatedRoom.grid;
 
@@ -117,7 +117,16 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
                     yield return null;
                 }
 
-                Vector3Int cellPosition = (Vector3Int)currentRoom.spawnPositionArray[Random.Range(0, currentRoom.spawnPositionArray.Length)];
+                Vector3Int cellPosition;
+
+                if (randomEnemyHelperClass.GetItem().isEnemyBoss)
+                {
+                    cellPosition = (Vector3Int)currentRoom.spawnPositionArray[0];
+                }
+                else
+                {
+                    cellPosition = (Vector3Int)currentRoom.spawnPositionArray[Random.Range(0, currentRoom.spawnPositionArray.Length)];
+                }
 
                 // Create Enemy - Get next enemy type to spawn 
                 CreateEnemy(randomEnemyHelperClass.GetItem(), grid.CellToWorld(cellPosition));
@@ -146,7 +155,7 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     /// <summary>
     /// Create an enemy in the specified position
     /// </summary>
-    private void CreateEnemy(EnemyDetailsSO enemyDetails, Vector3 position)
+    public void CreateEnemy(EnemyDetailsSO enemyDetails, Vector3 position)
     {
         // Keep track of the number of enemies spawned so far
         enemiesSpawnedSoFar++;
@@ -167,7 +176,10 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         if (currentRoom.roomNodeType.isBossRoom)
         {
             isBossInstantiated = true;
-            SetEnemyAsBoss(enemy.GetComponent<Enemy>());
+            if (enemy.GetComponent<Enemy>().enemyDetails.isEnemyBoss)
+            {
+                SetEnemyAsBoss(enemy.GetComponent<Enemy>());
+            }
         }
         else
         {

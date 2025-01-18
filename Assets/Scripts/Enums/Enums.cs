@@ -40,7 +40,8 @@ public enum ActiveItemType
     Hourglass,
     Compass,
     Potion,
-    Summoner
+    Summoner,
+    Incendiary
 }
 
 public enum PassiveItemCategory
@@ -253,7 +254,15 @@ public enum EnemyBehaviour
     Pursuit,
     AimAndShoot,
     PrepareAndDash,
-    Centaur
+    Centaur,
+    Treant
+}
+
+public enum EnemyType
+{
+    Normal,
+    Boss,
+    Minion
 }
 
 public enum EnemyPhase
@@ -272,6 +281,16 @@ public enum CentaurPhase
     StraightArrowShot,
     ChargeAndRetreat,
     SpreadArrowShot,
+}
+
+public enum TreantPhase
+{
+    None,
+    Wait,
+    StraightAttack,
+    RazorLeaf,
+    Summon,
+    Heal
 }
 
 public enum BookPage

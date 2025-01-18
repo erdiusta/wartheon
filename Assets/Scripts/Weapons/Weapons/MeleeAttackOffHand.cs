@@ -87,8 +87,11 @@ public class MeleeAttackOffHand : MonoBehaviour
 
                             if (player.currentWeaponHandlingValue * 100 - enemy.enemyDetails.deflectionValue * 100 > Random.Range(0, 100))
                             {
-                                CheckSuddenDeathStatus(enemy);
-                                CheckShatterStatus(enemy);
+                                if (!enemy.enemyDetails.isEnemyBoss)
+                                {
+                                    CheckSuddenDeathStatus(enemy);
+                                    CheckShatterStatus(enemy);
+                                }
 
                                 if (enemyHealth.suddenDeathHappened) return;
 
@@ -97,10 +100,13 @@ public class MeleeAttackOffHand : MonoBehaviour
 
                                 SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
-                                CheckAcidStatus(enemy);
-                                CheckFrostStatus(enemy);
-                                CheckStunStatus(enemy);
-                                CheckPoisonStatus(enemy);
+                                if (!enemy.enemyDetails.isEnemyBoss)
+                                {
+                                    CheckAcidStatus(enemy);
+                                    CheckFrostStatus(enemy);
+                                    CheckStunStatus(enemy);
+                                    CheckPoisonStatus(enemy);
+                                }
 
                                 if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
                                 {
@@ -141,8 +147,11 @@ public class MeleeAttackOffHand : MonoBehaviour
 
                             if (player.currentWeaponHandlingValue * 100 - enemy.enemyDetails.deflectionValue * 100 > Random.Range(0, 100))
                             {
-                                CheckSuddenDeathStatus(enemy);
-                                CheckShatterStatus(enemy);
+                                if (!enemy.enemyDetails.isEnemyBoss)
+                                {
+                                    CheckSuddenDeathStatus(enemy);
+                                    CheckShatterStatus(enemy);
+                                }
 
                                 if (enemyHealth.suddenDeathHappened) return;
 
@@ -151,10 +160,13 @@ public class MeleeAttackOffHand : MonoBehaviour
 
                                 SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
-                                CheckAcidStatus(enemy);
-                                CheckFrostStatus(enemy);
-                                CheckStunStatus(enemy);
-                                CheckPoisonStatus(enemy);
+                                if (!enemy.enemyDetails.isEnemyBoss)
+                                {
+                                    CheckAcidStatus(enemy);
+                                    CheckFrostStatus(enemy);
+                                    CheckStunStatus(enemy);
+                                    CheckPoisonStatus(enemy);
+                                }
 
                                 if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
                                 {

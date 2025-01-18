@@ -152,10 +152,10 @@ TextureImporter:
       name: black_widow_attack_down_0
       rect:
         serializedVersion: 2
-        x: 16
-        y: 19
-        width: 23
-        height: 20
+        x: 9
+        y: 13
+        width: 37
+        height: 33
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -173,10 +173,10 @@ TextureImporter:
       name: black_widow_attack_down_1
       rect:
         serializedVersion: 2
-        x: 68
-        y: 19
-        width: 23
-        height: 21
+        x: 61
+        y: 13
+        width: 37
+        height: 33
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,10 +194,10 @@ TextureImporter:
       name: black_widow_attack_down_2
       rect:
         serializedVersion: 2
-        x: 120
-        y: 20
-        width: 23
-        height: 21
+        x: 113
+        y: 13
+        width: 37
+        height: 33
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,10 +215,10 @@ TextureImporter:
       name: black_widow_attack_down_3
       rect:
         serializedVersion: 2
-        x: 172
-        y: 20
-        width: 23
-        height: 22
+        x: 165
+        y: 13
+        width: 37
+        height: 33
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -236,10 +236,10 @@ TextureImporter:
       name: black_widow_attack_down_4
       rect:
         serializedVersion: 2
-        x: 224
-        y: 20
-        width: 23
-        height: 23
+        x: 217
+        y: 13
+        width: 37
+        height: 33
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -257,10 +257,10 @@ TextureImporter:
       name: black_widow_attack_down_5
       rect:
         serializedVersion: 2
-        x: 276
-        y: 17
-        width: 23
-        height: 20
+        x: 269
+        y: 13
+        width: 37
+        height: 33
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -270,27 +270,6 @@ TextureImporter:
       bones: []
       spriteID: 9312d800ad0993544a35fd89ab244af9
       internalID: 356552337
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: black_widow_attack_down_6
-      rect:
-        serializedVersion: 2
-        x: 328
-        y: 15
-        width: 23
-        height: 21
-      alignment: 9
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c9847cd0b07f6cc4d902d25db0b221ec
-      internalID: -1222048155
       vertices: []
       indices: 
       edges: []

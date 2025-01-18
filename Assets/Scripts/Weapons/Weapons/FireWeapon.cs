@@ -80,7 +80,7 @@ public class FireWeapon : MonoBehaviour
                 if (IsWeaponReadyToFire())
                 {
                     FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
-                        fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase);
+                        fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase, fireWeaponEventArgs.treantPhase);
                     ResetCooldownTimer(fireWeaponEventArgs.centaurPhase);
                     ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
                 }
@@ -151,7 +151,7 @@ public class FireWeapon : MonoBehaviour
     /// Set up ammo using an ammo gameObject and component from the object pool.
     /// </summary>
     private void FireProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false, 
-        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None)
+        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None)
     {
         if (!isActiveItem)
         {
@@ -161,7 +161,7 @@ public class FireWeapon : MonoBehaviour
             {
                 // Fire projectile routine
                 StartCoroutine(FireProjectileRoutine(currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, headShotHappened, 
-                    false, isPenetrationArrow, centaurPhase));
+                    false, isPenetrationArrow, centaurPhase, treantPhase));
             }
         }
         else
@@ -189,17 +189,21 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     IEnumerator  FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, 
         Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, 
-        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None)
+        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None)
     {      
         int projectileCounter = 0;
 
         int projectilePerShot = 1;
 
-        // CENTAUR
-
+        // CENTAUR - SPREAD ARROW SHOT
         if (centaurPhase == CentaurPhase.SpreadArrowShot)
         {
             projectilePerShot = 7;
+        }
+        // TREANT - RAZOR LEAF
+        else if (treantPhase == TreantPhase.RazorLeaf)
+        {
+            projectilePerShot = 12;
         }
         else
         {
@@ -212,7 +216,7 @@ public class FireWeapon : MonoBehaviour
 
         if (projectilePerShot > 1)
         {
-            if (centaurPhase == CentaurPhase.SpreadArrowShot)
+            if (centaurPhase == CentaurPhase.SpreadArrowShot || treantPhase == TreantPhase.RazorLeaf)
             {
                 projectileSpawnInterval = 0;
             }
@@ -250,6 +254,10 @@ public class FireWeapon : MonoBehaviour
             {
                 projectilePrefab = currentProjectile.projectilePrefabArray[1];
             }
+            else if (treantPhase == TreantPhase.RazorLeaf)
+            {
+                projectilePrefab = currentProjectile.projectilePrefabArray[0];
+            }
             else
             {
                 projectilePrefab = currentProjectile.projectilePrefabArray[0];
@@ -269,7 +277,7 @@ public class FireWeapon : MonoBehaviour
 
             // Initialize projectile
             projectile.InitializeProjectile(headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, false, false, 
-                isPenetrationArrow, projectileCounter - 1, projectilePerShot, centaurPhase);
+                isPenetrationArrow, projectileCounter - 1, projectilePerShot, centaurPhase, treantPhase);
 
             // Wait for projectile per shot timegap
             yield return new WaitForSeconds(projectileSpawnInterval);

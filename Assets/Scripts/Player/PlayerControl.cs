@@ -1473,7 +1473,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public void DropProcess(DropType dropType, IReceivable receivable = null, PassiveItemSlotName passiveItemSlotName = PassiveItemSlotName.None)
+    public void DropProcess(DropType dropType, IReceivable receivable = null)
     {
         if (dropType == DropType.ActiveItem)
         {
@@ -1540,11 +1540,11 @@ public class PlayerControl : MonoBehaviour
             ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
          
             // Update stat values
+            player.setPassiveItemEvent.CallRemovePassiveItem(passiveItem.passiveItemDetails.passiveItemSlotName);
+
             player.UpdateDamageValues();
             player.UpdateWeaponHandlingAndCriticalValues();
             player.UpdateEvasivenessValue();
-
-            player.setPassiveItemEvent.CallRemovePassiveItem(passiveItemSlotName);
 
             ChestItem.toBeDroppedChestItem.transform.SetParent(null);
             ChestItem.toBeDroppedChestItem.isPickedUp = false;

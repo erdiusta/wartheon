@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Centaur
   enemyPrefab: {fileID: 7183228443647751644, guid: e942b4fde2fcdae43bc95bb86569cd58, type: 3}
-  enemyRace: 0
+  enemyType: 0
   movementDetails: {fileID: 11400000, guid: f96faad51296e144eadcd7706aa0f43e, type: 2}
   experiencePoint: 30
   chaseDistance: 50
@@ -26,6 +26,7 @@ MonoBehaviour:
   enemyBehaviour: 3
   isEnemyBoss: 1
   hasAnimator: 0
+  enemyMinionDetails: {fileID: 0}
   enemyArmorValue: 2
   hasShield: 0
   deflectChance: 0
@@ -35,6 +36,8 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
   hasCurseDamage: 0
   curseChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -50,7 +53,7 @@ MonoBehaviour:
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
   poisonSoundEffect: {fileID: 0}
-  enemyWeapon: {fileID: 11400000, guid: 771bc99da394ec141a442bbedeb56f53, type: 2}
+  enemyWeapon: {fileID: 11400000, guid: 62753aefdf238ba45a6767106d21b164, type: 2}
   firingIntervalMin: 0.8
   firingIntervalMax: 1.5
   firingDurationMin: 1

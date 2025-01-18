@@ -70,9 +70,9 @@ MonoBehaviour:
   applyScreenShake: 1
   shakeIntensity: 5
   shakeDuration: 1.5
-  selectedActiveItem: {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
+  selectedActiveItem: {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
   activeItemsList:
-  - {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
+  - {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
   passiveItemsList: []
   startingWeapon: {fileID: 11400000, guid: fab928814406b1746a526ab91e63b525, type: 2}
   mainHandAnimatorController: {fileID: 9100000, guid: e71e7a5c05f68f9479820d6884082d69, type: 2}

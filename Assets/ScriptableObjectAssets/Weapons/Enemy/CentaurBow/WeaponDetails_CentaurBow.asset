@@ -29,13 +29,19 @@ MonoBehaviour:
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
   weaponRightShootPosition: {x: 1.8125, y: 2.1875, z: 0}
   weaponLeftShootPosition: {x: -1.91875, y: 2.1562, z: 0}
   weaponUpShootPosition: {x: 1.8125, y: 2.1875, z: 0}
   weaponDownShootPosition: {x: 1.8125, y: 2.1875, z: 0}
-  weaponCurrentProjectile: {fileID: 11400000, guid: f9fb64df6ca344f4888dbe48b062e22f, type: 2}
+  weaponCurrentProjectile: {fileID: 11400000, guid: 8f8fbbeb32d694143b7ed8b0b992a80e, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 9e94351610df36548be272034fa0be42, type: 2}
   weaponImpactSoundEffect: {fileID: 0}

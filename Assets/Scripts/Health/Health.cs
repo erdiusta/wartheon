@@ -549,6 +549,15 @@ public class Health : MonoBehaviour
             currentHealth = totalHealth;
         }
 
+        if (enemy != null)
+        {
+            // Set health bar as the percentage of health remaining
+            if (GameManager.Instance.healthBarContainer.activeSelf)
+            {
+                GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)startingHealth, enemy);
+            }
+        }
+
         CallHealthEvent(0);
         StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
     }

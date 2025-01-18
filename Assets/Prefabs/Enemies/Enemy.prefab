@@ -46667,7 +46667,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 400
+  m_Mass: 20
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 0
@@ -46809,14 +46809,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 18432
   debugText: {fileID: 7294595444096721567}
-  OnReadyForDashAttack:
-    m_PersistentCalls:
-      m_Calls: []
   moveStatus: 0
   moveSpeed: 0
   updateFrameNumber: 1
   enemyStartingSpeed: 0
   enemyPhase: 0
+  isAttacking: 0
+  isDashing: 0
+  collideCircleRadius: 1
 --- !u!114 &2505844984895068139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46865,10 +46865,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c1d5bd1b3b135e4591c47b8663c4cdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseLayerIndex: 0
-  attackLayerIndex: 0
-  getHitLayerIndex: 0
-  deathLayerIndex: 0
 --- !u!114 &4963464358191190218
 MonoBehaviour:
   m_ObjectHideFlags: 0

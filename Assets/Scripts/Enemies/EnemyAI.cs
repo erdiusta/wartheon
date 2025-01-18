@@ -41,13 +41,13 @@ public class EnemyAI : MonoBehaviour
     protected Stack<Vector3> patrolSteps = new Stack<Vector3>();
     protected float currentEnemyChasePathRebuildCooldown;
     protected float currentEnemyPatrolPathRebuildCooldown;
+    protected float dashTimer;
+    protected WaitForFixedUpdate waitForFixedUpdate;
+    protected float attackMoveTimer;
 
     int currentPatrolIndex = 0;
     Vector3 referencePosition;
     GameObject selectedTargetEnemy;
-    float attackMoveTimer;
-    float dashTimer;
-    WaitForFixedUpdate waitForFixedUpdate;
     Vector3 knockbackVector;
     float knockbackForce;
     float knockbackTimeWeight;
@@ -57,8 +57,8 @@ public class EnemyAI : MonoBehaviour
     // PHYSICS
     [HideInInspector] public bool isAttacking;
     [HideInInspector] public bool isDashing;
-    bool isTargetLocked;
-    Vector3 lockedTargetPosition;
+    protected bool isTargetLocked;
+    protected Vector3 lockedTargetPosition;
 
     // FIRING
     protected float firingIntervalTimer;
@@ -191,7 +191,7 @@ public class EnemyAI : MonoBehaviour
                 {
                     case EnemyPhase.Patrol:
 
-                        debugText.text = "PATROL";
+                        //debugText.text = "PATROL";
 
                         // Reset animation and dashing flag
                         enemy.animateEnemy.ResetAnimatonParameters();
@@ -210,7 +210,7 @@ public class EnemyAI : MonoBehaviour
                         // Reset animation and dashing flag
                         enemy.animator.SetBool(Settings.isAttacking, false);
 
-                        debugText.text = "CHASE";
+                        //debugText.text = "CHASE";
 
                         ClearPatrolPath();
                         Chase();
@@ -229,7 +229,7 @@ public class EnemyAI : MonoBehaviour
 
                     case EnemyPhase.Attack:
 
-                        debugText.text = "ATTACK";
+                        //debugText.text = "ATTACK";
 
                         if (enemy.enemyDetails.enemyBehaviour != EnemyBehaviour.AimAndShoot)
                         {
@@ -545,7 +545,7 @@ public class EnemyAI : MonoBehaviour
         // Build a path for the enemy to move on
         movementSteps = AStar.BuildPath(currentRoom, enemyGridPosition, playerGridPosition);
 
-        // Take off first step on path - this is the grid square the enemy is already on
+        // Take off first step on path and the last step (which is the tile player is on) to stop a tile away
         if (movementSteps != null)
         {
             movementSteps.Pop();
@@ -617,7 +617,7 @@ public class EnemyAI : MonoBehaviour
             enemy.animateEnemy.SetMovementAnimationParameters();
 
             // while not very close continue to move - when close move onto the next step
-            while (Vector3.Distance(nextPosition, transform.position) > 0.2f)
+            while (Vector3.Distance(nextPosition, transform.position) > 0.3f)
             {
                 Vector2 unitVector = Vector3.Normalize(nextPosition - transform.position);
 
@@ -734,7 +734,7 @@ public class EnemyAI : MonoBehaviour
     /// <summary>   
     /// Fire the weapon
     /// </summary>
-    protected void FireWeapon(CentaurPhase centaurPhase = CentaurPhase.None)
+    protected void FireWeapon(CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
@@ -755,7 +755,7 @@ public class EnemyAI : MonoBehaviour
                 if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
 
                 enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false,
-                    false, false, centaurPhase);
+                    false, false, centaurPhase, treantPhase);
             }
         }
     }
@@ -953,9 +953,10 @@ public class EnemyAI : MonoBehaviour
 
     public IEnumerator KnockbackRoutine()
     {
+        enemy.rb2D.velocity = CalculateKnockback();
+
         yield return waitForFixedUpdate;
 
-        enemy.rb2D.velocity = CalculateKnockback();
     }
 
     public void TriggerKnockback(Vector3 vector)

@@ -11989,9 +11989,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.056410257
-    width: 1
-    height: 0.88846153
+    y: 0
+    width: 0
+    height: 0
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -15608,6 +15608,9 @@ MonoBehaviour:
     prefab: {fileID: 3547249067481803369, guid: 2af4e44397d18874b9b14aa688f558b0, type: 3}
     componentType: IFireable
   - poolSize: 50
+    prefab: {fileID: 3547249067481803369, guid: ac689bb6916bcc549b544d503b785451, type: 3}
+    componentType: IFireable
+  - poolSize: 50
     prefab: {fileID: 3547249067481803369, guid: ea4b21319a271c2418909126d683f274, type: 3}
     componentType: IFireable
   - poolSize: 30
@@ -18088,7 +18091,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -19263,7 +19266,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -10.196228}
+  m_SizeDelta: {x: 0, y: -13.842163}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &819143053
 MonoBehaviour:
@@ -28216,7 +28219,7 @@ MonoBehaviour:
   m_text: Bosses
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d9190846f589a2b45bee7e0a202a2f87, type: 2}
-  m_sharedMaterial: {fileID: 6030368061921504907, guid: 23d878bd39bb1414087aecf71bce91df, type: 2}
+  m_sharedMaterial: {fileID: -3126052078805161472, guid: d9190846f589a2b45bee7e0a202a2f87, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

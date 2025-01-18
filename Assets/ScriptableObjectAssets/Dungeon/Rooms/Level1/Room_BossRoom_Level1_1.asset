@@ -55,6 +55,10 @@ MonoBehaviour:
     isUnavailable: 0
   spawnPositionArray:
   - {x: 2, y: 12}
+  - {x: -5, y: 16}
+  - {x: 9, y: 16}
+  - {x: -5, y: 7}
+  - {x: 9, y: 12}
   enemiesByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     spawnableObjectRatioList:

@@ -59,9 +59,9 @@ MonoBehaviour:
   - {x: 11, y: 3}
   - {x: 11, y: 9}
   - {x: 11, y: 5}
-  - {x: 11, y: 15}
+  - {x: 11, y: 13}
   - {x: 3, y: 16}
-  - {x: -5, y: 15}
+  - {x: -4, y: 15}
   - {x: -5, y: 9}
   enemiesByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}

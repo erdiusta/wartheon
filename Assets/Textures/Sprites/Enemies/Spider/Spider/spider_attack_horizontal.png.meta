@@ -152,9 +152,9 @@ TextureImporter:
       name: spider_attack_horizontal_0
       rect:
         serializedVersion: 2
-        x: 17
+        x: 10
         y: 17
-        width: 22
+        width: 37
         height: 21
       alignment: 9
       pivot: {x: 0.5, y: 0}
@@ -173,9 +173,9 @@ TextureImporter:
       name: spider_attack_horizontal_1
       rect:
         serializedVersion: 2
-        x: 69
+        x: 62
         y: 17
-        width: 23
+        width: 37
         height: 21
       alignment: 9
       pivot: {x: 0.5, y: 0}
@@ -194,10 +194,10 @@ TextureImporter:
       name: spider_attack_horizontal_2
       rect:
         serializedVersion: 2
-        x: 122
+        x: 114
         y: 17
-        width: 23
-        height: 20
+        width: 37
+        height: 21
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,10 +215,10 @@ TextureImporter:
       name: spider_attack_horizontal_3
       rect:
         serializedVersion: 2
-        x: 174
+        x: 166
         y: 17
-        width: 25
-        height: 18
+        width: 37
+        height: 21
       alignment: 9
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -236,9 +236,9 @@ TextureImporter:
       name: spider_attack_horizontal_4
       rect:
         serializedVersion: 2
-        x: 221
+        x: 215
         y: 17
-        width: 23
+        width: 37
         height: 21
       alignment: 9
       pivot: {x: 0.5, y: 0}
@@ -257,9 +257,9 @@ TextureImporter:
       name: spider_attack_horizontal_5
       rect:
         serializedVersion: 2
-        x: 271
+        x: 270
         y: 17
-        width: 24
+        width: 37
         height: 21
       alignment: 9
       pivot: {x: 0.5, y: 0}

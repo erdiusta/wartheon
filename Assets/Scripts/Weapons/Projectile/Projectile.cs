@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Linq;
+using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -54,7 +54,7 @@ public class Projectile : MonoBehaviour, IFireable
 
         if (activeItemDetails != null)
         {
-            if (activeItemDetails.activeItemType == ActiveItemType.Bomb)
+            if (activeItemDetails.activeItemType == ActiveItemType.Bomb || activeItemDetails.activeItemType == ActiveItemType.Incendiary)
             {
                 countDown = activeItemDetails.countDown;
                 blastRadius = activeItemDetails.blastRadius;
@@ -104,7 +104,7 @@ public class Projectile : MonoBehaviour, IFireable
         if (activeItemDetails != null)
         {
             // Start countdown until explosion if this is an active item bomb
-            if (activeItemDetails.activeItemType == ActiveItemType.Bomb)
+            if (activeItemDetails.activeItemType == ActiveItemType.Bomb || activeItemDetails.activeItemType == ActiveItemType.Incendiary)
             {
                 countDown -= Time.deltaTime;
 
@@ -139,7 +139,8 @@ public class Projectile : MonoBehaviour, IFireable
                     {
                         DisableProjectile();
                     }
-                    else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb && activeItemDetails.activeItemType != ActiveItemType.Dummy)
+                    else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb && activeItemDetails.activeItemType != ActiveItemType.Incendiary 
+                        && activeItemDetails.activeItemType != ActiveItemType.Dummy)
                     {
                         DisableProjectile();
                     }
@@ -527,7 +528,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
         float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false, bool fallingFromSkies = false,
-        bool isPenetrationArrow = false, int projectileCounter = 0, int totalProjectiles = 0,CentaurPhase centaurPhase = CentaurPhase.None)
+        bool isPenetrationArrow = false, int projectileCounter = 0, int projectilesPerShot = 0,CentaurPhase centaurPhase = CentaurPhase.None,
+        TreantPhase treantPhase = TreantPhase.None)
     {
         #region Projectile
 
@@ -543,7 +545,7 @@ public class Projectile : MonoBehaviour, IFireable
         isColliding = false;
 
         // Set fire direction
-        SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, totalProjectiles, centaurPhase);
+        SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, projectilesPerShot, centaurPhase, treantPhase);
 
         // Set projectile sprite
         spriteRenderer.sprite = projectileDetails.projectileSprite;
@@ -686,7 +688,7 @@ public class Projectile : MonoBehaviour, IFireable
     /// Set projectile fire direction and angle based on the input angle and direction adjusted by the
     /// random spread - PROJECTILE
     private void SetFireDirection(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
-        int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None)
+        int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None)
     {
         float projectileSpreadModifier;
 
@@ -712,6 +714,34 @@ public class Projectile : MonoBehaviour, IFireable
 
             // Set the fire direction angle based on the projectile index
             fireDirectionAngle = startAngle + (angleIncrement * projectileCounter);
+        }
+        else if (treantPhase == TreantPhase.RazorLeaf)
+        {
+            // Define the total angle spread (e.g., 60 degrees spread)
+            float totalSpreadAngle = 60f;
+
+            // Calculate the total weight for the decreasing intervals
+            float weightSum = 0f;
+            for (int i = 0; i < totalProjectiles; i++)
+            {
+                weightSum += (float)Math.Pow(2, -i); // Exponential decrease
+            }
+
+            // Determine the incremental angle for each projectile
+            float cumulativeAngle = 0f;
+            for (int i = 0; i < totalProjectiles; i++)
+            {
+                float weight = (float)Math.Pow(2, -i) / weightSum; // Normalize weight
+                float angle = totalSpreadAngle * weight;
+
+                if (i == projectileCounter)
+                {
+                    fireDirectionAngle = aimAngle - (totalSpreadAngle / 2) + cumulativeAngle + (angle / 2);
+                    break;
+                }
+
+                cumulativeAngle += angle;
+            }
         }
         else
         {
@@ -1025,6 +1055,8 @@ public class Projectile : MonoBehaviour, IFireable
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < projectileDetails.stunChance)
                 {
+                    player.playerControl.isPlayerRolling = false;
+
                     player.moveStatus = MoveStatus.Stun;
                     player.healthEvent.CallGetStunEvent();
                     player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
@@ -1039,6 +1071,8 @@ public class Projectile : MonoBehaviour, IFireable
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < activeItemDetails.stunChance)
                 {
+                    player.playerControl.isPlayerRolling = false;
+
                     player.moveStatus = MoveStatus.Stun;
                     player.healthEvent.CallGetStunEvent();
                     player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
@@ -1093,6 +1127,8 @@ public class Projectile : MonoBehaviour, IFireable
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < projectileDetails.frostChance)
                 {
+                    player.playerControl.isPlayerRolling = false;
+
                     player.moveStatus = MoveStatus.Frozen;
                     player.healthEvent.CallGetFrostEvent();
                     player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
@@ -1108,6 +1144,8 @@ public class Projectile : MonoBehaviour, IFireable
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < activeItemDetails.frostChance)
                 {
+                    player.playerControl.isPlayerRolling = false;
+
                     player.moveStatus = MoveStatus.Stun;
                     player.healthEvent.CallGetFrostEvent();
                     player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
@@ -1242,9 +1280,23 @@ public class Projectile : MonoBehaviour, IFireable
         animator.SetTrigger("burst");
         SoundEffectManager.Instance.PlaySoundEffect(activeItemDetails.activeItemImpactSoundEffect);
         Explosion();
-        yield return new WaitForSeconds(0.5f);
 
-        DisableProjectile();
+        if (activeItemDetails.activeItemType != ActiveItemType.Incendiary)
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            DisableProjectile();
+        }
+        else
+        {
+            BlastArea blastArea = transform.GetChild(1).GetComponentInChildren<BlastArea>();
+            blastArea.SetBlastAreaTiling(); // Adjust the scale of the blast area
+            blastArea.TriggerBurnAnimation(); // Trigger burn animation on separate object
+
+            yield return new WaitForSeconds(5f);
+
+            DisableProjectile();
+        }
     }
 
     /// <summary>

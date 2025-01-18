@@ -71,9 +71,8 @@ public class DealContactDamage : MonoBehaviour
 
                 Player player = collision.GetComponent<Player>();
 
-                if (enemy.enemyAI.enemyPhase == EnemyPhase.Attack)
+                if (enemy.enemyAI.isAttacking)
                 {
-
                     // Hit successful
                     if (100 - player.currentDeflectionValue * 100 > Random.Range(0, 100))
                     {
@@ -220,6 +219,8 @@ public class DealContactDamage : MonoBehaviour
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < enemy.enemyDetails.stunChance)
             {
+                player.playerControl.isPlayerRolling = false;
+
                 player.moveStatus = MoveStatus.Stun;
                 player.healthEvent.CallGetStunEvent();
             }
@@ -236,6 +237,8 @@ public class DealContactDamage : MonoBehaviour
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < enemy.enemyDetails.frostChance)
             {
+                player.playerControl.isPlayerRolling = false;
+
                 player.moveStatus = MoveStatus.Frozen;
                 player.healthEvent.CallGetFrostEvent();
             }

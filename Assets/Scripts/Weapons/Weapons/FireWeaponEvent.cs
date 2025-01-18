@@ -7,11 +7,12 @@ public class FireWeaponEvent : MonoBehaviour
     public event Action<FireWeaponEvent, FireWeaponEventArgs> OnFireWeapon;
 
     public void CallFireWeaponEvent(bool fire, bool firePreviousFrame,AimDirection aimDirection, float aimAngle, float weaponAimAngle, 
-        Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None)
+        Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None,
+        TreantPhase treantPhase = TreantPhase.None)
     {
         OnFireWeapon?.Invoke(this, new FireWeaponEventArgs { fire = fire, firePreviousFrame = firePreviousFrame, aimDirection = aimDirection, aimAngle = aimAngle, 
             weaponAimAngle = weaponAimAngle, weaponAimDirectionVector = weaponAimDirectionVector, headShotHappened = headShotHappened, isActiveItem = isActiveItem,
-            isPenetrationArrow = isPenetrationArrow, centaurPhase = centaurPhase});
+            isPenetrationArrow = isPenetrationArrow, centaurPhase = centaurPhase, treantPhase = treantPhase});
     }
 }
 
@@ -27,4 +28,5 @@ public class FireWeaponEventArgs : EventArgs
     public bool isActiveItem;
     public bool isPenetrationArrow;
     public CentaurPhase centaurPhase;
+    public TreantPhase treantPhase;
 }

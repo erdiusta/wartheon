@@ -31,6 +31,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     WeaponDetailsSO toBeDroppedMainWeaponDetails;
     WeaponDetailsSO toBeDroppedOffWeaponDetails;
     WeaponDetailsSO weaponDetails;
+    PassiveItemDetailsSO toBeDroppedPassiveItemDetails;
     PassiveItemDetailsSO passiveItemDetails;
     ActiveItemDetailsSO activeItemDetails;
     int ammoPercent;
@@ -172,7 +173,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                         }
                                         else
                                         {
-                                            if (weaponDetails.weaponClass == WeaponClass.Shield && player.activeWeapon.GetCurrentOffHandWeapon() != null)
+                                            if (weaponDetails.weaponClass == WeaponClass.Shield && player.activeWeapon?.GetCurrentOffHandWeapon() != null)
                                             {
                                                 toBeDroppedOffWeaponDetails = weaponDetails;
                                                 player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon());
@@ -232,6 +233,63 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                 {
                                     if (!isPickedUp)
                                     {
+                                        // Drop process
+                                        switch (passiveItemDetails.passiveItemSlotName)
+                                        {
+                                            case PassiveItemSlotName.Head:
+                                                if (player.selectedPassiveItem.GetCurrentHeadPassiveItem() != null)
+                                                {
+                                                    player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentHeadPassiveItem());
+                                                }
+                                                break;
+                                            case PassiveItemSlotName.Chest:
+                                                if (player.selectedPassiveItem.GetCurrentChestPassiveItem() != null)
+                                                {
+                                                    player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentChestPassiveItem());
+                                                }
+                                                break;
+                                            case PassiveItemSlotName.Neck:
+                                                if (player.selectedPassiveItem.GetCurrentNeckPassiveItem() != null)
+                                                {
+                                                    player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentNeckPassiveItem());
+                                                }
+                                                break;
+                                            case PassiveItemSlotName.Finger:
+                                                if (player.selectedPassiveItem.GetCurrentFingerPassiveItem() != null)
+                                                {
+                                                    player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentFingerPassiveItem());
+                                                }
+                                                break;
+                                            case PassiveItemSlotName.Back:
+                                                if (player.selectedPassiveItem.GetCurrentBackPassiveItem() != null)
+                                                {
+                                                    player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentBackPassiveItem());
+                                                }
+                                                break;
+                                            case PassiveItemSlotName.Waist:
+                                                if (player.selectedPassiveItem.GetCurrentWaistPassiveItem() != null)
+                                                {
+                                                    player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentWaistPassiveItem());
+                                                }
+                                                break;
+                                            case PassiveItemSlotName.Arm:
+                                                if (player.selectedPassiveItem.GetCurrentArmPassiveItem() != null)
+                                                {
+                                                    player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentArmPassiveItem());
+                                                }
+                                                break;
+                                            case PassiveItemSlotName.Leg:
+                                                if (player.selectedPassiveItem.GetCurrentLegPassiveItem() != null)
+                                                {
+                                                    player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentLegPassiveItem());
+                                                }
+                                                break;
+                                            default:
+                                                break;
+                                        }
+
+                                        // Pick up process
+                                        isColliding = false;
                                         CollectPassiveItem(player);
                                     }
                                 }
@@ -349,11 +407,79 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         }
                         else if (hasActiveDrop)
                         {
-                            CollectActiveItem(player, this);
-                            chest.chestState = ChestState.empty;
+                            // Drop process
+                            if (player.selectedActiveItem.GetCurrentActiveItem() != null && !isPickedUp)
+                            {
+                                player.playerControl.DropProcess(DropType.ActiveItem);
+                            }
+
+                            // Pick up process
+                            if (player.selectedActiveItem.GetCurrentActiveItem() == null)
+                            {
+                                isColliding = false;
+                                CollectActiveItem(player, this);
+                                chest.chestState = ChestState.empty;
+                            }
                         }
                         else if (hasSecondaryPassiveDrop)
                         {
+                            // Drop process
+                            switch (passiveItemDetails.passiveItemSlotName)
+                            {
+                                case PassiveItemSlotName.Head:
+                                    if (player.selectedPassiveItem.GetCurrentHeadPassiveItem() != null)
+                                    {
+                                        player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentHeadPassiveItem());
+                                    }
+                                    break;
+                                case PassiveItemSlotName.Chest:
+                                    if (player.selectedPassiveItem.GetCurrentChestPassiveItem() != null)
+                                    {
+                                        player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentChestPassiveItem());
+                                    }
+                                    break;
+                                case PassiveItemSlotName.Neck:
+                                    if (player.selectedPassiveItem.GetCurrentNeckPassiveItem() != null)
+                                    {
+                                        player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentNeckPassiveItem());
+                                    }
+                                    break;
+                                case PassiveItemSlotName.Finger:
+                                    if (player.selectedPassiveItem.GetCurrentFingerPassiveItem() != null)
+                                    {
+                                        player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentFingerPassiveItem());
+                                    }
+                                    break;
+                                case PassiveItemSlotName.Back:
+                                    if (player.selectedPassiveItem.GetCurrentBackPassiveItem() != null)
+                                    {
+                                        player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentBackPassiveItem());
+                                    }
+                                    break;
+                                case PassiveItemSlotName.Waist:
+                                    if (player.selectedPassiveItem.GetCurrentWaistPassiveItem() != null)
+                                    {
+                                        player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentWaistPassiveItem());
+                                    }
+                                    break;
+                                case PassiveItemSlotName.Arm:
+                                    if (player.selectedPassiveItem.GetCurrentArmPassiveItem() != null)
+                                    {
+                                        player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentArmPassiveItem());
+                                    }
+                                    break;
+                                case PassiveItemSlotName.Leg:
+                                    if (player.selectedPassiveItem.GetCurrentLegPassiveItem() != null)
+                                    {
+                                        player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentLegPassiveItem());
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            // Pick up process
+                            isColliding = false;
                             CollectPassiveItem(player);
                             chest.chestState = ChestState.empty;
                         }
@@ -401,15 +527,16 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (hasActiveDrop)
         {
             ActiveItem activeItem = (ActiveItem)receivable;
-            this.activeItemDetails = activeItem.activeItemDetails;
+            activeItemDetails = activeItem.activeItemDetails;
             animator.runtimeAnimatorController = activeItemDetails?.activeItemAnimatorController ?? animator.runtimeAnimatorController;
         }
 
         // Check for animation - Passive Items
         else if (hasPrimaryPassiveDrop || hasSecondaryPassiveDrop)
         {
+
             PassiveItem passiveItem = (PassiveItem)receivable;
-            this.passiveItemDetails = passiveItem.passiveItemDetails;
+            passiveItemDetails = passiveItem.passiveItemDetails;
             animator.runtimeAnimatorController = passiveItemDetails?.passiveItemAnimatorController ?? animator.runtimeAnimatorController;
         }
 
@@ -417,7 +544,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         else if (hasWeaponDrop)
         {
             Weapon weapon = (Weapon)receivable;
-            this.weaponDetails = weapon.weaponDetails;
+            weaponDetails = weapon.weaponDetails;
             animator.runtimeAnimatorController = weaponDetails?.weaponHoverAnimatorController ?? animator.runtimeAnimatorController;
         }
     }
@@ -586,8 +713,6 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
         else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
         {
-            Debug.Log("Current physical resistance " + player.currentPhysicalResistanceValue);
-            Debug.Log("Current air resistance " + player.currentAirResistanceValue);
             player.AddPassiveItemToPlayer(passiveItemDetails);
 
             isPickedUp = true;

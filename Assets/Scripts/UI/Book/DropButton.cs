@@ -36,7 +36,7 @@ public class DropButton : MonoBehaviour, IDropHandler
                 {
                     PassiveItem passiveItem = (PassiveItem)draggableItem.receivable;
 
-                    player.playerControl.DropProcess(DropType.PassiveItem, passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
+                    player.playerControl.DropProcess(DropType.PassiveItem, passiveItem);
                     SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
                 }
             }

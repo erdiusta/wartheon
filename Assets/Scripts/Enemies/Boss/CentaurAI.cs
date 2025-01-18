@@ -226,7 +226,7 @@ public class CentaurAI : EnemyAI
 
             float prehargeDuration = 1.5f;
             float chargeTimer = 0f;
-            enemy.animator.SetFloat(Settings.motionType, 4f); // charge trigger to blend tree
+            enemy.animator.SetFloat(Settings.motionType, 3f); // charge trigger to blend tree
             SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
 
             while (chargeTimer < prehargeDuration)
@@ -274,12 +274,12 @@ public class CentaurAI : EnemyAI
             enemyPhase = EnemyPhase.Chase;
 
             // PREPARE PRECHARGE PHASE
-            float prechargeDuration = 1.15f;
+            float prechargeDuration = 1.3f;
             float chargeTimer = 0f;
-            enemy.animateEnemy.ResetAnimatonParameters();
 
             // Set the motion type for the precharge phase
-            enemy.animator.SetFloat(Settings.motionType, 3f);
+            enemy.animateEnemy.ResetAnimatonParameters();
+            enemy.animator.SetBool(Settings.cast, true);
 
             yield return null;
 
@@ -295,6 +295,7 @@ public class CentaurAI : EnemyAI
             yield return null;  // Wait for the animation to start
 
             // START CHARGE PHASE
+            enemy.animator.SetBool(Settings.cast, false);
             enemy.animateEnemy.SetIdleAnimationParameters();
 
             float fireTimer = 0f;

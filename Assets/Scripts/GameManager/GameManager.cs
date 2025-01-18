@@ -720,9 +720,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             bossEnemy = EnemySpawner.Instance.GetBoss();
             healthBarContainer.SetActive(true);
+            healthBarContainer.GetComponentInChildren<TextMeshProUGUI>().text = bossEnemy.enemyDetails.enemyName;
         }
         else
         {
+            healthBarContainer.GetComponentInChildren<TextMeshProUGUI>().text = string.Empty;
             healthBarContainer.SetActive(false);
         }
     }

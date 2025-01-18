@@ -45,6 +45,8 @@ public static class Settings
     public static int motionType = Animator.StringToHash("motionType");
     public static int axisX = Animator.StringToHash("axisX");
     public static int axisY = Animator.StringToHash("axisY");
+    public static int cast = Animator.StringToHash("cast");
+    public static int dash = Animator.StringToHash("dash");
     public const float baseSpeedForPlayerAnimations = 6f;
 
     // Animator parameters - Status

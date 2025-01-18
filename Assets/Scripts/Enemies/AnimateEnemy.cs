@@ -110,6 +110,8 @@ public class AnimateEnemy : MonoBehaviour
         enemy.animator.SetBool(Settings.isIdle, false);
         enemy.animator.SetBool(Settings.isFrozen, false);
 
+        enemy.animator.SetBool(Settings.dash, true);
+
         if (HasParameter(enemy.animator, Settings.getHit))
         {
             enemy.animator.SetBool(Settings.getHit, false);
@@ -132,37 +134,37 @@ public class AnimateEnemy : MonoBehaviour
         switch (aimDirection)
         {
             case AimDirection.Up:
-                //enemy.animator.SetBool(Settings.aimUp, true);
+                enemy.animator.SetBool(Settings.aimUp, true);
                 enemy.animator.SetFloat(Settings.axisX, 0f);
                 enemy.animator.SetFloat(Settings.axisY, 1f);
                 break;
 
             case AimDirection.Down:
-                //enemy.animator.SetBool(Settings.aimDown, true);
+                enemy.animator.SetBool(Settings.aimDown, true);
                 enemy.animator.SetFloat(Settings.axisX, 0f);
                 enemy.animator.SetFloat(Settings.axisY, -1f);
                 break;
 
             case AimDirection.Right:
-                //enemy.animator.SetBool(Settings.aimRight, true);
+                enemy.animator.SetBool(Settings.aimRight, true);
                 enemy.animator.SetFloat(Settings.axisX, 1f);
                 enemy.animator.SetFloat(Settings.axisY, 0f);
                 break;
 
             case AimDirection.Left:
-                //enemy.animator.SetBool(Settings.aimLeft, true);
+                enemy.animator.SetBool(Settings.aimLeft, true);
                 enemy.animator.SetFloat(Settings.axisX, -1f);
                 enemy.animator.SetFloat(Settings.axisY, 0f);
                 break;
 
             case AimDirection.UpRight:
-                //enemy.animator.SetBool(Settings.aimUpRight, true);
+                enemy.animator.SetBool(Settings.aimUpRight, true);
                 enemy.animator.SetFloat(Settings.axisX, 0.7f);
                 enemy.animator.SetFloat(Settings.axisY, 0.7f);
                 break;
 
             case AimDirection.UpLeft:
-                //enemy.animator.SetBool(Settings.aimUpLeft, true);
+                enemy.animator.SetBool(Settings.aimUpLeft, true);
                 enemy.animator.SetFloat(Settings.axisX, -0.7f);
                 enemy.animator.SetFloat(Settings.axisY, 0.7f);
                 break;

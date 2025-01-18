@@ -82,7 +82,7 @@ public class EnemyAimAndShootAI : EnemyAI
                 {
                     case EnemyPhase.Patrol:
 
-                        debugText.text = "PATROL";
+                        //debugText.text = "PATROL";
 
                         // Reset animation and dashing flag
                         enemy.animateEnemy.ResetAnimatonParameters();
@@ -101,7 +101,7 @@ public class EnemyAimAndShootAI : EnemyAI
                         // Reset animation and dashing flag
                         enemy.animator.SetBool(Settings.isAttacking, false);
 
-                        debugText.text = "CHASE";
+                        //debugText.text = "CHASE";
 
                         ClearPatrolPath();
                         Chase();
@@ -116,7 +116,7 @@ public class EnemyAimAndShootAI : EnemyAI
 
                         if (enemy.isDead) return;
 
-                        debugText.text = "ATTACK";
+                        //debugText.text = "ATTACK";
 
                         // Interval Timer
                         if (firingIntervalTimer < 0f)

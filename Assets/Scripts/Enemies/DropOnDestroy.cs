@@ -248,6 +248,9 @@ public class DropOnDestroy : MonoBehaviour
 
     private bool IsWeaponAvailableForTheCharacter(WeaponDetailsSO weaponDetails)
     {
+        // If enemy is a minion, ignore all drop issue then return
+        if (enemy.enemyDetails.enemyType == EnemyType.Minion) return false;
+
         for (int i = 0; i < player.playerDetails.collectibleWeaponsArray.Length; i++)
         {
             if (player.playerDetails.collectibleWeaponsArray[i].weaponName == weaponDetails.weaponName)

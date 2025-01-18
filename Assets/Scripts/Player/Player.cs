@@ -456,7 +456,7 @@ public class Player : MonoBehaviour
         return activeItem;
     }
 
-    public PassiveItem AddPassiveItemToPlayer(PassiveItemDetailsSO passiveItemDetails)
+    public PassiveItem AddPassiveItemToPlayer(PassiveItemDetailsSO passiveItemDetails, ChestItem chestItem = null)
     {
         PassiveItem passiveItem = new PassiveItem
         {

@@ -18,6 +18,8 @@ public class MainMenuUI : MonoBehaviour
     public void PlayGame()
     {
         SceneManager.LoadScene("MainGameScene");
+
+        //SceneManager.LoadScene("CharacterSelectorScene");
     }
 
     /// <summary>

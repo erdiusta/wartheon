@@ -17,6 +17,10 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public GameObject enemyPrefab;
     #region Tooltip
+    [Tooltip("The type of the enemy")]
+    #endregion
+    public EnemyType enemyType;
+    #region Tooltip
     [Tooltip("Movement details of enemy")]
     #endregion
     public MovementDetailsSO movementDetails;
@@ -60,6 +64,11 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check if weapon animator exists")]
     #endregion
     public bool hasAnimator = false;
+    #region Tooltip
+    [Tooltip("Enemy's minion details")]
+    #endregion
+    public EnemyDetailsSO enemyMinionDetails;
+
 
     #region Header PASSIVE
     [Space(10)]
