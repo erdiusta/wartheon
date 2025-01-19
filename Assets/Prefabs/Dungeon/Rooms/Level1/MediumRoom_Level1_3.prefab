@@ -35373,6 +35373,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3645550564019275170, guid: 065e113ef89404143a18035c9bb62be2, type: 3}
+      propertyPath: lightIntensityMax
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3645550564019275170, guid: 065e113ef89404143a18035c9bb62be2, type: 3}
+      propertyPath: lightIntensityMin
+      value: 0.15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -35756,6 +35764,14 @@ PrefabInstance:
     - target: {fileID: 1589065736412744801, guid: 065e113ef89404143a18035c9bb62be2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3645550564019275170, guid: 065e113ef89404143a18035c9bb62be2, type: 3}
+      propertyPath: lightIntensityMax
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3645550564019275170, guid: 065e113ef89404143a18035c9bb62be2, type: 3}
+      propertyPath: lightIntensityMin
+      value: 0.15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

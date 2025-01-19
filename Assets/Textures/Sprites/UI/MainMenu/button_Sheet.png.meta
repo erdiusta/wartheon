@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d64ea4f2ba5081d4483a77adb1f1adae
+guid: c13810d6352aff94585b58001c3367ba
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 2048
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 8192
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -149,7 +149,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: quit_button_sheet_0
+      name: button_Sheet_0
       rect:
         serializedVersion: 2
         x: 0
@@ -163,14 +163,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 28f28d2bba42d4e4a89382a84e7860a1
-      internalID: 137215343
+      spriteID: 6bfb20ee99126e3439502cf17d057d3b
+      internalID: 1960390815
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: quit_button_sheet_1
+      name: button_Sheet_1
       rect:
         serializedVersion: 2
         x: 91
@@ -184,8 +184,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1cdf0d0a2f9283441bc34956ab923f2c
-      internalID: 1237130016
+      spriteID: 41f2e5259d06062459abaae3c4f7c21b
+      internalID: 1856330096
       vertices: []
       indices: 
       edges: []
@@ -193,7 +193,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: bdbe88e9908fe934298c5ae9fea8b762
+    spriteID: dbca0e13b10bfab45a3cf5a71dc9dbb1
     internalID: 0
     vertices: []
     indices: 
@@ -201,8 +201,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      quit_button_sheet_0: 137215343
-      quit_button_sheet_1: 1237130016
+      button_Sheet_0: 1960390815
+      button_Sheet_1: 1856330096
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,6 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using TMPro;
 
 [DisallowMultipleComponent]
@@ -15,98 +15,30 @@ public class CharacterSelectorUI : MonoBehaviour
     #endregion
     [SerializeField] TextMeshProUGUI characterNameText;
 
-    PlayerDetailsSO[] playerDetailsList;
-    GameObject playerSelectionPrefab;
-    CurrentPlayerSO currentPlayer;
-    List<GameObject> playerCharacterGameObjectList = new List<GameObject>();
-    Coroutine coroutine;
-    int selectedPlayerIndex = 0;
-    float offset = 4f;
+    [Space(10)]
+    [Header("CHARACTER SPOTLIGHTS")]
+    [Space(10)]
+    [SerializeField] Light2D lyrisaSpotlight;
+    [SerializeField] Light2D astraeusSpotlight;
+    [SerializeField] Light2D orionSpotlight;
+    [SerializeField] Light2D erebusSpotlight;
 
+    PlayerDetailsSO[] playerDetailsList;
+    CurrentPlayerSO currentPlayer;
+    int selectedPlayerIndex = 1;
 
     private void Awake()
     {
-        playerSelectionPrefab = GameResources.Instance.playerSelectionPrefab;
         playerDetailsList = GameResources.Instance.playerDetailsArray;
         currentPlayer = GameResources.Instance.currentPlayer;
     }
 
     private void Start()
     {
-        // Instantiate player characters
-        for (int i = 0; i < playerDetailsList.Length; i++)
-        {
-            GameObject playerSelectionObject = Instantiate(playerSelectionPrefab, characterSelector);
-            playerCharacterGameObjectList.Add(playerSelectionObject);
-            playerSelectionObject.transform.localPosition = new Vector3((offset * i), 0f, 0f);
-            PopulatePlayerDetails(playerSelectionObject.GetComponent<PlayerSelectionUI>(), playerDetailsList[i]);
-        }
-
         // Initialize the current player
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
         characterNameText.text = playerDetailsList[selectedPlayerIndex].playerCharacterName.ToString();
-    }
-
-    /// <summary>
-    /// Populate player character details for display
-    /// </summary>
-    private void PopulatePlayerDetails(PlayerSelectionUI playerSelection, PlayerDetailsSO playerDetails)
-    {
-        playerSelection.playerMainHandSpriteRenderer.sprite = playerDetails.playerHandSprite;
-        playerSelection.playerOffHandSpriteRenderer.sprite = playerDetails.playerHandSprite;
-        playerSelection.playerMainHandWeaponAnimator.runtimeAnimatorController = playerDetails.mainHandAnimatorController;
-
-        if (playerDetails.offHandAnimatorController != null)
-        {
-            playerSelection.playerOffHandWeaponAnimator.runtimeAnimatorController = playerDetails.offHandAnimatorController;
-        }
-        else
-        {
-            playerSelection.playerOffHandWeaponAnimator.enabled = false;
-        }
-
-        playerSelection.playerWeaponMainHandSpriteRenderer.sprite = playerDetails.startingWeaponList[0].weaponFrontSprite;
-        if (playerDetails.startingWeaponList.Count > 1)
-        {
-            if (playerDetails.startingWeaponList[1].weaponClass == WeaponClass.Shield)
-            {
-                playerSelection.playerOffHandSpriteRenderer.sortingOrder = 0;
-                playerSelection.playerWeaponOffHandSpriteRenderer.sprite = playerDetails.startingWeaponList[1].weaponFrontSprite;
-            }
-            else if (playerDetails.startingWeaponList[1].weaponClass == WeaponClass.Dagger)
-            {
-                playerSelection.playerWeaponOffHandSpriteRenderer.sprite = playerDetails.startingWeaponList[1].weaponFrontSprite;
-            }
-        }
-
-        if (playerDetails.playerCharacterIndex == Character.Astraeus)
-        {
-            playerSelection.animator.runtimeAnimatorController = playerDetails.oneHandRuntimeAnimatorController;
-        }
-        else if (playerDetails.playerCharacterIndex == Character.Orion)
-        {
-            playerSelection.thirdHandGameObject.SetActive(true);
-            playerSelection.thirdHandGameObject.GetComponent<SpriteRenderer>().sprite = playerDetails.playerHandSprite;
-            playerSelection.thirdHandGameObject.transform.localPosition = new Vector3(-0.4f, 0f, 0f);
-
-            playerSelection.animator.runtimeAnimatorController = playerDetails.bowRuntimeAnimatorController;
-
-            playerSelection.playerOffHandWeaponAnimator.enabled = false;
-            playerSelection.offHandWeaponAnchorTransform.gameObject.SetActive(false);
-        }
-        else if (playerDetails.playerCharacterIndex == Character.Erebus)
-        {
-            playerSelection.animator.runtimeAnimatorController = playerDetails.oneHandRuntimeAnimatorController;
-        }
-        else if (playerDetails.playerCharacterIndex == Character.Lyrisa)
-        {
-            playerSelection.thirdHandGameObject.SetActive(false);
-            playerSelection.animator.runtimeAnimatorController = playerDetails.staffRuntimeAnimatorController;
-
-            playerSelection.thirdHandGameObject.SetActive(false);
-            playerSelection.offHandWeaponAnchorTransform.gameObject.SetActive(true);
-            playerSelection.playerOffHandWeaponAnimator.enabled = true;
-        }
+        astraeusSpotlight.gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -137,26 +69,33 @@ public class CharacterSelectorUI : MonoBehaviour
 
     private void MoveToSelectedCharacter(int index)
     {
-        if (coroutine != null)
-            StopCoroutine(coroutine);
+        DisableAllSpotlights();
 
-        coroutine = StartCoroutine(MoveToSelectedCharacterRoutine(index));
+        switch (index)
+        {
+            case 0:
+                lyrisaSpotlight.gameObject.SetActive(true);
+                break;
+            case 1:
+                astraeusSpotlight.gameObject.SetActive(true);
+                break;
+            case 2:
+                orionSpotlight.gameObject.SetActive(true);
+                break;
+            case 3:
+                erebusSpotlight.gameObject.SetActive(true);
+                break;
+            default:
+                break;
+        }
     }
 
-    IEnumerator MoveToSelectedCharacterRoutine(int index)
+    private void DisableAllSpotlights()
     {
-        float currentLocalXPosition = characterSelector.localPosition.x;
-        float targetLocalXPosition = index * offset * characterSelector.localScale.x * -1f;
-
-        while (Mathf.Abs(currentLocalXPosition - targetLocalXPosition) > 0.01f)
-        {
-            currentLocalXPosition = Mathf.Lerp(currentLocalXPosition, targetLocalXPosition, Time.deltaTime * 10f);
-            characterSelector.localPosition = new Vector3(currentLocalXPosition, characterSelector.localPosition.y, 0f);
-
-            yield return null;
-        }
-
-        characterSelector.localPosition = new Vector3(targetLocalXPosition, characterSelector.localPosition.y, 0f);
+        lyrisaSpotlight.gameObject.SetActive(false);
+        astraeusSpotlight.gameObject.SetActive(false);
+        orionSpotlight.gameObject.SetActive(false);
+        erebusSpotlight.gameObject.SetActive(false);
     }
 
     #region Validation

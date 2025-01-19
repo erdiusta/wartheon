@@ -27,8 +27,8 @@ MonoBehaviour:
   twoHandRuntimeAnimatorController: {fileID: 9100000, guid: a548100e3f0314d418ac3ddc4b63d691, type: 2}
   bowRuntimeAnimatorController: {fileID: 9100000, guid: 89608e7d0f782dc4593536c2ee6a98dc, type: 2}
   staffRuntimeAnimatorController: {fileID: 9100000, guid: 616c36ade33b9d3469486229fb76c45f, type: 2}
-  strength: 4
-  constitution: 6
+  strength: 5
+  constitution: 5
   dexterity: 7
   intelligence: 5
   agility: 7
