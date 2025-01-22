@@ -1053,7 +1053,7 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0.9996967
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -1195,7 +1195,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -170, y: -60}
+  m_AnchoredPosition: {x: -140, y: -60}
   m_SizeDelta: {x: 120, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &873091677
@@ -1342,7 +1342,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 110, y: 30}
+  m_AnchoredPosition: {x: 120, y: 30}
   m_SizeDelta: {x: 200, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &903806159
@@ -1503,6 +1503,7 @@ GameObject:
   - component: {fileID: 1220520295}
   - component: {fileID: 1220520294}
   - component: {fileID: 1220520298}
+  - component: {fileID: 1220520299}
   m_Layer: 5
   m_Name: MainMenuUI
   m_TagString: Untagged
@@ -1605,6 +1606,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de59d50fb7dc5fe4b850c0e89556f016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playButton: {fileID: 873091675}
+  quitButton: {fileID: 1642549582}
+--- !u!225 &1220520299
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1220520293}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1430084313
 GameObject:
   m_ObjectHideFlags: 0
@@ -1777,7 +1792,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -170, y: -90}
+  m_AnchoredPosition: {x: -140, y: -90}
   m_SizeDelta: {x: 120, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1642549584

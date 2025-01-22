@@ -214,6 +214,7 @@ public class CentaurAI : EnemyAI
         else if (centaurPhase == CentaurPhase.ChargeAndRetreat)
         {
             enemyPhase = EnemyPhase.Attack;
+            isAttacking = true;
 
             // PREPARE PRECHARGE PHASE
             // Lock-on player position during the start of precharge
@@ -268,6 +269,8 @@ public class CentaurAI : EnemyAI
             chargeTimer = 0f;
 
             yield return null;
+
+            isAttacking = false;
         }
         else if (centaurPhase == CentaurPhase.SpreadArrowShot)
         {

@@ -18,7 +18,7 @@ public class ChestSpawner : MonoBehaviour
     #region Tooltip
     [Tooltip("Populate with the chest prefab")]
     #endregion Tooltip
-    [SerializeField] GameObject chestPrefab;
+    [SerializeField] GameObject[] chestPrefabs;
 
     #region Header CHEST SPAWN CHANCE
     [Space(10)]
@@ -44,8 +44,9 @@ public class ChestSpawner : MonoBehaviour
     #region Tooltip
     [Tooltip("The weapons to spawn for each dungeon level and their spawn ratios")]
     #endregion Tooltip
-    [SerializeField] List<SpawnableObjectsByLevel<WeaponDetailsSO>> weaponSpawnByLevelList;
+    [SerializeField] List<ChestsBasedOnSpawnableObjectsByLevel<WeaponDetailsSO>> weaponSpawnByChestBasedOnLevelList;
 
+    GameObject selectedChestPrefab;
     bool chestSpawned = false;
     Room chestRoom;
 
@@ -111,8 +112,24 @@ public class ChestSpawner : MonoBehaviour
         // Get Weapon Item To Spawn
         GetItemsToSpawn(out int weaponNum);
 
+        int randomNumberForChest = Random.Range(0, 100);
+
         // Instantiate chest
-        GameObject chestGameObject = Instantiate(chestPrefab, transform);
+        if (randomNumberForChest < 70)
+        {
+            selectedChestPrefab = chestPrefabs[0];
+        }
+        else if (randomNumberForChest < 90)
+        {
+            selectedChestPrefab = chestPrefabs[1];
+        }
+        else
+        {
+            selectedChestPrefab = chestPrefabs[2];
+        }
+
+        // Instantiate chest
+        GameObject chestGameObject = Instantiate(selectedChestPrefab, transform);
 
         // Position chest
         chestGameObject.transform.position = transform.position;
@@ -174,7 +191,20 @@ public class ChestSpawner : MonoBehaviour
 
         // Create an instance of the class used to select a random item from a list based on the
         // relative 'ratios' of the items specified
-        RandomSpawnableObject<WeaponDetailsSO> weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(weaponSpawnByLevelList);
+        RandomSpawnableObject<WeaponDetailsSO> weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(new List<SpawnableObjectsByLevel<WeaponDetailsSO>>());
+
+        if (selectedChestPrefab.Equals(chestPrefabs[0]))
+        {
+            weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(weaponSpawnByChestBasedOnLevelList[0].spawnableObjectByLevelList);
+        }
+        else if (selectedChestPrefab.Equals(chestPrefabs[1]))
+        {
+            weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(weaponSpawnByChestBasedOnLevelList[1].spawnableObjectByLevelList);
+        }
+        else if (selectedChestPrefab.Equals(chestPrefabs[2]))
+        {
+            weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(weaponSpawnByChestBasedOnLevelList[2].spawnableObjectByLevelList);
+        }
 
         WeaponDetailsSO weaponDetails = weaponRandom.GetItem();
 
@@ -186,7 +216,7 @@ public class ChestSpawner : MonoBehaviour
     // Validate prefab details enetered
     private void OnValidate()
     {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(chestPrefab), chestPrefab);
+        HelperUtilities.ValidateCheckEnumerableValues(this, nameof(chestPrefabs), chestPrefabs);
         HelperUtilities.ValidateCheckPositiveRange(this, nameof(chestSpawnChanceMin), chestSpawnChanceMin, nameof(chestSpawnChanceMax), 
             chestSpawnChanceMax, true);
 
@@ -198,21 +228,6 @@ public class ChestSpawner : MonoBehaviour
             {
                 HelperUtilities.ValidateCheckNullValue(this, nameof(rangeByLevel.dungeonLevel), rangeByLevel.dungeonLevel);
                 HelperUtilities.ValidateCheckPositiveRange(this, nameof(rangeByLevel.min), rangeByLevel.min, nameof(rangeByLevel.max), rangeByLevel.max, true);
-            }
-        }
-
-        if (weaponSpawnByLevelList != null && weaponSpawnByLevelList.Count > 0)
-        {
-            foreach (SpawnableObjectsByLevel<WeaponDetailsSO> weaponDetailsByLevel in weaponSpawnByLevelList)
-            {
-                HelperUtilities.ValidateCheckNullValue(this, nameof(weaponDetailsByLevel.dungeonLevel), weaponDetailsByLevel.dungeonLevel);
-
-                foreach (SpawnableObjectRatio<WeaponDetailsSO> weaponRatio in weaponDetailsByLevel.spawnableObjectRatioList)
-                {
-                    HelperUtilities.ValidateCheckNullValue(this, nameof(weaponRatio.dungeonObject), weaponRatio.dungeonObject);
-
-                    HelperUtilities.ValidateCheckPositiveValue(this, nameof(weaponRatio.ratio), weaponRatio.ratio, true);
-                }
             }
         }
     }

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Croclodyte
   enemyPrefab: {fileID: 7183228443647751644, guid: b8f69e81a25e9d540a8085ebdd8c842e, type: 3}
+  enemyType: 0
   movementDetails: {fileID: 11400000, guid: 2ccbcf447a971464784472b21a06e65c, type: 2}
   experiencePoint: 80
   chaseDistance: 13
@@ -25,6 +26,7 @@ MonoBehaviour:
   enemyBehaviour: 2
   isEnemyBoss: 0
   hasAnimator: 0
+  enemyMinionDetails: {fileID: 0}
   enemyArmorValue: 2
   hasShield: 0
   deflectChance: 0
@@ -34,6 +36,8 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 1
   stunChance: 0.2
+  hasFrostDamage: 0
+  frostChance: 0
   hasCurseDamage: 0
   curseChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -171,7 +175,7 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
       ratio: 1
-  dropSpawnChanceMin: 100
-  dropSpawnChanceMax: 100
+  dropSpawnChanceMin: 20
+  dropSpawnChanceMax: 30
   numberOfItemsToSpawnMin: 1
   numberOfItemsToSpawnMax: 2

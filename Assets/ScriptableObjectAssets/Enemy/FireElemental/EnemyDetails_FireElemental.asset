@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Fire Elemental
   enemyPrefab: {fileID: 7183228443647751644, guid: 8fea7a9db8fde704dab71124ec6d56b5, type: 3}
+  enemyType: 0
   movementDetails: {fileID: 11400000, guid: 006bc7b24d185b148a452111f4c05600, type: 2}
   experiencePoint: 75
   chaseDistance: 7
@@ -25,6 +26,7 @@ MonoBehaviour:
   enemyBehaviour: 1
   isEnemyBoss: 0
   hasAnimator: 0
+  enemyMinionDetails: {fileID: 0}
   enemyArmorValue: 1
   hasShield: 0
   deflectChance: 0
@@ -34,6 +36,8 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
   hasCurseDamage: 0
   curseChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -113,7 +117,7 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: de3069107c9b24d449fb00b8754c0be5, type: 2}
       ratio: 1
-  dropSpawnChanceMin: 100
-  dropSpawnChanceMax: 100
+  dropSpawnChanceMin: 15
+  dropSpawnChanceMax: 25
   numberOfItemsToSpawnMin: 1
   numberOfItemsToSpawnMax: 1

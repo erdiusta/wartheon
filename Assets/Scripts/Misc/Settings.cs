@@ -99,6 +99,10 @@ public static class Settings
     public const string playerProjectile = "playerProjectile";
     public const string meteor = "meteor";
     public const string enemyProjectile = "enemyProjectile";
+    public const string astraeusTag = "astraeusTag";
+    public const string lyrisaTag = "lyrisaTag";
+    public const string orionTag = "orionTag";
+    public const string erebusTag = "erebusTag";
     #endregion
 
     #region FIRING CONTROL

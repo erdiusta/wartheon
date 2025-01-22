@@ -50,25 +50,9 @@ public class PlayerDetailsSO : ScriptableObject
     [Header("PRIMARY STATS")]
     #endregion
     #region Tooltip
-    [Tooltip("Player strength value")]
+    [Tooltip("Primary stats of the player")]
     #endregion
-    public int strength = 5;
-    #region Tooltip
-    [Tooltip("Player constitution value")]
-    #endregion
-    public int constitution = 5;
-    #region Tooltip
-    [Tooltip("Player dexterity value")]
-    #endregion
-    public int dexterity = 5;
-    #region Tooltip
-    [Tooltip("Player intelligence value")]
-    #endregion
-    public int intelligence = 5;
-    #region Tooltip
-    [Tooltip("Player agility value")]
-    #endregion
-    public int agility = 5;
+    public PrimaryStats primaryStats;
     #region Tooltip
     [Tooltip("Player physical resistance value")]
     #endregion

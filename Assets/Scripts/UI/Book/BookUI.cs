@@ -638,7 +638,7 @@ public class BookUI : MonoBehaviour
         characterName.text = player.playerDetails.playerCharacterName;
         strengthText.text = $"Strength : {player.currentStrengthValue}";
         constitutionText.text = $"Constitution : {player.currentConstitutionValue}";
-        dexterityText.text = $"Dexterity : {player.playerDetails.dexterity}";
+        dexterityText.text = $"Dexterity : {player.playerDetails.primaryStats.dexterity}";
         intelligenceText.text = $"Intelligence : {player.currentIntelligenceValue}";
         agilityText.text = $"Agility : {player.currentAgilityValue}";
         physicalResistanceText.text = $"Physical : {player.currentPhysicalResistanceValue * 100} %";

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Red Viper
   enemyPrefab: {fileID: 7183228443647751644, guid: d16cb3bd4aa0ee44089ddf7671f2d61a, type: 3}
+  enemyType: 0
   movementDetails: {fileID: 11400000, guid: 45c12cb6eb3d1814495ddb55e13d221e, type: 2}
   experiencePoint: 40
   chaseDistance: 7
@@ -25,6 +26,7 @@ MonoBehaviour:
   enemyBehaviour: 1
   isEnemyBoss: 0
   hasAnimator: 0
+  enemyMinionDetails: {fileID: 0}
   enemyArmorValue: 1
   hasShield: 0
   deflectChance: 0
@@ -34,6 +36,8 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
   hasCurseDamage: 0
   curseChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -171,7 +175,7 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: 44da56b0da740104f85243ed6b962b09, type: 2}
       ratio: 1
-  dropSpawnChanceMin: 100
-  dropSpawnChanceMax: 100
+  dropSpawnChanceMin: 10
+  dropSpawnChanceMax: 20
   numberOfItemsToSpawnMin: 1
   numberOfItemsToSpawnMax: 1

@@ -15,6 +15,12 @@ MonoBehaviour:
   weaponName: Doombringer
   weaponTitle: 29
   weaponLevel: 2
+  requiredPrimaryStats:
+    strength: 7
+    dexterity: 0
+    constitution: 0
+    intelligence: 0
+    agility: 0
   weaponClass: 0
   weaponHitSpeed: 0
   wieldType: 1
@@ -35,6 +41,8 @@ MonoBehaviour:
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
   weaponRightShootPosition: {x: 0, y: 0, z: 0}
   weaponLeftShootPosition: {x: 0, y: 0, z: 0}
   weaponUpShootPosition: {x: 0, y: 0, z: 0}

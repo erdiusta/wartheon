@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Skeleton
   enemyPrefab: {fileID: 7183228443647751644, guid: fb4b93be95ba7c8469687f705f0f473f, type: 3}
+  enemyType: 0
   movementDetails: {fileID: 11400000, guid: 6f633f705e9bde84ba5ee31559f34b80, type: 2}
   experiencePoint: 60
   chaseDistance: 11
@@ -25,6 +26,7 @@ MonoBehaviour:
   enemyBehaviour: 2
   isEnemyBoss: 0
   hasAnimator: 0
+  enemyMinionDetails: {fileID: 0}
   enemyArmorValue: 5
   hasShield: 1
   deflectChance: 0.3
@@ -241,7 +243,7 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: de3069107c9b24d449fb00b8754c0be5, type: 2}
       ratio: 1
-  dropSpawnChanceMin: 100
-  dropSpawnChanceMax: 100
+  dropSpawnChanceMin: 15
+  dropSpawnChanceMax: 25
   numberOfItemsToSpawnMin: 1
   numberOfItemsToSpawnMax: 1

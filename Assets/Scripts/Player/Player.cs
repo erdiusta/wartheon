@@ -284,11 +284,11 @@ public class Player : MonoBehaviour
     /// </summary>
     private void SetPlayerPrimaryStats()
     {
-        currentStrengthValue = playerDetails.strength;
-        currentConstitutionValue = playerDetails.constitution;
-        currentDexterityValue = playerDetails.dexterity;
-        currentIntelligenceValue = playerDetails.intelligence;
-        currentAgilityValue = playerDetails.agility;
+        currentStrengthValue = playerDetails.primaryStats.strength;
+        currentConstitutionValue = playerDetails.primaryStats.constitution;
+        currentDexterityValue = playerDetails.primaryStats.dexterity;
+        currentIntelligenceValue = playerDetails.primaryStats.intelligence;
+        currentAgilityValue = playerDetails.primaryStats.agility;
 
         currentPhysicalResistanceValue = playerDetails.physicalResistance;
         currentFireResistanceValue = playerDetails.fireResistance;
@@ -315,20 +315,20 @@ public class Player : MonoBehaviour
                     // Melee and physical damage excluding dagger (such as swords, axes)
                     if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass != WeaponClass.Dagger)
                     {
-                        currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + playerDetails.strength * 2;
-                        currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + playerDetails.strength * 2;
+                        currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + playerDetails.primaryStats.strength * 2;
+                        currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + playerDetails.primaryStats.strength * 2;
                     }
                     // Melee and physical for dagger
                     else
                     {
-                        currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + playerDetails.dexterity;
-                        currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + playerDetails.dexterity;
+                        currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + playerDetails.primaryStats.dexterity;
+                        currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + playerDetails.primaryStats.dexterity;
                     }
                 }
                 else
                 {
-                    currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + playerDetails.intelligence * 2;
-                    currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + playerDetails.intelligence * 2;
+                    currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + playerDetails.primaryStats.intelligence * 2;
+                    currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + playerDetails.primaryStats.intelligence * 2;
                 }
             }
             else
@@ -336,14 +336,14 @@ public class Player : MonoBehaviour
                 // Non-melee and physical damage (such as bow)
                 if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasPhysicalDamage)
                 {
-                    currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + playerDetails.dexterity;
-                    currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + playerDetails.dexterity;
+                    currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + playerDetails.primaryStats.dexterity;
+                    currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + playerDetails.primaryStats.dexterity;
                 }
                 // Non-melee and non-physical damage (such as staff)
                 else
                 {
-                    currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + playerDetails.intelligence * 2;
-                    currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + playerDetails.intelligence * 2;
+                    currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + playerDetails.primaryStats.intelligence * 2;
+                    currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + playerDetails.primaryStats.intelligence * 2;
                 }
             }
         }
@@ -358,20 +358,20 @@ public class Player : MonoBehaviour
                     // Melee and physical damage excluding dagger (such as swords, axes)
                     if (activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass != WeaponClass.Dagger)
                     {
-                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + playerDetails.strength * 2) * 0.6f, 2);
-                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + playerDetails.strength * 2) * 0.6f, 2);
+                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + playerDetails.primaryStats.strength * 2) * 0.6f, 2);
+                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + playerDetails.primaryStats.strength * 2) * 0.6f, 2);
                     }
                     // Melee and physical for dagger
                     else
                     {
-                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + playerDetails.dexterity) * 0.6f, 2);
-                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + playerDetails.dexterity) * 0.6f, 2);
+                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + playerDetails.primaryStats.dexterity) * 0.6f, 2);
+                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + playerDetails.primaryStats.dexterity) * 0.6f, 2);
                     }
                 }
                 else
                 {
-                    currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + playerDetails.intelligence * 2) * 0.6f, 2);
-                    currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + playerDetails.intelligence * 2) * 0.6f, 2);
+                    currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + playerDetails.primaryStats.intelligence * 2) * 0.6f, 2);
+                    currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + playerDetails.primaryStats.intelligence * 2) * 0.6f, 2);
                 }
             }
             else
@@ -379,8 +379,8 @@ public class Player : MonoBehaviour
                 // Non-melee and physical damage (such as bow)
                 if (activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasPhysicalDamage)
                 {
-                    currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + playerDetails.dexterity) * 0.6f, 2);
-                    currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + playerDetails.dexterity) * 0.6f, 2);
+                    currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + playerDetails.primaryStats.dexterity) * 0.6f, 2);
+                    currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + playerDetails.primaryStats.dexterity) * 0.6f, 2);
                 }
                 // Non-melee and non-physical damage (such as staff)
                 else
@@ -388,9 +388,9 @@ public class Player : MonoBehaviour
                     if (activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass != WeaponClass.Shield)
                     {
                         currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin 
-                            + playerDetails.intelligence * 2) * 0.6f, 2);
+                            + playerDetails.primaryStats.intelligence * 2) * 0.6f, 2);
                         currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax
-                            + playerDetails.intelligence * 2) * 0.6f, 2);
+                            + playerDetails.primaryStats.intelligence * 2) * 0.6f, 2);
                     }
                 }
             }
@@ -403,16 +403,16 @@ public class Player : MonoBehaviour
         float? weaponHandlingModifier = activeWeapon.GetCurrentOffHandWeapon() != null ? (activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponBaseHandling +
             activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponBaseHandling) / 2 * 0.7f ?? 0 : activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponBaseHandling;
         float roundedModifier = weaponHandlingModifier != null ? (float)Math.Round((double)weaponHandlingModifier, 2) : 0;
-        currentWeaponHandlingValue = (float)playerDetails.dexterity * 10 / 100 + weaponHandlingModifier;
+        currentWeaponHandlingValue = (float)playerDetails.primaryStats.dexterity * 10 / 100 + weaponHandlingModifier;
 
         // Update equipped weapon critical hit chances
-        currentMainHandCriticalHitChance = (float)Math.Round((double)playerDetails.dexterity * 2 / 100) + (activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.criticalHitChance ?? 0);
-        currentOffHandCriticalHitChance = (float)Math.Round((double)playerDetails.dexterity * 2 / 100) + (activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.criticalHitChance ?? 0);
+        currentMainHandCriticalHitChance = (float)Math.Round((double)playerDetails.primaryStats.dexterity * 2 / 100) + (activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.criticalHitChance ?? 0);
+        currentOffHandCriticalHitChance = (float)Math.Round((double)playerDetails.primaryStats.dexterity * 2 / 100) + (activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.criticalHitChance ?? 0);
     }
 
     public void UpdateEvasivenessValue()
     {
-        currentDeflectionValue = (float)Math.Round((double)(playerDetails.agility * 3 / 100), 2);
+        currentDeflectionValue = (float)Math.Round((double)(playerDetails.primaryStats.agility * 3 / 100), 2);
 
         float? blockValueIfHas = activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield ? 
             activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.projectileDeflectRatio : 0f;
@@ -758,7 +758,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void SetPlayerHealth()
     {
-        health.SetStartingHealth(20 + playerDetails.constitution * 10);
+        health.SetStartingHealth(20 + playerDetails.primaryStats.constitution * 10);
     }
 
     /// <summary>

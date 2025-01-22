@@ -47,6 +47,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public GameObject tooltipPanel;
     public TextMeshProUGUI headerText;
     public TextMeshProUGUI levelText;
+    public TextMeshProUGUI requirementText;
     public TextMeshProUGUI weaponClassText;
     public TextMeshProUGUI hitSpeedText;
     public TextMeshProUGUI weaponWieldText;
@@ -1410,6 +1411,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case PopUpReason.YourHandsFull:
                 warningText.text = "All sets in main hand is full. Drop one of your weapons first.";
                 break;
+            case PopUpReason.DontMeetRequiredPrimaryStats:
+                warningText.text = "You don't have required stat points to wield this weapon.";
+                break;
             default:
                 break;
         }
@@ -1479,6 +1483,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
                 headerText.text = weaponDetails.weaponName;
                 levelText.text = $"({weaponDetails.weaponLevel.ToString()})";
+
+                requirementText.text = UpdateRequirementText(weaponDetails);
+
                 weaponClassText.text = $"Class: {weaponDetails.weaponClass.ToString()}";
 
                 if (weaponDetails.weaponClass == WeaponClass.Shield)
@@ -1571,6 +1578,45 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Updates the requirement text based on the weapon's required stats.
+    /// </summary>
+    /// <param name="weaponDetails">The weapon details ScriptableObject.</param>
+    public string UpdateRequirementText(WeaponDetailsSO weaponDetails)
+    {
+        PrimaryStats requiredStats = weaponDetails.requiredPrimaryStats;
+
+        string requirementString = "Requirement: ";
+
+        if (requiredStats.strength > 0) 
+        {
+            requirementString += $"STR: {requiredStats.strength} ";
+        };
+
+        if (requiredStats.dexterity > 0) requirementString += $"DEX: {requiredStats.dexterity} ";
+
+        if (requiredStats.constitution > 0) requirementString += $"CON: {requiredStats.constitution} ";
+
+        if (requiredStats.intelligence > 0) requirementString += $"INT: {requiredStats.intelligence} ";
+
+        if (requiredStats.agility > 0) requirementString += $"AGI: {requiredStats.agility} ";
+
+        if ((requiredStats.strength > 0 && player.playerDetails.primaryStats.strength < requiredStats.strength) ||
+            (requiredStats.dexterity > 0 && player.playerDetails.primaryStats.dexterity < requiredStats.dexterity) ||
+            (requiredStats.constitution > 0 && player.playerDetails.primaryStats.constitution < requiredStats.constitution) ||
+            (requiredStats.intelligence > 0 && player.playerDetails.primaryStats.intelligence < requiredStats.intelligence) ||
+            (requiredStats.agility > 0 && player.playerDetails.primaryStats.agility < requiredStats.agility))
+        {
+            requirementText.color = Color.red;
+        }
+        else
+        {
+            requirementText.color = Color.green;
+        }
+
+        return requirementString;
     }
 
     private void ClearTooltipPanel()

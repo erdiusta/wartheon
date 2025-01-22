@@ -15,6 +15,12 @@ MonoBehaviour:
   weaponName: Black Talon
   weaponTitle: 24
   weaponLevel: 1
+  requiredPrimaryStats:
+    strength: 0
+    dexterity: 7
+    constitution: 0
+    intelligence: 0
+    agility: 0
   weaponClass: 8
   weaponHitSpeed: 3
   wieldType: 0
@@ -29,9 +35,18 @@ MonoBehaviour:
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
-  weaponShootPosition: {x: 0, y: 0, z: 0}
+  hasFrostDamage: 0
+  frostChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 725854e135951404ba8a84c0a0ca4735, type: 2}

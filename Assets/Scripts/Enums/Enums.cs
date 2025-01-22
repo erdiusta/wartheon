@@ -74,7 +74,14 @@ public enum PassiveItemType
     GildedGuardian,
     WhisperingHood,
     EnchantersSpire,
-    RecantersCloak
+    RecantersCloak,
+    MantleOfStars,
+    CloakOfWindwalker,
+    GoldenCloak,
+    EmbercladBracers,
+    VenomTouchedGloves,
+    RingOfMight,
+    BootsOfInfernalMarch
 }
 
 public enum BoomerangPhase
@@ -179,7 +186,8 @@ public enum WeaponTitle
     PhoenixBolt,
     HammerOfTheThunderlord,
     VipersBite,
-    BloodfangClaw
+    BloodfangClaw,
+    SilverwingBow
 }
 
 public enum WeaponClass
@@ -345,7 +353,8 @@ public enum PopUpReason
     EmptyOffHandFirst,
     EquipMainHandFirst,
     CantMoveYourMainHandWithEmptyOffHand,
-    YourHandsFull
+    YourHandsFull,
+    DontMeetRequiredPrimaryStats
 }
 
 public enum DropType

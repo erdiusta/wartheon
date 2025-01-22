@@ -14,20 +14,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Shield
   weaponTitle: 18
+  weaponLevel: 0
+  requiredPrimaryStats:
+    strength: 6
+    dexterity: 5
+    constitution: 0
+    intelligence: 0
+    agility: 0
+  weaponClass: 3
+  weaponHitSpeed: 0
+  wieldType: 0
+  elementalBias: 0
+  elementalForgeRate: 0
+  price: 4
   weaponFrontSprite: {fileID: -1551370753, guid: 87c4a611cede8854994d7a1056212191, type: 3}
   weaponRearSprite: {fileID: -1497517463, guid: 87c4a611cede8854994d7a1056212191, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: b9154558c719d7c44bde88eae4e95ecd, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 1a628c7453d881c47a5cd0112a246f01, type: 2}
-  weaponClass: 3
-  wieldType: 0
-  price: 4
   canKillSuddenly: 0
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
-  weaponShootPosition: {x: 0, y: 0, z: 0}
+  hasFrostDamage: 0
+  frostChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}

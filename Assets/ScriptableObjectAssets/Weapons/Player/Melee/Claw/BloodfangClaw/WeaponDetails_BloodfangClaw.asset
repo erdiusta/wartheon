@@ -15,6 +15,12 @@ MonoBehaviour:
   weaponName: Bloodfang Claw
   weaponTitle: 39
   weaponLevel: 2
+  requiredPrimaryStats:
+    strength: 0
+    dexterity: 8
+    constitution: 0
+    intelligence: 0
+    agility: 0
   weaponClass: 8
   weaponHitSpeed: 3
   wieldType: 0

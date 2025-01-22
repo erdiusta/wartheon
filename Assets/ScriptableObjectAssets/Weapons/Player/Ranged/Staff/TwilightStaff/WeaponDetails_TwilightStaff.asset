@@ -15,6 +15,12 @@ MonoBehaviour:
   weaponName: Twilight Staff
   weaponTitle: 34
   weaponLevel: 2
+  requiredPrimaryStats:
+    strength: 0
+    dexterity: 0
+    constitution: 0
+    intelligence: 9
+    agility: 0
   weaponClass: 5
   weaponHitSpeed: 0
   wieldType: 1
@@ -29,8 +35,14 @@ MonoBehaviour:
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
   weaponRightShootPosition: {x: 0.01875, y: 1.6045, z: 0}
   weaponLeftShootPosition: {x: 0, y: 0, z: 0}
   weaponUpShootPosition: {x: 0, y: 0, z: 0}

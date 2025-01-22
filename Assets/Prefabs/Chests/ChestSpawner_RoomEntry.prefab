@@ -53,6 +53,10 @@ PrefabInstance:
       value: ChestSpawner_RoomEntry
       objectReference: {fileID: 0}
     - target: {fileID: 3559890550539658156, guid: c0c6a7832395fc947b8cc91177a3a239, type: 3}
+      propertyPath: weaponSpawnByLevelList.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3559890550539658156, guid: c0c6a7832395fc947b8cc91177a3a239, type: 3}
       propertyPath: chestSpawnChanceByLevelList.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -64,6 +68,18 @@ PrefabInstance:
       propertyPath: chestSpawnChanceByLevelList.Array.data[0].min
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 3559890550539658156, guid: c0c6a7832395fc947b8cc91177a3a239, type: 3}
+      propertyPath: weaponSpawnByLevelList.Array.data[0].chestObject
+      value: 
+      objectReference: {fileID: 668392875230514108, guid: 438595f76ccca7b45946f4ec443deb51, type: 3}
+    - target: {fileID: 3559890550539658156, guid: c0c6a7832395fc947b8cc91177a3a239, type: 3}
+      propertyPath: weaponSpawnByLevelList.Array.data[1].chestObject
+      value: 
+      objectReference: {fileID: 668392875230514108, guid: 8bddf2faac9cb1c4faa090284eb06b88, type: 3}
+    - target: {fileID: 3559890550539658156, guid: c0c6a7832395fc947b8cc91177a3a239, type: 3}
+      propertyPath: weaponSpawnByLevelList.Array.data[2].chestObject
+      value: 
+      objectReference: {fileID: 668392875230514108, guid: e61e26766ca26d14bafc27b81190b18e, type: 3}
     - target: {fileID: 3559890550539658156, guid: c0c6a7832395fc947b8cc91177a3a239, type: 3}
       propertyPath: chestSpawnChanceByLevelList.Array.data[0].dungeonLevel
       value: 

@@ -116,6 +116,12 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                     {
                                         if (!player.mainHandSlotFilled)
                                         {
+                                            if(!weaponDetails.requiredPrimaryStats.MeetsRequirements(player.playerDetails.primaryStats))
+                                            {
+                                                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
+                                                return;
+                                            }
+
                                             if (GameManager.Instance.GetPlayer().coins.coinAmount >= weaponDetails.price && !isPurchasing)
                                             {
                                                 isPurchasing = true;
@@ -130,6 +136,12 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                 }
                                 else
                                 {
+                                    if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player.playerDetails.primaryStats))
+                                    {
+                                        GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
+                                        return;
+                                    }
+
                                     if (!InputManager.Instance.isPressedPreviousFrame)
                                     {
                                         // Drop process
@@ -349,6 +361,12 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                     // Drop process
                                     if (player.activeWeapon.GetCurrentMainHandWeapon() != null && !isPickedUp)
                                     {
+                                        if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player.playerDetails.primaryStats))
+                                        {
+                                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
+                                            return;
+                                        }
+
                                         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded &&
                                             weaponDetails.weaponClass == WeaponClass.Shield)
                                         {

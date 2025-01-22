@@ -28,6 +28,10 @@ TagManager:
   - forceField
   - meteor
   - enemyProjectile
+  - astraeusTag
+  - erebusTag
+  - lyrisaTag
+  - orionTag
   layers:
   - Default
   - TransparentFX

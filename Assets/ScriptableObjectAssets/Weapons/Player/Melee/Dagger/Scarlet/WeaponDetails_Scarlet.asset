@@ -15,6 +15,12 @@ MonoBehaviour:
   weaponName: Scarlet
   weaponTitle: 28
   weaponLevel: 2
+  requiredPrimaryStats:
+    strength: 0
+    dexterity: 8
+    constitution: 0
+    intelligence: 0
+    agility: 0
   weaponClass: 7
   weaponHitSpeed: 4
   wieldType: 0

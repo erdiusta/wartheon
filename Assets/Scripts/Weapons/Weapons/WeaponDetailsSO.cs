@@ -20,6 +20,10 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public WeaponLevel weaponLevel;
     #region Tooltip
+    [Tooltip("Required primary Stat for wielding")]
+    #endregion Tooltip
+    public PrimaryStats requiredPrimaryStats;
+    #region Tooltip
     [Tooltip("Weapon class for the weapon")]
     #endregion Tooltip
     public WeaponClass weaponClass;
@@ -276,5 +280,29 @@ public class WeaponDetailsSO : ScriptableObject
     }
 #endif
     #endregion Validation
+}
+
+[System.Serializable]
+public class PrimaryStats
+{
+    public int strength;
+    public int dexterity;
+    public int constitution;
+    public int intelligence;
+    public int agility;
+
+    /// <summary>
+    /// Checks if the provided stats meet the required stats.
+    /// </summary>
+    /// <param name="playerStats">The player's stats.</param>
+    /// <returns>True if the player meets the requirements, otherwise false.</returns>
+    public bool MeetsRequirements(PrimaryStats playerStats)
+    {
+        return playerStats.strength >= strength &&
+               playerStats.dexterity >= dexterity &&
+               playerStats.constitution >= constitution &&
+               playerStats.intelligence >= intelligence &&
+               playerStats.agility >= agility;
+    }
 }
 

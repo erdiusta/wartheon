@@ -1,19 +1,16 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using TMPro;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
-public class CharacterSelectorUI : MonoBehaviour
+public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     #region Tooltip
-    [Tooltip("Populate this with the child CharacterSelector gameobject")]
+    [Tooltip("Populate this with the parent canvas")]
     #endregion
-    [SerializeField] Transform characterSelector;
-    #region Tooltip
-    [Tooltip("Populate this with the TMPro of selected character")]
-    #endregion
-    [SerializeField] TextMeshProUGUI characterNameText;
+    [SerializeField] Canvas parentCanvas;
 
     [Space(10)]
     [Header("CHARACTER SPOTLIGHTS")]
@@ -37,57 +34,69 @@ public class CharacterSelectorUI : MonoBehaviour
     {
         // Initialize the current player
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
-        characterNameText.text = playerDetailsList[selectedPlayerIndex].playerCharacterName.ToString();
         astraeusSpotlight.gameObject.SetActive(true);
     }
 
-    /// <summary>
-    /// Select next character - this method is called from onClick event set in the inspector
-    /// </summary>
-    public void NextCharacter()
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        if (selectedPlayerIndex >= playerDetailsList.Length - 1) return;
-
-        selectedPlayerIndex++;
-        currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
-        characterNameText.text = playerDetailsList[selectedPlayerIndex].playerCharacterName.ToString();
-        MoveToSelectedCharacter(selectedPlayerIndex);
+        if (eventData.pointerEnter.CompareTag(Settings.astraeusTag))
+        {
+            HoverAstraeus();
+        }
+        else if (eventData.pointerEnter.CompareTag(Settings.lyrisaTag))
+        {
+            HoverLyrisa();
+        }
+        else if (eventData.pointerEnter.CompareTag(Settings.erebusTag))
+        {
+            HoverErebus();
+        }
+        else if (eventData.pointerEnter.CompareTag(Settings.orionTag))
+        {
+            HoverOrion();
+        }
     }
 
-    /// <summary>
-    /// Select previous character - this method is called from onClick event set in the inspector
-    /// </summary>
-    public void PreviousCharacter()
-    {
-        if (selectedPlayerIndex == 0) return;
-
-        selectedPlayerIndex--;
-        currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
-        characterNameText.text = playerDetailsList[selectedPlayerIndex].playerCharacterName.ToString();
-        MoveToSelectedCharacter(selectedPlayerIndex);
-    }
-
-    private void MoveToSelectedCharacter(int index)
+    public void OnPointerExit(PointerEventData eventData)
     {
         DisableAllSpotlights();
+    }
 
-        switch (index)
-        {
-            case 0:
-                lyrisaSpotlight.gameObject.SetActive(true);
-                break;
-            case 1:
-                astraeusSpotlight.gameObject.SetActive(true);
-                break;
-            case 2:
-                orionSpotlight.gameObject.SetActive(true);
-                break;
-            case 3:
-                erebusSpotlight.gameObject.SetActive(true);
-                break;
-            default:
-                break;
-        }
+    public void HoverLyrisa()
+    {
+        DisableAllSpotlights();
+        selectedPlayerIndex = 0;
+        currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
+        lyrisaSpotlight.gameObject.SetActive(true);
+    }
+
+    public void HoverAstraeus()
+    {
+        DisableAllSpotlights();
+        selectedPlayerIndex = 1;
+        currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
+        astraeusSpotlight.gameObject.SetActive(true);
+    }
+
+    public void HoverOrion()
+    {
+        DisableAllSpotlights();
+        selectedPlayerIndex = 2;
+        currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
+        orionSpotlight.gameObject.SetActive(true);
+    }
+
+    public void HoverErebus()
+    {
+        DisableAllSpotlights();
+        selectedPlayerIndex = 3;
+        currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
+        erebusSpotlight.gameObject.SetActive(true);
+    }
+
+    public void StartGame()
+    {
+        SceneManager.LoadScene("MainGameScene");
     }
 
     private void DisableAllSpotlights()
@@ -102,7 +111,7 @@ public class CharacterSelectorUI : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(characterSelector), characterSelector);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(parentCanvas), parentCanvas);
     }
 #endif
     #endregion

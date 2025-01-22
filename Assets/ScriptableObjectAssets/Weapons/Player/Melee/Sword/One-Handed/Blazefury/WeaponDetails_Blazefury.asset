@@ -15,6 +15,12 @@ MonoBehaviour:
   weaponName: Blazefury
   weaponTitle: 27
   weaponLevel: 1
+  requiredPrimaryStats:
+    strength: 6
+    dexterity: 0
+    constitution: 0
+    intelligence: 0
+    agility: 0
   weaponClass: 0
   weaponHitSpeed: 3
   wieldType: 0
@@ -29,8 +35,14 @@ MonoBehaviour:
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
   weaponRightShootPosition: {x: 0, y: 0, z: 0}
   weaponLeftShootPosition: {x: 0, y: 0, z: 0}
   weaponUpShootPosition: {x: 0, y: 0, z: 0}

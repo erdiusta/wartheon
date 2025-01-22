@@ -48,7 +48,7 @@ public class DropOnDestroy : MonoBehaviour
         // Set collider to true
         chestItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
             
-        // Get number of Ammo & Passive & Weapon Items To Spawn (max 3 of each)
+        // Get number of Active & Passive & Weapon Items To Spawn (max 3 of each)
         GetItemsToSpawn(out int activeItemNum, out int passiveItemNum, out int weaponNum);
 
         // Initialize drops
@@ -251,15 +251,15 @@ public class DropOnDestroy : MonoBehaviour
         // If enemy is a minion, ignore all drop issue then return
         if (enemy.enemyDetails.enemyType == EnemyType.Minion) return false;
 
-        for (int i = 0; i < player.playerDetails.collectibleWeaponsArray.Length; i++)
-        {
-            if (player.playerDetails.collectibleWeaponsArray[i].weaponName == weaponDetails.weaponName)
-            {
-                return true;
-            }
-        }
+        //for (int i = 0; i < player.playerDetails.collectibleWeaponsArray.Length; i++)
+        //{
+        //    if (player.playerDetails.collectibleWeaponsArray[i].weaponName == weaponDetails.weaponName)
+        //    {
+        //        return true;
+        //    }
+        //}
 
-        return false;
+        return true;
     }
 
     /// <summary>
