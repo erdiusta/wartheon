@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(MeleeAttackEvent))]
 [DisallowMultipleComponent]
@@ -211,11 +213,47 @@ public class MeleeAttackOffHand : MonoBehaviour
             SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.criticalHitSoundEffect);
         }
 
+        // Calculate damage after critical hit check
         damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier) : damageDone;
 
-        // Damage inflicted to enemy after deducting enemy armor
-        int inflictedDamage = damageDone > enemyHealth.GetArmorValue() ? damageDone - enemyHealth.GetArmorValue() : 1;
-        return inflictedDamage;
+        // Segregate elemental and non-elemental damage
+        int elementalDamage = (int)(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.elementalForgeRate * damageDone);
+        int nonElementalDamage = damageDone - elementalDamage;
+
+        int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - enemy.enemyDetails.fireResistance));
+
+        int inflictedElementalDamage = 0;
+        // Calculate inflicted elemental damage
+        switch (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.elementalBias)
+        {
+            case ElementalBias.None:
+                break;
+            case ElementalBias.Fire:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.fireResistance));
+                break;
+            case ElementalBias.Water:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.waterResistance));
+                break;
+            case ElementalBias.Earth:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.earthResistance));
+                break;
+            case ElementalBias.Air:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.airResistance));
+                break;
+            case ElementalBias.Dark:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.darkResistance));
+                break;
+            case ElementalBias.Light:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.lightResistance));
+                break;
+            default:
+                break;
+        }
+
+        Debug.Log("Inflicted elemental damage " + inflictedElementalDamage);
+        Debug.Log("Inflicted non-elemental damage " + inflictedNonElementalDamage);
+
+        return inflictedElementalDamage + inflictedNonElementalDamage;
     }
 
     /// <summary>
@@ -313,9 +351,7 @@ public class MeleeAttackOffHand : MonoBehaviour
             if (randomDice < player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.acidEfficiency)
             {
                 enemy.armorStatus = ArmorStatus.Acid;
-                enemyHealth.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue *
-                    (1 - player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.acidEfficiency)));
-
+                enemy.currentPhysicalResistance = (float)Math.Round(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.acidEfficiency * enemy.currentPhysicalResistance, 2);
                 enemy.healthEvent.CallGetAcidEvent();
             }
         }

@@ -236,13 +236,28 @@ public class BookUI : MonoBehaviour
 
                 for (int i = offHandWeaponEquipped.childCount - 1; i >= 0; i--)
                 {
-                    GameObject offHandWeaponAtSlot = offHandWeaponEquipped.GetChild(i).gameObject;
-                    Destroy(offHandWeaponAtSlot);
+                    if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.wieldType == WieldType.OneHanded &&
+                        player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
+                    {
+
+                    }
+                    else
+                    {
+                        GameObject offHandWeaponAtSlot = offHandWeaponEquipped.GetChild(i).gameObject;
+                        Destroy(offHandWeaponAtSlot);
+                    }
                 }
 
-                offHandWeaponBackground.gameObject.SetActive(true);
-                offHandWeaponEquipped.gameObject.SetActive(false);
+                if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.wieldType == WieldType.OneHanded &&
+                    player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
+                {
 
+                }
+                else
+                {
+                    offHandWeaponBackground.gameObject.SetActive(true);
+                    offHandWeaponEquipped.gameObject.SetActive(false);
+                }
             }
         }
 

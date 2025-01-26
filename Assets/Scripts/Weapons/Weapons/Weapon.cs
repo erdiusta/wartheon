@@ -4,7 +4,7 @@ public class Weapon : IReceivable
 {
     public WeaponDetailsSO weaponDetails;
     public float activeWeaponHandling;
-    public bool onMaindHand;
+    public bool onMainHand;
     public int weaponBelongingToWhichMainHandSet;
     public int weaponBelongingToWhichOffHandSet;
     public int weaponRemainingProjectile;

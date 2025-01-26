@@ -177,23 +177,169 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                     if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
                     {
-                        weaponClassText.text = "Shiny look.";
+                        weaponClassText.text = "+1 Intelligence";
+                        hitSpeedText.text = "-20% Cast Duration";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
+                    {
+                        weaponClassText.text = "+15% Fire Resistance";
+                        hitSpeedText.text = "+5% Physical Resistance";
+                        weaponWieldText.text = "+15% Chance to Burn";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GirdleOfFirmament)
+                    {
+                        weaponClassText.text = "+5% Air Resistance";
+                        hitSpeedText.text = "+5% Light Resistance";
+                        weaponWieldText.text = "Immune to Blind";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
+                    {
+                        weaponClassText.text = "+1 Strength";
+                        hitSpeedText.text = "+1 Agility";
+                        weaponWieldText.text = "-5% Attack Cooldown";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.OminousGripOfThunder)
+                    {
+                        weaponClassText.text = "+5% Physical Resistance";
+                        hitSpeedText.text = "+10% Air Resistance";
                     }
                     else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
                     {
-                        weaponClassText.text = "More drop chance.";
+                        weaponClassText.text = "+15% Drop Chance";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
+                    {
+                        weaponClassText.text = "-20% Attack Cooldown";
+                        hitSpeedText.text = "-10% Physical Resistance";
                     }
                     else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                     {
-                        weaponClassText.text = "More critical chance\nfor dual-wield daggers.";
+                        weaponClassText.text = "+5% Cr. Hit Chance";
+                        hitSpeedText.text = "+10% Cr. Hit Chance When";
+                        weaponWieldText.text = "Dual-Wield Dagger or Claw Equipped";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
+                    {
+                        weaponClassText.text = "+1 Agility";
+                        hitSpeedText.text = "+10% Evasiveness";
                     }
                     else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
                     {
-                        weaponClassText.text = "More projectile accuracy\nfor bows.";
+                        weaponClassText.text = "+100% Accuracy for Bows";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HaloOfBlindingRadiance)
+                    {
+                        weaponClassText.text = "+5% Light Resistance";
+                        hitSpeedText.text = "+10% Chance to Blind";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HelmOfTheEternalVigil)
+                    {
+                        weaponClassText.text = "+40% Physical Resistance";
+                        hitSpeedText.text = "While Standing Still";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EnchantersSpire)
+                    {
+                        weaponClassText.text = "+1 Intelligence";
+                        hitSpeedText.text = "+5% All Elemental Resistance";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
+                    {
+                        weaponClassText.text = "+1 Dexterity";
+                        hitSpeedText.text = "+15% Evasiveness";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
+                    {
+                        weaponClassText.text = "+1 Constitution";
+                        hitSpeedText.text = "+10% Physical Resistance";
                     }
                     else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
                     {
-                        weaponClassText.text = "Increased speed.";
+                        weaponClassText.text = "+2 Agility";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
+                    {
+                        weaponClassText.text = "+1 Strength";
+                        hitSpeedText.text = "+1 Constitution";
+                        weaponWieldText.text = "+20% Physical Resistance";
+                        damageText.text = "+10% Chance to Block When";
+                        baseHandlingText.text = "Healt is below 50%";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
+                    {
+                        weaponClassText.text = "+20% Fire Resistance";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmeraldPendant)
+                    {
+                        weaponClassText.text = "+20% Earth Resistance";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.TopazPendant)
+                    {
+                        weaponClassText.text = "+20% Air Resistance";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SapphirePendant)
+                    {
+                        weaponClassText.text = "+20% Water Resistance";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
+                    {
+                        weaponClassText.text = "+5% Elemental Damage";
+                        hitSpeedText.text = "+15% All Elemental Resistance";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.CloakOfWindwalker)
+                    {
+                        weaponClassText.text = "+1 Agility";
+                        hitSpeedText.text = "+10% Evasiveness";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldenCloak)
+                    {
+                        weaponClassText.text = "+1 All Primary Stats";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmbercladBracers)
+                    {
+                        weaponClassText.text = "+8% Fire Resistance";
+                        hitSpeedText.text = "+10% Physical Resistance";
+                        weaponWieldText.text = "-5% Attack Cooldown";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomTouchedGloves)
+                    {
+                        weaponClassText.text = "+10% Earth Resistance";
+                        hitSpeedText.text = "Immune to Poison";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
+                    {
+                        weaponClassText.text = "+1 Stength";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BootsOfInfernalMarch)
+                    {
+                        weaponClassText.text = "+5% Fire Damage";
+                        hitSpeedText.text = "+2 Agility";
+                        weaponWieldText.text = "-10% Physical Resistance";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfVitality)
+                    {
+                        weaponClassText.text = "+1 Constitution";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
+                    {
+                        weaponClassText.text = "+1 Intelligence";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BlazingHeartplate)
+                    {
+                        weaponClassText.text = "+20% Physical Resistance";
+                        hitSpeedText.text = "+10% Fire Resistance";
+                        weaponWieldText.text = "-5% Attack Cooldown";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.FrostboundChainmail)
+                    {
+                        weaponClassText.text = "+15% Physical Resistance";
+                        hitSpeedText.text = "+10% Water Resistance";
+                        weaponWieldText.text = "Immune to Frost";
+                    }
+                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomweaveVest)
+                    {
+                        weaponClassText.text = "+10% Physical Resistance";
+                        hitSpeedText.text = "+10% Earth Resistance";
+                        weaponWieldText.text = "Immune to Poison";
                     }
                 }
             }
@@ -238,6 +384,56 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     headerText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
                     headerText.text = activeItem.activeItemDetails.activeItemName;
                     levelText.text = $"(Active Item)";
+
+                    if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Dummy)
+                    {
+                        weaponClassText.text = "Distracts Enemies Until Being";
+                        hitSpeedText.text = "Destroyed";
+                    }
+                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Potion)
+                    {
+                        weaponClassText.text = "Slowly Regenerates Health";
+                    }
+                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Bomb)
+                    {
+                        weaponClassText.text = "Explodes and Gives";
+                        hitSpeedText.text = "AoE Damage";
+                    }
+                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Compass)
+                    {
+                        weaponClassText.text = "Locates Boss Room's";
+                        hitSpeedText.text = "Direction";
+                    }
+                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Boomerang)
+                    {
+                        weaponClassText.text = "Strikes And Return, Useful";
+                        hitSpeedText.text = "AoE DamageFor Stunning Enemies";
+                    }
+                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Hourglass)
+                    {
+                        weaponClassText.text = "Slows the Time Flow By";
+                        hitSpeedText.text = "Half to Act More Precisely";
+                    }
+                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Shiruken)
+                    {
+                        weaponClassText.text = "Several Quick Throwable";
+                        hitSpeedText.text = "Star Projectiles";
+                    }
+                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Trap)
+                    {
+                        weaponClassText.text = "Trap for Enemies To Step On";
+                    }
+                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Summoner)
+                    {
+                        weaponClassText.text = "Summoning Ally Mobs as Companion";
+                        hitSpeedText.text = "For a Short Time";
+                    }
+                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.BobbyPin)
+                    {
+                        weaponClassText.text = "Chance to Crack The";
+                        hitSpeedText.text = "Chest Without a Key";
+                        weaponWieldText.text = "Only One Attempt Permitted";
+                    }
                 }
 
                 //levelText.text = $"({weapon.weaponDetails.weaponLevel.ToString()})";
@@ -487,7 +683,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
         // Move slot's weapon to draggable item's previous slot
         // Draggable item is on main hand
-        if (draggableItemWeapon.onMaindHand)
+        if (draggableItemWeapon.onMainHand)
         {
             if (currentSlotsDraggableItemWeapon == null)
             {
@@ -497,7 +693,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 return;
             }
             // Slot and draggable items are both main hands
-            else if (currentSlotsDraggableItemWeapon.onMaindHand)
+            else if (currentSlotsDraggableItemWeapon.onMainHand)
             {
                 // Draggable item doesn't have an off-hand weapon
                 if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] == null)
@@ -581,7 +777,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         else
         {
             // Draggable item is on off-hand and slot item is on main hand
-            if (currentSlotsDraggableItemWeapon.onMaindHand)
+            if (currentSlotsDraggableItemWeapon.onMainHand)
             {
                 // Draggable item is a shield
                 if (draggableItemWeapon.weaponDetails.weaponClass == WeaponClass.Shield)
@@ -635,9 +831,9 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 // Put draggable item to current slot
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
                 currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet = draggableItemWeapon.weaponBelongingToWhichMainHandSet;
-                currentSlotsDraggableItemWeapon.onMaindHand = true;
+                currentSlotsDraggableItemWeapon.onMainHand = true;
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                draggableItemWeapon.onMaindHand = true;
+                draggableItemWeapon.onMainHand = true;
                 player.playerControl.SetWeaponSetByIndex(true);
                 break;
             case ItemSwapPos.DragMainSlotOff:
@@ -648,10 +844,10 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
                 currentSlotsDraggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
                 currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet = draggableItemWeapon.weaponBelongingToWhichMainHandSet;
-                currentSlotsDraggableItemWeapon.onMaindHand = true;
+                currentSlotsDraggableItemWeapon.onMainHand = true;
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                draggableItemWeapon.onMaindHand = false;
+                draggableItemWeapon.onMainHand = false;
 
                 if (draggableItem.transactionOnTheSameSet)
                 {
@@ -671,10 +867,10 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
                 currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
                 currentSlotsDraggableItemWeapon.weaponBelongingToWhichOffHandSet = draggableItemWeapon.weaponBelongingToWhichOffHandSet;
-                currentSlotsDraggableItemWeapon.onMaindHand = false;
+                currentSlotsDraggableItemWeapon.onMainHand = false;
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                draggableItemWeapon.onMaindHand = true;
+                draggableItemWeapon.onMainHand = true;
 
                 if (draggableItem.transactionOnTheSameSet)
                 {
@@ -695,8 +891,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
                 currentSlotsDraggableItemWeapon.weaponBelongingToWhichOffHandSet = draggableItemWeapon.weaponBelongingToWhichOffHandSet;
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                draggableItemWeapon.onMaindHand = false;
-                currentSlotsDraggableItemWeapon.onMaindHand = false;
+                draggableItemWeapon.onMainHand = false;
+                currentSlotsDraggableItemWeapon.onMainHand = false;
                 player.playerControl.SetWeaponSetByIndex(true);
                 break;
             default:
@@ -708,7 +904,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     {
         Weapon draggableItemWeapon = (Weapon)draggableItem.receivable;
 
-        if (draggableItemWeapon.onMaindHand)
+        if (draggableItemWeapon.onMainHand)
         {
             if (slotType == SlotType.WeaponMainHand)
             {
@@ -757,7 +953,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 // Put draggable item to current slot
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
-                draggableItemWeapon.onMaindHand = false;
+                draggableItemWeapon.onMainHand = false;
 
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
@@ -780,7 +976,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 // Put draggable item to current slot
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
-                draggableItemWeapon.onMaindHand = true;
+                draggableItemWeapon.onMainHand = true;
 
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;

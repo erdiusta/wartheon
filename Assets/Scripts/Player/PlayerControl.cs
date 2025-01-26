@@ -780,7 +780,15 @@ public class PlayerControl : MonoBehaviour
 
             if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
             {
-                player.setActiveWeaponEvent.CallOneHandWeaponEquipEvent();
+                // If both hands are equipped with one-handed weapon, then swap is true
+                if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
+                {
+                    player.setActiveWeaponEvent.CallOneHandWeaponEquipEvent(true);
+                }
+                else
+                {
+                    player.setActiveWeaponEvent.CallOneHandWeaponEquipEvent();
+                }
             }
             else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
             {
@@ -843,7 +851,15 @@ public class PlayerControl : MonoBehaviour
             }
             else
             {
-                RemoveOffHandWeaponsFromBook();
+                if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.wieldType == WieldType.OneHanded &&
+                    player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
+                {
+
+                }
+                else
+                {
+                    RemoveOffHandWeaponsFromBook();
+                }
             }
         }
 
@@ -1301,7 +1317,13 @@ public class PlayerControl : MonoBehaviour
         {
             player.isGemSkinActive = true;
             player.healthEvent.CallGetGemSkinSpecialMoveEvent(); // This is for displaying gem skin icon
-            player.health.currentArmorValue += 5;
+            player.currentPhysicalResistanceValue += 0.1f;
+            player.currentFireResistanceValue += 0.1f;
+            player.currentWaterResistanceValue += 0.1f;
+            player.currentAirResistanceValue += 0.1f;
+            player.currentEarthResistanceValue += 0.1f;
+            player.currentLightResistanceValue += 0.1f;
+            player.currentDarkResistanceValue += 0.1f;
         }
     }
 
@@ -1473,7 +1495,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public void DropProcess(DropType dropType, IReceivable receivable = null)
+    public void DropProcess(DropType dropType, IReceivable receivable = null, bool isWeaponSwapping = false)
     {
         if (dropType == DropType.ActiveItem)
         {
@@ -1557,9 +1579,9 @@ public class PlayerControl : MonoBehaviour
         {
             Weapon weapon = (Weapon)receivable;
 
-            if (weapon.onMaindHand)
+            if (weapon.onMainHand)
             {
-                if (IsMainHandDropNotPossible())
+                if (!IsMainHandDropPossible(isWeaponSwapping))
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.LessThanOneMainHandWeapon);
                     return;
@@ -1571,10 +1593,14 @@ public class PlayerControl : MonoBehaviour
                         case 1:
                             if (player.weaponSlotSetArray[0][1] == null) // Drop main hand if only off-hand slot is empty
                             {
+                                if (isWeaponSwapping) break;
+
                                 player.weaponSlotSetArray[0][0] = null;
                             }
                             else
                             {
+                                if (isWeaponSwapping) break;
+
                                 GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
                                 return;
                             }
@@ -1582,10 +1608,14 @@ public class PlayerControl : MonoBehaviour
                         case 2:
                             if (player.weaponSlotSetArray[1][1] == null)
                             {
+                                if (isWeaponSwapping) break;
+
                                 player.weaponSlotSetArray[1][0] = null;
                             }
                             else
                             {
+                                if (isWeaponSwapping) break;
+
                                 GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
                                 return;
                             }
@@ -1593,10 +1623,14 @@ public class PlayerControl : MonoBehaviour
                         case 3:
                             if (player.weaponSlotSetArray[2][1] == null)
                             {
+                                if (isWeaponSwapping) break;
+
                                 player.weaponSlotSetArray[2][0] = null;
                             }
                             else
                             {
+                                if (isWeaponSwapping) break;
+
                                 GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
                                 return;
                             }
@@ -1622,7 +1656,17 @@ public class PlayerControl : MonoBehaviour
                     ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
 
                     // De-active dropped main hand weapon
-                    player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+                    if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]?.weaponDetails.wieldType == WieldType.OneHanded)
+                    {
+                        // Prevent off-hand ui weapon icon lost in case weapon swapping on drop while equipping a shield
+                        player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent(true);
+                    }
+                    else
+                    {
+                        player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+                    }
+
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = null; 
 
                     // Update stat values
                     player.UpdateDamageValues();
@@ -1693,7 +1737,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public bool IsMainHandDropNotPossible()
+    public bool IsMainHandDropPossible(bool isWeaponSwapping)
     {
         int gauge = 0;
 
@@ -1709,7 +1753,14 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
-        return gauge <= 1;
+        bool dropPossible = gauge > 1 ;
+
+        if (isWeaponSwapping)
+        {
+            dropPossible = true;
+        }
+
+        return dropPossible;
     }
 
     /// <summary>

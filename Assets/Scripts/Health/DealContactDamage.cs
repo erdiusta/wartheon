@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -77,7 +78,8 @@ public class DealContactDamage : MonoBehaviour
                     if (100 - player.currentDeflectionValue * 100 > Random.Range(0, 100))
                     {
                         // Damage produced by enemy
-                        int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMin);
+                        int damageDone = enemy.isCursed ? contactDamageAmountMin : Random.Range(contactDamageAmountMin, 
+                            contactDamageAmountMax);
 
                         if (player.health.isDamageable)
                         {
@@ -105,9 +107,7 @@ public class DealContactDamage : MonoBehaviour
                                     CheckAcidStatus(player);
                                     CheckStunStatus(player);
                                     CheckCurseStatus(player);
-
-                                    // Damage inflicted to enemy after deducting enemy armor
-                                    int inflictedDamage = damageDone > player.health.GetArmorValue() ? damageDone - player.health.GetArmorValue() : 1;
+                                    int inflictedDamage = CalculateDamageAmount(player, damageDone);
 
                                     receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
                                 }
@@ -143,6 +143,48 @@ public class DealContactDamage : MonoBehaviour
                 receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
             }
         }
+    }
+
+    private int CalculateDamageAmount(Player player, int damageDone)
+    {
+        // Segregate elemental and non-elemental damage
+        int elementalDamage = (int)(enemy.enemyDetails.elementalForgeRate * damageDone);
+        int nonElementalDamage = damageDone - elementalDamage;
+
+        int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentPhysicalResistanceValue));
+
+        int inflictedElementalDamage = 0;
+        // Calculate inflicted elemental damage
+        switch (enemy.enemyDetails.elementalBias)
+        {
+            case ElementalBias.None:
+                break;
+            case ElementalBias.Fire:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentFireResistanceValue));
+                break;
+            case ElementalBias.Water:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentWaterResistanceValue));
+                break;
+            case ElementalBias.Earth:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentEarthResistanceValue));
+                break;
+            case ElementalBias.Air:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentAirResistanceValue));
+                break;
+            case ElementalBias.Dark:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentDarkResistanceValue));
+                break;
+            case ElementalBias.Light:
+                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentLightResistanceValue));
+                break;
+            default:
+                break;
+        }
+
+        Debug.Log("Inflicted elemental damage " + inflictedElementalDamage);
+        Debug.Log("Inflicted non-elemental damage " + inflictedNonElementalDamage);
+
+        return inflictedElementalDamage + inflictedNonElementalDamage;
     }
 
     private void GetDamageFromSummonedEnemies(Collider2D collision)
@@ -203,7 +245,7 @@ public class DealContactDamage : MonoBehaviour
                 }
 
                 player.armorStatus = ArmorStatus.Acid;
-                player.health.SetArmorValue((int)(player.currentPhysicalResistanceValue * (1 - enemy.enemyDetails.acidEfficiency)));
+                player.currentPhysicalResistanceValue = (float)Math.Round(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.acidEfficiency * enemy.currentPhysicalResistance, 2);
                 player.healthEvent.CallGetAcidEvent();
             }
         }

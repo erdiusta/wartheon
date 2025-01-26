@@ -2,6 +2,7 @@ using System.Collections;
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using static UnityEngine.EventSystems.EventTrigger;
 
 [DisallowMultipleComponent]
 public class Projectile : MonoBehaviour, IFireable
@@ -38,6 +39,7 @@ public class Projectile : MonoBehaviour, IFireable
     Coroutine explosionRoutine;
     Decoy decoy;
     int damageDone = 0;
+    bool lightningStroke;
     bool isHittingWall; // Flag is for wall hit check for penetration arrow
 
     private void Awake()
@@ -69,7 +71,6 @@ public class Projectile : MonoBehaviour, IFireable
         {
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
-
     }
 
     private void Start()
@@ -148,6 +149,11 @@ public class Projectile : MonoBehaviour, IFireable
                     {
                         velocity = Vector3.zero;
                     }
+                }
+                if (lightningStroke)
+                {
+                    lightningStroke = false;
+                    StartCoroutine(DisableProcess(3.5f));
                 }
             }
         }
@@ -466,14 +472,16 @@ public class Projectile : MonoBehaviour, IFireable
 
             if (isPenetrationArrow)
             {
-                float incresedDamage = damageDone * 1.25f;
-                damageDone = (int)incresedDamage;
+                float increasedDamage = damageDone * 1.25f;
+                damageDone = (int)increasedDamage;
             }
 
             int inflictedDamage = 0;
 
             if (collision != null && collision.GetComponent<Enemy>() != null)
             {
+                Enemy enemy = collision.GetComponent<Enemy>();
+
                 if (projectileDetails != null)
                 {
                     if (projectileDetails.isPlayerProjectile)
@@ -490,20 +498,92 @@ public class Projectile : MonoBehaviour, IFireable
                         Random.Range(activeItemDetails.projectileDamageMin, activeItemDetails.projectileDamageMax);
                 }
 
-
-                // Damage inflicted to enemy after deducting enemy armor
-                inflictedDamage = damageDone > health.GetArmorValue() ? damageDone - health.GetArmorValue() : 1;
-
                 if (headShotHappened)
                 {
                     // x3 damage if used headshot
-                    inflictedDamage *= 3;
+                    damageDone *= 3;
                 }
+
+                // Segregate elemental and non-elemental damage
+                int elementalDamage = (int)(projectileDetails.belongingWeaponDetails.elementalForgeRate * damageDone);
+                int nonElementalDamage = damageDone - elementalDamage;
+
+                int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - enemy.currentPhysicalResistance));
+
+                int inflictedElementalDamage = 0;
+
+                // Calculate inflicted elemental damage
+                switch (projectileDetails.belongingWeaponDetails.elementalBias)
+                {
+                    case ElementalBias.None:
+                        break;
+                    case ElementalBias.Fire:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.fireResistance));
+                        break;
+                    case ElementalBias.Water:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.waterResistance));
+                        break;
+                    case ElementalBias.Earth:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.earthResistance));
+                        break;
+                    case ElementalBias.Air:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.airResistance));
+                        break;
+                    case ElementalBias.Dark:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.darkResistance));
+                        break;
+                    case ElementalBias.Light:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.lightResistance));
+                        break;
+                    default:
+                        break;
+                }
+
+                // Damage inflicted to enemy after deducting enemy armor
+                inflictedDamage = inflictedElementalDamage + inflictedNonElementalDamage;
             }
             else if (collision != null && collision.GetComponent<Player>() != null)
             {
-                // Damage inflicted to enemy after deducting enemy armor
-                inflictedDamage = damageDone > health.GetArmorValue() ? damageDone - health.GetArmorValue() : 1;
+                Player player = collision.GetComponent<Player>();
+
+                inflictedDamage = 0;
+
+                // Segregate elemental and non-elemental damage
+                int elementalDamage = (int)(projectileDetails.belongingWeaponDetails.elementalForgeRate * damageDone);
+                int nonElementalDamage = damageDone - elementalDamage;
+
+                int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentPhysicalResistanceValue));
+
+                int inflictedElementalDamage = 0;
+                // Calculate inflicted elemental damage
+                switch (projectileDetails.belongingWeaponDetails.elementalBias)
+                {
+                    case ElementalBias.None:
+                        break;
+                    case ElementalBias.Fire:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentFireResistanceValue));
+                        break;
+                    case ElementalBias.Water:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentWaterResistanceValue));
+                        break;
+                    case ElementalBias.Earth:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentEarthResistanceValue));
+                        break;
+                    case ElementalBias.Air:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentAirResistanceValue));
+                        break;
+                    case ElementalBias.Dark:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentDarkResistanceValue));
+                        break;
+                    case ElementalBias.Light:
+                        inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentLightResistanceValue));
+                        break;
+                    default:
+                        break;
+                }
+
+                // Damage inflicted to player after deducting player armor
+                inflictedDamage = inflictedElementalDamage + inflictedNonElementalDamage;
             }
             else if (collision != null && collision.GetComponent<Environment>() != null)
             {
@@ -529,7 +609,7 @@ public class Projectile : MonoBehaviour, IFireable
     public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
         float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false, bool fallingFromSkies = false,
         bool isPenetrationArrow = false, int projectileCounter = 0, int projectilesPerShot = 0,CentaurPhase centaurPhase = CentaurPhase.None,
-        TreantPhase treantPhase = TreantPhase.None)
+        TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None)
     {
         #region Projectile
 
@@ -545,10 +625,17 @@ public class Projectile : MonoBehaviour, IFireable
         isColliding = false;
 
         // Set fire direction
-        SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, projectilesPerShot, centaurPhase, treantPhase);
+        SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, projectilesPerShot, centaurPhase, treantPhase, galvanusPhase);
 
         // Set projectile sprite
         spriteRenderer.sprite = projectileDetails.projectileSprite;
+
+        // Play sound if it is a unique projectile
+        if (galvanusPhase == GalvanusPhase.Lightning)
+        {
+            SoundEffectManager.Instance.PlaySoundEffect(projectileDetails.projectileImpactSoundEffect);
+            lightningStroke = true;
+        }
 
         // Set initial projectile material depending on whether there is an projectile charge period
         if (projectileDetails.projectileChargeTime > 0f)
@@ -688,7 +775,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// Set projectile fire direction and angle based on the input angle and direction adjusted by the
     /// random spread - PROJECTILE
     private void SetFireDirection(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
-        int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None)
+        int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, 
+        GalvanusPhase galvanusPhase = GalvanusPhase.None)
     {
         float projectileSpreadModifier;
 
@@ -765,10 +853,17 @@ public class Projectile : MonoBehaviour, IFireable
         }
 
         // Set projectile rotation
-        transform.eulerAngles = new Vector3(0f, 0f, fireDirectionAngle);
+        if (galvanusPhase == GalvanusPhase.Lightning)
+        {
+            transform.eulerAngles = new Vector3(0f, 0f, 0f);
+        }
+        else
+        {
+            transform.eulerAngles = new Vector3(0f, 0f, fireDirectionAngle);
 
-        // Set projectile fire direction
-        fireDirectionVector = HelperUtilities.GetDirectionVectorFromAngle(fireDirectionAngle);
+            // Set projectile fire direction
+            fireDirectionVector = HelperUtilities.GetDirectionVectorFromAngle(fireDirectionAngle);
+        }
     }
 
     /// <summary>
@@ -844,7 +939,7 @@ public class Projectile : MonoBehaviour, IFireable
             GetComponentInChildren<Animator>().SetTrigger("impact");
             StaticEventHandler.CallCameraShakeEvent(GameManager.Instance.GetPlayer().playerDetails.shakeIntensity, GameManager.Instance.GetPlayer().playerDetails.shakeDuration);
             SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.specialMoveThreeSoundEffect);
-            StartCoroutine(DisableProcess());
+            StartCoroutine(DisableProcess(0.2f));
         }
         else
         {
@@ -857,20 +952,20 @@ public class Projectile : MonoBehaviour, IFireable
 
         if (!isPenetrationArrow)
         {
-            StartCoroutine(DisableProcess());
+            StartCoroutine(DisableProcess(0.2f));
         }
         else
         {
             if (isHittingWall)
             {
-                StartCoroutine(DisableProcess());
+                StartCoroutine(DisableProcess(0.2f));
             }
         }
     }
 
-    IEnumerator DisableProcess()
+    IEnumerator DisableProcess(float disableDuration)
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(disableDuration);
 
         isHittingWall = false;
         gameObject.SetActive(false);
@@ -984,7 +1079,7 @@ public class Projectile : MonoBehaviour, IFireable
                     }
 
                     player.armorStatus = ArmorStatus.Acid;
-                    player.health.SetArmorValue((int)(player.currentPhysicalResistanceValue * (1 - projectileDetails.acidEfficiency)));
+                    player.currentPhysicalResistanceValue = (float)Math.Round(projectileDetails.acidEfficiency * player.currentPhysicalResistanceValue, 2);
                     player.healthEvent.CallGetAcidEvent();
                 }
             }
@@ -1003,7 +1098,7 @@ public class Projectile : MonoBehaviour, IFireable
                     }
 
                     player.armorStatus = ArmorStatus.Acid;
-                    player.health.SetArmorValue((int)(player.currentPhysicalResistanceValue * (1 - activeItemDetails.acidEfficiency)));
+                    player.currentPhysicalResistanceValue = (float)Math.Round(activeItemDetails.acidEfficiency * player.currentPhysicalResistanceValue, 2);
                     player.healthEvent.CallGetAcidEvent();
                 }
             }
@@ -1023,7 +1118,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomAcidNum < projectileDetails.acidEfficiency)
                 {
                     enemy.armorStatus = ArmorStatus.Acid;
-                    enemy.health.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue * (1 - projectileDetails.acidEfficiency)));
+                    enemy.currentPhysicalResistance = (float)Math.Round(projectileDetails.acidEfficiency * enemy.currentPhysicalResistance, 2);
                     enemy.healthEvent.CallGetAcidEvent();
                 }
             }
@@ -1036,7 +1131,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomAcidNum < activeItemDetails.acidEfficiency)
                 {
                     enemy.armorStatus = ArmorStatus.Acid;
-                    enemy.health.SetArmorValue((int)(enemy.enemyDetails.enemyArmorValue * (1 - activeItemDetails.acidEfficiency)));
+                    enemy.currentPhysicalResistance = (float)Math.Round(activeItemDetails.acidEfficiency * enemy.currentPhysicalResistance, 2);
                     enemy.healthEvent.CallGetAcidEvent();
                 }
             }
@@ -1348,7 +1443,8 @@ public class Projectile : MonoBehaviour, IFireable
         // Damage inflicted to enemy after deducting enemy armor
         Health enemyHealth = enemy.GetComponent<Health>();
 
-        int inflictedDamage = damageDone > enemyHealth.GetArmorValue() ? damageDone - enemyHealth.GetArmorValue() : 1;
+        int inflictedDamage = (int)(damageDone * (1 - enemy.currentPhysicalResistance));
+
         return inflictedDamage;
     }
 

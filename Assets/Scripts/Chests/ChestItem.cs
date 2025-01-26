@@ -147,26 +147,53 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                         // Drop process
                                         if (player.activeWeapon.GetCurrentMainHandWeapon() != null && !isPickedUp)
                                         {
-                                            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded &&
-                                                weaponDetails.weaponClass == WeaponClass.Shield)
+                                            if (weaponDetails.weaponClass == WeaponClass.Shield)
                                             {
                                                 goto shieldContinue; // Skip drop process because you equip one-handed weapon and chest contains a shield
                                             }
 
+                                            // Drop off-hand weapon if pick-up item is two-handed
                                             if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
                                             {
-                                                toBeDroppedOffWeaponDetails = weaponDetails;
-                                                player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon());
+                                                if (weaponDetails.wieldType == WieldType.TwoHanded)                                                
+                                                {
+                                                    toBeDroppedOffWeaponDetails = weaponDetails;
+                                                    player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon());
+                                                }
                                             }
 
                                             if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
                                             {
-
                                                 toBeDroppedMainWeaponDetails = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails;
-                                                player.playerControl.DropProcess(DropType.Weapon,player.activeWeapon.GetCurrentMainHandWeapon());
-                                            }
 
+                                                // If pick-up weapon is two-handed, off-hand weapon is dropped and off-hand active weapon is null
+                                                if (weaponDetails.wieldType == WieldType.TwoHanded)
+                                                {
+                                                    player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentMainHandWeapon(), true);
+                                                }
+                                                else
+                                                {
+                                                    if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
+                                                    {
+                                                        // CURRENT ACTIVE MAIN HAND WEAPON BECOMES NULL HERE AND DROP HAPPENS
+                                                        player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentMainHandWeapon(), true);
+                                                    }
+                                                    else
+                                                    {
+                                                        if (weaponDetails.weaponClass == WeaponClass.Shield)
+                                                        {
+                                                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
+                                                        }
+                                                        else
+                                                        {
+                                                            player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentMainHandWeapon(), true);
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
+
+                                        // AT THIS LINE active main hand weapon becomes null
 
                                         shieldContinue:
                                         // Pick up process
@@ -181,17 +208,30 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                             else
                                             {
                                                 CollectWeaponItem(player);
+                                                Debug.Log("Equipped off-hand weapon is " + player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponName);
                                             }
                                         }
                                         else
                                         {
-                                            if (weaponDetails.weaponClass == WeaponClass.Shield && player.activeWeapon?.GetCurrentOffHandWeapon() != null)
+                                            // Drop equipped off-hand weapon if to-be-picked-up item is a shield
+                                            if (weaponDetails.weaponClass == WeaponClass.Shield)
                                             {
-                                                toBeDroppedOffWeaponDetails = weaponDetails;
-                                                player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon());
+                                                if (player.activeWeapon?.GetCurrentOffHandWeapon() != null)
+                                                {
+                                                    toBeDroppedOffWeaponDetails = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails;
+                                                    player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon());
+
+                                                    CollectWeaponItem(player);
+                                                }
+                                                else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+                                                {
+                                                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandCantBeAddedToTwoHanded);
+                                                }
+                                                else
+                                                {
+                                                    CollectWeaponItem(player);
+                                                }
                                             }
-                                            
-                                            CollectWeaponItem(player);
                                         }
                                     }
 
@@ -635,9 +675,6 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
         pickUpAnimator.SetTrigger("pickUp");
 
-        // Introduction pop-up
-        StaticEventHandler.CallIntroductionPopUpEvent(DropType.Weapon, weapon);
-
         isPickedUp = true;
         isColliding = true;
         weaponDetails = null;
@@ -736,8 +773,8 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             isPickedUp = true;
         }
 
-        // Introduction pop-up
-        StaticEventHandler.CallIntroductionPopUpEvent(DropType.PassiveItem, passiveItem);
+        //// Introduction pop-up
+        //StaticEventHandler.CallIntroductionPopUpEvent(DropType.PassiveItem, passiveItem);
 
         // Play pickup sound effect
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
@@ -771,9 +808,6 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
         pickUpAnimator.SetTrigger("pickUp");
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
-
-        // Introduction pop-up
-        StaticEventHandler.CallIntroductionPopUpEvent(DropType.ActiveItem, activeItem);
 
         isColliding = true;
         isPickedUp = true;

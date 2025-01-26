@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ActiveItem_BobbyPin
   m_EditorClassIdentifier: 
   activeItemName: Bobby Pin
-  activeItemType: 0
+  activeItemType: 11
   activeItemSprite: {fileID: 1973945012, guid: 53c60fae0ed937042a1eb82931d91861, type: 3}
   activeItemAnimatorController: {fileID: 9100000, guid: bef07f0cfff27394e8e32a06d3692480, type: 2}
   activeItemPrefabArray: []
@@ -48,12 +48,12 @@ MonoBehaviour:
   acidEfficiency: 0
   isPoisonous: 0
   poisonChance: 0
-  hasBleedingDamage: 0
-  bleedingChance: 0
   hasStunDamage: 0
   stunChance: 0.2
-  hasSlowDamage: 0
-  slowChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
   isProjectileTrail: 0
   projectileTrailTime: 3
   projectileTrailMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}

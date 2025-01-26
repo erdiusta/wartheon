@@ -65,6 +65,14 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public bool hasAnimator = false;
     #region Tooltip
+    [Tooltip("Weapon elemental bias")]
+    #endregion Tooltip
+    public ElementalBias elementalBias;
+    #region Tooltip
+    [Tooltip("Weapon elemental compound rate")]
+    #endregion Tooltip
+    public float elementalForgeRate;
+    #region Tooltip
     [Tooltip("Enemy's minion details")]
     #endregion
     public EnemyDetailsSO enemyMinionDetails;
@@ -77,7 +85,31 @@ public class EnemyDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Enemy starting armor amount")]
     #endregion
-    public int enemyArmorValue = 0;
+    public int physicalResistance = 0;
+    #region Tooltip
+    [Tooltip("Enemy fire resistance value")]
+    #endregion
+    public float fireResistance = 0f;
+    #region Tooltip
+    [Tooltip("Enemy water resistance value")]
+    #endregion
+    public float waterResistance = 0f;
+    #region Tooltip
+    [Tooltip("Enemy air resistance value")]
+    #endregion
+    public float airResistance = 0f;
+    #region Tooltip
+    [Tooltip("Enemy earth resistance value")]
+    #endregion
+    public float earthResistance = 0f;
+    #region Tooltip
+    [Tooltip("Enemy light resistance value")]
+    #endregion
+    public float lightResistance = 0f;
+    #region Tooltip
+    [Tooltip("Enemy dark resistance value")]
+    #endregion
+    public float darkResistance = 0f;
     #region Tooltip
     [Tooltip("Check if enemy has a shield")]
     #endregion
@@ -306,7 +338,7 @@ public class EnemyDetailsSO : ScriptableObject
         HelperUtilities.ValidateCheckNullValue(this, nameof(enemyPrefab), enemyPrefab);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(experiencePoint), experiencePoint, false);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(chaseDistance), chaseDistance, false);
-        HelperUtilities.ValidateCheckPositiveValue(this, nameof(enemyArmorValue), enemyArmorValue, true);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(physicalResistance), physicalResistance, true);
         HelperUtilities.ValidateCheckNullValue(this, nameof(enemyStandardMaterial), enemyStandardMaterial);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(enemyMaterializeTime), enemyMaterializeTime, true);
         HelperUtilities.ValidateCheckNullValue(this, nameof(enemyMaterializeShader), enemyMaterializeShader);

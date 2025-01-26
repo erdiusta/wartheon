@@ -38,6 +38,10 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip("If the projectile has a charge time then specify what material should be used to render the projectile while charging")]
     #endregion
     public Material projectileChargeMaterial;
+    #region Tooltip
+    [Tooltip("If have, belonging weapon details")]
+    #endregion
+    public WeaponDetailsSO belongingWeaponDetails;
 
     #region Header PROJECTILE HIT EFFECT
     [Space(10)]
@@ -155,6 +159,15 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip("Maximum spawn interval time. The time interval in seconds between spawned projectile is a random value between the minimum and maximum values specified.")]
     #endregion
     public float projectileSpawnIntervalMax = 0f;
+
+    #region Header PROJECTILE SOUND
+    [Space(10)]
+    [Header("PROJECTILE SOUND EFFECT DETAILS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The impact sound effect SO for the projectile")]
+    #endregion Tooltip
+    public SoundEffectSO projectileImpactSoundEffect;
 
     #region Header PROJECTILE TRAIL DETAILS
     [Space(10)]

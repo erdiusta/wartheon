@@ -109,9 +109,12 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// <summary>
     /// Remove lock placeholder if right hand hold two-handed weapon
     /// </summary>
-    private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
+    private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        RemoveLockImage();
+        if (!setActiveWeaponEventArgs.isWeaponSwapping)
+        {
+            RemoveLockImage();
+        }
     }
 
     /// <summary>
@@ -125,9 +128,12 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// <summary>
     /// Remove lock place holder if right hand hold one-handed weapon
     /// </summary>
-    private void SetActiveWeaponEvent_OnOneHandWeaponEquipped(SetActiveWeaponEvent setActiveWeaponEvent)
+    private void SetActiveWeaponEvent_OnOneHandWeaponEquipped(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        RemoveLockImage();
+        if (!setActiveWeaponEventArgs.isWeaponSwapping)
+        {
+            RemoveLockImage();
+        }
     }
 
     private void WeaponFiredEvent_OnWeaponFired(WeaponFiredEvent weaponFiredEvent, WeaponFiredEventArgs weaponFiredEventArgs)

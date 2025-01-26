@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Centaur
   enemyPrefab: {fileID: 7183228443647751644, guid: e942b4fde2fcdae43bc95bb86569cd58, type: 3}
-  enemyType: 0
+  enemyType: 1
   movementDetails: {fileID: 11400000, guid: f96faad51296e144eadcd7706aa0f43e, type: 2}
-  experiencePoint: 30
+  experiencePoint: 300
   chaseDistance: 50
   hasAttackMove: 0
   attackMoveTriggerDistance: 3
@@ -61,8 +61,6 @@ MonoBehaviour:
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    enemyHealthAmount: 225
-  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
     enemyHealthAmount: 225
   isImmuneAfterHit: 1
   hitImmunityTime: 2

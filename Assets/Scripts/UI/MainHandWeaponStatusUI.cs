@@ -89,7 +89,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
         SetActiveWeapon(setActiveWeaponEventArgs.weapon);
     }
 
-    private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
+    private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
         MakeWeaponInactive();
         cooldownBarParent.gameObject.SetActive(false);
@@ -175,7 +175,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     IEnumerator CooldownRoutine(Weapon currentWeapon)
     {
-        if (currentWeapon.onMaindHand)
+        if (currentWeapon.onMainHand)
         {
             cooldownBarParent.gameObject.SetActive(true);
         }

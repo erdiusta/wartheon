@@ -20,6 +20,7 @@ MonoBehaviour:
   projectileMaterial: {fileID: 2100000, guid: a561bba8f1360ee44898565d925c537c, type: 2}
   projectileChargeTime: 0.3
   projectileChargeMaterial: {fileID: 2100000, guid: a17dad796d5f693419e97628b3b559f4, type: 2}
+  belongingWeaponDetails: {fileID: 11400000, guid: 2333f40d8a2278b40a32c8995a4247af, type: 2}
   projectileHitEffect: {fileID: 11400000, guid: f3e839fdd5b82b6439febb9cddb0aa3d, type: 2}
   projectileDamageMin: 7
   projectileDamageMax: 12
@@ -43,6 +44,7 @@ MonoBehaviour:
   projectileSpawnAmountMax: 1
   projectileSpawnIntervalMin: 2.5
   projectileSpawnIntervalMax: 3.5
+  projectileImpactSoundEffect: {fileID: 0}
   isProjectileTrail: 0
   projectileTrailTime: 0
   projectileTrailMaterial: {fileID: 0}

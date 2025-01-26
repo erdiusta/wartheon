@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Treant
   enemyPrefab: {fileID: 7183228443647751644, guid: e35a27e9d323c3b4db5a0cba0c9aeae4, type: 3}
-  movementDetails: {fileID: 11400000, guid: 2fabb5762610b1046b4f8b55a0119fd7, type: 2}
-  experiencePoint: 30
+  enemyType: 1
+  movementDetails: {fileID: 11400000, guid: 2933915dee800d8459ccdd8bb84e1574, type: 2}
+  experiencePoint: 400
   chaseDistance: 50
   hasAttackMove: 1
   attackMoveTriggerDistance: 3
@@ -59,8 +60,6 @@ MonoBehaviour:
   firingDurationMax: 2
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
-  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    enemyHealthAmount: 225
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
     enemyHealthAmount: 225
   isImmuneAfterHit: 1

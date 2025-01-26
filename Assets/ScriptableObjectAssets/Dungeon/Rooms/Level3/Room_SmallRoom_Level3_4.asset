@@ -60,7 +60,6 @@ MonoBehaviour:
   - {x: 1, y: 9}
   - {x: 10, y: 10}
   - {x: 11, y: 16}
-  - {x: 3, y: 16}
   enemiesByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}
     spawnableObjectRatioList:

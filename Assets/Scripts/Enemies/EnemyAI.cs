@@ -734,7 +734,8 @@ public class EnemyAI : MonoBehaviour
     /// <summary>   
     /// Fire the weapon
     /// </summary>
-    protected void FireWeapon(CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None)
+    protected void FireWeapon(CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None,
+        GalvanusPhase galvanusPhase = GalvanusPhase.None)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
@@ -755,7 +756,7 @@ public class EnemyAI : MonoBehaviour
                 if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
 
                 enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false,
-                    false, false, centaurPhase, treantPhase);
+                    false, false, centaurPhase, treantPhase, galvanusPhase);
             }
         }
     }

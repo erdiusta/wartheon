@@ -20,6 +20,7 @@ MonoBehaviour:
   projectileMaterial: {fileID: 2100000, guid: 5b1210c7205efe84b9d8aaf7e6da652d, type: 2}
   projectileChargeTime: 0
   projectileChargeMaterial: {fileID: 0}
+  belongingWeaponDetails: {fileID: 11400000, guid: b02179fd59e599e4cbc9837e47405153, type: 2}
   projectileHitEffect: {fileID: 11400000, guid: c548db3331c8a1e48828670478265ad4, type: 2}
   projectileDamageMin: 8
   projectileDamageMax: 15
@@ -33,6 +34,8 @@ MonoBehaviour:
   poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
   hasCurseDamage: 1
   curseChance: 0.3
   projectileSpreadMin: 6
@@ -41,6 +44,7 @@ MonoBehaviour:
   projectileSpawnAmountMax: 5
   projectileSpawnIntervalMin: 3
   projectileSpawnIntervalMax: 5
+  projectileImpactSoundEffect: {fileID: 0}
   isProjectileTrail: 1
   projectileTrailTime: 0.5
   projectileTrailMaterial: {fileID: 2100000, guid: 5b1210c7205efe84b9d8aaf7e6da652d, type: 2}

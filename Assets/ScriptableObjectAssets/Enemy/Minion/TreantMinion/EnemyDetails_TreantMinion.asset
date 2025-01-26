@@ -26,8 +26,16 @@ MonoBehaviour:
   enemyBehaviour: 2
   isEnemyBoss: 0
   hasAnimator: 0
+  elementalBias: 3
+  elementalForgeRate: 0.2
   enemyMinionDetails: {fileID: 0}
-  enemyArmorValue: 2
+  physicalResistance: 0
+  fireResistance: 0
+  waterResistance: 0
+  airResistance: 0
+  earthResistance: 0
+  lightResistance: 0
+  darkResistance: 0
   hasShield: 0
   deflectChance: 0
   isPoisonous: 0

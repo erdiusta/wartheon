@@ -11,11 +11,11 @@ public class SetActiveWeaponEvent : MonoBehaviour
         OnSetActiveMainHandWeapon?.Invoke(this, new SetActiveWeaponEventArgs { weapon = weapon, weaponSetIndex = weaponSetIndex }); 
     }
 
-    public event Action<SetActiveWeaponEvent> OnSetInactiveMainHandWeapon;
+    public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnSetInactiveMainHandWeapon;
 
-    public void CallSetInactiveWeaponAtMainHandEvent()
+    public void CallSetInactiveWeaponAtMainHandEvent(bool isWeaponSwapping = false)
     {
-        OnSetInactiveMainHandWeapon?.Invoke(this);
+        OnSetInactiveMainHandWeapon?.Invoke(this, new SetActiveWeaponEventArgs { isWeaponSwapping = isWeaponSwapping});
     }
 
     public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnSetActiveOffHandWeapon;
@@ -39,11 +39,11 @@ public class SetActiveWeaponEvent : MonoBehaviour
         OnTwoHandWeaponEquipped?.Invoke(this);
     }
 
-    public event Action<SetActiveWeaponEvent> OnOneHandWeaponEquipped;
+    public event Action<SetActiveWeaponEvent, SetActiveWeaponEventArgs> OnOneHandWeaponEquipped;
 
-    public void CallOneHandWeaponEquipEvent()
+    public void CallOneHandWeaponEquipEvent(bool isWeaponSwapping = false)
     {
-        OnOneHandWeaponEquipped?.Invoke(this);
+        OnOneHandWeaponEquipped?.Invoke(this, new SetActiveWeaponEventArgs { isWeaponSwapping = isWeaponSwapping});
     }
 
     public event Action<SetActiveWeaponEvent, SetSelectedActiveItemArgs> OnSelectedActiveItem;
@@ -65,6 +65,7 @@ public class SetActiveWeaponEventArgs : EventArgs
 {
     public Weapon weapon;
     public int weaponSetIndex;
+    public bool isWeaponSwapping;
 }
 
 public class SetSelectedActiveItemArgs : EventArgs

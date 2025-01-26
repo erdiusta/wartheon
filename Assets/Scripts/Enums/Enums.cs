@@ -41,7 +41,8 @@ public enum ActiveItemType
     Compass,
     Potion,
     Summoner,
-    Incendiary
+    Incendiary,
+    BobbyPin
 }
 
 public enum PassiveItemCategory
@@ -81,7 +82,12 @@ public enum PassiveItemType
     EmbercladBracers,
     VenomTouchedGloves,
     RingOfMight,
-    BootsOfInfernalMarch
+    BootsOfInfernalMarch,
+    RingOfVitality,
+    RingOfSagacity,
+    BlazingHeartplate,
+    FrostboundChainmail,
+    VenomweaveVest
 }
 
 public enum BoomerangPhase
@@ -263,7 +269,8 @@ public enum EnemyBehaviour
     AimAndShoot,
     PrepareAndDash,
     Centaur,
-    Treant
+    Treant,
+    Galvanus
 }
 
 public enum EnemyType
@@ -299,6 +306,15 @@ public enum TreantPhase
     RazorLeaf,
     Summon,
     Heal
+}
+
+public enum GalvanusPhase
+{
+    None,
+    Wait,
+    LightningBolt,
+    DashAttack,
+    Lightning
 }
 
 public enum BookPage

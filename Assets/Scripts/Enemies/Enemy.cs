@@ -59,6 +59,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public DamageDisplay damageDisplay;
     [HideInInspector] public bool rightHandWeaponDamageHappened;
     [HideInInspector] public bool leftHandWeaponDamageHappened;
+    [HideInInspector] public float currentPhysicalResistance;
 
     public ParticleSystem hitFxParticles;
     public ParticleSystem headShotFxParticles;
@@ -115,6 +116,11 @@ public class Enemy : MonoBehaviour
         {
             EnemyDestroyed();
         }
+    }
+
+    private void Start()
+    {
+        currentPhysicalResistance = enemyDetails.physicalResistance;
     }
 
     /// <summary>

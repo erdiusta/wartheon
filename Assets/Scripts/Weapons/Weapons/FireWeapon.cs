@@ -1,6 +1,7 @@
 using Random = UnityEngine.Random;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(ActiveWeapon))]
 [RequireComponent(typeof(SelectedActiveItem))]
@@ -80,7 +81,8 @@ public class FireWeapon : MonoBehaviour
                 if (IsWeaponReadyToFire())
                 {
                     FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
-                        fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase, fireWeaponEventArgs.treantPhase);
+                        fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase, fireWeaponEventArgs.treantPhase,
+                        fireWeaponEventArgs.galvanusPhase);
                     ResetCooldownTimer(fireWeaponEventArgs.centaurPhase);
                     ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
                 }
@@ -151,7 +153,7 @@ public class FireWeapon : MonoBehaviour
     /// Set up ammo using an ammo gameObject and component from the object pool.
     /// </summary>
     private void FireProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false, 
-        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None)
+        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None)
     {
         if (!isActiveItem)
         {
@@ -161,7 +163,7 @@ public class FireWeapon : MonoBehaviour
             {
                 // Fire projectile routine
                 StartCoroutine(FireProjectileRoutine(currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, headShotHappened, 
-                    false, isPenetrationArrow, centaurPhase, treantPhase));
+                    false, isPenetrationArrow, centaurPhase, treantPhase, galvanusPhase));
             }
         }
         else
@@ -189,7 +191,7 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     IEnumerator  FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, 
         Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, 
-        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None)
+        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None)
     {      
         int projectileCounter = 0;
 
@@ -205,6 +207,11 @@ public class FireWeapon : MonoBehaviour
         {
             projectilePerShot = 12;
         }
+        // GALVANUS - LIGHTNING
+        else if (galvanusPhase == GalvanusPhase.Lightning)
+        {
+            projectilePerShot = 3;
+        }
         else
         {
             // Get random projectile per shot
@@ -219,6 +226,10 @@ public class FireWeapon : MonoBehaviour
             if (centaurPhase == CentaurPhase.SpreadArrowShot || treantPhase == TreantPhase.RazorLeaf)
             {
                 projectileSpawnInterval = 0;
+            }
+            else if (galvanusPhase == GalvanusPhase.Lightning)
+            {
+                projectileSpawnInterval = 1f;
             }
             else
             {
@@ -258,6 +269,10 @@ public class FireWeapon : MonoBehaviour
             {
                 projectilePrefab = currentProjectile.projectilePrefabArray[0];
             }
+            else if (galvanusPhase == GalvanusPhase.Lightning)
+            {
+                projectilePrefab = currentProjectile.projectilePrefabArray[1];
+            }
             else
             {
                 projectilePrefab = currentProjectile.projectilePrefabArray[0];
@@ -270,14 +285,61 @@ public class FireWeapon : MonoBehaviour
             {
                 projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin / 2, currentProjectile.projectileSpeedMax / 2);
             }
+            else if (galvanusPhase == GalvanusPhase.Lightning)
+            {
+                projectileSpeed = 0;
+            }
 
             // Get Gameobject with IFireable component
-            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetRightHandShootPosition(), 
+            IFireable projectile;
+
+            Room currentRoom = GameManager.Instance.GetCurrentRoom();
+
+            if (galvanusPhase == GalvanusPhase.Lightning)
+            {
+                // Get room bounds from template bounds
+                Vector2Int lowerBounds = currentRoom.templateLowerBounds;
+                Vector2Int upperBounds = currentRoom.templateUpperBounds;
+
+                // Get the player's current cell position
+                Vector3Int playerCellPosition = currentRoom.instantiatedRoom.grid.WorldToCell(GameManager.Instance.GetPlayer().transform.position);
+
+                // Generate a random lightning strike position within bounds
+                Vector3Int randomCellPosition;
+                Vector3 worldPosition;
+
+                do
+                {
+                    // Generate random position within 4 tiles around the player
+                    int randomX = Mathf.Clamp(Random.Range(playerCellPosition.x - 4, playerCellPosition.x + 5), lowerBounds.x, upperBounds.x);
+                    int randomY = Mathf.Clamp(Random.Range(playerCellPosition.y - 4, playerCellPosition.y + 5), lowerBounds.y, upperBounds.y);
+                    randomCellPosition = new Vector3Int(randomX, randomY, 0);
+
+                    // Convert to room-local zero-based coordinates
+                    Vector3Int zeroBasedCellPosition = new Vector3Int(randomCellPosition.x - lowerBounds.x, randomCellPosition.y - lowerBounds.y, 0);
+
+                    // Validate position using penalty system
+                    if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(zeroBasedCellPosition) == 1)
+                    {
+                        // Tile is valid, convert cell position to world position
+                        worldPosition = currentRoom.instantiatedRoom.grid.CellToWorld(randomCellPosition);
+
+                        projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, GameManager.Instance.GetPlayer().transform.position, Quaternion.identity);
+                        break;
+                    }
+                }
+                while (true);
+
+            }
+            else
+            {
+                projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetRightHandShootPosition(),
                 Quaternion.identity);
+            }
 
             // Initialize projectile
             projectile.InitializeProjectile(headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, false, false, 
-                isPenetrationArrow, projectileCounter - 1, projectilePerShot, centaurPhase, treantPhase);
+                isPenetrationArrow, projectileCounter - 1, projectilePerShot, centaurPhase, treantPhase, galvanusPhase);
 
             // Wait for projectile per shot timegap
             yield return new WaitForSeconds(projectileSpawnInterval);

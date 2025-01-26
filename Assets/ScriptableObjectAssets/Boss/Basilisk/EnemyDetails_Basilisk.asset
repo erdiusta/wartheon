@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Basilisk
   enemyPrefab: {fileID: 7183228443647751644, guid: f69d1f74f812f34489b1a7865e25a5cb, type: 3}
-  enemyRace: 0
+  enemyType: 1
   movementDetails: {fileID: 11400000, guid: 19ac5efea72cf974893224b5985818bd, type: 2}
   experiencePoint: 30
   chaseDistance: 50
@@ -26,6 +26,7 @@ MonoBehaviour:
   enemyBehaviour: 1
   isEnemyBoss: 1
   hasAnimator: 0
+  enemyMinionDetails: {fileID: 0}
   enemyArmorValue: 0
   hasShield: 0
   deflectChance: 0
@@ -35,6 +36,8 @@ MonoBehaviour:
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
   hasCurseDamage: 0
   curseChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}

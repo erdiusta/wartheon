@@ -10,7 +10,6 @@ public class Health : MonoBehaviour
     [HideInInspector] public int currentHealth;
     [HideInInspector] public bool isDamageable = true;
     [HideInInspector] public Enemy enemy;
-    [HideInInspector] public int currentArmorValue;
     [HideInInspector] public Coroutine getHitCoroutine;
     [HideInInspector] public bool isBlocking;
     [HideInInspector] public bool suddenDeathHappened;
@@ -59,7 +58,7 @@ public class Health : MonoBehaviour
         }
         else if (enemy != null)
         {
-            currentArmorValue = enemy.enemyDetails.enemyArmorValue;
+            enemy.currentPhysicalResistance = enemy.enemyDetails.physicalResistance;
 
             if (enemy.enemyDetails.isImmuneAfterHit)
             {
@@ -70,8 +69,6 @@ public class Health : MonoBehaviour
         }
         else if (decoy != null)
         {
-            currentArmorValue = 0;
-
             isImmuneAfterHit = true;
             immunityTime = 1.5f;
             spriteRenderer = decoy.spriteRenderer;
@@ -563,29 +560,6 @@ public class Health : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// Set current armor value - Acid
-    /// </summary>
-    public void SetArmorValue(int armorValue)
-    {
-        if (player != null)
-        {
-            if (player.armorStatus == ArmorStatus.Acid)
-            {
-                currentArmorValue = armorValue;
-            }
-            else if (player.armorStatus == ArmorStatus.SilverArmor)
-            {
-                player.currentPhysicalResistanceValue = 5 + (int)(player.playerDetails.physicalResistance * 1.5f);
-            }
-        }
-
-        if (enemy != null)
-        {
-            currentArmorValue = armorValue;
-        }
-    }
-
     public void ResetStatusInCaseOfDeath()
     {
         immunityCoroutine = null;
@@ -602,13 +576,5 @@ public class Health : MonoBehaviour
         {
             player.currentPhysicalResistanceValue = player.playerDetails.physicalResistance;
         }
-    }
-
-    /// <summary>
-    /// Get current armor value
-    /// </summary>
-    public int GetArmorValue()
-    {
-        return currentArmorValue;
     }
 }

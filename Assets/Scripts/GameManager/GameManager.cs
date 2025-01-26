@@ -171,7 +171,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void OnEnable()
     {
         StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
-        StaticEventHandler.OnDropPickedUp += StaticEventHandler_OnDropPickedUp;
+        //StaticEventHandler.OnDropPickedUp += StaticEventHandler_OnDropPickedUp;
         StaticEventHandler.OnRoomEnemiesDefeated += StaticEventHandler_OnRoomEnemiesDefeated;
         StaticEventHandler.OnDecoySpawned += StaticEventHandler_OnDecoySpawned;
         StaticEventHandler.OnHourglassSpawned += StaticEventHandler_OnHourglassSpawned;
@@ -189,7 +189,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void OnDisable()
     {
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
-        StaticEventHandler.OnDropPickedUp -= StaticEventHandler_OnDropPickedUp;
+        //StaticEventHandler.OnDropPickedUp -= StaticEventHandler_OnDropPickedUp;
         StaticEventHandler.OnRoomEnemiesDefeated -= StaticEventHandler_OnRoomEnemiesDefeated;
         StaticEventHandler.OnDecoySpawned -= StaticEventHandler_OnDecoySpawned;
         StaticEventHandler.OnHourglassSpawned -= StaticEventHandler_OnHourglassSpawned;
@@ -267,372 +267,79 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         visitedRooms.Add(currentRoom);
     }
 
-    private void StaticEventHandler_OnDropPickedUp(IntroductionPopUpUIArgs introductionPopUpUIArgs)
-    {
-        switch (introductionPopUpUIArgs.dropType)
-        {
-            case DropType.PassiveItem:
-                PassiveItem passiveItem = (PassiveItem)introductionPopUpUIArgs.receivable;
+    //private void StaticEventHandler_OnDropPickedUp(IntroductionPopUpUIArgs introductionPopUpUIArgs)
+    //{
+    //    switch (introductionPopUpUIArgs.dropType)
+    //    {
+    //        case DropType.PassiveItem:
+    //            PassiveItem passiveItem = (PassiveItem)introductionPopUpUIArgs.receivable;
 
-                if (passiveItem == null) return;
+    //            if (passiveItem == null) return;
 
-                // PRIMARY PASSIVES
-                if (passiveItem.passiveItemDetails.passiveItemName == "Silver Coin")
-                {
-                    IntroductionPopUpProcess("SILVER\nCOIN" ,"Coin for buying things.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                if (passiveItem.passiveItemDetails.passiveItemName == "Golden Coin")
-                {
-                    IntroductionPopUpProcess("GOLDEN\nCOIN", "Worth 5 silver coins.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemName == "Quiver")
-                {
-                    IntroductionPopUpProcess("QUIVER", "Refills projectiles for bow class weapons.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemName == "Medicine")
-                {
-                    IntroductionPopUpProcess("MEDICINE", "Cures basic negative status effects.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemName == "Holy Water")
-                {
-                    IntroductionPopUpProcess("HOLY\nWATER", "Cures curse.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemName == "Health")
-                {
-                    IntroductionPopUpProcess("HEALTH", "Recovers one heart - 20 hp.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemName == "Key")
-                {
-                    IntroductionPopUpProcess("KEY", "You will need it for opening chests.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
+    //            // PRIMARY PASSIVES
+    //            if (passiveItem.passiveItemDetails.passiveItemName == "Silver Coin")
+    //            {
+    //                IntroductionPopUpProcess("SILVER\nCOIN" ,"Coin for buying things.", passiveItem.passiveItemDetails.passiveItemSprite);
+    //            }
+    //            if (passiveItem.passiveItemDetails.passiveItemName == "Golden Coin")
+    //            {
+    //                IntroductionPopUpProcess("GOLDEN\nCOIN", "Worth 5 silver coins.", passiveItem.passiveItemDetails.passiveItemSprite);
+    //            }
+    //            else if (passiveItem.passiveItemDetails.passiveItemName == "Quiver")
+    //            {
+    //                IntroductionPopUpProcess("QUIVER", "Refills projectiles for bow class weapons.", passiveItem.passiveItemDetails.passiveItemSprite);
+    //            }
+    //            else if (passiveItem.passiveItemDetails.passiveItemName == "Medicine")
+    //            {
+    //                IntroductionPopUpProcess("MEDICINE", "Cures basic negative status effects.", passiveItem.passiveItemDetails.passiveItemSprite);
+    //            }
+    //            else if (passiveItem.passiveItemDetails.passiveItemName == "Holy Water")
+    //            {
+    //                IntroductionPopUpProcess("HOLY\nWATER", "Cures curse.", passiveItem.passiveItemDetails.passiveItemSprite);
+    //            }
+    //            else if (passiveItem.passiveItemDetails.passiveItemName == "Health")
+    //            {
+    //                IntroductionPopUpProcess("HEALTH", "Recovers one heart - 20 hp.", passiveItem.passiveItemDetails.passiveItemSprite);
+    //            }
+    //            else if (passiveItem.passiveItemDetails.passiveItemName == "Key")
+    //            {
+    //                IntroductionPopUpProcess("KEY", "You will need it for opening chests.", passiveItem.passiveItemDetails.passiveItemSprite);
+    //            }
+    //            break;
+    //        case DropType.ActiveItem:
+    //            break;
+    //        case DropType.Weapon:
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
 
-                // SECONDARY PASSIVES
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
-                {
-                    IntroductionPopUpProcess("BELT OF\nSORCERY", "Faster casting time.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
-                {
-                    IntroductionPopUpProcess("INFERNO SASH", "Resistance to fire and some burn effects during attack.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GirdleOfFirmament)
-                {
-                    IntroductionPopUpProcess("GIRDLE OF\nFIRMAMENT", "Small resistance to air and light and immunity to blind.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
-                {
-                    IntroductionPopUpProcess("BLOODFORGED\nGIRDLE", "More physical attack and agility.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
-                {
-                    IntroductionPopUpProcess("SANDWEAVER'S\nSASH", "More evasiveness and increasing attack per successful hits.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
-                {
-                    IntroductionPopUpProcess("RING OF\nFORTUNE", "More drop chance.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
-                {
-                    IntroductionPopUpProcess("RING OF\nTEMPEST STRIKES", "More evasiveness but less armor.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
-                {
-                    IntroductionPopUpProcess("SHADOW\nCLOAK", "More critical chance with equipped dual-wield daggers.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
-                {
-                    IntroductionPopUpProcess("RECANTER'S\nCLOAK", "More evasiveness and agility.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
-                {
-                    IntroductionPopUpProcess("WARDEN OF\nFOREST", "More projectile accuracy.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HaloOfBlindingRadiance)
-                {
-                    IntroductionPopUpProcess("HALO OF\nBLINDING RADIANCE", "More light resistance and chance to blind enemies.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HelmOfTheEternalVigil)
-                {
-                    IntroductionPopUpProcess("HELM OF\nETERNAL VIGIL", "Reduces damage taken while standing still.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EnchantersSpire)
-                {
-                    IntroductionPopUpProcess("ENCHANTER'S\nSPIRE", "More elemental resistances and intelligence.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
-                {
-                    IntroductionPopUpProcess("WHISPERING\nHOOD", "More evasiveness and dexterity.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
-                {
-                    IntroductionPopUpProcess("GILDED\nGUARDIAN", "More physical resistance and constitution.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
-                {
-                    IntroductionPopUpProcess("CHESTPLATE OF\nTHE LAST LIGHT", "More armor and even more when health is low.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
-                {
-                    IntroductionPopUpProcess("RUBY PENDANT", "More fire resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmeraldPendant)
-                {
-                    IntroductionPopUpProcess("EMERALD PENDANT", "More earth resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.TopazPendant)
-                {
-                    IntroductionPopUpProcess("TOPAZ PENDANT", "More air resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SapphirePendant)
-                {
-                    IntroductionPopUpProcess("SAPPHIRE PENDANT", "More water resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
-                {
-                    IntroductionPopUpProcess("WINGED SANDALS", "Increased speed.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.OminousGripOfThunder)
-                {
-                    IntroductionPopUpProcess("OMINOUS\nGRIP OF THUNDER", "More armor and air resistance.", passiveItem.passiveItemDetails.passiveItemSprite);
-                }
+    //private void IntroductionPopUpProcess(string weaponTextContent, string introductionTextContent, Sprite itemSprite)
+    //{
+    //    if (introductionTextRoutine == null)
+    //    {
+    //        introductionTextRoutine = StartCoroutine(IntroductionTextRoutine(weaponTextContent, introductionTextContent, itemSprite));
+    //    }
+    //    else
+    //    {
+    //        StopCoroutine(introductionTextRoutine);
+    //        introductionTextRoutine = StartCoroutine(IntroductionTextRoutine(weaponTextContent, introductionTextContent, itemSprite));
+    //    }
+    //}
 
-                break;
-            case DropType.ActiveItem:
-                ActiveItem activeItem = (ActiveItem)introductionPopUpUIArgs.receivable;
+    //IEnumerator IntroductionTextRoutine(string weaponTextContent, string introductionTextContent, Sprite itemSprite)
+    //{
+    //    introductionPopUp.SetActive(true);
+    //    weaponText.text = weaponTextContent;
+    //    introductionText.text = introductionTextContent;
+    //    introductionItemImage.sprite = itemSprite;
 
-                if (activeItem == null) return;
+    //    yield return new WaitForSeconds(4f);
 
-                if (activeItem.activeItemDetails.activeItemName == "Bobby Pin")
-                {
-                    IntroductionPopUpProcess("BOBBY PIN", "Can open chest without key.. sometimes.", activeItem.activeItemDetails.activeItemSprite);
-                }
-                else if (activeItem.activeItemDetails.activeItemName == "Bomb")
-                {
-                    IntroductionPopUpProcess("BOMB", "Obvious. It's a bomb. No more no less.", activeItem.activeItemDetails.activeItemSprite);
-                }
-                else if (activeItem.activeItemDetails.activeItemName == "Boomerang")
-                {
-                    IntroductionPopUpProcess("BOOMERANG", "Strike and return.", activeItem.activeItemDetails.activeItemSprite);
-                }
-                else if (activeItem.activeItemDetails.activeItemName == "Chronos Hourglass")
-                {
-                    IntroductionPopUpProcess("CHRONOS\nHOURGLASS", "Slow down timeflow.", activeItem.activeItemDetails.activeItemSprite);
-                }
-                else if (activeItem.activeItemDetails.activeItemName == "Dummy")
-                {
-                    IntroductionPopUpProcess("DUMMY", "Throw and distract mobs.", activeItem.activeItemDetails.activeItemSprite);
-                }
-                else if (activeItem.activeItemDetails.activeItemName == "Elysian Elixir")
-                {
-                    IntroductionPopUpProcess("ELYSIAN\nELIXIR", "Slowly regenates health.", activeItem.activeItemDetails.activeItemSprite);
-                }
-                else if (activeItem.activeItemDetails.activeItemName == "Oracle's Compass")
-                {
-                    IntroductionPopUpProcess("ORACLE'S\nCOMPASS", "Shows the directin of where the boss is.", activeItem.activeItemDetails.activeItemSprite);
-                }
-                else if (activeItem.activeItemDetails.activeItemName == "Pentagram")
-                {
-                    IntroductionPopUpProcess("PENTAGRAM", "Throw then wait for mobs to step on", activeItem.activeItemDetails.activeItemSprite);
-                }
-                else if (activeItem.activeItemDetails.activeItemName == "Shiruken")
-                {
-                    IntroductionPopUpProcess("SHIRUKEN", "Limited number of ninja star projectiles", activeItem.activeItemDetails.activeItemSprite);
-                }
-                else if (activeItem.activeItemDetails.activeItemName == "Bronze Summoner")
-                {
-                    IntroductionPopUpProcess("BRONZE\nSUMMONER", "Summons a lower class of ally mob", activeItem.activeItemDetails.activeItemSprite);
-                }
-
-                break;
-            case DropType.Weapon:
-                Weapon weapon = (Weapon)introductionPopUpUIArgs.receivable;
-
-                if (weapon.weaponDetails == null) return;
-
-                if (weapon.weaponDetails.weaponTitle == WeaponTitle.AncientKatana)
-                {
-                    IntroductionPopUpProcess("ANCIENT\nKATANA", "Two-handed sword which can have instant death on mobs directly.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ApolloShield)
-                {
-                    IntroductionPopUpProcess("APOLLO\nSHIELD", "High-deflect rate from projectiles.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ArcaneConduit)
-                {
-                    IntroductionPopUpProcess("ARCANE\nCONDUIT", "A Swift casting staff.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.BlackTalon)
-                {
-                    IntroductionPopUpProcess("BLACK TALON", "Claw from the darkness.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Blazefury)
-                {
-                    IntroductionPopUpProcess("BLAZEFURY", "Sword on fire.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.BloodfangClaw)
-                {
-                    IntroductionPopUpProcess("BLOODFANG\nCLAW", "Bleeding claws.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.BronzeHuntingBow)
-                {
-                    IntroductionPopUpProcess("BRONZE\nHUNTING BOW", "An acidifying glazing bow.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Carnage)
-                {
-                    IntroductionPopUpProcess("CARNAGE", "A two-handed axe.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ChordOfTheSerpent)
-                {
-                    IntroductionPopUpProcess("CHORD\nOF THE SERPENT", "Can poison enemies.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.ClobberingTime)
-                {
-                    IntroductionPopUpProcess("CLOBBERING\nTIME", "A kind of one-hand hammer. Can stun enemies.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Crossbow)
-                {
-                    IntroductionPopUpProcess("CROSSBOW", "Takes time to load but more deadly than bow.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.CrudeBow)
-                {
-                    IntroductionPopUpProcess("BOW", "A basic bow.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Crusher)
-                {
-                    IntroductionPopUpProcess("CRUSHER", "A stunning two-handed hammer.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Dirk)
-                {
-                    IntroductionPopUpProcess("DIRK", "Basic dagger.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.EbonLongbow)
-                {
-                    IntroductionPopUpProcess("EBON LONGBOW", "Long range bow.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Gambit)
-                {
-                    IntroductionPopUpProcess("GAMBIT", "A critical effective dagger.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Gladius)
-                {
-                    IntroductionPopUpProcess("GLADIUS", "Basic one-handed sword.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HailstormSculptor)
-                {
-                    IntroductionPopUpProcess("HAILSTORM\nSCULPTOR", "Biting frost is on my hand.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Hatchet)
-                {
-                    IntroductionPopUpProcess("HATCHET", "Basic one-handed axe.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HeavensGale)
-                {
-                    IntroductionPopUpProcess("HEAVEN'S\nGALE", "Fires patterned light projectiles.. Especially effective against undeads.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HolySword)
-                {
-                    IntroductionPopUpProcess("HOLY\nSWORD", "Sword of the light.. Especially well against undeads.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.HammerOfTheThunderlord)
-                {
-                    IntroductionPopUpProcess("HAMMER OF THE\nTHUNDERLORD", "Air biased hammer with stunning might.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Netherstrand)
-                {
-                    IntroductionPopUpProcess("NETHERSTRAND", "An ethereal bow. Can curse.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.PhalanxSpear)
-                {
-                    IntroductionPopUpProcess("PHALANX\nSPEAR", "A basic spear.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.PhoenixBolt)
-                {
-                    IntroductionPopUpProcess("PHOENIX\nBOLT", "Crossbow firing fire damage bolts.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Ravager)
-                {
-                    IntroductionPopUpProcess("RAVAGER", "Swift and easy to handle.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Scarlet)
-                {
-                    IntroductionPopUpProcess("SCARLET", "Health draining dagger.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Scimitar)
-                {
-                    IntroductionPopUpProcess("SCIMITAR", "Can't pierce but effective.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Shield)
-                {
-                    IntroductionPopUpProcess("SHIELD", "Basic shield.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.SizzlingSword)
-                {
-                    IntroductionPopUpProcess("SIZZLING\nSWORD", "Can acidify enemies.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.SolarFlare)
-                {
-                    IntroductionPopUpProcess("SOLAR\nFLARE", "Fires dispersed fire projectiles.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Staff)
-                {
-                    IntroductionPopUpProcess("STAFF", "Ordinary staff but no precharge time to fire.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.StaffOfTheWild)
-                {
-                    IntroductionPopUpProcess("STAFF OF\nTHE WILD", "Earth element biased staff.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Stormblade)
-                {
-                    IntroductionPopUpProcess("STORMBLADE", "Can both stun and freeze.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.Trinity)
-                {
-                    IntroductionPopUpProcess("TRINITY", "The lord of the waters.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.TwilightStaff)
-                {
-                    IntroductionPopUpProcess("TWILIGHT\nSTAFF", "Staff from the darkness.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.VenomAxe)
-                {
-                    IntroductionPopUpProcess("VENOM AXE", "A poisonous axe.", weapon.weaponDetails.weaponFrontSprite);
-                }
-                else if (weapon.weaponDetails.weaponTitle == WeaponTitle.VipersBite)
-                {
-                    IntroductionPopUpProcess("VIPER'S BITE", "A poisonous spear.", weapon.weaponDetails.weaponFrontSprite);
-                }
-
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void IntroductionPopUpProcess(string weaponTextContent, string introductionTextContent, Sprite itemSprite)
-    {
-        if (introductionTextRoutine == null)
-        {
-            introductionTextRoutine = StartCoroutine(IntroductionTextRoutine(weaponTextContent, introductionTextContent, itemSprite));
-        }
-        else
-        {
-            StopCoroutine(introductionTextRoutine);
-            introductionTextRoutine = StartCoroutine(IntroductionTextRoutine(weaponTextContent, introductionTextContent, itemSprite));
-        }
-    }
-
-    IEnumerator IntroductionTextRoutine(string weaponTextContent, string introductionTextContent, Sprite itemSprite)
-    {
-        introductionPopUp.SetActive(true);
-        weaponText.text = weaponTextContent;
-        introductionText.text = introductionTextContent;
-        introductionItemImage.sprite = itemSprite;
-
-        yield return new WaitForSeconds(4f);
-
-        introductionPopUp.SetActive(false);
-        introductionTextRoutine = null;
-    }
+    //    introductionPopUp.SetActive(false);
+    //    introductionTextRoutine = null;
+    //}
 
     private void StaticEventHandler_OnRoomEnemiesDefeated(RoomEnemiesDefeatedArgs roomEnemiesDefeatedArgs)
     {
@@ -1435,6 +1142,180 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
                 headerText.text = passiveItemDetails.passiveItemName;
                 levelText.text = $"(Passive Item)";
+
+                if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
+                {
+                    weaponClassText.text = "+1 Intelligence";
+                    hitSpeedText.text = "-20% Cast Duration";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
+                {
+                    weaponClassText.text = "+15% Fire Resistance";
+                    hitSpeedText.text = "+5% Physical Resistance";
+                    weaponWieldText.text = "+15% Chance to Burn";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GirdleOfFirmament)
+                {
+                    weaponClassText.text = "+5% Air Resistance";
+                    hitSpeedText.text = "+5% Light Resistance";
+                    weaponWieldText.text = "Immune to Blind";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
+                {
+                    weaponClassText.text = "+1 Strength";
+                    hitSpeedText.text = "+1 Agility";
+                    weaponWieldText.text = "-5% Attack Cooldown";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
+                {
+                    weaponClassText.text = "+1 Dexterity";
+                    hitSpeedText.text = "+1 Damage Per";
+                    weaponWieldText.text = "Successful Hit";
+                    damageText.text = "Max Stacks to 8";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.OminousGripOfThunder)
+                {
+                    weaponClassText.text = "+5% Physical Resistance";
+                    hitSpeedText.text = "+10% Air Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
+                {
+                    weaponClassText.text = "+15% Drop Chance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
+                {
+                    weaponClassText.text = "-20% Attack Cooldown";
+                    hitSpeedText.text = "-10% Physical Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
+                {
+                    weaponClassText.text = "+5% Cr. Hit Chance";
+                    hitSpeedText.text = "+10% Cr. Hit Chance When";
+                    weaponWieldText.text = "Dual-Wield Dagger or Claw Equipped";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
+                {
+                    weaponClassText.text = "+1 Agility";
+                    hitSpeedText.text = "+10% Evasiveness";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
+                {
+                    weaponClassText.text = "+100% Accuracy for Bows";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HaloOfBlindingRadiance)
+                {
+                    weaponClassText.text = "+5% Light Resistance";
+                    hitSpeedText.text = "+10% Chance to Blind";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HelmOfTheEternalVigil)
+                {
+                    weaponClassText.text = "+40% Physical Resistance";
+                    hitSpeedText.text = "While Standing Still";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EnchantersSpire)
+                {
+                    weaponClassText.text = "+1 Intelligence";
+                    hitSpeedText.text = "+5% All Elemental Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
+                {
+                    weaponClassText.text = "+1 Dexterity";
+                    hitSpeedText.text = "+15% Evasiveness";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
+                {
+                    weaponClassText.text = "+1 Constitution";
+                    hitSpeedText.text = "+10% Physical Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
+                {
+                    weaponClassText.text = "+2 Agility";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
+                {
+                    weaponClassText.text = "+1 Strength";
+                    hitSpeedText.text = "+1 Constitution";
+                    weaponWieldText.text = "+20% Physical Resistance";
+                    damageText.text = "+10% Chance to Block When";
+                    baseHandlingText.text = "Healt is below 50%";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
+                {
+                    weaponClassText.text = "+20% Fire Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmeraldPendant)
+                {
+                    weaponClassText.text = "+20% Earth Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.TopazPendant)
+                {
+                    weaponClassText.text = "+20% Air Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SapphirePendant)
+                {
+                    weaponClassText.text = "+20% Water Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
+                {
+                    weaponClassText.text = "+5% Elemental Damage";
+                    hitSpeedText.text = "+15% All Elemental Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.CloakOfWindwalker)
+                {
+                    weaponClassText.text = "+1 Agility";
+                    hitSpeedText.text = "+10% Evasiveness";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldenCloak)
+                {
+                    weaponClassText.text = "+1 All Primary Stats";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmbercladBracers)
+                {
+                    weaponClassText.text = "+8% Fire Resistance";
+                    hitSpeedText.text = "+10% Physical Resistance";
+                    weaponWieldText.text = "-5% Attack Cooldown";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomTouchedGloves)
+                {
+                    weaponClassText.text = "+10% Earth Resistance";
+                    hitSpeedText.text = "Immune to Poison";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
+                {
+                    weaponClassText.text = "+1 Stength";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BootsOfInfernalMarch)
+                {
+                    weaponClassText.text = "+5% Fire Damage";
+                    hitSpeedText.text = "+2 Agility";
+                    weaponWieldText.text = "-10% Physical Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfVitality)
+                {
+                    weaponClassText.text = "+1 Constitution";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
+                {
+                    weaponClassText.text = "+1 Intelligence";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BlazingHeartplate)
+                {
+                    weaponClassText.text = "+20% Physical Resistance";
+                    hitSpeedText.text = "+10% Fire Resistance";
+                    weaponWieldText.text = "-5% Attack Cooldown";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.FrostboundChainmail)
+                {
+                    weaponClassText.text = "+15% Physical Resistance";
+                    hitSpeedText.text = "+10% Water Resistance";
+                    weaponWieldText.text = "Immune to Frost";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomweaveVest)
+                {
+                    weaponClassText.text = "+10% Physical Resistance";
+                    hitSpeedText.text = "+10% Earth Resistance";
+                    weaponWieldText.text = "Immune to Poison";
+                }
             }
         }
         if (hasActiveDrop)
@@ -1443,11 +1324,60 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             {
                 headerText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
                 levelText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
-                ActiveItem passiveItem = (ActiveItem)receivable;
-                ActiveItemDetailsSO activeItemDetails = passiveItem.activeItemDetails;
+                ActiveItem activeItem = (ActiveItem)receivable;
+                ActiveItemDetailsSO activeItemDetails = activeItem.activeItemDetails;
 
                 headerText.text = activeItemDetails.activeItemName;
                 levelText.text = $"(Active Item)";
+
+                if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Dummy)
+                {
+                    weaponClassText.text = "Distracts Enemies Until Being";
+                    hitSpeedText.text = "Destroyed";
+                }
+                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Potion)
+                {
+                    weaponClassText.text = "Slowly Regenerates Health";
+                }
+                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Bomb)
+                {
+                    weaponClassText.text = "Explodes and Gives AoE Damage";
+                    //hitSpeedText.text = "AoE Damage";
+                }
+                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Compass)
+                {
+                    weaponClassText.text = "Locates Boss Room's";
+                    hitSpeedText.text = "Direction";
+                }
+                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Boomerang)
+                {
+                    weaponClassText.text = "Strikes And Return, Useful";
+                    hitSpeedText.text = "AoE DamageFor Stunning Enemies";
+                }
+                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Hourglass)
+                {
+                    weaponClassText.text = "Slows the Time Flow By";
+                    hitSpeedText.text = "Half to Act More Precisely";
+                }
+                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Shiruken)
+                {
+                    weaponClassText.text = "Several Quick Throwable Star Projectiles";
+                }
+                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Trap)
+                {
+                    weaponClassText.text = "Trap for Enemies To Step On";
+                }
+                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Summoner)
+                {
+                    weaponClassText.text = "Summoning Ally Mobs as Companion";
+                    hitSpeedText.text = "For a Short Time";
+                }
+                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.BobbyPin)
+                {
+                    weaponClassText.text = "Chance to Crack The";
+                    hitSpeedText.text = "Chest Without a Key";
+                    weaponWieldText.text = "Only One Attempt Permitted";
+                }
             }
         }
 

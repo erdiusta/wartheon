@@ -137,7 +137,16 @@ public class SpecialMoveUI : MonoBehaviour
                 if (player.specialMoveThreeDurationTimer >= player.playerDetails.specialMoveThreeDuration)
                 {
                     player.healthEvent.CallGemSkinSpecialMoveEndEvent();
-                    GameManager.Instance.GetPlayer().currentPhysicalResistanceValue= GameManager.Instance.GetPlayer().playerDetails.physicalResistance; // Reset physical res value
+
+                    // Reset resistance values
+                    player.currentPhysicalResistanceValue -= 0.1f; 
+                    player.currentPhysicalResistanceValue -= 0.1f;
+                    player.currentFireResistanceValue -= 0.1f;
+                    player.currentWaterResistanceValue -= 0.1f;
+                    player.currentAirResistanceValue -= 0.1f;
+                    player.currentEarthResistanceValue -= 0.1f;
+                    player.currentLightResistanceValue -= 0.1f;
+                    player.currentDarkResistanceValue -= 0.1f;
                 }
             }
 

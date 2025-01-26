@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad0d48074276e0640b14ec3640a668d8, type: 3}
   m_Name: ProjectileDetails_EbonLongbow
   m_EditorClassIdentifier: 
-  projectileName: Arrow
+  projectileName: Ebon Longbow Arrow
   isPlayerProjectile: 1
   projectileSprite: {fileID: 21300000, guid: f58d782a1395b2e438b94eba1d2d2a12, type: 3}
   projectilePrefabArray:
@@ -20,6 +20,7 @@ MonoBehaviour:
   projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   projectileChargeTime: 0.05
   projectileChargeMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  belongingWeaponDetails: {fileID: 11400000, guid: 5dafc78b029006e49908fade5f342a62, type: 2}
   projectileHitEffect: {fileID: 11400000, guid: 9e888f32de5d60a429c75fb52a068ded, type: 2}
   projectileDamageMin: 10
   projectileDamageMax: 14
@@ -33,6 +34,8 @@ MonoBehaviour:
   poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
   hasCurseDamage: 0
   curseChance: 0
   projectileSpreadMin: 1
@@ -41,6 +44,7 @@ MonoBehaviour:
   projectileSpawnAmountMax: 1
   projectileSpawnIntervalMin: 0
   projectileSpawnIntervalMax: 0
+  projectileImpactSoundEffect: {fileID: 0}
   isProjectileTrail: 0
   projectileTrailTime: 3
   projectileTrailMaterial: {fileID: 0}
