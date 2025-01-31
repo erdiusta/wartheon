@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
+  m_Name: EnemyDetails_TreantMinion
+  m_EditorClassIdentifier: 
+  enemyName: Treant Minion
+  enemyPrefab: {fileID: 7183228443647751644, guid: ca99fd265a6304a4081b6907ec3eb5c9, type: 3}
+  enemyType: 2
+  movementDetails: {fileID: 11400000, guid: 182204ff6305c3946801d9e2eaf62980, type: 2}
+  experiencePoint: 5
+  chaseDistance: 12
+  hasAttackMove: 1
+  attackMoveTriggerDistance: 3
+  attackMoveEfficentDistance: 5
+  attackMoveBaseCooldown: 1
+  deflectionValue: 0
+  enemyBehaviour: 2
+  isEnemyBoss: 0
+  hasAnimator: 0
+  elementalBias: 3
+  elementalForgeRate: 0.2
+  enemyMinionDetails: {fileID: 0}
+  physicalResistance: 0
+  fireResistance: 0
+  waterResistance: 0
+  airResistance: 0
+  earthResistance: 0
+  lightResistance: 0
+  darkResistance: 0
+  hasShield: 0
+  deflectChance: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  enemyMaterializeTime: 2
+  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
+  enemyMaterializeColor: {r: 3.987934, g: 0, b: 0.07809851, a: 0}
+  suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
+  getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
+  criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: 8520316363d6f1f459f854b545c0ab3f, type: 2}
+  roarSoundEffect: {fileID: 0}
+  attackSoundEffect: {fileID: 0}
+  deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
+  stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
+  poisonSoundEffect: {fileID: 0}
+  enemyWeapon: {fileID: 0}
+  firingIntervalMin: 0.1
+  firingIntervalMax: 1
+  firingDurationMin: 1
+  firingDurationMax: 2
+  firingLineOfSightRequired: 0
+  enemyHealthDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    enemyHealthAmount: 12
+  isImmuneAfterHit: 1
+  hitImmunityTime: 0.4
+  isHealthBarDisplayed: 0
+  hasKnockbackResistance: 0
+  weaponsByLevelList: []
+  passiveItemsByLevelList: []
+  activeItemsByLevelList: []
+  dropSpawnChanceMin: 100
+  dropSpawnChanceMax: 100
+  numberOfItemsToSpawnMin: 1
+  numberOfItemsToSpawnMax: 1

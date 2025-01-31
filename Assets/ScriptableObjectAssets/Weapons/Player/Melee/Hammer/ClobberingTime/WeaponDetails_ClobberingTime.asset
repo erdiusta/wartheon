@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_ClobberingTime
+  m_EditorClassIdentifier: 
+  weaponName: Clobbering Time
+  weaponTitle: 6
+  weaponLevel: 1
+  requiredPrimaryStats:
+    strength: 6
+    dexterity: 0
+    constitution: 6
+    intelligence: 0
+    agility: 0
+  weaponClass: 2
+  weaponHitSpeed: 2
+  wieldType: 0
+  elementalBias: 2
+  elementalForgeRate: 0.15
+  price: 4
+  weaponFrontSprite: {fileID: 1345734444, guid: 7c0ae1329256d0f42a906d3241d83455, type: 3}
+  weaponRearSprite: {fileID: 1345734444, guid: 7c0ae1329256d0f42a906d3241d83455, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: f2cd1c7a31c4db74fbe82733da9b805d, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 8d50f9dfcd86b91438e4c4868d290b2f, type: 2}
+  canKillSuddenly: 0
+  suddenKillChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasStunDamage: 1
+  stunChance: 0.15
+  hasFrostDamage: 0
+  frostChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 3176c80157244664fab59f1b8d558b48, type: 2}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: bed68100ea2672d4cb53ed373cb2fdec, type: 2}
+  isMeleeWeapon: 1
+  isShield: 0
+  projectileDeflectRatio: 0
+  circleRadius: 0.65
+  hasPhysicalDamage: 1
+  meleeDamageMin: 7
+  meleeDamageMax: 11
+  criticalHitChance: 0.15
+  criticalHitDamageMultiplier: 1.5
+  weaponCooldownDuration: 1
+  weaponBaseHandling: 0.6
+  hasSwing: 1
+  hasSweep: 0
+  hasThrust: 0
+  hasInfiniteProjectile: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0

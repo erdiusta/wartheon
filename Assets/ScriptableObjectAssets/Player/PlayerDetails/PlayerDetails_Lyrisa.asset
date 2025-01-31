@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352fbee161db0434d9a6bbbc0a4e4c34, type: 3}
+  m_Name: PlayerDetails_Lyrisa
+  m_EditorClassIdentifier: 
+  playerCharacterName: Lyrisa
+  playerCharacterIndex: 3
+  playerPrefab: {fileID: 38858171499291080, guid: 6a9aa1f748d0ed1438bd95590fc47986, type: 3}
+  playerClonePrefab: {fileID: 38858171499291080, guid: fe03a659a259e9644bfc4fd11d5dbdab, type: 3}
+  collectibleWeaponsArray:
+  - {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+  - {fileID: 11400000, guid: 7e3b41f2a27597c4d9a1b212d49e9ff0, type: 2}
+  - {fileID: 11400000, guid: 9926f985354b71a4690cb034e554c091, type: 2}
+  oneHandRuntimeAnimatorController: {fileID: 9100000, guid: f7fe8e6b5912d9b499b3a0d0cd74c1a1, type: 2}
+  twoHandRuntimeAnimatorController: {fileID: 9100000, guid: 525a9a954242e1a499074cd73da18897, type: 2}
+  bowRuntimeAnimatorController: {fileID: 9100000, guid: 20d8ee28837264745b955ceb23c11b0b, type: 2}
+  staffRuntimeAnimatorController: {fileID: 9100000, guid: b2109df0ec6145a4a93528cd77d9db9f, type: 2}
+  primaryStats:
+    strength: 3
+    dexterity: 4
+    constitution: 4
+    intelligence: 8
+    agility: 4
+  physicalResistance: 0
+  fireResistance: 0.05
+  waterResistance: 0.05
+  airResistance: 0.05
+  earthResistance: 0.05
+  lightResistance: 0.05
+  darkResistance: 0.05
+  playerHealthAmount: 60
+  isImmuneAfterHit: 1
+  hitImmunityTime: 2
+  getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
+  specialMoveOneImage: {fileID: 21300000, guid: 834d73f6332db84498a63a2fc2a4395e, type: 3}
+  specialMoveOneSoundEffect: {fileID: 11400000, guid: 34f8e2cdca30ac34ba736472fa3c0311, type: 2}
+  specialMoveOneCooldownDuration: 20
+  specialMoveOneDuration: 6
+  specialMoveTwoImage: {fileID: 21300000, guid: 966a60ae22fe83943bcb2dd5c921e560, type: 3}
+  specialMoveTwoSoundEffect: {fileID: 11400000, guid: f3afba237547a1a4082897c3ef044ee7, type: 2}
+  specialMoveTwoCooldownDuration: 30
+  specialMoveTwoDuration: 6
+  specialMoveThreeImage: {fileID: 21300000, guid: b5067951bb19bcb42b7eed33950ad3c1, type: 3}
+  specialMoveThreeSoundEffect: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
+  specialMoveThreeCooldownDuration: 15
+  specialMoveThreeDuration: 5
+  cataclysmMeteor: {fileID: 11400000, guid: 8e8582df663c5634b8c767ca670c0382, type: 2}
+  standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  headShotMaterial: {fileID: 0}
+  penetrateMaterial: {fileID: 0}
+  applyScreenShake: 0
+  shakeIntensity: 3
+  shakeDuration: 1
+  charBuildDetails:
+  - {fileID: 11400000, guid: e67f7f4e337949a46bb70cd4c1981906, type: 2}
+  - {fileID: 11400000, guid: 56e1a31fdaf172647a1f8cb75dbc645c, type: 2}
+  - {fileID: 11400000, guid: b4078cafcef9a13429d209f4703fbfc0, type: 2}
+  - {fileID: 11400000, guid: a5145313fa18b904eb32ac3ea78b7259, type: 2}
+  - {fileID: 11400000, guid: d5550b77fde2ee44fbbbcfa240f5d718, type: 2}
+  - {fileID: 11400000, guid: 9c44b4467f91e55499c6bf3b8af3264a, type: 2}
+  - {fileID: 11400000, guid: 81cb0d98e0d22724997f725547769631, type: 2}
+  - {fileID: 11400000, guid: 85c127bcefa11af4798e4310b034afe8, type: 2}
+  - {fileID: 11400000, guid: 789b32d4515f615429c58315a5662ffe, type: 2}
+  - {fileID: 11400000, guid: af0543d945b3836479bf9156e2e89aef, type: 2}
+  - {fileID: 11400000, guid: 51fb34c93fdf4c14eb706c125c52f905, type: 2}
+  - {fileID: 11400000, guid: e565dd789463492498d94921ebfd4f69, type: 2}
+  - {fileID: 11400000, guid: cdc851fd47ad0ba4299e6ac319dc477c, type: 2}
+  - {fileID: 11400000, guid: 81ec2f815d93b54459d33ae681c9d882, type: 2}
+  - {fileID: 11400000, guid: 604966a72585eb549995d57b5a49d6e7, type: 2}
+  - {fileID: 11400000, guid: 522ae3d85b9ac984ea84a21b59210abd, type: 2}
+  - {fileID: 11400000, guid: 0e77dfc801f1d454d9ad9c894a4b5fae, type: 2}
+  - {fileID: 11400000, guid: d5f1bed7c7d283749a1168f9f5104df5, type: 2}
+  selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  activeItemsList:
+  - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  passiveItemsList: []
+  startingWeapon: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+  mainHandAnimatorController: {fileID: 9100000, guid: a9f6b3580707cd749861dcb2fc4d7f34, type: 2}
+  offHandAnimatorController: {fileID: 0}
+  startingWeaponList:
+  - {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+  playerMiniMapIcon: {fileID: 21300000, guid: 205f8e50feb91b6439e7a8590681668b, type: 3}
+  playerHandSprite: {fileID: 21300000, guid: da6f695b50c559b49bcdd0286e92ebc9, type: 3}
+  playerBookSprite: {fileID: 1222474205, guid: 313d6a512cabaaa4a89179b77b006510, type: 3}
+  levelUpSoundEffect: {fileID: 11400000, guid: 65554e211d459a1499ae37e7fc5d6cdf, type: 2}
+  buildActivationSoundEffect: {fileID: 11400000, guid: 89b538f65e0e2894582436b50b37b10f, type: 2}

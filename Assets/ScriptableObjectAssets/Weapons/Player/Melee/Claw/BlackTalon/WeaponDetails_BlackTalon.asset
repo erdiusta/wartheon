@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_BlackTalon
+  m_EditorClassIdentifier: 
+  weaponName: Black Talon
+  weaponTitle: 24
+  weaponLevel: 1
+  requiredPrimaryStats:
+    strength: 0
+    dexterity: 7
+    constitution: 0
+    intelligence: 0
+    agility: 0
+  weaponClass: 8
+  weaponHitSpeed: 3
+  wieldType: 0
+  elementalBias: 5
+  elementalForgeRate: 0.15
+  price: 9
+  weaponFrontSprite: {fileID: 1979235743, guid: 42dbbc97e7810664ebadd2c00522fa3e, type: 3}
+  weaponRearSprite: {fileID: 1979235743, guid: 42dbbc97e7810664ebadd2c00522fa3e, type: 3}
+  weaponAnimatorController: {fileID: 9100000, guid: 1cdbac37eed4dd044b112463b26803f7, type: 2}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: bae615756b1d0524197fca553f3298af, type: 2}
+  canKillSuddenly: 0
+  suddenKillChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 725854e135951404ba8a84c0a0ca4735, type: 2}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: 05f4834c93baa084aa8d96b1654caa0e, type: 2}
+  isMeleeWeapon: 1
+  isShield: 0
+  projectileDeflectRatio: 0
+  circleRadius: 0.6
+  hasPhysicalDamage: 1
+  meleeDamageMin: 9
+  meleeDamageMax: 12
+  criticalHitChance: 0.17
+  criticalHitDamageMultiplier: 1.5
+  weaponCooldownDuration: 0.65
+  weaponBaseHandling: 0.8
+  hasSwing: 0
+  hasSweep: 0
+  hasThrust: 1
+  hasInfiniteProjectile: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0

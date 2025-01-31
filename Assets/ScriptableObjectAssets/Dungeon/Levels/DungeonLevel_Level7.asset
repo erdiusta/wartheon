@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22943cb44bb6d5e4cbb81f6f6c20488d, type: 3}
+  m_Name: DungeonLevel_Level7
+  m_EditorClassIdentifier: 
+  levelNumber: 6
+  levelName: INFERNAL WASTES
+  roomTemplateList:
+  - {fileID: 11400000, guid: 3baa3333513c09f4ba14cab6b45b69e0, type: 2}
+  - {fileID: 11400000, guid: d9a48a74ffb85fc498d1752e70ffcd10, type: 2}
+  - {fileID: 11400000, guid: f03aa3b70dd1c2a43a62e12671b4540c, type: 2}
+  - {fileID: 11400000, guid: 371bb6f88032956489886669830e30ed, type: 2}
+  - {fileID: 11400000, guid: e4aae224701947e4397626da8d26d0b3, type: 2}
+  - {fileID: 11400000, guid: 7411232731211d1478b50c80b235d04b, type: 2}
+  - {fileID: 11400000, guid: 02037da4e97e41f4180b698a74d9db28, type: 2}
+  - {fileID: 11400000, guid: 9ef7f93bccb048e4887021101176d3b7, type: 2}
+  - {fileID: 11400000, guid: 10159dccb6888524cb43819c8b7c06cc, type: 2}
+  - {fileID: 11400000, guid: 16c719f1d664c4c47918b1529c409e4f, type: 2}
+  - {fileID: 11400000, guid: ea6474660fb1a67438278a8b5b29a486, type: 2}
+  - {fileID: 11400000, guid: a4c11195f07c16d4c95bfa079ed6d7dd, type: 2}
+  - {fileID: 11400000, guid: d21b1bec386f38548948e5c249eeecbe, type: 2}
+  - {fileID: 11400000, guid: b6d171c39d3e3414688f9a43b1950f41, type: 2}
+  - {fileID: 11400000, guid: 510f8621c1812694c8d962e7abe32e0b, type: 2}
+  - {fileID: 11400000, guid: 365d833e19effb74482cbfe9c4e560eb, type: 2}
+  - {fileID: 11400000, guid: 0c937fe56750472459b1fa5aa434111b, type: 2}
+  - {fileID: 11400000, guid: 31bc1cb4ae488d94584fa5e5b369c3e3, type: 2}
+  - {fileID: 11400000, guid: e35f93d17a26c1441937f8ea9eeb97ed, type: 2}
+  - {fileID: 11400000, guid: 59923bf19932895488ad18fc2b6ed07a, type: 2}
+  - {fileID: 11400000, guid: 2eb393fe1c664a04a98a8f1a4db43e29, type: 2}
+  - {fileID: 11400000, guid: 13c2bdef936908b4683433c496eb751a, type: 2}
+  - {fileID: 11400000, guid: 1690306b05e66a24496d068eec177114, type: 2}
+  - {fileID: 11400000, guid: 87a110dd802c06b4ea45ae3bd8259043, type: 2}
+  roomNodeGraphList:
+  - {fileID: 11400000, guid: a84e3b299c5e0e04486c2701d0009921, type: 2}
