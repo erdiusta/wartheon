@@ -15,5 +15,5 @@ MonoBehaviour:
   belongingCharacter: 3
   characterBuildImage: {fileID: 600633801, guid: b87206805ea5b754aa677a16066a6002, type: 3}
   characterBuildName: Voidstep Shield
-  characterBuildDetails: Grants 3 Seconds of Invincibility After Teleport Skill Is
+  characterBuildDetails: Grants 4 Seconds of Invincibility After Teleport Skill Is
     Used

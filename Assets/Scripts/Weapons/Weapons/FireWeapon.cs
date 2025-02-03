@@ -1,7 +1,6 @@
 using Random = UnityEngine.Random;
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 [RequireComponent(typeof(ActiveWeapon))]
 [RequireComponent(typeof(SelectedActiveItem))]
@@ -12,11 +11,11 @@ public class FireWeapon : MonoBehaviour
 {
     public Transform prechargeBarContainer;
     public RectTransform prechargeBar;
+    public float fireRateCooldownTimer = 0f;
 
     Player player;
     Enemy enemy;
     float firePrechargeTimer = 0f;
-    float fireRateCooldownTimer = 0f;
     ActiveWeapon activeWeapon;
     SelectedActiveItem selectedActiveItem;
     FireWeaponEvent fireWeaponEvent;
@@ -47,6 +46,17 @@ public class FireWeapon : MonoBehaviour
     {
         // Decrease cooldown timer.
         fireRateCooldownTimer -= Time.deltaTime;
+
+        if (player != null)
+        {
+            if (activeWeapon.GetCurrentMainHandWeapon() != null)
+            {
+                if (fireRateCooldownTimer < 0 && activeWeapon.GetCurrentMainHandWeapon().onCooldown && !activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+                {
+                    activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -101,35 +111,51 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     private void WeaponPrecharge(FireWeaponEventArgs fireWeaponEventArgs)
     {
-        // Weapon precharge 
-        if (fireWeaponEventArgs.firePreviousFrame)
+        if (fireRateCooldownTimer <= 0f)
         {
-            // If cooldown continues return
-            if (fireRateCooldownTimer > 0f) return;
-
-            if (!prechargeBarContainer.gameObject.activeSelf)
+            // Weapon precharge 
+            if (fireWeaponEventArgs.firePreviousFrame)
             {
-                // Activate precharge bar container
-                firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime;
-                prechargeBarContainer.gameObject.SetActive(true);
+                if (!prechargeBarContainer.gameObject.activeSelf)
+                {
+                    // Activate precharge bar container
+                    if (player != null)
+                    {
+                        firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime * player.additionalCastDurationModifier;
+                    }
+                    else
+                    {
+                        firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime;
+                    }
+
+                    prechargeBarContainer.gameObject.SetActive(true);
+                }
+
+                // Set precharging flag to true
+                activeWeapon.GetCurrentMainHandWeapon().onPrecharge = true;
+
+                // Decrease precharge timer if fire button held previous frame
+                firePrechargeTimer -= Time.deltaTime;
+
+                // Update precharge bar
+                float barFill = firePrechargeTimer / (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime * player.additionalCastDurationModifier);
+
+                // Update bar fill
+                prechargeBar.transform.localScale = barFill > 0 ? new Vector3(barFill, 1f, 1f) : new Vector3(0f, 1f, 1f);
             }
+            // If precharge stops prematurely
+            else if (!fireWeaponEventArgs.firePreviousFrame && firePrechargeTimer > 0f)
+            {
+                ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
 
-            // Set precharging flag to true
-            activeWeapon.GetCurrentMainHandWeapon().onPrecharge = true;
-
-            // Decrease precharge timer if fire button held previous frame
-            firePrechargeTimer -= Time.deltaTime;
-
-            // Update precharge bar
-            float barFill = firePrechargeTimer / activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime;
-
-            // Update bar fill
-            prechargeBar.transform.localScale = barFill > 0 ? new Vector3(barFill, 1f, 1f) : new Vector3(0f, 1f, 1f);
-        }
-        else
-        {
-            // Else reset the precharge timer
-            ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
+                activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged = true;
+                activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+            }
+            //else
+            //{
+            //    // Else reset the precharge timer
+            //    ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);             
+            //}
         }
     }
 
@@ -346,12 +372,7 @@ public class FireWeapon : MonoBehaviour
         }
 
         // Set weapon's onCooldown status to true for triggering Weapon status UI
-         if (!activeWeapon.GetCurrentMainHandWeapon().onPrecharge)
-         {
-            activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
-         }
-
-        //activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
+        activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
 
         // Call weapon fired event
         weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentMainHandWeapon(), true);
@@ -451,8 +472,25 @@ public class FireWeapon : MonoBehaviour
         }
 
         // Reset cooldown timer
-        fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration * coolDownTimerModifier;
-        activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+        if (player != null)
+        {
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow ||
+                player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow)
+            {
+                fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration *
+                    (1 + player.additionalBowAttackCoolDownModifier);
+            }
+            else
+            {
+                fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration * coolDownTimerModifier;
+            }
+        }
+        else
+        {
+            fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration * coolDownTimerModifier;
+        }
+
+        Debug.Log("Weapon cooldown duration is " + fireRateCooldownTimer);
     }
 
     /// <summary>
@@ -461,29 +499,26 @@ public class FireWeapon : MonoBehaviour
     private void ResetPrechargeTimer(bool firePreviousFrame)
     {
         // Reset precharge timer
-        if (activeWeapon.GetCurrentMainHandWeapon() != null)
+        if (player != null)
         {
-            firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime;
+            if (activeWeapon.GetCurrentMainHandWeapon() != null)
+            {
+                // Reset precharge timer
+                firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime * player.additionalCastDurationModifier;
+
+                // Set weapon's precharge flag to false
+                activeWeapon.GetCurrentMainHandWeapon().onPrecharge = false;
+
+                if (firePreviousFrame)
+                {
+                    activeWeapon.GetCurrentMainHandWeapon().firingCompletedIfWeaponIsPrecharged = true;
+                }
+            }
         }
 
         // Reset bar fill and disable the bar container
         prechargeBar.transform.localScale = new Vector3(1f, 1f, 1f);
         prechargeBarContainer.gameObject.SetActive(false);
-
-        // Set weapon's precharge flag to false
-        if (activeWeapon.GetCurrentMainHandWeapon() != null)
-        {
-            activeWeapon.GetCurrentMainHandWeapon().onPrecharge = false;
-        }
-
-        if (tag == Settings.playerTag && activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponPrechargeTime > 0f)
-        {
-            // Check for first frame for not jumping to fire completed
-            if (firePreviousFrame == true)
-            {
-                GetComponent<PlayerControl>().fireCompletedDuringPressed = true;
-            }
-        }
     }
 
     /// <summary>
@@ -492,7 +527,7 @@ public class FireWeapon : MonoBehaviour
     private void WeaponShootEffect(float aimAngle)
     {
         // Process if there is a shoot effect & prefab
-        if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponShootEffect != null && activeWeapon.GetCurrentMainHandWeapon().
+        if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponShootEffect != null && activeWeapon?.GetCurrentMainHandWeapon().
             weaponDetails.weaponShootEffect.weaponShootEffectPrefab != null)
         {
             // Get weapon shoot effect gameobject from the pool with particle system component

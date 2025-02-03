@@ -15,4 +15,4 @@ MonoBehaviour:
   belongingCharacter: 0
   characterBuildImage: {fileID: 308771424, guid: 6b52fabf9da366a4eb93eea1161072ca, type: 3}
   characterBuildName: Berserker's Wrath
-  characterBuildDetails: Increases Critical Damage By 30%
+  characterBuildDetails: Increases Melee Attack's Critical Damage By 30%

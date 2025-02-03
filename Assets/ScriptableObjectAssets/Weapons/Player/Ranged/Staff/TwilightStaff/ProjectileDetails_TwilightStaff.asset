@@ -22,8 +22,8 @@ MonoBehaviour:
   projectileChargeMaterial: {fileID: 2100000, guid: d1b51ad0ae4eb4f459e88e66e280a127, type: 2}
   belongingWeaponDetails: {fileID: 11400000, guid: 63c31ba35716baf47a0ba5d0b8e262a8, type: 2}
   projectileHitEffect: {fileID: 11400000, guid: f1e9c303382e2d942800a3c5970cc911, type: 2}
-  projectileDamageMin: 7
-  projectileDamageMax: 10
+  projectileDamageMin: 15
+  projectileDamageMax: 20
   projectileSpeedMin: 15
   projectileSpeedMax: 15
   projectileRange: 22
@@ -50,3 +50,4 @@ MonoBehaviour:
   projectileTrailMaterial: {fileID: 0}
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0

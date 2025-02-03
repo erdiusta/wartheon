@@ -12,6 +12,14 @@ public static class StaticEventHandler
         OnRoomChanged?.Invoke(new RoomChangedEventArgs { room = room });
     }
 
+    // Stats changed event
+    public static event Action OnPrimaryStatsChanged;
+
+    public static void CallPrimaryStatsChangedEvent()
+    {
+        OnPrimaryStatsChanged?.Invoke();
+    }
+
     // Room enemies defeated event
     public static event Action<RoomEnemiesDefeatedArgs> OnRoomEnemiesDefeated;
 

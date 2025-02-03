@@ -15,4 +15,4 @@ MonoBehaviour:
   belongingCharacter: 0
   characterBuildImage: {fileID: 21300000, guid: c66829781b302694ea803227f7739496, type: 3}
   characterBuildName: Relentless Fury
-  characterBuildDetails: Reduces Attack Cooldown By 10%
+  characterBuildDetails: Reduces Melee Attack Cooldown By 10%

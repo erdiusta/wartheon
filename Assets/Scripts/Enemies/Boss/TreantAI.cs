@@ -186,7 +186,7 @@ public class TreantAI : EnemyAI
             currentTreantPhase = (TreantPhase)Random.Range(2, Enum.GetValues(typeof(TreantPhase)).Length);
 
             // If health is not low enough, switch heal phase
-            if (currentTreantPhase == TreantPhase.Heal && enemy.health.GetCurrentHealth() > (int)(enemy.health.GetStartingHealth() * 0.5f))
+            if (currentTreantPhase == TreantPhase.Heal && enemy.health.GetCurrentHealth() > (int)(enemy.health.GetMaximumHealth() * 0.5f))
             {
                 currentTreantPhase = (TreantPhase)Random.Range(2, Enum.GetValues(typeof(TreantPhase)).Length - 1);
             }
@@ -345,7 +345,7 @@ public class TreantAI : EnemyAI
         {
             enemy.animator.SetFloat(Settings.motionType, 4f);
 
-            enemy.health.AddHealth((int)(20f / enemy.health.GetStartingHealth() * 100));
+            enemy.health.AddHealth((int)(20f / enemy.health.GetMaximumHealth() * 100));
 
             yield return new WaitForEndOfFrame();
 

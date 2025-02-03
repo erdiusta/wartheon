@@ -15,4 +15,4 @@ MonoBehaviour:
   belongingCharacter: 2
   characterBuildImage: {fileID: 1899041939, guid: 278312a73c1e345478a16ce30eb6472f, type: 3}
   characterBuildName: Rapid Execution
-  characterBuildDetails: Reduces Attack Cooldown By 10%
+  characterBuildDetails: Reduces Bow Attack Cooldown By 10%

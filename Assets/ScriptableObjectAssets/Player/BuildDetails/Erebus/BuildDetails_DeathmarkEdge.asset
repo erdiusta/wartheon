@@ -15,4 +15,4 @@ MonoBehaviour:
   belongingCharacter: 1
   characterBuildImage: {fileID: 895827228, guid: 4f4eb87aa8b052c4e90c730583feb7f6, type: 3}
   characterBuildName: Deathmark Edge
-  characterBuildDetails: Increases Critical Hit Chance By 10%
+  characterBuildDetails: Increases Melee Attack Critical Hit Chance By 10%

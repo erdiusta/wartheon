@@ -7,10 +7,6 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public class PlayerControl : MonoBehaviour
 {
-    [SerializeField] float seismicSlamCircleRadius = 5f;
-    int seismicSlamDamage = 10;
-
-    [HideInInspector] public bool fireCompletedDuringPressed = false;
     [HideInInspector] public bool isSoundPlayed = false;
     [HideInInspector] public Coroutine unstealthRoutine;
     [HideInInspector] public float movementTimer = 0;
@@ -464,14 +460,42 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
-        // Fire when left mouse button is clicked
-        if (InputManager.Instance.attack.action.WasPerformedThisFrame())
-        {
-            //Reset precharge for loading again
-            fireCompletedDuringPressed = false;
-            isSoundPlayed = false;
+        //// Fire when left mouse button is clicked
+        //if (InputManager.Instance.attack.action.WasPerformedThisFrame())
+        //{
+        //    //Reset precharge for loading again
+        //    isSoundPlayed = false;
 
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f) return;
+        //    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f) return;
+
+        //    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
+        //    {
+        //        player.meleeAttackRightHand.IsAttackingAtRightHand = true;
+        //        player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
+        //    }
+
+        //    // Trigger fire weapon event
+        //    player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
+        //}
+
+        // Fire for precharge weapons (fire once after precharge)
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
+        {
+            if (InputManager.Instance.attack.action.IsPressed() && !player.activeWeapon.GetCurrentMainHandWeapon().firingCompletedIfWeaponIsPrecharged) // Only trigger once per hold
+            {
+                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                {
+                    player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
+                }
+
+                // Start precharge process (firePreviousFrame is false because firing hasn't happened yet)
+                player.fireWeaponEvent.CallFireWeaponEvent(true, true, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
+            }
+        }
+        // Fire for non-precharge weapons (fire once per press)
+        else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime == 0f && InputManager.Instance.attack.action.WasPressedThisFrame())
+        {
+            isSoundPlayed = false;
 
             if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
             {
@@ -479,55 +503,21 @@ public class PlayerControl : MonoBehaviour
                 player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
             }
 
-            // Trigger fire weapon event
+            // Fire event (only once per press)
             player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
         }
 
-        // Fire for precharge weapons
-        if (InputManager.Instance.attack.action.IsPressed())
+        // Reset when fire button is released
+        if (InputManager.Instance.attack.action.WasReleasedThisFrame())
         {
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f && !fireCompletedDuringPressed)
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
             {
-                leftMouseDownPreviousFrame = true;
-
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
-                {
-                    player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection,player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
-                }
-
-                // Trigger fire weapon event for precharge weapons
-                player.fireWeaponEvent.CallFireWeaponEvent(true, leftMouseDownPreviousFrame, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
+                // Reset firing flag when releasing button for precharge weapons
+                player.activeWeapon.GetCurrentMainHandWeapon().firingCompletedIfWeaponIsPrecharged = false;
             }
 
-            if (fireCompletedDuringPressed) return;
-        }
-        else
-        {
-            // Reset hasFired when the mouse button is released
-            leftMouseDownPreviousFrame = false;
-
-            // Trigger fire weapon event for precharge weapons
-            player.fireWeaponEvent.CallFireWeaponEvent(false, leftMouseDownPreviousFrame, playerAimDirection, playerAngleDegrees,weaponAngleDegrees, weaponDirection, false);
-        }
-
-        // Fire when right mouse button is clicked
-        if (InputManager.Instance.attackOffHand.action.WasPerformedThisFrame())
-        {
-            if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
-                return;
-
-            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass != WeaponClass.Shield ||
-                player.activeWeapon.GetCurrentOffHandWeapon() != null)
-            {
-                if (!player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon)
-                {
-                    rightMouseDownPreviousFrame = true;
-                }
-            }
-        }
-        else
-        {
-            rightMouseDownPreviousFrame = false;
+            // Stop firing
+            player.fireWeaponEvent.CallFireWeaponEvent(false, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
         }
     }
 
@@ -596,7 +586,7 @@ public class PlayerControl : MonoBehaviour
                         {
                             SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemUseSoundEffect);
                             player.selectedActiveItem.GetCurrentActiveItem().potionDrank = true;
-                            healthPotionDrinkCoroutine = StartCoroutine(AddHealthCoroutine((int)(50f / player.health.GetStartingHealth() * 100)));
+                            healthPotionDrinkCoroutine = StartCoroutine(AddHealthCoroutine((int)(50f / player.health.GetMaximumHealth() * 100)));
 
                             player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
 
@@ -674,7 +664,6 @@ public class PlayerControl : MonoBehaviour
         {
             accumulatedHealth += healthForEachStep;
             player.health.AddHealth((int)healthForEachStep);
-            StaticEventHandler.CallBookHealthChangedEvent(player.health.currentHealth);
 
             yield return new WaitForSeconds(0.5f);
         }
@@ -909,7 +898,7 @@ public class PlayerControl : MonoBehaviour
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallStunCuredEvent();
         player.animator.SetBool(Settings.isStunned, false);
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetMoveSpeed();
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
         stunCoroutine = null;
     }
 
@@ -928,7 +917,7 @@ public class PlayerControl : MonoBehaviour
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallStunCuredEvent();
         player.animator.SetBool(Settings.isFrozen, false);
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetMoveSpeed();
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
         frostCoroutine = null;
     }
 
@@ -1052,6 +1041,11 @@ public class PlayerControl : MonoBehaviour
 
             // Play special move sound effect
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveOneSoundEffect);
+
+            if (player.threeSecInvincilibityAfterTeleportEnabled)
+            {
+                StartCoroutine(EnableInvincibility());
+            }
         }
     }
 
@@ -1073,6 +1067,33 @@ public class PlayerControl : MonoBehaviour
         float angle = HelperUtilities.GetAngleFromVector(direction);
 
         StartCoroutine(FireCataclysmMeteorRoutine(player.playerDetails.cataclysmMeteor, angle, angle, direction, meteorStartsToFallPosition));
+    }
+
+    /// <summary>
+    /// Enable Invincibility
+    /// </summary>
+    private IEnumerator EnableInvincibility()
+    {
+        player.health.isDamageable = false;
+
+        // 4 is duration of invincibility
+        int iterations = Mathf.RoundToInt(4 / Health.spriteFlashInterval / 2);
+
+        // Flash effect
+        while (iterations > 0)
+        {
+            player.health.flashManager.WhiteFlashCharacter(player.spriteRenderer);
+            yield return new WaitForSeconds(Health.spriteFlashInterval);
+
+            player.health.flashManager.UnflashCharacter(player.spriteRenderer);
+            yield return new WaitForSeconds(Health.spriteFlashInterval);
+
+            iterations--;
+
+            yield return null;
+        }
+
+        player.health.isDamageable = true;
     }
 
     private void OnTeleportInput(InputAction.CallbackContext context)
@@ -1262,11 +1283,13 @@ public class PlayerControl : MonoBehaviour
     private void SeismicSlam()
     {
         // Get all colliders within the radius of the seismic slam
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, seismicSlamCircleRadius);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, player.seismicSlamCircleRadius);
 
         if (player.specialMoveParticlesSystem != null)
         {
             player.specialMoveParticlesSystem.Play();
+
+
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveOneSoundEffect);
         }
 
@@ -1290,7 +1313,7 @@ public class PlayerControl : MonoBehaviour
 
                 if (enemy.health != null)
                 {
-                    enemy.health.TakeDamage(seismicSlamDamage, transform.position, enemy.health.transform.position, false);
+                    enemy.health.TakeDamage(player.seismicSlamDamage, transform.position, enemy.health.transform.position, false);
                 }
             }
         }
@@ -1301,7 +1324,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void Block()
     {
-        if (player.specialMoveTwoDurationTimer < player.playerDetails.specialMoveTwoDuration)
+        if (player.specialMoveTwoDurationTimer < player.playerDetails.specialMoveTwoDuration * (1 + player.blockSkillAdditionalDurationModifier))
         {
             player.isBlockingActive = true;
             player.healthEvent.CallGetBlockSpecialMoveEvent(); // This is for displaying shield icon
@@ -1317,13 +1340,14 @@ public class PlayerControl : MonoBehaviour
         {
             player.isGemSkinActive = true;
             player.healthEvent.CallGetGemSkinSpecialMoveEvent(); // This is for displaying gem skin icon
-            player.currentPhysicalResistanceValue += 0.1f;
-            player.currentFireResistanceValue += 0.1f;
-            player.currentWaterResistanceValue += 0.1f;
-            player.currentAirResistanceValue += 0.1f;
-            player.currentEarthResistanceValue += 0.1f;
-            player.currentLightResistanceValue += 0.1f;
-            player.currentDarkResistanceValue += 0.1f;
+            player.currentPhysicalResistanceValue += 0.1f + player.gemStoneSkillAdditionalModifier;
+            player.currentFireResistanceValue += 0.1f + player.gemStoneSkillAdditionalModifier;
+            player.currentWaterResistanceValue += 0.1f + player.gemStoneSkillAdditionalModifier;
+            player.currentAirResistanceValue += 0.1f + player.gemStoneSkillAdditionalModifier;
+            player.currentEarthResistanceValue += 0.1f + player.gemStoneSkillAdditionalModifier;
+            player.currentLightResistanceValue += 0.1f + player.gemStoneSkillAdditionalModifier;
+            player.currentDarkResistanceValue += 0.1f + player.gemStoneSkillAdditionalModifier;
+            StaticEventHandler.CallPrimaryStatsChangedEvent();
         }
     }
 
@@ -1344,6 +1368,14 @@ public class PlayerControl : MonoBehaviour
     {
         if (!Player.hasClone)
         {
+            if (player.tripleTeamEnabled)
+            {
+                player.playerSecondCloneObject = Instantiate(player.playerDetails.playerClonePrefab, transform.position + new Vector3(0f, -2f, 0f), Quaternion.identity);
+                player.playerSecondCloneObject.GetComponent<Player>().Initialize(player.playerDetails);
+                player.playerSecondCloneObject.GetComponent<Health>().currentHealth = 1;
+                player.playerSecondCloneObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.4f);
+            }
+
             player.playerCloneObject = Instantiate(player.playerDetails.playerClonePrefab, transform.position + new Vector3(0f, 2f, 0f), Quaternion.identity);
             player.playerCloneObject.GetComponent<Player>().Initialize(player.playerDetails);
             player.playerCloneObject.GetComponent<Health>().currentHealth = 1;
@@ -1375,7 +1407,6 @@ public class PlayerControl : MonoBehaviour
         AimWeaponInput(out weaponDirection, out weaponAngleDegrees, out playerAngleDegrees, out playerAimDirection);
 
         //Reset precharge for loading again
-        fireCompletedDuringPressed = false;
         isSoundPlayed = false;
 
         player.meleeAttackRightHand.IsAttackingAtRightHand = true;
@@ -1390,8 +1421,11 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void LightFeet()
     {
-        player.movementByVelocity.moveSpeed += 1.5f;
-        SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
+        if (player.specialMoveTwoDurationTimer < player.playerDetails.specialMoveTwoDuration * (1 + player.additionalLightfeetSkillDurationModifier))
+        {
+            player.movementByVelocity.moveSpeed += 1f;
+            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
+        }
     }
 
     /// <summary>
@@ -1407,7 +1441,6 @@ public class PlayerControl : MonoBehaviour
         AimWeaponInput(out weaponDirection, out weaponAngleDegrees, out playerAngleDegrees, out playerAimDirection);
 
         //Reset precharge for loading again
-        fireCompletedDuringPressed = false;
         isSoundPlayed = false;
 
         player.meleeAttackRightHand.IsAttackingAtRightHand = true;
@@ -1447,12 +1480,12 @@ public class PlayerControl : MonoBehaviour
                 }
 
                 // Try open with bobby pin process
-                if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemName == "Bobby Pin" && chest.bobbyPinTried == false)
+                if (player.selectedActiveItem?.GetCurrentActiveItem().activeItemDetails.activeItemName == "Bobby Pin" && chest.bobbyPinTried == false)
                 {
                     if (InputManager.Instance.activeItem.action.IsPressed())
                     {
                         chest.bobbyPinTried = true;
-                        int diceRoll = Random.Range(0, 100);
+                        int diceRoll = Random.Range(1, 101) + (int)(player.additionalLockpickingModifier * 100);
 
                         if (diceRoll > 50)
                         {
@@ -1530,7 +1563,7 @@ public class PlayerControl : MonoBehaviour
                 // Update stat values
                 player.UpdateDamageValues();
                 player.UpdateWeaponHandlingAndCriticalValues();
-                player.UpdateEvasivenessValue();
+                player.UpdateBlockAndEvasivenessValues();
 
                 RemoveActiveItemFromBook();
 
@@ -1566,7 +1599,7 @@ public class PlayerControl : MonoBehaviour
 
             player.UpdateDamageValues();
             player.UpdateWeaponHandlingAndCriticalValues();
-            player.UpdateEvasivenessValue();
+            player.UpdateBlockAndEvasivenessValues();
 
             ChestItem.toBeDroppedChestItem.transform.SetParent(null);
             ChestItem.toBeDroppedChestItem.isPickedUp = false;
@@ -1671,7 +1704,7 @@ public class PlayerControl : MonoBehaviour
                     // Update stat values
                     player.UpdateDamageValues();
                     player.UpdateWeaponHandlingAndCriticalValues();
-                    player.UpdateEvasivenessValue();
+                    player.UpdateBlockAndEvasivenessValues();
 
                     RemoveMainHandWeaponFromBook();
 
@@ -1716,7 +1749,7 @@ public class PlayerControl : MonoBehaviour
                 // Update stat values
                 player.UpdateDamageValues();
                 player.UpdateWeaponHandlingAndCriticalValues();
-                player.UpdateEvasivenessValue();
+                player.UpdateBlockAndEvasivenessValues();
 
                 RemoveOffHandWeaponsFromBook();
 
@@ -1848,7 +1881,7 @@ public class PlayerControl : MonoBehaviour
     public void EnablePlayer()
     {
         isPlayerMovementDisabled = false;
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.moveSpeed;
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
     }
 
     /// <summary>
@@ -1872,7 +1905,7 @@ public class PlayerControl : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, seismicSlamCircleRadius);
+        Gizmos.DrawWireSphere(transform.position, player.seismicSlamCircleRadius);
     }
 
     public void PopulateMainHandWeaponsToBook(Weapon weapon, bool onlySwitch)

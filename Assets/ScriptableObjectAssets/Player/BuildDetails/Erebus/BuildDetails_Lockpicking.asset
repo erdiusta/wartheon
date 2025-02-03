@@ -15,4 +15,4 @@ MonoBehaviour:
   belongingCharacter: 1
   characterBuildImage: {fileID: 1562025145, guid: 4f4eb87aa8b052c4e90c730583feb7f6, type: 3}
   characterBuildName: Lockpicking
-  characterBuildDetails: Increases Chance To Crack Chests With A Bobby Pin 10%
+  characterBuildDetails: Increases Chance To Crack Chests With A Bobby Pin 15%

@@ -123,7 +123,7 @@ public class MeleeAttackOffHand : MonoBehaviour
                             else
                             {
                                 enemy.health.isBlocking = true;
-                                enemy.healthEvent.CallDeflectionEvent();
+                                enemy.healthEvent.CallDodgeEvent();
                                 enemy.health.PostHitImmunity(true);
                                 enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
                             }
@@ -183,7 +183,7 @@ public class MeleeAttackOffHand : MonoBehaviour
                             else
                             {
                                 enemy.health.isBlocking = true;
-                                enemy.healthEvent.CallDeflectionEvent();
+                                enemy.healthEvent.CallDodgeEvent();
                                 enemy.health.PostHitImmunity(true);
                                 enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
                             }
@@ -214,7 +214,17 @@ public class MeleeAttackOffHand : MonoBehaviour
         }
 
         // Calculate damage after critical hit check
-        damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier) : damageDone;
+        if (player.onStealth)
+        {
+            // Add critical damage modifier if player is on stealth
+            damageDone = criticalHitHappened ? (int)(damageDone * (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnStealth)) : damageDone;
+        }
+        else
+        {
+            damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                player.additionalCriticalMeleeDamageModifier) : damageDone;
+        }
 
         // Segregate elemental and non-elemental damage
         int elementalDamage = (int)(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.elementalForgeRate * damageDone);
@@ -461,7 +471,7 @@ public class MeleeAttackOffHand : MonoBehaviour
 
     IEnumerator DelayAttackLeftHand(Weapon weapon)
     {
-        yield return new WaitForSeconds(weapon.weaponDetails.weaponCooldownDuration);
+        yield return new WaitForSeconds(weapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
 
         weapon.onCooldown = false;
         leftHandAttackBlocked = false;

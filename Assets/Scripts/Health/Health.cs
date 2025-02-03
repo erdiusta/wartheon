@@ -12,18 +12,19 @@ public class Health : MonoBehaviour
     [HideInInspector] public Enemy enemy;
     [HideInInspector] public Coroutine getHitCoroutine;
     [HideInInspector] public bool isBlocking;
+    [HideInInspector] public bool isDodging;
     [HideInInspector] public bool suddenDeathHappened;
+    [HideInInspector] public FlashManager flashManager;
+    [HideInInspector] public const float spriteFlashInterval = 0.1f;
 
-    int startingHealth;
+    int maximumHealth;
     HealthEvent healthEvent;
     Player player;
     Coroutine immunityCoroutine;
     bool isImmuneAfterHit;
     float immunityTime = 0f;
     SpriteRenderer spriteRenderer;
-    const float spriteFlashInterval = 0.1f;
     WaitForSeconds waitForSecondsSpriteFlashInterval = new WaitForSeconds(spriteFlashInterval);
-    FlashManager flashManager;
     Coroutine poisonCoroutine;
     Coroutine bleedingCoroutine;
     int poisonPeriodCount = 0;
@@ -39,7 +40,8 @@ public class Health : MonoBehaviour
     private void Start()
     {
         // Trigger a health event for UI update
-        CallHealthEvent(0);
+        // Trigger health event
+        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, 0);
 
         // Attempt to load enemy / player / decoy components
         player = GetComponent<Player>();
@@ -168,7 +170,7 @@ public class Health : MonoBehaviour
             {
                 if (getHitCoroutine == null)
                 {
-                    if (!isBlocking)
+                    if (!isBlocking || !isDodging)
                     {
                         PostHitImmunity();
                     }
@@ -187,11 +189,12 @@ public class Health : MonoBehaviour
                 // Set health bar as the percentage of health remaining
                 if (GameManager.Instance.healthBarContainer.activeSelf)
                 {
-                    GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)startingHealth, enemy);
+                    GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)maximumHealth, enemy);
                 }
             }
 
-            CallHealthEvent(damageAmount);
+            // Trigger health event
+            healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, damageAmount);
         }
     }
 
@@ -236,7 +239,7 @@ public class Health : MonoBehaviour
                 {
                     if (getHitCoroutine == null)
                     {
-                        if (!isBlocking)
+                        if (!isBlocking && !isDodging)
                         {
                             PostHitImmunity();
                         }
@@ -249,7 +252,7 @@ public class Health : MonoBehaviour
                     // Set health bar as the percentage of health remaining
                     if (GameManager.Instance.healthBarContainer.activeSelf)
                     {
-                        GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)startingHealth, enemy);
+                        GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)maximumHealth, enemy);
                     }
 
                     if (getHitCoroutine != null)
@@ -272,7 +275,8 @@ public class Health : MonoBehaviour
                 }
             }
 
-            CallHealthEvent(damageAmount);
+            // Trigger health event
+            healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, damageAmount);
         }
     }
 
@@ -471,7 +475,7 @@ public class Health : MonoBehaviour
 
         int damageAmount = 7;
         // Trigger health event
-        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)startingHealth), currentHealth, damageAmount);
+        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, damageAmount);
         TakeDamage(damageAmount, Vector2.zero, transform.position, false);
 
         float rndNumber = Random.Range(0f, 1f);
@@ -497,27 +501,25 @@ public class Health : MonoBehaviour
         poisonCoroutine = null; // Reset the coroutine reference when it's finished
     }
 
-    private void CallHealthEvent(int damageAmount)
-    {
-        // Trigger health event
-        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)startingHealth), currentHealth, damageAmount);
-    }
+
 
     /// <summary>
     /// Set starting health 
     /// </summary>
-    public void SetStartingHealth(int startingHealth)
+    public void SetMaximumHealth(int maximumHealth, bool shouldHealthFilled = true)
     {
-        this.startingHealth = startingHealth;
-        currentHealth = startingHealth;
+        this.maximumHealth = maximumHealth;
+
+        // If current health maximized together with increasing max health or not
+        currentHealth = shouldHealthFilled ? maximumHealth : currentHealth;
     }
 
     /// <summary>
     /// Get the starting health
     /// </summary>
-    public int GetStartingHealth()
+    public int GetMaximumHealth()
     {
-        return startingHealth;
+        return maximumHealth;
     }
 
     /// <summary>
@@ -533,13 +535,12 @@ public class Health : MonoBehaviour
     /// </summary>
     public void AddHealth(int healthPercent)
     {
-        int healthIncrease = Mathf.RoundToInt((startingHealth * healthPercent) / 100f);
-
+        int healthIncrease = Mathf.RoundToInt((maximumHealth * healthPercent) / 100f);
         int totalHealth = currentHealth + healthIncrease;
 
-        if (totalHealth > startingHealth)
+        if (totalHealth > maximumHealth)
         {
-            currentHealth = startingHealth;
+            currentHealth = maximumHealth;
         }
         else
         {
@@ -551,11 +552,12 @@ public class Health : MonoBehaviour
             // Set health bar as the percentage of health remaining
             if (GameManager.Instance.healthBarContainer.activeSelf)
             {
-                GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)startingHealth, enemy);
+                GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)maximumHealth, enemy);
             }
         }
 
-        CallHealthEvent(0);
+        // Trigger health event
+        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, 0);
         StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
     }
 

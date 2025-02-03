@@ -15,4 +15,4 @@ MonoBehaviour:
   belongingCharacter: 0
   characterBuildImage: {fileID: -232255942, guid: 5abc88a278fbfc8419f06f529a043f90, type: 3}
   characterBuildName: Seasoned Explorer
-  characterBuildDetails: Increases Experience Gained From Enemies By 50%
+  characterBuildDetails: Increases Experience Gained From Enemies By 20%

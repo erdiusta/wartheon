@@ -196,7 +196,8 @@ public class LeanSmooth {
     * @method LeanSmooth.linear (float)
     * @param {float} current:float the current value
     * @param {float} target:float the value we are trying to reach
-    * @param {float} moveSpeed:float the speed at which to move towards the target
+    * @param {float} moveSpeed
+    * :float the speed at which to move towards the target
     * @param {float} deltaTime:float the difference in time since the method was called (defaults to Time.deltaTime)
     * @example
     * followVar = LeanSmooth.linear(followVar, destinationVar, 50f);\n

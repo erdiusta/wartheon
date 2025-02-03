@@ -219,6 +219,12 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         if (Player.hasClone)
         {
             Destroy(player.playerCloneObject);
+
+            if (player.tripleTeamEnabled)
+            {
+                Destroy(player.playerSecondCloneObject);
+            }
+
             Player.hasClone = false;
         }
 
@@ -234,7 +240,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 if (!visitedRooms.Contains(currentRoom))
                 {
                     if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge ==
-                        player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemMaxCharge) return;
+                        player.selectedActiveItem.GetCurrentActiveItem().activeItemMaxCharge) return;
 
                     int refreshedCharge = (int)(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemChargeRegenerationPerSixRooms *
                         ++exploredRoomCount / ROOM_CONST);
@@ -244,10 +250,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                         player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge += refreshedCharge;
 
                         if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge >
-                            player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemMaxCharge)
+                            player.selectedActiveItem.GetCurrentActiveItem().activeItemMaxCharge)
                         {
                             player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge =
-                                player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemMaxCharge;
+                                player.selectedActiveItem.GetCurrentActiveItem().activeItemMaxCharge;
                         }
 
                         if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Dummy)
@@ -1438,8 +1444,17 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 }
 
                 baseHandlingText.text = $"Base Handling: {weaponDetails.weaponBaseHandling * 100}%";
-                crHitChanceText.text = $"Base Cr. Hit Chance: {weaponDetails.criticalHitChance * 100}%";
-                crHitDamageText.text = $"Base Cr. Hit Damage: {weaponDetails.criticalHitDamageMultiplier * 100}%";
+                crHitChanceText.text = $"Base Cr. Hit Chance: {weaponDetails.criticalHitChance * 100 }%";
+
+                if (weaponDetails.isMeleeWeapon)
+                {
+                    crHitDamageText.text = $"Base Cr. Hit Damage: {(weaponDetails.criticalHitDamageMultiplier + player.additionalCriticalMeleeDamageModifier) * 100}%";
+                }
+                else
+                {
+                    crHitDamageText.text = $"Base Cr. Hit Damage: {weaponDetails.criticalHitDamageMultiplier * 100}%";
+                }
+
                 elementalBiasText.text = "Elemental Bias:";
 
 
@@ -1533,11 +1548,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         if (requiredStats.agility > 0) requirementString += $"AGI: {requiredStats.agility} ";
 
-        if ((requiredStats.strength > 0 && player.playerDetails.primaryStats.strength < requiredStats.strength) ||
-            (requiredStats.dexterity > 0 && player.playerDetails.primaryStats.dexterity < requiredStats.dexterity) ||
-            (requiredStats.constitution > 0 && player.playerDetails.primaryStats.constitution < requiredStats.constitution) ||
-            (requiredStats.intelligence > 0 && player.playerDetails.primaryStats.intelligence < requiredStats.intelligence) ||
-            (requiredStats.agility > 0 && player.playerDetails.primaryStats.agility < requiredStats.agility))
+        if ((requiredStats.strength > 0 && player.currentStrengthValue< requiredStats.strength) ||
+            (requiredStats.dexterity > 0 && player.currentDexterityValue < requiredStats.dexterity) ||
+            (requiredStats.constitution > 0 && player.currentConstitutionValue < requiredStats.constitution) ||
+            (requiredStats.intelligence > 0 && player.currentIntelligenceValue < requiredStats.intelligence) ||
+            (requiredStats.agility > 0 && player.currentAgilityValue < requiredStats.agility))
         {
             requirementText.color = Color.red;
         }

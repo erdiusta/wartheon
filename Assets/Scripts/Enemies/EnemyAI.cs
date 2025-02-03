@@ -70,8 +70,8 @@ public class EnemyAI : MonoBehaviour
     protected virtual void Awake()
     {
         enemy = GetComponent<Enemy>();
-        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
-        enemyStartingSpeed = enemyDetails.movementDetails.moveSpeed;
+        moveSpeed = enemyDetails.movementDetails.GetBaseMoveSpeed();
+        enemyStartingSpeed = enemyDetails.movementDetails.baseMoveSpeed;
     }
 
     protected virtual void OnEnable()
@@ -439,7 +439,7 @@ public class EnemyAI : MonoBehaviour
                 if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot || (enemy.enemyDetails.hasAttackMove && 
                     Vector3.Distance(referencePosition, transform.position) < enemy.enemyDetails.attackMoveTriggerDistance))
                 {
-                    if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot || attackMoveTimer <= 0f)
+                    if ((enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.AimAndShoot || attackMoveTimer <= 0f) && !GameManager.Instance.GetPlayer().onStealth)
                     {
                         enemyPhaseAtPreviousFrame = enemyPhase;
                         enemyPhase = EnemyPhase.Attack;
@@ -447,7 +447,7 @@ public class EnemyAI : MonoBehaviour
                     }
                 }
             }
-            else if ((Vector3.Distance(transform.position, referencePosition) < enemy.enemyDetails.chaseDistance))
+            else if ((Vector3.Distance(transform.position, referencePosition) < enemy.enemyDetails.chaseDistance) && !GameManager.Instance.GetPlayer().onStealth)
             {
                 enemyPhaseAtPreviousFrame = enemyPhase;
                 enemyPhase = EnemyPhase.Chase;
@@ -921,7 +921,7 @@ public class EnemyAI : MonoBehaviour
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         // Reset stun status and allow other stun coroutines to be started
-        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+        moveSpeed = enemyDetails.movementDetails.GetBaseMoveSpeed();
         moveStatus = MoveStatus.Idle;
         stunEnemyRoutine = null;
     }
@@ -945,7 +945,7 @@ public class EnemyAI : MonoBehaviour
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         // Reset stun status and allow other stun coroutines to be started
-        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+        moveSpeed = enemyDetails.movementDetails.GetBaseMoveSpeed();
         moveStatus = MoveStatus.Idle;
         enemyPhase = EnemyPhase.Patrol;
         currentEnemyPatrolPathRebuildCooldown = -0.1f;
@@ -978,7 +978,7 @@ public class EnemyAI : MonoBehaviour
 
         yield return new WaitForSeconds(knockbackTimeWeight);
 
-        moveSpeed = enemyDetails.movementDetails.GetMoveSpeed();
+        moveSpeed = enemyDetails.movementDetails.GetBaseMoveSpeed();
         moveStatus = MoveStatus.Idle;
     }
 

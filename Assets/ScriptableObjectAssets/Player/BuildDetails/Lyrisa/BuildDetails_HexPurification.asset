@@ -16,4 +16,4 @@ MonoBehaviour:
   characterBuildImage: {fileID: 260242399, guid: b87206805ea5b754aa677a16066a6002, type: 3}
   characterBuildName: Hex Purification
   characterBuildDetails: Increases Chance To Eliminate Negative Status Effect By
-    20%
+    10%

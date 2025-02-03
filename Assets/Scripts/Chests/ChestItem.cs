@@ -116,7 +116,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                     {
                                         if (!player.mainHandSlotFilled)
                                         {
-                                            if(!weaponDetails.requiredPrimaryStats.MeetsRequirements(player.playerDetails.primaryStats))
+                                            if(!weaponDetails.requiredPrimaryStats.MeetsRequirements(player))
                                             {
                                                 GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
                                                 return;
@@ -136,7 +136,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                 }
                                 else
                                 {
-                                    if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player.playerDetails.primaryStats))
+                                    if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player))
                                     {
                                         GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
                                         return;
@@ -208,7 +208,6 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                             else
                                             {
                                                 CollectWeaponItem(player);
-                                                Debug.Log("Equipped off-hand weapon is " + player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponName);
                                             }
                                         }
                                         else
@@ -401,7 +400,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                     // Drop process
                                     if (player.activeWeapon.GetCurrentMainHandWeapon() != null && !isPickedUp)
                                     {
-                                        if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player.playerDetails.primaryStats))
+                                        if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player))
                                         {
                                             GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
                                             return;
@@ -714,7 +713,8 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
             if (passiveItem.passiveItemDetails.passiveItemName == "Health")
             {
-                player.health.AddHealth((int)(20f / player.health.GetStartingHealth() * 100));
+                player.UpdatePlayerHealth((int)(20f / player.health.GetMaximumHealth() * 100), false, false);
+
             }
 
             if (passiveItem.passiveItemDetails.passiveItemName == "Medicine")
@@ -798,13 +798,19 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
         ActiveItem activeItem = new ActiveItem();
         activeItem.activeItemDetails = activeItemDetails;
+        activeItem.activeItemMaxCharge = activeItemDetails.activeItemMaxCharge + player.additionalActiveItemCharge;
 
         if (activeItemDetails != null)
         {
-            chestItem.remainingItemCharge = droppedByPlayer ? chestItem.remainingItemCharge : activeItemDetails.activeItemMaxCharge;
+            chestItem.remainingItemCharge = droppedByPlayer ? chestItem.remainingItemCharge : activeItem.activeItemMaxCharge;
         }
 
-        player.AddActiveItemToPlayer(activeItemDetails, this, chestItem.remainingItemCharge);
+        if (!droppedByPlayer)
+        {
+            activeItem.activeItemRemainingCharge = activeItem.activeItemMaxCharge;
+        }
+
+        player.AddActiveItemToPlayer(activeItemDetails, this, chestItem.remainingItemCharge, false);
 
         pickUpAnimator.SetTrigger("pickUp");
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);

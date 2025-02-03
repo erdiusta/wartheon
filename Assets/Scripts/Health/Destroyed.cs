@@ -158,14 +158,12 @@ public class Destroyed : MonoBehaviour
             enemy.isDead = true;
 
             // Gain Experience Upon Killing An Enemy
-            player.currentGainedTotalExperiencePoints += enemy.enemyDetails.experiencePoint;
+            int gainedExpFromEnemy = (int)(enemy.enemyDetails.experiencePoint * player.expGainModifier);
+            player.currentGainedTotalExperiencePoints += gainedExpFromEnemy;
 
             // Check if player levels-after killing the enemy
             int levelBeforeKillingEnemy = player.currentLevel;
             LevelUpCheck(player, levelBeforeKillingEnemy);
-
-            Debug.Log("Player's current gained total exp point is " + player.currentGainedTotalExperiencePoints);
-            Debug.Log("Player current level is " + player.currentLevel);
 
             if (enemy.enemyDetails.isEnemyBoss)
             {
@@ -195,6 +193,7 @@ public class Destroyed : MonoBehaviour
 
     private void LevelUpCheck(Player player, int levelBeforeKillingEnemy)
     {
+        #region LevelUpExpThresholds
         if (player.currentGainedTotalExperiencePoints >= 21825)
         {
             player.currentLevel = 19;
@@ -271,13 +270,16 @@ public class Destroyed : MonoBehaviour
         {
             player.currentLevel = 1;
         }
+        #endregion
 
+        // If current level is more than level before killing enemy, it means char leveled up!
         if (player.currentLevel > levelBeforeKillingEnemy)
         {
             player.levelUpAnimator.SetTrigger(Settings.levelUp);
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.levelUpSoundEffect);
             player.currentBuildPoints++;
             StaticEventHandler.CallBuildPointsGained();
+            player.health.SetMaximumHealth(player.health.GetMaximumHealth());
         }
     }
 

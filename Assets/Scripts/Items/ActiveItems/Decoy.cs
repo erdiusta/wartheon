@@ -17,7 +17,7 @@ public class Decoy : MonoBehaviour
 
     private void Start()
     {
-        health.SetStartingHealth(30);
+        health.SetMaximumHealth(30);
     }
 
     public ActiveItem InitializeDecoy()

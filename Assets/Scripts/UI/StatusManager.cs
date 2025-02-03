@@ -37,7 +37,7 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetBlockSpecialMove += EnableBlockSkillImage;
             player.healthEvent.GetGemSkinSpecialMove += EnableGemSkinSkillImage;
             player.healthEvent.GetDeath += EnableDeathImage;
-            player.healthEvent.OnDeflected += HealthEvent_OnDeflected;
+            player.healthEvent.OnDodged += HealthEvent_OnDodged;
 
             player.healthEvent.PoisonCured += DisablePoisonImage;
             player.healthEvent.AcidCured += DisableAcidImage;
@@ -82,7 +82,7 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetBlockSpecialMove -= EnableBlockSkillImage;
             player.healthEvent.GetGemSkinSpecialMove -= EnableGemSkinSkillImage;
             player.healthEvent.GetDeath -= EnableDeathImage;
-            player.healthEvent.OnDeflected -= HealthEvent_OnDeflected;
+            player.healthEvent.OnDodged -= HealthEvent_OnDodged;
 
             player.healthEvent.PoisonCured -= DisablePoisonImage;
             player.healthEvent.AcidCured -= DisableAcidImage;
@@ -115,7 +115,7 @@ public class StatusManager : MonoBehaviour
         }
     }
 
-    private void HealthEvent_OnDeflected(HealthEvent healthEvent)
+    private void HealthEvent_OnDodged(HealthEvent healthEvent)
     {
         ClearLog();
 
@@ -125,7 +125,7 @@ public class StatusManager : MonoBehaviour
         }
         else
         {
-            logRoutine = StartCoroutine(WriteLog("DEFLECTED", Color.gray));
+            logRoutine = StartCoroutine(WriteLog("DODGED", Color.white));
         }
     }
 

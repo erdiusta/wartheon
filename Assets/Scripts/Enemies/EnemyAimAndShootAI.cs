@@ -130,7 +130,10 @@ public class EnemyAimAndShootAI : EnemyAI
                                 enemy.animateEnemy.ResetAnimatonParameters();
                                 enemy.animateEnemy.SetAttackAnimationParameters();
 
-                                FireWeapon();
+                                if (!GameManager.Instance.GetPlayer().onStealth)
+                                {
+                                    FireWeapon();
+                                }
 
                                 if (waitAfterFiringRoutine == null)
                                 {

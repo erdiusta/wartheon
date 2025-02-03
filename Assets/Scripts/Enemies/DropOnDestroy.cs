@@ -96,18 +96,18 @@ public class DropOnDestroy : MonoBehaviour
 
         int passiveItemModifier;
 
-        if (GameManager.Instance.GetPlayer().playerDetails.passiveItemsList.Any(item => item.passiveItemType == PassiveItemType.RingOfFortune))
+        if (player.playerDetails.passiveItemsList.Any(item => item.passiveItemType == PassiveItemType.RingOfFortune))
         {
             // The player has a passive item of type RingOfFortune
-            passiveItemModifier = 15;
+            passiveItemModifier = 15 + (int)(player.additionalDropChanceModifier * 100);
         }
         else
         {
-            passiveItemModifier = 0;
+            passiveItemModifier = 0 + (int)(player.additionalDropChanceModifier * 100);
         }
 
         // get random value between 1 and 100
-        int randomPercent = Random.Range(1, 100 + 1);
+        int randomPercent = Random.Range(1, 101);
 
         randomPercent += passiveItemModifier;
         randomPercent = randomPercent >= 100 ? 100 : randomPercent;

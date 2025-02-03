@@ -164,12 +164,12 @@ public class Enemy : MonoBehaviour
         {
             if (enemyHealthDetails.dungeonLevel == dungeonLevel)
             {
-                health.SetStartingHealth(enemyHealthDetails.enemyHealthAmount);
+                health.SetMaximumHealth(enemyHealthDetails.enemyHealthAmount);
                 return;
             }
         }
 
-        health.SetStartingHealth(Settings.defaultEnemyHealth);
+        health.SetMaximumHealth(Settings.defaultEnemyHealth);
     }
 
     /// <summary>

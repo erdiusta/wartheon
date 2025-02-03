@@ -194,6 +194,15 @@ public class ProjectileDetailsSO : ScriptableObject
     #endregion
     [Range(0f, 1f)] public float projectileTrailEndWidth;
 
+    #region Header MISC
+    [Space(10)]
+    [Header("PROJECTILE MISC")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The misc info for projectile")]
+    #endregion Tooltip
+    public bool isCataclysmProjectile = false;
+
     #region Validation
 #if UNITY_EDITOR
     // Validate the scriptable object details entered

@@ -18,4 +18,4 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6f253a71adc23e0449255b85675a093e, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
-  soundEffectVolume: 0.5
+  soundEffectVolume: 0.4

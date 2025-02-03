@@ -35,16 +35,16 @@ public class HealthUI : MonoBehaviour
         ClearHealthBar();
 
         // Instantiate heart image prefabs
-        int healthHeartCount = healthEventArgs.healthPercent * ((20 + player.playerDetails.primaryStats.constitution * 10)) % 20f > 10 ? 
-            Mathf.CeilToInt(healthEventArgs.healthPercent * (20 + player.playerDetails.primaryStats.constitution * 10) / 20f) : 
-            Mathf.FloorToInt(healthEventArgs.healthPercent * (20 + player.playerDetails.primaryStats.constitution * 10) / 20f);
+        int healthHeartCount = healthEventArgs.healthPercent * ((20 + player.currentConstitutionValue * 10)) % 20f > 10 ? 
+            Mathf.CeilToInt(healthEventArgs.healthPercent * (20 + player.currentConstitutionValue * 10) / 20f) : 
+            Mathf.FloorToInt(healthEventArgs.healthPercent * (20 + player.currentConstitutionValue * 10) / 20f);
 
         int halfHeartCount;
 
         // Instantiate half heart image prefabs
         if (healthEventArgs.healthAmount >= 0f)
         {
-            halfHeartCount = healthEventArgs.healthPercent * (20 + player.playerDetails.primaryStats.constitution * 10) % 20f <= 10 ? 1 : 0;
+            halfHeartCount = healthEventArgs.healthPercent * (20 + player.currentConstitutionValue * 10) % 20f <= 10 ? 1 : 0;
         }
         else
         {
@@ -64,7 +64,7 @@ public class HealthUI : MonoBehaviour
 
         if (halfHeartCount > 0)
         {
-            if (Mathf.FloorToInt(healthEventArgs.healthPercent * (20 + player.playerDetails.primaryStats.constitution * 10) % 20f) != 0)
+            if (Mathf.FloorToInt(healthEventArgs.healthPercent * (20 + player.currentConstitutionValue * 10) % 20f) != 0)
             {
                 // Instantiate half heart prefab if exists
                 GameObject halfHeart = Instantiate(GameResources.Instance.halfHeartPrefab, transform);

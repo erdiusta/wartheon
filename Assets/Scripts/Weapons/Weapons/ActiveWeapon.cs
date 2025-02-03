@@ -98,7 +98,7 @@ public class ActiveWeapon : MonoBehaviour
         // Update new weapon values
         player?.UpdateDamageValues();
         player?.UpdateWeaponHandlingAndCriticalValues();
-        player?.UpdateEvasivenessValue();
+        player?.UpdateBlockAndEvasivenessValues();
     }
 
     private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
@@ -108,7 +108,7 @@ public class ActiveWeapon : MonoBehaviour
         // Update new weapon values
         player?.UpdateDamageValues();
         player?.UpdateWeaponHandlingAndCriticalValues();
-        player?.UpdateEvasivenessValue();
+        player?.UpdateBlockAndEvasivenessValues();
     }
 
     private void SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
@@ -120,7 +120,7 @@ public class ActiveWeapon : MonoBehaviour
         // Update new weapon values
         player.UpdateDamageValues();
         player.UpdateWeaponHandlingAndCriticalValues();
-        player.UpdateEvasivenessValue();
+        player.UpdateBlockAndEvasivenessValues();
     }
 
     private void SetActiveWeaponEvent_OnSetInactiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
@@ -130,7 +130,7 @@ public class ActiveWeapon : MonoBehaviour
         // Update new weapon values
         player?.UpdateDamageValues();
         player?.UpdateWeaponHandlingAndCriticalValues();
-        player?.UpdateEvasivenessValue();
+        player?.UpdateBlockAndEvasivenessValues();
     }
 
     private void SetMainHandWeapon(Weapon weapon)

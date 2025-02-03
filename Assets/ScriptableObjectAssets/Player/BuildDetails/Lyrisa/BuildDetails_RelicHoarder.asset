@@ -15,4 +15,4 @@ MonoBehaviour:
   belongingCharacter: 3
   characterBuildImage: {fileID: 669131749, guid: 5abc88a278fbfc8419f06f529a043f90, type: 3}
   characterBuildName: Relic Hoarder
-  characterBuildDetails: Increases Active Item's Supply by 50%
+  characterBuildDetails: Grants +1 Active Item Charge For Consumable Types

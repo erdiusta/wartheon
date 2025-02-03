@@ -46,6 +46,9 @@ public class ChestSpawner : MonoBehaviour
     #endregion Tooltip
     [SerializeField] List<ChestsBasedOnSpawnableObjectsByLevel<WeaponDetailsSO>> weaponSpawnByChestBasedOnLevelList;
 
+    [HideInInspector] public static float rareChestLocateModifier = 0f;
+    [HideInInspector] public static float legendaryChestLocateModifier = 0f;
+
     GameObject selectedChestPrefab;
     bool chestSpawned = false;
     Room chestRoom;
@@ -115,11 +118,11 @@ public class ChestSpawner : MonoBehaviour
         int randomNumberForChest = Random.Range(0, 100);
 
         // Instantiate chest
-        if (randomNumberForChest < 70)
+        if (randomNumberForChest < 70 - (rareChestLocateModifier * 100))
         {
             selectedChestPrefab = chestPrefabs[0];
         }
-        else if (randomNumberForChest < 90)
+        else if (randomNumberForChest < 90 - (legendaryChestLocateModifier * 100))
         {
             selectedChestPrefab = chestPrefabs[1];
         }

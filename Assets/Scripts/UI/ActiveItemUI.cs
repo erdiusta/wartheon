@@ -103,7 +103,7 @@ public class ActiveItemUI : MonoBehaviour
         else
         {
             // Update availability bar
-            float barFill = (float)currentActiveItem.activeItemRemainingCharge / (float)currentActiveItem.activeItemDetails.activeItemMaxCharge;
+            float barFill = (float)currentActiveItem.activeItemRemainingCharge / (float)currentActiveItem.activeItemMaxCharge;
 
             // Update bar fill
             availabilityBar.transform.localScale = new Vector3(1f, barFill, 1f);

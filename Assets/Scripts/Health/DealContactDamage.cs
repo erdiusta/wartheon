@@ -74,12 +74,11 @@ public class DealContactDamage : MonoBehaviour
 
                 if (enemy.enemyAI.isAttacking)
                 {
-                    // Hit successful
-                    if (100 - player.currentDeflectionValue * 100 > Random.Range(0, 100))
+                    // Evasiveness - dodge check
+                    if (100 - player.currentEvasivenessValue * 100 > Random.Range(1, 101))
                     {
                         // Damage produced by enemy
-                        int damageDone = enemy.isCursed ? contactDamageAmountMin : Random.Range(contactDamageAmountMin, 
-                            contactDamageAmountMax);
+                        int damageDone = enemy.isCursed ? contactDamageAmountMin : Random.Range(contactDamageAmountMin, contactDamageAmountMax);
 
                         if (player.health.isDamageable)
                         {
@@ -119,8 +118,8 @@ public class DealContactDamage : MonoBehaviour
                     }
                     else
                     {
-                        player.health.isBlocking = true;
-                        player.healthEvent.CallDeflectionEvent();
+                        player.health.isDodging = true;
+                        player.healthEvent.CallDodgeEvent();
                         player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
                     }
                 }
@@ -220,7 +219,7 @@ public class DealContactDamage : MonoBehaviour
         {
             // Check get poisoned
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.poisonChance)
+            if (randomDice < enemy.enemyDetails.poisonChance - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 player.healthEvent.CallGetPoisonedEvent();
                 player.healthStatus = HealthStatus.Poisoned;
@@ -237,7 +236,7 @@ public class DealContactDamage : MonoBehaviour
         {
             // Check get acid
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.acidEfficiency)
+            if (randomDice < enemy.enemyDetails.acidEfficiency - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 if (player.armorStatus == ArmorStatus.SilverArmor)
                 {
@@ -259,7 +258,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.stunChance)
+            if (randomDice < enemy.enemyDetails.stunChance - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 player.playerControl.isPlayerRolling = false;
 
@@ -277,7 +276,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasFrostDamage && player.moveStatus != MoveStatus.Frozen)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.frostChance)
+            if (randomDice < enemy.enemyDetails.frostChance - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 player.playerControl.isPlayerRolling = false;
 
@@ -295,7 +294,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasCurseDamage)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.curseChance)
+            if (randomDice < enemy.enemyDetails.curseChance - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 player.isCursed = true;
                 player.healthEvent.CallGetCurseEvent();

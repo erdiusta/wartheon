@@ -169,30 +169,29 @@ public class Projectile : MonoBehaviour, IFireable
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // If already colliding with something return
-            if (isColliding) return;
+        if (isColliding) return;
 
         if (activeItemDetails != null)
         {
             if (activeItemDetails.activeItemType == ActiveItemType.Bomb) return;
         }
 
-        // Block process if shield equipped
         if (collision.tag == Settings.playerTag)
         {
             Player player = collision.GetComponent<Player>();
 
-            int diceRoll = Random.Range(0, 100);
-            bool deflectHappened = 100 - player.currentDeflectionValue * 100 < diceRoll ? true : false;
+            int diceRoll = Random.Range(1, 101);
+            bool isProjectileDodged = 100 - player.currentEvasivenessValue * 100 < diceRoll ? true : false;
 
-            if (deflectHappened)
+            // Dodge check
+            if (isProjectileDodged)
             {
-                player.health.isBlocking = true;
-                player.healthEvent.CallDeflectionEvent();
+                player.health.isDodging = true;
                 player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
+                player.healthEvent.CallDodgeEvent();
             }
             else
             {
-
                 if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
                 {
                     // Get enemy projectile direction
@@ -202,15 +201,14 @@ public class Projectile : MonoBehaviour, IFireable
                     Vector2 cursorPosition = InputManager.Instance.pointerPosition.action.ReadValue<Vector2>();
                     Vector2 cursorWorldPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
 
-                    Vector2 pointerDirection = (cursorWorldPosition - new Vector2(player.transform.position.x, player.transform.position.y)).
-                        normalized;
+                    Vector2 pointerDirection = (cursorWorldPosition - new Vector2(player.transform.position.x, player.transform.position.y)).normalized;
 
                     // Calculate the dot product between the shield's forward direction and the projectile direction
                     float dotProduct = Vector2.Dot(pointerDirection, enemyProjectileDirection);
 
                     float blockingThreshold = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.projectileDeflectRatio;
 
-                    // Check if the dot product is greater than the threshold, deflection fails
+                    // Check if the dot product is greater than the threshold, block fails
                     if (dotProduct > blockingThreshold - 1f)
                     {
                         // Status checks
@@ -302,7 +300,7 @@ public class Projectile : MonoBehaviour, IFireable
                     if (deflectHappened)
                     {
                         enemy.health.isBlocking = true;
-                        enemy.healthEvent.CallDeflectionEvent();
+                        enemy.healthEvent.CallDodgeEvent();
                         enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
                     }
                     else
@@ -429,7 +427,14 @@ public class Projectile : MonoBehaviour, IFireable
             }
 
             // Deal Damage To Collision Object
-            DealDamage(collision);
+            if (activeItemDetails != null)
+            {
+                DealDamage(collision, true);
+            }
+            else
+            {
+                DealDamage(collision);
+            }
 
             // Show ammo hit effect
             ProjectileHitEffect();
@@ -445,6 +450,7 @@ public class Projectile : MonoBehaviour, IFireable
         // Adjust animator layer weights
         player.transform.GetChild(1).GetComponent<Animator>().SetTrigger(Settings.block);
         SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponSwingSoundEffect);
+        player.healthEvent.CallBlockEvent();
 
         yield return new WaitForSeconds(0.6f);
 
@@ -469,10 +475,18 @@ public class Projectile : MonoBehaviour, IFireable
                 isColliding = true;
             }
 
-            // Damage produced by player
+
             if (!activeItem)
             {
-                damageDone = Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+                if (collision != null && collision.GetComponent<Enemy>() != null)
+                {
+                    // Caster is player
+                    damageDone = Random.Range(GameManager.Instance.GetPlayer().currentMainHandMinDamageValue, GameManager.Instance.GetPlayer().currentMainHandMaxDamageValue);
+                }
+                else
+                {
+                    damageDone = Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+                }
             }
             else
             { 
@@ -482,7 +496,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (isPenetrationArrow)
             {
                 float increasedDamage = damageDone * 1.25f;
-                damageDone = (int)increasedDamage;
+                damageDone = (int)(increasedDamage * (1 + GameManager.Instance.GetPlayer().additionalPenetrationSkillDamageModifier));
             }
 
             int inflictedDamage = 0;
@@ -509,19 +523,46 @@ public class Projectile : MonoBehaviour, IFireable
 
                 if (headShotHappened)
                 {
-                    // x3 damage if used headshot
-                    damageDone *= 3;
+                    // x2.5 damage if used headshot and add additional modifier if has
+                    damageDone = (int)(2.5f * damageDone * (1 + GameManager.Instance.GetPlayer().additionalHeadShotDamageModifier));
                 }
 
                 // Segregate elemental and non-elemental damage
                 int elementalDamage = 0;
                 int nonElementalDamage = 0;
                 int inflictedNonElementalDamage = 0;
+                int additionalElementalCataclysmDamage = 0;
+                int additionalElementalDamage = 0;
 
                 if (!activeItem)
                 {
-                    elementalDamage = (int)(projectileDetails.belongingWeaponDetails.elementalForgeRate * damageDone);
-                    nonElementalDamage = damageDone - elementalDamage;
+                    if (projectileDetails.isCataclysmProjectile)
+                    {
+                        elementalDamage = (int)(GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon().weaponDetails.elementalForgeRate * damageDone);
+                    }
+                    else
+                    {
+                        elementalDamage = (int)(projectileDetails.belongingWeaponDetails.elementalForgeRate * damageDone);
+                        additionalElementalDamage = (int)(elementalDamage * GameManager.Instance.GetPlayer().additionalElementalDamageModifier);
+                        elementalDamage += additionalElementalDamage;
+                    }
+
+                    // Check if projectile is cataclysm projectile
+                    if (projectileDetails.isCataclysmProjectile)
+                    {
+                        additionalElementalCataclysmDamage = (int)(elementalDamage * GameManager.Instance.GetPlayer().additionalCataclysmElementalDamageModifier);
+                        elementalDamage += additionalElementalCataclysmDamage;
+                    }
+
+                    if (projectileDetails.isCataclysmProjectile)
+                    {
+                        nonElementalDamage = damageDone - elementalDamage + additionalElementalCataclysmDamage;
+                    }
+                    else
+                    {
+                        nonElementalDamage = damageDone - elementalDamage + additionalElementalDamage;
+                    }
+
                     inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - enemy.currentPhysicalResistance));
                 }
                 else
@@ -534,8 +575,12 @@ public class Projectile : MonoBehaviour, IFireable
                 // Damage inflicted to enemy after deducting enemy armor
                 if (!activeItem)
                 {
+                    // Retrieve weapon details if projectile cataclysm or not
+                    WeaponDetailsSO weaponDetails = projectileDetails.isCataclysmProjectile ? GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon().weaponDetails :
+                        projectileDetails.belongingWeaponDetails;
+
                     // Calculate inflicted elemental damage
-                    switch (projectileDetails.belongingWeaponDetails.elementalBias)
+                    switch (weaponDetails.elementalBias)
                     {
                         case ElementalBias.None:
                             break;
@@ -858,6 +903,13 @@ public class Projectile : MonoBehaviour, IFireable
             // Calculate random spread angle between min and max
             float randomSpread = Random.Range(projectileDetails.projectileSpreadMin * projectileSpreadModifier, projectileDetails.projectileSpreadMax * projectileSpreadModifier);
 
+            if (projectileDetails.isPlayerProjectile && (projectileDetails.belongingWeaponDetails.weaponClass == WeaponClass.Bow || projectileDetails.belongingWeaponDetails.
+                weaponClass == WeaponClass.Crossbow))
+            {
+                float arrowSpreadReduction = randomSpread * GameManager.Instance.GetPlayer().additionalBowAccuracyModifier;
+                randomSpread = randomSpread - arrowSpreadReduction;
+            }
+
             // Get a random spread toggle of 1 or -1
             int spreadToggle = Random.Range(0, 2) * 2 - 1;
 
@@ -1027,7 +1079,7 @@ public class Projectile : MonoBehaviour, IFireable
             {
                 // Check get poisoned
                 float randomDice = Random.Range(0f, 1f);
-                if (randomDice < projectileDetails.poisonChance)
+                if (randomDice < projectileDetails.poisonChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.healthEvent.CallGetPoisonedEvent();
                     player.healthStatus = HealthStatus.Poisoned;
@@ -1040,7 +1092,7 @@ public class Projectile : MonoBehaviour, IFireable
             {
                 // Check get poisoned
                 float randomDice = Random.Range(0f, 1f);
-                if (randomDice < activeItemDetails.poisonChance)
+                if (randomDice < activeItemDetails.poisonChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.healthEvent.CallGetPoisonedEvent();
                     player.healthStatus = HealthStatus.Poisoned;
@@ -1093,7 +1145,7 @@ public class Projectile : MonoBehaviour, IFireable
             {
                 // Check get acid
                 float randomDice = Random.Range(0f, 1f);
-                if (randomDice < projectileDetails.acidEfficiency)
+                if (randomDice < projectileDetails.acidEfficiency - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     if (player.armorStatus == ArmorStatus.SilverArmor)
                     {
@@ -1111,7 +1163,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (activeItemDetails.hasAcid && player.armorStatus != ArmorStatus.Acid)
             {
                 // Check get acid
-                float randomDice = Random.Range(0f, 1f);
+                float randomDice = Random.Range(0f, 1f - player.additionalNegativeStatusEffectNegatorModifier);
                 if (randomDice < activeItemDetails.acidEfficiency)
                 {
                     if (player.armorStatus == ArmorStatus.SilverArmor)
@@ -1170,7 +1222,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (projectileDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun)
             {
                 float randomDice = Random.Range(0f, 1f);
-                if (randomDice < projectileDetails.stunChance)
+                if (randomDice < projectileDetails.stunChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.playerControl.isPlayerRolling = false;
 
@@ -1186,7 +1238,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (activeItemDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun)
             {
                 float randomDice = Random.Range(0f, 1f);
-                if (randomDice < activeItemDetails.stunChance)
+                if (randomDice < activeItemDetails.stunChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.playerControl.isPlayerRolling = false;
 
@@ -1242,7 +1294,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (projectileDetails.hasFrostDamage && player.moveStatus != MoveStatus.Frozen)
             {
                 float randomDice = Random.Range(0f, 1f);
-                if (randomDice < projectileDetails.frostChance)
+                if (randomDice < projectileDetails.frostChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.playerControl.isPlayerRolling = false;
 
@@ -1259,7 +1311,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (activeItemDetails.hasStunDamage && player.moveStatus != MoveStatus.Frozen)
             {
                 float randomDice = Random.Range(0f, 1f);
-                if (randomDice < activeItemDetails.frostChance)
+                if (randomDice < activeItemDetails.frostChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.playerControl.isPlayerRolling = false;
 
@@ -1316,7 +1368,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (projectileDetails.hasCurseDamage && !player.isCursed)
             {
                 float randomDice = Random.Range(0f, 1f);
-                if (randomDice < projectileDetails.curseChance)
+                if (randomDice < projectileDetails.curseChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.isCursed = true;
                     player.healthEvent.CallGetCurseEvent();
@@ -1328,7 +1380,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (activeItemDetails.hasCurseDamage && player.isCursed)
             {
                 float randomDice = Random.Range(0f, 1f);
-                if (randomDice < activeItemDetails.curseChance)
+                if (randomDice < activeItemDetails.curseChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.isCursed = true;
                     player.healthEvent.CallGetCurseEvent();

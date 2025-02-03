@@ -8,6 +8,8 @@ public class Weapon : IReceivable
     public int weaponBelongingToWhichMainHandSet;
     public int weaponBelongingToWhichOffHandSet;
     public int weaponRemainingProjectile;
+    public bool firingCompletedIfWeaponIsPrecharged;
+    public bool firingStoppedPrematurelyIfWeaponIsPrecharged;
     public bool onPrecharge;
     public bool onCooldown;
 }

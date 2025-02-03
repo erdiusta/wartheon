@@ -2695,7 +2695,8 @@ public class LeanTween : MonoBehaviour {
     * @param {Transform} transform:Transform the transform you wish to be the follower
     * @param {Transform} transform:Transform the transform you wish to follow
     * @param {LeanProp} leanProp:LeanProp enum of the type of following you wish to do position, scale, color, etc.
-    * @param {float} moveSpeed:float roughly the time it takes to reach the destination
+    * @param {float} moveSpeed
+    * :float roughly the time it takes to reach the destination
     * @example
     * LeanTween.followLinear(transform, followTransform, LeanProp.localY, 50f);
     */

@@ -69,14 +69,30 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     {
         if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
         {
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0 && player.activeWeapon.GetCurrentMainHandWeapon().onPrecharge)
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
             {
-                ResetWeaponCooldownBar(player.activeWeapon.GetCurrentMainHandWeapon());
-                return;
+                if (player.activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged)
+                {
+                    ResetWeaponCooldownBar(player.activeWeapon.GetCurrentMainHandWeapon(), player.activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged);
+                    return;
+                }
+
+                if (player.activeWeapon.GetCurrentMainHandWeapon().onPrecharge)
+                {
+                    {
+                        ResetWeaponCooldownBar(player.activeWeapon.GetCurrentMainHandWeapon());
+                        return;
+                    }
+                }
             }
+
             if (player.activeWeapon.GetCurrentMainHandWeapon().onCooldown)
             {
                 cooldownTimer -= Time.deltaTime;
+            }
+            else
+            {
+                ResetWeaponCooldownBar(player.activeWeapon.GetCurrentMainHandWeapon());
             }
         }
     }
@@ -182,8 +198,21 @@ public class MainHandWeaponStatusUI : MonoBehaviour
 
         while (currentWeapon.onCooldown)
         {
+            float barFill = 0f;
+
             // Update cooldown bar
-            float barFill = cooldownTimer / currentWeapon.weaponDetails.weaponCooldownDuration;
+            if (currentWeapon.weaponDetails.isMeleeWeapon)
+            {
+                barFill = cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
+            }
+            else if (currentWeapon.weaponDetails.weaponClass == WeaponClass.Bow || currentWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
+            {
+                barFill = cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalBowAttackCoolDownModifier));
+            }
+            else
+            {
+                barFill = cooldownTimer / currentWeapon.weaponDetails.weaponCooldownDuration;
+            }
 
             // Update bar fill
             if (barFill > 0f)
@@ -206,13 +235,33 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// <summary>
     /// Reset the weapon cooldown bar on the UI
     /// </summary>
-    private void ResetWeaponCooldownBar(Weapon currentWeapon)
+    private void ResetWeaponCooldownBar(Weapon currentWeapon, bool stoppedPrematurely = false)
     {
-        cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration;
+        if (currentWeapon.weaponDetails.isMeleeWeapon)
+        {
+            cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
+        }
+        else if (currentWeapon.weaponDetails.weaponClass == WeaponClass.Bow || currentWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
+        {
+            cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalBowAttackCoolDownModifier));
+        }
+        else
+        {
+            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration;
+        }
+
 
         // Set bar scale to 1
         barImage.transform.localScale = new Vector3(1f, 1f, 1f);
-        barImage.color = new Color(1f, 1f, 1f, 0f);
+
+        if (!stoppedPrematurely)
+        {
+            barImage.color = new Color(1f, 1f, 1f, 0f);
+        }
+        else
+        {
+            player.activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged = false;
+        }
     }
 
     #region Validation

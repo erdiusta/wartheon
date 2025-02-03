@@ -81,8 +81,8 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
                     {
-                        player.currentDeflectionValue += 0.15f;
-                        player.currentDeflectionValue = player.currentDeflectionValue.HasValue ? (float?)Math.Round(player.currentDeflectionValue.Value, 2) : null;
+                        player.currentBlockValue += 0.15f;
+                        player.currentBlockValue = player.currentBlockValue.HasValue ? (float?)Math.Round(player.currentBlockValue.Value, 2) : null;
                         player.currentDexterityValue += 1;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
@@ -169,8 +169,8 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
                     {
-                        player.currentDeflectionValue += 0.1f;
-                        player.currentDeflectionValue = player.currentDeflectionValue.HasValue ? (float?)Math.Round(player.currentDeflectionValue.Value, 2) : null;
+                        player.currentBlockValue += 0.1f;
+                        player.currentBlockValue = player.currentBlockValue.HasValue ? (float?)Math.Round(player.currentBlockValue.Value, 2) : null;
                         player.currentAgilityValue += 1;
                     }
 
@@ -193,7 +193,7 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.currentFireResistanceValue += 0.15f;
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue, 2);
 
-                        player.currentPhysicalResistanceValue += 2f;
+                        player.currentPhysicalResistanceValue += 0.05f;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
 
                         Debug.Log("Every 5th hit causes burn.");
@@ -216,7 +216,7 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
                     {
-                        player.currentDeflectionValue += 0.15f;
+                        player.currentBlockValue += 0.15f;
                         Debug.Log("+1 Physical damage per successful hit (max stack +8)");
 
                     }
@@ -301,8 +301,8 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
                     {
-                        player.currentDeflectionValue -= 0.15f;
-                        player.currentDeflectionValue = player.currentDeflectionValue.HasValue ? (float?)Math.Round(player.currentDeflectionValue.Value, 2) : null;
+                        player.currentBlockValue -= 0.15f;
+                        player.currentBlockValue = player.currentBlockValue.HasValue ? (float?)Math.Round(player.currentBlockValue.Value, 2) : null;
                         player.currentDexterityValue -= 1;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
@@ -382,8 +382,8 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
                     {
-                        player.currentDeflectionValue -= 0.1f;
-                        player.currentDeflectionValue = player.currentDeflectionValue.HasValue ? (float?)Math.Round(player.currentDeflectionValue.Value, 2) : null;
+                        player.currentBlockValue -= 0.1f;
+                        player.currentBlockValue = player.currentBlockValue.HasValue ? (float?)Math.Round(player.currentBlockValue.Value, 2) : null;
                         player.currentAgilityValue -= 1;
                     }
 
@@ -403,8 +403,10 @@ public class SelectedPassiveItem : MonoBehaviour
                     {
                         player.currentFireResistanceValue -= 0.15f;
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue, 2);
-                        player.currentPhysicalResistanceValue = Mathf.Clamp(player.currentPhysicalResistanceValue - 2f, 0, 1f);
+
+                        player.currentPhysicalResistanceValue -= 0.05f;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
+
                         Debug.Log("Every 5th hit causes burn.");
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GirdleOfFirmament)
@@ -424,7 +426,7 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
                     {
-                        player.currentDeflectionValue -= 0.15f;
+                        player.currentBlockValue -= 0.15f;
                         Debug.Log("+1 Physical damage per successful hit (max stack +8)");
 
                     }

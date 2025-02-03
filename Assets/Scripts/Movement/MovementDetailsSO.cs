@@ -10,7 +10,7 @@ public class MovementDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("The maximum move speed. The GetMoveSpeed method calculates a random value between the minimum and maximum")]
     #endregion Tooltip
-    public float moveSpeed = 8f;
+    public float baseMoveSpeed = 8f;
     #region Tooltip
     [Tooltip("If there is a roll movement - this is the roll speed")]
     #endregion Tooltip
@@ -27,13 +27,13 @@ public class MovementDetailsSO : ScriptableObject
     /// <summary>
     /// Get a random movement speed between the minimum and maximum values
     /// </summary>
-    public float GetMoveSpeed() => moveSpeed;
+    public float GetBaseMoveSpeed() => baseMoveSpeed;
 
     #region Validation
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        HelperUtilities.ValidateCheckPositiveValue(this, nameof(moveSpeed), moveSpeed, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(baseMoveSpeed), baseMoveSpeed, false);
     }
 #endif
     #endregion Validation

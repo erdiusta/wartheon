@@ -542,8 +542,18 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     }
 
                     baseHandlingText.text = $"Base Handling: {weapon.weaponDetails.weaponBaseHandling * 100}%";
+
                     crHitChanceText.text = $"Base Cr. Hit Chance: {weapon.weaponDetails.criticalHitChance * 100}%";
-                    crHitDamageText.text = $"Base Cr. Hit Damage: {weapon.weaponDetails.criticalHitDamageMultiplier * 100}%";
+
+                    if (weapon.weaponDetails.isMeleeWeapon)
+                    {
+                        crHitDamageText.text = $"Base Cr. Hit Damage: {(weapon.weaponDetails.criticalHitDamageMultiplier + player.additionalCriticalMeleeDamageModifier) * 100}%";
+                    }
+                    else
+                    {
+                        crHitDamageText.text = $"Base Cr. Hit Damage: {weapon.weaponDetails.criticalHitDamageMultiplier * 100}%";
+                    }
+
                     elementalBiasText.text = "Elemental Bias:";
 
                     // Populate text field based on the related elemental info

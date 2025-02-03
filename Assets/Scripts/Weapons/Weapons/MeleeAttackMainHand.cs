@@ -88,7 +88,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                         {
                             Enemy enemy = collider.GetComponent<Enemy>();
 
-                            // Check if hit is successful or deflected by enemy
+                            // Check if hit is successful or dodged by enemy
                             if (player.currentWeaponHandlingValue * 100 - enemy.enemyDetails.deflectionValue * 100 > Random.Range(0, 100))
                             {
                                 if (!enemy.enemyDetails.isEnemyBoss)
@@ -142,7 +142,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                             else
                             {
                                 enemy.health.isBlocking = true;
-                                enemy.healthEvent.CallDeflectionEvent();
+                                enemy.healthEvent.CallDodgeEvent();
                                 enemy.health.PostHitImmunity(true);
                                 enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
                             }
@@ -166,7 +166,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                         {
                             Enemy enemy = collider.GetComponent<Enemy>();
 
-                            // Check if hit is successful or deflected by enemy
+                            // Check if hit is successful or dodged by enemy
                             if (player.currentWeaponHandlingValue * 100 - enemy.enemyDetails.deflectionValue * 100 > Random.Range(0, 100))
                             {
                                 if (!enemy.enemyDetails.isEnemyBoss)
@@ -179,7 +179,8 @@ public class MeleeAttackMainHand : MonoBehaviour
                                 
                                 if (isSpecialMeleeAttack)
                                 {
-                                    int inflictedProportionalDamage = (int)(enemyHealth.currentHealth * 0.15f);
+                                    // BLOOD DRAIN SKILL FOR EREBUS
+                                    int inflictedProportionalDamage = (int)(enemyHealth.currentHealth * (0.15f + player.bloodDrainSkillAdditionalDamagePercentageModifier));
                                     enemyHealth.TakeDamage(inflictedProportionalDamage, transform.position, enemy.transform.position, false);
                                 }
                                 else
@@ -211,7 +212,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                             else
                             {
                                 enemy.health.isBlocking = true;
-                                enemy.healthEvent.CallDeflectionEvent();
+                                enemy.healthEvent.CallDodgeEvent();
                                 enemy.health.PostHitImmunity(true);
                                 enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
                             }
@@ -242,7 +243,16 @@ public class MeleeAttackMainHand : MonoBehaviour
         }
 
         // Calculate damage after critical hit check
-        damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier) : damageDone;
+        if (player.onStealth)
+        {
+            damageDone = criticalHitHappened ? (int)(damageDone * (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnStealth)) : damageDone;
+        }
+        else
+        {
+            damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                player.additionalCriticalMeleeDamageModifier) : damageDone;
+        }
 
         // Segregate elemental and non-elemental damage
         int elementalDamage = (int)(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.elementalForgeRate * damageDone);
@@ -299,7 +309,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             float randomCriticalDice = Random.Range(0f, 1f);
 
-            float criticalHitModifier = 0f;
+            float criticalHitChanceModifier = 0f;
 
             if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
             {
@@ -307,19 +317,19 @@ public class MeleeAttackMainHand : MonoBehaviour
                     player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Dagger &&
                     player.selectedPassiveItem.GetCurrentBackPassiveItem()?.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                 {
-                    criticalHitModifier = 0.15f;
+                    criticalHitChanceModifier = 0.15f;
                 }
                 else
                 {
-                    criticalHitModifier = 0f;
+                    criticalHitChanceModifier = 0f;
                 }
             }
             else
             {
-                criticalHitModifier = 0f;
+                criticalHitChanceModifier = 0f;
             }
 
-            criticalHitHappened = randomCriticalDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitChance + criticalHitModifier ?
+            criticalHitHappened = randomCriticalDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitChance + criticalHitChanceModifier ?
                 true : false;
         }
 
@@ -493,7 +503,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
     IEnumerator DelayAttackRightHand(Weapon weapon)
     {
-        yield return new WaitForSeconds(weapon.weaponDetails.weaponCooldownDuration);
+        yield return new WaitForSeconds(weapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
 
         weapon.onCooldown = false;
         rightHandAttackBlocked = false;

@@ -29,7 +29,8 @@ public class DamageDisplay : MonoBehaviour
         enemy.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
         enemy.healthEvent.OnCriticalHit += HealthEvent_OnCriticalHit;
         enemy.healthEvent.OnHeadShot += HealthEvent_OnHeadShot;
-        enemy.healthEvent.OnDeflected += HealthEvent_OnDeflected;
+        enemy.healthEvent.OnDodged += HealthEvent_OnDodged;
+        enemy.healthEvent.OnBlocked += HealthEvent_OnBlocked;
     }
 
     private void OnDisable()
@@ -37,8 +38,10 @@ public class DamageDisplay : MonoBehaviour
         enemy.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
         enemy.healthEvent.OnCriticalHit -= HealthEvent_OnCriticalHit;
         enemy.healthEvent.OnHeadShot -= HealthEvent_OnHeadShot;
-        enemy.healthEvent.OnDeflected -= HealthEvent_OnDeflected;
+        enemy.healthEvent.OnDodged -= HealthEvent_OnDodged;
+        enemy.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
     }
+
 
     private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {
@@ -64,9 +67,14 @@ public class DamageDisplay : MonoBehaviour
         }
     }
 
-    private void HealthEvent_OnDeflected(HealthEvent healthEvent)
+    private void HealthEvent_OnDodged(HealthEvent healthEvent)
     {
-        DisplayDeflected();
+        DisplayDodged();
+    }
+
+    private void HealthEvent_OnBlocked(HealthEvent healthEvent)
+    {
+        DisplayBlocked();
     }
 
     /// <summary>
@@ -102,13 +110,24 @@ public class DamageDisplay : MonoBehaviour
     }
 
     /// <summary>
-    /// Display deflected text
+    /// Display dodged text
     /// </summary>
-    private void DisplayDeflected()
+    private void DisplayDodged()
     {
         var deflectedText = Instantiate(damageDisplayTextPrefab, criticalTextSpawnPoint.position, Quaternion.identity, criticalTextSpawnPoint);
-        deflectedText.color = new Color(0f, 0f, 0f);
-        deflectedText.text = "MISSED";
+        deflectedText.color = Color.white;
+        deflectedText.text = "DODGED";
+        AnimateText(deflectedText, criticalHitDuration);
+    }
+
+    /// <summary>
+    /// Display dodged text
+    /// </summary>
+    private void DisplayBlocked()
+    {
+        var deflectedText = Instantiate(damageDisplayTextPrefab, criticalTextSpawnPoint.position, Quaternion.identity, criticalTextSpawnPoint);
+        deflectedText.color = Color.white;
+        deflectedText.text = "BLOCKED";
         AnimateText(deflectedText, criticalHitDuration);
     }
 

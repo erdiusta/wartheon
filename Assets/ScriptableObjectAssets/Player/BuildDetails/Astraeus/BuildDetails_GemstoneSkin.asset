@@ -15,5 +15,4 @@ MonoBehaviour:
   belongingCharacter: 0
   characterBuildImage: {fileID: 1491580325, guid: 6b52fabf9da366a4eb93eea1161072ca, type: 3}
   characterBuildName: Gemstone Skin
-  characterBuildDetails: Increases Gemstone Skin Skill's Elemental Resistance By
-    10%
+  characterBuildDetails: Increases Gemstone Skin Skill's All Resistance By 10%

@@ -123,11 +123,18 @@ public class HealthEvent : MonoBehaviour
         OnGemSkinSpecialMoveEnded?.Invoke(this);
     }
 
-    public event Action<HealthEvent> OnDeflected;
+    public event Action<HealthEvent> OnDodged;
 
-    public void CallDeflectionEvent()
+    public void CallDodgeEvent()
     {
-        OnDeflected?.Invoke(this);
+        OnDodged?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnBlocked;
+
+    public void CallBlockEvent()
+    {
+        OnBlocked?.Invoke(this);
     }
 
     public event Action<HealthEvent> OnCriticalHit;

@@ -3,6 +3,8 @@ using UnityEngine.EventSystems;
 
 public class BuildSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [HideInInspector] public bool isSelected;
+
     public bool isLocked = true;
     public int indexNumber;
 
@@ -33,8 +35,9 @@ public class BuildSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void ActivateBuild()
     {
-        if (GameManager.Instance.GetPlayer().currentBuildPoints > 0 && !isLocked)
+        if (GameManager.Instance.GetPlayer().currentBuildPoints > 0 && !isLocked && !isSelected)
         {
+            isSelected = true;
             selectedBuildImageTransform.gameObject.SetActive(true);
             GameManager.Instance.GetPlayer().currentBuildPoints--;
             StaticEventHandler.CallBuildPointsUsed(indexNumber); // This is for activating build unlocked image

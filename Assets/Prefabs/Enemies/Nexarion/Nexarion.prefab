@@ -606,6 +606,8 @@ MonoBehaviour:
   updateFrameNumber: 1
   enemyStartingSpeed: 0
   enemyPhase: 0
+  isAttacking: 0
+  isDashing: 0
   collideCircleRadius: 1
 --- !u!114 &7910599782929872873 stripped
 MonoBehaviour:

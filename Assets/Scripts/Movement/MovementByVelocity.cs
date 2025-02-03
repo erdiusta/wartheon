@@ -35,7 +35,6 @@ public class MovementByVelocity : MonoBehaviour
     {
         player = GetComponent<Player>();
         rb2D = GetComponent<Rigidbody2D>();
-        moveSpeed = movementDetails.GetMoveSpeed();
         dustTrailAnimator = dustTrailContainer.GetComponentInChildren<Animator>();
     }
 
@@ -51,14 +50,14 @@ public class MovementByVelocity : MonoBehaviour
 
     private void Start()
     {
-        playerStartingSpeed = movementDetails.moveSpeed;
+        playerStartingSpeed = movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
+        moveSpeed = movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
     }
 
     private void FixedUpdate()
     {
         Move();
     }
-
 
     private void Move()
     {
@@ -113,14 +112,6 @@ public class MovementByVelocity : MonoBehaviour
     }
 
     /// <summary>
-    /// Get current move speed
-    /// </summary>
-    public int GetCurrentMoveSpeed()
-    {
-        return (int)moveSpeed;
-    }
-
-    /// <summary>
     /// Neutralize Status on room changed
     /// </summary>
     private void NeutralizeStatus(RoomChangedEventArgs roomChangedEventArgs)
@@ -157,7 +148,7 @@ public class MovementByVelocity : MonoBehaviour
         player.animator.SetBool(Settings.isStunned, false);
 
         // Reset stun status and allow other stun coroutines to be started
-        moveSpeed = movementDetails.GetMoveSpeed();
+        moveSpeed = movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
         player.moveStatus = MoveStatus.Idle;
         stunPlayerRoutine = null;
     }
@@ -245,7 +236,7 @@ public class MovementByVelocity : MonoBehaviour
 
         yield return new WaitForSeconds(knockbackTimeWeight);
 
-        moveSpeed = movementDetails.GetMoveSpeed();
+        moveSpeed = movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
         player.moveStatus = MoveStatus.Idle;
     }
 

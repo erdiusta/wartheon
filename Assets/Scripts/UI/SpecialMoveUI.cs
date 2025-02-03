@@ -21,14 +21,20 @@ public class SpecialMoveUI : MonoBehaviour
     #endregion Tooltip
     [SerializeField] Transform thirdSpecialMoveContainer;
 
-
     Player player;
     Coroutine specialMoveOneCooldownCoroutine;
     Coroutine specialMoveTwoCooldownCoroutine;
     Coroutine specialMoveThreeCooldownCoroutine;
+
+    float specialMoveOneDuration;
+    float specialMoveTwoDuration;
+    float specialMoveThreeDuration;
+
     bool specialMoveOneIsReset;
     bool specialMoveTwoIsReset;
     bool specialMoveThreeIsReset;
+    bool skillDurationExpired;
+    bool isSkillActive;
 
     private void Awake()
     {
@@ -61,7 +67,9 @@ public class SpecialMoveUI : MonoBehaviour
 
             player.specialMoveOneCooldownTimer += Time.deltaTime;
 
-            if (player.playerDetails.specialMoveOneDuration > 0)
+            specialMoveOneDuration = player.playerDetails.specialMoveOneDuration;
+
+            if (specialMoveOneDuration > 0)
             {
                 player.specialMoveOneDurationTimer += Time.deltaTime;
             }
@@ -82,14 +90,32 @@ public class SpecialMoveUI : MonoBehaviour
 
             player.specialMoveTwoCooldownTimer += Time.deltaTime;
 
-            if (player.playerDetails.specialMoveTwoDuration > 0)
+            switch (player.playerDetails.playerCharacterIndex)
+            {
+                case Character.Astraeus:
+                    // Block Skill
+                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoDuration * (1 + player.blockSkillAdditionalDurationModifier);
+                    break;
+                case Character.Erebus:
+                    break;
+                case Character.Orion:
+                    // Lightfeet Skill
+                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoDuration * (1 + player.additionalLightfeetSkillDurationModifier);
+                    break;
+                case Character.Lyrisa:
+                    // Barrier Skill
+                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoDuration * (1 + player.barrierSkillAdditionalDurationModifier);
+                    break;
+            }
+
+            if (specialMoveTwoDuration > 0)
             {
                 player.specialMoveTwoDurationTimer += Time.deltaTime;
 
                 switch (player.playerDetails.playerCharacterIndex)
                 {
                     case Character.Astraeus:
-                        if (player.specialMoveTwoDurationTimer >= player.playerDetails.specialMoveTwoDuration)
+                        if (player.specialMoveTwoDurationTimer >= specialMoveTwoDuration)
                         {
                             player.isBlockingActive = false;
                             player.healthEvent.CallArmorWoreOffEvent();
@@ -98,13 +124,14 @@ public class SpecialMoveUI : MonoBehaviour
                     case Character.Erebus:
                         break;
                     case Character.Orion:
-                        if (player.specialMoveTwoDurationTimer >= player.playerDetails.specialMoveTwoDuration)
+                        if (player.specialMoveTwoDurationTimer >= specialMoveTwoDuration && !isSkillActive)
                         {
-                            player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetMoveSpeed();
+                            player.movementByVelocity.moveSpeed -= 1f;
+                            isSkillActive = true;
                         }
                         break;
                     case Character.Lyrisa:
-                        if (player.specialMoveTwoDurationTimer >= player.playerDetails.specialMoveTwoDuration)
+                        if (player.specialMoveTwoDurationTimer >= specialMoveTwoDuration)
                         {
                             player.forcefieldTransform.gameObject.SetActive(false);
                         }
@@ -119,6 +146,7 @@ public class SpecialMoveUI : MonoBehaviour
                 // Ensure that the timer is not exceeding the duration
                 player.specialMoveTwoOnCooldown = false;
                 player.specialMoveTwoCooldownTimer = 0f;
+                isSkillActive = true;
                 player.specialMoveTwoDurationTimer = 0f;
                 ResetSpecialMoveCooldownSlot(2);
             }
@@ -130,23 +158,41 @@ public class SpecialMoveUI : MonoBehaviour
 
             player.specialMoveThreeCooldownTimer += Time.deltaTime;
 
-            if (player.playerDetails.specialMoveThreeDuration > 0)
+            specialMoveThreeDuration = player.playerDetails.specialMoveThreeDuration;
+
+            if (specialMoveThreeDuration > 0)
             {
                 player.specialMoveThreeDurationTimer += Time.deltaTime;
 
-                if (player.specialMoveThreeDurationTimer >= player.playerDetails.specialMoveThreeDuration)
+                if (player.specialMoveThreeDurationTimer >= specialMoveThreeDuration && !skillDurationExpired)
                 {
-                    player.healthEvent.CallGemSkinSpecialMoveEndEvent();
+                    skillDurationExpired = true;
 
-                    // Reset resistance values
-                    player.currentPhysicalResistanceValue -= 0.1f; 
-                    player.currentPhysicalResistanceValue -= 0.1f;
-                    player.currentFireResistanceValue -= 0.1f;
-                    player.currentWaterResistanceValue -= 0.1f;
-                    player.currentAirResistanceValue -= 0.1f;
-                    player.currentEarthResistanceValue -= 0.1f;
-                    player.currentLightResistanceValue -= 0.1f;
-                    player.currentDarkResistanceValue -= 0.1f;
+                    switch (player.playerDetails.playerCharacterIndex)
+                    {
+                        case Character.Astraeus:
+                            // Disable status icon on player object
+                            player.healthEvent.CallGemSkinSpecialMoveEndEvent();
+
+                            // Reset resistance values
+                            player.currentPhysicalResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                            player.currentFireResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                            player.currentWaterResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                            player.currentAirResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                            player.currentEarthResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                            player.currentLightResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                            player.currentDarkResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                            StaticEventHandler.CallPrimaryStatsChangedEvent();
+                            break;
+                        case Character.Erebus:
+                            break;
+                        case Character.Orion:
+                            break;
+                        case Character.Lyrisa:
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
@@ -156,6 +202,7 @@ public class SpecialMoveUI : MonoBehaviour
                 player.specialMoveThreeOnCooldown = false;
                 player.specialMoveThreeCooldownTimer = 0f;
                 player.specialMoveThreeDurationTimer = 0f;
+                skillDurationExpired = false;
                 ResetSpecialMoveCooldownSlot(3);
             }
         }

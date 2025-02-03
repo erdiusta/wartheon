@@ -296,13 +296,13 @@ public class PrimaryStats
     /// </summary>
     /// <param name="playerStats">The player's stats.</param>
     /// <returns>True if the player meets the requirements, otherwise false.</returns>
-    public bool MeetsRequirements(PrimaryStats playerStats)
+    public bool MeetsRequirements(Player player)
     {
-        return playerStats.strength >= strength &&
-               playerStats.dexterity >= dexterity &&
-               playerStats.constitution >= constitution &&
-               playerStats.intelligence >= intelligence &&
-               playerStats.agility >= agility;
+        return player.currentStrengthValue >= strength &&
+               player.currentDexterityValue >= dexterity &&
+               player.currentConstitutionValue >= constitution &&
+               player.currentIntelligenceValue >= intelligence &&
+               player.currentAgilityValue >= agility;
     }
 }
 
