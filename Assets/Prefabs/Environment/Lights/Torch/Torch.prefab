@@ -59,8 +59,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 704ce89ab29ebac498598fc35b5c7d03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightIntensityMin: 0.3
-  lightIntensityMax: 0.6
+  lightIntensityMin: 0.5
+  lightIntensityMax: 0.75
   lightFlickerTimeMin: 0.15
   lightFlickerTimeMax: 0.35
 --- !u!1 &3577220212906400793

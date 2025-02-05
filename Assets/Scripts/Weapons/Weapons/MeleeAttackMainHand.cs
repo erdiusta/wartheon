@@ -127,6 +127,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                                     CheckFrostStatus(enemy);
                                     CheckStunStatus(enemy);
                                     CheckPoisonStatus(enemy);
+                                    CheckBlindStatus(enemy);
                                 }
 
                                 if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
@@ -197,6 +198,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                                     CheckFrostStatus(enemy);
                                     CheckStunStatus(enemy);
                                     CheckPoisonStatus(enemy);
+                                    CheckBlindStatus(enemy);
                                 }
 
                                 if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
@@ -233,6 +235,8 @@ public class MeleeAttackMainHand : MonoBehaviour
         // Damage produced by player
         int damageDone = player.isCursed ? player.currentMainHandMinDamageValue : Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
 
+
+
         bool criticalHitHappened = CriticalHitHappened();
 
         // Critical hit check
@@ -256,7 +260,11 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         // Segregate elemental and non-elemental damage
         int elementalDamage = (int)(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.elementalForgeRate * damageDone);
-        int nonElementalDamage = damageDone - elementalDamage;
+
+        int additionalElementalDamage = (int)(elementalDamage * player.additionalElementalDamageModifier);
+        elementalDamage += additionalElementalDamage;
+
+        int nonElementalDamage = damageDone - elementalDamage + additionalElementalDamage;
 
         int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - enemy.currentPhysicalResistance));
 
@@ -288,9 +296,6 @@ public class MeleeAttackMainHand : MonoBehaviour
                 break;
         }
 
-        Debug.Log("Inflicted elemental damage " + inflictedElementalDamage);
-        Debug.Log("Inflicted non-elemental damage " + inflictedNonElementalDamage);
-
         return inflictedElementalDamage + inflictedNonElementalDamage;
     }
 
@@ -300,10 +305,14 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <returns></returns>
     private bool CriticalHitHappened()
     {
-        bool criticalHitHappened;
+        bool criticalHitHappened = false;
+
         if (player.onStealth)
         {
-            criticalHitHappened = true;
+            if (!player.isBlind)
+            {
+                criticalHitHappened = true;
+            }
         }
         else
         {
@@ -313,11 +322,13 @@ public class MeleeAttackMainHand : MonoBehaviour
 
             if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
             {
-                if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Dagger &&
-                    player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Dagger &&
+                if ((player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Dagger &&
+                    player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Dagger) ||
+                    (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Claw &&
+                    player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Claw) &&
                     player.selectedPassiveItem.GetCurrentBackPassiveItem()?.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                 {
-                    criticalHitChanceModifier = 0.15f;
+                    criticalHitChanceModifier += 0.1f;
                 }
                 else
                 {
@@ -329,8 +340,15 @@ public class MeleeAttackMainHand : MonoBehaviour
                 criticalHitChanceModifier = 0f;
             }
 
-            criticalHitHappened = randomCriticalDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitChance + criticalHitChanceModifier ?
-                true : false;
+            if (player.isBlind)
+            {
+                criticalHitHappened = false;
+            }
+            else
+            {
+                criticalHitHappened = randomCriticalDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitChance + criticalHitChanceModifier ?
+                    true : false;
+            }
         }
 
         return criticalHitHappened;
@@ -443,6 +461,22 @@ public class MeleeAttackMainHand : MonoBehaviour
             {
                 enemy.enemyAI.moveStatus = MoveStatus.Stun;
                 enemy.healthEvent.CallGetStunEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check blind status
+    /// </summary>
+    private void CheckBlindStatus(Enemy enemy)
+    {
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasBlindDamage)
+        {
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.blindChance + player.additionalBlindMakerModifier)
+            {
+                enemy.healthEvent.CallGetBlindEvent();
             }
         }
     }

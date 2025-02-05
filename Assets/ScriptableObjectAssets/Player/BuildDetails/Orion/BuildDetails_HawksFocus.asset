@@ -15,4 +15,5 @@ MonoBehaviour:
   belongingCharacter: 2
   characterBuildImage: {fileID: -1933365245, guid: 278312a73c1e345478a16ce30eb6472f, type: 3}
   characterBuildName: Hawk's Focus
-  characterBuildDetails: Grants +80% Accuracy With Bows And Crossbows
+  characterBuildDetails: Reduces 40% Arrow Spread To Fire More Accurately For Bows
+    And Crossbows

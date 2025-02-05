@@ -53,43 +53,40 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     headPassiveItem = setPassiveItemEventArgs.passiveItem;
 
-                    if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HaloOfBlindingRadiance)
+                    if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
                     {
-                        player.currentLightResistanceValue += 0.05f;
-                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue, 2);
-                        Debug.Log("Blinding chance increased.");
+                        player.additionalBowAccuracyModifier += 0.3f;
+                    }
+                    else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HaloOfBlindingRadiance)
+                    {
+                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue + 0.1f, 2);
+                        player.additionalBlindMakerModifier += 0.1f;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HelmOfTheEternalVigil)
                     {
-                        Debug.Log("Reduces damage taken by 4 while standing still.");
+                        player.currentDexterityValue++;
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.1f, 2);
+                        player.currentEvasivenessValue = (float)Math.Round(player.currentEvasivenessValue + 0.1f, 2);
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EnchantersSpire)
                     {
-                        player.currentFireResistanceValue += 0.05f;
-                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue, 2);
-                        player.currentEarthResistanceValue += 0.05f;
-                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue, 2);
-                        player.currentAirResistanceValue += 0.05f;
-                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue, 2);
-                        player.currentWaterResistanceValue += 0.05f;
-                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue, 2);
-                        player.currentLightResistanceValue += 0.05f;
-                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue, 2);
-                        player.currentDarkResistanceValue += 0.05f;
-                        player.currentDarkResistanceValue = (float)Math.Round(player.currentDarkResistanceValue, 2);
-                        player.currentIntelligenceValue += 1;
+                        player.currentIntelligenceValue++;
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.05f, 2);
+                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue + 0.05f, 2);
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue + 0.05f, 2);
+                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue + 0.05f, 2);
+                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue + 0.05f, 2);
+                        player.currentDarkResistanceValue = (float)Math.Round(player.currentDarkResistanceValue + 0.05f, 2);
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
                     {
-                        player.currentBlockValue += 0.15f;
-                        player.currentBlockValue = player.currentBlockValue.HasValue ? (float?)Math.Round(player.currentBlockValue.Value, 2) : null;
-                        player.currentDexterityValue += 1;
+                        player.currentDexterityValue++;
+                        player.currentEvasivenessValue = (float)Math.Round(player.currentEvasivenessValue + 0.15f, 2);
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
                     {
-                        player.currentPhysicalResistanceValue += 0.2f;
-                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
-                        player.currentConstitutionValue += 1;
+                        player.currentConstitutionValue++;
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.2f, 2);
                     }
 
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
@@ -104,9 +101,28 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
                     {
-                        player.currentPhysicalResistanceValue += 0.3f;
-                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
-                        Debug.Log("When below 50% health absorbs 20% of damage.");
+                        player.currentStrengthValue++;
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.3f, 2);
+                    }
+                    else if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BlazingHeartplate)
+                    {
+                        player.currentStrengthValue++;
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.2f, 2);
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.1f, 2);
+                        player.additionalBowAttackCoolDownModifier -= 0.05f;
+                        player.additionalMeleeAttackCoolDownModifier -= 0.05f;
+                    }
+                    else if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.FrostboundChainmail)
+                    {
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.15f, 2);
+                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue + 0.1f, 2);
+                        player.isImmunetoFrost = true;
+                    }
+                    else if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomweaveVest)
+                    {
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.1f, 2);
+                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue + 0.1f, 2);
+                        player.isImmunetoPoison = true;
                     }
 
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
@@ -121,23 +137,19 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     if (neckPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
                     {
-                        player.currentFireResistanceValue = player.currentFireResistanceValue + 0.2f;
-                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue, 2);
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.2f, 2);
                     }
                     else if (neckPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmeraldPendant)
                     {
-                        player.currentEarthResistanceValue = player.currentEarthResistanceValue + 0.2f;
-                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue, 2);
+                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue + 0.2f, 2);
                     }
                     else if (neckPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.TopazPendant)
                     {
-                        player.currentAirResistanceValue = player.currentAirResistanceValue + 0.2f;
-                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue, 2);
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue + 0.2f, 2);
                     }
                     else if (neckPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SapphirePendant)
                     {
-                        player.currentWaterResistanceValue = player.currentWaterResistanceValue + 0.2f;
-                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue, 2);
+                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue + 0.2f, 2);
                     }
 
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
@@ -152,9 +164,21 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
                     {
-                        Debug.Log("Attack speed increases by 20%.");
-                        player.currentPhysicalResistanceValue = Mathf.Clamp(player.currentPhysicalResistanceValue - 1f, 0, player.currentPhysicalResistanceValue - 1f);
-                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.1f, 2);
+                        player.additionalBowAttackCoolDownModifier -= 0.2f;
+                        player.additionalMeleeAttackCoolDownModifier -= 0.2f;
+                    }
+                    else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
+                    {
+                        player.currentStrengthValue++;
+                    }
+                    else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfVitality)
+                    {
+                        player.currentConstitutionValue++;
+                    }
+                    else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
+                    {
+                        player.currentIntelligenceValue++;
                     }
 
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
@@ -167,11 +191,39 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     backPassiveItem = setPassiveItemEventArgs.passiveItem;
 
-                    if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
+                    if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                     {
-                        player.currentBlockValue += 0.1f;
-                        player.currentBlockValue = player.currentBlockValue.HasValue ? (float?)Math.Round(player.currentBlockValue.Value, 2) : null;
-                        player.currentAgilityValue += 1;
+                        player.additionalMeleeCriticalHitChanceModifier = (float)Math.Round(player.additionalMeleeCriticalHitChanceModifier + 0.05f, 2);
+                        player.UpdateCurrentCriticalHitChance();
+                    }
+                    else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
+                    {
+                        player.currentAgilityValue++;
+                        player.currentEvasivenessValue = (float)Math.Round(player.currentEvasivenessValue + 0.1f, 2);
+                    }
+                    else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
+                    {
+                        player.additionalElementalDamageModifier += 0.05f;
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.15f, 2);
+                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue + 0.15f, 2);
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue + 0.15f, 2);
+                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue + 0.15f, 2);
+                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue + 0.15f, 2);
+                        player.currentDarkResistanceValue = (float)Math.Round(player.currentDarkResistanceValue + 0.15f, 2);
+                        player.UpdateDamageValues();
+                    }
+                    else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.CloakOfWindwalker)
+                    {
+                        player.currentAgilityValue += 2;
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue + 0.3f, 2);
+                    }
+                    else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldenCloak)
+                    {
+                        player.currentStrengthValue++;
+                        player.currentDexterityValue++;
+                        player.currentConstitutionValue++;
+                        player.currentIntelligenceValue++;
+                        player.currentAgilityValue++;
                     }
 
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
@@ -186,39 +238,32 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
                     {
-                        Debug.Log("CAST SPEED INCREASED.");
+                        player.currentIntelligenceValue++;
+                        player.additionalCastDurationModifier -= 0.2f;
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
                     {
-                        player.currentFireResistanceValue += 0.15f;
-                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue, 2);
-
-                        player.currentPhysicalResistanceValue += 0.05f;
-                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
-
-                        Debug.Log("Every 5th hit causes burn.");
+                        player.currentConstitutionValue++;
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.05f, 2);
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.15f, 2);
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GirdleOfFirmament)
                     {
-                        player.currentAirResistanceValue += 0.05f;
-                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue, 2);
-
-                        player.currentLightResistanceValue = player.currentLightResistanceValue + 0.05f;
-                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue, 2);
-                        Debug.Log("Immune to blind");
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue + 0.1f, 2);
+                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue + 0.1f, 2);
+                        player.isImmunetoBlind = true;
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
                     {
-                        player.currentMainHandMinDamageValue += 3;
-                        player.currentMainHandMaxDamageValue += 3;
-                        player.movementByVelocity.moveSpeed += 0.5f;
-                        Debug.Log("Attack speed increases.");
+                        player.currentStrengthValue++;
+                        player.currentAgilityValue++;
+                        player.additionalMeleeAttackCoolDownModifier -= 0.05f;
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
                     {
-                        player.currentBlockValue += 0.15f;
-                        Debug.Log("+1 Physical damage per successful hit (max stack +8)");
-
+                        player.currentDexterityValue++;
+                        player.currentEvasivenessValue += 0.1f;
+                        player.additionalMeleeCriticalHitChanceModifier += 0.05f;
                     }
 
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
@@ -233,10 +278,20 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     if (armPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.OminousGripOfThunder)
                     {
-                        player.currentPhysicalResistanceValue += 0.05f ;
-                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
-                        player.currentAirResistanceValue += 0.1f;
-                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue, 2);
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.05f, 2);
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue + 0.1f, 2);
+                    }
+                    else if (armPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmbercladBracers)
+                    {
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.1f, 2);
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.08f, 2);
+                        player.additionalBowAttackCoolDownModifier -= 0.5f;
+                        player.additionalMeleeAttackCoolDownModifier -= 0.5f;
+                    }
+                    else if (armPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomTouchedGloves)
+                    {
+                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue + 0.1f, 2);
+                        player.isImmunetoPoison = true;
                     }
 
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
@@ -251,7 +306,12 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
                     {
-                        player.movementByVelocity.moveSpeed += 1f;
+                        player.currentAgilityValue += 2;
+                    }
+                    else if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
+                    {
+                        player.currentAgilityValue++;
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.15f, 2);
                     }
 
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
@@ -262,6 +322,8 @@ public class SelectedPassiveItem : MonoBehaviour
             default:
                 break;
         }
+
+        StaticEventHandler.CallPrimaryStatsChangedEvent();
     }
 
     private void SetPassiveItemEvent_OnRemovedPassiveItem(SetPassiveItemEvent setPassiveItemEvent, SetPassiveItemEventArgs setPassiveItemEventArgs)
@@ -275,41 +337,38 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HaloOfBlindingRadiance)
                     {
-                        player.currentLightResistanceValue -= 0.05f;
-                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue, 2);
-                        Debug.Log("Blinding chance increased.");
+                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue - 0.1f, 2);
+                        player.additionalBlindMakerModifier -= 0.1f;
+                    }
+                    else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
+                    {
+                        player.additionalBowAccuracyModifier -= 0.3f;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HelmOfTheEternalVigil)
                     {
-                        Debug.Log("Reduces damage taken by 4 while standing still.");
+                        player.currentDexterityValue--;
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.1f, 2);
+                        player.currentEvasivenessValue -= 0.1f;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EnchantersSpire)
                     {
-                        player.currentFireResistanceValue -= 0.05f;
-                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue, 2);
-                        player.currentEarthResistanceValue -= 0.05f;
-                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue, 2);
-                        player.currentAirResistanceValue -= 0.05f;
-                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue, 2);
-                        player.currentWaterResistanceValue -= 0.05f;
-                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue, 2);
-                        player.currentLightResistanceValue -= 0.05f;
-                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue, 2);
-                        player.currentDarkResistanceValue -= 0.05f;
-                        player.currentDarkResistanceValue = (float)Math.Round(player.currentDarkResistanceValue, 2);
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.05f, 2);
+                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue - 0.05f, 2);
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue - 0.05f, 2);
+                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue - 0.05f, 2);
+                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue - 0.05f, 2);
+                        player.currentDarkResistanceValue = (float)Math.Round(player.currentDarkResistanceValue - 0.05f, 2);
                         player.currentIntelligenceValue -= 1;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
                     {
-                        player.currentBlockValue -= 0.15f;
-                        player.currentBlockValue = player.currentBlockValue.HasValue ? (float?)Math.Round(player.currentBlockValue.Value, 2) : null;
-                        player.currentDexterityValue -= 1;
+                        player.currentDexterityValue--;
+                        player.currentEvasivenessValue = (float)Math.Round(player.currentEvasivenessValue - 0.15f, 2);
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
                     {
-                        player.currentPhysicalResistanceValue = Mathf.Clamp(player.currentPhysicalResistanceValue - 0.2f, 0f, 1f);
-                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
-                        player.currentConstitutionValue -= 1;
+                        player.currentConstitutionValue--;
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.2f, 2);
                     }
 
                     player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
@@ -322,10 +381,28 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
                     {
-                        player.currentPhysicalResistanceValue = Mathf.Clamp(player.currentPhysicalResistanceValue - 0.3f, 0f, 1f);
-                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
-
-                        Debug.Log("When below 50% health absorbs 20% of damage.");
+                        player.currentStrengthValue--;
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.3f, 2);
+                    }
+                    else if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BlazingHeartplate)
+                    {
+                        player.currentStrengthValue--;
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.2f, 2);
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.1f, 2);
+                        player.additionalBowAttackCoolDownModifier += 0.05f;
+                        player.additionalMeleeAttackCoolDownModifier += 0.05f;
+                    }
+                    else if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.FrostboundChainmail)
+                    {
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.15f, 2);
+                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue - 0.1f, 2);
+                        player.isImmunetoFrost = false;
+                    }
+                    else if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomweaveVest)
+                    {
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.1f, 2);
+                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue - 0.1f, 2);
+                        player.isImmunetoPoison = false;
                     }
 
                     player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
@@ -338,23 +415,19 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (neckPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
                     {
-                        player.currentFireResistanceValue = player.currentFireResistanceValue - 0.2f;
-                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue, 2);
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.2f, 2);
                     }
                     else if (neckPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmeraldPendant)
                     {
-                        player.currentEarthResistanceValue = player.currentEarthResistanceValue - 0.2f;
-                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue, 2);
+                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue - 0.2f, 2);
                     }
                     else if (neckPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.TopazPendant)
                     {
-                        player.currentAirResistanceValue = player.currentAirResistanceValue - 0.2f;
-                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue, 2);
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue - 0.2f, 2);
                     }
                     else if (neckPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SapphirePendant)
                     {
-                        player.currentWaterResistanceValue = player.currentWaterResistanceValue - 0.2f;
-                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue, 2);
+                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue - 0.2f, 2);
                     }
 
                     player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
@@ -367,9 +440,21 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
                     {
-                        Debug.Log("Attack speed increases by 20%.");
-                        player.currentPhysicalResistanceValue += 1;
-                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.1f, 2);
+                        player.additionalBowAttackCoolDownModifier += 0.2f;
+                        player.additionalMeleeAttackCoolDownModifier += 0.2f;
+                    }
+                    else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
+                    {
+                        player.currentStrengthValue--;
+                    }
+                    else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfVitality)
+                    {
+                        player.currentConstitutionValue--;
+                    }
+                    else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
+                    {
+                        player.currentIntelligenceValue--;
                     }
 
                     player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
@@ -380,11 +465,39 @@ public class SelectedPassiveItem : MonoBehaviour
             case PassiveItemSlotName.Back:
                 if (isBackEquipped)
                 {
-                    if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
+                    if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                     {
-                        player.currentBlockValue -= 0.1f;
-                        player.currentBlockValue = player.currentBlockValue.HasValue ? (float?)Math.Round(player.currentBlockValue.Value, 2) : null;
-                        player.currentAgilityValue -= 1;
+                        player.additionalMeleeCriticalHitChanceModifier = (float)Math.Round(player.additionalMeleeCriticalHitChanceModifier - 0.05f, 2);
+                        player.UpdateCurrentCriticalHitChance();
+                    }
+                    else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
+                    {
+                        player.currentAgilityValue--;
+                        player.currentEvasivenessValue = (float)Math.Round(player.currentEvasivenessValue - 0.1f, 2);
+                    }
+                    else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
+                    {
+                        player.additionalElementalDamageModifier -= 0.05f;
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.15f, 2);
+                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue - 0.15f, 2);
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue - 0.15f, 2);
+                        player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue - 0.15f, 2);
+                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue - 0.15f, 2);
+                        player.currentDarkResistanceValue = (float)Math.Round(player.currentDarkResistanceValue - 0.15f, 2);
+                        player.UpdateDamageValues();
+                    }
+                    else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.CloakOfWindwalker)
+                    {
+                        player.currentAgilityValue -= 2;
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue - 0.3f, 2);
+                    }
+                    else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldenCloak)
+                    {
+                        player.currentStrengthValue--;
+                        player.currentDexterityValue--;
+                        player.currentConstitutionValue--;
+                        player.currentIntelligenceValue--;
+                        player.currentAgilityValue--;
                     }
 
                     player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
@@ -397,38 +510,32 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
                     {
-                        Debug.Log("CAST SPEED INCREASED.");
+                        player.currentIntelligenceValue--;
+                        player.additionalCastDurationModifier += 0.2f;
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
                     {
-                        player.currentFireResistanceValue -= 0.15f;
-                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue, 2);
-
-                        player.currentPhysicalResistanceValue -= 0.05f;
-                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
-
-                        Debug.Log("Every 5th hit causes burn.");
+                        player.currentConstitutionValue--;
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.05f, 2);
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.15f, 2);
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GirdleOfFirmament)
                     {
-                        player.currentAirResistanceValue = player.currentAirResistanceValue - 0.05f;
-                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue, 2);
-                        player.currentLightResistanceValue = player.currentLightResistanceValue - 0.05f;
-                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue, 2);
-                        Debug.Log("Immune to blind");
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue - 0.1f, 2);
+                        player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue - 0.1f, 2);
+                        player.isImmunetoBlind = false;
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
                     {
-                        player.currentMainHandMinDamageValue -= 3;
-                        player.currentMainHandMaxDamageValue -= 3;
-                        player.movementByVelocity.moveSpeed -= 0.5f;
-                        Debug.Log("Attack speed increases.");
+                        player.currentStrengthValue--;
+                        player.currentAgilityValue--;
+                        player.additionalMeleeAttackCoolDownModifier += 0.05f;
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
                     {
-                        player.currentBlockValue -= 0.15f;
-                        Debug.Log("+1 Physical damage per successful hit (max stack +8)");
-
+                        player.currentDexterityValue--;
+                        player.currentEvasivenessValue -= 0.1f;
+                        player.additionalMeleeCriticalHitChanceModifier -= 0.05f;
                     }
 
                     player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
@@ -441,10 +548,20 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (armPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.OminousGripOfThunder)
                     {
-                        player.currentPhysicalResistanceValue -= 0.05f;
-                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue, 2);
-                        player.currentAirResistanceValue -= 0.1f;
-                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue, 2);
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.05f, 2);
+                        player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue - 0.1f, 2);
+                    }
+                    else if (armPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmbercladBracers)
+                    {
+                        player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.1f, 2);
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.08f, 2);
+                        player.additionalBowAttackCoolDownModifier += 0.5f;
+                        player.additionalMeleeAttackCoolDownModifier += 0.5f;
+                    }
+                    else if (armPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomTouchedGloves)
+                    {
+                        player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue - 0.1f, 2);
+                        player.isImmunetoPoison = false;
                     }
 
                     player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
@@ -457,7 +574,12 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
                     {
-                        player.movementByVelocity.moveSpeed = player.movementByVelocity.playerStartingSpeed;
+                        player.currentAgilityValue -= 2;
+                    }
+                    else if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
+                    {
+                        player.currentAgilityValue--;
+                        player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.15f, 2);
                     }
 
                     player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
@@ -468,6 +590,8 @@ public class SelectedPassiveItem : MonoBehaviour
             default:
                 break;
         }
+
+        StaticEventHandler.CallPrimaryStatsChangedEvent();
     }
 
     public PassiveItem GetCurrentHeadPassiveItem()

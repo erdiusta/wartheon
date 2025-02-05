@@ -109,6 +109,14 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("The chance of weapon's frost")]
     #endregion Tooltip
     [Range(0f, 1f)] public float frostChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if weapon has blind damage")]
+    #endregion Tooltip
+    public bool hasBlindDamage;
+    #region Tooltip
+    [Tooltip("The chance of weapon's blind")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float blindChance = 0f;
     public bool canDrainHealth;
     #region Tooltip
     [Tooltip("The chance of enemy's health drained")]

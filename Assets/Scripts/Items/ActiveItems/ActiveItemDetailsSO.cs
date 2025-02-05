@@ -201,6 +201,14 @@ public class ActiveItemDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float frostChance = 0f;
     #region Tooltip
+    [Tooltip("Check if item has blind damage")]
+    #endregion Tooltip
+    public bool hasBlindDamage;
+    #region Tooltip
+    [Tooltip("The chance of item's blind")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float blindChance = 0f;
+    #region Tooltip
     [Tooltip("Check if item has curse damage")]
     #endregion Tooltip
     public bool hasCurseDamage;

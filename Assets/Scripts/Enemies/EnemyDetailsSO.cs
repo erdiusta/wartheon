@@ -61,6 +61,10 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public bool isEnemyBoss = false;
     #region Tooltip
+    [Tooltip("Check if enemy is a summoned minion")]
+    #endregion
+    public bool isSummonedMinion = false;
+    #region Tooltip
     [Tooltip("Check if weapon animator exists")]
     #endregion
     public bool hasAnimator = false;
@@ -158,6 +162,11 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check enemy's curse chance")]
     #endregion
     [Range(0f, 1f)] public float curseChance = 0f;
+    public bool hasBlindDamage = false;
+    #region Tooltip
+    [Tooltip("Check enemy's blind chance")]
+    #endregion
+    [Range(0f, 1f)] public float blindChance = 0f;
 
     #region Header ENEMY MATERIAL
     [Space(10)]

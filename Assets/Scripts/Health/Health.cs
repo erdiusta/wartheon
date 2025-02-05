@@ -81,6 +81,16 @@ public class Health : MonoBehaviour
     {
         if (player != null)
         {
+            if (player.selectedPassiveItem?.GetCurrentChestPassiveItem() != null && player.selectedPassiveItem.GetCurrentChestPassiveItem().passiveItemDetails.passiveItemType ==
+                PassiveItemType.ChestplateOfTheLastLight && currentHealth < maximumHealth * 0.5f)
+            {
+                player.thirtyPercentDamageAbsorbIsActive = true;
+            }
+            else
+            {
+                player.thirtyPercentDamageAbsorbIsActive = false;
+            }
+
             if (player.healthStatus == HealthStatus.Poisoned)
             {
                 if (poisonCoroutine == null)

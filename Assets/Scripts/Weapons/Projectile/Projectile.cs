@@ -15,6 +15,7 @@ public class Projectile : MonoBehaviour, IFireable
 
     [HideInInspector] public Coroutine playerBlockCoroutine;
 
+    Player player;
     float projectileRange = 0f;
     float projectileSpeed;
     Vector3 fireDirectionVector;
@@ -79,6 +80,8 @@ public class Projectile : MonoBehaviour, IFireable
         {
             damageDone = Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
         }
+
+        player = GameManager.Instance.GetPlayer();
     }
 
     private void Update()
@@ -217,6 +220,7 @@ public class Projectile : MonoBehaviour, IFireable
                         CheckFrostStatus(player);
                         CheckStunStatus(player);
                         CheckCurseStatus(player);
+                        CheckBlindStatus(player);
 
                         // Deal Damage To Collision Object
                         DealDamage(collision);
@@ -232,6 +236,7 @@ public class Projectile : MonoBehaviour, IFireable
                             CheckFrostStatus(player);
                             CheckStunStatus(player);
                             CheckCurseStatus(player);
+                            CheckBlindStatus(player);
 
                             // Deal Damage To Collision Object
                             DealDamage(collision);
@@ -254,6 +259,7 @@ public class Projectile : MonoBehaviour, IFireable
                     CheckFrostStatus(player);
                     CheckStunStatus(player);
                     CheckCurseStatus(player);
+                    CheckBlindStatus(player);
 
                     // Deal Damage To Collision Object
                     DealDamage(collision);
@@ -313,6 +319,7 @@ public class Projectile : MonoBehaviour, IFireable
                             CheckFrostStatus(enemy);
                             CheckStunStatus(enemy);
                             CheckCurseStatus(enemy);
+                            CheckBlindStatus(enemy);
 
                             // Deal Damage To Collision Object
                             DealDamage(collision);
@@ -325,6 +332,7 @@ public class Projectile : MonoBehaviour, IFireable
                             CheckFrostStatus(enemy, true);
                             CheckStunStatus(enemy, true);
                             CheckCurseStatus(enemy, true);
+                            CheckBlindStatus(enemy, true);
 
                             // Deal Damage To Collision Object
                             DealDamage(collision, true);
@@ -341,6 +349,7 @@ public class Projectile : MonoBehaviour, IFireable
                         CheckFrostStatus(enemy);
                         CheckStunStatus(enemy);
                         CheckCurseStatus(enemy);
+                        CheckBlindStatus(enemy);
 
                         // Deal Damage To Collision Object
                         DealDamage(collision);
@@ -353,6 +362,7 @@ public class Projectile : MonoBehaviour, IFireable
                         CheckFrostStatus(enemy, true);
                         CheckStunStatus(enemy, true);
                         CheckCurseStatus(enemy, true);
+                        CheckBlindStatus(enemy, true);
 
                         // Deal Damage To Collision Object
                         DealDamage(collision, true);
@@ -369,6 +379,7 @@ public class Projectile : MonoBehaviour, IFireable
                     CheckFrostStatus(enemy);
                     CheckStunStatus(enemy);
                     CheckCurseStatus(enemy);
+                    CheckBlindStatus(enemy);
 
                     // Deal Damage To Collision Object
                     DealDamage(collision);
@@ -381,6 +392,7 @@ public class Projectile : MonoBehaviour, IFireable
                     CheckFrostStatus(enemy, true);
                     CheckStunStatus(enemy, true);
                     CheckCurseStatus(enemy, true);
+                    CheckBlindStatus(enemy, true);
 
                     // Deal Damage To Collision Object
                     DealDamage(collision, true);
@@ -401,7 +413,7 @@ public class Projectile : MonoBehaviour, IFireable
 
             DisableProjectile();
         }
-        else if (collision.tag == "playerWeapon")
+        else if (collision.tag == Settings.playerWeapon)
         {
             return;
         }
@@ -475,13 +487,12 @@ public class Projectile : MonoBehaviour, IFireable
                 isColliding = true;
             }
 
-
             if (!activeItem)
             {
                 if (collision != null && collision.GetComponent<Enemy>() != null)
                 {
                     // Caster is player
-                    damageDone = Random.Range(GameManager.Instance.GetPlayer().currentMainHandMinDamageValue, GameManager.Instance.GetPlayer().currentMainHandMaxDamageValue);
+                    damageDone = Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
                 }
                 else
                 {
@@ -496,7 +507,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (isPenetrationArrow)
             {
                 float increasedDamage = damageDone * 1.25f;
-                damageDone = (int)(increasedDamage * (1 + GameManager.Instance.GetPlayer().additionalPenetrationSkillDamageModifier));
+                damageDone = (int)(increasedDamage * (1 + player.additionalPenetrationSkillDamageModifier));
             }
 
             int inflictedDamage = 0;
@@ -510,21 +521,19 @@ public class Projectile : MonoBehaviour, IFireable
                     if (projectileDetails.isPlayerProjectile)
                     {
                         // LOWER DAMAGE IF PLAYER IS CURSED - PROJECTILE
-                        damageDone = GameManager.Instance.GetPlayer().isCursed ? projectileDetails.projectileDamageMin :
-                            Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+                        damageDone = player.isCursed ? player.currentMainHandMinDamageValue : Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
                     }
                 }
                 else
                 {
                     // LOWER DAMAGE IF PLAYER IS CURSED - ACTIVE ITEM
-                    damageDone = GameManager.Instance.GetPlayer().isCursed ? activeItemDetails.projectileDamageMin :
-                        Random.Range(activeItemDetails.projectileDamageMin, activeItemDetails.projectileDamageMax);
+                    damageDone = player.isCursed ? activeItemDetails.projectileDamageMin : Random.Range(activeItemDetails.projectileDamageMin, activeItemDetails.projectileDamageMax);
                 }
 
                 if (headShotHappened)
                 {
                     // x2.5 damage if used headshot and add additional modifier if has
-                    damageDone = (int)(2.5f * damageDone * (1 + GameManager.Instance.GetPlayer().additionalHeadShotDamageModifier));
+                    damageDone = (int)(2.5f * damageDone * (1 + player.additionalHeadShotDamageModifier));
                 }
 
                 // Segregate elemental and non-elemental damage
@@ -538,19 +547,19 @@ public class Projectile : MonoBehaviour, IFireable
                 {
                     if (projectileDetails.isCataclysmProjectile)
                     {
-                        elementalDamage = (int)(GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon().weaponDetails.elementalForgeRate * damageDone);
+                        elementalDamage = (int)(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.elementalForgeRate * damageDone);
                     }
                     else
                     {
                         elementalDamage = (int)(projectileDetails.belongingWeaponDetails.elementalForgeRate * damageDone);
-                        additionalElementalDamage = (int)(elementalDamage * GameManager.Instance.GetPlayer().additionalElementalDamageModifier);
+                        additionalElementalDamage = (int)(elementalDamage * (player.additionalStaffElementalDamageModifier + player.additionalElementalDamageModifier));
                         elementalDamage += additionalElementalDamage;
                     }
 
                     // Check if projectile is cataclysm projectile
                     if (projectileDetails.isCataclysmProjectile)
                     {
-                        additionalElementalCataclysmDamage = (int)(elementalDamage * GameManager.Instance.GetPlayer().additionalCataclysmElementalDamageModifier);
+                        additionalElementalCataclysmDamage = (int)(elementalDamage * (player.additionalCataclysmElementalDamageModifier + player.additionalElementalDamageModifier));
                         elementalDamage += additionalElementalCataclysmDamage;
                     }
 
@@ -576,7 +585,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (!activeItem)
                 {
                     // Retrieve weapon details if projectile cataclysm or not
-                    WeaponDetailsSO weaponDetails = projectileDetails.isCataclysmProjectile ? GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon().weaponDetails :
+                    WeaponDetailsSO weaponDetails = projectileDetails.isCataclysmProjectile ? player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails :
                         projectileDetails.belongingWeaponDetails;
 
                     // Calculate inflicted elemental damage
@@ -845,17 +854,6 @@ public class Projectile : MonoBehaviour, IFireable
         int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, 
         GalvanusPhase galvanusPhase = GalvanusPhase.None)
     {
-        float projectileSpreadModifier;
-
-        if (GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentHeadPassiveItem()?.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
-        {
-            projectileSpreadModifier = 0.5f;
-        }
-        else
-        {
-            projectileSpreadModifier = 1f;
-        }
-
         if (centaurPhase == CentaurPhase.SpreadArrowShot)
         {
             // Define the total angle spread (e.g., 45 degrees spread)
@@ -901,12 +899,12 @@ public class Projectile : MonoBehaviour, IFireable
         else
         {
             // Calculate random spread angle between min and max
-            float randomSpread = Random.Range(projectileDetails.projectileSpreadMin * projectileSpreadModifier, projectileDetails.projectileSpreadMax * projectileSpreadModifier);
+            float randomSpread = Random.Range(projectileDetails.projectileSpreadMin, projectileDetails.projectileSpreadMax);
 
-            if (projectileDetails.isPlayerProjectile && (projectileDetails.belongingWeaponDetails.weaponClass == WeaponClass.Bow || projectileDetails.belongingWeaponDetails.
-                weaponClass == WeaponClass.Crossbow))
+            if (projectileDetails.isPlayerProjectile && (projectileDetails.belongingWeaponDetails.weaponClass == WeaponClass.Bow || 
+                projectileDetails.belongingWeaponDetails.weaponClass == WeaponClass.Crossbow))
             {
-                float arrowSpreadReduction = randomSpread * GameManager.Instance.GetPlayer().additionalBowAccuracyModifier;
+                float arrowSpreadReduction = randomSpread * (GameManager.Instance.GetPlayer().additionalBowAccuracyModifier);
                 randomSpread = randomSpread - arrowSpreadReduction;
             }
 
@@ -1073,6 +1071,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckPoisonStatus(Player player, bool isActiveItem = false)
     {
+        if (player.isImmunetoPoison) return;
+
         if (!isActiveItem)
         {
             if (projectileDetails.isPoisonous)
@@ -1289,6 +1289,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckFrostStatus(Player player, bool isActiveItem = false)
     {
+        if (player.isImmunetoFrost) return;
+
         if (!isActiveItem)
         {
             if (projectileDetails.hasFrostDamage && player.moveStatus != MoveStatus.Frozen)
@@ -1353,6 +1355,66 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomDice < activeItemDetails.frostChance)
                 {
                     StartCoroutine(FrostRoutine(enemy));
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check blind status - Player
+    /// </summary>
+    private void CheckBlindStatus(Player player, bool isActiveItem = false)
+    {
+        if (player.isImmunetoBlind) return;
+
+        if (!isActiveItem)
+        {
+            if (projectileDetails.hasBlindDamage)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.blindChance - player.additionalNegativeStatusEffectNegatorModifier)
+                {
+                    player.healthEvent.CallGetBlindEvent();
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasBlindDamage)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.blindChance - player.additionalNegativeStatusEffectNegatorModifier)
+                {
+                    player.healthEvent.CallGetBlindEvent();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check blind status - Enemy
+    /// </summary>
+    private void CheckBlindStatus(Enemy enemy, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            if (projectileDetails.hasBlindDamage)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.blindChance + GameManager.Instance.GetPlayer().additionalBlindMakerModifier)
+                {
+                    enemy.healthEvent.CallGetBlindEvent();
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasBlindDamage)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.blindChance + GameManager.Instance.GetPlayer().additionalBlindMakerModifier)
+                {
+                    enemy.healthEvent.CallGetBlindEvent();
                 }
             }
         }

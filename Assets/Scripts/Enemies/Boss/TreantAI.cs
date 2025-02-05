@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 
 public class TreantAI : EnemyAI
 {
-    // BOSSES
+    // BOSS
     TreantPhase currentTreantPhase;
     private float phaseTimer;  // Timer to control phase duration
     private float waitPhase = 0.5f;  // Adjust this to control how long each phase lasts

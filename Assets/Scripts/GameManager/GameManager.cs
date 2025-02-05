@@ -23,7 +23,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [SerializeField] GameObject pauseMenu;
     #region Tooltip
     [Tooltip("Populate with the MessageText textmeshpro component in the FadeScreenUI")]
-    #endregion Tooltip
+    #endregion
     [SerializeField] TextMeshProUGUI messageTextTMP;
     #region Tooltip
     [Tooltip("Populate with the FadeImage canvasgroup component in the FadeScreenUI")]
@@ -31,8 +31,14 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [SerializeField] CanvasGroup canvasGroup;
     #region Tooltip
     [Tooltip("Populate with the Post processing volume")]
-    #endregion Tooltip
+    #endregion
     [SerializeField] Volume volume;
+
+    // Light member
+    #region Tooltip
+    [Tooltip("Populate with Light2D component")]
+    #endregion
+    public Light2D light2D;
 
     // Book members
     public GameObject bookView;
@@ -110,6 +116,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     Vignette vignette;
     HashSet<Room> visitedRooms = new HashSet<Room>();
     Enemy bossEnemy;
+    float blindTimer = 0f;
 
     // Weapon Level 
     [Header("WEAPON LEVEL COLORS")]
@@ -177,6 +184,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         StaticEventHandler.OnHourglassSpawned += StaticEventHandler_OnHourglassSpawned;
         StaticEventHandler.OnHourglasExpired += StaticEventHandler_OnHourglasExpired;
 
+        player.healthEvent.GetBlind += PlayerGetBlind;
         player.destroyedEvent.OnDestroyed += Player_OnDestroyed;
 
         if (InputManager.Instance != null)
@@ -196,12 +204,22 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         StaticEventHandler.OnHourglasExpired -= StaticEventHandler_OnHourglasExpired;
 
         player.destroyedEvent.OnDestroyed -= Player_OnDestroyed;
+        player.healthEvent.GetBlind -= PlayerGetBlind;
 
         if (InputManager.Instance  != null)
         {
             InputManager.Instance.overviewMapFullView.action.started -= ControlDisplayDungeonOverviewMap;
             InputManager.Instance.overviewMapFullView.action.canceled -= ControlClearDungeonOverviewMap;
         }
+    }
+
+    private void PlayerGetBlind(HealthEvent healthEvent)
+    {
+        blindTimer = 8f;
+        player.isBlind = true;
+        player.blindModifier = 0.5f;
+        player.UpdateCurrentHandlingValues();
+        StaticEventHandler.CallPrimaryStatsChangedEvent();
     }
 
     /// <summary>
@@ -439,7 +457,20 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         else
         {
             healthBarContainer.GetComponentInChildren<TextMeshProUGUI>().text = string.Empty;
+            healthBar.transform.localScale = new Vector3(-1f, 1f, 1f);
             healthBarContainer.SetActive(false);
+        }
+
+        // Adjust blind status
+        blindTimer -= Time.deltaTime;
+
+        if (blindTimer <= 0 && player.isBlind)
+        {
+            player.isBlind = false;
+            player.blindModifier = 0f;
+            player.healthEvent.CallBlindCuredEvent();
+            player.UpdateCurrentHandlingValues();
+            StaticEventHandler.CallPrimaryStatsChangedEvent();
         }
     }
 
@@ -1149,74 +1180,21 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 headerText.text = passiveItemDetails.passiveItemName;
                 levelText.text = $"(Passive Item)";
 
-                if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
-                {
-                    weaponClassText.text = "+1 Intelligence";
-                    hitSpeedText.text = "-20% Cast Duration";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
-                {
-                    weaponClassText.text = "+15% Fire Resistance";
-                    hitSpeedText.text = "+5% Physical Resistance";
-                    weaponWieldText.text = "+15% Chance to Burn";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GirdleOfFirmament)
-                {
-                    weaponClassText.text = "+5% Air Resistance";
-                    hitSpeedText.text = "+5% Light Resistance";
-                    weaponWieldText.text = "Immune to Blind";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
-                {
-                    weaponClassText.text = "+1 Strength";
-                    hitSpeedText.text = "+1 Agility";
-                    weaponWieldText.text = "-5% Attack Cooldown";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
-                {
-                    weaponClassText.text = "+1 Dexterity";
-                    hitSpeedText.text = "+1 Damage Per";
-                    weaponWieldText.text = "Successful Hit";
-                    damageText.text = "Max Stacks to 8";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.OminousGripOfThunder)
-                {
-                    weaponClassText.text = "+5% Physical Resistance";
-                    hitSpeedText.text = "+10% Air Resistance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
-                {
-                    weaponClassText.text = "+15% Drop Chance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
-                {
-                    weaponClassText.text = "-20% Attack Cooldown";
-                    hitSpeedText.text = "-10% Physical Resistance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
-                {
-                    weaponClassText.text = "+5% Cr. Hit Chance";
-                    hitSpeedText.text = "+10% Cr. Hit Chance When";
-                    weaponWieldText.text = "Dual-Wield Dagger or Claw Equipped";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
-                {
-                    weaponClassText.text = "+1 Agility";
-                    hitSpeedText.text = "+10% Evasiveness";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
+                // HEAD
+                if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
                 {
                     weaponClassText.text = "+100% Accuracy for Bows";
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HaloOfBlindingRadiance)
                 {
-                    weaponClassText.text = "+5% Light Resistance";
+                    weaponClassText.text = "+10% Light Resistance";
                     hitSpeedText.text = "+10% Chance to Blind";
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HelmOfTheEternalVigil)
                 {
-                    weaponClassText.text = "+40% Physical Resistance";
-                    hitSpeedText.text = "While Standing Still";
+                    weaponClassText.text = "+1 Dexterity";
+                    hitSpeedText.text = "+10% Physical Resistance";
+                    weaponWieldText.text = "+10% Evasiveness";
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EnchantersSpire)
                 {
@@ -1231,20 +1209,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
                 {
                     weaponClassText.text = "+1 Constitution";
-                    hitSpeedText.text = "+10% Physical Resistance";
+                    hitSpeedText.text = "+20% Physical Resistance";
                 }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
-                {
-                    weaponClassText.text = "+2 Agility";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
-                {
-                    weaponClassText.text = "+1 Strength";
-                    hitSpeedText.text = "+1 Constitution";
-                    weaponWieldText.text = "+20% Physical Resistance";
-                    damageText.text = "+10% Chance to Block When";
-                    baseHandlingText.text = "Healt is below 50%";
-                }
+                //NECK
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
                 {
                     weaponClassText.text = "+20% Fire Resistance";
@@ -1261,54 +1228,21 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 {
                     weaponClassText.text = "+20% Water Resistance";
                 }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
+                // CHEST
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
                 {
-                    weaponClassText.text = "+5% Elemental Damage";
-                    hitSpeedText.text = "+15% All Elemental Resistance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.CloakOfWindwalker)
-                {
-                    weaponClassText.text = "+1 Agility";
-                    hitSpeedText.text = "+10% Evasiveness";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldenCloak)
-                {
-                    weaponClassText.text = "+1 All Primary Stats";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmbercladBracers)
-                {
-                    weaponClassText.text = "+8% Fire Resistance";
-                    hitSpeedText.text = "+10% Physical Resistance";
-                    weaponWieldText.text = "-5% Attack Cooldown";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomTouchedGloves)
-                {
-                    weaponClassText.text = "+10% Earth Resistance";
-                    hitSpeedText.text = "Immune to Poison";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
-                {
-                    weaponClassText.text = "+1 Stength";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BootsOfInfernalMarch)
-                {
-                    weaponClassText.text = "+5% Fire Damage";
-                    hitSpeedText.text = "+2 Agility";
-                    weaponWieldText.text = "-10% Physical Resistance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfVitality)
-                {
-                    weaponClassText.text = "+1 Constitution";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
-                {
-                    weaponClassText.text = "+1 Intelligence";
+                    weaponClassText.text = "+1 Strength";
+                    hitSpeedText.text = "+30% Physical Resistance";
+                    weaponWieldText.text = "Absorbs +30% Physical Damage";
+                    damageText.text = "When Healt is below 50%";
+                    baseHandlingText.text = "";
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BlazingHeartplate)
                 {
-                    weaponClassText.text = "+20% Physical Resistance";
-                    hitSpeedText.text = "+10% Fire Resistance";
-                    weaponWieldText.text = "-5% Attack Cooldown";
+                    weaponClassText.text = "+1 Strength";
+                    hitSpeedText.text = "+20% Physical Resistance";
+                    weaponWieldText.text = "+10% Fire Resistance";
+                    damageText.text = "-5% Attack Cooldown";
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.FrostboundChainmail)
                 {
@@ -1321,6 +1255,111 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                     weaponClassText.text = "+10% Physical Resistance";
                     hitSpeedText.text = "+10% Earth Resistance";
                     weaponWieldText.text = "Immune to Poison";
+                }
+                // WAIST
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
+                {
+                    weaponClassText.text = "+1 Intelligence";
+                    hitSpeedText.text = "-20% Cast Duration";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
+                {
+                    weaponClassText.text = "+1 Constitution";
+                    hitSpeedText.text = "+5% Physical Resistance";
+                    weaponWieldText.text = "+15% Fire Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GirdleOfFirmament)
+                {
+                    weaponClassText.text = "+10% Air Resistance";
+                    hitSpeedText.text = "+10% Light Resistance";
+                    weaponWieldText.text = "Immune to Blind";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
+                {
+                    weaponClassText.text = "+1 Strength";
+                    hitSpeedText.text = "+1 Agility";
+                    weaponWieldText.text = "-5% Melee Attack Cooldown";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
+                {
+                    weaponClassText.text = "+1 Dexterity";
+                    hitSpeedText.text = "+10% Evasiveness";
+                    weaponWieldText.text = "+5% Cr.Hit Chance";
+                }
+                // FINGER
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
+                {
+                    weaponClassText.text = "+15% Drop Chance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
+                {
+                    weaponClassText.text = "-20% Attack Cooldown";
+                    hitSpeedText.text = "-10% Physical Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
+                {
+                    weaponClassText.text = "+1 Stength";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfVitality)
+                {
+                    weaponClassText.text = "+1 Constitution";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
+                {
+                    weaponClassText.text = "+1 Intelligence";
+                }
+                // ARM
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.OminousGripOfThunder)
+                {
+                    weaponClassText.text = "+5% Physical Resistance";
+                    hitSpeedText.text = "+10% Air Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmbercladBracers)
+                {
+                    weaponClassText.text = "+10% Physical Resistance";
+                    hitSpeedText.text = "+8% Fire Resistance";
+                    weaponWieldText.text = "-5% Attack Cooldown";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomTouchedGloves)
+                {
+                    weaponClassText.text = "+10% Earth Resistance";
+                    hitSpeedText.text = "Immunity to Poison";
+                }
+                // BACK
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
+                {
+                    weaponClassText.text = "+5% Cr. Hit Chance";
+                    hitSpeedText.text = "+10% Cr. Hit Chance When";
+                    weaponWieldText.text = "Dual-Wield Dagger or Claw Equipped";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
+                {
+                    weaponClassText.text = "+1 Agility";
+                    hitSpeedText.text = "+10% Evasiveness";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
+                {
+                    weaponClassText.text = "+5% Elemental Damage";
+                    hitSpeedText.text = "+15% Elemental Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.CloakOfWindwalker)
+                {
+                    weaponClassText.text = "+2 Agility";
+                    hitSpeedText.text = "+30% Air Resistance";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldenCloak)
+                {
+                    weaponClassText.text = "+1 All Primary Stats";
+                }
+                // LEG
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
+                {
+                    weaponClassText.text = "+2 Agility";
+                }
+                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BootsOfInfernalMarch)
+                {
+                    weaponClassText.text = "+1 Agility";
+                    hitSpeedText.text = "+15% Fire Resistance";
                 }
             }
         }

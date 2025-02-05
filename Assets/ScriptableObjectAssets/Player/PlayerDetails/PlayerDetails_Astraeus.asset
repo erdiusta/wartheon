@@ -16,20 +16,7 @@ MonoBehaviour:
   playerCharacterIndex: 0
   playerPrefab: {fileID: 38858171499291080, guid: af0377fdaae0f9149837404546914c2a, type: 3}
   playerClonePrefab: {fileID: 38858171499291080, guid: 346ad554c5e0aae41adf3cae0cc87e16, type: 3}
-  collectibleWeaponsArray:
-  - {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
-  - {fileID: 11400000, guid: 211f7d94e0f899e419c4d985c9b8aefc, type: 2}
-  - {fileID: 11400000, guid: 107b06428c3ac0746aa44728b775af01, type: 2}
-  - {fileID: 11400000, guid: 8393f6d104b5bb44ab472c1447da1818, type: 2}
-  - {fileID: 11400000, guid: 4363433de726d624b991e9d8b796e7a1, type: 2}
-  - {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
-  - {fileID: 11400000, guid: bba05607ec78139438ec83b847d254ee, type: 2}
-  - {fileID: 11400000, guid: dc70bba435344054aa98ff671fae1024, type: 2}
-  - {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
-  - {fileID: 11400000, guid: 2709e31502b5c5d45a59d45fc94517bf, type: 2}
-  - {fileID: 11400000, guid: a310b80193e93084c9fde37c6fc1bb61, type: 2}
-  - {fileID: 11400000, guid: 6a162c84bf175a840b49cc25aaac62e7, type: 2}
-  - {fileID: 11400000, guid: f452683b8567bc84d8dc35c734b37e7c, type: 2}
+  collectibleWeaponsArray: []
   oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 836fd2be91cb18a48a7e9b5427b0fb5c, type: 2}
   twoHandRuntimeAnimatorController: {fileID: 9100000, guid: c51aa5637f38c474d8e672f7f9cc7cfd, type: 2}
   bowRuntimeAnimatorController: {fileID: 9100000, guid: b9faaa81f817ad14085bdb08607495d1, type: 2}

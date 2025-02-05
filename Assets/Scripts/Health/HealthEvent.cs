@@ -60,6 +60,13 @@ public class HealthEvent : MonoBehaviour
         GetDeath?.Invoke(this);
     }
 
+    public event Action<HealthEvent> GetBlind;
+
+    public void CallGetBlindEvent()
+    {
+        GetBlind?.Invoke(this);
+    }
+
     public event Action<HealthEvent> PoisonCured;
 
     public void CallPoisonCuredEvent()
@@ -93,6 +100,13 @@ public class HealthEvent : MonoBehaviour
     public void CallCurseCuredEvent()
     {
         CurseCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> BlindCured;
+
+    public void CallBlindCuredEvent()
+    {
+        BlindCured?.Invoke(this);
     }
 
     public event Action<HealthEvent> GetBlockSpecialMove;

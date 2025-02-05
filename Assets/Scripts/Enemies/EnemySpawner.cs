@@ -158,7 +158,10 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     public void CreateEnemy(EnemyDetailsSO enemyDetails, Vector3 position)
     {
         // Keep track of the number of enemies spawned so far
-        enemiesSpawnedSoFar++;
+        if (!enemyDetails.isSummonedMinion)
+        {
+            enemiesSpawnedSoFar++;
+        }
 
         // Add one to the current enemy count - this is reduced when an enemy is destroyed
         currentEnemyCount++;

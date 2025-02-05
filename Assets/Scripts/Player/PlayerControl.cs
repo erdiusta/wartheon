@@ -727,6 +727,11 @@ public class PlayerControl : MonoBehaviour
             SetWeaponSetByIndex(onlySwitch);
         }
 
+        player.UpdatePlayerHealth(0, true, true);
+        player.UpdateDamageValues();
+        player.UpdateWeaponHandlingAndCriticalValues();
+        player.UpdateBlockAndEvasivenessValues();
+        player.UpdateSpeedValue();
         HighlightWeaponSetButton();
     }
 
@@ -1534,7 +1539,7 @@ public class PlayerControl : MonoBehaviour
         {
             if (player.selectedActiveItem.GetCurrentActiveItem() != null)
             {
-                if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Compass)
+                if (player.selectedActiveItem?.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Compass)
                 {
                     StaticEventHandler.CallCompassDisabled();
                 }

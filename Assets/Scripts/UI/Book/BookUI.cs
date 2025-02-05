@@ -1132,7 +1132,7 @@ public class BookUI : MonoBehaviour
                             break;
                         case Character.Lyrisa:
                             // Elemental Affinity
-                            player.additionalElementalDamageModifier += 0.1f;
+                            player.additionalStaffElementalDamageModifier += 0.1f;
                             player.UpdateDamageValues();
                             break;
                     }
@@ -1186,7 +1186,7 @@ public class BookUI : MonoBehaviour
                             break;
                         case Character.Orion:
                             // Hawk's Focus
-                            player.additionalBowAccuracyModifier += 0.8f;
+                            player.additionalBowAccuracyModifier += 0.4f;
                             break;
                         case Character.Lyrisa:
                             // Chrono Amplification

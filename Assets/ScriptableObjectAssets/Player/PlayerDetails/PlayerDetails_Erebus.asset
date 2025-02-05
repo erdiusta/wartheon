@@ -16,11 +16,7 @@ MonoBehaviour:
   playerCharacterIndex: 1
   playerPrefab: {fileID: 38858171499291080, guid: dd7a903ea8b0ca44e8877d7b30e01d9f, type: 3}
   playerClonePrefab: {fileID: 38858171499291080, guid: 70b22c5bcd48a8f4d94cb4d32de4146a, type: 3}
-  collectibleWeaponsArray:
-  - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
-  - {fileID: 11400000, guid: 6cb3c4a1b97dd484a8e9af133ff54615, type: 2}
-  - {fileID: 11400000, guid: bba05607ec78139438ec83b847d254ee, type: 2}
-  - {fileID: 11400000, guid: 93d2d24fb15c92447ad3eaf7a564ee4c, type: 2}
+  collectibleWeaponsArray: []
   oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 4102ba67a73173f4eade31c0a46ffc1a, type: 2}
   twoHandRuntimeAnimatorController: {fileID: 9100000, guid: 3bde3ff582fce72409ca00143dda2347, type: 2}
   bowRuntimeAnimatorController: {fileID: 9100000, guid: d298c1ca77072b445ac610f3466c2319, type: 2}

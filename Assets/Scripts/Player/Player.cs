@@ -127,7 +127,7 @@ public class Player : MonoBehaviour
 
     // CURRENT BLOCK AND EVASIVENESS VALUES
     [HideInInspector] public float? currentBlockValue;
-    [HideInInspector] public float? currentEvasivenessValue;
+    [HideInInspector] public float currentEvasivenessValue;
 
     // CURRENT TOTAL EXPERIENCE - LEVEL STATS
     [HideInInspector] public int currentLevel = 1;
@@ -160,8 +160,15 @@ public class Player : MonoBehaviour
     [HideInInspector] public float additionalBowAttackCoolDownModifier = 0f;
     [HideInInspector] public float additionalLockpickingModifier = 0f;
     [HideInInspector] public float additionalDropChanceModifier = 0f;
+    [HideInInspector] public float additionalStaffElementalDamageModifier = 0f;
     [HideInInspector] public float additionalElementalDamageModifier = 0f;
     [HideInInspector] public float additionalNegativeStatusEffectNegatorModifier = 0f;
+    [HideInInspector] public bool thirtyPercentDamageAbsorbIsActive = false;
+    [HideInInspector] public float blindModifier = 0f;
+    [HideInInspector] public float additionalBlindMakerModifier = 0f;
+    [HideInInspector] public bool isImmunetoPoison;
+    [HideInInspector] public bool isImmunetoFrost;
+    [HideInInspector] public bool isImmunetoBlind;
 
     [HideInInspector] public ParticleSystem specialMoveParticlesSystem;
     [HideInInspector] public Weapon[][] weaponSlotSetArray = new Weapon[3][] { new Weapon[2] {null, null}, new Weapon[2] {null, null}, new Weapon[2] {null, null}};
@@ -179,7 +186,9 @@ public class Player : MonoBehaviour
     [HideInInspector] public GameObject playerCloneObject;
     [HideInInspector] public GameObject playerSecondCloneObject;
 
+    // STATUS EFFECT
     [HideInInspector] public bool isCursed;
+    [HideInInspector] public bool isBlind;
 
     private void Awake()
     {
@@ -266,7 +275,6 @@ public class Player : MonoBehaviour
             else
             {
                 destroyedEvent.CallDestroyedEvent(true, true);
-
             }
         }   
     }
@@ -358,18 +366,27 @@ public class Player : MonoBehaviour
                     {
                         currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + currentStrengthValue * 2;
                         currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + currentStrengthValue * 2;
+
+                        currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
+                        currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
                     }
                     // Melee and physical for dagger
                     else
                     {
                         currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + currentDexterityValue;
                         currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + currentDexterityValue;
+
+                        currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
+                        currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
                     }
                 }
                 else
                 {
                     currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 2;
                     currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 2;
+
+                    currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
+                    currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
                 }
             }
             else
@@ -379,6 +396,9 @@ public class Player : MonoBehaviour
                 {
                     currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentDexterityValue;
                     currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentDexterityValue;
+
+                    currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
+                    currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
                 }
                 // Non-melee and non-physical damage (such as staff)
                 else
@@ -386,8 +406,8 @@ public class Player : MonoBehaviour
                     currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 2;
                     currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 2;
 
-                    currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
-                    currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
+                    currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalStaffElementalDamageModifier + additionalElementalDamageModifier));
+                    currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalStaffElementalDamageModifier + additionalElementalDamageModifier));
                 }
             }
         }
@@ -409,18 +429,27 @@ public class Player : MonoBehaviour
                     {
                         currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + currentStrengthValue * 2) * 0.6f, 2);
                         currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + currentStrengthValue * 2) * 0.6f, 2);
+
+                        currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
+                        currentOffHandMaxDamageValue = (int)(currentOffHandMaxDamageValue * (1 + additionalElementalDamageModifier));
                     }
                     // Melee and physical for dagger
                     else
                     {
                         currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + currentDexterityValue) * 0.6f, 2);
                         currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + currentDexterityValue) * 0.6f, 2);
+
+                        currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
+                        currentOffHandMaxDamageValue = (int)(currentOffHandMaxDamageValue * (1 + additionalElementalDamageModifier));
                     }
                 }
                 else
                 {
                     currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 2) * 0.6f, 2);
                     currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 2) * 0.6f, 2);
+
+                    currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
+                    currentOffHandMaxDamageValue = (int)(currentOffHandMaxDamageValue * (1 + additionalElementalDamageModifier));
                 }
             }
             else
@@ -430,6 +459,9 @@ public class Player : MonoBehaviour
                 {
                     currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentDexterityValue) * 0.6f, 2);
                     currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentDexterityValue) * 0.6f, 2);
+
+                    currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
+                    currentOffHandMaxDamageValue = (int)(currentOffHandMaxDamageValue * (1 + additionalElementalDamageModifier));
                 }
                 // Non-melee and non-physical damage (such as staff)
                 else
@@ -440,6 +472,9 @@ public class Player : MonoBehaviour
                             + currentIntelligenceValue * 2) * 0.6f, 2);
                         currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax
                             + currentIntelligenceValue * 2) * 0.6f, 2);
+
+                        currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
+                        currentOffHandMaxDamageValue = (int)(currentOffHandMaxDamageValue * (1 + additionalElementalDamageModifier));
                     }
                 }
             }
@@ -454,10 +489,7 @@ public class Player : MonoBehaviour
     public void UpdateWeaponHandlingAndCriticalValues()
     {
         // Update weapon handling value
-        float? weaponHandlingModifier = activeWeapon.GetCurrentOffHandWeapon() != null ? (activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponBaseHandling +
-            activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponBaseHandling) / 2 * 0.7f ?? 0 : activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponBaseHandling;
-        float roundedModifier = weaponHandlingModifier != null ? (float)Math.Round((double)weaponHandlingModifier, 2) : 0;
-        currentWeaponHandlingValue = (float)currentDexterityValue * 10 / 100 + weaponHandlingModifier;
+        UpdateCurrentHandlingValues();
 
         // Update equipped weapon critical hit chances
         UpdateCurrentCriticalHitChance();
@@ -487,15 +519,12 @@ public class Player : MonoBehaviour
     {
         ActiveItem activeItem = new ActiveItem();
 
-        if (onStart)
+        activeItem = new ActiveItem
         {
-            activeItem = new ActiveItem
-            {
-                activeItemDetails = activeItemDetails,
-                activeItemMaxCharge = activeItemDetails.activeItemMaxCharge + additionalActiveItemCharge,
-                activeItemRemainingCharge = remainingItemCharge,
-            };
-        }
+            activeItemDetails = activeItemDetails,
+            activeItemMaxCharge = activeItemDetails.activeItemMaxCharge + additionalActiveItemCharge,
+            activeItemRemainingCharge = remainingItemCharge,
+        };
 
         chestItem.boxCollider2D.enabled = false;
 
@@ -826,7 +855,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void UpdateCurrentCriticalHitChance()
+    public void UpdateCurrentCriticalHitChance()
     {
         if (activeWeapon.GetCurrentMainHandWeapon() != null)
         {
@@ -902,15 +931,22 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void UpdateBlockValue()
+    public void UpdateCurrentHandlingValues()
+    {
+        float? weaponHandlingModifier = activeWeapon.GetCurrentOffHandWeapon() != null ? (activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponBaseHandling +
+            activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponBaseHandling) / 2 * 0.7f ?? 0 : activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponBaseHandling;
+        float roundedModifier = weaponHandlingModifier != null ? (float)Math.Round((double)weaponHandlingModifier, 2) : 0;
+        currentWeaponHandlingValue = (float)currentDexterityValue * 10 / 100 + weaponHandlingModifier - blindModifier;
+    }
+
+    public void UpdateBlockValue()
     {
         float? blockValueIfHas = activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield ?
             activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.projectileDeflectRatio + additionalBlockModifier : 0f;
-        float roundedModifier = (float)Math.Round((double)blockValueIfHas, 2);
-        currentBlockValue += roundedModifier;
+        currentBlockValue = (float)Math.Round((double)blockValueIfHas, 2);
     }
 
-    private void UpdateEvasivenessValue()
+    public void UpdateEvasivenessValue()
     {
         currentEvasivenessValue = (float)Math.Round((double)(currentAgilityValue * 2.5 / 100), 2) + additionalEvasivenessModifier;
     }

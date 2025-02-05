@@ -466,7 +466,7 @@ public class EnemyAI : MonoBehaviour
             Vector3 updatedTargetPosition = selectedTargetEnemy != null ? selectedTargetEnemy.transform.position :
                 GameManager.Instance.GetPlayer().GetPlayerPosition();
 
-            if (Vector3.Distance(referencePosition, updatedTargetPosition) > Settings.playerMoveDistanceToRebuildPath)
+            if (currentEnemyChasePathRebuildCooldown <= 0f || (Vector3.Distance(referencePosition, updatedTargetPosition) > Settings.playerMoveDistanceToRebuildPath))
             {
                 // Reset path rebuild cooldown timer
                 currentEnemyChasePathRebuildCooldown = Settings.enemyPatrolPathRebuildCooldown;

@@ -60,10 +60,12 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool rightHandWeaponDamageHappened;
     [HideInInspector] public bool leftHandWeaponDamageHappened;
     [HideInInspector] public float currentPhysicalResistance;
+    [HideInInspector] public bool isBlind;
 
     public ParticleSystem hitFxParticles;
     public ParticleSystem headShotFxParticles;
 
+    float blindTimer;
     SetActiveWeaponEvent setActiveWeaponEvent;
     MaterializeEffect materializeEffect;
     CircleCollider2D circleCollider2D;
@@ -100,11 +102,13 @@ public class Enemy : MonoBehaviour
     private void OnEnable()
     {
         healthEvent.OnHealthChanged += HealthEvent_OnHealthLost;
+        healthEvent.GetBlind += HealthEvent_GetBlind;
     }
 
     private void OnDisable()
     {
         healthEvent.OnHealthChanged -= HealthEvent_OnHealthLost;
+        healthEvent.GetBlind -= HealthEvent_GetBlind;
     }
 
     /// <summary>
@@ -118,9 +122,26 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private void HealthEvent_GetBlind(HealthEvent healthEvent)
+    {
+        isBlind = true;
+        blindTimer = 8f;
+    }
+
     private void Start()
     {
         currentPhysicalResistance = enemyDetails.physicalResistance;
+    }
+
+    private void Update()
+    {
+        blindTimer -= Time.deltaTime;
+
+        if (blindTimer <= 0 && isBlind)
+        {
+            isBlind = false;
+            healthEvent.CallBlindCuredEvent();
+        }
     }
 
     /// <summary>

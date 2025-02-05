@@ -74,8 +74,10 @@ public class DealContactDamage : MonoBehaviour
 
                 if (enemy.enemyAI.isAttacking)
                 {
+                    float blindPenalty = enemy.isBlind ? 0.5f : 0f;
+
                     // Evasiveness - dodge check
-                    if (100 - player.currentEvasivenessValue * 100 > Random.Range(1, 101))
+                    if (100 - (player.currentEvasivenessValue + blindPenalty) * 100 > Random.Range(1, 101))
                     {
                         // Damage produced by enemy
                         int damageDone = enemy.isCursed ? contactDamageAmountMin : Random.Range(contactDamageAmountMin, contactDamageAmountMax);
@@ -106,6 +108,8 @@ public class DealContactDamage : MonoBehaviour
                                     CheckAcidStatus(player);
                                     CheckStunStatus(player);
                                     CheckCurseStatus(player);
+                                    CheckBlindStatus(player);
+
                                     int inflictedDamage = CalculateDamageAmount(player, damageDone);
 
                                     receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
@@ -150,7 +154,18 @@ public class DealContactDamage : MonoBehaviour
         int elementalDamage = (int)(enemy.enemyDetails.elementalForgeRate * damageDone);
         int nonElementalDamage = damageDone - elementalDamage;
 
-        int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentPhysicalResistanceValue));
+        int inflictedNonElementalDamage = 0;
+
+        if (player.thirtyPercentDamageAbsorbIsActive)
+        {
+            inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentPhysicalResistanceValue));
+            int absorbedDamage = (int)(inflictedNonElementalDamage * 0.3f);
+            inflictedNonElementalDamage -= absorbedDamage;
+        }
+        else
+        {
+            inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentPhysicalResistanceValue));
+        }
 
         int inflictedElementalDamage = 0;
         // Calculate inflicted elemental damage
@@ -179,9 +194,6 @@ public class DealContactDamage : MonoBehaviour
             default:
                 break;
         }
-
-        Debug.Log("Inflicted elemental damage " + inflictedElementalDamage);
-        Debug.Log("Inflicted non-elemental damage " + inflictedNonElementalDamage);
 
         return inflictedElementalDamage + inflictedNonElementalDamage;
     }
@@ -215,6 +227,8 @@ public class DealContactDamage : MonoBehaviour
     /// </summary>
     private void CheckPoisonStatus(Player player)
     {
+        if (player.isImmunetoPoison) return;
+
         if (enemy.enemyDetails.isPoisonous)
         {
             // Check get poisoned
@@ -273,6 +287,8 @@ public class DealContactDamage : MonoBehaviour
     /// </summary>
     private void CheckFrostStatus(Player player)
     {
+        if (player.isImmunetoFrost) return;
+
         if (enemy.enemyDetails.hasFrostDamage && player.moveStatus != MoveStatus.Frozen)
         {
             float randomDice = Random.Range(0f, 1f);
@@ -298,6 +314,23 @@ public class DealContactDamage : MonoBehaviour
             {
                 player.isCursed = true;
                 player.healthEvent.CallGetCurseEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check blind status - Player
+    /// </summary>
+    private void CheckBlindStatus(Player player)
+    {
+        if (player.isImmunetoBlind) return;
+
+        if (enemy.enemyDetails.hasBlindDamage)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.blindChance - player.additionalNegativeStatusEffectNegatorModifier)
+            {
+                player.healthEvent.CallGetBlindEvent();
             }
         }
     }

@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 7183228443647751644, guid: ca99fd265a6304a4081b6907ec3eb5c9, type: 3}
   enemyType: 2
   movementDetails: {fileID: 11400000, guid: 182204ff6305c3946801d9e2eaf62980, type: 2}
-  experiencePoint: 5
+  experiencePoint: 0
   chaseDistance: 12
   hasAttackMove: 1
   attackMoveTriggerDistance: 3
@@ -25,6 +25,7 @@ MonoBehaviour:
   deflectionValue: 0
   enemyBehaviour: 2
   isEnemyBoss: 0
+  isSummonedMinion: 1
   hasAnimator: 0
   elementalBias: 3
   elementalForgeRate: 0.2
@@ -48,6 +49,8 @@ MonoBehaviour:
   frostChance: 0
   hasCurseDamage: 0
   curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
