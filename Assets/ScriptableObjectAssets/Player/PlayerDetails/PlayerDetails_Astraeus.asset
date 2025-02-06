@@ -19,8 +19,8 @@ MonoBehaviour:
   collectibleWeaponsArray: []
   oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 836fd2be91cb18a48a7e9b5427b0fb5c, type: 2}
   twoHandRuntimeAnimatorController: {fileID: 9100000, guid: c51aa5637f38c474d8e672f7f9cc7cfd, type: 2}
-  bowRuntimeAnimatorController: {fileID: 9100000, guid: b9faaa81f817ad14085bdb08607495d1, type: 2}
-  staffRuntimeAnimatorController: {fileID: 9100000, guid: 935ad94154ca7444bb5103851adb3b5b, type: 2}
+  bowRuntimeAnimatorController: {fileID: 9100000, guid: 2f0039af75146a34a9a3d7e35b4a2498, type: 2}
+  staffRuntimeAnimatorController: {fileID: 9100000, guid: df21a8a2bf475674abb15acf8da22795, type: 2}
   primaryStats:
     strength: 6
     dexterity: 5

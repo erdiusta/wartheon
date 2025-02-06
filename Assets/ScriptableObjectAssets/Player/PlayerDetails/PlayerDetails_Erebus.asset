@@ -19,8 +19,8 @@ MonoBehaviour:
   collectibleWeaponsArray: []
   oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 4102ba67a73173f4eade31c0a46ffc1a, type: 2}
   twoHandRuntimeAnimatorController: {fileID: 9100000, guid: 3bde3ff582fce72409ca00143dda2347, type: 2}
-  bowRuntimeAnimatorController: {fileID: 9100000, guid: d298c1ca77072b445ac610f3466c2319, type: 2}
-  staffRuntimeAnimatorController: {fileID: 9100000, guid: 832e0fee03e2c62498284cc7ba774ea4, type: 2}
+  bowRuntimeAnimatorController: {fileID: 9100000, guid: 9b3da1ec1d3f98246a70ba8a6b18ce74, type: 2}
+  staffRuntimeAnimatorController: {fileID: 9100000, guid: 56ab154e0f567ad46bede2dbf7173948, type: 2}
   primaryStats:
     strength: 4
     dexterity: 8
@@ -87,6 +87,7 @@ MonoBehaviour:
   startingWeaponList:
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+  - {fileID: 11400000, guid: 509acef336eef354c80b204d5527b79e, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: f10364e9e25cea94e8f0ec8d6826ca20, type: 3}
   playerHandSprite: {fileID: 21300000, guid: 61f9f1056a5486644b029259a89f6cce, type: 3}
   playerBookSprite: {fileID: 1770967855, guid: df96b7638c152474e8af466b7833c3a1, type: 3}

@@ -25,9 +25,18 @@ MonoBehaviour:
   deflectionValue: 0.1
   enemyBehaviour: 5
   isEnemyBoss: 1
+  isSummonedMinion: 0
   hasAnimator: 0
+  elementalBias: 4
+  elementalForgeRate: 0.5
   enemyMinionDetails: {fileID: 0}
-  enemyArmorValue: 2
+  physicalResistance: 0
+  fireResistance: 0
+  waterResistance: 0
+  airResistance: 0
+  earthResistance: 0
+  lightResistance: 0
+  darkResistance: 0
   hasShield: 0
   deflectChance: 0
   isPoisonous: 0
@@ -40,6 +49,8 @@ MonoBehaviour:
   frostChance: 0
   hasCurseDamage: 0
   curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 5
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}

@@ -64,7 +64,6 @@ public class EnemyAI : MonoBehaviour
     protected float firingIntervalTimer;
     protected float firingDurationTimer;
 
-    int coroutineCalledCounter = 0;
     [SerializeField] float collideCircleRadius = 1f;
 
     protected virtual void Awake()

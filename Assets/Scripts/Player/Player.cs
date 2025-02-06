@@ -188,6 +188,7 @@ public class Player : MonoBehaviour
 
     // STATUS EFFECT
     [HideInInspector] public bool isCursed;
+    [HideInInspector] public bool gemSkinBoostGainedDuringGemSkinActive;
     [HideInInspector] public bool isBlind;
 
     private void Awake()
@@ -301,7 +302,7 @@ public class Player : MonoBehaviour
         activeItemChestItem = chestItemObject.GetComponent<ChestItem>();
 
         activeItemChestItem.remainingItemCharge = playerDetails.selectedActiveItem.activeItemMaxCharge;
-        AddActiveItemToPlayer(playerDetails.selectedActiveItem, activeItemChestItem, activeItemChestItem.remainingItemCharge, true);
+        AddActiveItemToPlayer(playerDetails.selectedActiveItem, activeItemChestItem, activeItemChestItem.remainingItemCharge);
     }
 
     /// <summary>
@@ -515,7 +516,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Add an active item to the player
     /// </summary>
-    public ActiveItem AddActiveItemToPlayer(ActiveItemDetailsSO activeItemDetails, ChestItem chestItem, int remainingItemCharge, bool onStart)
+    public ActiveItem AddActiveItemToPlayer(ActiveItemDetailsSO activeItemDetails, ChestItem chestItem, int remainingItemCharge)
     {
         ActiveItem activeItem = new ActiveItem();
 

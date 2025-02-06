@@ -64,6 +64,23 @@ public class InstantiatedRoom : MonoBehaviour
         }
     }
 
+    // Delete chest items when exiting rooms
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        // If the player triggered the collider
+        if (collision.tag == Settings.playerTag && room == GameManager.Instance.GetCurrentRoom())
+        {
+            ChestItem[] chestItems = FindObjectsOfType<ChestItem>();
+
+            for (int i = 0; i < chestItems.Length; i++)
+            {
+                if (chestItems[i].GetComponentInParent<Player>() != null) continue;
+
+                Destroy(chestItems[i].gameObject);
+            }
+        }
+    }
+
     /// <summary>
     /// Initialize The Instantiated Room
     /// </summary>

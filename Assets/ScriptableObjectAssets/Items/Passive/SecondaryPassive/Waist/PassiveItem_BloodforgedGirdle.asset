@@ -15,6 +15,6 @@ MonoBehaviour:
   passiveItemName: Bloodforged Girdle
   passiveItemSprite: {fileID: -1606676688, guid: 11fd8b54124517141b2e25a2000a87d3, type: 3}
   passiveItemCategory: 1
-  passiveItemType: 12
+  passiveItemType: 13
   passiveItemSlotName: 6
   passiveItemAnimatorController: {fileID: 9100000, guid: 1ee4e52034f25784c9d0f5618e54fd52, type: 2}

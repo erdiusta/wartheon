@@ -126,7 +126,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                             {
                                                 isPurchasing = true;
 
-                                                ChestItemDropPickUpProcess(player);
+                                                ChestItemWeaponDropPickUpProcess(player);
 
                                                 //CollectWeaponItem(player);
                                             }
@@ -139,7 +139,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                 }
                                 else
                                 {
-                                    ChestItemDropPickUpProcess(player);
+                                    ChestItemWeaponDropPickUpProcess(player);
                                 }
                             }
                             else
@@ -296,7 +296,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         {
                             if (InputManager.Instance.interaction.action.IsPressed())
                             {
-                                ChestItemDropPickUpProcess(player);
+                                ChestItemWeaponDropPickUpProcess(player);
                             }
                             else
                             {
@@ -395,19 +395,19 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
     }
 
-    private void ChestItemDropPickUpProcess(Player player)
+    private void ChestItemWeaponDropPickUpProcess(Player player)
     {
         if (!InputManager.Instance.isPressedPreviousFrame)
         {
+            if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player))
+            {
+                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
+                return;
+            }
+
             // Drop process
             if (player.activeWeapon.GetCurrentMainHandWeapon() != null && !isPickedUp)
             {
-                if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player))
-                {
-                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
-                    return;
-                }
-
                 if (weaponDetails.weaponClass == WeaponClass.Shield)
                 {
                     goto shieldContinue; // Skip drop process because you equip one-handed weapon and chest contains a shield
@@ -494,6 +494,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 }
             }
         }
+
         if (isPickedUp)
         {
             InputManager.Instance.isPressedPreviousFrame = true;
@@ -758,7 +759,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             activeItem.activeItemRemainingCharge = activeItem.activeItemMaxCharge;
         }
 
-        player.AddActiveItemToPlayer(activeItemDetails, this, chestItem.remainingItemCharge, false);
+        player.AddActiveItemToPlayer(activeItemDetails, this, chestItem.remainingItemCharge);
 
         pickUpAnimator.SetTrigger("pickUp");
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);

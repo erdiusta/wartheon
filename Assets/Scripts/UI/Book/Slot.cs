@@ -975,10 +975,11 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 }
 
                 player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
+                player.mainHandSlotFilled = false; // Change flag so this empty slot can be used for future pick-ups
 
                 // Put draggable item to current slot
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
-                draggableItemWeapon.onMainHand = false;
+                draggableItemWeapon.onMainHand = false; 
 
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
@@ -1018,6 +1019,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 }
 
                 player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
+                player.offHandSlotFilled = false; // Change flag so this empty slot can be used for future pick-ups
 
                 // Put draggable item to current slot
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;

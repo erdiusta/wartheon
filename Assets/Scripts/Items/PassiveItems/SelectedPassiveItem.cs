@@ -308,7 +308,7 @@ public class SelectedPassiveItem : MonoBehaviour
                     {
                         player.currentAgilityValue += 2;
                     }
-                    else if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
+                    else if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BootsOfInfernalMarch)
                     {
                         player.currentAgilityValue++;
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.15f, 2);
@@ -576,7 +576,7 @@ public class SelectedPassiveItem : MonoBehaviour
                     {
                         player.currentAgilityValue -= 2;
                     }
-                    else if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
+                    else if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BootsOfInfernalMarch)
                     {
                         player.currentAgilityValue--;
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.15f, 2);

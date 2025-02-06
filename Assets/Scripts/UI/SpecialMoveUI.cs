@@ -175,13 +175,29 @@ public class SpecialMoveUI : MonoBehaviour
                             player.healthEvent.CallGemSkinSpecialMoveEndEvent();
 
                             // Reset resistance values
-                            player.currentPhysicalResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                            player.currentFireResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                            player.currentWaterResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                            player.currentAirResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                            player.currentEarthResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                            player.currentLightResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                            player.currentDarkResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                            if (player.gemSkinBoostGainedDuringGemSkinActive)
+                            {
+                                player.currentPhysicalResistanceValue -= 0.1f;
+                                player.currentFireResistanceValue -= 0.1f;
+                                player.currentWaterResistanceValue -= 0.1f;
+                                player.currentAirResistanceValue -= 0.1f;
+                                player.currentEarthResistanceValue -= 0.1f;
+                                player.currentLightResistanceValue -= 0.1f;
+                                player.currentDarkResistanceValue -= 0.1f;
+
+                                player.gemSkinBoostGainedDuringGemSkinActive = false;
+                            }
+                            else
+                            {
+                                player.currentPhysicalResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                                player.currentFireResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                                player.currentWaterResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                                player.currentAirResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                                player.currentEarthResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                                player.currentLightResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                                player.currentDarkResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
+                            }
+
                             StaticEventHandler.CallPrimaryStatsChangedEvent();
                             break;
                         case Character.Erebus:

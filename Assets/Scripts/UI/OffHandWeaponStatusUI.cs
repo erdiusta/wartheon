@@ -250,10 +250,15 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     IEnumerator CooldownRoutine(Weapon currentWeapon)
     {
+        if (!currentWeapon.onMainHand)
+        {
+            cooldownBarParent.gameObject.SetActive(true);
+        }
+
         while (currentWeapon.onCooldown)
         {
             // Update cooldown bar
-            float barFill = currentWeapon.weaponDetails.isMeleeWeapon ? cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * player.additionalMeleeAttackCoolDownModifier) :
+            float barFill = currentWeapon.weaponDetails.isMeleeWeapon ? cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier)):
                 cooldownTimer / currentWeapon.weaponDetails.weaponCooldownDuration;
 
             // Update bar fill
@@ -276,7 +281,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     {
         if (currentWeapon.weaponDetails.isMeleeWeapon)
         {
-            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration * player.additionalMeleeAttackCoolDownModifier;
+            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier);
         }
         else
         {

@@ -168,6 +168,21 @@ public class Destroyed : MonoBehaviour
             if (enemy.enemyDetails.isEnemyBoss)
             {
                 EnemySpawner.Instance.isBossInstantiated = false;
+
+                if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Treant || enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Galvanus)
+                {
+                    enemy.animator.SetBool(Settings.cast, false);
+                }
+
+                if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Treant)
+                {
+                    foreach (Transform minion in EnemySpawner.Instance.transform)
+                    {
+                        if (minion.GetComponent<Enemy>().enemyDetails.enemyBehaviour == EnemyBehaviour.Treant) continue;
+  
+                        minion.GetComponent<DestroyedEvent>().CallDestroyedEvent(false);
+                    }
+                }
             }
 
             if (enemy.enemyDetails.enemyName == "Skeleton")
@@ -277,7 +292,7 @@ public class Destroyed : MonoBehaviour
         {
             player.levelUpAnimator.SetTrigger(Settings.levelUp);
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.levelUpSoundEffect);
-            player.currentBuildPoints++;
+            player.currentBuildPoints ++;
             StaticEventHandler.CallBuildPointsGained();
             player.health.SetMaximumHealth(player.health.GetMaximumHealth());
         }

@@ -148,8 +148,11 @@ public class FireWeapon : MonoBehaviour
             {
                 ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
 
-                activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged = true;
-                activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+                if (activeWeapon.GetCurrentMainHandWeapon() != null)
+                {
+                    activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged = true;
+                    activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+                }
             }
             //else
             //{

@@ -56,6 +56,12 @@ public class BookUI : MonoBehaviour
     Transform passiveItemWaistSlot;
     Transform passiveItemFingerSlot;
 
+    // SLOT TRANSFORMS
+    Transform mainHandWeaponBackground;
+    Transform mainHandWeaponEquipped;
+    Transform offHandWeaponBackground;
+    Transform offHandWeaponEquipped;
+
     Transform buildTreeFrame;
     Transform buildPointsTransform;
     Player player;
@@ -85,6 +91,12 @@ public class BookUI : MonoBehaviour
 
         UpdatePlayerStatInfo(player);
 
+        // Populate Slot Transforms
+        mainHandWeaponBackground = mainHandWeaponSlot.GetChild(0);
+        mainHandWeaponEquipped = mainHandWeaponSlot.GetChild(1);
+        offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
+        offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
+
         switch (player.playerDetails.playerCharacterName)
         {
             case Settings.astraeus:
@@ -92,18 +104,12 @@ public class BookUI : MonoBehaviour
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 // MAIN HAND WEAPON EQUIP AT START - SLOT
-                Transform mainWeaponBackground = mainHandWeaponSlot.GetChild(0);
-                Transform mainWeaponEquipped = mainHandWeaponSlot.GetChild(1);
-                mainWeaponBackground.gameObject.SetActive(false);
-                mainWeaponEquipped.gameObject.SetActive(true);
-                GameObject mainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainWeaponEquipped);
+                DisableBackgroundEnableEquippedTransform();
+                GameObject mainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponEquipped);
                 mainHandWeaponAtSlot.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[0].weaponFrontSprite;
 
                 // OFF HAND WEAPON EQUIP AT START - SLOT
-                Transform offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
-                Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
-                offHandWeaponBackground.gameObject.SetActive(false);
-                offHandWeaponEquipped.gameObject.SetActive(true);
+                DisableBackgroundEnableEquippedTransform(true);
                 GameObject offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
                 offHandWeaponAtSlot.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[1].weaponFrontSprite;
                 break;
@@ -113,18 +119,12 @@ public class BookUI : MonoBehaviour
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 // WEAPON EQUIP AT START - SLOT
-                mainWeaponBackground = mainHandWeaponSlot.GetChild(0);
-                mainWeaponEquipped = mainHandWeaponSlot.GetChild(1);
-                mainWeaponBackground.gameObject.SetActive(false);
-                mainWeaponEquipped.gameObject.SetActive(true);
-                mainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainWeaponEquipped);
+                DisableBackgroundEnableEquippedTransform();
+                mainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponEquipped);
                 mainHandWeaponAtSlot.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[0].weaponFrontSprite;
 
                 // OFF HAND WEAPON EQUIP AT START - SLOT
-                offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
-                offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
-                offHandWeaponBackground.gameObject.SetActive(false);
-                offHandWeaponEquipped.gameObject.SetActive(true);
+                DisableBackgroundEnableEquippedTransform(true);
                 offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
                 offHandWeaponAtSlot.GetComponent<Image>().sprite = GameResources.Instance.lockSlotIcon;
                 break;
@@ -140,53 +140,6 @@ public class BookUI : MonoBehaviour
         activeEquipped.gameObject.SetActive(true);
         GameObject activeItem = Instantiate(GameResources.Instance.bookWeaponSlot, activeEquipped);
         activeItem.GetComponent<Image>().sprite = player.playerDetails.activeItemsList[0].activeItemSprite;
-
-        //// PASSIVE EQUIPS AT START
-        //GameObject passiveItem;
-        //Transform passiveBackground;
-        //Transform passiveEquipped;
-
-        //switch (player.playerDetails.playerCharacterName)
-        //{
-        //    case Settings.astraeus:
-        //        passiveBackground = passiveItemArmSlot.GetChild(0);
-        //        passiveEquipped = passiveItemArmSlot.GetChild(1);
-        //        passiveBackground.gameObject.SetActive(false);
-        //        passiveEquipped.gameObject.SetActive(true);
-        //        passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, passiveEquipped);
-        //        passiveItem.GetComponent<Image>().sprite = player.playerDetails.passiveItemsList[0].passiveItemSprite;
-        //        break;
-
-        //    case Settings.erebus:
-        //        passiveBackground = passiveItemBackSlot.GetChild(0);
-        //        passiveEquipped = passiveItemBackSlot.GetChild(1);
-        //        passiveBackground.gameObject.SetActive(false);
-        //        passiveEquipped.gameObject.SetActive(true);
-        //        passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, passiveEquipped);
-        //        passiveItem.GetComponent<Image>().sprite = player.playerDetails.passiveItemsList[0].passiveItemSprite;
-        //        break;
-
-        //    case Settings.orion:
-        //        passiveBackground = passiveItemHeadSlot.GetChild(0);
-        //        passiveEquipped = passiveItemHeadSlot.GetChild(1);
-        //        passiveBackground.gameObject.SetActive(false);
-        //        passiveEquipped.gameObject.SetActive(true);
-        //        passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, passiveEquipped);
-        //        passiveItem.GetComponent<Image>().sprite = player.playerDetails.passiveItemsList[0].passiveItemSprite;
-        //        break;
-
-        //    case Settings.lyrisa:
-        //        passiveBackground = passiveItemWaistSlot.GetChild(0);
-        //        passiveEquipped = passiveItemWaistSlot.GetChild(1);
-        //        passiveBackground.gameObject.SetActive(false);
-        //        passiveEquipped.gameObject.SetActive(true);
-        //        passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, passiveEquipped);
-        //        passiveItem.GetComponent<Image>().sprite = player.playerDetails.passiveItemsList[0].passiveItemSprite;
-        //        break;
-
-        //    default:
-        //        break;
-        //}
     }
 
     private void OnEnable()
@@ -237,22 +190,14 @@ public class BookUI : MonoBehaviour
         // OFF-HAND WEAPON EQUIP AT START - SLOT
         if (weaponAddedToBookArgs.weapon.weaponDetails.wieldType == WieldType.TwoHanded)
         {
-            Transform offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
-            Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
-            offHandWeaponBackground.gameObject.SetActive(false);
-            offHandWeaponEquipped.gameObject.SetActive(true);
-            GameObject offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
-            offHandWeaponAtSlot.GetComponent<Image>().sprite = GameResources.Instance.lockSlotIcon;
-            offHandWeaponAtSlot.GetComponent<DraggableItem>().isLockIcon = true;
+            DisableBackgroundEnableEquippedTransform(true);
+            PlaceLockIcon();
         }
         else
         {
             // Destroy lock icon at off-hand if changing main weapon from two-handed to one-handed
             if (!weaponAddedToBookArgs.onStart)
             {
-                Transform offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
-                Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
-
                 for (int i = offHandWeaponEquipped.childCount - 1; i >= 0; i--)
                 {
                     if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.wieldType == WieldType.OneHanded &&
@@ -274,64 +219,42 @@ public class BookUI : MonoBehaviour
                 }
                 else
                 {
-                    offHandWeaponBackground.gameObject.SetActive(true);
-                    offHandWeaponEquipped.gameObject.SetActive(false);
+                    EnableBackgroundDisableEquippedTransform(true);
                 }
             }
         }
 
         // Destroy previous main hand slot before new weapon replaces it
+        EnableBackgroundDisableEquippedTransform();
 
-        Transform mainHandWeaponBackground = mainHandWeaponSlot.GetChild(0);
-        Transform mainHandWeaponEquipped = mainHandWeaponSlot.GetChild(1);
-        mainHandWeaponBackground.gameObject.SetActive(true);
-        mainHandWeaponEquipped.gameObject.SetActive(false);
-
-        for (int i = mainHandWeaponEquipped.childCount - 1; i >= 0; i--)
-        {
-            GameObject mainHandWeaponAtSlot = mainHandWeaponEquipped.GetChild(i).gameObject;
-            Destroy(mainHandWeaponAtSlot);
-        }
+        EmptyMainHandEquippedSlot();
 
         // Place new weapon icon to the slot
-        mainHandWeaponBackground.gameObject.SetActive(false);
-        mainHandWeaponEquipped.gameObject.SetActive(true);
-        GameObject newMainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponEquipped);
-        newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
+        DisableBackgroundEnableEquippedTransform();
+        PlaceWeaponIconToMainHand(weaponAddedToBookArgs.weapon);
 
         UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
     }
 
     private void StaticEventHandler_OnWeaponSwappedAtMainHand(WeaponAddedToBookArgs weaponAddedToBookArgs)
     {
-        Transform mainHandWeaponBackground = mainHandWeaponSlot.GetChild(0);
-        Transform mainHandWeaponEquipped = mainHandWeaponSlot.GetChild(1);
-        mainHandWeaponBackground.gameObject.SetActive(false);
-        mainHandWeaponEquipped.gameObject.SetActive(true);
-        GameObject newMainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponEquipped);
-        newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
+        DisableBackgroundEnableEquippedTransform();
+        PlaceMainHandSprite(weaponAddedToBookArgs.weapon);
 
         UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
     }
 
+    private void PlaceMainHandSprite(Weapon weapon)
+    {
+        GameObject newMainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponEquipped);
+        newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weapon.weaponDetails.weaponFrontSprite;
+    }
+
     private void StaticEventHandler_OnWeaponRemovedFromMainHandBook()
     {
-        Transform mainHandWeaponBackground = mainHandWeaponSlot.GetChild(0);
-        Transform mainHandWeaponEquipped = mainHandWeaponSlot.GetChild(1);
-        mainHandWeaponBackground.gameObject.SetActive(true);
-        mainHandWeaponEquipped.gameObject.SetActive(false);
-
-        for (int i = mainHandWeaponEquipped.childCount - 1; i >= 0; i--)
-        {
-            GameObject HandWeaponAtSlot = mainHandWeaponEquipped.GetChild(i).gameObject;
-            Destroy(HandWeaponAtSlot);
-        }
-
-        if (mainHandWeaponEquipped.childCount == 0)
-        {
-            mainHandWeaponBackground.gameObject.SetActive(true);
-            mainHandWeaponEquipped.gameObject.SetActive(false);
-        }
+        EnableBackgroundDisableEquippedTransform();
+        EmptyMainHandEquippedSlot();
+        EnableBackgroundDisableEquippedTransform();
 
         UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
     }
@@ -339,57 +262,106 @@ public class BookUI : MonoBehaviour
     private void StaticEventHandler_OnWeaponAddedToOffHandBook(WeaponAddedToBookArgs weaponAddedToBookArgs)
     {
         // OFF-HAND WEAPON EQUIP AT START - SLOT
-        Transform offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
-        Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
-
-        offHandWeaponBackground.gameObject.SetActive(false);
-        offHandWeaponEquipped.gameObject.SetActive(true);
-        GameObject offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
-        offHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
+        DisableBackgroundEnableEquippedTransform(true);
+        PlaceWeaponIconToOffhand(weaponAddedToBookArgs.weapon);
 
         UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
     }
 
     private void StaticEventHandler_OnWeaponSwappedAtOffHand(WeaponAddedToBookArgs weaponAddedToBookArgs)
     {
-        Transform offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
-        Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
-        offHandWeaponBackground.gameObject.SetActive(false);
-        offHandWeaponEquipped.gameObject.SetActive(true);
-        GameObject newOffHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
-        newOffHandWeaponAtSlot.GetComponent<Image>().sprite = weaponAddedToBookArgs.weapon.weaponDetails.weaponFrontSprite;
+        // Loop through all child objects and destroy them
+        EmptyOffhandEquippedSlot();
+        DisableBackgroundEnableEquippedTransform(true);
+        PlaceWeaponIconToOffhand(weaponAddedToBookArgs.weapon);
 
         UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
     }
 
     private void StaticEventHandler_OnWeaponRemovedFromOffHandBook()
     {
-        Transform offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
-        Transform offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
-
-        // Loop through all child objects and destroy them
-        for (int i = offHandWeaponEquipped.childCount - 1; i >= 0; i--)
-        {
-            GameObject offHandWeaponAtSlot = offHandWeaponEquipped.GetChild(i).gameObject;
-            Destroy(offHandWeaponAtSlot);
-        }
-
-        offHandWeaponBackground.gameObject.SetActive(true);
-        offHandWeaponEquipped.gameObject.SetActive(false);
+        EmptyOffhandEquippedSlot();
+        EnableBackgroundDisableEquippedTransform(true);
 
         if (GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon() == null) return;
 
         // OFF-HAND WEAPON EQUIP AT START - SLOT
         if (GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
         {
-            offHandWeaponBackground.gameObject.SetActive(false);
-            offHandWeaponEquipped.gameObject.SetActive(true);
-            GameObject offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
-            offHandWeaponAtSlot.GetComponent<Image>().sprite = GameResources.Instance.lockSlotIcon;
-            offHandWeaponAtSlot.GetComponent<DraggableItem>().isLockIcon = true;
+            DisableBackgroundEnableEquippedTransform(true);
+            PlaceLockIcon();
         }
 
         UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
+    }
+
+    private void PlaceWeaponIconToMainHand(Weapon weapon)
+    {
+        GameObject newMainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponEquipped);
+        newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weapon.weaponDetails.weaponFrontSprite;
+    }
+
+    private void PlaceWeaponIconToOffhand(Weapon weapon)
+    {
+        GameObject offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
+        offHandWeaponAtSlot.GetComponent<Image>().sprite = weapon.weaponDetails.weaponFrontSprite;
+    }
+
+    private void EmptyMainHandEquippedSlot()
+    {
+        for (int i = mainHandWeaponEquipped.childCount - 1; i >= 0; i--)
+        {
+            Destroy(mainHandWeaponEquipped.GetChild(i).gameObject);
+        }
+    }
+
+    private void EmptyOffhandEquippedSlot()
+    {
+        for (int i = offHandWeaponEquipped.childCount - 1; i >= 0; i--)
+        {
+            Destroy(offHandWeaponEquipped.GetChild(i).gameObject);
+        }
+    }
+
+    private void PlaceLockIcon()
+    {
+        GameObject offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
+        offHandWeaponAtSlot.GetComponent<Image>().sprite = GameResources.Instance.lockSlotIcon;
+        offHandWeaponAtSlot.GetComponent<DraggableItem>().isLockIcon = true;
+    }
+
+    /// <summary>
+    /// Enable background transform and disable equipped transform which hold weapon images
+    /// </summary>
+    private void EnableBackgroundDisableEquippedTransform(bool offHand = false)
+    {
+        if (offHand)
+        {
+            offHandWeaponBackground.gameObject.SetActive(true);
+            offHandWeaponEquipped.gameObject.SetActive(false);
+        }
+        else
+        {
+            mainHandWeaponBackground.gameObject.SetActive(true);
+            mainHandWeaponEquipped.gameObject.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// Disable background transform and enable equipped transform which hold weapon images
+    /// </summary>
+    private void DisableBackgroundEnableEquippedTransform(bool offHand = false)
+    {
+        if (offHand)
+        {
+            offHandWeaponBackground.gameObject.SetActive(false);
+            offHandWeaponEquipped.gameObject.SetActive(true);
+        }
+        else
+        {
+            mainHandWeaponBackground.gameObject.SetActive(false);
+            mainHandWeaponEquipped.gameObject.SetActive(true);
+        }
     }
 
     private void StaticEventHandler_OnBookHealthChanged(HealthChangedArgs healthChangedArgs)
@@ -976,6 +948,7 @@ public class BookUI : MonoBehaviour
                     {
                         case Character.Astraeus:
                             // Gemstone Skin
+                            player.gemSkinBoostGainedDuringGemSkinActive = player.isGemSkinActive ? true : false;
                             player.gemStoneSkillAdditionalModifier += 0.1f;
                             break;
                         case Character.Erebus:

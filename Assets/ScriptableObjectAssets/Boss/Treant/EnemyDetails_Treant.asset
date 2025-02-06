@@ -27,8 +27,8 @@ MonoBehaviour:
   isEnemyBoss: 1
   isSummonedMinion: 0
   hasAnimator: 0
-  elementalBias: 0
-  elementalForgeRate: 0
+  elementalBias: 3
+  elementalForgeRate: 0.5
   enemyMinionDetails: {fileID: 11400000, guid: 7066b3e1a3f08274c8b37c0e568599cb, type: 2}
   physicalResistance: 0
   fireResistance: 0
@@ -72,7 +72,7 @@ MonoBehaviour:
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
-    enemyHealthAmount: 225
+    enemyHealthAmount: 300
   isImmuneAfterHit: 1
   hitImmunityTime: 2
   isHealthBarDisplayed: 1

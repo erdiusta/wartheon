@@ -86,6 +86,7 @@ MonoBehaviour:
   offHandAnimatorController: {fileID: 0}
   startingWeaponList:
   - {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+  - {fileID: 11400000, guid: 509acef336eef354c80b204d5527b79e, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: 205f8e50feb91b6439e7a8590681668b, type: 3}
   playerHandSprite: {fileID: 21300000, guid: da6f695b50c559b49bcdd0286e92ebc9, type: 3}
   playerBookSprite: {fileID: 1222474205, guid: 313d6a512cabaaa4a89179b77b006510, type: 3}

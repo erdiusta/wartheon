@@ -7,7 +7,6 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering;
-using System;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
@@ -257,6 +256,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
                 if (!visitedRooms.Contains(currentRoom))
                 {
+                    if (player.selectedActiveItem.GetCurrentActiveItem() == null) return;
+
                     if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge ==
                         player.selectedActiveItem.GetCurrentActiveItem().activeItemMaxCharge) return;
 
