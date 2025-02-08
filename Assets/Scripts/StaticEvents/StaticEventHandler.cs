@@ -36,52 +36,70 @@ public static class StaticEventHandler
         OnCameraShaken?.Invoke(new CameraShakeArgs { shakeIntensity = shakeIntensity, shakeDuration = shakeDuration });
     }
 
-    // Weapon added to main hand on book event
-    public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToMainHandBook;
+    #region Book Weapon Events
+    //// Weapon added to main hand on book event
+    //public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToMainHandBook;
 
-    public static void CallWeaponAddedToMainHandBook(Weapon weapon, bool onlySwitch)
+    //public static void CallWeaponAddedToMainHandBook(Weapon weapon, bool onlySwitch)
+    //{
+    //    OnWeaponAddedToMainHandBook?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, onlySwitch = onlySwitch});
+    //}
+
+    //// Main hand weapon removed from main hand on book event
+    //public static event Action OnWeaponRemovedFromMainHandBook;
+
+    //public static void CallWeaponRemovedFromMainHandBook()
+    //{
+    //    OnWeaponRemovedFromMainHandBook?.Invoke();
+    //}
+
+    //// Weapon added to off-hand on book event
+    //public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToOffHandBook;
+
+    //public static void CallWeaponAddedToOffHandBook(Weapon weapon)
+    //{
+    //    OnWeaponAddedToOffHandBook?.Invoke(new WeaponAddedToBookArgs { weapon = weapon});
+    //}
+
+    //// Weapon swapped at main hand
+    //public static event Action<WeaponAddedToBookArgs> OnWeaponSwappedAtOffHand;
+
+    //public static void CallWeaponSwappedAtOffHand(Weapon weapon)
+    //{
+    //    OnWeaponSwappedAtOffHand?.Invoke(new WeaponAddedToBookArgs { weapon = weapon });
+    //}
+
+    //// Off-hand weapon removed from off-hand on book event
+    //public static event Action OnWeaponRemovedFromOffHandBook;
+
+    //public static void CallWeaponRemovedFromOffHandBook()
+    //{
+    //    OnWeaponRemovedFromOffHandBook?.Invoke();
+    //}
+    #endregion
+
+    // Book weapon switch event
+    public static event Action OnWeaponSwitched;
+
+    public static void CallWeaponSwitchedEventForBook()
     {
-        OnWeaponAddedToMainHandBook?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, onlySwitch = onlySwitch});
+        OnWeaponSwitched?.Invoke();
     }
 
-    // Weapon swapped at main hand
-    public static event Action<WeaponAddedToBookArgs> OnWeaponSwappedAtMainHand;
+    // Book weapon pick-up event
+    public static event Action<WeaponAddedToBookArgs> OnWeaponPickedUp;
 
-    public static void CallWeaponSwappedAtMainHand(Weapon weapon)
+    public static void CallWeaponPickedUpEventForBook(Weapon weapon, bool pickedUpByOffHand = false)
     {
-        OnWeaponSwappedAtMainHand?.Invoke(new WeaponAddedToBookArgs { weapon = weapon });
+        OnWeaponPickedUp?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, pickedUpByOffHand = pickedUpByOffHand });
     }
 
-    // Main hand weapon removed from main hand on book event
-    public static event Action OnWeaponRemovedFromMainHandBook;
+    // Book weapon drop event
+    public static event Action<WeaponAddedToBookArgs> OnWeaponDropped;
 
-    public static void CallWeaponRemovedFromMainHandBook()
+    public static void CallWeaponDroppedEventForBook(SlotType slotType)
     {
-        OnWeaponRemovedFromMainHandBook?.Invoke();
-    }
-
-    // Weapon added to off-hand on book event
-    public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToOffHandBook;
-
-    public static void CallWeaponAddedToOffHandBook(Weapon weapon)
-    {
-        OnWeaponAddedToOffHandBook?.Invoke(new WeaponAddedToBookArgs { weapon = weapon});
-    }
-
-    // Weapon swapped at main hand
-    public static event Action<WeaponAddedToBookArgs> OnWeaponSwappedAtOffHand;
-
-    public static void CallWeaponSwappedAtOffHand(Weapon weapon)
-    {
-        OnWeaponSwappedAtOffHand?.Invoke(new WeaponAddedToBookArgs { weapon = weapon });
-    }
-
-    // Off-hand weapon removed from off-hand on book event
-    public static event Action OnWeaponRemovedFromOffHandBook;
-
-    public static void CallWeaponRemovedFromOffHandBook()
-    {
-        OnWeaponRemovedFromOffHandBook?.Invoke();
+        OnWeaponDropped?.Invoke(new WeaponAddedToBookArgs { slotType = slotType });
     }
 
     // Item added to active item slot on book event
@@ -210,6 +228,8 @@ public class CameraShakeArgs : EventArgs
 public class WeaponAddedToBookArgs : EventArgs
 {
     public Weapon weapon;
+    public bool pickedUpByOffHand;
+    public SlotType slotType;
     public bool onStart;
     public bool onlySwitch;
 }

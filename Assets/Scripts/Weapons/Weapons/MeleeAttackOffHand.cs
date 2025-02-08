@@ -95,7 +95,11 @@ public class MeleeAttackOffHand : MonoBehaviour
                                     CheckShatterStatus(enemy);
                                 }
 
-                                if (enemyHealth.suddenDeathHappened) return;
+                                if (enemyHealth.suddenDeathHappened)
+                                {
+                                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false);
+                                    return;
+                                }
 
                                 int inflictedDamage = CalculateDamageAmount(enemy);
                                 enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
@@ -156,7 +160,11 @@ public class MeleeAttackOffHand : MonoBehaviour
                                     CheckShatterStatus(enemy);
                                 }
 
-                                if (enemyHealth.suddenDeathHappened) return;
+                                if (enemyHealth.suddenDeathHappened)
+                                {
+                                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false);
+                                    return;
+                                }
 
                                 int inflictedDamage = CalculateDamageAmount(enemy);
                                 enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);

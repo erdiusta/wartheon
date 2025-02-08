@@ -714,7 +714,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             {
                 // Draggable item is two-handed weapon, so swap is canceled
 
-                draggableItem.swapCanceled = true;
+                draggableItem.swapCancelled = true;
                 return;
             }
             // Slot and draggable items are both main hands
@@ -735,7 +735,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                         if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
                         {
                             // Draggable item is two-handed weapon, so swap is canceled
-                            draggableItem.swapCanceled = true;
+                            draggableItem.swapCancelled = true;
                             return;
                         }
                         else
@@ -755,7 +755,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                         if (player.weaponSlotSetArray[currentSlotsDraggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
                         {
                             // Draggable item has an off-hand and slot item is a two-handed weapon, so swap is canceled
-                            draggableItem.swapCanceled = true;
+                            draggableItem.swapCancelled = true;
                             return;
                         }
                         else
@@ -780,7 +780,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 {
                     // Slot item is a shield, so swap is canceled
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
-                    draggableItem.swapCanceled = true;
+                    draggableItem.swapCancelled = true;
                     return;
                 }
                 // Draggable item is a two-handed weapon
@@ -788,7 +788,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 {
                     // Draggable item is two-handed weapon, so swap is canceled
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandCantBeAddedToTwoHanded);
-                    draggableItem.swapCanceled = true;
+                    draggableItem.swapCancelled = true;
                     return;
                 }
                 else
@@ -809,7 +809,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 {
                     // Draggable item is a shield, so swap is canceled
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
-                    draggableItem.swapCanceled = true;
+                    draggableItem.swapCancelled = true;
                     return;
                 }
                 // Slot item is a two-handed weapon
@@ -817,7 +817,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 {
                     // Slot item is two-handed weapon, so swap is canceled
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandCantBeAddedToTwoHanded);
-                    draggableItem.swapCanceled = true;
+                    draggableItem.swapCancelled = true;
                     return;
                 }
                 else
@@ -860,6 +860,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
                 draggableItemWeapon.onMainHand = true;
                 player.playerControl.SetWeaponSetByIndex(true);
+                StaticEventHandler.CallWeaponSwitchedEventForBook();
                 break;
             case ItemSwapPos.DragMainSlotOff:
                 // Put current slots child to draggable item slot
@@ -880,8 +881,9 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 }
                 else
                 {
-                    Destroy(equippedTransform.GetChild(0).gameObject);
-                    StaticEventHandler.CallWeaponAddedToOffHandBook(draggableItemWeapon);
+                    //Destroy(equippedTransform.GetChild(0).gameObject);
+                    //StaticEventHandler.CallWeaponPickedUpEventForBook(draggableItemWeapon, true);
+                    StaticEventHandler.CallWeaponSwitchedEventForBook();
                 }
                 break;
             case ItemSwapPos.DragOffSlotMain:
@@ -903,8 +905,9 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 }
                 else
                 {
-                    Destroy(equippedTransform.GetChild(0).gameObject);
-                    StaticEventHandler.CallWeaponAddedToMainHandBook(draggableItemWeapon, false);
+                    //Destroy(equippedTransform.GetChild(0).gameObject);
+                    //StaticEventHandler.CallWeaponPickedUpEventForBook(draggableItemWeapon);
+                    StaticEventHandler.CallWeaponSwitchedEventForBook();
                 }
 
                 break;
@@ -919,6 +922,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 draggableItemWeapon.onMainHand = false;
                 currentSlotsDraggableItemWeapon.onMainHand = false;
                 player.playerControl.SetWeaponSetByIndex(true);
+
                 break;
             default:
                 break;
@@ -936,7 +940,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EmptyOffHandFirst);
-                    draggableItem.swapCanceled = true;
+                    draggableItem.swapCancelled = true;
                     return;
                 }
 
@@ -946,7 +950,6 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
 
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                //player.ActivateWeapon(draggableItemWeapon, false, player.currentWeaponSlotSetIndex);
                 player.playerControl.SetWeaponSetByIndex(true);
             }
             else
@@ -954,7 +957,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EmptyOffHandFirst);
-                    draggableItem.swapCanceled = true;
+                    draggableItem.swapCancelled = true;
                     return;
                 }
                 else
@@ -962,7 +965,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     if (draggableItemWeapon.weaponBelongingToWhichMainHandSet == player.currentWeaponSlotSetIndex)
                     {
                         GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.CantMoveYourMainHandWithEmptyOffHand);
-                        draggableItem.swapCanceled = true;
+                        draggableItem.swapCancelled = true;
                         return;
                     }
                 }
@@ -970,7 +973,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 if (draggableItem.transactionOnTheSameSet)
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.CantMoveYourMainHandWithEmptyOffHand);
-                    draggableItem.swapCanceled = true;
+                    draggableItem.swapCancelled = true;
                     return;
                 }
 
@@ -983,9 +986,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                //player.ActivateWeapon(draggableItemWeapon, true, player.currentWeaponSlotSetIndex);
-                player.playerControl.SetWeaponSetByIndex(true, true);
                 draggableItem.dragMainSlotOff = true;
+                player.playerControl.SetWeaponSetByIndex(true);
             }
         }
         else
@@ -995,7 +997,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
-                    draggableItem.swapCanceled = true;
+                    draggableItem.swapCancelled = true;
                     return;
                 }
                 player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
@@ -1006,7 +1008,6 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                //player.ActivateWeapon(draggableItemWeapon, true, player.currentWeaponSlotSetIndex);
                 player.playerControl.SetWeaponSetByIndex(true);
             }
             else
@@ -1014,7 +1015,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] == null)
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EquipMainHandFirst);
-                    draggableItem.swapCanceled = true;
+                    draggableItem.swapCancelled = true;
                     return;
                 }
 
@@ -1025,7 +1026,6 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
 
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                //player.ActivateWeapon(draggableItemWeapon, true, player.currentWeaponSlotSetIndex);
                 player.playerControl.SetWeaponSetByIndex(true);
             }
         }

@@ -92,10 +92,10 @@ public class Player : MonoBehaviour
     [HideInInspector] public float specialMoveTwoDurationTimer;
     [HideInInspector] public float specialMoveThreeDurationTimer;
     [HideInInspector] public int keyCount = 0;
+    [HideInInspector] public int previousSetIndex = 1;
     [HideInInspector] public BranchMastery branchMastery;
     [HideInInspector] public WeaponMastery weaponMastery;
     [HideInInspector] public ChestItem activeItemChestItem;
-    [HideInInspector] public bool hasRingOfFortune;
 
     // PLAYER PRIMARY STATS
     [HideInInspector] public int currentStrengthValue;
@@ -166,6 +166,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool thirtyPercentDamageAbsorbIsActive = false;
     [HideInInspector] public float blindModifier = 0f;
     [HideInInspector] public float additionalBlindMakerModifier = 0f;
+    [HideInInspector] public bool hasRingOfFortune;
     [HideInInspector] public bool isImmunetoPoison;
     [HideInInspector] public bool isImmunetoFrost;
     [HideInInspector] public bool isImmunetoBlind;
@@ -594,7 +595,7 @@ public class Player : MonoBehaviour
                                 ActivateWeapon(weapon, !weapon.onMainHand, currentWeaponSlotSetIndex);
                                 if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
                                 {
-                                    playerControl.PopulateOffHandWeaponsToBook(weapon);
+                                    StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
                                 }
                                 return;
                             }
@@ -623,7 +624,7 @@ public class Player : MonoBehaviour
                                 }
                                 if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
                                 {
-                                    playerControl.PopulateOffHandWeaponsToBook(weapon);
+                                    StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
                                 }
                                 return;
                             }
@@ -641,7 +642,7 @@ public class Player : MonoBehaviour
                                     ActivateWeapon(weapon, !weapon.onMainHand, 2);
                                 }
                                 weapon.weaponBelongingToWhichOffHandSet = 2;
-                                playerControl.PopulateOffHandWeaponsToBook(weapon);
+                                StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
                                 return;
                             }
                         }
@@ -658,7 +659,7 @@ public class Player : MonoBehaviour
                                     ActivateWeapon(weapon, !weapon.onMainHand, 3);
                                 }
                                 weapon.weaponBelongingToWhichOffHandSet = 3;
-                                playerControl.PopulateOffHandWeaponsToBook(weapon);
+                                StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
                                 offHandSlotFilled = true;
                                 return;
                             }
@@ -694,7 +695,9 @@ public class Player : MonoBehaviour
                         ActivateWeapon(weapon, !weapon.onMainHand, currentWeaponSlotSetIndex);
                         if (!onStart)
                         {
-                            playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                            //StaticEventHandler.CallWeaponAddedToMainHandBook(weapon, onlySwitch);
+
+                            StaticEventHandler.CallWeaponPickedUpEventForBook(weapon);
                         }
                     }
 
@@ -732,7 +735,9 @@ public class Player : MonoBehaviour
                         }
                         if (!onStart)
                         {
-                            playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                            //StaticEventHandler.CallWeaponAddedToMainHandBook(weapon, onlySwitch);
+
+                            StaticEventHandler.CallWeaponPickedUpEventForBook(weapon);
                         }
                     }
                     else if (weaponSlotSetArray[1][0] == null)
@@ -745,7 +750,9 @@ public class Player : MonoBehaviour
                         }
                         if (!onStart)
                         {
-                            playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                            //StaticEventHandler.CallWeaponAddedToMainHandBook(weapon, onlySwitch);
+
+                            StaticEventHandler.CallWeaponPickedUpEventForBook(weapon);
                         }
                     }
                     else if (weaponSlotSetArray[2][0] == null)
@@ -758,7 +765,9 @@ public class Player : MonoBehaviour
                         }
                         if (!onStart)
                         {
-                            playerControl.PopulateMainHandWeaponsToBook(weapon, onlySwitch);
+                            //StaticEventHandler.CallWeaponAddedToMainHandBook(weapon, onlySwitch);
+
+                            StaticEventHandler.CallWeaponPickedUpEventForBook(weapon);
                         }
                         mainHandSlotFilled = true; // All 3 main hand slots filled at start
                     }
@@ -792,7 +801,7 @@ public class Player : MonoBehaviour
                     }
                     if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon addition are excluded
                     {
-                        playerControl.PopulateOffHandWeaponsToBook(weapon);
+                        StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
                     }
                 }
                 else if (weaponSlotSetArray[1][1] == null)
@@ -803,7 +812,8 @@ public class Player : MonoBehaviour
                     {
                         ActivateWeapon(weapon, !weapon.onMainHand, 2);
                     }
-                    playerControl.PopulateOffHandWeaponsToBook(weapon);
+
+                    StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
                 }
                 else if (weaponSlotSetArray[2][1] == null)
                 {
@@ -813,7 +823,8 @@ public class Player : MonoBehaviour
                     {
                         ActivateWeapon(weapon, !weapon.onMainHand, 3);
                     }
-                    playerControl.PopulateOffHandWeaponsToBook(weapon);
+
+                    StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
                     offHandSlotFilled = true;
                 }
                 else
@@ -822,6 +833,7 @@ public class Player : MonoBehaviour
                 }
             }
         }
+
     }
     
     public void ActivateWeapon(Weapon weapon, bool isOffHand, int setIndex)

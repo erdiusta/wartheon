@@ -12,6 +12,8 @@ public class DropButton : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
+        bool dropFailed = false;
+
         if (eventData.pointerDrag != null)
         {
             DraggableItem draggableItem = eventData.pointerDrag?.GetComponentInParent<DraggableItem>() ?? eventData.pointerDrag?.GetComponent<DraggableItem>();
@@ -22,8 +24,14 @@ public class DropButton : MonoBehaviour, IDropHandler
                 {
                     Weapon weapon = (Weapon)draggableItem.receivable;
 
-                    player.playerControl.DropProcess(DropType.Weapon, weapon);
-                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
+                    bool dropOffhand = draggableItem.belongingSlot.slotType == SlotType.WeaponOffHand ? true : false;
+
+                    dropFailed = player.playerControl.DropProcess(DropType.Weapon, weapon, false, dropOffhand);
+
+                    if (!dropFailed)
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.ammoPickup);
+                    }
                 }
                 else if (draggableItem.receivable is ActiveItem)
                 {

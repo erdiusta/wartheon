@@ -14512,9 +14512,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.030794164
-    width: 1
-    height: 0.9399311
+    y: 0.038897894
+    width: 0.99999994
+    height: 0.92169774
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -19176,7 +19176,7 @@ GameObject:
   - component: {fileID: 687091855}
   m_Layer: 5
   m_Name: Text (TMP)
-  m_TagString: Untagged
+  m_TagString: dropButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -59154,6 +59154,8 @@ MonoBehaviour:
   blockRateText: {fileID: 830109797}
   eveasivenessRateText: {fileID: 1717690045}
   bookAnimator: {fileID: 1617418091}
+  mainHandWeaponSlot: {fileID: 783512911}
+  offHandWeaponSlot: {fileID: 783452591}
 --- !u!222 &2060895242
 CanvasRenderer:
   m_ObjectHideFlags: 0

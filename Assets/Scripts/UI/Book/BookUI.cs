@@ -40,9 +40,8 @@ public class BookUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI eveasivenessRateText;
 
     [SerializeField] Animator bookAnimator;
-
-    Transform mainHandWeaponSlot;
-    Transform offHandWeaponSlot;
+    [SerializeField] Transform mainHandWeaponSlot;
+    [SerializeField] Transform offHandWeaponSlot;
 
     Transform activeItemSlot;
 
@@ -68,12 +67,6 @@ public class BookUI : MonoBehaviour
 
     private void Awake()
     {
-        // Main Hand Slot
-        mainHandWeaponSlot = transform.GetChild(1).GetChild(1).GetChild(3).GetChild(1);
-
-        // Off-hand Slot
-        offHandWeaponSlot = transform.GetChild(1).GetChild(1).GetChild(4).GetChild(0);
-
         // Active Item Slot
         activeItemSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(0);
 
@@ -140,16 +133,16 @@ public class BookUI : MonoBehaviour
         activeEquipped.gameObject.SetActive(true);
         GameObject activeItem = Instantiate(GameResources.Instance.bookWeaponSlot, activeEquipped);
         activeItem.GetComponent<Image>().sprite = player.playerDetails.activeItemsList[0].activeItemSprite;
+
     }
 
     private void OnEnable()
     {
-        StaticEventHandler.OnWeaponAddedToMainHandBook += StaticEventHandler_OnWeaponAddedToMainHandBook;
-        StaticEventHandler.OnWeaponSwappedAtMainHand += StaticEventHandler_OnWeaponSwappedAtMainHand;
-        StaticEventHandler.OnWeaponRemovedFromMainHandBook += StaticEventHandler_OnWeaponRemovedFromMainHandBook;
-        StaticEventHandler.OnWeaponAddedToOffHandBook += StaticEventHandler_OnWeaponAddedToOffHandBook;
-        StaticEventHandler.OnWeaponSwappedAtOffHand += StaticEventHandler_OnWeaponSwappedAtOffHand;
-        StaticEventHandler.OnWeaponRemovedFromOffHandBook += StaticEventHandler_OnWeaponRemovedFromOffHandBook;
+        // BOOK WEAPON EVENTS
+        StaticEventHandler.OnWeaponPickedUp += StaticEventHandler_OnWeaponPickedUp;
+        StaticEventHandler.OnWeaponSwitched += StaticEventHandler_OnWeaponSwitched;
+        StaticEventHandler.OnWeaponDropped += StaticEventHandler_OnWeaponDropped;
+
         StaticEventHandler.OnBookHealthChanged += StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnItemAddedToActiveItemSlot += StaticEventHandler_OnItemAddedToActiveItemSlot;
         StaticEventHandler.OnItemRemovedFromActiveItemSlot += StaticEventHandler_OnItemRemovedFromActiveItemSlot;
@@ -162,12 +155,11 @@ public class BookUI : MonoBehaviour
 
     private void OnDisable()
     {
-        StaticEventHandler.OnWeaponAddedToMainHandBook -= StaticEventHandler_OnWeaponAddedToMainHandBook;
-        StaticEventHandler.OnWeaponSwappedAtMainHand -= StaticEventHandler_OnWeaponSwappedAtMainHand;
-        StaticEventHandler.OnWeaponRemovedFromMainHandBook -= StaticEventHandler_OnWeaponRemovedFromMainHandBook;
-        StaticEventHandler.OnWeaponAddedToOffHandBook -= StaticEventHandler_OnWeaponAddedToOffHandBook;
-        StaticEventHandler.OnWeaponSwappedAtOffHand -= StaticEventHandler_OnWeaponSwappedAtOffHand;
-        StaticEventHandler.OnWeaponRemovedFromOffHandBook -= StaticEventHandler_OnWeaponRemovedFromOffHandBook;
+        // BOOK WEAPON EVENTS
+        StaticEventHandler.OnWeaponPickedUp -= StaticEventHandler_OnWeaponPickedUp;
+        StaticEventHandler.OnWeaponSwitched -= StaticEventHandler_OnWeaponSwitched;
+        StaticEventHandler.OnWeaponDropped -= StaticEventHandler_OnWeaponDropped;
+
         StaticEventHandler.OnBookHealthChanged -= StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnItemAddedToActiveItemSlot -= StaticEventHandler_OnItemAddedToActiveItemSlot;
         StaticEventHandler.OnItemRemovedFromActiveItemSlot -= StaticEventHandler_OnItemRemovedFromActiveItemSlot;
@@ -185,114 +177,95 @@ public class BookUI : MonoBehaviour
         PopulateCharactersBuildDetails();
     }
 
-    private void StaticEventHandler_OnWeaponAddedToMainHandBook(WeaponAddedToBookArgs weaponAddedToBookArgs)
+    private void StaticEventHandler_OnWeaponPickedUp(WeaponAddedToBookArgs weaponAddedToBookArgs)
     {
-        // OFF-HAND WEAPON EQUIP AT START - SLOT
-        if (weaponAddedToBookArgs.weapon.weaponDetails.wieldType == WieldType.TwoHanded)
+        if (weaponAddedToBookArgs.pickedUpByOffHand)
         {
             DisableBackgroundEnableEquippedTransform(true);
-            PlaceLockIcon();
+            EmptyOffhandEquippedSlot();
+            PlaceWeaponIconToOffhand(weaponAddedToBookArgs.weapon);
         }
         else
         {
-            // Destroy lock icon at off-hand if changing main weapon from two-handed to one-handed
-            if (!weaponAddedToBookArgs.onStart)
+            DisableBackgroundEnableEquippedTransform();
+            EmptyMainHandEquippedSlot();
+            PlaceWeaponIconToMainHand(weaponAddedToBookArgs.weapon);
+
+            if (weaponAddedToBookArgs.weapon.weaponDetails.wieldType == WieldType.TwoHanded)
             {
-                for (int i = offHandWeaponEquipped.childCount - 1; i >= 0; i--)
+                PlaceLockIcon();
+            }
+        }
+    }
+
+    private void StaticEventHandler_OnWeaponSwitched()
+    {
+        DisableBackgroundEnableEquippedTransform(true);
+        DisableBackgroundEnableEquippedTransform();
+        EmptyMainHandEquippedSlot();
+        EmptyOffhandEquippedSlot();
+
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+        {
+            PlaceWeaponIconToMainHand(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0]);
+        }
+        else
+        {
+            EnableBackgroundDisableEquippedTransform();
+        }
+
+        // Off-hand full
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null)
+        {
+            PlaceWeaponIconToOffhand(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]);
+        }
+        // Off-hand empty
+        else
+        {
+            // Off-hand empty and main hand full
+            if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+            {
+                // Off-hand empty and main hand is two-handed weapon
+                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
                 {
-                    if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.wieldType == WieldType.OneHanded &&
-                        player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
-                    {
-
-                    }
-                    else
-                    {
-                        GameObject offHandWeaponAtSlot = offHandWeaponEquipped.GetChild(i).gameObject;
-                        Destroy(offHandWeaponAtSlot);
-                    }
+                    PlaceLockIcon();
                 }
-
-                if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.wieldType == WieldType.OneHanded &&
-                    player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
-                {
-
-                }
+                // Off-hand empty and main hand is one-handed weapon
                 else
                 {
                     EnableBackgroundDisableEquippedTransform(true);
                 }
             }
+            // Both off-hand and main hands are empty
+            else
+            {
+                EnableBackgroundDisableEquippedTransform(true);
+            }
         }
-
-        // Destroy previous main hand slot before new weapon replaces it
-        EnableBackgroundDisableEquippedTransform();
-
-        EmptyMainHandEquippedSlot();
-
-        // Place new weapon icon to the slot
-        DisableBackgroundEnableEquippedTransform();
-        PlaceWeaponIconToMainHand(weaponAddedToBookArgs.weapon);
-
-        UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
     }
 
-    private void StaticEventHandler_OnWeaponSwappedAtMainHand(WeaponAddedToBookArgs weaponAddedToBookArgs)
+    private void StaticEventHandler_OnWeaponDropped(WeaponAddedToBookArgs weaponAddedToBookArgs)
     {
-        DisableBackgroundEnableEquippedTransform();
-        PlaceMainHandSprite(weaponAddedToBookArgs.weapon);
-
-        UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
-    }
-
-    private void PlaceMainHandSprite(Weapon weapon)
-    {
-        GameObject newMainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponEquipped);
-        newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weapon.weaponDetails.weaponFrontSprite;
-    }
-
-    private void StaticEventHandler_OnWeaponRemovedFromMainHandBook()
-    {
-        EnableBackgroundDisableEquippedTransform();
-        EmptyMainHandEquippedSlot();
-        EnableBackgroundDisableEquippedTransform();
-
-        UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
-    }
-
-    private void StaticEventHandler_OnWeaponAddedToOffHandBook(WeaponAddedToBookArgs weaponAddedToBookArgs)
-    {
-        // OFF-HAND WEAPON EQUIP AT START - SLOT
-        DisableBackgroundEnableEquippedTransform(true);
-        PlaceWeaponIconToOffhand(weaponAddedToBookArgs.weapon);
-
-        UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
-    }
-
-    private void StaticEventHandler_OnWeaponSwappedAtOffHand(WeaponAddedToBookArgs weaponAddedToBookArgs)
-    {
-        // Loop through all child objects and destroy them
-        EmptyOffhandEquippedSlot();
-        DisableBackgroundEnableEquippedTransform(true);
-        PlaceWeaponIconToOffhand(weaponAddedToBookArgs.weapon);
-
-        UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
-    }
-
-    private void StaticEventHandler_OnWeaponRemovedFromOffHandBook()
-    {
-        EmptyOffhandEquippedSlot();
-        EnableBackgroundDisableEquippedTransform(true);
-
-        if (GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon() == null) return;
-
-        // OFF-HAND WEAPON EQUIP AT START - SLOT
-        if (GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+        if (weaponAddedToBookArgs.slotType == SlotType.WeaponOffHand)
         {
             DisableBackgroundEnableEquippedTransform(true);
-            PlaceLockIcon();
+            EmptyOffhandEquippedSlot();
+            EnableBackgroundDisableEquippedTransform(true);
         }
+        else
+        {
+            DisableBackgroundEnableEquippedTransform();
+            EmptyMainHandEquippedSlot();
+            EnableBackgroundDisableEquippedTransform();
 
-        UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
+            // Remove lock icon
+            if (weaponAddedToBookArgs.weapon != null && weaponAddedToBookArgs.weapon.weaponDetails.wieldType == WieldType.TwoHanded)
+            {
+                DisableBackgroundEnableEquippedTransform(true);
+                EmptyOffhandEquippedSlot();
+                EnableBackgroundDisableEquippedTransform(true);
+            }
+        }
     }
 
     private void PlaceWeaponIconToMainHand(Weapon weapon)

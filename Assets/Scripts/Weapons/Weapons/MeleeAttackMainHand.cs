@@ -97,7 +97,11 @@ public class MeleeAttackMainHand : MonoBehaviour
                                     CheckShatterStatus(enemy);
                                 }
 
-                                if (enemyHealth.suddenDeathHappened) return;
+                                if (enemyHealth.suddenDeathHappened)
+                                {
+                                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false);
+                                    return;
+                                }
 
                                 int inflictedDamage = CalculateDamageAmount(enemy);
 
@@ -176,8 +180,12 @@ public class MeleeAttackMainHand : MonoBehaviour
                                     CheckShatterStatus(enemy);
                                 }
 
-                                if (enemyHealth.suddenDeathHappened) return;
-                                
+                                if (enemyHealth.suddenDeathHappened)
+                                {
+                                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false);
+                                    return;
+                                }
+
                                 if (isSpecialMeleeAttack)
                                 {
                                     // BLOOD DRAIN SKILL FOR EREBUS
@@ -362,7 +370,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.canKillSuddenly && enemy.health.currentHealth > 0)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice > player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.suddenKillChance)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.suddenKillChance)
             {
                 enemyHealth.suddenDeathHappened = true;
                 enemy.destroyedEvent.CallDestroyedEvent(false);

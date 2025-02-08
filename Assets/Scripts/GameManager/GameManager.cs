@@ -228,6 +228,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         SetCurrentRoom(roomChangedEventArgs.room);
 
+        tooltipPanel.SetActive(false);
+
         if (decoy != null)
         {
             Destroy(decoy.gameObject);
@@ -1094,22 +1096,22 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     public void GoToWeaponSetWithIndex(int setIndex)
     {
-        player.playerControl.NextWeaponSet(false, false, setIndex);
+        player.playerControl.NextWeaponSet(true, false, setIndex);
     }
 
     public void WeaponSetOne()
     {
-        player.playerControl.NextWeaponSet(false, false, 1);
+        player.playerControl.NextWeaponSet(true, false, 1);
     }
 
     public void WeaponSetTwo()
     {
-        player.playerControl.NextWeaponSet(false, false, 2);
+        player.playerControl.NextWeaponSet(true, false, 2);
     }
 
     public void WeaponSetThree()
     {
-        player.playerControl.NextWeaponSet(false, false, 3);
+        player.playerControl.NextWeaponSet(true, false, 3);
     }
 
     public void OpenWarningPopUpMenu(PopUpReason popUpReason)

@@ -76,6 +76,8 @@ public class InstantiatedRoom : MonoBehaviour
             {
                 if (chestItems[i].GetComponentInParent<Player>() != null) continue;
 
+                if(chestItems[i].GetComponentInParent<Counter>() != null) continue;
+
                 Destroy(chestItems[i].gameObject);
             }
         }

@@ -28,7 +28,6 @@ public class PlayerControl : MonoBehaviour
     bool particlePlayed;
     float unstealthImmunityTime = 2f;
     AimDirection aimDirection;
-    int previousIndex = 1;
 
     // Attack member variables
     [HideInInspector] public MeleeAttackType meleeAttackTypeMainHand = MeleeAttackType.None;
@@ -113,6 +112,9 @@ public class PlayerControl : MonoBehaviour
                 break;
             case MoveStatus.Stun:
                 isPlayerRolling = false;
+                player.animatePlayer.InitializeRollAnimationParameters();
+                player.animator.SetBool(Settings.isIdle, true);
+
                 if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
                 {
                     if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
@@ -704,7 +706,7 @@ public class PlayerControl : MonoBehaviour
             InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
 
             // Set previous index
-            previousIndex = player.currentWeaponSlotSetIndex;
+            player.previousSetIndex = player.currentWeaponSlotSetIndex;
 
             // Increment the current weapon slot set index
             player.currentWeaponSlotSetIndex++;
@@ -732,7 +734,8 @@ public class PlayerControl : MonoBehaviour
         player.UpdateWeaponHandlingAndCriticalValues();
         player.UpdateBlockAndEvasivenessValues();
         player.UpdateSpeedValue();
-        HighlightWeaponSetButton();
+
+        HighlightWeaponSetButton(); //Light and color settings
     }
 
     public void PreviousWeaponSet(bool onlySwitch)
@@ -740,7 +743,7 @@ public class PlayerControl : MonoBehaviour
         // Cache previous weapon slot index
         InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
 
-        previousIndex = player.currentWeaponSlotSetIndex;
+        player.previousSetIndex = player.currentWeaponSlotSetIndex;
 
         // Decrease the current weapon slot set index
         player.currentWeaponSlotSetIndex--;
@@ -755,16 +758,16 @@ public class PlayerControl : MonoBehaviour
         HighlightWeaponSetButton();
     }
 
-    public void SetWeaponSetByIndex(bool onlySwitch, bool dragMainSlotOff = false)
+    public void SetWeaponSetByIndex(bool onlySwitch)
     {
-        // ACTIVE WEAPON VARIABLES SWITCH
-        if (player.weaponSlotSetArray[previousIndex - 1][1] != null)
-        {
-            if (!dragMainSlotOff)
-            {
-                player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
-            }
-        }
+        //// ACTIVE WEAPON VARIABLES SWITCH
+        //if (player.weaponSlotSetArray[player.previousSetIndex - 1][1] != null)
+        //{
+        //    if (!dragMainSlotOff)
+        //    {
+        //        player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+        //    }
+        //}
 
         // WEAPON SLOTS SWITCH
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
@@ -813,54 +816,8 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
-        // BOOK UI SWITCH
-        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
-        {
-            if (!dragMainSlotOff)
-            {
-                PopulateMainHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0], onlySwitch);
-            }
-            else
-            {
-
-            }
-        }
-        else
-        {
-            RemoveMainHandWeaponFromBook();
-        }
-
-        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null)
-        {
-            PopulateOffHandWeaponsToBook(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]);
-        }
-        else
-        {
-            if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
-            {
-                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
-                {
-                    RemoveOffHandWeaponsFromBook();
-                }
-            }
-            else
-            {
-                if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.wieldType == WieldType.OneHanded &&
-                    player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
-                {
-
-                }
-                else
-                {
-                    RemoveOffHandWeaponsFromBook();
-                }
-            }
-        }
-
-        //if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] == null)
-        //{
-        //    ChestItem.toBeDroppedOffHandChestItem = null;
-        //}
+        // Book UI SWITCH
+        StaticEventHandler.CallWeaponSwitchedEventForBook();
     }
 
     /// <summary>
@@ -1533,7 +1490,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public void DropProcess(DropType dropType, IReceivable receivable = null, bool isWeaponSwapping = false)
+    public bool DropProcess(DropType dropType, IReceivable receivable = null, bool isWeaponSwapping = false, bool dropOffHand = false)
     {
         if (dropType == DropType.ActiveItem)
         {
@@ -1622,7 +1579,7 @@ public class PlayerControl : MonoBehaviour
                 if (!IsMainHandDropPossible(isWeaponSwapping))
                 {
                     GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.LessThanOneMainHandWeapon);
-                    return;
+                    return true;
                 }
                 else
                 {
@@ -1640,7 +1597,7 @@ public class PlayerControl : MonoBehaviour
                                 if (isWeaponSwapping) break;
 
                                 GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
-                                return;
+                                return true;
                             }
                             break;
                         case 2:
@@ -1655,7 +1612,7 @@ public class PlayerControl : MonoBehaviour
                                 if (isWeaponSwapping) break;
 
                                 GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
-                                return;
+                                return true;
                             }
                             break;
                         case 3:
@@ -1670,7 +1627,7 @@ public class PlayerControl : MonoBehaviour
                                 if (isWeaponSwapping) break;
 
                                 GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
-                                return;
+                                return true;
                             }
                             break;
                         default:
@@ -1711,7 +1668,7 @@ public class PlayerControl : MonoBehaviour
                     player.UpdateWeaponHandlingAndCriticalValues();
                     player.UpdateBlockAndEvasivenessValues();
 
-                    RemoveMainHandWeaponFromBook();
+                    StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponMainHand);
 
                     ChestItem.toBeDroppedChestItem.transform.SetParent(null);
                     ChestItem.toBeDroppedChestItem.isPickedUp = false;
@@ -1756,7 +1713,7 @@ public class PlayerControl : MonoBehaviour
                 player.UpdateWeaponHandlingAndCriticalValues();
                 player.UpdateBlockAndEvasivenessValues();
 
-                RemoveOffHandWeaponsFromBook();
+                StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponOffHand);
 
                 ChestItem.toBeDroppedChestItem.transform.SetParent(null);
                 ChestItem.toBeDroppedChestItem.isPickedUp = false;
@@ -1773,6 +1730,8 @@ public class PlayerControl : MonoBehaviour
                 }
             }
         }
+
+        return false;
     }
 
     public bool IsMainHandDropPossible(bool isWeaponSwapping)
@@ -1911,26 +1870,6 @@ public class PlayerControl : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, player.seismicSlamCircleRadius);
-    }
-
-    public void PopulateMainHandWeaponsToBook(Weapon weapon, bool onlySwitch)
-    {
-        StaticEventHandler.CallWeaponAddedToMainHandBook(weapon, onlySwitch);
-    }
-
-    public void RemoveMainHandWeaponFromBook()
-    {
-        StaticEventHandler.CallWeaponRemovedFromMainHandBook();
-    }
-
-    public void PopulateOffHandWeaponsToBook(Weapon weapon)
-    {
-        StaticEventHandler.CallWeaponAddedToOffHandBook(weapon);
-    }
-
-    public void RemoveOffHandWeaponsFromBook()
-    {
-        StaticEventHandler.CallWeaponRemovedFromOffHandBook();
     }
 
     public void PopulateActiveItemsToBook(Sprite sprite)
