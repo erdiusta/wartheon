@@ -274,6 +274,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: separators-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 58
+        y: 154
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: adcf2a48ddb100a46933f0a5b3af52c5
+      internalID: 2121080362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -291,6 +312,7 @@ TextureImporter:
       separators-Sheet_3: -523515706
       separators-Sheet_4: 43075546
       separators-Sheet_5: -1301212556
+      separators-Sheet_6: 2121080362
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

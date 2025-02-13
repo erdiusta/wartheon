@@ -25,6 +25,8 @@ public class SelectedActiveItem : MonoBehaviour
     private void SetActiveWeaponEvent_OnSelectedActiveItem(SetActiveWeaponEvent setActiveWeaponEvent, SetSelectedActiveItemArgs setSelectedActiveItemArgs)
     {
         SetActiveItem(setSelectedActiveItemArgs.activeItem);
+
+        StaticEventHandler.CallActiveUnlockedEvent(setSelectedActiveItemArgs.activeItem.activeItemDetails.activeItemType);
     }
 
     private void SetActiveWeaponEvent_OnRemovedActiveItem(SetActiveWeaponEvent setActiveWeaponEvent)

@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class SepharothAI : EnemyAI
+public class SepharothAI : EnemyAI, IMutualBossBehaviour
 {
     // BOSSES
     GalvanusPhase currentGalvanusPhase;
@@ -70,6 +70,12 @@ public class SepharothAI : EnemyAI
         }
         else if (moveStatus == MoveStatus.Idle)
         {
+            // Check if the player is on stealth
+            if (GameManager.Instance.GetPlayer().onStealth)
+            {
+                PlayerStealthCheck();
+            }
+
             // Check if the enemy is a Galvanus boss
             if (enemyDetails.enemyBehaviour == EnemyBehaviour.Galvanus)
             {
@@ -149,6 +155,13 @@ public class SepharothAI : EnemyAI
 
     private void TransitionToNextPhase()
     {
+        // Check if the player is on stealth
+        if (GameManager.Instance.GetPlayer().onStealth)
+        {
+            PlayerStealthCheck();
+            return;
+        }
+
         if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 4f)
         {
             // If player is too close to centaur, automatically next phase will be chargeAndRetreat
@@ -337,5 +350,11 @@ public class SepharothAI : EnemyAI
         galvanusAttackMoveRoutine = null;
 
         TransitionToNextPhase();
+    }
+
+    public void PlayerStealthCheck()
+    {
+        // Check if the player is on stealth
+        currentGalvanusPhase = GalvanusPhase.Wait;
     }
 }

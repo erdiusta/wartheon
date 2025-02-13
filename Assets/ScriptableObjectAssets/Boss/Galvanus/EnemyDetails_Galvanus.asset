@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: EnemyDetails_Galvanus
   m_EditorClassIdentifier: 
   enemyName: Galvanus
+  enemyDetails: A golem-like sentry creature charged with electicity. Stay away from
+    its jolts causing stun.
+  enemyCategory: 22
   enemyPrefab: {fileID: 7183228443647751644, guid: 0774227b2500d3e468ac2f5f15dea51f, type: 3}
   enemyType: 1
   movementDetails: {fileID: 11400000, guid: 2933915dee800d8459ccdd8bb84e1574, type: 2}
@@ -22,6 +25,7 @@ MonoBehaviour:
   attackMoveTriggerDistance: 3
   attackMoveEfficentDistance: 8
   attackMoveBaseCooldown: 8
+  countdownDurationBeforeDashAttack: 0.4
   deflectionValue: 0.1
   enemyBehaviour: 5
   isEnemyBoss: 1
@@ -39,6 +43,8 @@ MonoBehaviour:
   darkResistance: 0
   hasShield: 0
   deflectChance: 0
+  dealtMeleeDamageMin: 12
+  dealtMeleeDamageMax: 15
   isPoisonous: 0
   poisonChance: 0
   hasAcid: 0
@@ -72,15 +78,17 @@ MonoBehaviour:
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}
-    enemyHealthAmount: 300
+    enemyHealthAmount: 500
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    enemyHealthAmount: 500
   isImmuneAfterHit: 1
   hitImmunityTime: 2
   isHealthBarDisplayed: 1
   hasKnockbackResistance: 1
+  primaryPassiveItemsByLevelList: []
   weaponsByLevelList: []
-  passiveItemsByLevelList: []
+  secondaryPassiveItemsByLevelList: []
   activeItemsByLevelList: []
+  primaryPassiveDropChanceMax: 0
   dropSpawnChanceMin: 0
   dropSpawnChanceMax: 0
-  numberOfItemsToSpawnMin: 0
-  numberOfItemsToSpawnMax: 0

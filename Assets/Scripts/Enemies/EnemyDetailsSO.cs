@@ -13,6 +13,14 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public string enemyName;
     #region Tooltip
+    [Tooltip("The name details of the enemy")]
+    #endregion
+    public string enemyDetails;
+    #region Tooltip
+    [Tooltip("The name of the enemy as enum")]
+    #endregion
+    public EnemyCategory enemyCategory;
+    #region Tooltip
     [Tooltip("The prefab for the enemy")]
     #endregion
     public GameObject enemyPrefab;
@@ -48,6 +56,10 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Cooldown duration after special attack performed")]
     #endregion
     public float attackMoveBaseCooldown = 8f;
+    #region Tooltip
+    [Tooltip("Countdown duration before dash attack")]
+    #endregion
+    public float countdownDurationBeforeDashAttack = 0.4f;
     #region Tooltip
     [Tooltip("Base evasivenes of the enemy to dodge player")]
     #endregion
@@ -122,6 +134,19 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check enemy's deflect chance")]
     #endregion
     [Range(0f, 1f)] public float deflectChance = 0f;
+
+    #region Header ATTACK
+    [Space(10)]
+    [Header("ATTACK DETAILS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Enemy dealt damage by melee min")]
+    #endregion
+    public int dealtMeleeDamageMin = 12;
+    #region Tooltip
+    [Tooltip("Enemy dealt damage by melee max")]
+    #endregion
+    public int dealtMeleeDamageMax = 15;
     #region Tooltip
     [Tooltip("Check if enemy is a poisonous")]
     #endregion
@@ -301,13 +326,17 @@ public class EnemyDetailsSO : ScriptableObject
     [Header("ENEMY DROP SETTINGS")]
     #endregion
     #region Tooltip
+    [Tooltip("The enemy primary passive drops list")]
+    #endregion
+    public List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> primaryPassiveItemsByLevelList;
+    #region Tooltip
     [Tooltip("The enemy weapon drops list")]
     #endregion
     public List<SpawnableObjectsByLevel<WeaponDetailsSO>> weaponsByLevelList;
     #region Tooltip
-    [Tooltip("The enemy passive drops list")]
+    [Tooltip("The enemy secondary passive drops list")]
     #endregion
-    public List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> passiveItemsByLevelList;
+    public List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> secondaryPassiveItemsByLevelList;
     #region Tooltip
     [Tooltip("The enemy active drops list")]
     #endregion
@@ -320,24 +349,15 @@ public class EnemyDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("The minimum probability for spawning a drop")]
     #endregion Tooltip
+    [Range(0, 100)] public int primaryPassiveDropChanceMax;
+    #region Tooltip
+    [Tooltip("The minimum probability for spawning a drop")]
+    #endregion Tooltip
     [Range(0, 100)] public int dropSpawnChanceMin;
     #region Tooltip
     [Tooltip("The maximum probability for spawning a drop")]
     #endregion Tooltip
     [Range(0, 100)] public int dropSpawnChanceMax;
-
-    #region Header DROP SPAWN DETAILS
-    [Space(10)]
-    [Header("DROP SPAWN DETAILS")]
-    #endregion
-    #region Tooltip
-    [Tooltip("The minimum number of items to spawn (note that a maximum of 1 of each type of ammo, health, and weapon will be spawned")]
-    #endregion
-    [Range(0, 3)] public int numberOfItemsToSpawnMin;
-    #region Tooltip
-    [Tooltip("The maximum number of items to spawn (note that a maximum of 1 of each type of ammo, health, and weapon will be spawned")]
-    #endregion
-    [Range(0, 3)] public int numberOfItemsToSpawnMax;
 
     #region Validation
 #if UNITY_EDITOR

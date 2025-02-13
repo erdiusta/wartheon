@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
-  m_Name: WeaponDetails_Trinity
+  m_Name: WeaponDetails_Trident
   m_EditorClassIdentifier: 
-  weaponName: Trinity
+  weaponName: Trident
   weaponTitle: 26
   weaponLevel: 2
   requiredPrimaryStats:
@@ -26,7 +26,7 @@ MonoBehaviour:
   wieldType: 1
   elementalBias: 2
   elementalForgeRate: 0.3
-  price: 12
+  price: 170
   weaponFrontSprite: {fileID: -1392490652, guid: e748ccf633d4bf84b9b7074117185fa6, type: 3}
   weaponRearSprite: {fileID: -1392490652, guid: e748ccf633d4bf84b9b7074117185fa6, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 3772441040b4e0a43b8a1c3ffdfff049, type: 2}
@@ -41,6 +41,8 @@ MonoBehaviour:
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   canDrainHealth: 0
   healthDrainChance: 0
   weaponRightShootPosition: {x: 0, y: 0, z: 0}

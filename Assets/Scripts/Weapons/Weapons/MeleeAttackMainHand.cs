@@ -23,7 +23,7 @@ public class MeleeAttackMainHand : MonoBehaviour
     Health enemyHealth;
     Player player;
     bool rightHandAttackBlocked;
-    bool isSpecialMeleeAttack;
+    bool isBloodDrain;
 
     private void Awake()
     {
@@ -57,7 +57,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
     private void MeleeAttackEvent_MainHandMeleeAttack(MeleeAttackEvent meleeAttackEvent, MeleeAttackEventArgs meleeAttackEventArgs)
     {
-        AttackAtMainHand(meleeAttackEventArgs.weapon, meleeAttackEventArgs.meleeAttackType, meleeAttackEventArgs.specialMeleeMove);
+        AttackAtMainHand(meleeAttackEventArgs.weapon, meleeAttackEventArgs.meleeAttackType, meleeAttackEventArgs.isBloodDrain);
     }
 
     /// <summary>
@@ -105,10 +105,10 @@ public class MeleeAttackMainHand : MonoBehaviour
 
                                 int inflictedDamage = CalculateDamageAmount(enemy);
 
-                                if (isSpecialMeleeAttack)
+                                if (isBloodDrain)
                                 {
                                     int inflictedProportionalDamage = (int)(enemy.enemyDetails.enemyHealthDetailsArray[GameManager.Instance.GetCurrentDungeonLevel().levelNumber - 1]
-                                        .enemyHealthAmount * 0.15f);
+                                        .enemyHealthAmount * 0.2f);
                                     if (inflictedDamage > inflictedProportionalDamage)
                                     {
                                         enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
@@ -146,7 +146,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                             }
                             else
                             {
-                                enemy.health.isBlocking = true;
+                                enemy.health.isDodging = true;
                                 enemy.healthEvent.CallDodgeEvent();
                                 enemy.health.PostHitImmunity(true);
                                 enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
@@ -186,10 +186,10 @@ public class MeleeAttackMainHand : MonoBehaviour
                                     return;
                                 }
 
-                                if (isSpecialMeleeAttack)
+                                if (isBloodDrain)
                                 {
                                     // BLOOD DRAIN SKILL FOR EREBUS
-                                    int inflictedProportionalDamage = (int)(enemyHealth.currentHealth * (0.15f + player.bloodDrainSkillAdditionalDamagePercentageModifier));
+                                    int inflictedProportionalDamage = (int)(enemyHealth.currentHealth * (0.2f + player.bloodDrainSkillAdditionalDamagePercentageModifier));
                                     enemyHealth.TakeDamage(inflictedProportionalDamage, transform.position, enemy.transform.position, false);
                                 }
                                 else
@@ -221,7 +221,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                             }
                             else
                             {
-                                enemy.health.isBlocking = true;
+                                enemy.health.isDodging = true;
                                 enemy.healthEvent.CallDodgeEvent();
                                 enemy.health.PostHitImmunity(true);
                                 enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
@@ -242,8 +242,6 @@ public class MeleeAttackMainHand : MonoBehaviour
     {
         // Damage produced by player
         int damageDone = player.isCursed ? player.currentMainHandMinDamageValue : Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
-
-
 
         bool criticalHitHappened = CriticalHitHappened();
 
@@ -498,16 +496,14 @@ public class MeleeAttackMainHand : MonoBehaviour
     {
         IsAttackingAtRightHand = false;
         player.playerControl.meleeAttackTypeMainHand = MeleeAttackType.None;
-        player.health.isDamageable = true;
     }
 
-    private void AttackAtMainHand(Weapon weapon, MeleeAttackType meleeAttackType, bool specialMeleeMove)
+    private void AttackAtMainHand(Weapon weapon, MeleeAttackType meleeAttackType, bool isBloodDrain)
     {
         if (rightHandAttackBlocked) return;
 
-        isSpecialMeleeAttack = specialMeleeMove;
+        this.isBloodDrain = isBloodDrain;
 
-        player.health.isDamageable = false;
         rightHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtRightHand);
 
         weapon.onCooldown = true;

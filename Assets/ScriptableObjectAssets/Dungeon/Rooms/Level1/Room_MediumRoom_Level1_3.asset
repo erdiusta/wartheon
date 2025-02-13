@@ -75,7 +75,7 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     minTotalEnemiesToSpawn: 7
     maxTotalEnemiesToSpawn: 11
-    minConcurrentEnemies: 2
-    maxConcurrentEnemies: 4
+    minConcurrentEnemies: 7
+    maxConcurrentEnemies: 7
     minSpawnInterval: 1
-    maxSpawnInterval: 3
+    maxSpawnInterval: 2

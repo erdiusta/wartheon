@@ -56,8 +56,8 @@ MonoBehaviour:
   headShotMaterial: {fileID: 0}
   penetrateMaterial: {fileID: 0}
   applyScreenShake: 1
-  shakeIntensity: 5
-  shakeDuration: 1.5
+  shakeIntensity: 3
+  shakeDuration: 1.2
   charBuildDetails:
   - {fileID: 11400000, guid: a4460a7b2e0eb454095626f2b7c99d7c, type: 2}
   - {fileID: 11400000, guid: c5c81476684539f4eb9e255ddf7c53fe, type: 2}
@@ -77,9 +77,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 372b19df8b4d7ab4bb577bcb294cf71d, type: 2}
   - {fileID: 11400000, guid: 993de16f468e03142aec45e22eafcafd, type: 2}
   - {fileID: 11400000, guid: 631870c2719c8214ca8dd89fcfaf131a, type: 2}
-  selectedActiveItem: {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
+  selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
   activeItemsList:
-  - {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
+  - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
   passiveItemsList: []
   startingWeapon: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
   mainHandAnimatorController: {fileID: 9100000, guid: 763046c15b6ac0a4db7e14a096c4ace1, type: 2}

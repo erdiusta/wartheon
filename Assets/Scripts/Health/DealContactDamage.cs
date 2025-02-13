@@ -79,6 +79,9 @@ public class DealContactDamage : MonoBehaviour
                     // Evasiveness - dodge check
                     if (100 - (player.currentEvasivenessValue + blindPenalty) * 100 > Random.Range(1, 101))
                     {
+                        contactDamageAmountMin = enemy.enemyDetails.dealtMeleeDamageMin;
+                        contactDamageAmountMax = enemy.enemyDetails.dealtMeleeDamageMax;
+
                         // Damage produced by enemy
                         int damageDone = enemy.isCursed ? contactDamageAmountMin : Random.Range(contactDamageAmountMin, contactDamageAmountMax);
 
@@ -124,7 +127,8 @@ public class DealContactDamage : MonoBehaviour
                     {
                         player.health.isDodging = true;
                         player.healthEvent.CallDodgeEvent();
-                        player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
+                        player.health.PostHitImmunity(true);
+                        //player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
                     }
                 }
             }

@@ -35,7 +35,7 @@ public enum ActiveItemType
     Boomerang,
     Bomb,
     Shiruken,
-    Trap,
+    Pentagram,
     Dummy,
     Hourglass,
     Compass,
@@ -168,7 +168,7 @@ public enum WeaponTitle
     Gambit,
     CrudeBow,
     Crossbow,
-    Staff,
+    OldStaff,
     SolarFlare,
     HeavensGale,
     Shield,
@@ -179,7 +179,7 @@ public enum WeaponTitle
     Netherstrand,
     BlackTalon,
     HailstormSculptor,
-    Trinity,
+    Trident,
     Blazefury,
     Scarlet,
     Doombringer,
@@ -263,6 +263,34 @@ public enum ChestState
     empty
 }
 
+public enum EnemyCategory
+{
+    None,
+    Bat,
+    CrimsonWing,
+    Croclodyte,
+    FireElemental,
+    EmberclawImp,
+    StormsparkImp,
+    Nexarion,
+    NexarionLord,
+    Pixie,
+    Sprite,
+    Skeleton,
+    Viper,
+    RedViper,
+    Snapthorn,
+    Ravagevine,
+    Spider,
+    BlackWidow,
+    Wight,
+    Wraith,
+    Centaur,
+    Treant,
+    Galvanus,
+    Sepharoth
+}
+
 public enum EnemyBehaviour
 {
     Pursuit,
@@ -321,7 +349,8 @@ public enum BookPage
 {
     Stats,
     Weapons,
-    Items,
+    Passives,
+    Actives,
     Beastiary,
     Bosses,
     Build

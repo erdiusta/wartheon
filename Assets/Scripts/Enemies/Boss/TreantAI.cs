@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class TreantAI : EnemyAI
+public class TreantAI : EnemyAI, IMutualBossBehaviour
 {
     // BOSS
     TreantPhase currentTreantPhase;
@@ -77,6 +77,12 @@ public class TreantAI : EnemyAI
             // Check if the enemy is Treant boss
             if (enemyDetails.enemyBehaviour == EnemyBehaviour.Treant)
             {
+                // Check if the player is on stealth
+                if (GameManager.Instance.GetPlayer().onStealth)
+                {
+                    PlayerStealthCheck();
+                }
+
                 // Handle phases based on currentPhase
                 switch (currentTreantPhase)
                 {
@@ -167,6 +173,13 @@ public class TreantAI : EnemyAI
 
     private void TransitionToNextPhase()
     {
+        // Check if the player is on stealth
+        if (GameManager.Instance.GetPlayer().onStealth)
+        {
+            PlayerStealthCheck();
+            return;
+        }
+
         if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 4f)
         {
             // If player is too close to treant, automatically next phase will be chargeAndRetreat
@@ -356,5 +369,10 @@ public class TreantAI : EnemyAI
         treantAttackMoveRoutine = null;
 
         TransitionToNextPhase();
+    }
+
+    public void PlayerStealthCheck()
+    {
+        currentTreantPhase = TreantPhase.Wait;
     }
 }

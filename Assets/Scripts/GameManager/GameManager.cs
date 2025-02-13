@@ -1411,7 +1411,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 {
                     weaponClassText.text = "Several Quick Throwable Star Projectiles";
                 }
-                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Trap)
+                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Pentagram)
                 {
                     weaponClassText.text = "Trap for Enemies To Step On";
                 }

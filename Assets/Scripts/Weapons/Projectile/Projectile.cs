@@ -62,7 +62,7 @@ public class Projectile : MonoBehaviour, IFireable
                 countDown = activeItemDetails.countDown;
                 blastRadius = activeItemDetails.blastRadius;
             }
-            else if (activeItemDetails.activeItemType == ActiveItemType.Trap)
+            else if (activeItemDetails.activeItemType == ActiveItemType.Pentagram)
             {
                 blastRadius = activeItemDetails.blastRadius;
             }
@@ -190,8 +190,9 @@ public class Projectile : MonoBehaviour, IFireable
             if (isProjectileDodged)
             {
                 player.health.isDodging = true;
-                player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
                 player.healthEvent.CallDodgeEvent();
+                player.health.PostHitImmunity(true);
+                //player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
             }
             else
             {
@@ -288,7 +289,7 @@ public class Projectile : MonoBehaviour, IFireable
                         ProjectilePattern projectilePattern = GetComponentInParent<ProjectilePattern>();
                         projectilePattern.boomerangPhase = BoomerangPhase.Return;
                     }
-                    else if (activeItemDetails.activeItemType == ActiveItemType.Trap)
+                    else if (activeItemDetails.activeItemType == ActiveItemType.Pentagram)
                     {
                         if (explosionRoutine == null)
                         {
@@ -901,11 +902,17 @@ public class Projectile : MonoBehaviour, IFireable
             // Calculate random spread angle between min and max
             float randomSpread = Random.Range(projectileDetails.projectileSpreadMin, projectileDetails.projectileSpreadMax);
 
-            if (projectileDetails.isPlayerProjectile && (projectileDetails.belongingWeaponDetails.weaponClass == WeaponClass.Bow || 
-                projectileDetails.belongingWeaponDetails.weaponClass == WeaponClass.Crossbow))
+            if (projectileDetails.isPlayerProjectile)
             {
-                float arrowSpreadReduction = randomSpread * (GameManager.Instance.GetPlayer().additionalBowAccuracyModifier);
-                randomSpread = randomSpread - arrowSpreadReduction;
+                if (projectileDetails.belongingWeaponDetails != null)
+                {
+                    if (projectileDetails.belongingWeaponDetails.weaponClass == WeaponClass.Bow ||
+                        projectileDetails.belongingWeaponDetails.weaponClass == WeaponClass.Crossbow)
+                    {
+                        float arrowSpreadReduction = randomSpread * (GameManager.Instance.GetPlayer().additionalBowAccuracyModifier);
+                        randomSpread = randomSpread - arrowSpreadReduction;
+                    }
+                }
             }
 
             // Get a random spread toggle of 1 or -1
@@ -983,7 +990,7 @@ public class Projectile : MonoBehaviour, IFireable
                     return;
                 case ActiveItemType.Generic:
                 case ActiveItemType.Shiruken:
-                case ActiveItemType.Trap:
+                case ActiveItemType.Pentagram:
                     break;
                 default:
                     break;

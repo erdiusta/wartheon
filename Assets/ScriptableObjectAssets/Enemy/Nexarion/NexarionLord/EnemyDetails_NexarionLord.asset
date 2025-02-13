@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_NexarionLord
   m_EditorClassIdentifier: 
   enemyName: Nexarion Lord
+  enemyCategory: 8
   enemyPrefab: {fileID: 7183228443647751644, guid: 3865642d8490b1346a1d710d848e76a0, type: 3}
   enemyType: 0
   movementDetails: {fileID: 11400000, guid: 189d3eb1a9a7de54699816e33666c749, type: 2}
@@ -22,14 +23,26 @@ MonoBehaviour:
   attackMoveTriggerDistance: 0
   attackMoveEfficentDistance: 0
   attackMoveBaseCooldown: 8
+  countdownDurationBeforeDashAttack: 0.4
   deflectionValue: 0
   enemyBehaviour: 1
   isEnemyBoss: 0
+  isSummonedMinion: 0
   hasAnimator: 0
+  elementalBias: 0
+  elementalForgeRate: 0
   enemyMinionDetails: {fileID: 0}
-  enemyArmorValue: 1
+  physicalResistance: 0
+  fireResistance: 0
+  waterResistance: 0
+  airResistance: 0
+  earthResistance: 0
+  lightResistance: 0
+  darkResistance: 0
   hasShield: 0
   deflectChance: 0
+  dealtMeleeDamageMin: 12
+  dealtMeleeDamageMax: 15
   isPoisonous: 0
   poisonChance: 0
   hasAcid: 0
@@ -40,6 +53,8 @@ MonoBehaviour:
   frostChance: 0
   hasCurseDamage: 0
   curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2.5
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -66,6 +81,19 @@ MonoBehaviour:
   hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
+  primaryPassiveItemsByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
+      ratio: 100
+    - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
+      ratio: 3
+    - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
+      ratio: 4
+    - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
+      ratio: 4
+    - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
+      ratio: 3
   weaponsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     spawnableObjectRatioList:
@@ -89,25 +117,7 @@ MonoBehaviour:
       ratio: 10
     - dungeonObject: {fileID: 11400000, guid: 9926f985354b71a4690cb034e554c091, type: 2}
       ratio: 25
-  passiveItemsByLevelList:
-  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
-    spawnableObjectRatioList:
-    - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: e87d6cab4dd029648b79abd7d75ca6e6, type: 2}
-      ratio: 2
-    - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
-      ratio: 5
-    - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
-      ratio: 2
-    - dungeonObject: {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: ea43c30395e36ed4dad1c912b02fe8ee, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
-      ratio: 1
-    - dungeonObject: {fileID: 11400000, guid: 9257872b795a94e41a66d9c55b43cd9e, type: 2}
-      ratio: 2
+  secondaryPassiveItemsByLevelList: []
   activeItemsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     spawnableObjectRatioList:
@@ -123,7 +133,6 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: 44da56b0da740104f85243ed6b962b09, type: 2}
       ratio: 1
+  primaryPassiveDropChanceMax: 6
   dropSpawnChanceMin: 15
   dropSpawnChanceMax: 25
-  numberOfItemsToSpawnMin: 1
-  numberOfItemsToSpawnMax: 1

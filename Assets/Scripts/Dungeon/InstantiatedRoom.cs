@@ -56,6 +56,9 @@ public class InstantiatedRoom : MonoBehaviour
         // If the player triggered the collider
         if (collision.tag == Settings.playerTag && room != GameManager.Instance.GetCurrentRoom())
         {
+            // If the player entering the room is a clone, ignore room visit interactions
+            if (collision.GetComponent<Player>().isClone) return;
+
             // Set room as visited
             room.isPreviouslyVisited = true;
 

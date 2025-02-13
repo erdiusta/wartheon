@@ -206,6 +206,103 @@ public static class StaticEventHandler
     {
         OnBuildPointsGained?.Invoke();
     }
+
+    // Mob hovered
+    public static event Action<MobHoverArgs> OnMobHovered;
+
+    public static void CallMobHoveredEvent(EnemyCategory mobCategory, bool isBoss = false)
+    {
+        OnMobHovered?.Invoke(new MobHoverArgs { mobCategory = mobCategory, isBoss = isBoss});
+    }
+
+    // Mob unhovered
+    public static event Action<MobHoverArgs> OnMobUnhovered;
+
+    public static void CallMobUnhoveredEvent(bool isBoss = false)
+    {
+        OnMobUnhovered?.Invoke(new MobHoverArgs { isBoss = isBoss});
+    }
+
+    // Mob unlocked
+    public static event Action<MobUnlockArgs> OnMobUnlocked;
+
+    public static void CallMobUnlockedEvent(EnemyCategory mobCategory, bool isBoss)
+    {
+        OnMobUnlocked?.Invoke(new MobUnlockArgs { mobCategory = mobCategory, isBoss = isBoss });
+    }
+
+    // Weapon hovered
+    public static event Action<WeaponHoverArgs> OnWeaponHovered;
+
+    public static void CallWeaponHoveredEvent(WeaponTitle weaponTitle)
+    {
+        OnWeaponHovered?.Invoke(new WeaponHoverArgs { weaponTitle = weaponTitle });
+    }
+
+    // Weapon unhovered
+    public static event Action OnWeaponUnhovered;
+
+    public static void CallWeaponUnhoveredEvent()
+    {
+        OnWeaponUnhovered?.Invoke();
+    }
+
+    // Weapon unlocked
+    public static event Action<WeaponUnlockArgs> OnWeaponUnlocked;
+
+    public static void CallWeaponUnlockedEvent(WeaponTitle weaponTitle)
+    {
+        OnWeaponUnlocked?.Invoke(new WeaponUnlockArgs { weaponTitle = weaponTitle });
+    }
+
+
+    // Passive hovered
+    public static event Action<PassiveHoverArgs> OnPassiveHovered;
+
+    public static void CallPassiveHoveredEvent(PassiveItemType passiveItemType)
+    {
+        OnPassiveHovered?.Invoke(new PassiveHoverArgs { passiveItemType = passiveItemType });
+    }
+
+    // Passive unhovered
+    public static event Action OnPassiveUnhovered;
+
+    public static void CallPassiveUnhoveredEvent()
+    {
+        OnPassiveUnhovered?.Invoke();
+    }
+
+    // Passive unlocked
+    public static event Action<PassiveUnlockArgs> OnPassiveUnlocked;
+
+    public static void CallPassiveUnlockedEvent(PassiveItemType passiveItemType)
+    {
+        OnPassiveUnlocked?.Invoke(new PassiveUnlockArgs { passiveItemType = passiveItemType });
+    }
+
+    // Active hovered
+    public static event Action<ActiveHoverArgs> OnActiveHovered;
+
+    public static void CallActiveHoveredEvent(ActiveItemType activeItemType)
+    {
+        OnActiveHovered?.Invoke(new ActiveHoverArgs { activeItemType = activeItemType });
+    }
+
+    // Active unhovered
+    public static event Action OnActiveUnhovered;
+
+    public static void CallActiveUnhoveredEvent()
+    {
+        OnActiveUnhovered?.Invoke();
+    }
+
+    // Active unlocked
+    public static event Action<ActiveUnlockArgs> OnActiveUnlocked;
+
+    public static void CallActiveUnlockedEvent(ActiveItemType activeItemType)
+    {
+        OnActiveUnlocked?.Invoke(new ActiveUnlockArgs { activeItemType = activeItemType });
+    }
 }
 
 public class RoomChangedEventArgs : EventArgs
@@ -265,4 +362,45 @@ public class IntroductionPopUpUIArgs : EventArgs
 public class BuildPointsArgs : EventArgs
 {
     public int unlockedBuildIconIndexNumber;
+}
+
+public class MobHoverArgs : EventArgs
+{
+    public EnemyCategory mobCategory;
+    public bool isBoss;
+}
+
+public class MobUnlockArgs : EventArgs
+{
+    public EnemyCategory mobCategory;
+    public bool isBoss;
+}
+
+public class WeaponHoverArgs : EventArgs
+{
+    public WeaponTitle weaponTitle;
+}
+
+public class WeaponUnlockArgs : EventArgs
+{
+    public WeaponTitle weaponTitle;
+}
+
+public class PassiveHoverArgs : EventArgs
+{
+    public PassiveItemType passiveItemType;
+}
+
+public class PassiveUnlockArgs : EventArgs
+{
+    public PassiveItemType passiveItemType;
+}
+public class ActiveHoverArgs : EventArgs
+{
+    public ActiveItemType activeItemType;
+}
+
+public class ActiveUnlockArgs : EventArgs
+{
+    public ActiveItemType activeItemType;
 }

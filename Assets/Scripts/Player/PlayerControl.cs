@@ -729,7 +729,7 @@ public class PlayerControl : MonoBehaviour
             SetWeaponSetByIndex(onlySwitch);
         }
 
-        player.UpdatePlayerHealth(0, true, true);
+        player.UpdatePlayerHealth(0, false, false);
         player.UpdateDamageValues();
         player.UpdateWeaponHandlingAndCriticalValues();
         player.UpdateBlockAndEvasivenessValues();
@@ -854,7 +854,7 @@ public class PlayerControl : MonoBehaviour
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         player.animator.SetBool(Settings.isStunned, true);
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
 
         player.moveStatus = MoveStatus.Idle;
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -1226,13 +1226,13 @@ public class PlayerControl : MonoBehaviour
         Color currentColor = player.spriteRenderer.color;
 
         // Set the alpha value back to 0.7 (70% opacity)
-        currentColor.a = 0.7f;
+        currentColor.a = player.isClone ? 0.4f : 0.7f;
         player.spriteRenderer.color = currentColor; 
 
         yield return new WaitForSeconds(unstealthImmunityTime);
 
         // Set the alpha value back to 1 (100% opacity)
-        currentColor.a = 1f;
+        currentColor.a = player.isClone ? 0.4f : 1f;
         player.spriteRenderer.color = currentColor;
 
         player.health.isDamageable = true;

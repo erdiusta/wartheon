@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: EnemyDetails_Sepharoth
   m_EditorClassIdentifier: 
   enemyName: Sepharoth
+  enemyDetails: An old spirit fallen from the sky a long ago. It can fire laser beam
+    from head and swing swords from torso effectively. Also be careful of its pentagram
+    traps when it is invisible.
+  enemyCategory: 23
   enemyPrefab: {fileID: 7183228443647751644, guid: 32cd241b3471c1e42b9d6024dbeff6da, type: 3}
   enemyType: 1
   movementDetails: {fileID: 11400000, guid: 1f540107cacce3c44b830cbc38b61fd9, type: 2}
@@ -22,6 +26,7 @@ MonoBehaviour:
   attackMoveTriggerDistance: 3
   attackMoveEfficentDistance: 8
   attackMoveBaseCooldown: 8
+  countdownDurationBeforeDashAttack: 0.4
   deflectionValue: 0.15
   enemyBehaviour: 5
   isEnemyBoss: 1
@@ -39,6 +44,8 @@ MonoBehaviour:
   darkResistance: 0
   hasShield: 0
   deflectChance: 0
+  dealtMeleeDamageMin: 12
+  dealtMeleeDamageMax: 15
   isPoisonous: 0
   poisonChance: 0
   hasAcid: 0
@@ -77,10 +84,10 @@ MonoBehaviour:
   hitImmunityTime: 2
   isHealthBarDisplayed: 1
   hasKnockbackResistance: 0
+  primaryPassiveItemsByLevelList: []
   weaponsByLevelList: []
-  passiveItemsByLevelList: []
+  secondaryPassiveItemsByLevelList: []
   activeItemsByLevelList: []
+  primaryPassiveDropChanceMax: 0
   dropSpawnChanceMin: 0
   dropSpawnChanceMax: 0
-  numberOfItemsToSpawnMin: 0
-  numberOfItemsToSpawnMax: 0

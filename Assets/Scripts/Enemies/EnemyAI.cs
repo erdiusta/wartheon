@@ -101,7 +101,7 @@ public class EnemyAI : MonoBehaviour
         if (isDashing)
         {
             // Move towards the locked target position
-            enemy.movementToPosition.AttackMoveRigidbodyByPosition(lockedVector, moveSpeed * 1.5f);
+            enemy.movementToPosition.AttackMoveRigidbodyByPosition(lockedVector, moveSpeed * 2f);
 
             // Check for collision with the player
             if (IsCollidedWithPlayer())
@@ -677,7 +677,7 @@ public class EnemyAI : MonoBehaviour
         ClearPatrolPath();
 
         // Wait until dash starts
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(enemyDetails.countdownDurationBeforeDashAttack);
 
         isDashing = true;
         dashTimer = 0f;

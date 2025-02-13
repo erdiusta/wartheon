@@ -70,35 +70,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[0].x
-      value: -0.375
+      value: -0.40546224
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[0].y
-      value: 1.34375
+      value: 1.2881033
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[1].x
-      value: -0.375
+      value: -0.40239966
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[1].y
-      value: 0.09375
+      value: 0.08279014
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[2].x
-      value: 0.40625
+      value: 0.46104938
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[2].y
-      value: 0.09375
+      value: 0.08279014
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[3].x
-      value: 0.40625
+      value: 0.4525069
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[3].y
-      value: 1.34375
+      value: 1.2881033
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[4].x

@@ -1,21 +1,15 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-[System.Serializable]
-public class SpawnableObjectsByCharacterIndex
-{
-    public Character characterName;
-    public List<SpawnableObjectsByLevel<WeaponDetailsSO>> weaponSpawnByLevelList;
-}
-
 public class Counter : MonoBehaviour
 {
-    [SerializeField] List<SpawnableObjectsByCharacterIndex> weaponSpawnByCharacterList;
+    [SerializeField] List<SpawnableObjectsByLevel<WeaponDetailsSO>> weaponSpawnByLevelList;
     [SerializeField] ChestItem firstChestItem;
     [SerializeField] ChestItem secondChestItem;
     [SerializeField] ChestItem thirdChestItem;
+
+    Player player;
 
     private void OnEnable()
     {
@@ -33,6 +27,8 @@ public class Counter : MonoBehaviour
         firstChestItem.transform.GetChild(3).gameObject.SetActive(true);
         secondChestItem.transform.GetChild(3).gameObject.SetActive(true);
         thirdChestItem.transform.GetChild(3).gameObject.SetActive(true);
+
+        player = GameManager.Instance.GetPlayer();
     }
 
     /// <summary>
@@ -59,10 +55,11 @@ public class Counter : MonoBehaviour
         chestItem.hasWeaponDrop = true;
         Weapon weapon = new Weapon();
         weapon.weaponDetails = weaponDetails;
+        weapon.activePrice = (int)(weaponDetails.price * (1 + player.additinalNPCCostModifier));
 
         chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, chestItem.transform.position);
 
-        chestItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + weaponDetails.price.ToString();
+        chestItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + weapon.activePrice.ToString();
     }
 
     /// <summary>
@@ -70,15 +67,7 @@ public class Counter : MonoBehaviour
     /// </summary>
     private WeaponDetailsSO GetWeaponDetailsToSpawn()
     {
-        RandomSpawnableObject<WeaponDetailsSO> weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(null);
-
-        foreach (SpawnableObjectsByCharacterIndex item in weaponSpawnByCharacterList)
-        {
-            if (item.characterName == GameManager.Instance.GetPlayer().playerDetails.playerCharacterIndex)
-            {
-                weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(item.weaponSpawnByLevelList);
-            }
-        }
+        RandomSpawnableObject<WeaponDetailsSO> weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(weaponSpawnByLevelList);
 
         WeaponDetailsSO weaponDetails = weaponRandom.GetItem();
 

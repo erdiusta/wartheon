@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: EnemyDetails_Treant
   m_EditorClassIdentifier: 
   enemyName: Treant
+  enemyDetails: A huge plant originated from the heart of the nature. It can summon
+    minion sprouts, fire poison seeds from vine arms. It can restore its health when
+    health is lower than half.
+  enemyCategory: 21
   enemyPrefab: {fileID: 7183228443647751644, guid: e35a27e9d323c3b4db5a0cba0c9aeae4, type: 3}
   enemyType: 1
   movementDetails: {fileID: 11400000, guid: 2933915dee800d8459ccdd8bb84e1574, type: 2}
@@ -22,6 +26,7 @@ MonoBehaviour:
   attackMoveTriggerDistance: 3
   attackMoveEfficentDistance: 8
   attackMoveBaseCooldown: 8
+  countdownDurationBeforeDashAttack: 0.4
   deflectionValue: 0.1
   enemyBehaviour: 4
   isEnemyBoss: 1
@@ -39,6 +44,8 @@ MonoBehaviour:
   darkResistance: 0
   hasShield: 0
   deflectChance: 0
+  dealtMeleeDamageMin: 12
+  dealtMeleeDamageMax: 15
   isPoisonous: 0
   poisonChance: 0
   hasAcid: 0
@@ -72,15 +79,15 @@ MonoBehaviour:
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
-    enemyHealthAmount: 300
+    enemyHealthAmount: 400
   isImmuneAfterHit: 1
   hitImmunityTime: 2
   isHealthBarDisplayed: 1
   hasKnockbackResistance: 1
+  primaryPassiveItemsByLevelList: []
   weaponsByLevelList: []
-  passiveItemsByLevelList: []
+  secondaryPassiveItemsByLevelList: []
   activeItemsByLevelList: []
+  primaryPassiveDropChanceMax: 0
   dropSpawnChanceMin: 0
   dropSpawnChanceMax: 0
-  numberOfItemsToSpawnMin: 0
-  numberOfItemsToSpawnMax: 0

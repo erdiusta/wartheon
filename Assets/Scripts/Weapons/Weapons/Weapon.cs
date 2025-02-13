@@ -12,6 +12,7 @@ public class Weapon : IReceivable
     public bool firingStoppedPrematurelyIfWeaponIsPrecharged;
     public bool onPrecharge;
     public bool onCooldown;
+    public int activePrice;
 }
 
 public class WeaponNameComparer : IEqualityComparer<Weapon>

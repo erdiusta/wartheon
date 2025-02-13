@@ -142,7 +142,7 @@ public class Destroyed : MonoBehaviour
                 case WeaponTitle.Crossbow:
                     player.weaponMastery.crossBowMasteryPoints += enemy.enemyDetails.experiencePoint;
                     break;
-                case WeaponTitle.Staff:
+                case WeaponTitle.OldStaff:
                     player.weaponMastery.staffMasteryPoints += enemy.enemyDetails.experiencePoint;
                     break;
                 case WeaponTitle.SolarFlare:
@@ -169,7 +169,8 @@ public class Destroyed : MonoBehaviour
             {
                 EnemySpawner.Instance.isBossInstantiated = false;
 
-                if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Treant || enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Galvanus)
+                if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Treant || enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Galvanus ||
+                    enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Centaur)
                 {
                     enemy.animator.SetBool(Settings.cast, false);
                 }
@@ -185,7 +186,7 @@ public class Destroyed : MonoBehaviour
                 }
             }
 
-            if (enemy.enemyDetails.enemyName == "Skeleton")
+            if (enemy.enemyDetails.enemyCategory == EnemyCategory.Skeleton)
             {
                 enemy.animator.SetBool(Settings.block, false);
             }
@@ -295,6 +296,7 @@ public class Destroyed : MonoBehaviour
             player.currentBuildPoints ++;
             StaticEventHandler.CallBuildPointsGained();
             player.health.SetMaximumHealth(player.health.GetMaximumHealth());
+            player.UpdatePlayerHealth(1, true, true);
         }
     }
 

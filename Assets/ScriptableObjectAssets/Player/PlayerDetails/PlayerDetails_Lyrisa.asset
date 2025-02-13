@@ -77,9 +77,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 522ae3d85b9ac984ea84a21b59210abd, type: 2}
   - {fileID: 11400000, guid: 0e77dfc801f1d454d9ad9c894a4b5fae, type: 2}
   - {fileID: 11400000, guid: d5f1bed7c7d283749a1168f9f5104df5, type: 2}
-  selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  selectedActiveItem: {fileID: 11400000, guid: 85ccad2c87365d94a9c7007bb20296b9, type: 2}
   activeItemsList:
-  - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  - {fileID: 11400000, guid: 85ccad2c87365d94a9c7007bb20296b9, type: 2}
   passiveItemsList: []
   startingWeapon: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
   mainHandAnimatorController: {fileID: 9100000, guid: a9f6b3580707cd749861dcb2fc4d7f34, type: 2}

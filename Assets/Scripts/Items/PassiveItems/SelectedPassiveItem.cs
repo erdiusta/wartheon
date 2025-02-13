@@ -128,6 +128,7 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
                     isChestEquipped = true;
+
                 }
                 break;
             case PassiveItemSlotName.Neck:
@@ -179,6 +180,10 @@ public class SelectedPassiveItem : MonoBehaviour
                     else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
                     {
                         player.currentIntelligenceValue++;
+                    }
+                    else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
+                    {
+                        player.additionalDropChanceModifier += 0.15f;
                     }
 
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
@@ -324,6 +329,7 @@ public class SelectedPassiveItem : MonoBehaviour
         }
 
         StaticEventHandler.CallPrimaryStatsChangedEvent();
+        StaticEventHandler.CallPassiveUnlockedEvent(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemType);
     }
 
     private void SetPassiveItemEvent_OnRemovedPassiveItem(SetPassiveItemEvent setPassiveItemEvent, SetPassiveItemEventArgs setPassiveItemEventArgs)
@@ -455,6 +461,10 @@ public class SelectedPassiveItem : MonoBehaviour
                     else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
                     {
                         player.currentIntelligenceValue--;
+                    }
+                    else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
+                    {
+                        player.additionalDropChanceModifier -= 0.15f;
                     }
 
                     player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);

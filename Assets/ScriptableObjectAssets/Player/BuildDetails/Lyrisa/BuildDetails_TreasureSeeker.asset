@@ -15,4 +15,4 @@ MonoBehaviour:
   belongingCharacter: 3
   characterBuildImage: {fileID: 1404236079, guid: 5abc88a278fbfc8419f06f529a043f90, type: 3}
   characterBuildName: Treasure Seeker
-  characterBuildDetails: Increases Coin Yield Of Enemy Drops By 20%
+  characterBuildDetails: Increases Coin Yield Of Enemy Drops By 1

@@ -189,6 +189,9 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
             isBossInstantiated = false;
         }
 
+        // Call mob & boss unlock event
+        StaticEventHandler.CallMobUnlockedEvent(enemy.GetComponent<Enemy>().enemyDetails.enemyCategory, isBossInstantiated);
+
         // Subscribe to enemy destroyed event
         enemy.GetComponent<DestroyedEvent>().OnDestroyed += Enemy_OnDestroyed;
     }

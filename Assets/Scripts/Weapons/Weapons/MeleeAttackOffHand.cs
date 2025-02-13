@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -127,7 +126,7 @@ public class MeleeAttackOffHand : MonoBehaviour
                             }
                             else
                             {
-                                enemy.health.isBlocking = true;
+                                enemy.health.isDodging = true;
                                 enemy.healthEvent.CallDodgeEvent();
                                 enemy.health.PostHitImmunity(true);
                                 enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
@@ -192,7 +191,7 @@ public class MeleeAttackOffHand : MonoBehaviour
                             }
                             else
                             {
-                                enemy.health.isBlocking = true;
+                                enemy.health.isDodging = true;
                                 enemy.healthEvent.CallDodgeEvent();
                                 enemy.health.PostHitImmunity(true);
                                 enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
@@ -466,14 +465,12 @@ public class MeleeAttackOffHand : MonoBehaviour
     {
         IsAttackingAtLeftHand = false;
         player.playerControl.meleeAttackTypeOffHand = MeleeAttackType.None;
-        player.health.isDamageable = true;
     }
 
     void AttackWithOffHand(Weapon weapon, MeleeAttackType meleeAttackType)
     {
         if (leftHandAttackBlocked) return;
 
-        player.health.isDamageable = false;
         leftHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtLeftHand);
 
         weapon.onCooldown = true;

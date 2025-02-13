@@ -26,7 +26,7 @@ MonoBehaviour:
   wieldType: 1
   elementalBias: 1
   elementalForgeRate: 0.6
-  price: 11
+  price: 220
   weaponFrontSprite: {fileID: 1389954988, guid: fda665326f377c3478943f81825d4fb4, type: 3}
   weaponRearSprite: {fileID: 1389954988, guid: fda665326f377c3478943f81825d4fb4, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: b8bd768a06e8c624484364865077107c, type: 2}
@@ -41,6 +41,8 @@ MonoBehaviour:
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   canDrainHealth: 0
   healthDrainChance: 0
   weaponRightShootPosition: {x: 0.8625, y: 0.2607501, z: 0}

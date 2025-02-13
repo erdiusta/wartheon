@@ -434,7 +434,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                         weaponClassText.text = "Several Quick Throwable";
                         hitSpeedText.text = "Star Projectiles";
                     }
-                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Trap)
+                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Pentagram)
                     {
                         weaponClassText.text = "Trap for Enemies To Step On";
                     }

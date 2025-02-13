@@ -11,7 +11,8 @@ public class BookUI : MonoBehaviour
     public Transform buildPage;
     public Transform statsPage;
     public Transform weaponsPage;
-    public Transform itemsPage;
+    public Transform passivesPage;
+    public Transform activesPage;
     public Transform beastiaryPage;
     public Transform bossesPage;
 
@@ -64,6 +65,31 @@ public class BookUI : MonoBehaviour
     Transform buildTreeFrame;
     Transform buildPointsTransform;
     Player player;
+
+    // WEAPONS
+    [SerializeField] TextMeshProUGUI weaponTitleText;
+    [SerializeField] TextMeshProUGUI weaponDetailsText;
+    [SerializeField] Transform weaponImageContainer;
+
+    // PASSIVES
+    [SerializeField] TextMeshProUGUI passivesTitleText;
+    [SerializeField] TextMeshProUGUI passivesDetailsText;
+    [SerializeField] Transform passivesImageContainer;
+
+    // ACTIVES
+    [SerializeField] TextMeshProUGUI activesTitleText;
+    [SerializeField] TextMeshProUGUI activesDetailsText;
+    [SerializeField] Transform activesImageContainer;
+
+    // BEASTIARY
+    [SerializeField] TextMeshProUGUI mobTitleText;
+    [SerializeField] TextMeshProUGUI mobDetailsText;
+    [SerializeField] Transform beastiaryImageContainer;
+
+    // BOSSES
+    [SerializeField] TextMeshProUGUI bossTitleText;
+    [SerializeField] TextMeshProUGUI bossDetailsText;
+    [SerializeField] Transform bossImageContainer;
 
     private void Awake()
     {
@@ -133,7 +159,6 @@ public class BookUI : MonoBehaviour
         activeEquipped.gameObject.SetActive(true);
         GameObject activeItem = Instantiate(GameResources.Instance.bookWeaponSlot, activeEquipped);
         activeItem.GetComponent<Image>().sprite = player.playerDetails.activeItemsList[0].activeItemSprite;
-
     }
 
     private void OnEnable()
@@ -142,6 +167,26 @@ public class BookUI : MonoBehaviour
         StaticEventHandler.OnWeaponPickedUp += StaticEventHandler_OnWeaponPickedUp;
         StaticEventHandler.OnWeaponSwitched += StaticEventHandler_OnWeaponSwitched;
         StaticEventHandler.OnWeaponDropped += StaticEventHandler_OnWeaponDropped;
+
+        // BEASTIARY EVENTS
+        StaticEventHandler.OnMobUnlocked += StaticEventHandler_OnMobUnlocked;
+        StaticEventHandler.OnMobHovered += StaticEventHandler_OnMobHovered;
+        StaticEventHandler.OnMobUnhovered += StaticEventHandler_OnMobUnhovered;
+
+        // WEAPON EVENTS
+        StaticEventHandler.OnWeaponUnlocked += StaticEventHandler_OnWeaponUnlocked;
+        StaticEventHandler.OnWeaponHovered += StaticEventHandler_OnWeaponHovered;
+        StaticEventHandler.OnWeaponUnhovered += StaticEventHandler_OnWeaponUnhovered;
+
+        // PASSIVE EVENTS
+        StaticEventHandler.OnPassiveUnlocked += StaticEventHandler_OnPassiveUnlocked;
+        StaticEventHandler.OnPassiveHovered += StaticEventHandler_OnPassiveHovered;
+        StaticEventHandler.OnPassiveUnhovered += StaticEventHandler_OnPassiveUnhovered;
+
+        // ACTIVE EVENTS
+        StaticEventHandler.OnActiveUnlocked += StaticEventHandler_OnActiveUnlocked;
+        StaticEventHandler.OnActiveHovered += StaticEventHandler_OnActiveHovered;
+        StaticEventHandler.OnActiveUnhovered += StaticEventHandler_OnActiveUnhovered;
 
         StaticEventHandler.OnBookHealthChanged += StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnItemAddedToActiveItemSlot += StaticEventHandler_OnItemAddedToActiveItemSlot;
@@ -159,6 +204,26 @@ public class BookUI : MonoBehaviour
         StaticEventHandler.OnWeaponPickedUp -= StaticEventHandler_OnWeaponPickedUp;
         StaticEventHandler.OnWeaponSwitched -= StaticEventHandler_OnWeaponSwitched;
         StaticEventHandler.OnWeaponDropped -= StaticEventHandler_OnWeaponDropped;
+
+        // BEASTIARY EVENTS
+        StaticEventHandler.OnMobUnlocked -= StaticEventHandler_OnMobUnlocked;
+        StaticEventHandler.OnMobHovered -= StaticEventHandler_OnMobHovered;
+        StaticEventHandler.OnMobUnhovered -= StaticEventHandler_OnMobUnhovered;
+
+        // WEAPON EVENTS
+        StaticEventHandler.OnWeaponUnlocked -= StaticEventHandler_OnWeaponUnlocked;
+        StaticEventHandler.OnWeaponHovered -= StaticEventHandler_OnWeaponHovered;
+        StaticEventHandler.OnWeaponUnhovered -= StaticEventHandler_OnWeaponUnhovered;
+
+        // PASSIVE EVENTS
+        StaticEventHandler.OnPassiveUnlocked -= StaticEventHandler_OnPassiveUnlocked;
+        StaticEventHandler.OnPassiveHovered -= StaticEventHandler_OnPassiveHovered;
+        StaticEventHandler.OnPassiveUnhovered -= StaticEventHandler_OnPassiveUnhovered;
+
+        // ACTIVE EVENTS
+        StaticEventHandler.OnActiveUnlocked -= StaticEventHandler_OnActiveUnlocked;
+        StaticEventHandler.OnActiveHovered -= StaticEventHandler_OnActiveHovered;
+        StaticEventHandler.OnActiveUnhovered -= StaticEventHandler_OnActiveUnhovered;
 
         StaticEventHandler.OnBookHealthChanged -= StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnItemAddedToActiveItemSlot -= StaticEventHandler_OnItemAddedToActiveItemSlot;
@@ -196,6 +261,8 @@ public class BookUI : MonoBehaviour
                 PlaceLockIcon();
             }
         }
+
+        UpdatePlayerStatInfo(player);
     }
 
     private void StaticEventHandler_OnWeaponSwitched()
@@ -242,6 +309,8 @@ public class BookUI : MonoBehaviour
                 EnableBackgroundDisableEquippedTransform(true);
             }
         }
+
+        UpdatePlayerStatInfo(player);
     }
 
     private void StaticEventHandler_OnWeaponDropped(WeaponAddedToBookArgs weaponAddedToBookArgs)
@@ -266,6 +335,8 @@ public class BookUI : MonoBehaviour
                 EnableBackgroundDisableEquippedTransform(true);
             }
         }
+
+        UpdatePlayerStatInfo(player);
     }
 
     private void PlaceWeaponIconToMainHand(Weapon weapon)
@@ -663,12 +734,20 @@ public class BookUI : MonoBehaviour
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Weapons));
     }
 
-    public void OpenItemPage()
+    public void OpenPassivesPage()
     {
-        if (itemsPage.GetChild(0).gameObject.activeSelf) return;
+        if (passivesPage.GetChild(0).gameObject.activeSelf) return;
 
         StopAllCoroutines();
-        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Items));
+        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Passives));
+    }
+
+    public void OpenActivesPage()
+    {
+        if (activesPage.GetChild(0).gameObject.activeSelf) return;
+
+        StopAllCoroutines();
+        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Actives));
     }
 
     public void OpenBestiaryPage()
@@ -707,15 +786,28 @@ public class BookUI : MonoBehaviour
                     break;
                 case BookPage.Weapons:
                     weaponsPage.GetChild(0).gameObject.SetActive(true);
+                    EnableWeaponsPage();
+                    UpdateWeaponsPage();
                     break;
-                case BookPage.Items:
-                    itemsPage.GetChild(0).gameObject.SetActive(true);
+                case BookPage.Passives:
+                    passivesPage.GetChild(0).gameObject.SetActive(true);
+                    EnablePassivesPage();
+                    UpdatePassivesPage();
+                    break;
+                case BookPage.Actives:
+                    activesPage.GetChild(0).gameObject.SetActive(true);
+                    EnableActivesPage();
+                    UpdateActivesPage();
                     break;
                 case BookPage.Beastiary:
                     beastiaryPage.GetChild(0).gameObject.SetActive(true);
+                    EnableBeastiaryPage();
+                    UpdateBeastiaryPage();
                     break;
                 case BookPage.Bosses:
                     bossesPage.GetChild(0).gameObject.SetActive(true);
+                    EnableBossesPage();
+                    UpdateBossesPage();
                     break;
                 case BookPage.Build:
                     EnableBuildsPage();
@@ -730,10 +822,11 @@ public class BookUI : MonoBehaviour
     private void TurnThePage()
     {
         if (statsPage.GetChild(0).gameObject.activeSelf) { ClearStatPage(); }
-        else if (weaponsPage.GetChild(0).gameObject.activeSelf) { weaponsPage.GetChild(0).gameObject.SetActive(false); }
-        else if (itemsPage.GetChild(0).gameObject.activeSelf) { itemsPage.GetChild(0).gameObject.SetActive(false); }
-        else if (beastiaryPage.GetChild(0).gameObject.activeSelf) { beastiaryPage.GetChild(0).gameObject.SetActive(false); }
-        else if (bossesPage.GetChild(0).gameObject.activeSelf) { bossesPage.GetChild(0).gameObject.SetActive(false); }
+        else if (weaponsPage.GetChild(0).gameObject.activeSelf) { ClearWeaponsPage(); }
+        else if (passivesPage.GetChild(0).gameObject.activeSelf) { ClearPassivesPage(); }
+        else if (activesPage.GetChild(0).gameObject.activeSelf) { ClearActivesPage(); }
+        else if (beastiaryPage.GetChild(0).gameObject.activeSelf) { ClearBeastiaryPage();  }
+        else if (bossesPage.GetChild(0).gameObject.activeSelf) { ClearBossesPage(); }
         else if (buildPage.GetChild(0).gameObject.activeSelf) { ClearBuildsPage(); }
 
         bookAnimator.enabled = false;
@@ -773,6 +866,158 @@ public class BookUI : MonoBehaviour
         }
     }
 
+
+    private void ClearWeaponsPage()
+    {
+        foreach (Transform child in weaponsPage)
+        {
+            child.gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdateWeaponsPage()
+    {
+        for (int i = 0; i < weaponImageContainer.childCount; i++)
+        {
+            WeaponSlot weaponSlot = weaponImageContainer.GetChild(i).GetComponent<WeaponSlot>();
+
+            if (weaponSlot.weaponUnlocked)
+            {
+                weaponSlot.GetComponent<Image>().color = Color.white;
+            }
+
+        }
+    }
+
+    private void EnableWeaponsPage()
+    {
+        foreach (Transform child in weaponsPage)
+        {
+            child.gameObject.SetActive(true);
+        }
+    }
+
+    private void ClearPassivesPage()
+    {
+        foreach (Transform child in passivesPage)
+        {
+            child.gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdatePassivesPage()
+    {
+        for (int i = 0; i < passivesImageContainer.childCount; i++)
+        {
+            PassiveSlot passiveSlot = passivesImageContainer.GetChild(i).GetComponent<PassiveSlot>();
+
+            if (passiveSlot.passiveUnlocked)
+            {
+                passiveSlot.GetComponent<Image>().color = Color.white;
+            }
+
+        }
+    }
+
+    private void EnablePassivesPage()
+    {
+        foreach (Transform child in passivesPage)
+        {
+            child.gameObject.SetActive(true);
+        }
+    }
+
+    private void ClearActivesPage()
+    {
+        foreach (Transform child in activesPage)
+        {
+            child.gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdateActivesPage()
+    {
+        for (int i = 0; i < activesImageContainer.childCount; i++)
+        {
+            ActiveSlot activeSlot = activesImageContainer.GetChild(i).GetComponent<ActiveSlot>();
+
+            if (activeSlot.activeUnlocked)
+            {
+                activeSlot.GetComponent<Image>().color = Color.white;
+            }
+
+        }
+    }
+
+    private void EnableActivesPage()
+    {
+        foreach (Transform child in activesPage)
+        {
+            child.gameObject.SetActive(true);
+        }
+    }
+
+    private void ClearBeastiaryPage()
+    {
+        foreach (Transform child in beastiaryPage)
+        {
+            child.gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdateBeastiaryPage()
+    {
+        for (int i = 0; i < beastiaryImageContainer.childCount; i++)
+        {
+            MobSlot mobSlot = beastiaryImageContainer.GetChild(i).GetComponent<MobSlot>();
+
+            if (mobSlot.mobUnlocked)
+            {
+                mobSlot.GetComponent<Image>().color = Color.white;
+            }
+
+        }
+    }
+
+    private void EnableBeastiaryPage()
+    {
+        foreach (Transform child in beastiaryPage)
+        {
+            child.gameObject.SetActive(true);
+        }
+    }
+
+    private void ClearBossesPage()
+    {
+        foreach (Transform child in bossesPage)
+        {
+            child.gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdateBossesPage()
+    {
+        for (int i = 0; i < bossImageContainer.childCount; i++)
+        {
+            MobSlot mobSlot = bossImageContainer.GetChild(i).GetComponent<MobSlot>();
+
+            if (mobSlot.mobUnlocked)
+            {
+                mobSlot.GetComponent<Image>().color = Color.white;
+            }
+
+        }
+    }
+
+    private void EnableBossesPage()
+    {
+        foreach (Transform child in bossesPage)
+        {
+            child.gameObject.SetActive(true);
+        }
+    }
+
+
     private void ClearBuildsPage()
     {
         foreach (Transform child in buildPage)
@@ -787,6 +1032,192 @@ public class BookUI : MonoBehaviour
         {
             child.gameObject.SetActive(true);
         }
+    }
+
+    private void StaticEventHandler_OnMobUnlocked(MobUnlockArgs mobUnlockArgs)
+    {
+        if (!mobUnlockArgs.isBoss)
+        {
+            for (int i = 0; i < beastiaryImageContainer.childCount; i++)
+            {
+                MobSlot mobSlot = beastiaryImageContainer.GetChild(i).GetComponent<MobSlot>();
+
+                if (mobSlot.mobUnlocked == true) continue;
+
+                if (mobSlot.mobDetails.enemyCategory == mobUnlockArgs.mobCategory)
+                {
+                    mobSlot.mobUnlocked = true;
+                    mobSlot.GetComponent<Image>().color = Color.white;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < bossImageContainer.childCount; i++)
+            {
+                MobSlot mobSlot = bossImageContainer.GetChild(i).GetComponent<MobSlot>();
+
+                if (mobSlot.mobUnlocked == true) continue;
+
+                if (mobSlot.mobDetails.enemyCategory == mobUnlockArgs.mobCategory)
+                {
+                    mobSlot.mobUnlocked = true;
+                    mobSlot.GetComponent<Image>().color = Color.white;
+                }
+            }
+        }
+    }
+
+    private void StaticEventHandler_OnMobHovered(MobHoverArgs mobHoverArgs)
+    {
+        if (!mobHoverArgs.isBoss)
+        {
+            for (int i = 0; i < beastiaryImageContainer.childCount; i++)
+            {
+                MobSlot mobSlot = beastiaryImageContainer.GetChild(i).GetComponent<MobSlot>();
+
+                if (mobSlot.mobUnlocked == true && mobSlot.mobDetails.enemyCategory == mobHoverArgs.mobCategory)
+                {
+                    mobTitleText.text = mobSlot.mobDetails.enemyName;
+                    mobDetailsText.text = mobSlot.mobDetails.enemyDetails;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < bossImageContainer.childCount; i++)
+            {
+                MobSlot mobSlot = bossImageContainer.GetChild(i).GetComponent<MobSlot>();
+
+                if (mobSlot.mobUnlocked == true && mobSlot.mobDetails.enemyCategory == mobHoverArgs.mobCategory)
+                {
+                    bossTitleText.text = mobSlot.mobDetails.enemyName;
+                    bossDetailsText.text = mobSlot.mobDetails.enemyDetails;
+                }
+            }
+        }
+    }
+
+    private void StaticEventHandler_OnMobUnhovered(MobHoverArgs mobHoverArgs)
+    {
+        if (!mobHoverArgs.isBoss)
+        {
+            mobTitleText.text = string.Empty;
+            mobDetailsText.text = string.Empty;
+        }
+        else
+        {
+            bossTitleText.text = string.Empty;
+            bossDetailsText.text = string.Empty;
+        }
+    }
+
+    private void StaticEventHandler_OnWeaponUnlocked(WeaponUnlockArgs weaponUnlockArgs)
+    {
+        for (int i = 0; i < weaponImageContainer.childCount; i++)
+        {
+            WeaponSlot weaponSlot = weaponImageContainer.GetChild(i).GetComponent<WeaponSlot>();
+
+            if (weaponSlot.weaponUnlocked == true) continue;
+
+            if (weaponSlot.weaponDetails.weaponTitle == weaponUnlockArgs.weaponTitle)
+            {
+                weaponSlot.weaponUnlocked = true;
+                weaponSlot.GetComponent<Image>().color = Color.white;
+            }
+        }
+    }
+
+    private void StaticEventHandler_OnWeaponHovered(WeaponHoverArgs weaponHoverArgs)
+    {
+        for (int i = 0; i < weaponImageContainer.childCount; i++)
+        {
+            WeaponSlot weaponSlot = weaponImageContainer.GetChild(i).GetComponent<WeaponSlot>();
+
+            if (weaponSlot.weaponUnlocked == true && weaponSlot.weaponDetails.weaponTitle == weaponHoverArgs.weaponTitle)
+            {
+                weaponTitleText.text = weaponSlot.weaponDetails.weaponName;
+                weaponDetailsText.text = "weaponSlot.mobDetails.enemyDetails;";
+            }
+        }
+    }
+
+    private void StaticEventHandler_OnWeaponUnhovered()
+    {
+        weaponTitleText.text = string.Empty;
+        weaponDetailsText.text = string.Empty;
+    }
+
+    private void StaticEventHandler_OnPassiveUnlocked(PassiveUnlockArgs passiveUnlockArgs)
+    {
+        for (int i = 0; i < passivesImageContainer.childCount; i++)
+        {
+            PassiveSlot passiveSlot = passivesImageContainer.GetChild(i).GetComponent<PassiveSlot>();
+
+            if (passiveSlot.passiveUnlocked == true) continue;
+
+            if (passiveSlot.passiveItemDetails.passiveItemType == passiveUnlockArgs.passiveItemType)
+            {
+                passiveSlot.passiveUnlocked = true;
+                passiveSlot.GetComponent<Image>().color = Color.white;
+            }
+        }
+    }
+
+    private void StaticEventHandler_OnPassiveHovered(PassiveHoverArgs passiveHoverArgs)
+    {
+        for (int i = 0; i < passivesImageContainer.childCount; i++)
+        {
+            PassiveSlot passiveSlot = passivesImageContainer.GetChild(i).GetComponent<PassiveSlot>();
+
+            if (passiveSlot.passiveUnlocked == true && passiveSlot.passiveItemDetails.passiveItemType == passiveHoverArgs.passiveItemType)
+            {
+                passivesTitleText.text = passiveSlot.passiveItemDetails.passiveItemName;
+                passivesDetailsText.text = "passiveSlot.passiveItemDetails.passiveItemName;";
+            }
+        }
+    }
+
+    private void StaticEventHandler_OnPassiveUnhovered()
+    {
+        passivesTitleText.text = string.Empty;
+        passivesDetailsText.text = string.Empty;
+    }
+
+    private void StaticEventHandler_OnActiveUnlocked(ActiveUnlockArgs activeUnlockArgs)
+    {
+        for (int i = 0; i < activesImageContainer.childCount; i++)
+        {
+            ActiveSlot activeSlot = activesImageContainer.GetChild(i).GetComponent<ActiveSlot>();
+
+            if (activeSlot.activeUnlocked == true) continue;
+
+            if (activeSlot.activeItemDetails.activeItemType == activeUnlockArgs.activeItemType)
+            {
+                activeSlot.activeUnlocked = true;
+                activeSlot.GetComponent<Image>().color = Color.white;
+            }
+        }
+    }
+
+    private void StaticEventHandler_OnActiveHovered(ActiveHoverArgs activeHoverArgs)
+    {
+        for (int i = 0; i < activesImageContainer.childCount; i++)
+        {
+            ActiveSlot activeSlot = activesImageContainer.GetChild(i).GetComponent<ActiveSlot>();
+
+            if (activeSlot.activeUnlocked == true && activeSlot.activeItemDetails.activeItemType == activeHoverArgs.activeItemType)
+            {
+                activesTitleText.text = activeSlot.activeItemDetails.activeItemName;
+                activesDetailsText.text = "passiveSlot.passiveItemDetails.passiveItemName;";
+            }
+        }
+    }
+
+    private void StaticEventHandler_OnActiveUnhovered()
+    {
+        activesTitleText.text = string.Empty;
+        activesDetailsText.text = string.Empty;
     }
 
     private void StaticEventHandler_OnPrimaryStatsChanged()
@@ -816,6 +1247,7 @@ public class BookUI : MonoBehaviour
                             // Ironheart Endurance
                             player.currentConstitutionValue++;
                             player.UpdatePlayerHealth(10, false, true);
+
                             break;
                         case Character.Erebus:
                             // Shadow Endurance
@@ -865,6 +1297,7 @@ public class BookUI : MonoBehaviour
                 else if (i == 2)
                 {
                     // Treasure Seeker
+                    player.additionalCoinIncreaserModifier++;
                 }
                 else if (i == 3)
                 {
@@ -1053,6 +1486,7 @@ public class BookUI : MonoBehaviour
                             break;
                         case Character.Lyrisa:
                             // Mindbender's Persuasion
+                            player.additinalNPCCostModifier -= 0.2f;
                             break;
                     }
                 }

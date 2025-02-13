@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class CentaurAI : EnemyAI
+public class CentaurAI : EnemyAI, IMutualBossBehaviour
 {
     // BOSSES
     CentaurPhase currentCentaurPhase;
@@ -70,6 +70,12 @@ public class CentaurAI : EnemyAI
         }
         else if (moveStatus == MoveStatus.Idle)
         {
+            // Check if the player is on stealth
+            if (GameManager.Instance.GetPlayer().onStealth)
+            {
+                PlayerStealthCheck();
+            }
+
             // Check if the enemy is a Centaur boss
             if (enemyDetails.enemyBehaviour == EnemyBehaviour.Centaur)
             {
@@ -149,6 +155,13 @@ public class CentaurAI : EnemyAI
 
     private void TransitionToNextPhase()
     {
+        // Check if the player is on stealth
+        if (GameManager.Instance.GetPlayer().onStealth)
+        {
+            PlayerStealthCheck();
+            return;
+        }
+
         if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 4f)
         {
             // If player is too close to centaur, automatically next phase will be chargeAndRetreat
@@ -335,5 +348,11 @@ public class CentaurAI : EnemyAI
         centaurAttackMoveRoutine = null;
 
         TransitionToNextPhase();
+    }
+
+    public void PlayerStealthCheck()
+    {
+        // Check if the player is on stealth
+        currentCentaurPhase = CentaurPhase.Wait;
     }
 }

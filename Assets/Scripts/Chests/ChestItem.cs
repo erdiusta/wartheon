@@ -122,7 +122,9 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                                 return;
                                             }
 
-                                            if (GameManager.Instance.GetPlayer().coins.coinAmount >= weaponDetails.price && !isPurchasing)
+                                            int currentPrice = (int)(weaponDetails.price * (1 + player.additinalNPCCostModifier));
+
+                                            if (GameManager.Instance.GetPlayer().coins.coinAmount >= currentPrice && !isPurchasing)
                                             {
                                                 isPurchasing = true;
 
@@ -651,7 +653,11 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
             if (passiveItem.passiveItemDetails.passiveItemName == "Silver Coin")
             {
-                player.GetComponent<Coins>().Add(1);
+                int coinAmount = player.additionalCoinIncreaseActivated ? 1 : 1 + player.additionalCoinIncreaserModifier;
+
+                player.GetComponent<Coins>().Add(coinAmount);
+
+                player.additionalCoinIncreaseActivated = true;
             }
 
             if (passiveItem.passiveItemDetails.passiveItemName == "Golden Coin")

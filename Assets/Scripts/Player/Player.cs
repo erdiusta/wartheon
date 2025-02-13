@@ -158,11 +158,14 @@ public class Player : MonoBehaviour
     [HideInInspector] public int additionalActiveItemCharge = 0;
     [HideInInspector] public float additionalMeleeAttackCoolDownModifier = 0f;
     [HideInInspector] public float additionalBowAttackCoolDownModifier = 0f;
+    [HideInInspector] public int additionalCoinIncreaserModifier = 0;
+    [HideInInspector] public bool additionalCoinIncreaseActivated = false;
     [HideInInspector] public float additionalLockpickingModifier = 0f;
     [HideInInspector] public float additionalDropChanceModifier = 0f;
-    [HideInInspector] public float additionalStaffElementalDamageModifier = 0f;
+    [HideInInspector] public float additionalStaffElementalDamageModifier = 0f; 
     [HideInInspector] public float additionalElementalDamageModifier = 0f;
     [HideInInspector] public float additionalNegativeStatusEffectNegatorModifier = 0f;
+    [HideInInspector] public float additinalNPCCostModifier = 0;
     [HideInInspector] public bool thirtyPercentDamageAbsorbIsActive = false;
     [HideInInspector] public float blindModifier = 0f;
     [HideInInspector] public float additionalBlindMakerModifier = 0f;
@@ -258,8 +261,6 @@ public class Player : MonoBehaviour
     private void Start()
     {
         specialMoveOneCooldownTimer = 0;
-
-        keyCount = 1;
     }
 
     /// <summary>
@@ -325,6 +326,13 @@ public class Player : MonoBehaviour
     public void UpdateWieldedWeapons(WeaponDetailsSO weaponDetails, bool pickingUp, bool onStart)
     {
         AddNextWeaponToPlayer(weaponDetails, pickingUp, onStart, false);
+
+        // Set player starting health
+        UpdatePlayerHealth(0, false, false);
+        UpdateDamageValues();
+        UpdateWeaponHandlingAndCriticalValues();
+        UpdateBlockAndEvasivenessValues();
+        UpdateSpeedValue();
     }
 
     /// <summary>
@@ -405,8 +413,8 @@ public class Player : MonoBehaviour
                 // Non-melee and non-physical damage (such as staff)
                 else
                 {
-                    currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 2;
-                    currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 2;
+                    currentMainHandMinDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 1.5f);
+                    currentMainHandMaxDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 1.5f);
 
                     currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalStaffElementalDamageModifier + additionalElementalDamageModifier));
                     currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalStaffElementalDamageModifier + additionalElementalDamageModifier));
@@ -549,6 +557,8 @@ public class Player : MonoBehaviour
         ChestItem.toBeDroppedChestItem = chestItem;
         ChestItem.toBeDroppedChestItem.toBeDroppedActiveItem = activeItem;
 
+        StaticEventHandler.CallActiveUnlockedEvent(activeItemDetails.activeItemType);
+
         return activeItem;
     }
 
@@ -590,9 +600,10 @@ public class Player : MonoBehaviour
                             if (weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType != WieldType.TwoHanded)
                             {
                                 weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] = weapon;
-                                weapon.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;
-
+                                weapon.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;                               
                                 ActivateWeapon(weapon, !weapon.onMainHand, currentWeaponSlotSetIndex);
+                                StaticEventHandler.CallWeaponUnlockedEvent(weapon.weaponDetails.weaponTitle);
+
                                 if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
                                 {
                                     StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
@@ -691,8 +702,9 @@ public class Player : MonoBehaviour
                     {
                         weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] = weapon;
                         weapon.weaponBelongingToWhichMainHandSet = currentWeaponSlotSetIndex;
-
                         ActivateWeapon(weapon, !weapon.onMainHand, currentWeaponSlotSetIndex);
+                        StaticEventHandler.CallWeaponUnlockedEvent(weapon.weaponDetails.weaponTitle);
+
                         if (!onStart)
                         {
                             //StaticEventHandler.CallWeaponAddedToMainHandBook(weapon, onlySwitch);

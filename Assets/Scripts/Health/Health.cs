@@ -79,6 +79,16 @@ public class Health : MonoBehaviour
 
     private void Update()
     {
+        // If player dies, clones should be destroyed immediately
+        if (player != null)
+        {
+            if (!Player.hasClone && player.isClone)
+            {
+                Destroy(gameObject);
+            }
+        }
+
+
         if (player != null)
         {
             if (player.selectedPassiveItem?.GetCurrentChestPassiveItem() != null && player.selectedPassiveItem.GetCurrentChestPassiveItem().passiveItemDetails.passiveItemType ==
@@ -371,12 +381,12 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Indicate a hit and give some post hit immunity
     /// </summary>
-    public void PostHitImmunity(bool blockSpecialMoveEnabled = false)
+    public void PostHitImmunity(bool dodgedOrBlocked = false)
     {
         // Check if gameobject is active - if not return
         if (gameObject.activeSelf == false) return;
 
-        if (blockSpecialMoveEnabled)
+        if (dodgedOrBlocked)
         {
             if (immunityCoroutine != null)
             {
@@ -405,13 +415,13 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Coroutine to indicate a hit and give some post hit immunity
     /// </summary>
-    IEnumerator PostHitImmunityRoutine(float immunityTime, SpriteRenderer spriteRenderer, bool blockSpecialMoveEnabled = false)
+    IEnumerator PostHitImmunityRoutine(float immunityTime, SpriteRenderer spriteRenderer, bool dodgedOrBlocked = false)
     {
         int iterations = Mathf.RoundToInt(immunityTime / spriteFlashInterval / 4);
 
         isDamageable = isProjectileHit;
 
-        if (blockSpecialMoveEnabled)
+        if (dodgedOrBlocked)
         {
             // Flash effect
             while (iterations > 0)

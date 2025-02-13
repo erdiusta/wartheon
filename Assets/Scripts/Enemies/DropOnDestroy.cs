@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -7,8 +6,9 @@ public class DropOnDestroy : MonoBehaviour
 {
     [HideInInspector] public GameObject chestItemGameObject;
 
+    List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> enemyPrimaryPassiveItemDropList;
     List<SpawnableObjectsByLevel<WeaponDetailsSO>> enemyWeaponDropList;
-    List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> enemyPassiveItemDropList;
+    List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> enemySecondaryPassiveItemDropList;
     List<SpawnableObjectsByLevel<ActiveItemDetailsSO>> enemyActiveItemDropList;
     int ammoPercent;
     int characterIndexNo;
@@ -16,10 +16,11 @@ public class DropOnDestroy : MonoBehaviour
     int dropSpawnChanceMin;
     int dropSpawnChanceMax;
 
-    int numberOfItemsToSpawnMin;
-    int numberOfItemsToSpawnMax;
+    //int numberOfItemsToSpawnMin;
+    //int numberOfItemsToSpawnMax;
     WeaponDetailsSO weaponDetails;
-    PassiveItemDetailsSO passiveItemDetails;
+    PassiveItemDetailsSO primaryPassiveItemDetails;
+    PassiveItemDetailsSO secondaryPassiveItemDetails;
     ActiveItemDetailsSO activeItemDetails;
     ChestItem chestItem;
     Enemy enemy;
@@ -35,7 +36,29 @@ public class DropOnDestroy : MonoBehaviour
 
     public void DropProcess()
     {
+        // PRIMARY PASSIVE DROP PHASE
+        // Get primary passive items
+        int primaryPassiveItemNum = Random.Range(0, enemy.enemyDetails.primaryPassiveDropChanceMax + 1);
+
+        for (int i = 0; i < primaryPassiveItemNum; i++)
+        {
+            // Instantiate item container
+            InstantiateChestItem();
+
+            // Retrieve item details
+            primaryPassiveItemDetails = GetPrimaryPassiveItemDetailsToSpawn(primaryPassiveItemNum);
+
+            InstantiatePassiveItem(primaryPassiveItemDetails);
+            chestItem.transform.SetParent(null);
+
+            Vector3 spawnPointDeviation = new Vector3(Random.Range(-2, 2), Random.Range(-2, 2), 0);
+            chestItem.transform.position += spawnPointDeviation;
+        }
+
+        // OTHER DROPS PHASE IF HAS
         // Should drop be spawned based on specified chance? If not return.
+        player.additionalCoinIncreaseActivated = false;
+
         if (!RandomDropCheck())
         {
             Destroy(chestItemGameObject);
@@ -44,28 +67,24 @@ public class DropOnDestroy : MonoBehaviour
 
         // Instantiate container
         InstantiateChestItem();
-
-        // Set collider to true
-        chestItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
-            
-        // Get number of Active & Passive & Weapon Items To Spawn (max 3 of each)
-        GetItemsToSpawn(out int activeItemNum, out int passiveItemNum, out int weaponNum);
+        
+        // Get number of Active & Passive & Weapon Items To Spawn (max 2 of each)
+        GetItemsToSpawn(out int activeItemNum, out int secondaryPassiveItemNum, out int weaponNum);
 
         // Initialize drops
         weaponDetails = GetWeaponDetailsToSpawn(weaponNum);
-        passiveItemDetails = GetPassiveItemDetailsToSpawn(passiveItemNum);
+        secondaryPassiveItemDetails = GetSecondaryPassiveItemDetailsToSpawn(secondaryPassiveItemNum);
         activeItemDetails = GetActiveItemDetailsToSpawn(activeItemNum);
 
-        // Instantiate items if not null
         if (weaponDetails != null)
         {
             InstantiateWeaponItem(weaponDetails);
             chestItem.transform.SetParent(null);
         }
 
-        if (passiveItemDetails != null)
+        if (secondaryPassiveItemDetails != null)
         {
-            InstantiatePassiveItem(passiveItemDetails);
+            InstantiatePassiveItem(secondaryPassiveItemDetails);
             chestItem.transform.SetParent(null);
         }
 
@@ -78,13 +97,12 @@ public class DropOnDestroy : MonoBehaviour
 
     private void SetDropList()
     {
+        enemySecondaryPassiveItemDropList = enemy.enemyDetails.secondaryPassiveItemsByLevelList;
         enemyWeaponDropList = enemy.enemyDetails.weaponsByLevelList;
-        enemyPassiveItemDropList = enemy.enemyDetails.passiveItemsByLevelList;
+        enemyPrimaryPassiveItemDropList = enemy.enemyDetails.primaryPassiveItemsByLevelList;
         enemyActiveItemDropList = enemy.enemyDetails.activeItemsByLevelList;
         dropSpawnChanceMin = enemy.enemyDetails.dropSpawnChanceMin;
         dropSpawnChanceMax = enemy.enemyDetails.dropSpawnChanceMax;
-        numberOfItemsToSpawnMin = enemy.enemyDetails.numberOfItemsToSpawnMin;
-        numberOfItemsToSpawnMax = enemy.enemyDetails.numberOfItemsToSpawnMax;
     }
 
     /// <summary>
@@ -94,17 +112,7 @@ public class DropOnDestroy : MonoBehaviour
     {
         int chancePercent = 100 - Random.Range(dropSpawnChanceMin, dropSpawnChanceMax + 1);
 
-        int passiveItemModifier;
-
-        if (player.playerDetails.passiveItemsList.Any(item => item.passiveItemType == PassiveItemType.RingOfFortune))
-        {
-            // The player has a passive item of type RingOfFortune
-            passiveItemModifier = 15 + (int)(player.additionalDropChanceModifier * 100);
-        }
-        else
-        {
-            passiveItemModifier = 0 + (int)(player.additionalDropChanceModifier * 100);
-        }
+        int passiveItemModifier = (int)(player.additionalDropChanceModifier * 100);
 
         // get random value between 1 and 100
         int randomPercent = Random.Range(1, 101);
@@ -125,41 +133,19 @@ public class DropOnDestroy : MonoBehaviour
     /// <summary>
     /// Get the number of items to spawn - max 1 of each - max 3 in total
     /// </summary>
-    private void GetItemsToSpawn(out int actives, out int passives, out int weapons)
+    private void GetItemsToSpawn(out int actives, out int secondaryPassives, out int weapons)
     {
         actives = 0;
-        passives = 0;
+        secondaryPassives = 0;
         weapons = 0;
 
-        int numberofItemsToSpawn = Random.Range(numberOfItemsToSpawnMin, numberOfItemsToSpawnMax + 1);
+        int choice = Random.Range(0, 50);
 
-        int choice;
+        if (choice >= 0 && choice <= 35) { weapons++; return; }
+        if (choice > 35 && choice <= 40) { actives++; return; }
+        if (choice > 40 && choice <= 50) { secondaryPassives++; return; }
 
-        if (numberofItemsToSpawn == 1)
-        {
-            choice = Random.Range(0, 50);
-
-            if (choice >= 0 && choice <= 35) { weapons++; return; }
-            if (choice > 35 && choice <= 40) { actives++; return; }
-            if (choice > 40 && choice <= 50) { passives++; return; }
-
-            return;
-        }
-        else if (numberofItemsToSpawn == 2)
-        {
-            choice = Random.Range(0, 50);
-            if (choice >= 0 && choice <= 2) { weapons++; return; }
-            if (choice >= 3 && choice <= 5) { actives++; return; }
-            if (choice > 5 && choice <= 50) { passives++; return; }
-        }
-        else if (numberofItemsToSpawn >= 3)
-        {
-            actives++;
-            passives++;
-            weapons++;
-
-            return;
-        }
+        return;
     }
 
     /// <summary>
@@ -168,9 +154,11 @@ public class DropOnDestroy : MonoBehaviour
     private void InstantiateChestItem()
     {
         chestItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        chestItemGameObject.GetComponent<BoxCollider2D>().enabled = false;
         chestItem = chestItemGameObject.GetComponent<ChestItem>();
         chestItem.droppedByPlayer = false;
+
+        // Set collider to true
+        chestItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
     }
 
     /// <summary>
@@ -263,16 +251,31 @@ public class DropOnDestroy : MonoBehaviour
     }
 
     /// <summary>
-    /// Get the passive item details to spawn - return null if no passive item is to be spawned
+    /// Get the secondary passive item details to spawn - return null if no passive item is to be spawned
     /// </summary>
-    private PassiveItemDetailsSO GetPassiveItemDetailsToSpawn(int passiveItemNumber)
+    private PassiveItemDetailsSO GetSecondaryPassiveItemDetailsToSpawn(int passiveItemNumber)
     {
         if (passiveItemNumber == 0) return null;
 
         // Create an instance of the class used to select a random item from a list based on the relative 'ratios' of the items specified
-        RandomSpawnableObject<PassiveItemDetailsSO> passiveItemRandom = new RandomSpawnableObject<PassiveItemDetailsSO>(enemyPassiveItemDropList);
+        RandomSpawnableObject<PassiveItemDetailsSO> secondaryPassiveItemRandom = new RandomSpawnableObject<PassiveItemDetailsSO>(enemySecondaryPassiveItemDropList);
 
-        PassiveItemDetailsSO passiveItemDetails = passiveItemRandom.GetItem();
+        PassiveItemDetailsSO passiveItemDetails = secondaryPassiveItemRandom.GetItem();
+
+        return passiveItemDetails;
+    }
+
+    /// <summary>
+    /// Get the primary passive item details to spawn - return null if no passive item is to be spawned
+    /// </summary>
+    private PassiveItemDetailsSO GetPrimaryPassiveItemDetailsToSpawn(int passiveItemNumber)
+    {
+        if (passiveItemNumber == 0) return null;
+
+        // Create an instance of the class used to select a random item from a list based on the relative 'ratios' of the items specified
+        RandomSpawnableObject<PassiveItemDetailsSO> primaryPassiveItemRandom = new RandomSpawnableObject<PassiveItemDetailsSO>(enemyPrimaryPassiveItemDropList);
+
+        PassiveItemDetailsSO passiveItemDetails = primaryPassiveItemRandom.GetItem();
 
         return passiveItemDetails;
     }
