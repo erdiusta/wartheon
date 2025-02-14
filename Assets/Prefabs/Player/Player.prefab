@@ -2123,8 +2123,8 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 20
-  m_LinearDrag: 0
+  m_Mass: 1
+  m_LinearDrag: 0.1
   m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -2153,6 +2153,7 @@ MonoBehaviour:
   isClone: 0
   forcefieldTransform: {fileID: 0}
   levelUpAnimator: {fileID: 2946168106481843369}
+  levelUpDetails: {fileID: 11400000, guid: 40ba893ce07dd0b4c809a5726349ecc3, type: 2}
   playerDetails: {fileID: 0}
   healthEvent: {fileID: 0}
   health: {fileID: 0}
@@ -2196,10 +2197,10 @@ MonoBehaviour:
   specialMoveTwoDurationTimer: 0
   specialMoveThreeDurationTimer: 0
   keyCount: 0
+  previousSetIndex: 1
   branchMastery: {fileID: 0}
   weaponMastery: {fileID: 0}
   activeItemChestItem: {fileID: 0}
-  hasRingOfFortune: 0
   currentStrengthValue: 0
   currentConstitutionValue: 0
   currentDexterityValue: 0
@@ -2221,6 +2222,7 @@ MonoBehaviour:
   currentOffHandCriticalHitChance: 0
   currentMainHandCriticalHitDamage: 0
   currentOffHandCriticalHitDamage: 0
+  currentEvasivenessValue: 0
   currentLevel: 1
   currentGainedTotalExperiencePoints: 0
   currentBuildPoints: 0
@@ -2247,10 +2249,21 @@ MonoBehaviour:
   additionalActiveItemCharge: 0
   additionalMeleeAttackCoolDownModifier: 0
   additionalBowAttackCoolDownModifier: 0
+  additionalCoinIncreaserModifier: 0
+  additionalCoinIncreaseActivated: 0
   additionalLockpickingModifier: 0
   additionalDropChanceModifier: 0
+  additionalStaffElementalDamageModifier: 0
   additionalElementalDamageModifier: 0
   additionalNegativeStatusEffectNegatorModifier: 0
+  additinalNPCCostModifier: 0
+  thirtyPercentDamageAbsorbIsActive: 0
+  blindModifier: 0
+  additionalBlindMakerModifier: 0
+  hasRingOfFortune: 0
+  isImmunetoPoison: 0
+  isImmunetoFrost: 0
+  isImmunetoBlind: 0
   specialMoveParticlesSystem: {fileID: 0}
   currentWeaponSlotSetIndex: 1
   summonedEnemies: []
@@ -2263,6 +2276,7 @@ MonoBehaviour:
   playerCloneObject: {fileID: 0}
   playerSecondCloneObject: {fileID: 0}
   isCursed: 0
+  gemSkinBoostGainedDuringGemSkinActive: 0
   isBlind: 0
 --- !u!114 &3362413763628156882
 MonoBehaviour:
@@ -2576,8 +2590,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad9b2ed813db9ba4ead2574d93f6db80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockbackForce: 4
-  knockbackTimeWeight: 1.5
+  knockbackForce: 3.5
+  knockbackTimeWeight: 1.2
 --- !u!114 &9050973798060747845
 MonoBehaviour:
   m_ObjectHideFlags: 0

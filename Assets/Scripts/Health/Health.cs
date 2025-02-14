@@ -82,7 +82,7 @@ public class Health : MonoBehaviour
         // If player dies, clones should be destroyed immediately
         if (player != null)
         {
-            if (!Player.hasClone && player.isClone)
+            if (player.isDead)
             {
                 Destroy(gameObject);
             }
@@ -154,7 +154,7 @@ public class Health : MonoBehaviour
         if (isDamageable && !isRolling)
         {
             currentHealth -= damageAmount;
-            if (player != null)
+            if (player != null && !player.isClone)
             {
                 StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
             }
@@ -165,7 +165,7 @@ public class Health : MonoBehaviour
                 {
                     if (currentHealth > 0)
                     {
-                        getHitCoroutine = StartCoroutine(PlayerGetHitRoutine());
+                        //getHitCoroutine = StartCoroutine(PlayerGetHitRoutine());
                         PostHitImmunity();
                     }
                     else
@@ -234,7 +234,7 @@ public class Health : MonoBehaviour
         {
             currentHealth -= damageAmount;
 
-            if (player != null)
+            if (player != null && !player.isClone)
             {
                 StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
 
@@ -307,14 +307,14 @@ public class Health : MonoBehaviour
             player.animatePlayer.ResetAnimatonParameters();
             player.animator.SetBool(Settings.getHit, true);
             SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
-        }
-        else
-        {
-            player.animatePlayer.ResetAnimatonParameters();
-            player.animator.SetBool(Settings.death, true);
-        }
 
-        yield return new WaitForSeconds(0.4f);
+            yield return new WaitForSeconds(0.4f);
+        }
+        //else
+        //{
+        //    player.animatePlayer.ResetAnimatonParameters();
+        //    player.animator.SetBool(Settings.death, true);
+        //}
 
         player.animator.SetBool(Settings.getHit, false);
         getHitCoroutine = null;

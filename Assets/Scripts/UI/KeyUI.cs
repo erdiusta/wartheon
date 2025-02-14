@@ -8,6 +8,6 @@ public class KeyUI : MonoBehaviour
 
     private void Update()
     {
-        keyCountDisplayText.text = GameManager.Instance.GetPlayer().keyCount.ToString();
+        keyCountDisplayText.text = "x" + GameManager.Instance.GetPlayer().keyCount.ToString();
     }
 }

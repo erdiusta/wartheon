@@ -43,6 +43,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public GameObject bookView;
     public GameObject bookCover;
 
+    // Gameplay UI
+    public GameObject gamePlayUI;
+
     // Pop-ups
     public GameObject warningPopUp;
 
@@ -481,6 +484,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         if (pauseMenu.activeSelf) return;
 
+        if (!bookView.activeSelf) { gamePlayUI.SetActive(true); }
+
         if (zoomInFinished)
         {
             zoomInFinished = false;
@@ -510,11 +515,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             if (bookView.activeSelf)
             {
+                gamePlayUI.SetActive(true);
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
                 bookView.GetComponent<Animator>().SetTrigger(Settings.zoomOut);
             }
             else
             {
+                gamePlayUI.SetActive(false);
                 bookView.SetActive(true);
                 bookCover.SetActive(true);
                 glossaryBookOpen = true;

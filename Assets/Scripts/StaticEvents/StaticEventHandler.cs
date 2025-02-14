@@ -199,12 +199,20 @@ public static class StaticEventHandler
         OnBuildPointUsed?.Invoke(new BuildPointsArgs { unlockedBuildIconIndexNumber = unlockedBuildIconIndexNumber });
     }
 
-    // Build point gained
-    public static event Action OnBuildPointsGained;
+    // Level up
+    public static event Action OnLevelUp;
 
-    public static void CallBuildPointsGained()
+    public static void CallLevelUp()
     {
-        OnBuildPointsGained?.Invoke();
+        OnLevelUp?.Invoke();
+    }
+
+    // Exp point Gained
+    public static event Action OnExpGained;
+
+    public static void CallExpGained()
+    {
+        OnExpGained?.Invoke();
     }
 
     // Mob hovered

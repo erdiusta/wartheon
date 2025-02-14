@@ -48,6 +48,7 @@ public class Player : MonoBehaviour
     public bool isClone;
     public Transform forcefieldTransform;
     public Animator levelUpAnimator;
+    public LevelUpDetailsSO levelUpDetails;
 
     [HideInInspector] public PlayerDetailsSO playerDetails;
     [HideInInspector] public HealthEvent healthEvent;

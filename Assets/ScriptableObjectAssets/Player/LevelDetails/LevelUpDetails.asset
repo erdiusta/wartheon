@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cab9f186db4ebb478204bed29744c9e, type: 3}
+  m_Name: LevelUpDetails
+  m_EditorClassIdentifier: 
+  playerLevelDataList:
+  - playerLevel: 0
+    levelUpExpPointForNextLevel: 0
+  - playerLevel: 1
+    levelUpExpPointForNextLevel: 200
+  - playerLevel: 2
+    levelUpExpPointForNextLevel: 550
+  - playerLevel: 3
+    levelUpExpPointForNextLevel: 950
+  - playerLevel: 4
+    levelUpExpPointForNextLevel: 1500
+  - playerLevel: 5
+    levelUpExpPointForNextLevel: 2150
+  - playerLevel: 6
+    levelUpExpPointForNextLevel: 2900
+  - playerLevel: 7
+    levelUpExpPointForNextLevel: 3800
+  - playerLevel: 8
+    levelUpExpPointForNextLevel: 4900
+  - playerLevel: 9
+    levelUpExpPointForNextLevel: 6200
+  - playerLevel: 10
+    levelUpExpPointForNextLevel: 7125
+  - playerLevel: 11
+    levelUpExpPointForNextLevel: 8525
+  - playerLevel: 12
+    levelUpExpPointForNextLevel: 10050
+  - playerLevel: 13
+    levelUpExpPointForNextLevel: 11700
+  - playerLevel: 14
+    levelUpExpPointForNextLevel: 13475
+  - playerLevel: 15
+    levelUpExpPointForNextLevel: 15375
+  - playerLevel: 16
+    levelUpExpPointForNextLevel: 17400
+  - playerLevel: 17
+    levelUpExpPointForNextLevel: 19550
+  - playerLevel: 18
+    levelUpExpPointForNextLevel: 21825

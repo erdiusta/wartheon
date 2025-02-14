@@ -84,7 +84,10 @@ public class EnemyAI : MonoBehaviour
         waitForFixedUpdate = new WaitForFixedUpdate();
 
         // Reset player reference position
-        referencePosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
+        if (GameManager.Instance.GetPlayer() != null)
+        {
+            referencePosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
+        }
 
         // Reset attack move timer
         attackMoveTimer = enemy.enemyDetails.attackMoveBaseCooldown;
@@ -103,11 +106,17 @@ public class EnemyAI : MonoBehaviour
             // Move towards the locked target position
             enemy.movementToPosition.AttackMoveRigidbodyByPosition(lockedVector, moveSpeed * 2f);
 
-            // Check for collision with the player
-            if (IsCollidedWithPlayer())
-            {
-                StopDashing(); // Stop dashing if colliding with player
-            }
+            enemy.rb2D.mass = 4f;
+
+            //// Check for collision with the player
+            //if (IsCollidedWithPlayer())
+            //{
+            //    StopDashing(); // Stop dashing if colliding with player
+            //}
+        }
+        else
+        {
+            enemy.rb2D.mass = 1f;
         }
     }
 
@@ -185,6 +194,8 @@ public class EnemyAI : MonoBehaviour
             if (moveStatus == MoveStatus.Idle)
             {
                 Perform();
+
+                if (GameManager.Instance.GetPlayer() == null) return;
 
                 switch (enemyPhase)
                 {
@@ -265,6 +276,8 @@ public class EnemyAI : MonoBehaviour
 
     protected void Perform()
     {
+        if (GameManager.Instance.GetPlayer() == null || GameManager.Instance.GetPlayer().isDead) return;
+
         // If enemy is attacking process, don't get involved in AStar calculations
         if (isAttacking || enemy.isFiring) return;
 
@@ -350,11 +363,14 @@ public class EnemyAI : MonoBehaviour
     protected void Patrol()
     {
         // Check distance is too close to the player, reset patrol state
-        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
+        if(GameManager.Instance.GetPlayer() != null)
         {
-            enemyPhaseAtPreviousFrame = enemyPhase;
-            enemyPhase = EnemyPhase.Chase;
-            return;
+            if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
+            {
+                enemyPhaseAtPreviousFrame = enemyPhase;
+                enemyPhase = EnemyPhase.Chase;
+                return;
+            }
         }
 
         // Reset path rebuild cooldown timer
@@ -763,6 +779,16 @@ public class EnemyAI : MonoBehaviour
     public void Aim(out Vector3 playerDirectionVector, out Vector3 weaponDirection, out float weaponAngleDegrees, out float enemyAngleDegrees,
         out AimDirection enemyAimDirection)
     {
+        if (GameManager.Instance.GetPlayer().isDead || GameManager.Instance.GetPlayer() == null)
+        {
+            playerDirectionVector = Vector3.zero;
+            weaponDirection = Vector3.zero;
+            weaponAngleDegrees = 0f;
+            enemyAngleDegrees = 0f;
+            enemyAimDirection = 0;
+            return;
+        }
+
         // Player distance
         playerDirectionVector = GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position;
 

@@ -25,7 +25,7 @@ MonoBehaviour:
     strength: 4
     dexterity: 8
     constitution: 6
-    intelligence: 4
+    intelligence: 3
     agility: 7
   physicalResistance: 0.05
   fireResistance: 0
@@ -36,7 +36,7 @@ MonoBehaviour:
   darkResistance: 0
   playerHealthAmount: 80
   isImmuneAfterHit: 1
-  hitImmunityTime: 2
+  hitImmunityTime: 1
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
   specialMoveOneImage: {fileID: 21300000, guid: 10d7cf1878b58fc40ba9c90b8761b93a, type: 3}

@@ -119,7 +119,7 @@ public class DealContactDamage : MonoBehaviour
                                 }
 
                                 // Apply knockback
-                                //player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
+                                player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
                             }
                         }
                     }

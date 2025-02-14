@@ -40,6 +40,7 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetGemSkinSpecialMove += EnableGemSkinSkillImage;
             player.healthEvent.GetDeath += EnableDeathImage;
             player.healthEvent.OnDodged += HealthEvent_OnDodged;
+            player.healthEvent.OnBlocked += HealthEvent_OnBlocked;
 
             player.healthEvent.PoisonCured += DisablePoisonImage;
             player.healthEvent.AcidCured += DisableAcidImage;
@@ -63,6 +64,8 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetGemSkinSpecialMove += EnableGemSkinSkillImage;
             enemy.healthEvent.GetDeath += EnableDeathImage;
             enemy.healthEvent.GetShattered += EnableShatterLog;
+            enemy.healthEvent.OnDodged += HealthEvent_OnDodged;
+            enemy.healthEvent.OnBlocked += HealthEvent_OnBlocked;
 
             enemy.healthEvent.PoisonCured += DisablePoisonImage;
             enemy.healthEvent.AcidCured += DisableAcidImage;
@@ -89,6 +92,7 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetGemSkinSpecialMove -= EnableGemSkinSkillImage;
             player.healthEvent.GetDeath -= EnableDeathImage;
             player.healthEvent.OnDodged -= HealthEvent_OnDodged;
+            player.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
 
             player.healthEvent.PoisonCured -= DisablePoisonImage;
             player.healthEvent.AcidCured -= DisableAcidImage;
@@ -112,6 +116,8 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetGemSkinSpecialMove -= EnableGemSkinSkillImage;
             enemy.healthEvent.GetDeath -= EnableDeathImage;
             enemy.healthEvent.GetShattered -= EnableShatterLog;
+            enemy.healthEvent.OnDodged -= HealthEvent_OnDodged;
+            enemy.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
 
             enemy.healthEvent.PoisonCured -= DisablePoisonImage;
             enemy.healthEvent.AcidCured -= DisableAcidImage;
@@ -135,6 +141,20 @@ public class StatusManager : MonoBehaviour
         else
         {
             logRoutine = StartCoroutine(WriteLog("DODGED", Color.white));
+        }
+    }
+
+    private void HealthEvent_OnBlocked(HealthEvent healthEvent)
+    {
+        ClearLog();
+
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+        else
+        {
+            logRoutine = StartCoroutine(WriteLog("BLOCKED", Color.white));
         }
     }
 
@@ -408,7 +428,7 @@ public class StatusManager : MonoBehaviour
         statusLogText.transform.localScale = targetScale;
 
         // Wait for 0.5 seconds before finishing
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
 
         // Reset the text
         statusLogText.text = string.Empty;

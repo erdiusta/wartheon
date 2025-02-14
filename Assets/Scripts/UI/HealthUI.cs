@@ -1,13 +1,25 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
+using TMPro;
 
 [DisallowMultipleComponent]
 public class HealthUI : MonoBehaviour
 {
     Player player;
 
-    List<GameObject> healthHeartsList = new List<GameObject>();
-    List<GameObject> healthHalfHeartsList = new List<GameObject>();
+    #region Header OBJECT REFERENCES
+    [Space(10)]
+    [Header("OBJECT REFERENCES")]
+    #endregion Header
+    #region Tooltip
+    [Tooltip("Populate with the Image component of the child gameobject HealthImage")]
+    #endregion Tooltip
+    [SerializeField] Image healthImage;
+    #region Tooltip
+    [Tooltip("Populate with healthText")]
+    #endregion Tooltip
+    [SerializeField] TextMeshProUGUI healthText;
 
     private void Awake()
     {
@@ -27,72 +39,38 @@ public class HealthUI : MonoBehaviour
 
     private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {
-        SetHealthBar(healthEventArgs);
+        UpdateHealth(healthEventArgs);
     }
 
-    private void SetHealthBar(HealthEventArgs healthEventArgs)
+    private void UpdateHealth(HealthEventArgs healthEventArgs)
     {
-        ClearHealthBar();
-
-        // Instantiate heart image prefabs
-        int healthHeartCount = healthEventArgs.healthPercent * ((20 + player.currentConstitutionValue * 10)) % 20f > 10 ? 
-            Mathf.CeilToInt(healthEventArgs.healthPercent * (20 + player.currentConstitutionValue * 10) / 20f) : 
-            Mathf.FloorToInt(healthEventArgs.healthPercent * (20 + player.currentConstitutionValue * 10) / 20f);
-
-        int halfHeartCount;
-
-        // Instantiate half heart image prefabs
-        if (healthEventArgs.healthAmount >= 0f)
-        {
-            halfHeartCount = healthEventArgs.healthPercent * (20 + player.currentConstitutionValue * 10) % 20f <= 10 ? 1 : 0;
-        }
-        else
-        {
-            halfHeartCount = 0;
-        }
-
-        for (int i = 0; i < healthHeartCount; i++)
-        {
-            // Instantiate heart prefabs
-            GameObject heart = Instantiate(GameResources.Instance.heartPrefab, transform);
-
-            // Position
-            heart.GetComponent<RectTransform>().anchoredPosition = new Vector2(Settings.uiHeartSpacing * i, 0f);
-
-            healthHeartsList.Add(heart);
-        }
-
-        if (halfHeartCount > 0)
-        {
-            if (Mathf.FloorToInt(healthEventArgs.healthPercent * (20 + player.currentConstitutionValue * 10) % 20f) != 0)
-            {
-                // Instantiate half heart prefab if exists
-                GameObject halfHeart = Instantiate(GameResources.Instance.halfHeartPrefab, transform);
-
-                // Position
-                halfHeart.GetComponent<RectTransform>().anchoredPosition = new Vector2(Settings.uiHeartSpacing * healthHeartCount, 0f);
-
-                healthHeartsList.Add(halfHeart);
-            }
-            else if (healthEventArgs.healthAmount <= 0f)
-            {
-                foreach (GameObject halfHeartPrefab in healthHalfHeartsList)
-                {
-                    Destroy(halfHeartPrefab);
-                }
-
-                healthHalfHeartsList.Clear();
-            }
-        }
+        UpdateHealthBar();
+        UpdateHealthText();
     }
 
-    private void ClearHealthBar()
+    private void UpdateHealthText()
     {
-        foreach (GameObject heartIcon in healthHeartsList)
-        {
-            Destroy(heartIcon);
-        }
+        int health = player.health.GetCurrentHealth() < 0 ? 0 : player.health.GetCurrentHealth();
+        healthText.text = $"{health}/{player.health.GetMaximumHealth()}";
+    }
 
-        healthHeartsList.Clear();
+    private void UpdateHealthBar()
+    {
+        StartCoroutine(UpdateHealthBarRoutine());
+    }
+
+    /// <summary>
+    /// Animate health bar coroutine
+    /// </summary>
+    private IEnumerator UpdateHealthBarRoutine()
+    {
+        // Update availability bar
+        float barFill =  Mathf.Clamp((float)player.health.GetCurrentHealth() / (float)player.health.GetMaximumHealth(), 0, 1);
+
+        // Update bar fill
+        healthImage.transform.localScale = new Vector3(barFill, 1f, 1f);
+
+        yield return null;
+
     }
 }

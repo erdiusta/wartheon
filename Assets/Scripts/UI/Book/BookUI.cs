@@ -194,7 +194,7 @@ public class BookUI : MonoBehaviour
         StaticEventHandler.OnItemAddedToPassiveItemSlot += StaticEventHandler_OnItemAddedToPassiveItemSlot;
         StaticEventHandler.OnItemRemovedFromPassiveItemSlot += StaticEventHandler_OnItemRemovedFromPassiveItemSlot;
         StaticEventHandler.OnBuildPointUsed += StaticEventHandler_OnBuildPointUsed;
-        StaticEventHandler.OnBuildPointsGained += StaticEventHandler_OnBuildPointsGained;
+        StaticEventHandler.OnLevelUp += StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnPrimaryStatsChanged += StaticEventHandler_OnPrimaryStatsChanged;
     }
 
@@ -231,7 +231,7 @@ public class BookUI : MonoBehaviour
         StaticEventHandler.OnItemAddedToPassiveItemSlot -= StaticEventHandler_OnItemAddedToPassiveItemSlot;
         StaticEventHandler.OnItemRemovedFromPassiveItemSlot -= StaticEventHandler_OnItemRemovedFromPassiveItemSlot;
         StaticEventHandler.OnBuildPointUsed -= StaticEventHandler_OnBuildPointUsed;
-        StaticEventHandler.OnBuildPointsGained -= StaticEventHandler_OnBuildPointsGained;
+        StaticEventHandler.OnLevelUp -= StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnPrimaryStatsChanged -= StaticEventHandler_OnPrimaryStatsChanged;
     }
 
@@ -1594,7 +1594,7 @@ public class BookUI : MonoBehaviour
         UpdatePlayerStatInfo(player);
     }
 
-    private void StaticEventHandler_OnBuildPointsGained()
+    private void StaticEventHandler_OnLevelUp()
     {
         buildPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentBuildPoints.ToString();
     }

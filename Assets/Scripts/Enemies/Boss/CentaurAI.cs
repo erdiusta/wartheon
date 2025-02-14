@@ -233,7 +233,11 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
             // Lock-on player position during the start of precharge
             if (!chargeProcessStarted)
             {
-                lockedPosition = GameManager.Instance.GetPlayer().transform.position;
+                if (GameManager.Instance.GetPlayer() != null)
+                {
+                    lockedPosition = GameManager.Instance.GetPlayer().transform.position;
+                }
+
             }
 
             chargeProcessStarted = true;

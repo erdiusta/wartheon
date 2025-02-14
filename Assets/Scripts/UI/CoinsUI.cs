@@ -8,6 +8,6 @@ public class CoinsUI : MonoBehaviour
 
     private void Update()
     {
-        coinDisplayText.text = GameManager.Instance.GetPlayer().coins.GetCurrentCoin().ToString();
+        coinDisplayText.text = "x" + GameManager.Instance.GetPlayer().coins.GetCurrentCoin().ToString();
     }
 }

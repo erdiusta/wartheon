@@ -46676,6 +46676,7 @@ GameObject:
   - component: {fileID: 4716338610028615223}
   - component: {fileID: 9183617335226411885}
   - component: {fileID: 554938303889344163}
+  - component: {fileID: 1489624854237943964}
   m_Layer: 16
   m_Name: Enemy
   m_TagString: Enemy
@@ -46749,6 +46750,7 @@ MonoBehaviour:
   rightHandWeaponDamageHappened: 0
   leftHandWeaponDamageHappened: 0
   currentPhysicalResistance: 0
+  isBlind: 0
   hitFxParticles: {fileID: 5738290968065053144}
   headShotFxParticles: {fileID: 5575912466879800398}
 --- !u!210 &5050891164117682802
@@ -46827,8 +46829,8 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 20
-  m_LinearDrag: 0
+  m_Mass: 1
+  m_LinearDrag: 0.1
   m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -47296,6 +47298,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3152a0b0bab69846ad02b521e8e5289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1489624854237943964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7736189416814370986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dac50ad25df85544a94593917c031a7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  separationRadius: 0.5
+  separationStrength: 3
 --- !u!1 &8037039556400538667
 GameObject:
   m_ObjectHideFlags: 0

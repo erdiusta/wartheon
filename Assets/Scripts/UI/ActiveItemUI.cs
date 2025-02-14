@@ -7,7 +7,7 @@ public class ActiveItemUI : MonoBehaviour
     #region Header OBJECT REFERENCES
     [Space(10)]
     [Header("OBJECT REFERENCES")]
-    #endregion Header OBJECT REFERENCES
+    #endregion
     #region Tooltip
     [Tooltip("Populate with image component on the child ActiveItemImage gameobject")]
     #endregion Tooltip

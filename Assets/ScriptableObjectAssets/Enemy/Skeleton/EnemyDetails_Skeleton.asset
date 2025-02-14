@@ -20,7 +20,7 @@ MonoBehaviour:
   enemyType: 0
   movementDetails: {fileID: 11400000, guid: 6f633f705e9bde84ba5ee31559f34b80, type: 2}
   experiencePoint: 60
-  chaseDistance: 11
+  chaseDistance: 6
   hasAttackMove: 1
   attackMoveTriggerDistance: 4
   attackMoveEfficentDistance: 6
@@ -39,8 +39,8 @@ MonoBehaviour:
   waterResistance: 0
   airResistance: 0
   earthResistance: 0
-  lightResistance: 0
-  darkResistance: 0
+  lightResistance: -0.2
+  darkResistance: -0.2
   hasShield: 1
   deflectChance: 0.3
   dealtMeleeDamageMin: 14
@@ -97,6 +97,8 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
+      ratio: 4
+    - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
       ratio: 3

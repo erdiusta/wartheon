@@ -51,9 +51,13 @@ public class Destroyed : MonoBehaviour
             }
             else
             {
+                GameManager.Instance.GetPlayer().isDead = true;
                 GetComponent<PolygonCollider2D>().enabled = false;
-                gameObject.SetActive(false);
+                GameManager.Instance.GetPlayer().animatePlayer.ResetAnimatonParameters();
+                GameManager.Instance.GetPlayer().animator.SetBool(Settings.death, true);
+
                 SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.deathSoundEffect);
+                Destroy(gameObject, 1f);
             }
         }
         else
@@ -156,10 +160,12 @@ public class Destroyed : MonoBehaviour
             }
 
             enemy.isDead = true;
+            enemy.rb2D.mass = 1000f;
 
             // Gain Experience Upon Killing An Enemy
             int gainedExpFromEnemy = (int)(enemy.enemyDetails.experiencePoint * player.expGainModifier);
             player.currentGainedTotalExperiencePoints += gainedExpFromEnemy;
+            StaticEventHandler.CallExpGained();
 
             // Check if player levels-after killing the enemy
             int levelBeforeKillingEnemy = player.currentLevel;
@@ -210,81 +216,13 @@ public class Destroyed : MonoBehaviour
     private void LevelUpCheck(Player player, int levelBeforeKillingEnemy)
     {
         #region LevelUpExpThresholds
-        if (player.currentGainedTotalExperiencePoints >= 21825)
+        for (int i = 0; i < player.levelUpDetails.playerLevelDataList.Count; i++)
         {
-            player.currentLevel = 19;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 19550)
-        {
-            player.currentLevel = 18;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 17400)
-        {
-            player.currentLevel = 17;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 15375)
-        {
-            player.currentLevel = 16;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 13475)
-        {
-            player.currentLevel = 15;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 11700)
-        {
-            player.currentLevel = 14;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 10050)
-        {
-            player.currentLevel = 13;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 8525)
-        {
-            player.currentLevel = 12;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 7125)
-        {
-            player.currentLevel = 11;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 5850)
-        {
-            player.currentLevel = 10;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 4700)
-        {
-            player.currentLevel = 9;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 3675)
-        {
-            player.currentLevel = 8;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 2775)
-        {
-            player.currentLevel = 7;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 2000)
-        {
-            player.currentLevel = 6;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 1350)
-        {
-            player.currentLevel = 5;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 825)
-        {
-            player.currentLevel = 4;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 425)
-        {
-            player.currentLevel = 3;
-        }
-        else if (player.currentGainedTotalExperiencePoints >= 150)
-        {
-            player.currentLevel = 2;
-        }
-        else
-        {
-            player.currentLevel = 1;
+            if (player.currentLevel == player.levelUpDetails.playerLevelDataList[i].playerLevel &&
+                player.currentGainedTotalExperiencePoints >= player.levelUpDetails.playerLevelDataList[i].levelUpExpPointForNextLevel)
+            {
+                player.currentLevel++;
+            }
         }
         #endregion
 
@@ -293,8 +231,8 @@ public class Destroyed : MonoBehaviour
         {
             player.levelUpAnimator.SetTrigger(Settings.levelUp);
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.levelUpSoundEffect);
-            player.currentBuildPoints ++;
-            StaticEventHandler.CallBuildPointsGained();
+            player.currentBuildPoints++;
+            StaticEventHandler.CallLevelUp();
             player.health.SetMaximumHealth(player.health.GetMaximumHealth());
             player.UpdatePlayerHealth(1, true, true);
         }

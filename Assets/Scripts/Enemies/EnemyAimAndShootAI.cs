@@ -161,9 +161,12 @@ public class EnemyAimAndShootAI : EnemyAI
         yield return new WaitForSeconds(enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration);
 
         // Transition to patrol phase
-        if((Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) >= enemy.enemyDetails.chaseDistance))
+        if (GameManager.Instance.GetPlayer() != null)
         {
-            enemyPhase = EnemyPhase.Patrol;
+            if ((Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) >= enemy.enemyDetails.chaseDistance))
+            {
+                enemyPhase = EnemyPhase.Patrol;
+            }
         }
 
         waitAfterFiringRoutine = null;

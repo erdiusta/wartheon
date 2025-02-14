@@ -29,8 +29,6 @@ public class DamageDisplay : MonoBehaviour
         enemy.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
         enemy.healthEvent.OnCriticalHit += HealthEvent_OnCriticalHit;
         enemy.healthEvent.OnHeadShot += HealthEvent_OnHeadShot;
-        enemy.healthEvent.OnDodged += HealthEvent_OnDodged;
-        enemy.healthEvent.OnBlocked += HealthEvent_OnBlocked;
     }
 
     private void OnDisable()
@@ -38,8 +36,6 @@ public class DamageDisplay : MonoBehaviour
         enemy.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
         enemy.healthEvent.OnCriticalHit -= HealthEvent_OnCriticalHit;
         enemy.healthEvent.OnHeadShot -= HealthEvent_OnHeadShot;
-        enemy.healthEvent.OnDodged -= HealthEvent_OnDodged;
-        enemy.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
     }
 
 
@@ -65,16 +61,6 @@ public class DamageDisplay : MonoBehaviour
         {
             DisplayHeadShot();
         }
-    }
-
-    private void HealthEvent_OnDodged(HealthEvent healthEvent)
-    {
-        DisplayDodged();
-    }
-
-    private void HealthEvent_OnBlocked(HealthEvent healthEvent)
-    {
-        DisplayBlocked();
     }
 
     /// <summary>
@@ -107,28 +93,6 @@ public class DamageDisplay : MonoBehaviour
         headShotText.color = headShotColor;
         headShotText.text = "HEAD SHOT";
         AnimateText(headShotText, headShotDuration);
-    }
-
-    /// <summary>
-    /// Display dodged text
-    /// </summary>
-    private void DisplayDodged()
-    {
-        var deflectedText = Instantiate(damageDisplayTextPrefab, criticalTextSpawnPoint.position, Quaternion.identity, criticalTextSpawnPoint);
-        deflectedText.color = Color.white;
-        deflectedText.text = "DODGED";
-        AnimateText(deflectedText, criticalHitDuration);
-    }
-
-    /// <summary>
-    /// Display dodged text
-    /// </summary>
-    private void DisplayBlocked()
-    {
-        var deflectedText = Instantiate(damageDisplayTextPrefab, criticalTextSpawnPoint.position, Quaternion.identity, criticalTextSpawnPoint);
-        deflectedText.color = Color.white;
-        deflectedText.text = "BLOCKED";
-        AnimateText(deflectedText, criticalHitDuration);
     }
 
     private void AnimateText(TMP_Text text, float duration)

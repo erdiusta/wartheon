@@ -492,8 +492,6 @@ public class FireWeapon : MonoBehaviour
         {
             fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration * coolDownTimerModifier;
         }
-
-        Debug.Log("Weapon cooldown duration is " + fireRateCooldownTimer);
     }
 
     /// <summary>

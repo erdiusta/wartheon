@@ -36,7 +36,7 @@ MonoBehaviour:
   darkResistance: 0
   playerHealthAmount: 100
   isImmuneAfterHit: 1
-  hitImmunityTime: 2
+  hitImmunityTime: 1
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
   specialMoveOneImage: {fileID: 21300000, guid: 8382a280217407c45a5d379f1e1fa89a, type: 3}
