@@ -235,7 +235,7 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
             {
                 if (GameManager.Instance.GetPlayer() != null)
                 {
-                    lockedPosition = GameManager.Instance.GetPlayer().transform.position;
+                    lockedPosition = GameManager.Instance.GetPlayer().transform.position + new Vector3(0f, 0.5f, 0f);
                 }
 
             }
@@ -272,7 +272,7 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, lockedPosition, chargeSpeed * Time.deltaTime);
 
                 // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, lockedPosition) < 0.1f)  // Small threshold for accuracy
+                if (Vector3.Distance(transform.position, lockedPosition) < 0.02f)  // Small threshold for accuracy
                 {
                     // Exit the loop early if boss has reached the destination
                     break;
@@ -331,7 +331,7 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
                     if (firingDurationTimer >= 0)
                     {
                         firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(CentaurPhase.SpreadArrowShot);
+                        FireWeapon(false, CentaurPhase.SpreadArrowShot);
                     }
                     else
                     {

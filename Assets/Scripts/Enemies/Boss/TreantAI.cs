@@ -314,7 +314,7 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
                     if (firingDurationTimer >= 0)
                     {
                         firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(0, TreantPhase.RazorLeaf);
+                        FireWeapon(false, 0, TreantPhase.RazorLeaf);
                     }
                     else
                     {

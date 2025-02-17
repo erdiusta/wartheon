@@ -81,6 +81,44 @@ public class ProjectileDetailsSO : ScriptableObject
     #endregion
     public float projectileRotationSpeed = 1f;
 
+    #region Header PROJECTILE - BOMB & TRAP
+    [Space(10)]
+    [Header("PROJECTILE BOMB&TRAP PARAMETERS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The bomb check")]
+    #endregion
+    public bool isBomb = false;
+    #region Tooltip
+    [Tooltip("The trap check")]
+    #endregion
+    public bool isTrap = false;
+    #region Tooltip
+    [Tooltip("Check if has a lifetime")]
+    #endregion
+    public bool hasLifeTime = false;
+    #region Tooltip
+    [Tooltip("The blast radius of the item")]
+    #endregion
+    public float lifeDuration = 15;
+    #region Tooltip
+    [Tooltip("The blast radius of the item")]
+    #endregion
+    public float blastRadius = 1f;
+    #region Tooltip
+    [Tooltip("The countdown until the item burst")]
+    #endregion
+    public float countDown = 3f;
+    #region Tooltip
+    [Tooltip("The min burst damage each projectile deals")]
+    #endregion
+    public int burstDamageMin = 15;
+    #region Tooltip
+    [Tooltip("The max burst damage each projectile deals")]
+    #endregion
+    public int burstDamageMax = 25;
+
+
     #region Header PASSIVE
     [Space(10)]
     [Header("PROJECTILE PASSIVE EFFECT")]
@@ -210,6 +248,10 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip("The misc info for projectile")]
     #endregion Tooltip
     public bool isCataclysmProjectile = false;
+    #region Tooltip
+    [Tooltip("The laser check for projectile")]
+    #endregion Tooltip
+    public bool isLaser = false;
 
     #region Validation
 #if UNITY_EDITOR

@@ -195,14 +195,14 @@ PrefabInstance:
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 868459059, guid: f12547d97cd4fbb429dcfcbf70d950f1, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_MaskInteraction
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_WasSpriteAssigned
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1273379931405193202, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -475,7 +475,8 @@ MonoBehaviour:
   updateFrameNumber: 1
   enemyStartingSpeed: 0
   enemyPhase: 0
-  collideCircleRadius: 1
+  isAttacking: 0
+  isDashing: 0
 --- !u!114 &7910599782929872873 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7294595444096721567, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}

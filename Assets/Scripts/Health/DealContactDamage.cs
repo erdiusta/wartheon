@@ -147,7 +147,10 @@ public class DealContactDamage : MonoBehaviour
             }
             else
             {
-                receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
+                if (tag != Settings.playerWeapon)
+                {
+                    receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 using Random = UnityEngine.Random;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(ActiveWeapon))]
 [RequireComponent(typeof(SelectedActiveItem))]
@@ -21,6 +22,7 @@ public class FireWeapon : MonoBehaviour
     FireWeaponEvent fireWeaponEvent;
     WeaponFiredEvent weaponFiredEvent;
     int normalShotCounter = 0;
+    int laserFrameGauge;
 
     private void Awake()
     {
@@ -35,11 +37,13 @@ public class FireWeapon : MonoBehaviour
     private void OnEnable()
     {
         fireWeaponEvent.OnFireWeapon += FireWeaponEvent_OnFireWeapon;
+        //fireWeaponEvent.OnFocousedAim += FireWeaponEvent_OnFocousedAim;
     }
 
     private void OnDisable()
     {
         fireWeaponEvent.OnFireWeapon -= FireWeaponEvent_OnFireWeapon;
+        //fireWeaponEvent.OnFocousedAim -= FireWeaponEvent_OnFocousedAim;
     }
 
     private void Update()
@@ -57,6 +61,16 @@ public class FireWeapon : MonoBehaviour
                 }
             }
         }
+        else if (enemy != null)
+        {
+            if (activeWeapon.GetCurrentMainHandWeapon() != null)
+            {
+                if (fireRateCooldownTimer < 0 && activeWeapon.GetCurrentMainHandWeapon().onCooldown)
+                {
+                    activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -67,11 +81,45 @@ public class FireWeapon : MonoBehaviour
         WeaponFire(fireWeaponEventArgs);
     }
 
+    ///// <summary>
+    ///// Handle focus aim event
+    ///// </summary>
+    //private void FireWeaponEvent_OnFocousedAim(FireWeaponEvent fireWeaponEvent, FireFocusedShotEventArgs focusedShotEventArgs)
+    //{
+    //    lockedTargetVector = focusedShotEventArgs.lockedTargetVector;
+    //    lockedAngle = focusedShotEventArgs.lockedAngle;
+    //    lockedAimDirection = focusedShotEventArgs.lockedAimDirection;
+    //}
+
     /// <summary>
     /// Fire weapon
     /// </summary>
     private void WeaponFire(FireWeaponEventArgs fireWeaponEventArgs)
     {
+        // Laser beam check
+        if (tag == Settings.enemyTag)
+        {
+            // Handle laser beam as a continuousattack
+            if (fireWeaponEventArgs.isLaser)
+            {
+                // Ensure laser fires only once
+                if (!enemy.isFiring)
+                {
+                    enemy.isFiring = true;
+
+                    // Fire Laser Beam Projectile (only once)
+                    FireProjectile(fireWeaponEventArgs.belongingEnemy, fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector, 
+                        fireWeaponEventArgs.isLaser, fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase, 
+                        fireWeaponEventArgs.treantPhase, fireWeaponEventArgs.galvanusPhase, fireWeaponEventArgs.sepharothPhase);
+
+                    // Keep laser active for its full duration
+                    StartCoroutine(LaserDurationCoroutine());                 
+                }
+
+                return; // Prevent further processing for standard projectiles
+            }
+        }
+
         // Standard weapon routine
         if (!fireWeaponEventArgs.isActiveItem)
         {
@@ -87,12 +135,17 @@ public class FireWeapon : MonoBehaviour
             // Weapon fire
             if (fireWeaponEventArgs.fire)
             {
+                if (fireWeaponEventArgs.sepharothPhase == SepharothPhase.InvisibleAndMine)
+                {
+                    firePrechargeTimer = -3f; // Prevent charger issue for mine
+                }
+
                 // Test if weapon is ready to fire
                 if (IsWeaponReadyToFire())
                 {
-                    FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
-                        fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase, fireWeaponEventArgs.treantPhase,
-                        fireWeaponEventArgs.galvanusPhase);
+                    FireProjectile(fireWeaponEventArgs.belongingEnemy, fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector, 
+                        fireWeaponEventArgs.isLaser, fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase, 
+                        fireWeaponEventArgs.treantPhase,fireWeaponEventArgs.galvanusPhase, fireWeaponEventArgs.sepharothPhase);
                     ResetCooldownTimer(fireWeaponEventArgs.centaurPhase);
                     ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
                 }
@@ -101,8 +154,8 @@ public class FireWeapon : MonoBehaviour
         // Active item routine
         else
         {
-            FireProjectile(fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
-                fireWeaponEventArgs.headShotHappened, true);
+            FireProjectile(fireWeaponEventArgs.belongingEnemy, fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
+                fireWeaponEventArgs.isLaser, fireWeaponEventArgs.headShotHappened, true);
         }
     }
 
@@ -179,20 +232,43 @@ public class FireWeapon : MonoBehaviour
     }
 
     /// <summary>
+    /// Ensures the laser remains active for its full duration before allowing another shot.
+    /// </summary>
+    IEnumerator LaserDurationCoroutine()
+    {
+        float laserDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration; // Adjust this if necessary
+        yield return new WaitForSeconds(laserDuration);
+
+        ResetCooldownTimer();
+        activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
+        enemy.isFiring = false; // Allow firing again only after the laser ends
+    }
+
+    /// <summary>
     /// Set up ammo using an ammo gameObject and component from the object pool.
     /// </summary>
-    private void FireProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false, 
-        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None)
+    private void FireProjectile(Enemy belongingEnemy, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser, bool headShotHappened, bool isActiveItem = false, 
+        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None,
+        SepharothPhase sepharothPhase = SepharothPhase.None)
     {
         if (!isActiveItem)
         {
-            ProjectileDetailsSO currentProjectile = activeWeapon.GetCurrentProjectile();
+            ProjectileDetailsSO currentProjectile;
+
+            if (sepharothPhase == SepharothPhase.InvisibleAndMine)
+            {
+                currentProjectile = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSecondaryProjectile;
+            }
+            else
+            {
+                currentProjectile = activeWeapon.GetCurrentProjectile();
+            }
 
             if (currentProjectile != null)
             {
                 // Fire projectile routine
-                StartCoroutine(FireProjectileRoutine(currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, headShotHappened, 
-                    false, isPenetrationArrow, centaurPhase, treantPhase, galvanusPhase));
+                StartCoroutine(FireProjectileRoutine(belongingEnemy, currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, headShotHappened, 
+                    false, isPenetrationArrow, centaurPhase, treantPhase, galvanusPhase, sepharothPhase));
             }
         }
         else
@@ -218,9 +294,9 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Coroutine to spawn multiple ammo per shot if specified in the ammo details - PROJECTILE
     /// </summary>
-    IEnumerator  FireProjectileRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, 
-        Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, 
-        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None)
+    IEnumerator  FireProjectileRoutine(Enemy belongingEnemy, ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
+        bool isLaser = false, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, 
+        TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None)
     {      
         int projectileCounter = 0;
 
@@ -238,6 +314,16 @@ public class FireWeapon : MonoBehaviour
         }
         // GALVANUS - LIGHTNING
         else if (galvanusPhase == GalvanusPhase.Lightning)
+        {
+            projectilePerShot = 3;
+        }
+        // SEPHAROTH - LASER
+        else if (sepharothPhase == SepharothPhase.LaserBeam)
+        {
+            projectilePerShot = 2;
+        }
+        // SEPHAROTH - MINE
+        else if (sepharothPhase == SepharothPhase.InvisibleAndMine)
         {
             projectilePerShot = 3;
         }
@@ -282,10 +368,55 @@ public class FireWeapon : MonoBehaviour
             }
         }
 
+        Room currentRoom = GameManager.Instance.GetCurrentRoom();
+        Grid grid = currentRoom.instantiatedRoom.grid;
+
+        // Default position
+        Vector3 projectileSpawnPoint = activeWeapon.GetRightHandShootPosition();
+
         // Loop for number of projectile per shot
         while (projectileCounter < projectilePerShot)
         {
             projectileCounter++;
+
+            int selectedIndexNum = -1;
+
+            switch (projectileCounter)
+            {
+                case 2:
+                    if (sepharothPhase == SepharothPhase.LaserBeam)
+                    {
+                        aimAngle += 120;
+                        weaponAimAngle += 120;
+                    }
+                    else if (sepharothPhase == SepharothPhase.InvisibleAndMine)
+                    {
+                        // Selected second mine' position
+                        selectedIndexNum = Random.Range(0, currentRoom.spawnPositionArray.Length);
+                        Vector3Int selectedFirstSpawnPoint = new Vector3Int(currentRoom.spawnPositionArray[selectedIndexNum].x, currentRoom.spawnPositionArray[selectedIndexNum].y, 0);
+
+                        // Convert the cell position to world position
+                        projectileSpawnPoint = grid.CellToWorld(selectedFirstSpawnPoint);
+                    }
+                    break;
+                case 3:
+                    if (sepharothPhase == SepharothPhase.InvisibleAndMine)
+                    {
+                        // Selected thir mine' position
+                        selectAgain:
+                        int selectedSecondIndexNum = Random.Range(0, currentRoom.spawnPositionArray.Length);
+
+                        if (selectedSecondIndexNum == selectedIndexNum) goto selectAgain;
+
+                        Vector3Int selectedSecondSpawnPoint = new Vector3Int(currentRoom.spawnPositionArray[selectedSecondIndexNum].x, currentRoom.spawnPositionArray[selectedSecondIndexNum].y, 0);
+
+                        // Convert the cell position to world position
+                        projectileSpawnPoint = grid.CellToWorld(selectedSecondSpawnPoint);
+                    }
+                    break;
+                default:
+                    break;
+            }
 
             GameObject projectilePrefab;
 
@@ -321,8 +452,6 @@ public class FireWeapon : MonoBehaviour
 
             // Get Gameobject with IFireable component
             IFireable projectile;
-
-            Room currentRoom = GameManager.Instance.GetCurrentRoom();
 
             if (galvanusPhase == GalvanusPhase.Lightning)
             {
@@ -362,20 +491,34 @@ public class FireWeapon : MonoBehaviour
             }
             else
             {
-                projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetRightHandShootPosition(),
-                Quaternion.identity);
+                if (sepharothPhase != SepharothPhase.InvisibleAndMine)
+                {
+                    projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetRightHandShootPosition(), Quaternion.identity);
+                }
+                else
+                {
+                    projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, projectileSpawnPoint, Quaternion.identity);
+                }
+            }
+
+            if (isLaser)
+            {
+                Projectile spawnedProjectile = (Projectile)projectile;
+
+                spawnedProjectile.lockedTargetVector = weaponAimDirectionVector;
+                spawnedProjectile.lockedAngle = aimAngle;
             }
 
             // Initialize projectile
-            projectile.InitializeProjectile(headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, false, false, 
-                isPenetrationArrow, projectileCounter - 1, projectilePerShot, centaurPhase, treantPhase, galvanusPhase);
+            projectile.InitializeProjectile(belongingEnemy, headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, false, false, 
+                isPenetrationArrow, projectileCounter - 1, projectilePerShot, centaurPhase, treantPhase, galvanusPhase, sepharothPhase);
 
             // Wait for projectile per shot timegap
             yield return new WaitForSeconds(projectileSpawnInterval);
         }
 
         // Set weapon's onCooldown status to true for triggering Weapon status UI
-        activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
+        activeWeapon.GetCurrentMainHandWeapon().onCooldown = !isLaser ? true : false;
 
         // Call weapon fired event
         weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentMainHandWeapon(), true);

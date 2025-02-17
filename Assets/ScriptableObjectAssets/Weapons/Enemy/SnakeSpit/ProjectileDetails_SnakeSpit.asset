@@ -28,6 +28,14 @@ MonoBehaviour:
   projectileSpeedMax: 8
   projectileRange: 10
   projectileRotationSpeed: 1
+  isBomb: 0
+  isTrap: 0
+  hasLifeTime: 0
+  lifeDuration: 15
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
   hasAcid: 0
   acidEfficiency: 0
   isPoisonous: 1
@@ -36,17 +44,21 @@ MonoBehaviour:
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   hasCurseDamage: 0
   curseChance: 0
   projectileSpreadMin: 4
   projectileSpreadMax: 10
   projectileSpawnAmountMin: 1
-  projectileSpawnAmountMax: 2
-  projectileSpawnIntervalMin: 2
-  projectileSpawnIntervalMax: 5
+  projectileSpawnAmountMax: 1
+  projectileSpawnIntervalMin: 1
+  projectileSpawnIntervalMax: 3
   projectileImpactSoundEffect: {fileID: 0}
   isProjectileTrail: 0
   projectileTrailTime: 0
   projectileTrailMaterial: {fileID: 0}
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

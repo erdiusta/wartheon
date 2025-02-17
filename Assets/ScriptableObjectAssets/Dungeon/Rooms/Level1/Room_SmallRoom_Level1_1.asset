@@ -57,7 +57,6 @@ MonoBehaviour:
   - {x: -3, y: 3}
   - {x: 2, y: 4}
   - {x: 11, y: 3}
-  - {x: 11, y: 16}
   - {x: 2, y: 9}
   - {x: 2, y: 15}
   - {x: -5, y: 9}
@@ -71,6 +70,8 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: 6bf0ddf131d80cb4fab6782b836cf701, type: 2}
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 669eeea2e0efa024f81cb84e14941385, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: a1b9c68ed342cdc4b95427441b677f96, type: 2}
       ratio: 2
   roomEnemySpawnParametersList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}

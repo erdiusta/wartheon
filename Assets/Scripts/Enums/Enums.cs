@@ -90,6 +90,12 @@ public enum PassiveItemType
     VenomweaveVest
 }
 
+public enum ProjectileType
+{
+    Normal,
+    Laser
+}
+
 public enum BoomerangPhase
 {
     Aim,
@@ -298,7 +304,8 @@ public enum EnemyBehaviour
     PrepareAndDash,
     Centaur,
     Treant,
-    Galvanus
+    Galvanus,
+    Sepharoth
 }
 
 public enum EnemyType
@@ -343,6 +350,15 @@ public enum GalvanusPhase
     LightningBolt,
     DashAttack,
     Lightning
+}
+
+public enum SepharothPhase
+{
+    None,
+    Wait,
+    InvisibleAndMine,
+    SmearAttack,
+    LaserBeam
 }
 
 public enum BookPage

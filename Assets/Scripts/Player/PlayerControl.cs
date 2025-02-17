@@ -105,7 +105,8 @@ public class PlayerControl : MonoBehaviour
                     if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
                     {
                         // Trigger fire weapon event for precharge weapons
-                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser, 
+                            AimDirection.Right, 0f, 0f, Vector3.zero, false);
                     }
                 }
                 StartCoroutine(Stagger());
@@ -120,7 +121,8 @@ public class PlayerControl : MonoBehaviour
                     if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
                     {
                         // Trigger fire weapon event for precharge weapons
-                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser, 
+                            AimDirection.Right, 0f, 0f, Vector3.zero, false);
                     }
                 }
 
@@ -137,7 +139,8 @@ public class PlayerControl : MonoBehaviour
                     if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
                     {
                         // Trigger fire weapon event for precharge weapons
-                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+                        player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+                            AimDirection.Right, 0f, 0f, Vector3.zero, false);
                     }
 
                     if (frostCoroutine == null)
@@ -491,7 +494,8 @@ public class PlayerControl : MonoBehaviour
                 }
 
                 // Start precharge process (firePreviousFrame is false because firing hasn't happened yet)
-                player.fireWeaponEvent.CallFireWeaponEvent(true, true, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
+                player.fireWeaponEvent.CallFireWeaponEvent(true, true, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser, 
+                    playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
             }
         }
         // Fire for non-precharge weapons (fire once per press)
@@ -506,7 +510,8 @@ public class PlayerControl : MonoBehaviour
             }
 
             // Fire event (only once per press)
-            player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
+            player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+                playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
         }
 
         // Reset when fire button is released
@@ -519,7 +524,8 @@ public class PlayerControl : MonoBehaviour
             }
 
             // Stop firing
-            player.fireWeaponEvent.CallFireWeaponEvent(false, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
+            player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+                playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
         }
     }
 
@@ -651,7 +657,7 @@ public class PlayerControl : MonoBehaviour
                 // Trigger fire weapon event if item is treated as a projectile
                 else
                 {
-                    player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, true);
+                    player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, true);
                 }
             }
         }
@@ -678,7 +684,7 @@ public class PlayerControl : MonoBehaviour
     private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {
         // Trigger reset prechager mechanism in case a hit taken during the precharge
-        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+        player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
     }
 
     private void SwitchWeaponInput()
@@ -1116,7 +1122,7 @@ public class PlayerControl : MonoBehaviour
             IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, meteorStartsToFallPosition, Quaternion.identity);
 
             // Initialize projectile
-            projectile.InitializeProjectile(false, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, direction, false, true);
+            projectile.InitializeProjectile(null, false, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, direction, false, true);
 
             Projectile meteor = (Projectile)projectile;
             meteor.GetComponentInChildren<SpriteRenderer>().transform.eulerAngles = Vector3.zero;
@@ -1375,7 +1381,8 @@ public class PlayerControl : MonoBehaviour
         player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
 
         // Trigger fire weapon event
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, true);
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+            playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, true);
     }
 
     /// <summary>
@@ -1409,7 +1416,8 @@ public class PlayerControl : MonoBehaviour
         player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
 
         // Trigger fire weapon event
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, false, true);
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+            playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, false, true);
     }
 
     /// <summary>
@@ -1442,7 +1450,7 @@ public class PlayerControl : MonoBehaviour
                 }
 
                 // Try open with bobby pin process
-                if (player.selectedActiveItem?.GetCurrentActiveItem().activeItemDetails.activeItemName == "Bobby Pin" && chest.bobbyPinTried == false)
+                if (player.selectedActiveItem?.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.BobbyPin && chest.bobbyPinTried == false)
                 {
                     if (InputManager.Instance.activeItem.action.IsPressed())
                     {

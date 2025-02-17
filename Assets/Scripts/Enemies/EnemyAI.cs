@@ -64,8 +64,6 @@ public class EnemyAI : MonoBehaviour
     protected float firingIntervalTimer;
     protected float firingDurationTimer;
 
-    [SerializeField] float collideCircleRadius = 1f;
-
     protected virtual void Awake()
     {
         enemy = GetComponent<Enemy>();
@@ -193,6 +191,11 @@ public class EnemyAI : MonoBehaviour
         {
             if (moveStatus == MoveStatus.Idle)
             {
+                if (GameManager.Instance.GetPlayer() == null || GameManager.Instance.GetPlayer().isDead) return;
+
+                // If enemy is attacking process, don't get involved in AStar calculations
+                if (isAttacking || enemy.isFiring) return;
+
                 Perform();
 
                 if (GameManager.Instance.GetPlayer() == null) return;
@@ -276,13 +279,10 @@ public class EnemyAI : MonoBehaviour
 
     protected void Perform()
     {
-        if (GameManager.Instance.GetPlayer() == null || GameManager.Instance.GetPlayer().isDead) return;
-
-        // If enemy is attacking process, don't get involved in AStar calculations
-        if (isAttacking || enemy.isFiring) return;
-
         // Only process A Star path rebuild on certain frames to spread the load between enemies
         if (Time.frameCount % Settings.targetFrameRateToSpreadPathfindingOver != updateFrameNumber) return;
+
+        if (GameManager.Instance.GetPlayer() == null) return;
 
         if (tag == Settings.enemyTag)
         {
@@ -747,10 +747,62 @@ public class EnemyAI : MonoBehaviour
     }
 
     /// <summary>   
-    /// Fire the weapon
+    /// Fire the weapon - laser
     /// </summary>
-    protected void FireWeapon(CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None,
-        GalvanusPhase galvanusPhase = GalvanusPhase.None)
+    protected void FireWeapon(Vector3 lockedPlayerVector, float lockedEnemyAngle, AimDirection lockedAimDirection, bool isLaser = false, 
+        CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, 
+        SepharothPhase sepharothPhase = SepharothPhase.None)
+    {
+        Vector3 playerDirectionVector, weaponDirection;
+        float weaponAngleDegrees, enemyAngleDegrees;
+        AimDirection enemyAimDirection;
+
+        if (isLaser)
+        {
+            playerDirectionVector = lockedPlayerVector;
+            weaponDirection = lockedPlayerVector;
+            weaponAngleDegrees = lockedEnemyAngle;
+            enemyAngleDegrees = lockedEnemyAngle;
+            enemyAimDirection = lockedAimDirection;
+
+            // Trigger weapon aim methods
+            enemy.aimWeapon.Aim(enemyAimDirection, enemyAngleDegrees);
+            enemy.animateEnemy.ResetAimAnimationParameters();
+            enemy.animateEnemy.SetAimWeaponAnimationParameters(enemyAimDirection);
+
+            enemy.fireWeaponEvent.CallFocusedAimEvent(lockedPlayerVector, lockedEnemyAngle);
+
+            goto laserJump;
+        }
+
+        Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection);
+
+        // Skip ordinary aim procedures for locked shots like laser
+        laserJump:
+
+        // Only fire if enemy has a weapon
+        if (enemyDetails.enemyWeapon != null)
+        {
+            // Get projectile range
+            float enemyProjectileRange = enemyDetails.enemyWeapon.weaponCurrentProjectile.projectileRange;
+
+            // Is the player in range
+            if (playerDirectionVector.magnitude <= enemyProjectileRange)
+            {
+                // Does this enemy require line of sight to the player before firing?
+                if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
+
+                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false,
+                    false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase);
+            }
+        }
+    }
+
+    /// <summary>   
+    /// Fire the weapon - ordinary aim
+    /// </summary>
+    protected void FireWeapon(bool isLaser = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, 
+        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
@@ -770,8 +822,8 @@ public class EnemyAI : MonoBehaviour
                 // Does this enemy require line of sight to the player before firing?
                 if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
 
-                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false,
-                    false, false, centaurPhase, treantPhase, galvanusPhase);
+                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false,
+                    false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase);
             }
         }
     }
@@ -1048,30 +1100,6 @@ public class EnemyAI : MonoBehaviour
     {
         // Calculate a random weapon shoot interval
         return Random.Range(enemyDetails.firingIntervalMin, enemyDetails.firingIntervalMax);
-    }
-
-    // Method to check for collision with the player
-    private bool IsCollidedWithPlayer()
-    {
-        // Use a collider to check for collision with the player
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, collideCircleRadius);
-
-        foreach (var hitCollider in hitColliders)
-        {
-            if (hitCollider.CompareTag(Settings.playerTag)) // Ensure the player has the "Player" tag
-            {
-                return true; // Collision detected
-            }
-        }
-
-        return false; // No collision
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.blue;
-        Vector3 position = this == null ? Vector3.zero : transform.position;
-        Gizmos.DrawWireSphere(position, collideCircleRadius);
     }
 
     // Method to stop dashing

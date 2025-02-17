@@ -233,7 +233,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
             // Lock-on player position during the start of precharge
             if (!chargeProcessStarted)
             {
-                lockedPosition = GameManager.Instance.GetPlayer().transform.position;
+                lockedPosition = GameManager.Instance.GetPlayer().transform.position + new Vector3(0f, 0.5f, 0f);
             }
 
             chargeProcessStarted = true;
@@ -329,7 +329,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
                     if (firingDurationTimer >= 0)
                     {
                         firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(0, 0, GalvanusPhase.Lightning);
+                        FireWeapon(false, 0, 0, GalvanusPhase.Lightning);
                     }
                     else
                     {

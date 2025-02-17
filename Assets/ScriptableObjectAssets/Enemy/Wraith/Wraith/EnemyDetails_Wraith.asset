@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Wraith
   m_EditorClassIdentifier: 
   enemyName: Wraith
+  enemyDetails: 
   enemyCategory: 19
   enemyPrefab: {fileID: 7183228443647751644, guid: 913cc469d3c1a8a4bbf5516c97fbe315, type: 3}
   enemyType: 0
@@ -64,6 +65,7 @@ MonoBehaviour:
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 36fd7981b2c14794796cd69ffa707648, type: 2}
   roarSoundEffect: {fileID: 0}
+  chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 11400000, guid: 49b9c611a31cfaa4fb504722dc0a02e2, type: 2}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
@@ -82,7 +84,7 @@ MonoBehaviour:
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
   primaryPassiveItemsByLevelList:
-  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+  - dungeonLevel: {fileID: 11400000, guid: 2a9e0254a141aba41bdcd556b95beeb2, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
       ratio: 100

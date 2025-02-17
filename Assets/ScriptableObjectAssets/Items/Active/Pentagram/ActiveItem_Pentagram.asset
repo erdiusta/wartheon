@@ -23,7 +23,7 @@ MonoBehaviour:
   projectileChargeMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   activeItemShootEffect: {fileID: 0}
   activeItemSwingSoundEffect: {fileID: 0}
-  activeItemImpactSoundEffect: {fileID: 11400000, guid: 4ee5ca33b8f0fc144a35a5f9dd9f3273, type: 2}
+  activeItemImpactSoundEffect: {fileID: 11400000, guid: 558c5eabf9f97a64bb29e76ec881722e, type: 2}
   activeItemUseSoundEffect: {fileID: 0}
   hasNoProjectileNumberLimit: 0
   activeItemMaxCharge: 6
@@ -49,12 +49,14 @@ MonoBehaviour:
   acidEfficiency: 0
   isPoisonous: 0
   poisonChance: 0
-  hasBleedingDamage: 0
-  bleedingChance: 0
   hasStunDamage: 0
   stunChance: 0.2
-  hasSlowDamage: 0
-  slowChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
   isProjectileTrail: 0
   projectileTrailTime: 3
   projectileTrailMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}

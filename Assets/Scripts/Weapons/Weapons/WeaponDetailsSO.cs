@@ -141,12 +141,16 @@ public class WeaponDetailsSO : ScriptableObject
     public Vector3 weaponUpShootPosition;
     #region Tooltip
     [Tooltip("Weapon Down Shoot Position - the offset position for the end of the weapon from the sprite pivot pont")]
-    #endregion Tooltip
+    #endregion Tooltips
     public Vector3 weaponDownShootPosition;
     #region Tooltip
     [Tooltip("Weapon current projectile")]
     #endregion Tooltip
     public ProjectileDetailsSO weaponCurrentProjectile;
+    #region Tooltip
+    [Tooltip("Weapon secondary projectile if has")]
+    #endregion Tooltip
+    public ProjectileDetailsSO weaponSecondaryProjectile;
     #region Tooltip
     [Tooltip("Weapon shoot effect SO - contains particle effect parameters to be used in conjunction with the weaponShootEffectPrefab ")]
     #endregion Tooltip

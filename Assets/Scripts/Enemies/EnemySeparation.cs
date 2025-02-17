@@ -2,8 +2,15 @@ using UnityEngine;
 
 public class EnemySeparation : MonoBehaviour
 {
+    Enemy enemy;
+
     public float separationRadius = 0.6f; // Adjust based on enemy size
     public float separationStrength = 5f; // Strength of push force
+
+    private void Start()
+    {
+        enemy = GetComponent<Enemy>();
+    }
 
     private void Update()
     {
@@ -29,6 +36,9 @@ public class EnemySeparation : MonoBehaviour
         if (count > 0)
         {
             separationForce /= count; // Average out the force
+
+            if (enemy.isMaterializing || enemy.isDead) return;
+
             transform.position += (Vector3)(separationForce * separationStrength * Time.deltaTime);
         }
     }

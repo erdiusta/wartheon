@@ -2,7 +2,6 @@ using System.Collections;
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
-using static UnityEngine.EventSystems.EventTrigger;
 
 [DisallowMultipleComponent]
 public class Projectile : MonoBehaviour, IFireable
@@ -16,6 +15,7 @@ public class Projectile : MonoBehaviour, IFireable
     [HideInInspector] public Coroutine playerBlockCoroutine;
 
     Player player;
+    Enemy belongingEnemy;
     float projectileRange = 0f;
     float projectileSpeed;
     Vector3 fireDirectionVector;
@@ -42,6 +42,24 @@ public class Projectile : MonoBehaviour, IFireable
     int damageDone = 0;
     bool lightningStroke;
     bool isHittingWall; // Flag is for wall hit check for penetration arrow
+
+    // Laser features
+    [SerializeField] float angleSpeed = 10f;  // How fast the laser extends
+
+    float currentLength = 0f;  // Tracks how long the laser currently is
+    bool isLaserBeam;
+    float laserDuration;
+    float laserDurationOffset = 0.4f;
+    Transform laserStartPoint;
+    Vector3 targetPosition;
+
+    // Locked aim field
+    [HideInInspector] public Vector3 lockedTargetVector;
+    [HideInInspector] public float lockedAngle;
+    bool isLocked = false;
+
+    // Lifetime countdown
+    float lifeTimeCountdownTimer = 0f;
 
     private void Awake()
     {
@@ -72,20 +90,43 @@ public class Projectile : MonoBehaviour, IFireable
         {
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
+
+        if (isLaserBeam)
+        {
+            laserStartPoint = transform;
+        }
+
+        if (projectileDetails != null && projectileDetails.hasLifeTime)
+        {
+            lifeTimeCountdownTimer = projectileDetails.lifeDuration;
+        }
     }
 
     private void Start()
     {
+        player = GameManager.Instance.GetPlayer();
+
         if (projectileDetails != null)
         {
             damageDone = Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
         }
 
-        player = GameManager.Instance.GetPlayer();
+        if (isLaserBeam)
+        {
+            laserDuration = belongingEnemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration - laserDurationOffset;
+        }
     }
 
     private void Update()
     {
+        // Life time time reduces over time
+        lifeTimeCountdownTimer -= Time.deltaTime;
+
+        if (projectileDetails != null && projectileDetails.hasLifeTime && lifeTimeCountdownTimer < 0)
+        {
+            DisableProjectile();
+        }
+
         // Projectile charge effect
         if (projectileChargeTimer > 0f)
         {
@@ -122,6 +163,18 @@ public class Projectile : MonoBehaviour, IFireable
             }
         }
 
+        if (isLaserBeam)
+        {
+            UpdateLaser();
+        }
+        else
+        {
+            MoveStandardProjectile();
+        }     
+    }
+
+    private void MoveStandardProjectile()
+    {
         // Don't move projectile if movement has been overriden - e.g. this projectile is part of an projectile pattern
         if (!overrideProjectileMovement)
         {
@@ -141,9 +194,12 @@ public class Projectile : MonoBehaviour, IFireable
                 {
                     if (activeItemDetails == null)
                     {
-                        DisableProjectile();
+                        if (!projectileDetails.isTrap)
+                        {
+                            DisableProjectile();
+                        }
                     }
-                    else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb && activeItemDetails.activeItemType != ActiveItemType.Incendiary 
+                    else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb && activeItemDetails.activeItemType != ActiveItemType.Incendiary
                         && activeItemDetails.activeItemType != ActiveItemType.Dummy)
                     {
                         DisableProjectile();
@@ -171,6 +227,12 @@ public class Projectile : MonoBehaviour, IFireable
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // **If this is a laser, don't disable it on collision**
+        if (projectileDetails != null && isLaserBeam)
+        {
+            return;  // Let the laser continue without being disabled
+        }
+
         // If already colliding with something return
         if (isColliding) return;
 
@@ -182,6 +244,15 @@ public class Projectile : MonoBehaviour, IFireable
         if (collision.tag == Settings.playerTag)
         {
             Player player = collision.GetComponent<Player>();
+
+            if (projectileDetails.isTrap)
+            {
+                if (explosionRoutine == null)
+                {
+                    explosionRoutine = StartCoroutine(ExplosionRoutine(true));
+                    return;
+                }
+            }
 
             int diceRoll = Random.Range(1, 101);
             bool isProjectileDodged = 100 - player.currentEvasivenessValue * 100 < diceRoll ? true : false;
@@ -472,7 +543,7 @@ public class Projectile : MonoBehaviour, IFireable
         player.animator.SetBool(Settings.isIdle, true);
     }
 
-    private void DealDamage(Collider2D collision, bool activeItem = false)
+    private void DealDamage(Collider2D collision, bool activeItem = false, bool isLaser = false)
     {
         Health health = collision.GetComponent<Health>();
 
@@ -483,7 +554,7 @@ public class Projectile : MonoBehaviour, IFireable
             {
                 StartCoroutine(ColliderTimeThreshold());
             }
-            else
+            else if(!isLaser) // Laser do not need this
             {
                 isColliding = true;
             }
@@ -668,6 +739,12 @@ public class Projectile : MonoBehaviour, IFireable
                 inflictedDamage = damageDone;
             }
 
+            // **Apply Time.deltaTime Scaling ONLY for Laser Beams**
+            if (isLaserBeam)
+            {
+                inflictedDamage = Mathf.Max(1, inflictedDamage); // Ensure at least 1 damage per frame
+            }
+
             health.TakeDamage(inflictedDamage, transform.position, health.transform.position, polygonCollider2D, headShotHappened);
         }
     }
@@ -683,10 +760,10 @@ public class Projectile : MonoBehaviour, IFireable
     /// Initialize the projectile being fired - using the projectileDetails, the aimangle, weaponAngle, and weaponAimDirectionVector. If this 
     /// projectile is part of a pattern the projectile movement can be overriden by setting overrideAmmoMovement to true - PROJECTILE
     /// </summary>
-    public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
+    public void InitializeProjectile(Enemy belongingEnemy, bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
         float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false, bool fallingFromSkies = false,
         bool isPenetrationArrow = false, int projectileCounter = 0, int projectilesPerShot = 0,CentaurPhase centaurPhase = CentaurPhase.None,
-        TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None)
+        TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None)
     {
         #region Projectile
 
@@ -698,8 +775,14 @@ public class Projectile : MonoBehaviour, IFireable
         // Set penetration arrow bool
         this.isPenetrationArrow = isPenetrationArrow;
 
+        // Set laser status
+        isLaserBeam = projectileDetails.isLaser;
+
         // Initialize isColliding
         isColliding = false;
+
+        // Set belonging enemy if it is
+        this.belongingEnemy = belongingEnemy;
 
         // Set fire direction
         SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, projectilesPerShot, centaurPhase, treantPhase, galvanusPhase);
@@ -1040,6 +1123,127 @@ public class Projectile : MonoBehaviour, IFireable
                 StartCoroutine(DisableProcess(0.2f));
             }
         }
+    }
+
+    private void UpdateLaser()
+    {
+        laserDuration -= Time.deltaTime;
+
+        if (laserDuration <= 0)
+        {
+            DisableProjectile();
+            return;
+        }
+
+        Vector3 startPos = laserStartPoint.position;
+        Vector3 direction = new Vector3();
+        float startAngle = 0f;
+
+        if (!isLocked)
+        {
+            direction = lockedTargetVector;
+            startAngle = lockedAngle;
+            isLocked = true;
+        }
+        else
+        {
+            // Update direction for raycast
+            direction = HelperUtilities.GetDirectionVectorFromAngle(lockedAngle);
+        }
+
+        // Check if the laser collides with something
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, Mathf.Infinity, layerMask);
+
+        float maxDistance = hit.collider != null ? Vector2.Distance(startPos, hit.point + new Vector2(0f, 0.5f)) : Vector2.Distance(startPos, targetPosition);
+
+        // **If the player is inside the beam, apply continuous damage**
+        if (hit.collider != null && hit.collider.CompareTag(Settings.playerTag))
+        {
+            // Status checks
+            CheckPoisonStatus(player);
+            CheckAcidStatus(player);
+            CheckFrostStatus(player);
+            CheckStunStatus(player);
+            CheckCurseStatus(player);
+            CheckBlindStatus(player);
+
+            DealLaserDamage(hit.collider);
+        }
+
+        // **Smoothly Extend Laser Length**
+        spriteRenderer.transform.localScale = new Vector3(maxDistance * 5, spriteRenderer.transform.localScale.y, 1f);
+
+        // Update laser start points transform
+        laserStartPoint = transform;
+
+        // Check Player's location for beam
+        bool isBeamAbovePlayer = IsBeamAbovePlayer(ref direction);
+
+        // Change angle towards player position
+        if (isBeamAbovePlayer)
+        {
+            lockedAngle -= angleSpeed * Time.deltaTime;
+        }
+        else
+        {
+            lockedAngle += angleSpeed * Time.deltaTime;
+        }
+
+        // **Rotate Laser Sprite**
+        spriteRenderer.transform.rotation = Quaternion.Euler(0f, 0f, lockedAngle);
+
+        // Tweak with sorting order
+        Vector3 playerDirectionVector = Vector3.zero;
+
+        if (GameManager.Instance.GetPlayer() != null)
+        {
+            playerDirectionVector = GameManager.Instance.GetPlayer().GetPlayerPosition() - belongingEnemy.transform.position;
+        }
+
+        float enemyAngleDegrees = HelperUtilities.GetAngleFromVector(playerDirectionVector);
+        AimDirection enemyAimDirection = HelperUtilities.GetAimDirection(lockedAngle);
+
+        if (enemyAimDirection == AimDirection.Up || enemyAimDirection == AimDirection.UpRight || enemyAimDirection == AimDirection.UpLeft)
+        {
+            spriteRenderer.sortingOrder = -1;
+        }
+        else
+        {
+            spriteRenderer.sortingOrder = 3;
+        }
+    }
+
+    private bool IsBeamAbovePlayer(ref Vector3 direction)
+    {
+        Vector3 playerPos = Vector3.zero;
+
+        if (GameManager.Instance.GetPlayer() != null)
+        {
+            playerPos = GameManager.Instance.GetPlayer().transform.position + new Vector3(0f, 0.5f, 0f);
+        }
+
+        Vector3 laserPos = laserStartPoint.position;
+        Vector3 laserDirection = direction.normalized; // Laser's firing direction
+
+        // Calculate a perpendicular vector to the laser's direction
+        Vector3 perpendicularVector = new Vector2(-laserDirection.y, laserDirection.x);
+
+        // Check if the player is above or below the laser line
+        float positionCheck = Vector2.Dot(playerPos - laserPos, perpendicularVector);
+
+        if (positionCheck > 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private void DealLaserDamage(Collider2D collider)
+    {
+        DealDamage(collider, false, true);
     }
 
     IEnumerator DisableProcess(float disableDuration)
@@ -1512,35 +1716,48 @@ public class Projectile : MonoBehaviour, IFireable
         yield return new WaitForFixedUpdate();
     }
 
-    IEnumerator ExplosionRoutine()
+    IEnumerator ExplosionRoutine(bool isEnemy = false)
     {
         Animator animator = GetComponent<Animator>();
         animator.SetTrigger("burst");
-        SoundEffectManager.Instance.PlaySoundEffect(activeItemDetails.activeItemImpactSoundEffect);
-        Explosion();
 
-        if (activeItemDetails.activeItemType != ActiveItemType.Incendiary)
+        if (isEnemy)
         {
+            SoundEffectManager.Instance.PlaySoundEffect(projectileDetails.projectileImpactSoundEffect);
+            Explosion(true);
+
             yield return new WaitForSeconds(0.5f);
 
             DisableProjectile();
         }
         else
         {
-            BlastArea blastArea = transform.GetChild(1).GetComponentInChildren<BlastArea>();
-            blastArea.SetBlastAreaTiling(); // Adjust the scale of the blast area
-            blastArea.TriggerBurnAnimation(); // Trigger burn animation on separate object
+            SoundEffectManager.Instance.PlaySoundEffect(activeItemDetails.activeItemImpactSoundEffect);
+            Explosion();
 
-            yield return new WaitForSeconds(5f);
+            if (activeItemDetails.activeItemType != ActiveItemType.Incendiary)
+            {
+                yield return new WaitForSeconds(0.5f);
 
-            DisableProjectile();
+                DisableProjectile();
+            }
+            else
+            {
+                BlastArea blastArea = transform.GetChild(1).GetComponentInChildren<BlastArea>();
+                blastArea.SetBlastAreaTiling(); // Adjust the scale of the blast area
+                blastArea.TriggerBurnAnimation(); // Trigger burn animation on separate object
+
+                yield return new WaitForSeconds(5f);
+
+                DisableProjectile();
+            }
         }
     }
 
     /// <summary>
     /// Based on circle radius of the bomb, detect all enemy colliders for damage
     /// </summary>
-    public void Explosion()
+    public void Explosion(bool isEnemy = false)
     {
         StaticEventHandler.CallCameraShakeEvent(4, 0.6f);
 
@@ -1548,29 +1765,59 @@ public class Projectile : MonoBehaviour, IFireable
         {
             if (collider.GetType() == typeof(PolygonCollider2D))
             {
-                // Don't hit yourself if player is also in the collider list
-                if (collider.tag == Settings.playerTag) continue;
-
-                if (collider.tag == Settings.enemyTag)
+                if (isEnemy)
                 {
-                    Enemy enemy = collider.GetComponent<Enemy>();
+                    // Don't hit yourself if player is also in the collider list
+                    if (collider.tag == Settings.enemyTag) continue;
 
-                    int inflictedDamage = CalculateDamageAmount(enemy);
-                    enemy.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
-
-                    CheckAcidStatus(enemy, true);
-                    CheckStunStatus(enemy, true);
-
-                    if (!enemy.enemyDetails.hasKnockbackResistance && enemy.GetComponent<Health>().currentHealth > 0)
+                    if (collider.tag == Settings.playerTag)
                     {
-                        enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                        Player player = collider.GetComponent<Player>();
+
+                        int inflictedDamage = CalculateDamageAmount(null, true);
+                        player.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, player.transform.position, false);
+
+                        CheckAcidStatus(player);
+                        CheckStunStatus(player);
+
+                        // Apply knockback
+                        player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
+                    }
+                }
+                else
+                {
+                    // Don't hit yourself if player is also in the collider list
+                    if (collider.tag == Settings.playerTag) continue;
+
+                    if (collider.tag == Settings.enemyTag)
+                    {
+                        Enemy enemy = collider.GetComponent<Enemy>();
+
+                        int inflictedDamage = CalculateDamageAmount(enemy);
+                        enemy.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+
+                        CheckAcidStatus(enemy, true);
+                        CheckStunStatus(enemy, true);
+
+                        if (!enemy.enemyDetails.hasKnockbackResistance && enemy.GetComponent<Health>().currentHealth > 0)
+                        {
+                            enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
+                        }
                     }
                 }
             }
             else
             {
-                collider.GetComponent<Health>().TakeDamage(Random.Range(activeItemDetails.burstDamageMin, activeItemDetails.burstDamageMax),
-                    transform.position, collider.transform.position, false);
+                if (isEnemy)
+                {
+                    collider.GetComponent<Health>().TakeDamage(Random.Range(projectileDetails.burstDamageMin, projectileDetails.burstDamageMax),
+                        transform.position, collider.transform.position, false);
+                }
+                else
+                {
+                    collider.GetComponent<Health>().TakeDamage(Random.Range(activeItemDetails.burstDamageMin, activeItemDetails.burstDamageMax),
+                        transform.position, collider.transform.position, false);
+                }
             }
         }
     }
@@ -1578,15 +1825,31 @@ public class Projectile : MonoBehaviour, IFireable
     /// <summary>
     /// Calculate damage amount
     /// </summary>
-    private int CalculateDamageAmount(Enemy enemy)
+    private int CalculateDamageAmount(Enemy enemy, bool isEnemy = false)
     {
-        // Damage produced by player
-        int damageDone = Random.Range(activeItemDetails.burstDamageMin, activeItemDetails.burstDamageMax);
+        int damageDone = 0;
+        int inflictedDamage = 0;
+        Health health;
 
-        // Damage inflicted to enemy after deducting enemy armor
-        Health enemyHealth = enemy.GetComponent<Health>();
+        if (isEnemy)
+        {
+            // Damage produced by enemy
+            damageDone = Random.Range(projectileDetails.burstDamageMin, projectileDetails.burstDamageMax);
 
-        int inflictedDamage = (int)(damageDone * (1 - enemy.currentPhysicalResistance));
+            // Damage inflicted to player after deducting player armor
+            health = player.GetComponent<Health>();
+            inflictedDamage = (int)(damageDone * (1 - player.currentPhysicalResistanceValue));
+        }
+        else
+        {
+            // Damage produced by player
+            damageDone = Random.Range(activeItemDetails.burstDamageMin, activeItemDetails.burstDamageMax);
+
+            // Damage inflicted to enemy after deducting enemy armor
+            health = enemy.GetComponent<Health>();
+
+            inflictedDamage = (int)(damageDone * (1 - enemy.currentPhysicalResistance));
+        }
 
         return inflictedDamage;
     }

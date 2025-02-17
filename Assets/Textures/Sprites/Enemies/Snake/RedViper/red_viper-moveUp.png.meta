@@ -152,12 +152,12 @@ TextureImporter:
       name: red_viper-moveUp_0
       rect:
         serializedVersion: 2
-        x: 8
-        y: 0
-        width: 21
-        height: 29
+        x: 7
+        y: 5
+        width: 22
+        height: 40
       alignment: 9
-      pivot: {x: 0.5, y: 0}
+      pivot: {x: 0.5, y: 0.3}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -173,12 +173,12 @@ TextureImporter:
       name: red_viper-moveUp_1
       rect:
         serializedVersion: 2
-        x: 39
-        y: 0
-        width: 19
-        height: 28
+        x: 36
+        y: 5
+        width: 22
+        height: 40
       alignment: 9
-      pivot: {x: 0.5, y: 0}
+      pivot: {x: 0.5, y: 0.32}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -194,12 +194,12 @@ TextureImporter:
       name: red_viper-moveUp_2
       rect:
         serializedVersion: 2
-        x: 72
-        y: 0
-        width: 21
-        height: 29
+        x: 69
+        y: 5
+        width: 22
+        height: 40
       alignment: 9
-      pivot: {x: 0.5, y: 0}
+      pivot: {x: 0.5, y: 0.35}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -215,12 +215,12 @@ TextureImporter:
       name: red_viper-moveUp_3
       rect:
         serializedVersion: 2
-        x: 103
-        y: 0
-        width: 21
-        height: 28
+        x: 101
+        y: 5
+        width: 22
+        height: 40
       alignment: 9
-      pivot: {x: 0.5, y: 0}
+      pivot: {x: 0.5, y: 0.32}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

@@ -25,10 +25,10 @@ public class ProjectilePattern : MonoBehaviour, IFireable
     }
 
     // FOR PROJECTILE
-    public void InitializeProjectile(bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
+    public void InitializeProjectile(Enemy belongingEnemy, bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
         float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement, bool fallingFromSkies = false, bool isPenetrationArrow = false,
         int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None,
-        GalvanusPhase galvanusPhase = GalvanusPhase.None)
+        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None)
     {
         this.projectileDetails = projectileDetails;
         this.projectileSpeed = projectileSpeed;
@@ -45,7 +45,7 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         // Loop through all child ammo and initialise it
         foreach (Projectile projectile in projectileArray)
         {
-            projectile.InitializeProjectile(false, projectileDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true);
+            projectile.InitializeProjectile(belongingEnemy, false, projectileDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true);
         }
 
         // Set ammo charge timer - this will hold the ammo briefly

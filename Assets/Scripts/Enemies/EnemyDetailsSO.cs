@@ -101,7 +101,7 @@ public class EnemyDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Enemy starting armor amount")]
     #endregion
-    public int physicalResistance = 0;
+    public float physicalResistance = 0;
     #region Tooltip
     [Tooltip("Enemy fire resistance value")]
     #endregion
@@ -244,6 +244,10 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("The sound effect for this enemy's roar")]
     #endregion
     public SoundEffectSO roarSoundEffect;
+    #region Tooltip
+    [Tooltip("The sound effect for this enemy's charge")]
+    #endregion
+    public SoundEffectSO chargeSoundEffect;
     #region Tooltip
     [Tooltip("The sound effect for this enemy to attack")]
     #endregion

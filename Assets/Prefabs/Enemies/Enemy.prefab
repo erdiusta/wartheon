@@ -46751,6 +46751,7 @@ MonoBehaviour:
   leftHandWeaponDamageHappened: 0
   currentPhysicalResistance: 0
   isBlind: 0
+  isMaterializing: 0
   hitFxParticles: {fileID: 5738290968065053144}
   headShotFxParticles: {fileID: 5575912466879800398}
 --- !u!210 &5050891164117682802
@@ -46763,7 +46764,7 @@ SortingGroup:
   m_Enabled: 1
   m_SortingLayerID: -257139871
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_SortAtRoot: 0
 --- !u!212 &962553851605136546
 SpriteRenderer:
@@ -46806,7 +46807,7 @@ SpriteRenderer:
   m_SortingLayerID: -257139871
   m_SortingLayer: 3
   m_SortingOrder: 2
-  m_Sprite: {fileID: -288758098, guid: e0bdefa6b2c614240a7227baa7ab04f6, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -46978,7 +46979,6 @@ MonoBehaviour:
   enemyPhase: 0
   isAttacking: 0
   isDashing: 0
-  collideCircleRadius: 1
 --- !u!114 &2505844984895068139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47311,7 +47311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   separationRadius: 0.5
-  separationStrength: 3
+  separationStrength: 2
 --- !u!1 &8037039556400538667
 GameObject:
   m_ObjectHideFlags: 0

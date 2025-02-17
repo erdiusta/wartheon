@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2092ef68715c84a45bec5bf989732ff4
+guid: c1c563751b9c3be42bcab5b98da4e3c6
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -43,17 +43,17 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 16
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteMeshType: 0
+  alignment: 9
+  spritePivot: {x: 0, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 3, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
-  spriteTessellationDetail: -1
+  spriteTessellationDetail: 0
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -147,128 +147,22 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: laser_beam-Sheet_0
-      rect:
-        serializedVersion: 2
-        x: 13
-        y: 79
-        width: 7
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4f8c5fccf78de3f4c836ae09ab53f026
-      internalID: 1046179085
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: laser_beam-Sheet_1
-      rect:
-        serializedVersion: 2
-        x: 45
-        y: 65
-        width: 7
-        height: 28
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e6247a9924d7bce4fa174f95f4fcc009
-      internalID: -211853664
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: laser_beam-Sheet_2
-      rect:
-        serializedVersion: 2
-        x: 77
-        y: 54
-        width: 7
-        height: 39
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ca487c31289e0104085fff99bfda9618
-      internalID: -127006059
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: laser_beam-Sheet_3
-      rect:
-        serializedVersion: 2
-        x: 109
-        y: 39
-        width: 7
-        height: 54
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6b9344a9435f5774086813b4b5f68765
-      internalID: 193282369
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: laser_beam-Sheet_4
-      rect:
-        serializedVersion: 2
-        x: 141
-        y: 24
-        width: 7
-        height: 69
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bdf1fa9b408fdac4682b87d80cbde2e2
-      internalID: 1862934341
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
+    sprites: []
     outline: []
-    physicsShape: []
+    physicsShape:
+    - - {x: -7, y: -3.5}
+      - {x: -7, y: 3.5}
+      - {x: 7, y: 3.5}
+      - {x: 7, y: -3.5}
     bones: []
-    spriteID: be9105c138a54be4087555363be8bc64
-    internalID: 0
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      laser_beam-Sheet_0: 1046179085
-      laser_beam-Sheet_1: -211853664
-      laser_beam-Sheet_2: -127006059
-      laser_beam-Sheet_3: 193282369
-      laser_beam-Sheet_4: 1862934341
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

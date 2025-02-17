@@ -61,6 +61,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool leftHandWeaponDamageHappened;
     [HideInInspector] public float currentPhysicalResistance;
     [HideInInspector] public bool isBlind;
+    [HideInInspector] public bool isMaterializing;
 
     public ParticleSystem hitFxParticles;
     public ParticleSystem headShotFxParticles;
@@ -219,6 +220,8 @@ public class Enemy : MonoBehaviour
 
     IEnumerator MaterializeEnemy()
     {
+        isMaterializing = true;
+
         // Disable collider, Movement AI and Weapon AI
         EnemyEnable(false);
 
@@ -227,6 +230,9 @@ public class Enemy : MonoBehaviour
 
         // Enable collider, Movement AI and Weapon AI
         EnemyEnable(true);
+
+        // Materializing completed
+        isMaterializing = false;
     }
 
     private void EnemyEnable(bool isEnabled)

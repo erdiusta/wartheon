@@ -160,7 +160,6 @@ public class Destroyed : MonoBehaviour
             }
 
             enemy.isDead = true;
-            enemy.rb2D.mass = 1000f;
 
             // Gain Experience Upon Killing An Enemy
             int gainedExpFromEnemy = (int)(enemy.enemyDetails.experiencePoint * player.expGainModifier);

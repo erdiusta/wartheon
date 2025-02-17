@@ -49,10 +49,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a42ab75f5a3331e4991d9544ef54a187, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectileType: 0
   trailRenderer: {fileID: 2893936929755227308}
   layerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 65536
+  growthSpeed: 10
 --- !u!212 &6316016757709079695
 SpriteRenderer:
   m_ObjectHideFlags: 0

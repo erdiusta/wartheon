@@ -5,6 +5,8 @@ public class EnemyAimAndShootAI : EnemyAI
 {
     Coroutine waitAfterFiringRoutine;
 
+    bool isFired;
+
     protected override void Awake()
     {
         base.Awake();
@@ -130,9 +132,10 @@ public class EnemyAimAndShootAI : EnemyAI
                                 enemy.animateEnemy.ResetAnimatonParameters();
                                 enemy.animateEnemy.SetAttackAnimationParameters();
 
-                                if (!GameManager.Instance.GetPlayer().onStealth)
+                                if (!GameManager.Instance.GetPlayer().onStealth && !isFired)
                                 {
                                     FireWeapon();
+                                    isFired = true; // Make sure it doesn't fire consecutive projectiles
                                 }
 
                                 if (waitAfterFiringRoutine == null)
@@ -145,8 +148,10 @@ public class EnemyAimAndShootAI : EnemyAI
                                 // Reset timers
                                 firingIntervalTimer = WeaponShootInterval();
                                 firingDurationTimer = WeaponShootDuration();
+                                isFired = false;
                             }
                         }
+
                         break;
 
                     default:
