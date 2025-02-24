@@ -80,7 +80,7 @@ MonoBehaviour:
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    enemyHealthAmount: 400
+    enemyHealthAmount: 150
   - dungeonLevel: {fileID: 11400000, guid: 2a9e0254a141aba41bdcd556b95beeb2, type: 2}
     enemyHealthAmount: 400
   isImmuneAfterHit: 1

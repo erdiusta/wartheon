@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ActiveItem_OracleCompass
   m_EditorClassIdentifier: 
   activeItemName: Oracle's Compass
+  activeItemDetails: It creates an arrow to point the boss room located.
   activeItemType: 7
   activeItemSprite: {fileID: 937129936, guid: 6b829dbac15e3aa42a8f4587c6d770e7, type: 3}
   activeItemAnimatorController: {fileID: 9100000, guid: dcdfa3af5f858624a92f694a7e7ff71f, type: 2}
@@ -48,12 +49,14 @@ MonoBehaviour:
   acidEfficiency: 0
   isPoisonous: 0
   poisonChance: 0
-  hasBleedingDamage: 0
-  bleedingChance: 0
   hasStunDamage: 0
   stunChance: 0
-  hasSlowDamage: 0
-  slowChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
   isProjectileTrail: 0
   projectileTrailTime: 3
   projectileTrailMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}

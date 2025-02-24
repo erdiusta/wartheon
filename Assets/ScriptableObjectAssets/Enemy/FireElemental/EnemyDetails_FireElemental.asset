@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_FireElemental
   m_EditorClassIdentifier: 
   enemyName: Fire Elemental
+  enemyDetails: 
   enemyCategory: 4
   enemyPrefab: {fileID: 7183228443647751644, guid: 8fea7a9db8fde704dab71124ec6d56b5, type: 3}
   enemyType: 0
@@ -29,7 +30,7 @@ MonoBehaviour:
   isEnemyBoss: 0
   isSummonedMinion: 0
   hasAnimator: 0
-  elementalBias: 0
+  elementalBias: 1
   elementalForgeRate: 1
   enemyMinionDetails: {fileID: 0}
   physicalResistance: 0
@@ -64,6 +65,7 @@ MonoBehaviour:
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 7dc4ed292175f0446af2d154c13685b2, type: 2}
   roarSoundEffect: {fileID: 0}
+  chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}

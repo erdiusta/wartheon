@@ -11,6 +11,10 @@ public class ActiveItemDetailsSO : ScriptableObject
     [Tooltip("Active item name")]
     #endregion Tooltip
     public string activeItemName;
+    #region Tooltip
+    [Tooltip("Active item details")]
+    #endregion Tooltip
+    public string activeItemDetails;
     public ActiveItemType activeItemType = ActiveItemType.Generic;
 
     #region Header ITEM SPRITE, PREFAB & MATERIALS

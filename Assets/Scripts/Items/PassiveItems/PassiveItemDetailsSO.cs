@@ -12,6 +12,10 @@ public class PassiveItemDetailsSO : ScriptableObject
     #endregion Tooltip
     public string passiveItemName;
     #region Tooltip
+    [Tooltip("Passive item details")]
+    #endregion Tooltip
+    public string passiveItemDetails;
+    #region Tooltip
     [Tooltip("The sprite for the item - the sprite should have the 'generate physics shape' option selected ")]
     #endregion Tooltip
     public Sprite passiveItemSprite;

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Nexarion
   m_EditorClassIdentifier: 
   enemyName: Nexarion
-  enemyDetails: Demonic Creature With Firing Multiple Projectles. It Can Stun You.
+  enemyDetails: Demonic Creature With Firing Multiple Projectiles. It Can Stun You.
     No Elemental Bias.
   enemyCategory: 7
   enemyPrefab: {fileID: 7183228443647751644, guid: 3d2778eb92f63c542b2252f7e2d1fb72, type: 3}
@@ -66,6 +66,7 @@ MonoBehaviour:
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 88c84bb85bc16ff47bf83c6ed6d9b4af, type: 2}
   roarSoundEffect: {fileID: 0}
+  chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}

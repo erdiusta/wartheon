@@ -102,12 +102,16 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public GameObject healthBarContainer;
 
     [HideInInspector] public GameObject healthBar;
+    Coroutine healthBarCoroutine;
+
     [HideInInspector] public GameState gameState;
     [HideInInspector] public GameState previousGameState;
     [HideInInspector] public Decoy decoy;
     [HideInInspector] public int exploredRoomCount = 0;
 
     Coroutine introductionTextRoutine;
+    bool bossHealthInitializationOnProcess;
+    float invisibleTimer = 0f;
     const int ROOM_CONST = 6;
     Room currentRoom;
     Room previousRoom;
@@ -151,6 +155,12 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [HideInInspector] public Color darkColor2 = new Color(0.6784314f, 0.01568628f, 0.5607843f);
 
     [HideInInspector] public Color passiveItemColor = new Color(0f, 0.7f, 1f);
+
+    // Health Bar Materials
+    [Header("HEALTH BAR MATERIALS")]
+    [Space(10)]
+    [SerializeField] Sprite standardSprite;
+    [SerializeField] Sprite flashSprite;
 
     protected override void Awake()
     {
@@ -427,7 +437,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         previousGameState = GameState.gameStarted;
         gameState = GameState.gameStarted;
 
-        healthBar = healthBarContainer.transform.GetChild(1).GetChild(1).GetChild(0).gameObject;
+        healthBar = healthBarContainer.transform.GetChild(0).GetChild(0).gameObject;
 
         bookCover.SetActive(false);
         bookView.SetActive(false);
@@ -456,14 +466,15 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         if (EnemySpawner.Instance.isBossInstantiated)
         {
-            bossEnemy = EnemySpawner.Instance.GetBoss();
-            healthBarContainer.SetActive(true);
-            healthBarContainer.GetComponentInChildren<TextMeshProUGUI>().text = bossEnemy.enemyDetails.enemyName;
+            if (!bossHealthInitializationOnProcess)
+            {
+                StartCoroutine(EnemyHealthBarInitialization());
+            }
         }
         else
         {
             healthBarContainer.GetComponentInChildren<TextMeshProUGUI>().text = string.Empty;
-            healthBar.transform.localScale = new Vector3(-1f, 1f, 1f);
+            healthBar.transform.localScale = new Vector3(1f, 1f, 1f);
             healthBarContainer.SetActive(false);
         }
 
@@ -478,6 +489,42 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             player.UpdateCurrentHandlingValues();
             StaticEventHandler.CallPrimaryStatsChangedEvent();
         }
+    }
+
+    IEnumerator EnemyHealthBarInitialization()
+    {
+        bossHealthInitializationOnProcess = true;
+
+        float completeInvisibleDuration = 1.5f;
+
+        bossEnemy = EnemySpawner.Instance.GetBoss();
+        healthBarContainer.SetActive(true);
+        healthBarContainer.GetComponentInChildren<TextMeshProUGUI>().text = bossEnemy.enemyDetails.enemyName;
+
+        // Become invisible
+        while (invisibleTimer < completeInvisibleDuration)
+        {
+            invisibleTimer += Time.deltaTime;
+
+            float newAlpha = 0.2f; // Default to start value
+
+            if (invisibleTimer > 1.2f) newAlpha = 1f;
+            else if (invisibleTimer > 0.9f) newAlpha = 0.8f;
+            else if (invisibleTimer > 0.6f) newAlpha = 0.6f;
+            else if (invisibleTimer > 0.3f) newAlpha = 0.4f;
+
+            // Apply alpha change
+            Image barImage = healthBarContainer.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
+            Color color = barImage.color;
+            color.a = newAlpha;
+            barImage.color = color;
+
+            yield return null;
+        }
+
+        yield return null;
+
+        bossHealthInitializationOnProcess = false;
     }
 
     private void HandleBook()
@@ -867,7 +914,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         string messageText = "LEVEL " + (currentDungeonLevelListIndex + 1).ToString() + "\n\n" + dungeonLevelList[currentDungeonLevelListIndex].
             levelName.ToUpper();
 
-        yield return StartCoroutine(DisplayMessageRoutine(messageText, Color.white, 2f));
+        yield return StartCoroutine(DisplayMessageRoutine(messageText, Color.yellow, 2f));
 
         GetPlayer().playerControl.EnablePlayer();
 
@@ -927,7 +974,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         // Display level completed
         yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! \n\nYOU'VE SURVIVED THIS DUNGEON " +
-            "LEVEL", Color.white, 5f));
+            "LEVEL", Color.yellow, 5f));
 
         // Fade out canvas
         yield return StartCoroutine(Fade(1f, 0f, 2f, new Color(0f, 0f, 0f, 0.4f)));
@@ -974,9 +1021,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         // Display game won
         yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE DEFEATED THE DUNGEON", 
-            Color.white, 3f));
+            Color.green, 3f));
 
-        yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.white, 0f));
+        yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.yellow, 0f));
 
         // Set game state to restart game
         gameState = GameState.restartGame;
@@ -1007,9 +1054,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         // Display game lost
         yield return StartCoroutine(DisplayMessageRoutine("BAD LUCK " + player.playerDetails.playerCharacterName + 
-            "! YOU HAVE SUCCUMBED TO THE DUNGEON", Color.white, 2f));
+            "! YOU HAVE\nSUCCUMBED TO THE DUNGEON", Color.red, 2f));
 
-        yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.white, 0f));
+        yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.yellow, 0f));
 
         // Set game state to restart game
         gameState = GameState.restartGame;
@@ -1091,14 +1138,37 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             if (enemy.enemyDetails.isEnemyBoss)
             {
-                healthBar.transform.localScale = new Vector3(healthPercent * -1f, 1f, 1f);
-
-                if (enemy.health.GetCurrentHealth() <= 0f)
+                if (healthBarCoroutine != null)
                 {
-                    healthBar.transform.localScale = new Vector3(0f, 1f, 1f);
+                    StopCoroutine(healthBarCoroutine);
                 }
+
+                healthBarCoroutine = StartCoroutine(SmoothHealthBarChange(healthPercent));
             }
         }
+    }
+
+    IEnumerator SmoothHealthBarChange(float targetValue)
+    {
+        float duration = 1f; // Adjust duration as needed
+        float elapsed = 0f;
+        float startValue = healthBar.transform.localScale.x;
+
+        // Apply sprite change
+        Image barImage = healthBarContainer.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
+        barImage.sprite = flashSprite;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float newValue = Mathf.Lerp(startValue, targetValue, elapsed / duration);
+            healthBar.transform.localScale = new Vector3(newValue, 1f, 1f);
+
+            yield return null;
+        }
+
+        barImage.sprite = standardSprite;
+        healthBar.transform.localScale = new Vector3(targetValue, 1f, 1f);
     }
 
     public void GoToWeaponSetWithIndex(int setIndex)
@@ -1407,7 +1477,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Boomerang)
                 {
                     weaponClassText.text = "Strikes And Return, Useful";
-                    hitSpeedText.text = "AoE DamageFor Stunning Enemies";
+                    hitSpeedText.text = "For Stunning Enemies";
                 }
                 else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Hourglass)
                 {

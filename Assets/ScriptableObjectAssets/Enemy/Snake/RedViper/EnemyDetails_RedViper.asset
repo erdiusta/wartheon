@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_RedViper
   m_EditorClassIdentifier: 
   enemyName: Red Viper
+  enemyDetails: 
   enemyCategory: 13
   enemyPrefab: {fileID: 7183228443647751644, guid: d16cb3bd4aa0ee44089ddf7671f2d61a, type: 3}
   enemyType: 0
@@ -64,6 +65,7 @@ MonoBehaviour:
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 36fd7981b2c14794796cd69ffa707648, type: 2}
   roarSoundEffect: {fileID: 0}
+  chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 11400000, guid: 49b9c611a31cfaa4fb504722dc0a02e2, type: 2}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}

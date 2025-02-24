@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: ActiveItem_Shiruken
   m_EditorClassIdentifier: 
   activeItemName: Shiruken
+  activeItemDetails: It is a couple of ninja stars. It is useful when in need of
+    quick throwing projectiles to enemies.
   activeItemType: 3
   activeItemSprite: {fileID: 146081717, guid: 4d563ae87f5c23344b1b1439b8e4d1bd, type: 3}
   activeItemAnimatorController: {fileID: 9100000, guid: 44080774a435b074684da1f27d54cb13, type: 2}
@@ -49,12 +51,14 @@ MonoBehaviour:
   acidEfficiency: 0
   isPoisonous: 0
   poisonChance: 0
-  hasBleedingDamage: 1
-  bleedingChance: 0.2
   hasStunDamage: 0
   stunChance: 0
-  hasSlowDamage: 0
-  slowChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
   isProjectileTrail: 1
   projectileTrailTime: 0.75
   projectileTrailMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}

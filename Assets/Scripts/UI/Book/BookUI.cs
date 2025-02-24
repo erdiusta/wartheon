@@ -1209,7 +1209,7 @@ public class BookUI : MonoBehaviour
             if (activeSlot.activeUnlocked == true && activeSlot.activeItemDetails.activeItemType == activeHoverArgs.activeItemType)
             {
                 activesTitleText.text = activeSlot.activeItemDetails.activeItemName;
-                activesDetailsText.text = "passiveSlot.passiveItemDetails.passiveItemName;";
+                activesDetailsText.text = activeSlot.activeItemDetails.activeItemDetails;
             }
         }
     }

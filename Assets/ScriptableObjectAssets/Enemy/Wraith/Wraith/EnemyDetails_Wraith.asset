@@ -30,7 +30,7 @@ MonoBehaviour:
   isEnemyBoss: 0
   isSummonedMinion: 0
   hasAnimator: 0
-  elementalBias: 6
+  elementalBias: 5
   elementalForgeRate: 0.4
   enemyMinionDetails: {fileID: 0}
   physicalResistance: 0
