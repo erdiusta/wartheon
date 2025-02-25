@@ -1,4 +1,4 @@
-using Cinemachine;
+using Unity.Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,7 +26,7 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
         Transform playerTransform = GameManager.Instance.GetPlayer().transform;
 
         // Populate player as cinemachine camera target
-        CinemachineVirtualCamera cinemachineVirtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
+        CinemachineCamera cinemachineVirtualCamera = GetComponentInChildren<CinemachineCamera>();
         cinemachineVirtualCamera.Follow = playerTransform;
 
         // Get dungeonmap camera

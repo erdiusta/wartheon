@@ -1,4 +1,4 @@
-using Cinemachine;
+using Unity.Cinemachine;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -16,8 +16,8 @@ public class Minimap : MonoBehaviour
         playerTransform = GameManager.Instance.GetPlayer().transform;
 
         // Populate player as cinemachine camera target
-        CinemachineVirtualCamera cinemachineVirtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
-        cinemachineVirtualCamera.Follow = playerTransform;
+        CinemachineCamera cinemachineCamera = GetComponentInChildren<CinemachineCamera>();
+        cinemachineCamera.Follow = playerTransform;
 
         // Set minimap player icon
         SpriteRenderer spriteRenderer = minimapPlayer.GetComponent<SpriteRenderer>();

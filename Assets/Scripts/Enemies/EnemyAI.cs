@@ -1031,7 +1031,7 @@ public class EnemyAI : MonoBehaviour
 
     public IEnumerator KnockbackRoutine()
     {
-        enemy.rb2D.velocity = CalculateKnockback();
+        enemy.rb2D.linearVelocity = CalculateKnockback();
 
         yield return waitForFixedUpdate;
 

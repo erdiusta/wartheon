@@ -52,7 +52,7 @@ public class MovementToPosition : MonoBehaviour
     /// </summary>
     public void MoveRigidbodyByPosition(Vector2 unitVector, float moveSpeed)
     {
-        rb2D.velocity = unitVector * moveSpeed;
+        rb2D.linearVelocity = unitVector * moveSpeed;
     }
 
     /// <summary>

@@ -17,6 +17,6 @@ public class Idle : MonoBehaviour
     public void StopVelocity()
     {
         // Ensure the rb collision detection is set to continuous
-        rb2D.velocity = Vector2.zero;
+        rb2D.linearVelocity = Vector2.zero;
     }
 }

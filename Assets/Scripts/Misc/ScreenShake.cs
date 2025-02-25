@@ -1,17 +1,17 @@
 using UnityEngine;
-using Cinemachine;
+using Unity.Cinemachine;
 using System;
 
 public class ScreenShake : MonoBehaviour
 {
-    CinemachineVirtualCamera virtualCamera;
+    CinemachineCamera virtualCamera;
     CinemachineBasicMultiChannelPerlin noise;
 
     private void Awake()
     {
-        virtualCamera = GetComponent<CinemachineVirtualCamera>();
+        virtualCamera = GetComponent<CinemachineCamera>();
 
-        noise = virtualCamera.GetComponentInChildren<CinemachineBasicMultiChannelPerlin>();
+        noise = virtualCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
 
         // If still not found, log an error
         if (noise == null)
@@ -41,7 +41,7 @@ public class ScreenShake : MonoBehaviour
     {
         if (noise != null)
         {
-            noise.m_AmplitudeGain = intensity;
+            noise.AmplitudeGain = intensity;
             Invoke("StopShaking", duration);
         }
     }
@@ -50,7 +50,7 @@ public class ScreenShake : MonoBehaviour
     {
         if (noise != null)
         {
-            noise.m_AmplitudeGain = 0f;
+            noise.AmplitudeGain = 0f;
         }
     }
 }

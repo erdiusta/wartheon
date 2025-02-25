@@ -94,12 +94,12 @@ public class MovementByVelocity : MonoBehaviour
         // Third check if enemy is on knockback status
         if (player.moveStatus == MoveStatus.Stagger)
         {
-            rb2D.velocity = CalculateKnockback();
+            rb2D.linearVelocity = CalculateKnockback();
             return;
         }
 
         // If none of the above conditions are met, perform regular move
-        rb2D.velocity = MovementInput * moveSpeed;
+        rb2D.linearVelocity = MovementInput * moveSpeed;
     }
 
     /// <summary>
@@ -108,7 +108,7 @@ public class MovementByVelocity : MonoBehaviour
     public void MoveRigidbody(Vector2 moveDirection, float moveSpeed)
     {
         // Ensure the rb collision detection is set to continuous
-        rb2D.velocity = moveDirection * moveSpeed;
+        rb2D.linearVelocity = moveDirection * moveSpeed;
     }
 
     /// <summary>
