@@ -4,6 +4,7 @@ public class Decoy : MonoBehaviour
 {
     public ActiveItemDetailsSO activeItemDetails;
     public Health health;
+    public HealthEvent healthEvent;
 
     [HideInInspector] public SpriteRenderer spriteRenderer;
 
@@ -12,6 +13,7 @@ public class Decoy : MonoBehaviour
     private void Awake()
     {
         health = GetComponent<Health>();
+        healthEvent = GetComponent<HealthEvent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 

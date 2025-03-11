@@ -195,6 +195,14 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public float circleRadius = 0.8f;
     #region Tooltip
+    [Tooltip("Select box length amount if weapon is a melee thrust weapon")]
+    #endregion Tooltip
+    public float boxLength = 1.2f;
+    #region Tooltip
+    [Tooltip("Select box height amount if weapon is a melee thrust weapon")]
+    #endregion Tooltip
+    public float boxHeight = 2.6f;
+    #region Tooltip
     [Tooltip("Check if the weapon is physical damaged weapon or not")]
     #endregion Tooltip
     public bool hasPhysicalDamage = false;
@@ -226,10 +234,6 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Check if melee weapon has slash fx")]
     #endregion
     public bool hasSwing = false;
-    #region Tooltip
-    [Tooltip("Check if melee weapon has sweep fx")]
-    #endregion
-    public bool hasSweep = false;
     #region Tooltip
     [Tooltip("Check if melee weapon has thrust fx")]
     #endregion

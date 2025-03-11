@@ -22,10 +22,10 @@ MonoBehaviour:
   bowRuntimeAnimatorController: {fileID: 9100000, guid: 2f0039af75146a34a9a3d7e35b4a2498, type: 2}
   staffRuntimeAnimatorController: {fileID: 9100000, guid: df21a8a2bf475674abb15acf8da22795, type: 2}
   primaryStats:
-    strength: 6
-    dexterity: 5
+    strength: 7
+    dexterity: 7
     constitution: 8
-    intelligence: 3
+    intelligence: 5
     agility: 5
   physicalResistance: 0.1
   fireResistance: 0
@@ -87,6 +87,8 @@ MonoBehaviour:
   startingWeaponList:
   - {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
   - {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
+  - {fileID: 11400000, guid: b415640f0d1ca4d41b24898c8eab10bd, type: 2}
+  - {fileID: 11400000, guid: dc70bba435344054aa98ff671fae1024, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: 3640f47ca78384741a1cfa06c932e212, type: 3}
   playerHandSprite: {fileID: 21300000, guid: 61f9f1056a5486644b029259a89f6cce, type: 3}
   playerBookSprite: {fileID: 992082748, guid: a12edb5d6b0f71549bcb7df602017777, type: 3}

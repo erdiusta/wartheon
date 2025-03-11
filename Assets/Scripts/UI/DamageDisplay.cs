@@ -18,26 +18,46 @@ public class DamageDisplay : MonoBehaviour
     [SerializeField] float popUpDuration = 0.5f;
 
     Enemy enemy;
+    Decoy decoy;
 
     private void Awake()
     {
         enemy = GetComponent<Enemy>();
+        decoy = GetComponent<Decoy>();
     }
 
     private void OnEnable()
     {
-        enemy.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
-        enemy.healthEvent.OnCriticalHit += HealthEvent_OnCriticalHit;
-        enemy.healthEvent.OnHeadShot += HealthEvent_OnHeadShot;
+        if (decoy == null)
+        {
+            enemy.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
+            enemy.healthEvent.OnCriticalHit += HealthEvent_OnCriticalHit;
+            enemy.healthEvent.OnHeadShot += HealthEvent_OnHeadShot;
+        }
+        else if (enemy == null)
+        {
+            decoy.healthEvent.OnHealthChanged += HealthEvent_OnHealthChangedForDecoy;
+        }
     }
 
     private void OnDisable()
     {
-        enemy.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
-        enemy.healthEvent.OnCriticalHit -= HealthEvent_OnCriticalHit;
-        enemy.healthEvent.OnHeadShot -= HealthEvent_OnHeadShot;
+        if (decoy == null)
+        {
+            enemy.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
+            enemy.healthEvent.OnCriticalHit -= HealthEvent_OnCriticalHit;
+            enemy.healthEvent.OnHeadShot -= HealthEvent_OnHeadShot;
+        }
+        else if (enemy == null)
+        {
+            decoy.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChangedForDecoy;
+        }
     }
 
+    private void HealthEvent_OnHealthChangedForDecoy(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
+    {
+        DisplayDamage(healthEventArgs.damageAmount);
+    }
 
     private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {

@@ -101,7 +101,7 @@ public class EnemyAimAndShootAI : EnemyAI
                     case EnemyPhase.Chase:
 
                         // Reset animation and dashing flag
-                        enemy.animator.SetBool(Settings.isAttacking, false);
+                        enemy.animator.SetBool(Settings.isAttack, false);
 
                         //debugText.text = "CHASE";
 

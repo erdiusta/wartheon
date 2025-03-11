@@ -300,7 +300,7 @@ public class Projectile : MonoBehaviour, IFireable
                     else
                     {
                         // If the player is attacking, guard is down so block is disabled
-                        if (player.meleeAttackRightHand.IsAttackingAtRightHand)
+                        if (player.meleeAttackMainHand.IsAttacking)
                         {
                             // Status checks
                             CheckPoisonStatus(player);
@@ -1203,7 +1203,7 @@ public class Projectile : MonoBehaviour, IFireable
         float enemyAngleDegrees = HelperUtilities.GetAngleFromVector(playerDirectionVector);
         AimDirection enemyAimDirection = HelperUtilities.GetAimDirection(lockedAngle);
 
-        if (enemyAimDirection == AimDirection.Up || enemyAimDirection == AimDirection.UpRight || enemyAimDirection == AimDirection.UpLeft)
+        if (enemyAimDirection == AimDirection.Up)
         {
             spriteRenderer.sortingOrder = -1;
         }

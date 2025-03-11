@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 [RequireComponent(typeof(Player))]
 [DisallowMultipleComponent]
@@ -36,12 +37,74 @@ public class AnimatePlayer : MonoBehaviour
     /// </summary>
     public void InitializeAimAnimationParameters()
     {
+        player.animator.SetFloat(Settings.motionType, -1f);
+
+        player.animator.SetFloat(Settings.axisX, -1f);
+        player.animator.SetFloat(Settings.axisY, -1f);
+
+        // Reset aim parameters
         player.animator.SetBool(Settings.aimUp, false);
-        player.animator.SetBool(Settings.aimUpRight, false);
-        player.animator.SetBool(Settings.aimUpLeft, false);
         player.animator.SetBool(Settings.aimRight, false);
         player.animator.SetBool(Settings.aimLeft, false);
         player.animator.SetBool(Settings.aimDown, false);
+
+        // Reset attack aim parameters
+        player.animator.SetBool(Settings.attackUp, false);
+        player.animator.SetBool(Settings.attackUpRight, false);
+        player.animator.SetBool(Settings.attackRight, false);
+        player.animator.SetBool(Settings.attackDownRight, false);
+        player.animator.SetBool(Settings.attackDown, false);
+        player.animator.SetBool(Settings.attackDownLeft, false);
+        player.animator.SetBool(Settings.attackLeft, false);
+        player.animator.SetBool(Settings.attackUpLeft, false);
+    }
+
+
+    /// <summary>
+    /// Set idle animation parameters
+    /// </summary>
+    public void SetIdleAnimationParameters()
+    {
+        // Set idle
+        player.animator.SetBool(Settings.isMoving, false);
+        player.animator.SetBool(Settings.isIdle, true);
+        player.animator.SetBool(Settings.isRoll, false);
+        player.animator.SetBool(Settings.isAttack, false);
+
+        player.animator.SetFloat(Settings.motionType, 0f);
+    }
+
+    /// <summary>
+    /// Set attack animation parameters
+    /// </summary>
+    public void SetAttackAnimationParameters()
+    {
+        // Set attack
+        player.animator.SetBool(Settings.isAttack, true);
+        player.animator.SetBool(Settings.isMoving, false);
+        player.animator.SetBool(Settings.isIdle, false);
+        player.animator.SetBool(Settings.isRoll, false);
+
+        player.animator.SetFloat(Settings.motionType, -1f);
+        player.animator.SetFloat(Settings.axisX, -1f);
+        player.animator.SetFloat(Settings.axisY, -1f);
+    }
+
+    /// <summary>
+    /// Set movement animation parameters
+    /// </summary>
+    public void SetMovementAnimationParameters()
+    {
+        if (player.meleeAttackMainHand.playerAttackMotionRoutine == null || !player.isDead)
+        {
+            player.animator.SetBool(Settings.isMoving, true);
+            player.animator.SetBool(Settings.isIdle, false);
+            player.animator.SetBool(Settings.isRoll, false);
+            player.animator.SetBool(Settings.death, false);
+            player.animator.SetBool(Settings.isAttack, false);
+        }
+
+        player.animator.SetFloat(Settings.motionType, 1f);
     }
 
     /// <summary>
@@ -50,12 +113,16 @@ public class AnimatePlayer : MonoBehaviour
     public void InitializeRollAnimationParameters()
     {
         player.animator.SetBool(Settings.isMoving, false);
+        player.animator.SetBool(Settings.isAttack, false);
         player.animator.SetBool(Settings.isIdle, false);
+        player.animator.SetBool(Settings.isRoll, true);
 
         player.animator.SetBool(Settings.rollDown, false);
         player.animator.SetBool(Settings.rollRight, false);
         player.animator.SetBool(Settings.rollLeft, false);
         player.animator.SetBool(Settings.rollUp, false);
+
+        player.animator.SetFloat(Settings.motionType, -1f);
     }
 
     /// <summary>
@@ -86,32 +153,14 @@ public class AnimatePlayer : MonoBehaviour
     }
 
     /// <summary>
-    /// Set movement animation parameters
-    /// </summary>
-    public void SetMovementAnimationParameters()
-    {
-        if (player.meleeAttackRightHand.playerAttackMotionRoutine == null || !player.isDead)
-        {
-            player.animator.SetBool(Settings.isMoving, true);
-            player.animator.SetBool(Settings.isIdle, false);
-            player.animator.SetBool(Settings.getHit, false);
-            player.animator.SetBool(Settings.death, false);
-        }
-    }
-
-    /// <summary>
     /// Reset all animation parameters
     /// </summary>
     public void ResetAnimatonParameters()
     {
-        player.animator.SetBool(Settings.isAttacking, false);
+        player.animator.SetBool(Settings.isAttack, false);
         player.animator.SetBool(Settings.isMoving, false);
         player.animator.SetBool(Settings.isIdle, false);
-
-        if (HasParameter(player.animator, Settings.getHit))
-        {
-            player.animator.SetBool(Settings.getHit, false);
-        }
+        player.animator.SetBool(Settings.isRoll, false);
 
         if (HasParameter(player.animator, Settings.block))
         {
@@ -124,33 +173,80 @@ public class AnimatePlayer : MonoBehaviour
     /// <summary>
     /// Set aim animation parameters
     /// </summary>
-    public void SetAimWeaponAnimationParameters(AimDirection aimDirection)
+    public void SetAimWeaponAnimationParameters(AimDirection aimDirection, AttackDirection attackDirection)
     {
         // Set aim direction
         switch (aimDirection)
         {
             case AimDirection.Up:
-                player.animator.SetBool(Settings.aimUp, true);
+                player.animator.SetFloat(Settings.axisX, 0f);
+                player.animator.SetFloat(Settings.axisY, 1f);
                 break;
 
             case AimDirection.UpRight:
-                player.animator.SetBool(Settings.aimUpRight, true);
-                break;
-
-            case AimDirection.UpLeft:
-                player.animator.SetBool(Settings.aimUpLeft, true);
+                player.animator.SetFloat(Settings.axisX, 0.5f);
+                player.animator.SetFloat(Settings.axisY, 0.5f);
                 break;
 
             case AimDirection.Right:
-                player.animator.SetBool(Settings.aimRight, true);
+                player.animator.SetFloat(Settings.axisX, 1f);
+                player.animator.SetFloat(Settings.axisY, 0f);
+                break;
+
+            case AimDirection.DownRight:
+                player.animator.SetFloat(Settings.axisX, 0.5f);
+                player.animator.SetFloat(Settings.axisY, -0.5f);
                 break;
 
             case AimDirection.Left:
-                player.animator.SetBool(Settings.aimLeft, true);
+                player.animator.SetFloat(Settings.axisX, -1f);
+                player.animator.SetFloat(Settings.axisY, 0f);
+                break;
+
+            case AimDirection.DownLeft:
+                player.animator.SetFloat(Settings.axisX, -0.5f);
+                player.animator.SetFloat(Settings.axisY, -0.5f);
                 break;
 
             case AimDirection.Down:
-                player.animator.SetBool(Settings.aimDown, true);
+                player.animator.SetFloat(Settings.axisX, 0f);
+                player.animator.SetFloat(Settings.axisY, -1f);
+                break;
+
+            case AimDirection.UpLeft:
+                player.animator.SetFloat(Settings.axisX, -0.5f);
+                player.animator.SetFloat(Settings.axisY, 0.5f);
+                break;
+        }
+
+        // Set attack aim direction
+        switch (attackDirection)
+        {
+            case AttackDirection.Up:
+                player.animator.SetBool(Settings.attackUp, true);
+                break;
+            case AttackDirection.UpRight:
+                player.animator.SetBool(Settings.attackUpRight, true);
+                break;
+            case AttackDirection.Right:
+                player.animator.SetBool(Settings.attackRight, true);
+                break;
+            case AttackDirection.DownRight:
+                player.animator.SetBool(Settings.attackDownRight, true);
+                break;
+            case AttackDirection.Down:
+                player.animator.SetBool(Settings.attackDown, true);
+                break;
+            case AttackDirection.DownLeft:
+                player.animator.SetBool(Settings.attackDownLeft, true);
+                break;
+            case AttackDirection.Left:
+                player.animator.SetBool(Settings.attackLeft, true);
+                break;
+            case AttackDirection.UpLeft:
+                player.animator.SetBool(Settings.attackUpLeft, true);
+                break;
+            default:
                 break;
         }
     }

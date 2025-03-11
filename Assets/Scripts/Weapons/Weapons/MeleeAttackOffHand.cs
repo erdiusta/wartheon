@@ -12,7 +12,7 @@ public class MeleeAttackOffHand : MonoBehaviour
     [HideInInspector] public Coroutine playerAttackLeftHandRoutine;
 
     MeleeAttackEvent meleeAttackEvent;
-    Animator leftHandMeleeAnimator;
+    //Animator leftHandMeleeAnimator;
     SpriteRenderer weaponSpriteRenderer;
     AnimationEventHelperOffHand leftHandAnimationEventHelper;
     CircleOrigin circleOrigin;
@@ -27,8 +27,8 @@ public class MeleeAttackOffHand : MonoBehaviour
     {
         player = GetComponent<Player>();
         meleeAttackEvent = GetComponent<MeleeAttackEvent>();
-        leftHandMeleeAnimator = transform.GetChild(1).GetComponent<Animator>();
-        leftHandAnimationEventHelper = leftHandMeleeAnimator.GetComponent<AnimationEventHelperOffHand>();
+        //leftHandMeleeAnimator = transform.GetChild(1).GetComponent<Animator>();
+        //leftHandAnimationEventHelper = leftHandMeleeAnimator.GetComponent<AnimationEventHelperOffHand>();
         circleOrigin = GetComponentInChildren<CircleOrigin>();
         boxOrigin = GetComponentInChildren<BoxOrigin>();
     }
@@ -36,15 +36,15 @@ public class MeleeAttackOffHand : MonoBehaviour
     private void OnEnable()
     {
         meleeAttackEvent.OnLeftHandMeleeAttack += MeleeAttackEvent_OnLeftHandMeleeAttack;
-        leftHandAnimationEventHelper.OnAnimationOffHandEventTriggered.AddListener(ResetIsAttackingLeftHand);
-        leftHandAnimationEventHelper.OnAttackOffHandPerformed.AddListener(DetectColliders);
+        //leftHandAnimationEventHelper.OnAnimationOffHandEventTriggered.AddListener(ResetIsAttackingLeftHand);
+        //leftHandAnimationEventHelper.OnAttackOffHandPerformed.AddListener(DetectColliders);
     }
 
     private void OnDisable()
     {
         meleeAttackEvent.OnLeftHandMeleeAttack -= MeleeAttackEvent_OnLeftHandMeleeAttack;
-        leftHandAnimationEventHelper.OnAnimationOffHandEventTriggered.RemoveListener(ResetIsAttackingLeftHand);
-        leftHandAnimationEventHelper.OnAttackOffHandPerformed.RemoveListener(DetectColliders);
+        //leftHandAnimationEventHelper.OnAnimationOffHandEventTriggered.RemoveListener(ResetIsAttackingLeftHand);
+        //leftHandAnimationEventHelper.OnAttackOffHandPerformed.RemoveListener(DetectColliders);
     }
 
     void Start()
@@ -70,7 +70,6 @@ public class MeleeAttackOffHand : MonoBehaviour
             case MeleeAttackType.None:
                 break;
             case MeleeAttackType.Swing:
-            case MeleeAttackType.Sweep:
                 foreach (Collider2D collider in Physics2D.OverlapCircleAll(circleOriginTransform.position, circleOrigin.circleRadius))
                 {
                     if (collider.GetType() == typeof(PolygonCollider2D))
@@ -471,29 +470,29 @@ public class MeleeAttackOffHand : MonoBehaviour
     {
         if (leftHandAttackBlocked) return;
 
-        leftHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtLeftHand);
+        //leftHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtLeftHand);
 
         weapon.onCooldown = true;
 
-        switch (meleeAttackType)
-        {
-            case MeleeAttackType.None:
-                break;
-            case MeleeAttackType.Swing:
-                leftHandMeleeAnimator.SetInteger("attackMoveType", 0);
-                break;
-            case MeleeAttackType.Sweep:
-                leftHandMeleeAnimator.SetInteger("attackMoveType", 1);
-                break;
-            case MeleeAttackType.Thrust:
-                leftHandMeleeAnimator.SetInteger("attackMoveType", 2);
-                break;
-            default:
-                break;
-        }
+        //switch (meleeAttackType)
+        //{
+        //    case MeleeAttackType.None:
+        //        break;
+        //    case MeleeAttackType.Swing:
+        //        leftHandMeleeAnimator.SetInteger("attackMoveType", 0);
+        //        break;
+        //    case MeleeAttackType.Sweep:
+        //        leftHandMeleeAnimator.SetInteger("attackMoveType", 1);
+        //        break;
+        //    case MeleeAttackType.Thrust:
+        //        leftHandMeleeAnimator.SetInteger("attackMoveType", 2);
+        //        break;
+        //    default:
+        //        break;
+        //}
 
-        // Trigger the attack animation
-        leftHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtLeftHand);
+        //// Trigger the attack animation
+        //leftHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtLeftHand);
 
         IsAttackingAtLeftHand = true;
         leftHandAttackBlocked = true;

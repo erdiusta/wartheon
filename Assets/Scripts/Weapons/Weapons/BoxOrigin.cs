@@ -15,6 +15,18 @@ public class BoxOrigin : MonoBehaviour
         player = GetComponentInParent<Player>();
     }
 
+    private void Update()
+    {
+        if (GetComponentInParent<Projectile>() == null)
+        {
+            if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+            {
+                boxLength = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxLength;
+                boxHeight = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxHeight;
+            }
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;

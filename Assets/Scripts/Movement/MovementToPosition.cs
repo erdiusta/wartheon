@@ -50,8 +50,30 @@ public class MovementToPosition : MonoBehaviour
     /// <summary>
     /// Move the rigidbody component
     /// </summary>
-    public void MoveRigidbodyByPosition(Vector2 unitVector, float moveSpeed)
+    public void MoveRigidbodyByPosition(Vector2 unitVector, float moveSpeed, bool isPatrol)
     {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, unitVector, 1.5f, LayerMask.GetMask("Wall"));
+
+        if (hit.collider != null)
+        {
+            if (enemy.enemyAI.patrolSteps.Count > 1) // Ensure at least one step exists
+            {
+                enemy.enemyAI.patrolSteps.Pop(); // Remove the last step (which caused the hit)
+                Vector3 previousStep = enemy.enemyAI.patrolSteps.Peek(); // Get the step before the collision
+
+                unitVector = (previousStep - transform.position).normalized;
+                rb2D.linearVelocity = unitVector * moveSpeed;
+            }
+            else
+            {
+                Debug.Log("No previous steps left, recalculating path...");
+                enemy.enemyAIEvent.CallEnemyHitTheWallEvent(); // Request a new path
+            }
+
+            return;
+        }
+
+        // Move normally if no obstacle detected
         rb2D.linearVelocity = unitVector * moveSpeed;
     }
 

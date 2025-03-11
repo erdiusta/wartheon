@@ -52,7 +52,8 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
         // Initialize vectors, angles, directions and aim
         float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-        enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
+        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle);
         enemy.animateEnemy.ResetAimAnimationParameters();
         enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
 
@@ -422,7 +423,7 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
 
                 foreach (Collider2D collider in Physics2D.OverlapCircleAll(swordHoldingTransform.position, smearCircleRadius))
                 {
-                    enemy.animator.SetBool(Settings.isAttacking, true);
+                    enemy.animator.SetBool(Settings.isAttack, true);
 
                     if (collider.GetType() == typeof(PolygonCollider2D))
                     {
@@ -463,7 +464,7 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
                 SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.attackSoundEffect);
             }
 
-            enemy.animator.SetBool(Settings.isAttacking, false);
+            enemy.animator.SetBool(Settings.isAttack, false);
             enemy.animateEnemy.SetIdleAnimationParameters();
 
             isAttacking = false;
@@ -499,6 +500,9 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
             // Locked enemy aim direction
             AimDirection enemyAimDirection = HelperUtilities.GetAimDirection(enemyAngleDegrees);
 
+            // Locked enemy attack direction
+            AttackDirection enemyAttackDirection = HelperUtilities.GetAttackDirection(enemyAngleDegrees);
+
             while (chargeTimer < prechargeDuration)
             {
                 chargeTimer += Time.deltaTime;
@@ -517,7 +521,7 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
             GetComponent<Enemy>().isFiring = false; // Reset firing before laser shot
 
             // **Fire laser once and hold it for the full duration**
-            FireWeapon(playerDirectionVector, enemyAngleDegrees, enemyAimDirection, true, 0, 0, 0, SepharothPhase.LaserBeam);
+            FireWeapon(playerDirectionVector, enemyAngleDegrees, enemyAimDirection, enemyAttackDirection, true, 0, 0, 0, SepharothPhase.LaserBeam);
 
             while (fireTimer < fireProjectileDuration)
             {

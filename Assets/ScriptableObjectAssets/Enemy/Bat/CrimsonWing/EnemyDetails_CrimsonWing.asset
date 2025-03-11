@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_CrimsonWing
   m_EditorClassIdentifier: 
   enemyName: Crimson Wing
+  enemyDetails: 
   enemyCategory: 2
   enemyPrefab: {fileID: 7183228443647751644, guid: f35c15bbc40f5c7428b1cd097f84b66e, type: 3}
   enemyType: 0
@@ -20,14 +21,15 @@ MonoBehaviour:
   experiencePoint: 50
   chaseDistance: 15
   hasAttackMove: 0
-  attackMoveTriggerDistance: 0
-  attackMoveEfficentDistance: 0
-  attackMoveBaseCooldown: 8
-  countdownDurationBeforeDashAttack: 0.4
+  attackMoveTriggerDistance: 5
+  attackMoveEfficentDistance: 4
+  attackMoveBaseCooldown: 1
+  countdownDurationBeforeDashAttack: 0.8
   deflectionValue: 0.1
   enemyBehaviour: 0
   isEnemyBoss: 0
   isSummonedMinion: 0
+  isDummy: 0
   hasAnimator: 0
   elementalBias: 5
   elementalForgeRate: 0.3
@@ -64,6 +66,7 @@ MonoBehaviour:
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 8520316363d6f1f459f854b545c0ab3f, type: 2}
   roarSoundEffect: {fileID: 0}
+  chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}

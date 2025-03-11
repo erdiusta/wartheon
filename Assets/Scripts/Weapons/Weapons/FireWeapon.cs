@@ -620,6 +620,8 @@ public class FireWeapon : MonoBehaviour
         // Reset cooldown timer
         if (player != null)
         {
+            player.activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+
             if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow ||
                 player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow)
             {
@@ -630,6 +632,8 @@ public class FireWeapon : MonoBehaviour
             {
                 fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration * coolDownTimerModifier;
             }
+
+
         }
         else
         {

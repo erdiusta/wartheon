@@ -29,19 +29,39 @@ public static class Settings
     #region ANIMATOR PARAMETERS
     // Animator parameters - Player
     public static int aimUp = Animator.StringToHash("aimUp");
-    public static int aimDown = Animator.StringToHash("aimDown");
     public static int aimUpRight = Animator.StringToHash("aimUpRight");
-    public static int aimUpLeft = Animator.StringToHash("aimUpLeft");
     public static int aimRight = Animator.StringToHash("aimRight");
+    public static int aimDownRight = Animator.StringToHash("aimDownRight");
+    public static int aimDown = Animator.StringToHash("aimDown");
+    public static int aimDownLeft = Animator.StringToHash("aimDownLeft");
     public static int aimLeft = Animator.StringToHash("aimLeft");
+    public static int aimUpLeft = Animator.StringToHash("aimUpLeft");
+
+    public static int attackUp = Animator.StringToHash("attackUp");
+    public static int attackUpRight = Animator.StringToHash("attackUpRight");
+    public static int attackRight = Animator.StringToHash("attackRight");
+    public static int attackDownRight = Animator.StringToHash("attackDownRight");
+    public static int attackDown = Animator.StringToHash("attackDown");
+    public static int attackDownLeft = Animator.StringToHash("attackDownLeft");
+    public static int attackLeft = Animator.StringToHash("attackLeft");
+    public static int attackUpLeft = Animator.StringToHash("attackUpLeft");
+
+    public static int mainPosture = Animator.StringToHash("mainPosture");
     public static int isIdle = Animator.StringToHash("isIdle");
     public static int isMoving = Animator.StringToHash("isMoving");
+    public static int isRoll = Animator.StringToHash("roll");
     public static int rollUp = Animator.StringToHash("rollUp");
     public static int rollDown = Animator.StringToHash("rollDown");
     public static int rollRight = Animator.StringToHash("rollRight");
     public static int rollLeft = Animator.StringToHash("rollLeft");
     public static int use = Animator.StringToHash("use");
-    public static int isAttacking = Animator.StringToHash("attack");
+    public static int isAttack = Animator.StringToHash("attack");
+    public static int isMeleeWeapon = Animator.StringToHash("isMeleeWeapon");
+    public static int smearSize = Animator.StringToHash("smearSize");
+    public static int thrustSize = Animator.StringToHash("thrustSize");
+    public static int isDualWield = Animator.StringToHash("isDualWield");
+    public static int isShielded = Animator.StringToHash("isShielded");
+
     public static int motionType = Animator.StringToHash("motionType");
     public static int axisX = Animator.StringToHash("axisX");
     public static int axisY = Animator.StringToHash("axisY");
@@ -57,8 +77,8 @@ public static class Settings
     public static int death = Animator.StringToHash("death");
     public static int getHit = Animator.StringToHash("getHit");
 
-    // Animator parameters - MeleeAttack
-    public static int meleeAttackAtRightHand = Animator.StringToHash("AttackAtRightHand");
+    // Animator parameters - Ranged Attack
+    public static int rangedWeaponAttack = Animator.StringToHash("rangedWeaponAttack");
     public static int meleeAttackAtLeftHand = Animator.StringToHash("AttackAtLeftHand");
     public static int isLeft = Animator.StringToHash("isLeft");
 

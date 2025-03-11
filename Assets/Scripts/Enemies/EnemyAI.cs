@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Enemy))]
 [DisallowMultipleComponent]
@@ -30,6 +32,8 @@ public class EnemyAI : MonoBehaviour
     [HideInInspector] public Coroutine patrolMoveEnemyRoutine;
     [HideInInspector] public float enemyStartingSpeed;
     [HideInInspector] public EnemyPhase enemyPhase;
+    [HideInInspector] public Stack<Vector3> movementSteps = new Stack<Vector3>();
+    [HideInInspector] public Stack<Vector3> patrolSteps = new Stack<Vector3>();
 
     protected Enemy enemy;
     protected Coroutine attackAnimationRoutine;
@@ -37,8 +41,8 @@ public class EnemyAI : MonoBehaviour
     protected Coroutine frostEnemyRoutine;
     protected Vector3 lockedVector;
     protected Room currentRoom;
-    protected Stack<Vector3> movementSteps = new Stack<Vector3>();
-    protected Stack<Vector3> patrolSteps = new Stack<Vector3>();
+
+    protected bool repeatingCalculation;
     protected float currentEnemyChasePathRebuildCooldown;
     protected float currentEnemyPatrolPathRebuildCooldown;
     protected float dashTimer;
@@ -74,6 +78,35 @@ public class EnemyAI : MonoBehaviour
     protected virtual void OnEnable()
     {
         currentRoom = GameManager.Instance.GetCurrentRoom();
+
+        enemy.enemyAIEvent.OnEnemyHitTheWall += EnemyAIEvent_OnEnemyHitTheWall;
+    }
+
+    protected virtual void OnDisable()
+    {
+        enemy.enemyAIEvent.OnEnemyHitTheWall -= EnemyAIEvent_OnEnemyHitTheWall;
+    }
+
+    private void EnemyAIEvent_OnEnemyHitTheWall(EnemyAIEvent enemyAIEvent)
+    {
+        if (repeatingCalculation) return; // Prevent repeated calls
+
+        repeatingCalculation = true;
+        enemyPhase = EnemyPhase.Patrol;
+        patrolPathFound = false;
+
+        Debug.Log("Enemy hit the wall! Recalculating path...");
+
+        Chase(); // Find a new path
+
+        StartCoroutine(ResetRepathing()); // Add a small cooldown to prevent spam
+    }
+
+    private IEnumerator ResetRepathing()
+    {
+        yield return new WaitForSeconds(1f); // Adjust delay as needed
+
+        repeatingCalculation = false;
     }
 
     protected virtual void Start()
@@ -104,23 +137,18 @@ public class EnemyAI : MonoBehaviour
             // Move towards the locked target position
             enemy.movementToPosition.AttackMoveRigidbodyByPosition(lockedVector, moveSpeed * 2f);
 
-            enemy.rb2D.mass = 4f;
-
             //// Check for collision with the player
             //if (IsCollidedWithPlayer())
             //{
             //    StopDashing(); // Stop dashing if colliding with player
             //}
         }
-        else
-        {
-            enemy.rb2D.mass = 1f;
-        }
     }
 
     protected virtual void Update()
     {
         if (isAttacking) return;
+
 
         attackMoveTimer -= Time.deltaTime;
 
@@ -212,6 +240,9 @@ public class EnemyAI : MonoBehaviour
                         if (currentEnemyPatrolPathRebuildCooldown <= 0)
                         {
                             ClearChasePath();
+
+
+
                             Patrol();
                             currentEnemyPatrolPathRebuildCooldown = Settings.enemyPatrolPathRebuildCooldown; // Reset cooldown
                         }
@@ -221,7 +252,7 @@ public class EnemyAI : MonoBehaviour
                     case EnemyPhase.Chase:
 
                         // Reset animation and dashing flag
-                        enemy.animator.SetBool(Settings.isAttacking, false);
+                        enemy.animator.SetBool(Settings.isAttack, false);
 
                         //debugText.text = "CHASE";
 
@@ -315,7 +346,7 @@ public class EnemyAI : MonoBehaviour
         }
         else if (tag == Settings.summonedEnemyTag)
         {
-            Enemy[] allObjects = FindObjectsOfType<Enemy>();
+            Enemy[] allObjects = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
             List<Enemy> nonSummonedEnemyList = new List<Enemy>();
 
             // Retrieve all non-summoned enemies in the room
@@ -587,12 +618,13 @@ public class EnemyAI : MonoBehaviour
                 // Initialize vectors, angles, directions and aim
                 float unitAngle = HelperUtilities.GetAngleFromVector(unitVector);
                 AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-                enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
+                AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+                enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle);
                 enemy.animateEnemy.ResetAimAnimationParameters();
                 enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
                 enemy.animateEnemy.SetMovementAnimationParameters();
 
-                enemy.movementToPosition.MoveRigidbodyByPosition(unitVector, moveSpeed);
+                enemy.movementToPosition.MoveRigidbodyByPosition(unitVector, moveSpeed, true);
 
                 // Moving the enemy using 2D physics so wait until the next fixed update
                 yield return waitForFixedUpdate;
@@ -639,13 +671,14 @@ public class EnemyAI : MonoBehaviour
                 // Initialize vectors, angles, directions and aim
                 float unitAngle = HelperUtilities.GetAngleFromVector(unitVector);
                 AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-                enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
+                AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+                enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle);
                 enemy.animateEnemy.ResetAimAnimationParameters();
                 enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
                 enemy.animateEnemy.SetMovementAnimationParameters();
 
                 // Trigger movement and animations
-                enemy.movementToPosition.MoveRigidbodyByPosition(unitVector, moveSpeed);
+                enemy.movementToPosition.MoveRigidbodyByPosition(unitVector, moveSpeed, false);
 
                 // Moving the enemy using 2D physics so wait until the next fixed update
                 yield return waitForFixedUpdate;
@@ -683,7 +716,8 @@ public class EnemyAI : MonoBehaviour
         // Initialize vectors, angles, directions and aim
         float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-        enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
+        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle);
         enemy.animateEnemy.ResetAimAnimationParameters();
         enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
         enemy.animateEnemy.SetAttackAnimationParameters();
@@ -710,20 +744,11 @@ public class EnemyAI : MonoBehaviour
         // Let FixedUpdate() handle movement during dashing, just wait for the dash duration to complete
         while (dashTimer <= 0.6f)
         {
-            // Check for obstacles or invalid tiles, exit dash if needed
-            Vector3Int enemyCellPosition = new Vector3Int(currentRoom.instantiatedRoom.grid.WorldToCell(enemy.rb2D.position).x,
-                currentRoom.instantiatedRoom.grid.WorldToCell(enemy.rb2D.position).y);
-            Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
-                enemyCellPosition.y - currentRoom.templateLowerBounds.y);
+            bool obstacleFound;
 
-            if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) != 1)
-            {
-                enemyPhase = EnemyPhase.Patrol;
-                currentEnemyPatrolPathRebuildCooldown = -0.1f;
-                isDashing = false;
-                isAttacking = false;
-                break;
-            }
+            EnemyObstacleCheck(out obstacleFound);
+
+            if (obstacleFound) break;
 
             yield return waitForFixedUpdate;
         }
@@ -746,16 +771,38 @@ public class EnemyAI : MonoBehaviour
         attackAnimationRoutine = null;
     }
 
+    private void EnemyObstacleCheck(out bool obstacleFound)
+    {
+        obstacleFound = false;
+
+        // Check for obstacles or invalid tiles, exit dash if needed
+        Vector3Int enemyCellPosition = new Vector3Int(currentRoom.instantiatedRoom.grid.WorldToCell(enemy.rb2D.position).x,
+            currentRoom.instantiatedRoom.grid.WorldToCell(enemy.rb2D.position).y);
+        Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
+            enemyCellPosition.y - currentRoom.templateLowerBounds.y);
+
+        // Break out of the loop if the stepped tile is not a preferred tile
+        if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) != 1)
+        {
+            enemyPhase = EnemyPhase.Patrol;
+            currentEnemyPatrolPathRebuildCooldown = -0.1f;
+            isDashing = false;
+            isAttacking = false;
+            obstacleFound = true;
+        }
+    }
+
     /// <summary>   
     /// Fire the weapon - laser
     /// </summary>
-    protected void FireWeapon(Vector3 lockedPlayerVector, float lockedEnemyAngle, AimDirection lockedAimDirection, bool isLaser = false, 
+    protected void FireWeapon(Vector3 lockedPlayerVector, float lockedEnemyAngle, AimDirection lockedAimDirection, AttackDirection lockedAttackDirection, bool isLaser = false, 
         CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, 
         SepharothPhase sepharothPhase = SepharothPhase.None)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
         AimDirection enemyAimDirection;
+        AttackDirection enemyAttackDirection;
 
         if (isLaser)
         {
@@ -766,7 +813,7 @@ public class EnemyAI : MonoBehaviour
             enemyAimDirection = lockedAimDirection;
 
             // Trigger weapon aim methods
-            enemy.aimWeapon.Aim(enemyAimDirection, enemyAngleDegrees);
+            enemy.aimWeapon.Aim(enemyAimDirection, lockedAttackDirection, enemyAngleDegrees);
             enemy.animateEnemy.ResetAimAnimationParameters();
             enemy.animateEnemy.SetAimWeaponAnimationParameters(enemyAimDirection);
 
@@ -775,7 +822,7 @@ public class EnemyAI : MonoBehaviour
             goto laserJump;
         }
 
-        Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection);
+        Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection, out enemyAttackDirection);
 
         // Skip ordinary aim procedures for locked shots like laser
         laserJump:
@@ -807,8 +854,9 @@ public class EnemyAI : MonoBehaviour
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
         AimDirection enemyAimDirection;
+        AttackDirection enemyAttackDirection;
 
-        Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection);
+        Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection, out enemyAttackDirection);
 
         // Only fire if enemy has a weapon
         if (enemyDetails.enemyWeapon != null)
@@ -829,7 +877,7 @@ public class EnemyAI : MonoBehaviour
     }
 
     public void Aim(out Vector3 playerDirectionVector, out Vector3 weaponDirection, out float weaponAngleDegrees, out float enemyAngleDegrees,
-        out AimDirection enemyAimDirection)
+        out AimDirection enemyAimDirection, out AttackDirection enemyAttackDirection)
     {
         if (GameManager.Instance.GetPlayer().isDead || GameManager.Instance.GetPlayer() == null)
         {
@@ -838,6 +886,7 @@ public class EnemyAI : MonoBehaviour
             weaponAngleDegrees = 0f;
             enemyAngleDegrees = 0f;
             enemyAimDirection = 0;
+            enemyAttackDirection = 0;
             return;
         }
 
@@ -856,8 +905,11 @@ public class EnemyAI : MonoBehaviour
         // Set enemy aim direction
         enemyAimDirection = HelperUtilities.GetAimDirection(enemyAngleDegrees);
 
+        // Set enemy attack direction
+        enemyAttackDirection = HelperUtilities.GetAttackDirection(enemyAngleDegrees);
+
         // Trigger weapon aim methods
-        enemy.aimWeapon.Aim(enemyAimDirection, enemyAngleDegrees);
+        enemy.aimWeapon.Aim(enemyAimDirection, enemyAttackDirection, enemyAngleDegrees);
         enemy.animateEnemy.ResetAimAnimationParameters();
         enemy.animateEnemy.SetAimWeaponAnimationParameters(enemyAimDirection);
     }

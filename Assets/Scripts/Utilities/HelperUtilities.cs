@@ -1,5 +1,6 @@
     using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public static class HelperUtilities
 {
@@ -66,35 +67,45 @@ public static class HelperUtilities
         AimDirection aimDirection;
 
         // Set player direction
-        //Up Right
-        if (angleDegrees >= 22f && angleDegrees <= 67f)
-        {
-            aimDirection = AimDirection.UpRight;
-        }
         // Up
-        else if (angleDegrees > 67f && angleDegrees <= 112f)
+        if (angleDegrees > 67f && angleDegrees <= 112f)
         {
             aimDirection = AimDirection.Up;
         }
-        // Up Left
-        else if (angleDegrees > 112f && angleDegrees <= 158f)
+        // UpRight
+        else if (angleDegrees >= 22f && angleDegrees <= 67f)
         {
-            aimDirection = AimDirection.UpLeft;
+            aimDirection = AimDirection.UpRight;
         }
-        // Left
-        else if ((angleDegrees <= 180f && angleDegrees > 158f) || (angleDegrees > -180 && angleDegrees <= -135f))
+        // Right
+        else if ((angleDegrees >= -22f && angleDegrees <= 0f) || (angleDegrees > 0 && angleDegrees < 22f))
         {
-            aimDirection = AimDirection.Left;
+            aimDirection = AimDirection.Right;
+        }
+        // DownRight
+        else if (angleDegrees > -67f && angleDegrees < -22f)
+        {
+            aimDirection = AimDirection.DownRight;
         }
         // Down
-        else if ((angleDegrees > -135f && angleDegrees <= -45f))
+        else if (angleDegrees > -112f && angleDegrees <= -67f)
         {
             aimDirection = AimDirection.Down;
         }
-        // Right
-        else if ((angleDegrees > -45f && angleDegrees <= 0f) || (angleDegrees > 0 && angleDegrees < 22f))
+        // DownLeft
+        else if (angleDegrees > -158f && angleDegrees <= -112f)
         {
-            aimDirection = AimDirection.Right;
+            aimDirection = AimDirection.DownLeft;
+        }
+        // Left
+        else if ((angleDegrees >= 158f && angleDegrees < 180f) || (angleDegrees <= -158f && angleDegrees >= -180f))
+        {
+            aimDirection = AimDirection.Left;
+        }
+        // UpLeft
+        else if ((angleDegrees > 112f && angleDegrees < 158f))
+        {
+            aimDirection = AimDirection.UpLeft;
         }
         else
         {
@@ -102,7 +113,62 @@ public static class HelperUtilities
         }
 
         return aimDirection;
+    }
 
+    /// <summary>
+    /// Get AttackDirection enum value from the pased in angleDegrees
+    /// </summary>
+    public static AttackDirection GetAttackDirection(float angleDegrees)
+    {
+        AttackDirection attackDirection;
+
+        // Set player direction
+        // Up
+        if (angleDegrees > 67f && angleDegrees <= 112f)
+        {
+            attackDirection = AttackDirection.Up;
+        }
+        // Up Right
+        else if (angleDegrees >= 22f && angleDegrees <= 67f)
+        {
+            attackDirection = AttackDirection.UpRight;
+        }
+        // Right
+        else if ((angleDegrees >= -22f && angleDegrees <= 0f) || (angleDegrees > 0 && angleDegrees < 22f))
+        {
+            attackDirection = AttackDirection.Right;
+        }
+        // Down Right
+        else if (angleDegrees > -67f && angleDegrees < -22f)
+        {
+            attackDirection = AttackDirection.DownRight;
+        }
+        // Down
+        else if (angleDegrees > -112f && angleDegrees <= -67f)
+        {
+            attackDirection = AttackDirection.Down;
+        }
+        // Down Left
+        else if (angleDegrees > -158f && angleDegrees <= -112f)
+        {
+            attackDirection = AttackDirection.DownLeft;
+        }
+        // Left
+        else if ((angleDegrees >= 158f && angleDegrees < 180f) || (angleDegrees <= -158f && angleDegrees >= -180f))
+        {
+            attackDirection = AttackDirection.Left;
+        }
+        // Up Left
+        else if ((angleDegrees > 112f && angleDegrees < 158f))
+        {
+            attackDirection = AttackDirection.UpLeft;
+        }
+        else
+        {
+            attackDirection = AttackDirection.Right;
+        }
+
+        return attackDirection;
     }
 
     /// <summary>

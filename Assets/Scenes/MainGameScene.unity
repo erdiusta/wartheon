@@ -4804,8 +4804,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.50980395}
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -17878,7 +17878,7 @@ Camera:
     x: 0
     y: 0
     width: 1
-    height: 0.9993712
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 40
@@ -44136,7 +44136,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 992082748, guid: a12edb5d6b0f71549bcb7df602017777, type: 3}
+  m_Sprite: {fileID: 1307114046, guid: 5d12ab0ad64a9914b9b6ff838f7feeb7, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -66364,7 +66364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
@@ -75610,6 +75610,8 @@ MonoBehaviour:
   canvasGroup: {fileID: 306538525}
   volume: {fileID: 1063868306}
   light2D: {fileID: 1850477919}
+  currentRoomSideTileMap: {fileID: 0}
+  currentRoomFrontTilemap: {fileID: 0}
   bookView: {fileID: 1617418086}
   bookCover: {fileID: 1435044111}
   gamePlayUI: {fileID: 1827723085}

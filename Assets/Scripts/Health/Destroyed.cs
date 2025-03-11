@@ -208,7 +208,6 @@ public class Destroyed : MonoBehaviour
             enemy.animateEnemy.SetDeathAnimationParameters();
             enemy.fireWeapon.enabled = false;
             GetComponent<PolygonCollider2D>().enabled = false;
-            GetComponent<CircleCollider2D>().enabled = false;
         }
     }
 

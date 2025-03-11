@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering;
+using UnityEngine.Tilemaps;
+using System;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
@@ -38,6 +40,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Tooltip("Populate with Light2D component")]
     #endregion
     public Light2D light2D;
+
+    // Tilemap member
+    public Tilemap currentRoomSideTileMap;
+    public Tilemap currentRoomFrontTilemap;
 
     // Book members
     public GameObject bookView;
@@ -161,6 +167,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Space(10)]
     [SerializeField] Sprite standardSprite;
     [SerializeField] Sprite flashSprite;
+
+    // Check sprite overlap status
+    bool spriteOverlapped = false;
 
     protected override void Awake()
     {
@@ -478,6 +487,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             healthBarContainer.SetActive(false);
         }
 
+        // Sorting player
+        PlayerSortTileCheckForFrontTileMap();
+        PlayerSortTileCheckForSideTileMap();
+
         // Adjust blind status
         blindTimer -= Time.deltaTime;
 
@@ -725,12 +738,110 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     }
 
     /// <summary>
-    /// Set the current room the player in in
+    /// Set the current room the player is in
     /// </summary>
     public void SetCurrentRoom(Room room)
     {
         previousRoom = currentRoom;
         currentRoom = room;
+    }
+
+    /// <summary> - Front tile map
+    /// Check player's sorting status
+    /// </summary>
+    private void PlayerSortTileCheckForFrontTileMap()
+    {
+        Tilemap frontTilemap = currentRoom.instantiatedRoom.frontTilemap;
+
+        WeapoonSortingCheck(frontTilemap, true);
+    }
+
+    /// <summary>
+    /// Check player's sorting status - Side tile map
+    /// </summary>
+    private void PlayerSortTileCheckForSideTileMap()
+    {
+        Tilemap sideTilemap = currentRoom.instantiatedRoom.sideTilemap;
+
+        if (!spriteOverlapped)
+        {
+            WeapoonSortingCheck(sideTilemap);
+        }
+
+        spriteOverlapped = false;
+    }
+
+    /// <summary>
+    /// Sort if weapon holding transform overlap front or side tilemap when player is not above the tile
+    /// </summary>
+    private void WeapoonSortingCheck(Tilemap tilemap, bool isFrontTilemap = false)
+    {
+        if(player != null)
+        {
+            // MAIN HAND
+            // Player's weapon tile position - Main hand
+            Vector3 localMainWeaponCenterPos = player.mainHandWeaponAnchorTransform.localPosition;
+            Vector3 localMainWeaponUpperPos = player.mainHandWeaponAnchorTransform.localPosition;
+
+            // Center point
+            localMainWeaponCenterPos.x += 0.5f; // Increase X relative to the parent(player)
+            localMainWeaponCenterPos.y += 1f; // Increase Y relative to the parent (player)
+
+            // Upper point
+            localMainWeaponUpperPos.x += 0.5f; // Increase X relative to the parent(player)
+            localMainWeaponUpperPos.y += 2f; // Increase Y relative to the parent (player)
+
+
+            // OFF-HAND
+            // Player's weapon tile position - Off-hand
+            Vector3 localOffWeaponCenterPos = player.offHandWeaponAnchorTransform.localPosition;
+            Vector3 localOffWeaponUpperPos = player.offHandWeaponAnchorTransform.localPosition;
+
+            // Center point
+            localOffWeaponCenterPos.x += 0.5f; // Increase X relative to the parent(player)
+            localOffWeaponCenterPos.y += 1.5f; // Increase Y relative to the parent (player)
+
+            // Upper point
+            localOffWeaponUpperPos.x += 0.5f; // Increase X relative to the parent(player)
+            localOffWeaponUpperPos.y += 3f; // Increase Y relative to the parent (player)
+
+
+            // Retrieve anchor positions
+            Vector3Int mainHandWeaponAnchorCenterPos = GetWeaponIntPosition(tilemap, localMainWeaponCenterPos);
+            Vector3Int mainHandWeaponAnchorUpperPos = GetWeaponIntPosition(tilemap, localMainWeaponUpperPos);
+
+            Vector3Int offHandWeaponAnchorCenterPos = GetWeaponIntPosition(tilemap, localOffWeaponCenterPos);
+            Vector3Int offHandWeaponAnchorUpperPos = GetWeaponIntPosition(tilemap, localOffWeaponUpperPos);
+
+            // Check the tile directly above the player - CENTER
+            TileBase tileForMainHand = tilemap.GetTile(mainHandWeaponAnchorCenterPos);
+            tileForMainHand = tileForMainHand != null ? tileForMainHand : tilemap.GetTile(mainHandWeaponAnchorUpperPos);
+
+            // Check the tile directly above the player - UPPER
+            TileBase tileForOffHand = tilemap.GetTile(offHandWeaponAnchorCenterPos);
+            tileForOffHand = tileForOffHand != null ? tileForOffHand : tilemap.GetTile(offHandWeaponAnchorUpperPos);
+
+            if (tileForMainHand != null || (player.activeWeapon.GetCurrentOffHandWeapon() != null && tileForOffHand != null))
+            {
+                player.sortingGroup.sortingLayerID = SortingLayer.NameToID("Front");// Change to higher layer
+
+                if (isFrontTilemap)
+                {
+                    spriteOverlapped = true;
+                }
+            }
+            else
+            {
+                player.sortingGroup.sortingLayerID = SortingLayer.NameToID("Instances"); // Reset to default
+            }
+        }
+    }
+
+    private Vector3Int GetWeaponIntPosition(Tilemap tilemap, Vector3 localMainWeaponPos)
+    {
+        Vector3 adjustedMainHandWeaponWorldPos = player.transform.TransformPoint(localMainWeaponPos); // Convert adjusted local position to world position
+        Vector3Int mainHandWeaponAnchorPos = tilemap.WorldToCell(adjustedMainHandWeaponWorldPos); // Convert adjusted world position to tile coordinates
+        return mainHandWeaponAnchorPos;
     }
 
     /// <summary>

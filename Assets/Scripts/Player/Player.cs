@@ -20,7 +20,6 @@ using System;
 [RequireComponent(typeof(FireWeapon))]
 [RequireComponent(typeof(MeleeAttackEvent))]
 [RequireComponent(typeof(MeleeAttackMainHand))]
-[RequireComponent(typeof(MeleeAttackOffHand))]
 [RequireComponent(typeof(SetActiveWeaponEvent))]
 [RequireComponent(typeof(ActiveWeapon))]
 [RequireComponent(typeof(SelectedActiveItem))]
@@ -61,8 +60,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
     [HideInInspector] public FireWeapon fireWeapon;
     [HideInInspector] public MeleeAttackEvent meleeAttackEvent;
-    [HideInInspector] public MeleeAttackMainHand meleeAttackRightHand;
-    [HideInInspector] public MeleeAttackOffHand meleeAttackLeftHand;
+    [HideInInspector] public MeleeAttackMainHand meleeAttackMainHand;
+    [HideInInspector] public RangedAttackEvent rangedAttackEvent;
     [HideInInspector] public SetActiveWeaponEvent setActiveWeaponEvent;
     [HideInInspector] public SetPassiveItemEvent setPassiveItemEvent; 
     [HideInInspector] public AimWeapon aimWeapon;
@@ -71,7 +70,10 @@ public class Player : MonoBehaviour
     [HideInInspector] public SelectedPassiveItem selectedPassiveItem;
     [HideInInspector] public WeaponFiredEvent weaponFiredEvent;
     [HideInInspector] public SpriteRenderer spriteRenderer;
+    [HideInInspector] public SortingGroup sortingGroup;
     [HideInInspector] public PolygonCollider2D polygonCollider2D;
+    [HideInInspector] public Transform mainHandWeaponAnchorTransform;
+    [HideInInspector] public Transform offHandWeaponAnchorTransform;
     [HideInInspector] public Rigidbody2D rb2D;
     [HideInInspector] public Animator animator;
     [HideInInspector] public AnimatePlayer animatePlayer;
@@ -205,8 +207,8 @@ public class Player : MonoBehaviour
         fireWeaponEvent = GetComponent<FireWeaponEvent>();
         fireWeapon = GetComponent<FireWeapon>();
         meleeAttackEvent = GetComponent<MeleeAttackEvent>();
-        meleeAttackRightHand = GetComponent<MeleeAttackMainHand>();
-        meleeAttackLeftHand = GetComponent<MeleeAttackOffHand>();
+        rangedAttackEvent = GetComponentInChildren<RangedAttackEvent>();
+        meleeAttackMainHand = GetComponent<MeleeAttackMainHand>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
         setPassiveItemEvent = GetComponent<SetPassiveItemEvent>();
         aimWeapon = GetComponent<AimWeapon>();
@@ -214,6 +216,7 @@ public class Player : MonoBehaviour
         selectedActiveItem = GetComponent<SelectedActiveItem>();
         selectedPassiveItem = GetComponent<SelectedPassiveItem>();
         weaponFiredEvent = GetComponent<WeaponFiredEvent>();
+        sortingGroup = GetComponent<SortingGroup>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         polygonCollider2D = GetComponent<PolygonCollider2D>();
         rb2D = GetComponent<Rigidbody2D>();
@@ -227,6 +230,8 @@ public class Player : MonoBehaviour
         specialMoveEvent = GetComponent<SpecialMoveEvent>();
         branchMastery = GetComponent<BranchMastery>();
         weaponMastery = GetComponent<WeaponMastery>();
+        mainHandWeaponAnchorTransform = transform.GetChild(0);
+        offHandWeaponAnchorTransform = transform.GetChild(1);
     }
     
     /// <summary>
@@ -252,11 +257,15 @@ public class Player : MonoBehaviour
     private void OnEnable()
     {
         healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
+
+        rangedAttackEvent.OnAnimationRangedAttackAnimationTriggered.AddListener(ResetAttackForRangedAttack);
     }
 
     private void OnDisable()
     {
         healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
+
+        rangedAttackEvent.OnAnimationRangedAttackAnimationTriggered.RemoveListener(ResetAttackForRangedAttack);
     }
 
     private void Start()
@@ -281,6 +290,12 @@ public class Player : MonoBehaviour
                 destroyedEvent.CallDestroyedEvent(true, true);
             }
         }   
+    }
+
+    public void ResetAttackForRangedAttack()
+    {
+        meleeAttackMainHand.IsAttacking = false;
+        //animator.SetBool(Settings.rangedWeaponAttack, false);
     }
 
     /// <summary>

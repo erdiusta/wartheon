@@ -4,7 +4,7 @@ using UnityEngine.Events;
 public class AnimationEventHelperMainHand : MonoBehaviour
 {
     public UnityEvent OnAnimationMainHandEventTriggered;
-    public UnityEvent OnAttackOffHandPerformed;
+    public UnityEvent OnAttackMainHandPerformed;
 
     public void TriggerEventAtMainHand()
     {
@@ -13,6 +13,6 @@ public class AnimationEventHelperMainHand : MonoBehaviour
 
     public void TriggerAttackAtMainHand()
     {
-        OnAttackOffHandPerformed?.Invoke();
+        OnAttackMainHandPerformed?.Invoke();
     }
 }

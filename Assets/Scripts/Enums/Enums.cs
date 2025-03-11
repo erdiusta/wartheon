@@ -134,10 +134,24 @@ public enum AimDirection
 {
     Up,
     UpRight,
-    UpLeft,
     Right,
+    DownRight,
     Left,
-    Down
+    DownLeft,
+    Down,
+    UpLeft
+}
+
+public enum AttackDirection
+{
+    Up,
+    UpRight,
+    Right,
+    DownRight,
+    Down,
+    DownLeft,
+    Left,
+    UpLeft
 }
 
 public enum WeaponLevel
@@ -237,7 +251,6 @@ public enum MeleeAttackType
 {
     None,
     Swing,
-    Sweep,
     Thrust
 }
 

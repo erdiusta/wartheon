@@ -22,10 +22,10 @@ MonoBehaviour:
   experiencePoint: 60
   chaseDistance: 6
   hasAttackMove: 1
-  attackMoveTriggerDistance: 4
-  attackMoveEfficentDistance: 6
+  attackMoveTriggerDistance: 2
+  attackMoveEfficentDistance: 1
   attackMoveBaseCooldown: 1
-  countdownDurationBeforeDashAttack: 0.4
+  countdownDurationBeforeDashAttack: 0.8
   deflectionValue: 0.3
   enemyBehaviour: 2
   isEnemyBoss: 0
@@ -66,6 +66,7 @@ MonoBehaviour:
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 0}
   roarSoundEffect: {fileID: 0}
+  chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}

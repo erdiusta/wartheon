@@ -22,7 +22,6 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(CircleCollider2D))]
 [RequireComponent(typeof(PolygonCollider2D))]
 [RequireComponent(typeof(StatusManager))]
 [RequireComponent(typeof(DamageDisplay))]
@@ -34,6 +33,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public EnemyDetailsSO enemyDetails;
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
     [HideInInspector] public FireWeapon fireWeapon;
+    [HideInInspector] public EnemyAIEvent enemyAIEvent;
     [HideInInspector] public WeaponFiredEvent weaponFiredEvent;
     [HideInInspector] public DestroyedEvent destroyedEvent;
     [HideInInspector] public SpriteRenderer[] spriteRendererArray;
@@ -69,7 +69,6 @@ public class Enemy : MonoBehaviour
     float blindTimer;
     SetActiveWeaponEvent setActiveWeaponEvent;
     MaterializeEffect materializeEffect;
-    CircleCollider2D circleCollider2D;
     PolygonCollider2D polygonCollider2D;
 
     private void Awake()
@@ -79,13 +78,13 @@ public class Enemy : MonoBehaviour
         activeWeapon = GetComponent<ActiveWeapon>();
         fireWeaponEvent = GetComponent<FireWeaponEvent>();
         fireWeapon = GetComponent<FireWeapon>();
+        enemyAIEvent = GetComponent<EnemyAIEvent>();
         weaponFiredEvent = GetComponent<WeaponFiredEvent>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
         destroyedEvent = GetComponent<DestroyedEvent>();
         enemyAI = GetComponent<EnemyAI>();
         dealContactDamage = GetComponent<DealContactDamage>();
         materializeEffect = GetComponent<MaterializeEffect>();
-        circleCollider2D = GetComponent<CircleCollider2D>();
         polygonCollider2D = GetComponent<PolygonCollider2D>();
         spriteRendererArray = GetComponentsInChildren<SpriteRenderer>();
         aimWeapon = GetComponent<AimWeapon>();
@@ -238,7 +237,6 @@ public class Enemy : MonoBehaviour
     private void EnemyEnable(bool isEnabled)
     {
         // Enable/Disable colliders
-        circleCollider2D.enabled = isEnabled;
         polygonCollider2D.enabled = isEnabled;
 
         // Enable/Disable movement AI

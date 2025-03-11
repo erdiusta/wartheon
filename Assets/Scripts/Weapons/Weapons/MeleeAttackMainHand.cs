@@ -2,18 +2,19 @@ using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(MeleeAttackEvent))]
 [DisallowMultipleComponent]
 public class MeleeAttackMainHand : MonoBehaviour
 {
-    public bool IsAttackingAtRightHand { get; set; }
+    public bool IsAttacking { get; set; }
 
     [HideInInspector] public Coroutine playerAttackMotionRoutine;
 
     MeleeAttackEvent meleeAttackEvent;
-    Animator rightHandMeleeAnimator;
+    //Animator rightHandMeleeAnimator;
     SpriteRenderer weaponSpriteRenderer;
     AnimationEventHelperMainHand rightHandAnimationEventHelper;
     CircleOrigin circleOrigin;
@@ -25,12 +26,15 @@ public class MeleeAttackMainHand : MonoBehaviour
     bool rightHandAttackBlocked;
     bool isBloodDrain;
 
+    // DEBUG
+    int animationCounter = 0;
+
     private void Awake()
     {
         player = GetComponent<Player>();
         meleeAttackEvent = GetComponent<MeleeAttackEvent>();
-        rightHandMeleeAnimator = transform.GetChild(0).GetComponent<Animator>();
-        rightHandAnimationEventHelper = rightHandMeleeAnimator.GetComponent<AnimationEventHelperMainHand>();
+        //rightHandMeleeAnimator = transform.GetChild(0).GetComponent<Animator>();
+        rightHandAnimationEventHelper = GetComponent<AnimationEventHelperMainHand>();
         circleOrigin = GetComponentInChildren<CircleOrigin>();
         boxOrigin = GetComponentInChildren<BoxOrigin>();
     }
@@ -39,14 +43,14 @@ public class MeleeAttackMainHand : MonoBehaviour
     {
         meleeAttackEvent.OnRightHandMeleeAttack += MeleeAttackEvent_MainHandMeleeAttack;
         rightHandAnimationEventHelper.OnAnimationMainHandEventTriggered.AddListener(ResetIsAttackingRightHand);
-        rightHandAnimationEventHelper.OnAttackOffHandPerformed.AddListener(DetectColliders);
+        rightHandAnimationEventHelper.OnAttackMainHandPerformed.AddListener(DetectColliders);
     }
 
     private void OnDisable()
     {
         meleeAttackEvent.OnRightHandMeleeAttack -= MeleeAttackEvent_MainHandMeleeAttack;
         rightHandAnimationEventHelper.OnAnimationMainHandEventTriggered.RemoveListener(ResetIsAttackingRightHand);
-        rightHandAnimationEventHelper.OnAttackOffHandPerformed.RemoveListener(DetectColliders);
+        rightHandAnimationEventHelper.OnAttackMainHandPerformed.RemoveListener(DetectColliders);
     }
 
     void Start()
@@ -65,16 +69,20 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     public void DetectColliders()
     {
-        if (!IsAttackingAtRightHand) return;
+        if (!IsAttacking) return;
 
         switch (player.playerControl.meleeAttackTypeMainHand)
         {
             case MeleeAttackType.None:
                 break;
             case MeleeAttackType.Swing:
-            case MeleeAttackType.Sweep:
                 foreach (Collider2D collider in Physics2D.OverlapCircleAll(circleOriginTransform.position, circleOrigin.circleRadius))
                 {
+                    if (collider.GetComponent<Environment>() != null)
+                    {
+                        collider.GetComponent<Health>().TakeDamage(100, transform.position, collider.transform.position, false);
+                    }
+
                     if (collider.GetType() == typeof(PolygonCollider2D))
                     {
                         // Don't hit yourself if player is also in the collider list
@@ -86,6 +94,13 @@ public class MeleeAttackMainHand : MonoBehaviour
 
                         if (enemyHealth = collider.GetComponent<Health>())
                         {
+                            if(collider.tag == "PracticeDummy")
+                            {
+                                DummyCheck(collider);
+
+                                return; // Exit here to prevent enemy checks
+                            }
+
                             Enemy enemy = collider.GetComponent<Enemy>();
 
                             // Check if hit is successful or dodged by enemy
@@ -160,6 +175,11 @@ public class MeleeAttackMainHand : MonoBehaviour
                 Vector2 boxSize = new Vector2(boxOrigin.boxLength, boxOrigin.boxHeight);
                 foreach (Collider2D collider in Physics2D.OverlapBoxAll(boxOriginTransform.position, boxSize, 0))
                 {
+                    if (collider.GetComponent<Environment>() != null)
+                    {
+                        collider.GetComponent<Health>().TakeDamage(100, transform.position, collider.transform.position, false);
+                    }
+
                     if (collider.GetType() == typeof(PolygonCollider2D))
                     {
                         // Don't hit yourself if player is also in the collider list
@@ -169,6 +189,13 @@ public class MeleeAttackMainHand : MonoBehaviour
 
                         if (enemyHealth = collider.GetComponent<Health>())
                         {
+                            if (collider.tag == "PracticeDummy")
+                            {
+                                DummyCheck(collider);
+
+                                return; // Exit here to prevent enemy checks
+                            }
+
                             Enemy enemy = collider.GetComponent<Enemy>();
 
                             // Check if hit is successful or dodged by enemy
@@ -494,38 +521,113 @@ public class MeleeAttackMainHand : MonoBehaviour
 
     public void ResetIsAttackingRightHand()
     {
-        IsAttackingAtRightHand = false;
+        IsAttacking = false;
         player.playerControl.meleeAttackTypeMainHand = MeleeAttackType.None;
+
+        player.animatePlayer.SetIdleAnimationParameters();
     }
 
     private void AttackAtMainHand(Weapon weapon, MeleeAttackType meleeAttackType, bool isBloodDrain)
     {
         if (rightHandAttackBlocked) return;
 
-        this.isBloodDrain = isBloodDrain;
+        // Ranged fire animation (Bow or staff)
+        if (meleeAttackType == MeleeAttackType.None)
+        {
+            Animator weaponAnimator = transform.GetChild(0).GetComponent<Animator>();
 
-        rightHandMeleeAnimator.SetTrigger(Settings.meleeAttackAtRightHand);
+            player.animatePlayer.SetAttackAnimationParameters();
+            weaponAnimator.SetTrigger(Settings.rangedWeaponAttack);
+
+            //weaponAnimator.Play("AttackAtRightHand", 0, 0);
+            //weaponAnimator.Update(0);
+
+            return;
+        }
+
+        this.isBloodDrain = isBloodDrain;
 
         weapon.onCooldown = true;
 
-        switch (meleeAttackType)
+        player.animatePlayer.SetAttackAnimationParameters();
+
+        // This means that's neither a dual wield nor a shield
+        if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
         {
-            case MeleeAttackType.None:
-                break;
-            case MeleeAttackType.Swing:
-                rightHandMeleeAnimator.SetInteger("attackMoveType", 0);
-                break;
-            case MeleeAttackType.Sweep:
-                rightHandMeleeAnimator.SetInteger("attackMoveType", 1);
-                break;
-            case MeleeAttackType.Thrust:
-                rightHandMeleeAnimator.SetInteger("attackMoveType", 2);
-                break;
-            default:
-                break;
+            // If weapon is a spear, thrust motions should be enabled
+            if (player.activeWeapon.GetCurrentMainHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Spear) 
+            {
+                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+                {
+                    player.animator.Play("EmptyThrustLong", 0, 0);
+                }
+                else
+                {
+                    player.animator.Play("EmptyThrustShort", 0, 0);
+                }
+            }
+            else
+            {
+                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+                {
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger || player.activeWeapon.GetCurrentMainHandWeapon().
+                        weaponDetails.weaponClass == WeaponClass.Claw)
+                    {
+                        player.animator.Play("EmptyShort", 0, 0);  // Play short smear animation
+                    }
+                    else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+                    {
+                        player.animator.Play("EmptyLong", 0, 0);  // Play long smear animation
+                    }
+                    else
+                    {
+                        player.animator.Play("EmptyMedium", 0, 0); // Play medium smear animation
+                    }
+                }
+            }
+        }
+        else if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+        {
+            if (player.activeWeapon.GetCurrentMainHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Spear)
+            {
+                player.animator.Play("EmptyThrustS", 0, 0);
+            }
+            else
+            {
+                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+                {
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger || player.activeWeapon.GetCurrentMainHandWeapon().
+                        weaponDetails.weaponClass == WeaponClass.Claw)
+                    {
+                        player.animator.Play("EmptyShortS", 0, 0);  // Play short smear animation
+                    }
+                    else
+                    {
+                        player.animator.Play("EmptyMediumS", 0, 0); // Play medium smear animation
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+            {
+                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger || player.activeWeapon.GetCurrentMainHandWeapon().
+                    weaponDetails.weaponClass == WeaponClass.Claw)
+                {
+                    player.animator.Play("EmptyShortDW", 0, 0);  // Play short smear animation for dual wield
+                }
+                else
+                {
+                    player.animator.Play("EmptyMediumDW", 0, 0); // Play medium smear animation for dual wield
+                }
+            }
         }
 
-        IsAttackingAtRightHand = true;
+        //Force animator to update ASAP so new state will be active.
+        player.animator.Update(0);
+
+        IsAttacking = true;
         rightHandAttackBlocked = true;
         StartCoroutine(DelayAttackRightHand(weapon));
 
@@ -537,6 +639,35 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         // Weapon fired event for starting cooldown ui
         player.weaponFiredEvent.CallWeaponFiredEvent(player.activeWeapon.GetCurrentMainHandWeapon(), true);
+    }
+
+    /// <summary>
+    /// Dummy hit interactions
+    /// </summary>
+    private void DummyCheck(Collider2D collider)
+    {
+        Health health = collider.GetComponent<Health>();
+
+        // Damage produced by player
+        int damageDone = player.isCursed ? player.currentMainHandMinDamageValue : Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
+
+        bool criticalHitHappened = CriticalHitHappened();
+
+        // Calculate damage after critical hit check
+        if (player.onStealth)
+        {
+            damageDone = criticalHitHappened ? (int)(damageDone * (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnStealth)) : damageDone;
+        }
+        else
+        {
+            damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                player.additionalCriticalMeleeDamageModifier) : damageDone;
+        }
+
+        health.PostHitImmunity();
+        health.TakeDamage(damageDone, transform.position, health.transform.position, false);
+        collider.GetComponent<HealthEvent>().CallHealthChangedEvent(damageDone / 1000000000, 1000000000, damageDone);
     }
 
     IEnumerator DelayAttackRightHand(Weapon weapon)

@@ -36,7 +36,8 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
         // Initialize vectors, angles, directions and aim
         float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-        enemy.aimWeapon.Aim(unitAimDirection, unitAngle);
+        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle);
         enemy.animateEnemy.ResetAimAnimationParameters();
         enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
 
@@ -219,7 +220,7 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
             }
 
-            enemy.animator.SetBool(Settings.isAttacking, false);
+            enemy.animator.SetBool(Settings.isAttack, false);
 
             yield return null;
 

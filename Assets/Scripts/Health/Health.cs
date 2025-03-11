@@ -123,7 +123,11 @@ public class Health : MonoBehaviour
         {
             if (currentHealth <= 0f)
             {
-                SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemImpactSoundEffect);
+                if (decoy.tag == "Dummy")
+                {
+                    SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemImpactSoundEffect);
+                }
+
                 Destroy(gameObject);
             }
         }
@@ -322,7 +326,10 @@ public class Health : MonoBehaviour
 
     IEnumerator DecoyGetHitRoutine()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemSwingSoundEffect);
+        if (decoy.tag == "Dummy")
+        {
+            SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemSwingSoundEffect);
+        }
 
         yield return new WaitForSeconds(0.1f);
 
@@ -399,7 +406,7 @@ public class Health : MonoBehaviour
         else
         {
             // If there is post hit immunity then
-            if (isImmuneAfterHit)
+            if (isImmuneAfterHit || GetComponent<Decoy>() != null)
             {
                 if (immunityCoroutine != null)
                 {
