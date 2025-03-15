@@ -439,7 +439,7 @@ PrefabInstance:
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: b94f02f4605bbdc4dad32f13e9417f08, type: 2}
+      objectReference: {fileID: 9100000, guid: 138033939b3e36048aef57760bbb3f33, type: 2}
     m_RemovedComponents:
     - {fileID: 0}
     - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
@@ -483,4 +483,5 @@ MonoBehaviour:
   updateFrameNumber: 1
   enemyStartingSpeed: 0
   enemyPhase: 0
-  collideCircleRadius: 1
+  isAttacking: 0
+  isDashing: 0

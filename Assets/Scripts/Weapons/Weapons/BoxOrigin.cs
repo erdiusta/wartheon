@@ -1,18 +1,21 @@
 using UnityEngine;
 
-
+[RequireComponent(typeof(BoxCollider2D))]
 public class BoxOrigin : MonoBehaviour
 {
     public float boxLength = 1f;
     public float boxHeight = 1f;
 
-    [SerializeField] Transform weaponRotationPointTransform;
+    [SerializeField] private Transform weaponRotationPointTransform;
 
-    Player player;
+    private Player player;
+    private BoxCollider2D boxCollider;
 
     private void Awake()
     {
         player = GetComponentInParent<Player>();
+        boxCollider = GetComponent<BoxCollider2D>();
+        boxCollider.isTrigger = true; // Ensure it's used for detection, not physics collision
     }
 
     private void Update()
@@ -23,6 +26,13 @@ public class BoxOrigin : MonoBehaviour
             {
                 boxLength = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxLength;
                 boxHeight = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxHeight;
+
+                // Update collider size if needed
+                Vector2 newSize = new Vector2(boxLength, boxHeight);
+                if (boxCollider.size != newSize)
+                {
+                    boxCollider.size = newSize;
+                }
             }
         }
     }
@@ -30,16 +40,14 @@ public class BoxOrigin : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Vector3 position = this == null ? Vector3.zero : transform.position;
+        Vector3 position = transform ? transform.position : Vector3.zero;
 
-        // Convert angle value from degree to radians to use sin-cos methods
+        // Convert angle value from degrees to radians
         float angle = weaponRotationPointTransform.eulerAngles.z * Mathf.Deg2Rad;
 
-        // Use cos and sin to scale box dimensions smoothly
+        // Adjust box size based on rotation
         float cosAngle = Mathf.Abs(Mathf.Cos(angle));
         float sinAngle = Mathf.Abs(Mathf.Sin(angle));
-
-        // Adjust box size based on angle
         float adjustedLength = boxLength * cosAngle + boxHeight * sinAngle;
         float adjustedHeight = boxHeight * cosAngle + boxLength * sinAngle;
 

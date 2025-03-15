@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 [RequireComponent(typeof(Player))]
 [DisallowMultipleComponent]
@@ -95,7 +94,7 @@ public class AnimatePlayer : MonoBehaviour
     /// </summary>
     public void SetMovementAnimationParameters()
     {
-        if (player.meleeAttackMainHand.playerAttackMotionRoutine == null || !player.isDead)
+        if ( !player.isDead)
         {
             player.animator.SetBool(Settings.isMoving, true);
             player.animator.SetBool(Settings.isIdle, false);

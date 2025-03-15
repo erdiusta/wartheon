@@ -140,6 +140,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8447202650038424383}
   - component: {fileID: 2226921973809070019}
+  - component: {fileID: 4696130459254860829}
   m_Layer: 18
   m_Name: BoxOrigin
   m_TagString: Untagged
@@ -177,6 +178,52 @@ MonoBehaviour:
   boxLength: 1
   boxHeight: 1
   weaponRotationPointTransform: {fileID: 2635258226080149353}
+--- !u!61 &4696130459254860829
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256994677781490074}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &338371118052753355
 GameObject:
   m_ObjectHideFlags: 0
@@ -910,6 +957,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7936086671000619909}
   - component: {fileID: 6885515782890191060}
+  - component: {fileID: 8156907797649625243}
   m_Layer: 18
   m_Name: CircleOrigin
   m_TagString: Untagged
@@ -945,6 +993,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circleRadius: 0
+--- !u!58 &8156907797649625243
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784395287985587332}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.5
 --- !u!1 &1850999184104365948
 GameObject:
   m_ObjectHideFlags: 0
@@ -1236,6 +1320,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 232d7b104d571ef41959b90fa7ff856a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnAnimationRangedAttackAnimationTriggered:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2434299033552300049
 GameObject:
   m_ObjectHideFlags: 0
@@ -1412,6 +1499,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2935184723905329284}
   - component: {fileID: 6993977867922307612}
+  - component: {fileID: 2495974157095481760}
   m_Layer: 18
   m_Name: BoxOrigin
   m_TagString: Untagged
@@ -1449,6 +1537,52 @@ MonoBehaviour:
   boxLength: 1
   boxHeight: 1
   weaponRotationPointTransform: {fileID: 6873713257487317844}
+--- !u!61 &2495974157095481760
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3330880721001429551}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &3395802143089367590
 GameObject:
   m_ObjectHideFlags: 0
@@ -1459,6 +1593,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2111572377593781178}
   - component: {fileID: 8459880889773683550}
+  - component: {fileID: 2246981869558898825}
   m_Layer: 18
   m_Name: CircleOrigin
   m_TagString: Untagged
@@ -1494,6 +1629,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circleRadius: 1.7
+--- !u!58 &2246981869558898825
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3395802143089367590}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.5
 --- !u!1 &3542138100568624628
 GameObject:
   m_ObjectHideFlags: 0
@@ -2083,6 +2254,7 @@ MonoBehaviour:
   fireWeapon: {fileID: 0}
   meleeAttackEvent: {fileID: 0}
   meleeAttackMainHand: {fileID: 0}
+  rangedAttackEvent: {fileID: 0}
   setActiveWeaponEvent: {fileID: 0}
   setPassiveItemEvent: {fileID: 0}
   aimWeapon: {fileID: 0}
@@ -2655,7 +2827,7 @@ MonoBehaviour:
   OnAnimationMainHandEventTriggered:
     m_PersistentCalls:
       m_Calls: []
-  OnAttackOffHandPerformed:
+  OnAttackMainHandPerformed:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &4966358325702215446

@@ -559,7 +559,7 @@ PrefabInstance:
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 1ac4abcde34d0a8428008ddab35f8ceb, type: 2}
+      objectReference: {fileID: 9100000, guid: 437f23d1bf9575541a99bacb1cc272a6, type: 2}
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
@@ -606,7 +606,8 @@ MonoBehaviour:
   updateFrameNumber: 1
   enemyStartingSpeed: 0
   enemyPhase: 0
-  collideCircleRadius: 1
+  isAttacking: 0
+  isDashing: 0
 --- !u!114 &7910599782929872873 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7294595444096721567, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}

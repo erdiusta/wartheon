@@ -485,6 +485,12 @@ public class Projectile : MonoBehaviour, IFireable
 
             DisableProjectile();
         }
+        else if (collision.tag == "PracticeDummy")
+        {
+            DummyCheck(collision);
+
+            DisableProjectile();
+        }
         else if (collision.tag == Settings.playerWeapon)
         {
             return;
@@ -747,6 +753,37 @@ public class Projectile : MonoBehaviour, IFireable
 
             health.TakeDamage(inflictedDamage, transform.position, health.transform.position, polygonCollider2D, headShotHappened);
         }
+    }
+
+        /// <summary>
+    /// Dummy hit interactions
+    /// </summary>
+    private void DummyCheck(Collider2D collider)
+    {
+        Health health = collider.GetComponent<Health>();
+
+        // Damage produced by player
+        int damageDone = player.isCursed ? player.currentMainHandMinDamageValue : Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
+        int offHandDamageDone = player.isCursed ? player.currentOffHandMinDamageValue : Random.Range(player.currentOffHandMinDamageValue, player.currentOffHandMinDamageValue);
+        damageDone += offHandDamageDone;
+
+        bool criticalHitHappened = false;
+
+        // Calculate damage after critical hit check
+        if (player.onStealth)
+        {
+            damageDone = criticalHitHappened ? (int)(damageDone * (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnStealth)) : damageDone;
+        }
+        else
+        {
+            damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                player.additionalCriticalMeleeDamageModifier) : damageDone;
+        }
+
+        health.PostHitImmunity();
+        health.TakeDamage(damageDone, transform.position, health.transform.position, false);
+        collider.GetComponent<HealthEvent>().CallHealthChangedEvent(damageDone / 1000000000, 1000000000, damageDone);
     }
 
     IEnumerator ColliderTimeThreshold()

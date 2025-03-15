@@ -44,7 +44,6 @@ public class ActiveWeapon : MonoBehaviour
     Weapon currentMainHandWeapon;
     Weapon currentOffHandWeapon;
 
-
     private void Awake()
     {
         player = GetComponent<Player>();
@@ -83,7 +82,7 @@ public class ActiveWeapon : MonoBehaviour
     {
         if (player != null)
         {
-            playerAnimator.runtimeAnimatorController = player.playerDetails.oneHandRuntimeAnimatorController;
+            playerAnimator.runtimeAnimatorController = player.playerDetails.bodyRuntimeAnimatorController;
         }
     }
 
@@ -137,6 +136,7 @@ public class ActiveWeapon : MonoBehaviour
 
         if (player != null)
         {
+            // Reset transform values
             player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
             player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
             player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localScale = new Vector3(1f, 1f, 1f);
@@ -286,21 +286,23 @@ public class ActiveWeapon : MonoBehaviour
     {
         currentOffHandWeapon = weapon;
 
-        weaponOffHandAnimator.enabled = true;
-
         if (currentOffHandWeapon.weaponDetails.weaponClass == WeaponClass.Shield)
         {
+            weaponOffHandAnimator.enabled = true;
+
             playerAnimator.SetBool(Settings.isShielded, true);
             playerAnimator.SetBool(Settings.isDualWield, false);
+
+            // Set animator controller to the weapon animator
+            weaponOffHandAnimator.runtimeAnimatorController = currentOffHandWeapon.weaponDetails.weaponAnimatorController;
         }
         else
         {
+            weaponOffHandAnimator.enabled = false;
+
             playerAnimator.SetBool(Settings.isShielded, false);
             playerAnimator.SetBool(Settings.isDualWield, true);
         }
-
-        // Set animator controller to the weapon animator
-        weaponOffHandAnimator.runtimeAnimatorController = currentOffHandWeapon.weaponDetails.weaponAnimatorController;
 
         // Set current weapon sprite
         weaponOffHandSpriteRenderer.sprite = currentOffHandWeapon.weaponDetails.weaponFrontSprite;

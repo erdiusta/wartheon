@@ -379,96 +379,8 @@ public class PlayerControl : MonoBehaviour
             }
 
             return;
-
-            //// Return after moves finished if off-hand weapon is free or a shield
-            //if (player.activeWeapon.GetCurrentOffHandWeapon() == null || player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
-            //{
-            //    return;
-            //}
         }
-
-
-        //if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
-        //{
-        //    // Fire when right mouse button is clicked - melee off-hand
-        //    if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon)
-        //    {
-        //        // Check for quick tap input
-        //        if (InputManager.Instance.attackOffHand.action.WasPerformedThisFrame())
-        //        {
-        //            player.meleeAttackLeftHand.IsAttackingAtLeftHand = true;
-
-        //            diceAgainForOffHand:
-
-        //            int randomNum = Random.Range(1, 101);
-        //            int selectedWeaponMoveIndex;
-
-        //            if (randomNum <= 40)
-        //            {
-        //                selectedWeaponMoveIndex = 1;
-        //            }
-        //            else if (randomNum <= 70)
-        //            {
-        //                selectedWeaponMoveIndex = 2;
-        //            }
-        //            else
-        //            {
-        //                selectedWeaponMoveIndex = 3;
-        //            }
-
-        //            switch (selectedWeaponMoveIndex)
-        //            {
-        //                case 1:
-        //                    if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasSwing)
-        //                    {
-        //                        meleeAttackTypeOffHand = MeleeAttackType.Swing;
-        //                    }
-        //                    else
-        //                    {
-        //                        goto diceAgainForOffHand;
-        //                    }
-        //                    break;
-        //                case 2:
-        //                    if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasThrust)
-        //                    {
-        //                        meleeAttackTypeOffHand = MeleeAttackType.Thrust;
-        //                    }
-        //                    else
-        //                    {
-        //                        goto diceAgainForOffHand;
-        //                    }            
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-
-        //            player.meleeAttackEvent.CallOffHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), meleeAttackTypeOffHand);
-
-        //        }
-
-        //        // Don't pass to the ranged weapon elements so finish method here while returning
-        //        return;
-        //    }
-        //}
-
-        //// Fire when left mouse button is clicked
-        //if (InputManager.Instance.attack.action.WasPerformedThisFrame())
-        //{
-        //    //Reset precharge for loading again
-        //    isSoundPlayed = false;
-
-        //    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f) return;
-
-        //    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
-        //    {
-        //        player.meleeAttackRightHand.IsAttackingAtRightHand = true;
-        //        player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
-        //    }
-
-        //    // Trigger fire weapon event
-        //    player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
-        //}
-
+    
         // Fire for precharge weapons (fire once after precharge)
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
         {
@@ -494,7 +406,8 @@ public class PlayerControl : MonoBehaviour
         {
             isSoundPlayed = false;
 
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow || 
+                player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow)
             {
                 if (!player.activeWeapon.GetCurrentMainHandWeapon().onCooldown)
                 {

@@ -35,10 +35,17 @@ public class AnimateEnemy : MonoBehaviour
     /// </summary>
     public void ResetAimAnimationParameters()
     {
+        enemy.animator.SetFloat(Settings.axisX, -1f);
+        enemy.animator.SetFloat(Settings.axisY, -1f);
+
         enemy.animator.SetBool(Settings.aimUp, false);
+        enemy.animator.SetBool(Settings.aimUpRight, false);
         enemy.animator.SetBool(Settings.aimRight, false);
-        enemy.animator.SetBool(Settings.aimLeft, false);
+        enemy.animator.SetBool(Settings.aimDownRight, false);
         enemy.animator.SetBool(Settings.aimDown, false);
+        enemy.animator.SetBool(Settings.aimDownLeft, false);
+        enemy.animator.SetBool(Settings.aimLeft, false);
+        enemy.animator.SetBool(Settings.aimUpLeft, false);
     }
 
     /// <summary>
@@ -108,7 +115,7 @@ public class AnimateEnemy : MonoBehaviour
         enemy.animator.SetBool(Settings.isIdle, false);
         enemy.animator.SetBool(Settings.isFrozen, false);
 
-        enemy.animator.SetBool(Settings.dash, true);
+        enemy.animator.SetBool(Settings.dash, false);
 
         if (HasParameter(enemy.animator, Settings.getHit))
         {

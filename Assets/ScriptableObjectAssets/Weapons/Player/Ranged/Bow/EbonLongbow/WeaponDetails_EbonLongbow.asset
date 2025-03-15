@@ -50,13 +50,16 @@ MonoBehaviour:
   weaponUpShootPosition: {x: 0, y: 0, z: 0}
   weaponDownShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: f6205d4ffdade9f49985cf7560344db0, type: 2}
+  weaponSecondaryProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 9e94351610df36548be272034fa0be42, type: 2}
   weaponImpactSoundEffect: {fileID: 0}
-  isMeleeWeapon: 0
+  isMeleeWeapon: 1
   isShield: 0
   projectileDeflectRatio: 0
   circleRadius: 0
+  boxLength: 1.2
+  boxHeight: 2.6
   hasPhysicalDamage: 1
   meleeDamageMin: 0
   meleeDamageMax: 0
@@ -65,8 +68,7 @@ MonoBehaviour:
   weaponCooldownDuration: 2
   weaponBaseHandling: 0.75
   hasSwing: 0
-  hasSweep: 0
   hasThrust: 0
-  hasInfiniteProjectile: 0
+  hasInfiniteProjectile: 1
   weaponProjectileCapacity: 60
   weaponPrechargeTime: 0

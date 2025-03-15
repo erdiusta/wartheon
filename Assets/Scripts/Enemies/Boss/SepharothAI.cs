@@ -421,10 +421,10 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
             {
                 chargeTimer += Time.deltaTime;
 
+                enemy.animator.SetBool(Settings.isAttack, true);
+
                 foreach (Collider2D collider in Physics2D.OverlapCircleAll(swordHoldingTransform.position, smearCircleRadius))
                 {
-                    enemy.animator.SetBool(Settings.isAttack, true);
-
                     if (collider.GetType() == typeof(PolygonCollider2D))
                     {
                         // Don't hit yourself if player is also in the collider list

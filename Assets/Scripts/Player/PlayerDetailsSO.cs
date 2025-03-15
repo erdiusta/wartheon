@@ -31,19 +31,7 @@ public class PlayerDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Player runtime animator controller - ONE HAND")]
     #endregion
-    public RuntimeAnimatorController oneHandRuntimeAnimatorController;
-    #region Tooltip
-    [Tooltip("Player runtime animator controller - TWO HAND")]
-    #endregion
-    public RuntimeAnimatorController twoHandRuntimeAnimatorController;
-    #region Tooltip
-    [Tooltip("Player runtime animator controller - BOW")]
-    #endregion
-    public RuntimeAnimatorController bowRuntimeAnimatorController;
-    #region Tooltip
-    [Tooltip("Player runtime animator controller - STAFF")]
-    #endregion
-    public RuntimeAnimatorController staffRuntimeAnimatorController;
+    public RuntimeAnimatorController bodyRuntimeAnimatorController;
 
     #region Header
     [Space(10)]
@@ -281,9 +269,7 @@ public class PlayerDetailsSO : ScriptableObject
         HelperUtilities.ValidateCheckNullValue(this, nameof(startingWeapon), startingWeapon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerMiniMapIcon), playerMiniMapIcon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerHandSprite), playerHandSprite);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(oneHandRuntimeAnimatorController), oneHandRuntimeAnimatorController);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(twoHandRuntimeAnimatorController), twoHandRuntimeAnimatorController);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(bowRuntimeAnimatorController), bowRuntimeAnimatorController);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(bodyRuntimeAnimatorController), bodyRuntimeAnimatorController);
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(startingWeaponList), startingWeaponList);
 
         if (isImmuneAfterHit)

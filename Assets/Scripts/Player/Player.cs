@@ -295,7 +295,6 @@ public class Player : MonoBehaviour
     public void ResetAttackForRangedAttack()
     {
         meleeAttackMainHand.IsAttacking = false;
-        //animator.SetBool(Settings.rangedWeaponAttack, false);
     }
 
     /// <summary>
@@ -304,10 +303,22 @@ public class Player : MonoBehaviour
     private void CreatePlayerStartingWeapons()
     {
         // Populate weapon list from starting weapons for right hand and shield for left hand if have any
-        foreach (WeaponDetailsSO weaponDetails in playerDetails.startingWeaponList)
+        for (int i = 0; i < playerDetails.startingWeaponList.Count; i++)
         {
             // Add weapon to right hand list of player
-            AddNextWeaponToPlayer(weaponDetails, false, true, false);
+            bool dualWieldOnStart = false;
+
+            if (i == 1 && playerDetails.playerCharacterIndex == Character.Erebus)
+            {
+                dualWieldOnStart = true;
+            }
+
+            AddNextWeaponToPlayer(playerDetails.startingWeaponList[i], false, true, false, dualWieldOnStart);
+        }
+
+        foreach (WeaponDetailsSO weaponDetails in playerDetails.startingWeaponList)
+        {
+
         }
     }
 
@@ -593,12 +604,12 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Add a weapon to the right hand of player weapon list
     /// </summary>
-    public void AddNextWeaponToPlayer(WeaponDetailsSO weaponDetails, bool pickingUp, bool onStart, bool onlySwitch)
+    public void AddNextWeaponToPlayer(WeaponDetailsSO weaponDetails, bool pickingUp, bool onStart, bool onlySwitch, bool dualWieldOnStart = false)
     {
         if (!offHandSlotFilled)
         {
             // First check if it is a shield, if yes equip and return to avoid further checks
-            if (weaponDetails.weaponClass == WeaponClass.Shield)
+            if (weaponDetails.weaponClass == WeaponClass.Shield || dualWieldOnStart)
             {
                 Weapon weapon = new Weapon
                 {
@@ -737,22 +748,6 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
-                    // Exceptional for Erebus onStart offHand dagger wield then return
-                    if (playerDetails.playerCharacterIndex == Character.Erebus)
-                    {
-                        if (onStart)
-                        {
-                            if (weaponSlotSetArray[0][1] == null)
-                            {
-                                weapon.onMainHand = false;
-                                weaponSlotSetArray[0][1] = weapon;
-                                weapon.weaponBelongingToWhichOffHandSet = 1;
-                                ActivateWeapon(weapon, true, 1);
-                                return;
-                            }
-                        }
-                    }
-
                     if (weaponSlotSetArray[0][0] == null)
                     {
                         weaponSlotSetArray[0][0] = weapon;

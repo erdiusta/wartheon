@@ -17,10 +17,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 38858171499291080, guid: 99e6d53686669c243b844a3ade267a1e, type: 3}
   playerClonePrefab: {fileID: 38858171499291080, guid: 46f1237210b49064d9c8a4b11531fed5, type: 3}
   collectibleWeaponsArray: []
-  oneHandRuntimeAnimatorController: {fileID: 9100000, guid: 5a90f6b2373ea5a40932f8ccd43cf690, type: 2}
-  twoHandRuntimeAnimatorController: {fileID: 9100000, guid: cd5e546714cda37458594493845d0bc7, type: 2}
-  bowRuntimeAnimatorController: {fileID: 9100000, guid: 89608e7d0f782dc4593536c2ee6a98dc, type: 2}
-  staffRuntimeAnimatorController: {fileID: 9100000, guid: bd3366211809d0047ae5e9402beda1a3, type: 2}
+  bodyRuntimeAnimatorController: {fileID: 9100000, guid: 3cbcb1e9936af724d841b9df0fe0c7ae, type: 2}
   primaryStats:
     strength: 5
     dexterity: 7
@@ -89,6 +86,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: e5fcd79b7c5f3e945a6fc09e47d6b4f7, type: 3}
   playerHandSprite: {fileID: 21300000, guid: eb02467c70868144aa1dac1c48f1011a, type: 3}
-  playerBookSprite: {fileID: 130744547, guid: 41b5f4eba2f7c7843b707dec5cb31f40, type: 3}
+  playerBookSprite: {fileID: 1335493817, guid: 3fc9faa41809d404fb662a58a359621d, type: 3}
   levelUpSoundEffect: {fileID: 11400000, guid: 65554e211d459a1499ae37e7fc5d6cdf, type: 2}
   buildActivationSoundEffect: {fileID: 11400000, guid: 89b538f65e0e2894582436b50b37b10f, type: 2}

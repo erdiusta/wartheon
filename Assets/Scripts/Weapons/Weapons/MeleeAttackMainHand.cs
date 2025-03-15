@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
-using System.Linq;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(MeleeAttackEvent))]
@@ -11,11 +9,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 {
     public bool IsAttacking { get; set; }
 
-    [HideInInspector] public Coroutine playerAttackMotionRoutine;
-
     MeleeAttackEvent meleeAttackEvent;
-    //Animator rightHandMeleeAnimator;
-    SpriteRenderer weaponSpriteRenderer;
     AnimationEventHelperMainHand rightHandAnimationEventHelper;
     CircleOrigin circleOrigin;
     BoxOrigin boxOrigin;
@@ -26,14 +20,14 @@ public class MeleeAttackMainHand : MonoBehaviour
     bool rightHandAttackBlocked;
     bool isBloodDrain;
 
-    // DEBUG
-    int animationCounter = 0;
+    // Collision fields
+    Collider2D[] _colliders = new Collider2D[10]; // Initial size
+    ContactFilter2D _contactFilter = new ContactFilter2D().NoFilter(); // Default filter
 
     private void Awake()
     {
         player = GetComponent<Player>();
         meleeAttackEvent = GetComponent<MeleeAttackEvent>();
-        //rightHandMeleeAnimator = transform.GetChild(0).GetComponent<Animator>();
         rightHandAnimationEventHelper = GetComponent<AnimationEventHelperMainHand>();
         circleOrigin = GetComponentInChildren<CircleOrigin>();
         boxOrigin = GetComponentInChildren<BoxOrigin>();
@@ -71,194 +65,110 @@ public class MeleeAttackMainHand : MonoBehaviour
     {
         if (!IsAttacking) return;
 
-        switch (player.playerControl.meleeAttackTypeMainHand)
+        int hitCount = 0;
+
+        while (true) // Loop until we get all colliders
         {
-            case MeleeAttackType.None:
-                break;
-            case MeleeAttackType.Swing:
-                foreach (Collider2D collider in Physics2D.OverlapCircleAll(circleOriginTransform.position, circleOrigin.circleRadius))
-                {
-                    if (collider.GetComponent<Environment>() != null)
-                    {
-                        collider.GetComponent<Health>().TakeDamage(100, transform.position, collider.transform.position, false);
-                    }
-
-                    if (collider.GetType() == typeof(PolygonCollider2D))
-                    {
-                        // Don't hit yourself if player is also in the collider list
-                        if (collider.tag == Settings.playerTag) continue;
-
-                        if (collider.tag == Settings.decoyTag) continue;
-
-                        if (collider.tag == Settings.chestItemTag) continue;
-
-                        if (enemyHealth = collider.GetComponent<Health>())
-                        {
-                            if(collider.tag == "PracticeDummy")
-                            {
-                                DummyCheck(collider);
-
-                                return; // Exit here to prevent enemy checks
-                            }
-
-                            Enemy enemy = collider.GetComponent<Enemy>();
-
-                            // Check if hit is successful or dodged by enemy
-                            if (player.currentWeaponHandlingValue * 100 - enemy.enemyDetails.deflectionValue * 100 > Random.Range(0, 100))
-                            {
-                                if (!enemy.enemyDetails.isEnemyBoss)
-                                {
-                                    CheckSuddenDeathStatus(enemy);
-                                    CheckShatterStatus(enemy);
-                                }
-
-                                if (enemyHealth.suddenDeathHappened)
-                                {
-                                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false);
-                                    return;
-                                }
-
-                                int inflictedDamage = CalculateDamageAmount(enemy);
-
-                                if (isBloodDrain)
-                                {
-                                    int inflictedProportionalDamage = (int)(enemy.enemyDetails.enemyHealthDetailsArray[GameManager.Instance.GetCurrentDungeonLevel().levelNumber - 1]
-                                        .enemyHealthAmount * 0.2f);
-                                    if (inflictedDamage > inflictedProportionalDamage)
-                                    {
-                                        enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
-                                    }
-                                    else
-                                    {
-                                        enemyHealth.TakeDamage(inflictedProportionalDamage, transform.position, enemy.transform.position, false);
-                                    }
-                                }
-                                else
-                                {
-                                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
-                                }
-
-                                SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
-
-                                if (!enemy.enemyDetails.isEnemyBoss)
-                                {
-                                    CheckAcidStatus(enemy);
-                                    CheckFrostStatus(enemy);
-                                    CheckStunStatus(enemy);
-                                    CheckPoisonStatus(enemy);
-                                    CheckBlindStatus(enemy);
-                                }
-
-                                if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
-                                {
-                                    player.playerControl.Unstealth();
-                                }
-
-                                //if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
-                                //{
-                                //    enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
-                                //}
-                            }
-                            else
-                            {
-                                enemy.health.isDodging = true;
-                                enemy.healthEvent.CallDodgeEvent();
-                                enemy.health.PostHitImmunity(true);
-                                enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
-                            }
-                        }
-                    }
-                }
-                break;
-            case MeleeAttackType.Thrust:
-                // Fill here
-                Vector2 boxSize = new Vector2(boxOrigin.boxLength, boxOrigin.boxHeight);
-                foreach (Collider2D collider in Physics2D.OverlapBoxAll(boxOriginTransform.position, boxSize, 0))
-                {
-                    if (collider.GetComponent<Environment>() != null)
-                    {
-                        collider.GetComponent<Health>().TakeDamage(100, transform.position, collider.transform.position, false);
-                    }
-
-                    if (collider.GetType() == typeof(PolygonCollider2D))
-                    {
-                        // Don't hit yourself if player is also in the collider list
-                        if (collider.tag == Settings.playerTag) continue;
-                        if (collider.tag == Settings.decoyTag) continue;
-                        if (collider.tag == Settings.chestItemTag) continue;
-
-                        if (enemyHealth = collider.GetComponent<Health>())
-                        {
-                            if (collider.tag == "PracticeDummy")
-                            {
-                                DummyCheck(collider);
-
-                                return; // Exit here to prevent enemy checks
-                            }
-
-                            Enemy enemy = collider.GetComponent<Enemy>();
-
-                            // Check if hit is successful or dodged by enemy
-                            if (player.currentWeaponHandlingValue * 100 - enemy.enemyDetails.deflectionValue * 100 > Random.Range(0, 100))
-                            {
-                                if (!enemy.enemyDetails.isEnemyBoss)
-                                {
-                                    CheckSuddenDeathStatus(enemy);
-                                    CheckShatterStatus(enemy);
-                                }
-
-                                if (enemyHealth.suddenDeathHappened)
-                                {
-                                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false);
-                                    return;
-                                }
-
-                                if (isBloodDrain)
-                                {
-                                    // BLOOD DRAIN SKILL FOR EREBUS
-                                    int inflictedProportionalDamage = (int)(enemyHealth.currentHealth * (0.2f + player.bloodDrainSkillAdditionalDamagePercentageModifier));
-                                    enemyHealth.TakeDamage(inflictedProportionalDamage, transform.position, enemy.transform.position, false);
-                                }
-                                else
-                                {
-                                    int inflictedDamage = CalculateDamageAmount(enemy);
-                                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
-                                }
-
-                                SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
-
-                                if (!enemy.enemyDetails.isEnemyBoss)
-                                {
-                                    CheckAcidStatus(enemy);
-                                    CheckFrostStatus(enemy);
-                                    CheckStunStatus(enemy);
-                                    CheckPoisonStatus(enemy);
-                                    CheckBlindStatus(enemy);
-                                }
-
-                                if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
-                                {
-                                    player.playerControl.Unstealth();
-                                }
-
-                                //if (!enemy.enemyDetails.hasKnockbackResistance && enemyHealth.currentHealth > 0)
-                                //{
-                                //    enemy.enemyAI.TriggerKnockback((enemy.transform.position - transform.position).normalized);
-                                //}
-                            }
-                            else
-                            {
-                                enemy.health.isDodging = true;
-                                enemy.healthEvent.CallDodgeEvent();
-                                enemy.health.PostHitImmunity(true);
-                                enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
-                            }
-                        }
-                    }
-                }
+            switch (player.playerControl.meleeAttackTypeMainHand)
+            {
+                case MeleeAttackType.Swing:
+                    hitCount = Physics2D.OverlapCollider(circleOriginTransform.GetComponent<Collider2D>(), _contactFilter, _colliders);
                     break;
-            default:
-                break;
+                case MeleeAttackType.Thrust:
+                    hitCount = Physics2D.OverlapCollider(boxOriginTransform.GetComponent<Collider2D>(), _contactFilter, _colliders);
+                    break;
+                default:
+                    return;
+            }
+
+            // If the array is too small, increase its size and retry
+            if (hitCount == _colliders.Length)
+            {
+                _colliders = new Collider2D[_colliders.Length * 2]; // Double the size
+                continue;
+            }
+            break;
+        }
+
+        // Use Span<T> to process only the valid colliders
+        Span<Collider2D> hitSpan = _colliders.AsSpan(0, hitCount);
+
+        foreach (var collider in hitSpan)
+        {
+            // Check if the collider belongs to an environment object
+            if (collider.TryGetComponent(out Environment environment))
+            {
+                if (collider.TryGetComponent(out Health environmentHealth))
+                {
+                    environmentHealth.TakeDamage(100, transform.position, collider.transform.position, false);
+                }
+                continue; // Skip further checks
+            }
+
+            // Ignore unwanted objects
+            if (collider.CompareTag(Settings.playerTag) ||
+                collider.CompareTag(Settings.decoyTag) ||
+                collider.CompareTag(Settings.chestItemTag)) continue;
+
+            // Check if the collider has a Health component
+            if (!collider.TryGetComponent(out Health enemyHealth)) continue;
+
+            // Special check for practice dummy (doesn't exit early now)
+            if (collider.CompareTag("PracticeDummy"))
+            {
+                DummyCheck(collider);
+                continue; // Continue instead of return, so other enemies are processed
+            }
+
+            // Check if the collider is an actual enemy
+            if (!collider.TryGetComponent(out Enemy enemy)) continue;
+
+            // Hit calculation (determines if the attack lands)
+            bool attackHits = player.currentWeaponHandlingValue * 100 - enemy.enemyDetails.deflectionValue * 100 > Random.Range(0, 100);
+
+            if (attackHits)
+            {
+                if (!enemy.enemyDetails.isEnemyBoss)
+                {
+                    CheckSuddenDeathStatus(enemy);
+                    CheckShatterStatus(enemy);
+                }
+
+                if (enemyHealth.suddenDeathHappened)
+                {
+                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false);
+                    continue; // Move to the next enemy
+                }
+
+                int inflictedDamage = isBloodDrain
+                    ? Mathf.Max((int)(enemyHealth.currentHealth * (0.2f + player.bloodDrainSkillAdditionalDamagePercentageModifier)), CalculateDamageAmount(enemy))
+                    : CalculateDamageAmount(enemy);
+
+                enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+                SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
+
+                if (!enemy.enemyDetails.isEnemyBoss)
+                {
+                    CheckAcidStatus(enemy);
+                    CheckFrostStatus(enemy);
+                    CheckStunStatus(enemy);
+                    CheckPoisonStatus(enemy);
+                    CheckBlindStatus(enemy);
+                }
+
+                if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
+                {
+                    player.playerControl.Unstealth();
+                }
+            }
+            else
+            {
+                // Enemy dodged the attack
+                enemyHealth.isDodging = true;
+                enemy.healthEvent.CallDodgeEvent();
+                enemyHealth.PostHitImmunity(true);
+                enemyHealth.TakeDamage(0, transform.position, enemyHealth.transform.position, false);
+            }
         }
     }
 
@@ -269,6 +179,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     {
         // Damage produced by player
         int damageDone = player.isCursed ? player.currentMainHandMinDamageValue : Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
+        int offHandDamageDone = player.isCursed ? player.currentOffHandMinDamageValue : Random.Range(player.currentOffHandMinDamageValue, player.currentOffHandMinDamageValue);
+        damageDone += offHandDamageDone;
 
         bool criticalHitHappened = CriticalHitHappened();
 
@@ -532,16 +444,10 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (rightHandAttackBlocked) return;
 
         // Ranged fire animation (Bow or staff)
-        if (meleeAttackType == MeleeAttackType.None)
+        if (meleeAttackType == MeleeAttackType.None) // Ranged Attack
         {
             Animator weaponAnimator = transform.GetChild(0).GetComponent<Animator>();
-
-            player.animatePlayer.SetAttackAnimationParameters();
             weaponAnimator.SetTrigger(Settings.rangedWeaponAttack);
-
-            //weaponAnimator.Play("AttackAtRightHand", 0, 0);
-            //weaponAnimator.Update(0);
-
             return;
         }
 
@@ -650,6 +556,8 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         // Damage produced by player
         int damageDone = player.isCursed ? player.currentMainHandMinDamageValue : Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
+        int offHandDamageDone = player.isCursed ? player.currentOffHandMinDamageValue : Random.Range(player.currentOffHandMinDamageValue, player.currentOffHandMinDamageValue);
+        damageDone += offHandDamageDone;
 
         bool criticalHitHappened = CriticalHitHappened();
 
