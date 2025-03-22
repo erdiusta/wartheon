@@ -849,7 +849,8 @@ public class EnemyAI : MonoBehaviour
     /// Fire the weapon - ordinary aim
     /// </summary>
     protected void FireWeapon(bool isLaser = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, 
-        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None)
+        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None,
+        VenomancerPhase venomancerPhase = VenomancerPhase.None)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
@@ -871,7 +872,7 @@ public class EnemyAI : MonoBehaviour
                 if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
 
                 enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false,
-                    false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase);
+                    false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase);
             }
         }
     }
@@ -910,7 +911,6 @@ public class EnemyAI : MonoBehaviour
 
         // Trigger weapon aim methods
         enemy.aimWeapon.Aim(enemyAimDirection, enemyAttackDirection, enemyAngleDegrees);
-        enemy.animateEnemy.ResetAimAnimationParameters();
         enemy.animateEnemy.SetAimWeaponAnimationParameters(enemyAimDirection);
     }
 

@@ -196,6 +196,8 @@ public class Destroyed : MonoBehaviour
                 enemy.animator.SetBool(Settings.block, false);
             }
 
+            enemy.health.hitFXAnimator.SetTrigger(Settings.death);
+            enemy.health.fxAnimatorPlayed = true;
             enemy.animateEnemy.ResetAnimatonParameters();
             enemy.enemyAI.isDashing = false;
             enemy.enemyAI.isAttacking = false;

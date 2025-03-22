@@ -176,23 +176,6 @@ public class AimWeapon : MonoBehaviour
                     }
                 }
             }
-            // Staff case
-            //else if (player.activeWeapon.GetCurrentMainHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
-            //{
-            //    switch (aimDirection)
-            //    {
-            //        case AimDirection.Left:
-            //            mainHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 180f);
-            //            break;
-
-            //        case AimDirection.Up:
-            //        case AimDirection.Right:
-            //        case AimDirection.Down:
-
-            //            mainHandWeaponRotationPointTransform.eulerAngles = new Vector3(0f, 0f, 0f);
-            //            break;
-            //    }
-            //}
 
             // In case of shield
             Animator shieldAnimator = player.transform.GetChild(1).GetComponent<Animator>();

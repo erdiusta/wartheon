@@ -29,6 +29,14 @@ MonoBehaviour:
   projectileSpeedMax: 12
   projectileRange: 50
   projectileRotationSpeed: 1
+  isBomb: 0
+  isTrap: 0
+  hasLifeTime: 1
+  lifeDuration: 10
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
   hasAcid: 0
   acidEfficiency: 0
   isPoisonous: 0
@@ -37,6 +45,8 @@ MonoBehaviour:
   stunChance: 0.3
   hasFrostDamage: 0
   frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   hasCurseDamage: 0
   curseChance: 0
   projectileSpreadMin: 0
@@ -51,3 +61,5 @@ MonoBehaviour:
   projectileTrailMaterial: {fileID: 0}
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

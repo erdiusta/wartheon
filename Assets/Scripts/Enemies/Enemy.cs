@@ -63,9 +63,6 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool isBlind;
     [HideInInspector] public bool isMaterializing;
 
-    public ParticleSystem hitFxParticles;
-    public ParticleSystem headShotFxParticles;
-
     float blindTimer;
     SetActiveWeaponEvent setActiveWeaponEvent;
     MaterializeEffect materializeEffect;
@@ -204,7 +201,7 @@ public class Enemy : MonoBehaviour
             Weapon weapon = new Weapon { weaponDetails = enemyDetails.enemyWeapon, weaponRemainingProjectile = enemyDetails.enemyWeapon.weaponProjectileCapacity };
 
             //Set weapon for enemy
-            setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, 1);
+            setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, 1, false, false);
         }
     }
 

@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -73,7 +74,7 @@ public class InstantiatedRoom : MonoBehaviour
         // If the player triggered the collider
         if (collision.tag == Settings.playerTag && room == GameManager.Instance.GetCurrentRoom())
         {
-            ChestItem[] chestItems = FindObjectsOfType<ChestItem>();
+            ChestItem[] chestItems = FindObjectsByType<ChestItem>(FindObjectsSortMode.None);
 
             for (int i = 0; i < chestItems.Length; i++)
             {

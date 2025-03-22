@@ -15,6 +15,12 @@ MonoBehaviour:
   weaponName: Treant Whip
   weaponTitle: 0
   weaponLevel: 0
+  requiredPrimaryStats:
+    strength: 0
+    dexterity: 0
+    constitution: 0
+    intelligence: 0
+    agility: 0
   weaponClass: 6
   weaponHitSpeed: 0
   wieldType: 1
@@ -35,6 +41,8 @@ MonoBehaviour:
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   canDrainHealth: 0
   healthDrainChance: 0
   weaponRightShootPosition: {x: 1.8125, y: 2.1875, z: 0}
@@ -42,6 +50,7 @@ MonoBehaviour:
   weaponUpShootPosition: {x: 1.8125, y: 2.1875, z: 0}
   weaponDownShootPosition: {x: 1.8125, y: 2.1875, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: f9fb64df6ca344f4888dbe48b062e22f, type: 2}
+  weaponSecondaryProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 3b6db30b2f1be3747aa5427a4ff82696, type: 2}
   weaponImpactSoundEffect: {fileID: 0}
@@ -49,15 +58,20 @@ MonoBehaviour:
   isShield: 0
   projectileDeflectRatio: 0
   circleRadius: 0
+  boxLength: 1.2
+  boxHeight: 2.6
   hasPhysicalDamage: 0
-  meleeDamageMin: 0
-  meleeDamageMax: 0
+  meleeDamageMin: 4
+  meleeDamageMax: 7
+  meleeDamageElementalBias: 0
+  secondMeleeDamageMin: 0
+  secondMeleeDamageMax: 0
+  secondMeleeDamageElementalBias: 0
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 2
   weaponCooldownDuration: 0.45
   weaponBaseHandling: 0.8
   hasSwing: 0
-  hasSweep: 0
   hasThrust: 0
   hasInfiniteProjectile: 1
   weaponProjectileCapacity: 0

@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 [DisallowMultipleComponent]
 public class Health : MonoBehaviour
 {
+    public Animator hitFXAnimator;
 
     [HideInInspector] public int currentHealth;
     [HideInInspector] public bool isDamageable = true;
@@ -16,6 +17,7 @@ public class Health : MonoBehaviour
     [HideInInspector] public bool suddenDeathHappened;
     [HideInInspector] public FlashManager flashManager;
     [HideInInspector] public const float spriteFlashInterval = 0.1f;
+    [HideInInspector] public bool fxAnimatorPlayed;
 
     int maximumHealth;
     HealthEvent healthEvent;
@@ -30,6 +32,7 @@ public class Health : MonoBehaviour
     int poisonPeriodCount = 0;
     bool isProjectileHit = false;
     Decoy decoy;
+
 
     private void Awake()
     {
@@ -204,6 +207,8 @@ public class Health : MonoBehaviour
 
                 if (currentHealth <= 0)
                 {
+                    fxAnimatorPlayed = true; // Reset hit fx animation
+
                     enemy.dropOnDestroy.DropProcess();
                 }
             }
@@ -294,6 +299,7 @@ public class Health : MonoBehaviour
 
                     if (currentHealth <= 0)
                     {
+                        fxAnimatorPlayed = true; // Reset hit fx animation
                         enemy.dropOnDestroy.DropProcess();
                     }
                 }
@@ -302,26 +308,6 @@ public class Health : MonoBehaviour
             // Trigger health event
             healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, damageAmount);
         }
-    }
-
-    IEnumerator PlayerGetHitRoutine()
-    {
-        if (player.health.GetCurrentHealth() > 0f)
-        {
-            player.animatePlayer.ResetAnimatonParameters();
-            player.animator.SetBool(Settings.getHit, true);
-            SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Player>().playerDetails.getHitSoundEffect);
-
-            yield return new WaitForSeconds(0.4f);
-        }
-        //else
-        //{
-        //    player.animatePlayer.ResetAnimatonParameters();
-        //    player.animator.SetBool(Settings.death, true);
-        //}
-
-        player.animator.SetBool(Settings.getHit, false);
-        getHitCoroutine = null;
     }
 
     IEnumerator DecoyGetHitRoutine()
@@ -355,15 +341,18 @@ public class Health : MonoBehaviour
                 enemy.animateEnemy.SetDeathAnimationParameters();
             }
 
+            int randomNum = Random.Range(1, 8);
+
             if (headShotHappened)
             {
-                enemy.headShotFxParticles.Play();
                 enemy.healthEvent.CallHeadShotEvent();
                 SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.specialMoveOneSoundEffect);
             }
-            else
+
+            if (!fxAnimatorPlayed)
             {
-                enemy.hitFxParticles.Play();
+                hitFXAnimator.SetInteger(Settings.impactNumber, randomNum);
+                fxAnimatorPlayed = true;
             }
         }
         else
@@ -376,8 +365,8 @@ public class Health : MonoBehaviour
 
         yield return new WaitForSeconds(0.4f);
 
-        enemy.hitFxParticles.Stop();
-        enemy.headShotFxParticles.Stop();
+        fxAnimatorPlayed = false; // Reset hit fx animation
+        hitFXAnimator.SetInteger(Settings.impactNumber, 0);
         enemy.animator.SetBool(Settings.getHit, false);
         enemy.animator.SetBool(Settings.block, false);
         isBlocking = false;

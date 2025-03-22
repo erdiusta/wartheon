@@ -215,6 +215,22 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion
     public int meleeDamageMax = 7;
     #region Tooltip
+    [Tooltip("Elemental bias of the melee damage")]
+    #endregion
+    public ElementalBias meleeDamageElementalBias;
+    #region Tooltip
+    [Tooltip("Second min melee damage of the weapon")]
+    #endregion
+    public int secondMeleeDamageMin = 4;
+    #region Tooltip
+    [Tooltip("Second max melee damage of the weapon")]
+    #endregion
+    public int secondMeleeDamageMax = 7;
+    #region Tooltip
+    [Tooltip("Elemental bias of the second melee damage")]
+    #endregion
+    public ElementalBias secondMeleeDamageElementalBias;
+    #region Tooltip
     [Tooltip("Critical hit chance of the weapon")]
     #endregion
     public float criticalHitChance = 0.1f;

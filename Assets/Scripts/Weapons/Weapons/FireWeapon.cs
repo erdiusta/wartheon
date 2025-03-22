@@ -110,7 +110,8 @@ public class FireWeapon : MonoBehaviour
                     // Fire Laser Beam Projectile (only once)
                     FireProjectile(fireWeaponEventArgs.belongingEnemy, fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector, 
                         fireWeaponEventArgs.isLaser, fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase, 
-                        fireWeaponEventArgs.treantPhase, fireWeaponEventArgs.galvanusPhase, fireWeaponEventArgs.sepharothPhase);
+                        fireWeaponEventArgs.treantPhase, fireWeaponEventArgs.galvanusPhase, fireWeaponEventArgs.sepharothPhase, fireWeaponEventArgs.frostWrymPhase,
+                        fireWeaponEventArgs.venomancerPhase);
 
                     // Keep laser active for its full duration
                     StartCoroutine(LaserDurationCoroutine());                 
@@ -145,7 +146,8 @@ public class FireWeapon : MonoBehaviour
                 {
                     FireProjectile(fireWeaponEventArgs.belongingEnemy, fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector, 
                         fireWeaponEventArgs.isLaser, fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase, 
-                        fireWeaponEventArgs.treantPhase,fireWeaponEventArgs.galvanusPhase, fireWeaponEventArgs.sepharothPhase);
+                        fireWeaponEventArgs.treantPhase,fireWeaponEventArgs.galvanusPhase, fireWeaponEventArgs.sepharothPhase, fireWeaponEventArgs.frostWrymPhase,
+                        fireWeaponEventArgs.venomancerPhase);
                     ResetCooldownTimer(fireWeaponEventArgs.centaurPhase);
                     ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
                 }
@@ -249,13 +251,13 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     private void FireProjectile(Enemy belongingEnemy, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser, bool headShotHappened, bool isActiveItem = false, 
         bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None,
-        SepharothPhase sepharothPhase = SepharothPhase.None)
+        SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None)
     {
         if (!isActiveItem)
         {
             ProjectileDetailsSO currentProjectile;
 
-            if (sepharothPhase == SepharothPhase.InvisibleAndMine)
+            if (sepharothPhase == SepharothPhase.InvisibleAndMine || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain)
             {
                 currentProjectile = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSecondaryProjectile;
             }
@@ -268,7 +270,7 @@ public class FireWeapon : MonoBehaviour
             {
                 // Fire projectile routine
                 StartCoroutine(FireProjectileRoutine(belongingEnemy, currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, headShotHappened, 
-                    false, isPenetrationArrow, centaurPhase, treantPhase, galvanusPhase, sepharothPhase));
+                    false, isPenetrationArrow, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase));
             }
         }
         else
@@ -296,16 +298,17 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     IEnumerator  FireProjectileRoutine(Enemy belongingEnemy, ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
         bool isLaser = false, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, 
-        TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None)
+        TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
+        FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None)
     {      
         int projectileCounter = 0;
 
         int projectilePerShot = 1;
 
-        // CENTAUR - SPREAD ARROW SHOT
-        if (centaurPhase == CentaurPhase.SpreadArrowShot)
+        // CENTAUR - SPREAD ARROW SHOT OR FROST WRYM - PROJECTILE
+        if (centaurPhase == CentaurPhase.SpreadArrowShot || frostWrymPhase == FrostWrymPhase.IceProjectile || venomancerPhase == VenomancerPhase.SludgeThrow)
         {
-            projectilePerShot = 7;
+            projectilePerShot = 10;
         }
         // TREANT - RAZOR LEAF
         else if (treantPhase == TreantPhase.RazorLeaf)
@@ -315,7 +318,17 @@ public class FireWeapon : MonoBehaviour
         // GALVANUS - LIGHTNING
         else if (galvanusPhase == GalvanusPhase.Lightning)
         {
+            projectilePerShot = 2;
+        }
+        // VENOMANCER - STONE RAIN
+        else if (frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain)
+        {
             projectilePerShot = 3;
+        }
+        // VENOMANCER - TOXIC POOL
+        else if (frostWrymPhase == FrostWrymPhase.Icicle)
+        {
+            projectilePerShot = 5;
         }
         // SEPHAROTH - LASER
         else if (sepharothPhase == SepharothPhase.LaserBeam)
@@ -323,7 +336,7 @@ public class FireWeapon : MonoBehaviour
             projectilePerShot = 2;
         }
         // SEPHAROTH - MINE
-        else if (sepharothPhase == SepharothPhase.InvisibleAndMine)
+        else if (sepharothPhase == SepharothPhase.InvisibleAndMine || venomancerPhase == VenomancerPhase.ToxicPool)
         {
             projectilePerShot = 3;
         }
@@ -338,13 +351,18 @@ public class FireWeapon : MonoBehaviour
 
         if (projectilePerShot > 1)
         {
-            if (centaurPhase == CentaurPhase.SpreadArrowShot || treantPhase == TreantPhase.RazorLeaf)
+            if (centaurPhase == CentaurPhase.SpreadArrowShot || treantPhase == TreantPhase.RazorLeaf || frostWrymPhase == FrostWrymPhase.IceProjectile ||
+                venomancerPhase == VenomancerPhase.SludgeThrow)
             {
                 projectileSpawnInterval = 0;
             }
-            else if (galvanusPhase == GalvanusPhase.Lightning)
+            else if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain)
             {
                 projectileSpawnInterval = 1f;
+            }
+            else if (venomancerPhase == VenomancerPhase.ToxicPool)
+            {
+                projectileSpawnInterval = 0.8f;
             }
             else
             {
@@ -374,6 +392,7 @@ public class FireWeapon : MonoBehaviour
         // Default position
         Vector3 projectileSpawnPoint = activeWeapon.GetRightHandShootPosition();
 
+        
         // Loop for number of projectile per shot
         while (projectileCounter < projectilePerShot)
         {
@@ -381,26 +400,51 @@ public class FireWeapon : MonoBehaviour
 
             int selectedIndexNum = -1;
 
+            GameObject projectilePrefab;
+            // Get projectile prefab from array
+            if (centaurPhase == CentaurPhase.SpreadArrowShot || galvanusPhase == GalvanusPhase.Lightning || venomancerPhase == VenomancerPhase.ToxicPool)
+            {
+                projectilePrefab = currentProjectile.projectilePrefabArray[1];
+            }
+            else
+            {
+                projectilePrefab = currentProjectile.projectilePrefabArray[0];
+            }
+
             switch (projectileCounter)
             {
+                case 1:
+                    if ( venomancerPhase == VenomancerPhase.ToxicPool)
+                    {
+                        // Selected second mine' position
+                        selectedIndexNum = Random.Range(0, currentRoom.spawnPositionArray.Length);
+                        Vector3Int selectedFirstSpawnPoint = new Vector3Int(currentRoom.spawnPositionArray[selectedIndexNum].x,
+                            currentRoom.spawnPositionArray[selectedIndexNum].y, 0);
+
+                        // Convert the cell position to world position
+                        projectileSpawnPoint = grid.CellToWorld(selectedFirstSpawnPoint);
+                    }
+                    break;
+
                 case 2:
                     if (sepharothPhase == SepharothPhase.LaserBeam)
                     {
                         aimAngle += 120;
                         weaponAimAngle += 120;
                     }
-                    else if (sepharothPhase == SepharothPhase.InvisibleAndMine)
+                    else if (sepharothPhase == SepharothPhase.InvisibleAndMine || venomancerPhase == VenomancerPhase.ToxicPool)
                     {
                         // Selected second mine' position
                         selectedIndexNum = Random.Range(0, currentRoom.spawnPositionArray.Length);
-                        Vector3Int selectedFirstSpawnPoint = new Vector3Int(currentRoom.spawnPositionArray[selectedIndexNum].x, currentRoom.spawnPositionArray[selectedIndexNum].y, 0);
+                        Vector3Int selectedFirstSpawnPoint = new Vector3Int(currentRoom.spawnPositionArray[selectedIndexNum].x, 
+                            currentRoom.spawnPositionArray[selectedIndexNum].y, 0);
 
                         // Convert the cell position to world position
                         projectileSpawnPoint = grid.CellToWorld(selectedFirstSpawnPoint);
                     }
                     break;
                 case 3:
-                    if (sepharothPhase == SepharothPhase.InvisibleAndMine)
+                    if (sepharothPhase == SepharothPhase.InvisibleAndMine || venomancerPhase == VenomancerPhase.ToxicPool)
                     {
                         // Selected thir mine' position
                         selectAgain:
@@ -408,7 +452,8 @@ public class FireWeapon : MonoBehaviour
 
                         if (selectedSecondIndexNum == selectedIndexNum) goto selectAgain;
 
-                        Vector3Int selectedSecondSpawnPoint = new Vector3Int(currentRoom.spawnPositionArray[selectedSecondIndexNum].x, currentRoom.spawnPositionArray[selectedSecondIndexNum].y, 0);
+                        Vector3Int selectedSecondSpawnPoint = new Vector3Int(currentRoom.spawnPositionArray[selectedSecondIndexNum].x, 
+                            currentRoom.spawnPositionArray[selectedSecondIndexNum].y, 0);
 
                         // Convert the cell position to world position
                         projectileSpawnPoint = grid.CellToWorld(selectedSecondSpawnPoint);
@@ -418,26 +463,6 @@ public class FireWeapon : MonoBehaviour
                     break;
             }
 
-            GameObject projectilePrefab;
-
-            // Get projectile prefab from array
-            if (centaurPhase == CentaurPhase.SpreadArrowShot)
-            {
-                projectilePrefab = currentProjectile.projectilePrefabArray[1];
-            }
-            else if (treantPhase == TreantPhase.RazorLeaf)
-            {
-                projectilePrefab = currentProjectile.projectilePrefabArray[0];
-            }
-            else if (galvanusPhase == GalvanusPhase.Lightning)
-            {
-                projectilePrefab = currentProjectile.projectilePrefabArray[1];
-            }
-            else
-            {
-                projectilePrefab = currentProjectile.projectilePrefabArray[0];
-            }
-
             float projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin, currentProjectile.projectileSpeedMax);
 
             // Get random speed value
@@ -445,7 +470,11 @@ public class FireWeapon : MonoBehaviour
             {
                 projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin / 2, currentProjectile.projectileSpeedMax / 2);
             }
-            else if (galvanusPhase == GalvanusPhase.Lightning)
+            else if (venomancerPhase == VenomancerPhase.ToxicPool)
+            {
+                projectileSpeed = 1.8f;
+            }
+            else if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain)
             {
                 projectileSpeed = 0;
             }
@@ -453,21 +482,30 @@ public class FireWeapon : MonoBehaviour
             // Get Gameobject with IFireable component
             IFireable projectile;
 
-            if (galvanusPhase == GalvanusPhase.Lightning)
+            if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain)
             {
                 // Get room bounds from template bounds
                 Vector2Int lowerBounds = currentRoom.templateLowerBounds;
                 Vector2Int upperBounds = currentRoom.templateUpperBounds;
 
+                Vector3Int playerCellPosition = new Vector3Int();
+
                 // Get the player's current cell position
-                Vector3Int playerCellPosition = currentRoom.instantiatedRoom.grid.WorldToCell(GameManager.Instance.GetPlayer().transform.position);
+                if (GameManager.Instance.GetPlayer() != null)
+                {
+                    playerCellPosition = currentRoom.instantiatedRoom.grid.WorldToCell(GameManager.Instance.GetPlayer().transform.position);
+                }
 
                 // Generate a random lightning strike position within bounds
                 Vector3Int randomCellPosition;
                 Vector3 worldPosition;
 
+                int attemptCount = 0;
+
                 do
                 {
+                    attemptCount++;
+
                     // Generate random position within 4 tiles around the player
                     int randomX = Mathf.Clamp(Random.Range(playerCellPosition.x - 4, playerCellPosition.x + 5), lowerBounds.x, upperBounds.x);
                     int randomY = Mathf.Clamp(Random.Range(playerCellPosition.y - 4, playerCellPosition.y + 5), lowerBounds.y, upperBounds.y);
@@ -476,22 +514,39 @@ public class FireWeapon : MonoBehaviour
                     // Convert to room-local zero-based coordinates
                     Vector3Int zeroBasedCellPosition = new Vector3Int(randomCellPosition.x - lowerBounds.x, randomCellPosition.y - lowerBounds.y, 0);
 
-                    // Validate position using penalty system
-                    if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(zeroBasedCellPosition) == 1)
-                    {
-                        // Tile is valid, convert cell position to world position
-                        worldPosition = currentRoom.instantiatedRoom.grid.CellToWorld(randomCellPosition);
+                    // Tile is valid, convert cell position to world position
+                    worldPosition = currentRoom.instantiatedRoom.grid.CellToWorld(randomCellPosition);
 
+                    if (GameManager.Instance.GetPlayer() != null)
+                    {
                         projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, GameManager.Instance.GetPlayer().transform.position, Quaternion.identity);
-                        break;
                     }
+                    else
+                    {
+                        projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, transform.position, Quaternion.identity);
+                    }
+
+                    break;
+
+                    //// Validate position using penalty system
+                    //if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(zeroBasedCellPosition) == 1)
+                    //{
+                    //    // Tile is valid, convert cell position to world position
+                    //    worldPosition = currentRoom.instantiatedRoom.grid.CellToWorld(randomCellPosition);
+
+                    //    projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, GameManager.Instance.GetPlayer().transform.position, Quaternion.identity);
+                    //    break;
+                    //}
+                    //else if (attemptCount > 5)
+                    //{
+                    //    break; // Position validation is unsuccessful. Cast failed.
+                    //}
                 }
                 while (true);
-
             }
             else
             {
-                if (sepharothPhase != SepharothPhase.InvisibleAndMine)
+                if (sepharothPhase != SepharothPhase.InvisibleAndMine && venomancerPhase != VenomancerPhase.ToxicPool)
                 {
                     projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetRightHandShootPosition(), Quaternion.identity);
                 }
@@ -511,7 +566,7 @@ public class FireWeapon : MonoBehaviour
 
             // Initialize projectile
             projectile.InitializeProjectile(belongingEnemy, headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, false, false, 
-                isPenetrationArrow, projectileCounter - 1, projectilePerShot, centaurPhase, treantPhase, galvanusPhase, sepharothPhase);
+                isPenetrationArrow, projectileCounter - 1, projectilePerShot, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase);
 
             // Wait for projectile per shot timegap
             yield return new WaitForSeconds(projectileSpawnInterval);

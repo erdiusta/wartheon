@@ -594,24 +594,24 @@ public class PlayerControl : MonoBehaviour
         player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
     }
 
-    private void SwitchWeaponInput()
+    private void SwitchWeaponInput(bool onStart = false)
     {
         float scrollValue = (InputManager.Instance.switchWeapon.action.ReadValue<Vector2>().normalized).y;
 
         // Switch weapon if mouse scroll wheel selecetd
         if (scrollValue < 0f)
         {
-            PreviousWeaponSet(true);
+            PreviousWeaponSet(true, onStart);
         }
 
         if (scrollValue > 0f)
         {
 
-            NextWeaponSet(true, true);
+            NextWeaponSet(true, true, onStart);
         }
     }
 
-    public void NextWeaponSet(bool onlySwitch, bool mouseWheel, int setNumber = 0)
+    public void NextWeaponSet(bool onlySwitch, bool mouseWheel, bool onStart, int setNumber = 0)
     {
         if (mouseWheel)
         {
@@ -629,7 +629,7 @@ public class PlayerControl : MonoBehaviour
                 player.currentWeaponSlotSetIndex = 1;
             }
 
-            SetWeaponSetByIndex(onlySwitch);
+            SetWeaponSetByIndex(onlySwitch, onStart);
         }
         else
         {
@@ -639,13 +639,13 @@ public class PlayerControl : MonoBehaviour
             InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
 
             player.currentWeaponSlotSetIndex = setNumber;
-            SetWeaponSetByIndex(onlySwitch);
+            SetWeaponSetByIndex(onlySwitch, onStart);
         }
 
         HighlightWeaponSetButton(); //Light and color settings
     }
 
-    public void PreviousWeaponSet(bool onlySwitch)
+    public void PreviousWeaponSet(bool onlySwitch, bool onStart)
     {
         // Cache previous weapon slot index
         InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
@@ -660,12 +660,12 @@ public class PlayerControl : MonoBehaviour
             player.currentWeaponSlotSetIndex = 3;
         }
 
-        SetWeaponSetByIndex(onlySwitch);
+        SetWeaponSetByIndex(onlySwitch, onStart);
 
         HighlightWeaponSetButton();
     }
 
-    public void SetWeaponSetByIndex(bool onlySwitch)
+    public void SetWeaponSetByIndex(bool onlySwitch, bool onStart)
     {
         //// ACTIVE WEAPON VARIABLES SWITCH
         //if (player.weaponSlotSetArray[player.previousSetIndex - 1][1] != null)
@@ -680,7 +680,7 @@ public class PlayerControl : MonoBehaviour
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null) // If next slot contains a main-hand weapon
         {
             player.setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0],
-                player.currentWeaponSlotSetIndex);
+                player.currentWeaponSlotSetIndex, onStart, onlySwitch);
 
             if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
             {
@@ -707,7 +707,8 @@ public class PlayerControl : MonoBehaviour
 
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null) // If next slot contains a off-hand weapon
         {
-            player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1], player.currentWeaponSlotSetIndex);
+            player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1], 
+                player.currentWeaponSlotSetIndex, onStart, onlySwitch);
         }
         else
         {

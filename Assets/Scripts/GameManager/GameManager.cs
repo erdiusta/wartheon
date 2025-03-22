@@ -1282,24 +1282,24 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         healthBar.transform.localScale = new Vector3(targetValue, 1f, 1f);
     }
 
-    public void GoToWeaponSetWithIndex(int setIndex)
+    public void GoToWeaponSetWithIndex(int setIndex, bool onStart = false)
     {
-        player.playerControl.NextWeaponSet(true, false, setIndex);
+        player.playerControl.NextWeaponSet(true, false, onStart, setIndex);
     }
 
-    public void WeaponSetOne()
+    public void WeaponSetOne(bool onStart = false)
     {
-        player.playerControl.NextWeaponSet(true, false, 1);
+        player.playerControl.NextWeaponSet(true, false, onStart, 1);
     }
 
-    public void WeaponSetTwo()
+    public void WeaponSetTwo(bool onStart = false)
     {
-        player.playerControl.NextWeaponSet(true, false, 2);
+        player.playerControl.NextWeaponSet(true, false, onStart, 2);
     }
 
-    public void WeaponSetThree()
+    public void WeaponSetThree(bool onStart = false)
     {
-        player.playerControl.NextWeaponSet(true, false, 3);
+        player.playerControl.NextWeaponSet(true, false, onStart, 3);
     }
 
     public void OpenWarningPopUpMenu(PopUpReason popUpReason)

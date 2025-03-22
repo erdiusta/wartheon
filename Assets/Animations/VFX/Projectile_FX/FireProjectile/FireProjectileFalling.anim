@@ -31,7 +31,7 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 2100000, guid: a17dad796d5f693419e97628b3b559f4, type: 2}
-    attribute: m_Materials.Array.data[0]
+    attribute: 'm_Materials.Array.data[0]'
     path: 
     classID: 212
     script: {fileID: 0}

@@ -307,7 +307,13 @@ public enum EnemyCategory
     Centaur,
     Treant,
     Galvanus,
-    Sepharoth
+    Sepharoth,
+    FrostWrym,
+    Venomancer,
+    FireWrym,
+    Moldran,
+    Slime,
+    Beholder
 }
 
 public enum EnemyBehaviour
@@ -318,7 +324,11 @@ public enum EnemyBehaviour
     Centaur,
     Treant,
     Galvanus,
-    Sepharoth
+    Sepharoth,
+    FrostWrym,
+    Venomancer,
+    FireWrym,
+    Moldran
 }
 
 public enum EnemyType
@@ -372,6 +382,26 @@ public enum SepharothPhase
     InvisibleAndMine,
     SmearAttack,
     LaserBeam
+}
+
+public enum FrostWrymPhase
+{
+    None,
+    Wait,
+    IceProjectile,
+    Icicle,
+    TailAttack,
+    FrostBreath
+}
+
+public enum VenomancerPhase
+{
+    None,
+    Wait,
+    StoneRain,
+    SlamGround,
+    ToxicPool,
+    SludgeThrow
 }
 
 public enum BookPage

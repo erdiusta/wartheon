@@ -315,11 +315,6 @@ public class Player : MonoBehaviour
 
             AddNextWeaponToPlayer(playerDetails.startingWeaponList[i], false, true, false, dualWieldOnStart);
         }
-
-        foreach (WeaponDetailsSO weaponDetails in playerDetails.startingWeaponList)
-        {
-
-        }
     }
 
     /// <summary>
@@ -628,7 +623,7 @@ public class Player : MonoBehaviour
                             {
                                 weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] = weapon;
                                 weapon.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;                               
-                                ActivateWeapon(weapon, !weapon.onMainHand, currentWeaponSlotSetIndex);
+                                ActivateWeapon(weapon, !weapon.onMainHand, currentWeaponSlotSetIndex, onStart, onlySwitch);
                                 StaticEventHandler.CallWeaponUnlockedEvent(weapon.weaponDetails.weaponTitle);
 
                                 if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
@@ -658,7 +653,7 @@ public class Player : MonoBehaviour
                                 weapon.weaponBelongingToWhichOffHandSet = 1;
                                 if (currentWeaponSlotSetIndex == 1)
                                 {
-                                    ActivateWeapon(weapon, !weapon.onMainHand, 1);
+                                    ActivateWeapon(weapon, !weapon.onMainHand, 1, onStart, onlySwitch);
                                 }
                                 if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
                                 {
@@ -677,7 +672,7 @@ public class Player : MonoBehaviour
                                 weaponSlotSetArray[1][1] = weapon;
                                 if (currentWeaponSlotSetIndex == 2)
                                 {
-                                    ActivateWeapon(weapon, !weapon.onMainHand, 2);
+                                    ActivateWeapon(weapon, !weapon.onMainHand, 2, onStart, onlySwitch);
                                 }
                                 weapon.weaponBelongingToWhichOffHandSet = 2;
                                 StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
@@ -694,7 +689,7 @@ public class Player : MonoBehaviour
                                 weaponSlotSetArray[2][1] = weapon;
                                 if (currentWeaponSlotSetIndex == 3)
                                 {
-                                    ActivateWeapon(weapon, !weapon.onMainHand, 3);
+                                    ActivateWeapon(weapon, !weapon.onMainHand, 3, onStart, onlySwitch);
                                 }
                                 weapon.weaponBelongingToWhichOffHandSet = 3;
                                 StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
@@ -729,7 +724,7 @@ public class Player : MonoBehaviour
                     {
                         weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] = weapon;
                         weapon.weaponBelongingToWhichMainHandSet = currentWeaponSlotSetIndex;
-                        ActivateWeapon(weapon, !weapon.onMainHand, currentWeaponSlotSetIndex);
+                        ActivateWeapon(weapon, !weapon.onMainHand, currentWeaponSlotSetIndex, onStart, onlySwitch);
                         StaticEventHandler.CallWeaponUnlockedEvent(weapon.weaponDetails.weaponTitle);
 
                         if (!onStart)
@@ -754,7 +749,7 @@ public class Player : MonoBehaviour
                         weapon.weaponBelongingToWhichMainHandSet = 1;
                         if (currentWeaponSlotSetIndex == 1)
                         {
-                            ActivateWeapon(weapon, !weapon.onMainHand, 1);
+                            ActivateWeapon(weapon, !weapon.onMainHand, 1, onStart, onlySwitch);
                         }
                         if (!onStart)
                         {
@@ -769,7 +764,7 @@ public class Player : MonoBehaviour
                         weapon.weaponBelongingToWhichMainHandSet = 2;
                         if (currentWeaponSlotSetIndex == 2)
                         {
-                            ActivateWeapon(weapon, !weapon.onMainHand, 2);
+                            ActivateWeapon(weapon, !weapon.onMainHand, 2, onStart, onlySwitch);
                         }
                         if (!onStart)
                         {
@@ -784,7 +779,7 @@ public class Player : MonoBehaviour
                         weapon.weaponBelongingToWhichMainHandSet = 3;
                         if (currentWeaponSlotSetIndex == 3)
                         {
-                            ActivateWeapon(weapon, !weapon.onMainHand, 3);
+                            ActivateWeapon(weapon, !weapon.onMainHand, 3, onStart, onlySwitch);
                         }
                         if (!onStart)
                         {
@@ -820,7 +815,7 @@ public class Player : MonoBehaviour
                     weapon.weaponBelongingToWhichOffHandSet = 1;
                     if (currentWeaponSlotSetIndex == 1)
                     {
-                        ActivateWeapon(weapon, !weapon.onMainHand, 1);
+                        ActivateWeapon(weapon, !weapon.onMainHand, 1, onStart, onlySwitch);
                     }
                     if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon addition are excluded
                     {
@@ -833,7 +828,7 @@ public class Player : MonoBehaviour
                     weapon.weaponBelongingToWhichOffHandSet = 2;
                     if (currentWeaponSlotSetIndex == 2)
                     {
-                        ActivateWeapon(weapon, !weapon.onMainHand, 2);
+                        ActivateWeapon(weapon, !weapon.onMainHand, 2, onStart, onlySwitch);
                     }
 
                     StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
@@ -844,7 +839,7 @@ public class Player : MonoBehaviour
                     weapon.weaponBelongingToWhichOffHandSet = 3;
                     if (currentWeaponSlotSetIndex == 3)
                     {
-                        ActivateWeapon(weapon, !weapon.onMainHand, 3);
+                        ActivateWeapon(weapon, !weapon.onMainHand, 3, onStart, onlySwitch);
                     }
 
                     StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
@@ -859,12 +854,12 @@ public class Player : MonoBehaviour
 
     }
     
-    public void ActivateWeapon(Weapon weapon, bool isOffHand, int setIndex)
+    public void ActivateWeapon(Weapon weapon, bool isOffHand, int setIndex, bool onStart, bool onSwitch)
     {
         if (!isOffHand)
         {
             // Set the added weapon as active - main hand
-            setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, setIndex);
+            setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, setIndex, onStart, onSwitch);
             // MAIN HAND WEAPON ACTIVATED
 
             // This section is for enabling/disabling lock icon based on weapon's one-hand or two-hand wield
@@ -887,7 +882,7 @@ public class Player : MonoBehaviour
         else
         {
             // Set the added weapon as active - main hand
-            setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(weapon, setIndex);
+            setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(weapon, setIndex, onStart, onSwitch);
         }
     }
 

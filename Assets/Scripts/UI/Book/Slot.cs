@@ -859,7 +859,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 currentSlotsDraggableItemWeapon.onMainHand = true;
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
                 draggableItemWeapon.onMainHand = true;
-                player.playerControl.SetWeaponSetByIndex(true);
+                player.playerControl.SetWeaponSetByIndex(true, false);
                 StaticEventHandler.CallWeaponSwitchedEventForBook();
                 break;
             case ItemSwapPos.DragMainSlotOff:
@@ -877,7 +877,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 if (draggableItem.transactionOnTheSameSet)
                 {
-                    player.playerControl.SetWeaponSetByIndex(true);
+                    player.playerControl.SetWeaponSetByIndex(true, false);
                 }
                 else
                 {
@@ -901,7 +901,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 if (draggableItem.transactionOnTheSameSet)
                 {
-                    player.playerControl.SetWeaponSetByIndex(true);
+                    player.playerControl.SetWeaponSetByIndex(true, false);
                 }
                 else
                 {
@@ -921,7 +921,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
                 draggableItemWeapon.onMainHand = false;
                 currentSlotsDraggableItemWeapon.onMainHand = false;
-                player.playerControl.SetWeaponSetByIndex(true);
+                player.playerControl.SetWeaponSetByIndex(true, false);
 
                 break;
             default:
@@ -950,7 +950,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
 
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                player.playerControl.SetWeaponSetByIndex(true);
+                player.playerControl.SetWeaponSetByIndex(true, false);
             }
             else
             {
@@ -987,7 +987,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
                 draggableItem.dragMainSlotOff = true;
-                player.playerControl.SetWeaponSetByIndex(true);
+                player.playerControl.SetWeaponSetByIndex(true, false);
             }
         }
         else
@@ -1008,7 +1008,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
                 draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                player.playerControl.SetWeaponSetByIndex(true);
+                player.playerControl.SetWeaponSetByIndex(true, false);
             }
             else
             {
@@ -1026,7 +1026,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
 
                 draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                player.playerControl.SetWeaponSetByIndex(true);
+                player.playerControl.SetWeaponSetByIndex(true, false);
             }
         }
     }

@@ -18,10 +18,6 @@ public class ProjectileDetailsSO : ScriptableObject
     [Header("PROJECTILE SPRITE, PREFAB & MATERIALS")]
     #endregion
     #region Tooltip
-    [Tooltip("Sprite to be used for the projectile")]
-    #endregion
-    public Sprite projectileSprite;
-    #region Tooltip
     [Tooltip("Populate with the prefab to be used for the projectile.  If multiple prefabs are specified then a random prefab from the array will be selecetd.  " +
         "The prefab can be an projectile pattern - as long as it conforms to the IFireable interface.")]
     #endregion
@@ -259,7 +255,6 @@ public class ProjectileDetailsSO : ScriptableObject
     private void OnValidate()
     {
         HelperUtilities.ValidateCheckEmptyString(this, nameof(projectileName), projectileName);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(projectileSprite), projectileSprite);
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(projectilePrefabArray), projectilePrefabArray);
         HelperUtilities.ValidateCheckNullValue(this, nameof(projectileMaterial), projectileMaterial);
         if (projectileChargeTime > 0)

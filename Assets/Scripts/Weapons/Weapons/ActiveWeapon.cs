@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(SetActiveWeaponEvent))]
 [DisallowMultipleComponent]
@@ -43,6 +41,8 @@ public class ActiveWeapon : MonoBehaviour
     Animator weaponOffHandAnimator;
     Weapon currentMainHandWeapon;
     Weapon currentOffHandWeapon;
+
+    int previousWeaponSetIndex;
 
     private void Awake()
     {
@@ -89,7 +89,8 @@ public class ActiveWeapon : MonoBehaviour
     private void SetActiveMainWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
         SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        SetMainHandWeapon(setActiveWeaponEventArgs.weapon);
+        SetMainHandWeapon(setActiveWeaponEventArgs.weapon, setActiveWeaponEventArgs.weaponSetIndex, setActiveWeaponEventArgs.onStart,
+            setActiveWeaponEventArgs.onSwitch);
 
         // Update new weapon values
         player?.UpdateDamageValues();
@@ -99,7 +100,7 @@ public class ActiveWeapon : MonoBehaviour
 
     private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        DeselectMainHandWeapon();
+        DeselectMainHandWeapon(setActiveWeaponEventArgs.isWeaponSwapping, setActiveWeaponEventArgs.weaponSetIndex, setActiveWeaponEventArgs.onSwitch);
 
         // Update new weapon values
         player?.UpdateDamageValues();
@@ -110,7 +111,7 @@ public class ActiveWeapon : MonoBehaviour
     private void SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
         SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        SetOffHandWeapon(setActiveWeaponEventArgs.weapon);
+        SetOffHandWeapon(setActiveWeaponEventArgs.weapon, setActiveWeaponEventArgs.onStart);
 
         // Update new weapon values
         player.UpdateDamageValues();
@@ -128,22 +129,26 @@ public class ActiveWeapon : MonoBehaviour
         player?.UpdateBlockAndEvasivenessValues();
     }
 
-    private void SetMainHandWeapon(Weapon weapon)
+    private void SetMainHandWeapon(Weapon weapon, int weaponSetIndex, bool onStart, bool onSwitch)
     {
         isSwitching = true;
         currentMainHandWeapon = weapon;
         weaponToBeDropped = weapon; // for removing lock icon during two-handed weapon drop issue
 
+        Weapon equippedWeapon; 
+
         if (player != null)
         {
+            equippedWeapon = onStart ? currentMainHandWeapon : player.weaponSlotSetArray[weaponSetIndex - 1][0];
+
             // Reset transform values
             player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
             player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
             player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localScale = new Vector3(1f, 1f, 1f);
 
-            if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Bow)
+            if (equippedWeapon.weaponDetails.weaponClass == WeaponClass.Bow)
             {
-                OffHandWeaponRemoveCheck(); // Remove possible off-hand during weapon switch
+                OffHandWeaponRemoveCheck(weaponSetIndex); // Remove possible off-hand during weapon switch
                 ResetAnimationParameters();
 
                 offHandAnchorPosition.gameObject.SetActive(false);
@@ -156,9 +161,9 @@ public class ActiveWeapon : MonoBehaviour
 
                 weaponMainHandAnimator.runtimeAnimatorController = currentMainHandWeapon.weaponDetails.weaponAnimatorController;
             }
-            else if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Staff)
+            else if (equippedWeapon.weaponDetails.weaponClass == WeaponClass.Staff)
             {
-                OffHandWeaponRemoveCheck(); // Remove possible off-hand during weapon switch
+                OffHandWeaponRemoveCheck(weaponSetIndex); // Remove possible off-hand during weapon switch
                 ResetAnimationParameters();
 
                 weaponOffHandAnimator.enabled = false;
@@ -169,9 +174,9 @@ public class ActiveWeapon : MonoBehaviour
 
                 weaponMainHandAnimator.runtimeAnimatorController = currentMainHandWeapon.weaponDetails.weaponAnimatorController;
             }
-            else if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
+            else if (equippedWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
             {
-                OffHandWeaponRemoveCheck(); // Remove possible off-hand during weapon switch
+                OffHandWeaponRemoveCheck(weaponSetIndex); // Remove possible off-hand during weapon switch
                 ResetAnimationParameters();
 
                 offHandAnchorPosition.gameObject.SetActive(true);
@@ -186,7 +191,7 @@ public class ActiveWeapon : MonoBehaviour
             }
             else if (currentOffHandWeapon == null) // This means that's not a dual wield nor shield
             {
-                OffHandWeaponRemoveCheck(); // Remove possible off-hand during weapon switch
+                OffHandWeaponRemoveCheck(weaponSetIndex); // Remove possible off-hand during weapon switch
                 ResetAnimationParameters();
 
                 playerAnimator.SetBool(Settings.isDualWield, false);
@@ -222,7 +227,7 @@ public class ActiveWeapon : MonoBehaviour
             {
                 offHandAnchorPosition.gameObject.SetActive(true);
 
-                OffHandWeaponRemoveCheck();  // Remove possible off-hand during weapon switch
+                OffHandWeaponRemoveCheck(weaponSetIndex);  // Remove possible off-hand during weapon switch
 
                 playerAnimator.SetBool(Settings.isMeleeWeapon, true);
 
@@ -238,9 +243,9 @@ public class ActiveWeapon : MonoBehaviour
         isSwitching = false;
     }
 
-    private void OffHandWeaponRemoveCheck()
+    private void OffHandWeaponRemoveCheck(int weaponSetIndex)
     {
-        if (currentOffHandWeapon != null)
+        if (currentOffHandWeapon != null && currentMainHandWeapon.weaponDetails.wieldType != WieldType.OneHanded)
         {
             DeselectOffHandWeapon();
 
@@ -282,7 +287,7 @@ public class ActiveWeapon : MonoBehaviour
         }
     }
 
-    private void SetOffHandWeapon(Weapon weapon)
+    private void SetOffHandWeapon(Weapon weapon, bool onStart)
     {
         currentOffHandWeapon = weapon;
 
@@ -308,13 +313,16 @@ public class ActiveWeapon : MonoBehaviour
         weaponOffHandSpriteRenderer.sprite = currentOffHandWeapon.weaponDetails.weaponFrontSprite;
     }
 
-    private void DeselectMainHandWeapon()
+    private void DeselectMainHandWeapon(bool isWeaponSwapped, int weaponSetIndex, bool onSwitch)
     {
         offHandAnchorPosition.gameObject.SetActive(true);
         playerAnimator.SetFloat(Settings.mainPosture, 0f); // Reset posture for non-armed situation
         playerAnimator.SetBool(Settings.isMeleeWeapon, true);
 
-        DeselectOffHandWeapon(); // As main hand is empty, empty off-hand as well to be safe-side
+        if (!isWeaponSwapped)
+        {
+            DeselectOffHandWeapon(); // As main hand is empty, empty off-hand as well to be safe-side
+        }
 
         player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localPosition = Vector3.zero;
         player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;

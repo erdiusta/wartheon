@@ -1024,8 +1024,8 @@ Transform:
   m_GameObject: {fileID: 2931765610231361911}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.0941, y: 2.1131, z: 0.07001205}
-  m_LocalScale: {x: 1.230212, y: 1.0394093, z: 1}
+  m_LocalPosition: {x: 7.1282, y: 1.4848, z: 0.07001205}
+  m_LocalScale: {x: 0.9707712, y: 1.4582912, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6463268370290255810}
@@ -1076,9 +1076,9 @@ SpriteMask:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66bb625b1faa464489e1eee8785182fd, type: 3}
   m_MaskAlphaCutoff: 0
-  m_FrontSortingLayerID: -257139871
+  m_FrontSortingLayerID: -1838912663
   m_BackSortingLayerID: 0
-  m_FrontSortingLayer: 3
+  m_FrontSortingLayer: 8
   m_BackSortingLayer: 0
   m_FrontSortingOrder: 15
   m_BackSortingOrder: 0
@@ -2976,8 +2976,8 @@ Transform:
   m_GameObject: {fileID: 7195997253162826639}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.1181, y: -8.8411, z: 0.07001205}
-  m_LocalScale: {x: 1.2269766, y: 1.7597145, z: 1}
+  m_LocalPosition: {x: 0.1254, y: -8.3306, z: 0.07001205}
+  m_LocalScale: {x: 0.9914114, y: 2.1000433, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6463268370290255810}
@@ -3028,9 +3028,9 @@ SpriteMask:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66bb625b1faa464489e1eee8785182fd, type: 3}
   m_MaskAlphaCutoff: 0
-  m_FrontSortingLayerID: -257139871
+  m_FrontSortingLayerID: -1838912663
   m_BackSortingLayerID: 0
-  m_FrontSortingLayer: 3
+  m_FrontSortingLayer: 8
   m_BackSortingLayer: 0
   m_FrontSortingOrder: 15
   m_BackSortingOrder: 0
@@ -4602,8 +4602,8 @@ Transform:
   m_GameObject: {fileID: 8945676629741414548}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.6193, y: -2.8618, z: 0.07001205}
-  m_LocalScale: {x: 3.5649147, y: 2.3137994, z: 1}
+  m_LocalPosition: {x: 3.6209, y: -2.8339, z: 0.07001205}
+  m_LocalScale: {x: 3.318017, y: 1.633778, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6463268370290255810}
@@ -4654,9 +4654,9 @@ SpriteMask:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66bb625b1faa464489e1eee8785182fd, type: 3}
   m_MaskAlphaCutoff: 0
-  m_FrontSortingLayerID: -257139871
+  m_FrontSortingLayerID: -1838912663
   m_BackSortingLayerID: 0
-  m_FrontSortingLayer: 3
+  m_FrontSortingLayer: 8
   m_BackSortingLayer: 0
   m_FrontSortingOrder: 15
   m_BackSortingOrder: 0

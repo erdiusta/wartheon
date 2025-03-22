@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Frost Wrym
   enemyDetails: A glacier draconid which is too cold to touch. It has dangerous ice
     moves.
-  enemyCategory: 23
+  enemyCategory: 24
   enemyPrefab: {fileID: 7183228443647751644, guid: 30222bc0a34bb104f9b58d4aec937c0f, type: 3}
   enemyType: 1
   movementDetails: {fileID: 11400000, guid: d8ac9e42e7c2a744e9db3466367eb8c6, type: 2}
@@ -27,9 +27,10 @@ MonoBehaviour:
   attackMoveBaseCooldown: 8
   countdownDurationBeforeDashAttack: 0.4
   deflectionValue: 0.15
-  enemyBehaviour: 6
+  enemyBehaviour: 7
   isEnemyBoss: 1
   isSummonedMinion: 0
+  isDummy: 0
   hasAnimator: 0
   elementalBias: 2
   elementalForgeRate: 0.5
@@ -71,11 +72,11 @@ MonoBehaviour:
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
   poisonSoundEffect: {fileID: 0}
-  enemyWeapon: {fileID: 11400000, guid: 5e26935bd513f1b4e9b0ae2bedc3cf02, type: 2}
-  firingIntervalMin: 0.8
-  firingIntervalMax: 1.5
-  firingDurationMin: 1
-  firingDurationMax: 2
+  enemyWeapon: {fileID: 11400000, guid: 789080475bbb5924dbad6a8b30dbd621, type: 2}
+  firingIntervalMin: 0.6
+  firingIntervalMax: 0.6
+  firingDurationMin: 0.4
+  firingDurationMax: 0.4
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}

@@ -30,6 +30,7 @@ MonoBehaviour:
   enemyBehaviour: 3
   isEnemyBoss: 1
   isSummonedMinion: 0
+  isDummy: 0
   hasAnimator: 0
   elementalBias: 0
   elementalForgeRate: 0
@@ -66,6 +67,7 @@ MonoBehaviour:
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 0}
   roarSoundEffect: {fileID: 11400000, guid: 12253983c80540c47bd8dcee82351f89, type: 2}
+  chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
@@ -78,6 +80,8 @@ MonoBehaviour:
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    enemyHealthAmount: 350
+  - dungeonLevel: {fileID: 11400000, guid: c3413b0ad50f98a4ba7edfccd5230ccf, type: 2}
     enemyHealthAmount: 350
   isImmuneAfterHit: 1
   hitImmunityTime: 2

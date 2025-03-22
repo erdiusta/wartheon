@@ -67,6 +67,7 @@ public static class Settings
     public static int axisY = Animator.StringToHash("axisY");
     public static int cast = Animator.StringToHash("cast");
     public static int dash = Animator.StringToHash("dash");
+    public static int attackType = Animator.StringToHash("attackType");
     public const float baseSpeedForPlayerAnimations = 6f;
 
     // Animator parameters - Status
@@ -98,8 +99,9 @@ public static class Settings
     // Animator parameters - DropItem
     public static int hovered = Animator.StringToHash("hovered");
 
-    // Animator parameters - LevelUp VFX
+    // Animator parameters -  VFX
     public static int levelUp = Animator.StringToHash("levelUp");
+    public static int impactNumber = Animator.StringToHash("impactNumber");
 
     // Animator parameters - Book
     public static int turnPage = Animator.StringToHash("turnPage");

@@ -173,7 +173,7 @@ public class Projectile : MonoBehaviour, IFireable
         }     
     }
 
-    private void MoveStandardProjectile()
+    private void MoveStandardProjectile(VenomancerPhase venomancerPhase = VenomancerPhase.None)
     {
         // Don't move projectile if movement has been overriden - e.g. this projectile is part of an projectile pattern
         if (!overrideProjectileMovement)
@@ -194,7 +194,7 @@ public class Projectile : MonoBehaviour, IFireable
                 {
                     if (activeItemDetails == null)
                     {
-                        if (!projectileDetails.isTrap)
+                        if (!projectileDetails.isTrap && venomancerPhase != VenomancerPhase.ToxicPool)
                         {
                             DisableProjectile();
                         }
@@ -800,7 +800,8 @@ public class Projectile : MonoBehaviour, IFireable
     public void InitializeProjectile(Enemy belongingEnemy, bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
         float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false, bool fallingFromSkies = false,
         bool isPenetrationArrow = false, int projectileCounter = 0, int projectilesPerShot = 0,CentaurPhase centaurPhase = CentaurPhase.None,
-        TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None)
+        TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
+        FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None)
     {
         #region Projectile
 
@@ -822,10 +823,11 @@ public class Projectile : MonoBehaviour, IFireable
         this.belongingEnemy = belongingEnemy;
 
         // Set fire direction
-        SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, projectilesPerShot, centaurPhase, treantPhase, galvanusPhase);
+        SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, projectilesPerShot, centaurPhase, treantPhase, galvanusPhase,
+            sepharothPhase, frostWrymPhase, venomancerPhase);
 
-        // Set projectile sprite
-        spriteRenderer.sprite = projectileDetails.projectileSprite;
+        //// Set projectile sprite
+        //spriteRenderer.sprite = projectileDetails.projectileSprite;
 
         // Play sound if it is a unique projectile
         if (galvanusPhase == GalvanusPhase.Lightning)
@@ -973,7 +975,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// random spread - PROJECTILE
     private void SetFireDirection(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
         int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, 
-        GalvanusPhase galvanusPhase = GalvanusPhase.None)
+        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None,
+        VenomancerPhase venomancerPhase = VenomancerPhase.None)
     {
         if (centaurPhase == CentaurPhase.SpreadArrowShot)
         {
@@ -989,10 +992,38 @@ public class Projectile : MonoBehaviour, IFireable
             // Set the fire direction angle based on the projectile index
             fireDirectionAngle = startAngle + (angleIncrement * projectileCounter);
         }
+        else if (frostWrymPhase == FrostWrymPhase.IceProjectile)
+        {
+            // Define the total angle spread (e.g., 45 degrees spread)
+            float totalSpreadAngle = 30f;
+
+            // Calculate the angle increment between projectiles
+            float angleIncrement = (totalProjectiles > 1) ? totalSpreadAngle / (totalProjectiles - 1) : 0f;
+
+            // Adjust the starting angle to center the spread
+            float startAngle = aimAngle - (totalSpreadAngle / 2);
+
+            // Set the fire direction angle based on the projectile index
+            fireDirectionAngle = startAngle + (angleIncrement * projectileCounter);
+        }
+        else if (venomancerPhase == VenomancerPhase.SludgeThrow)
+        {
+            // Define the total angle spread (e.g., 45 degrees spread)
+            float totalSpreadAngle = 40f;
+
+            // Calculate the angle increment between projectiles
+            float angleIncrement = (totalProjectiles > 1) ? totalSpreadAngle / (totalProjectiles - 1) : 0f;
+
+            // Adjust the starting angle to center the spread
+            float startAngle = aimAngle - (totalSpreadAngle / 2);
+
+            // Set the fire direction angle based on the projectile index
+            fireDirectionAngle = startAngle + (angleIncrement * projectileCounter);
+        }
         else if (treantPhase == TreantPhase.RazorLeaf)
         {
             // Define the total angle spread (e.g., 60 degrees spread)
-            float totalSpreadAngle = 60f;
+            float totalSpreadAngle = 90f;
 
             // Calculate the total weight for the decreasing intervals
             float weightSum = 0f;
@@ -1052,7 +1083,7 @@ public class Projectile : MonoBehaviour, IFireable
         }
 
         // Set projectile rotation
-        if (galvanusPhase == GalvanusPhase.Lightning)
+        if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain)
         {
             transform.eulerAngles = new Vector3(0f, 0f, 0f);
         }

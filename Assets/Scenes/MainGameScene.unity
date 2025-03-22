@@ -17876,9 +17876,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
+    y: 0.016544119
     width: 1
-    height: 0.9997719
+    height: 0.9667969
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 40
@@ -23151,6 +23151,9 @@ MonoBehaviour:
   - poolSize: 300
     prefab: {fileID: 2585463276777236944, guid: 25b0df9a5d0f5824daa2a14040d0a116, type: 3}
     componentType: IFireable
+  - poolSize: 300
+    prefab: {fileID: 2585463276777236944, guid: 4f1edce39666951479df96272b456798, type: 3}
+    componentType: IFireable
   - poolSize: 250
     prefab: {fileID: 2585463276777236944, guid: 796b076dc70c8484389ba4a810ab08c6, type: 3}
     componentType: IFireable
@@ -23175,6 +23178,9 @@ MonoBehaviour:
   - poolSize: 100
     prefab: {fileID: 2585463276777236944, guid: 57b7bf409d4b6f14fba3aa88ee752e35, type: 3}
     componentType: IFireable
+  - poolSize: 20
+    prefab: {fileID: 9215254846020591270, guid: 134f30ac9663ee04b96c23e8b7f6d55e, type: 3}
+    componentType: ProjectileHitEffect
   - poolSize: 100
     prefab: {fileID: 2585463276777236944, guid: d22f60a616d93a04e99ab517374c2f82, type: 3}
     componentType: IFireable
@@ -23199,8 +23205,23 @@ MonoBehaviour:
   - poolSize: 40
     prefab: {fileID: 2585463276777236944, guid: 11969ab2f8c2f78418994433d44663ac, type: 3}
     componentType: IFireable
-  - poolSize: 10
+  - poolSize: 20
     prefab: {fileID: 2585463276777236944, guid: bef3bdc1fa588824489d8381a1e979ca, type: 3}
+    componentType: IFireable
+  - poolSize: 100
+    prefab: {fileID: 2585463276777236944, guid: 7b3a8f85af3a7874abf6cf9ae4dc6503, type: 3}
+    componentType: IFireable
+  - poolSize: 100
+    prefab: {fileID: 2585463276777236944, guid: 34d9254a31186964b972ba00f92adf09, type: 3}
+    componentType: IFireable
+  - poolSize: 20
+    prefab: {fileID: 2585463276777236944, guid: cf929e1aa614d9d4d85909cf1ef19903, type: 3}
+    componentType: IFireable
+  - poolSize: 20
+    prefab: {fileID: 2585463276777236944, guid: 6654918e3e6085e438932084ca382112, type: 3}
+    componentType: IFireable
+  - poolSize: 20
+    prefab: {fileID: 2585463276777236944, guid: adda8cef16320134cb6b6f7e2a5e59c2, type: 3}
     componentType: IFireable
   - poolSize: 300
     prefab: {fileID: 5263536334675765252, guid: 339536103c4f7b74995fd50408768bc1, type: 3}
@@ -23259,6 +23280,9 @@ MonoBehaviour:
   - poolSize: 30
     prefab: {fileID: 9017448095421764182, guid: 90ae5878019657a44914bc14f3991fb8, type: 3}
     componentType: ProjectileHitEffect
+  - poolSize: 20
+    prefab: {fileID: 9215254846020591270, guid: 134f30ac9663ee04b96c23e8b7f6d55e, type: 3}
+    componentType: ProjectileHitEffect
   - poolSize: 30
     prefab: {fileID: 9017448095421764182, guid: 9086633182a6cb846a09f1916c7ec2f3, type: 3}
     componentType: ProjectileHitEffect
@@ -23270,6 +23294,9 @@ MonoBehaviour:
     componentType: ProjectileHitEffect
   - poolSize: 20
     prefab: {fileID: 9215254846020591270, guid: 134f30ac9663ee04b96c23e8b7f6d55e, type: 3}
+    componentType: ProjectileHitEffect
+  - poolSize: 20
+    prefab: {fileID: 9017448095421764182, guid: bc01011a56986ea42884ecc65418f81b, type: 3}
     componentType: ProjectileHitEffect
 --- !u!4 &673935430
 Transform:
