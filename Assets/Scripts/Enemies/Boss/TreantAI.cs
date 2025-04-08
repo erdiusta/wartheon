@@ -33,9 +33,14 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Update()
     {
-        Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-            (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
-        lockedVector = direction;
+        Vector3 direction;
+
+        if (GameManager.Instance.GetPlayer() != null)
+        {
+            direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
+                (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
+            lockedVector = direction;
+        }
 
         // Initialize vectors, angles, directions and aim
         float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
@@ -341,6 +346,8 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
             // Create an instance of the helper class used to select a random enemy
             RandomSpawnableObject<EnemyDetailsSO> randomEnemyHelperClass = new RandomSpawnableObject<EnemyDetailsSO>(currentRoom.enemiesByLevelList);
 
+            SoundEffectManager.Instance.PlaySoundEffect(enemyDetails.attackSoundEffect);
+
             // Check we have somewhere to spawn the enemies
             if (currentRoom.spawnPositionArray.Length > 0)
             {
@@ -362,7 +369,7 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
 
             enemy.health.AddHealth((int)(20f / enemy.health.GetMaximumHealth() * 100));
 
-            yield return new WaitForEndOfFrame();
+            SoundEffectManager.Instance.PlaySoundEffect(enemyDetails.chargeSoundEffect);
 
             yield return new WaitForSeconds(2f);
         }

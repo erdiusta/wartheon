@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_WhisperingHood
   m_EditorClassIdentifier: 
   passiveItemName: Whispering Hood
+  price: 75
   passiveItemSprite: {fileID: -1819732502, guid: bc81045fbeabbdf4783612faadb56a9a, type: 3}
   passiveItemCategory: 1
   passiveItemType: 20

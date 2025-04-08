@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_BlazingHeartplate
   m_EditorClassIdentifier: 
   passiveItemName: Blazing Heartplate
+  price: 60
   passiveItemSprite: {fileID: -814480374, guid: c3ce3814bab00024abf443ff61f7e780, type: 3}
   passiveItemCategory: 1
   passiveItemType: 32

@@ -26,7 +26,7 @@ MonoBehaviour:
   wieldType: 1
   elementalBias: 3
   elementalForgeRate: 1
-  price: 210
+  price: 105
   weaponFrontSprite: {fileID: -2001001810, guid: 78f3ea8e5c6e695419ce88cfea96753b, type: 3}
   weaponRearSprite: {fileID: -2001001810, guid: 78f3ea8e5c6e695419ce88cfea96753b, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 81f5dc28a092d5c4dbf1c8432078429b, type: 2}
@@ -35,6 +35,8 @@ MonoBehaviour:
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  canBurn: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
   hasStunDamage: 0
@@ -50,6 +52,7 @@ MonoBehaviour:
   weaponUpShootPosition: {x: 0, y: 0, z: 0}
   weaponDownShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: bfda1476d0721314890c8e33f2b237ea, type: 2}
+  weaponSecondaryProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 2b48803770907284d95203a58a27c7b7, type: 2}
   weaponImpactSoundEffect: {fileID: 0}
@@ -57,15 +60,20 @@ MonoBehaviour:
   isShield: 0
   projectileDeflectRatio: 0
   circleRadius: 0
+  boxLength: 1.2
+  boxHeight: 2.6
   hasPhysicalDamage: 0
   meleeDamageMin: 0
   meleeDamageMax: 0
+  meleeDamageElementalBias: 0
+  secondMeleeDamageMin: 4
+  secondMeleeDamageMax: 7
+  secondMeleeDamageElementalBias: 0
   criticalHitChance: 0
   criticalHitDamageMultiplier: 2
   weaponCooldownDuration: 0.9
   weaponBaseHandling: 0.65
   hasSwing: 0
-  hasSweep: 0
   hasThrust: 0
   hasInfiniteProjectile: 1
   weaponProjectileCapacity: 0

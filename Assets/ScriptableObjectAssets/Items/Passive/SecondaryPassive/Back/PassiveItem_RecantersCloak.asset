@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_RecantersCloak
   m_EditorClassIdentifier: 
   passiveItemName: Recanter's Cloak
+  price: 50
   passiveItemSprite: {fileID: 1629930951, guid: 36ebfe1d318718f4cae20deec9a8729e, type: 3}
   passiveItemCategory: 1
   passiveItemType: 22

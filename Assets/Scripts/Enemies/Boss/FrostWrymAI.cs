@@ -85,7 +85,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
                 PlayerStealthCheck();
             }
 
-            // Check if the enemy is a Galvanus boss
+            // Check if the enemy is a Frost Wrym boss
             if (enemyDetails.enemyBehaviour == EnemyBehaviour.FrostWrym)
             {
                 // Handle phases based on currentPhase
@@ -108,22 +108,18 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
                         break;
 
                     case FrostWrymPhase.IceProjectile:
-                        Debug.Log(FrostWrymPhase.IceProjectile.ToString());
                         HandleIceProjectile();
                         break;
 
                     case FrostWrymPhase.TailAttack:
-                        Debug.Log(FrostWrymPhase.TailAttack.ToString());
                         HandleTailAttack();
                         break;
 
                     case FrostWrymPhase.Icicle:
-                        Debug.Log(FrostWrymPhase.Icicle.ToString());
                         HandleIcicle();
                         break;
 
                     case FrostWrymPhase.FrostBreath:
-                        Debug.Log(FrostWrymPhase.FrostBreath.ToString());
                         HandleFrostBreath();
                         break;
 
@@ -189,7 +185,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
             return;
         }
 
-        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 2f)
+        if (GameManager.Instance.GetPlayer() != null && Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 2f)
         {
             // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
             currentFrostWrymPhase = (FrostWrymPhase)Random.Range(4, Enum.GetValues(typeof(FrostWrymPhase)).Length);
@@ -426,7 +422,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
             enemy.animateEnemy.ResetAnimatonParameters();
             enemy.animator.SetBool(Settings.cast, true);
 
-            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
+            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.chargeSoundEffect);
 
             yield return null;
 
@@ -602,7 +598,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
                 yield return null;
 
-                SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.attackSoundEffect);
+                SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
             }
 
             enemy.animator.SetBool(Settings.cast, false);

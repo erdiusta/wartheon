@@ -15,11 +15,15 @@ public class Interaction : MonoBehaviour
     private void OnEnable()
     {
         StaticDialogueHandler.OnInsufficientFunds += StaticDialogueHandler_OnInsufficientFunds;
+        StaticDialogueHandler.OnGambleLost += StaticDialogueHandler_OnGambleLost;
+        StaticDialogueHandler.OnGambleWon += StaticDialogueHandler_OnGambleWon;
     }
 
     private void OnDisable()
     {
         StaticDialogueHandler.OnInsufficientFunds -= StaticDialogueHandler_OnInsufficientFunds;
+        StaticDialogueHandler.OnGambleLost -= StaticDialogueHandler_OnGambleLost;
+        StaticDialogueHandler.OnGambleWon -= StaticDialogueHandler_OnGambleWon;
     }
 
     private void Start()
@@ -30,6 +34,18 @@ public class Interaction : MonoBehaviour
 
     private void StaticDialogueHandler_OnInsufficientFunds()
     {
+        StartDialogue(dialogues[2]);
+    }
+
+    private void StaticDialogueHandler_OnGambleWon()
+    {
+        EndDialogue();
+        StartDialogue(dialogues[3]);
+    }
+
+    private void StaticDialogueHandler_OnGambleLost()
+    {
+        EndDialogue();
         StartDialogue(dialogues[2]);
     }
 

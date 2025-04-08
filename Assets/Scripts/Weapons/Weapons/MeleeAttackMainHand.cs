@@ -130,8 +130,8 @@ public class MeleeAttackMainHand : MonoBehaviour
             {
                 if (!enemy.enemyDetails.isEnemyBoss)
                 {
-                    CheckSuddenDeathStatus(enemy);
-                    CheckShatterStatus(enemy);
+                    CheckSuddenDeathStatus(enemy, enemyHealth);
+                    CheckShatterStatus(enemy, enemyHealth);
                 }
 
                 if (enemyHealth.suddenDeathHappened)
@@ -144,7 +144,11 @@ public class MeleeAttackMainHand : MonoBehaviour
                     ? Mathf.Max((int)(enemyHealth.currentHealth * (0.2f + player.bloodDrainSkillAdditionalDamagePercentageModifier)), CalculateDamageAmount(enemy))
                     : CalculateDamageAmount(enemy);
 
-                enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+                if (enemyHealth != null)
+                {
+                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+                }
+
                 SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
                 if (!enemy.enemyDetails.isEnemyBoss)
@@ -152,6 +156,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                     CheckAcidStatus(enemy);
                     CheckFrostStatus(enemy);
                     CheckStunStatus(enemy);
+                    CheckBurnStatus(enemy);
                     CheckPoisonStatus(enemy);
                     CheckBlindStatus(enemy);
                 }
@@ -302,10 +307,12 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <summary>
     /// Check sudden death status
     /// </summary>
-    private void CheckSuddenDeathStatus(Enemy enemy)
+    private void CheckSuddenDeathStatus(Enemy enemy, Health enemyHealth)
     {
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.canKillSuddenly && enemy.health.currentHealth > 0)
         {
+            this.enemyHealth = enemyHealth;
+
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.suddenKillChance)
             {
@@ -320,8 +327,10 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <summary>
     /// Check shatter status
     /// </summary>
-    private void CheckShatterStatus(Enemy enemy)
+    private void CheckShatterStatus(Enemy enemy, Health enemyHealth)
     {
+        this.enemyHealth = enemyHealth;
+
         EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
 
         if (enemyMovementAI.moveStatus == MoveStatus.Frozen && enemy.health.currentHealth > 0)
@@ -334,6 +343,23 @@ public class MeleeAttackMainHand : MonoBehaviour
                 enemy.destroyedEvent.CallDestroyedEvent(false);
                 enemy.healthEvent.CallGetShatteredEvent();
                 SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check burn status
+    /// </summary>
+    private void CheckBurnStatus(Enemy enemy, bool isActiveItem = false)
+    {
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.canBurn)
+        {
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.burnChance)
+            {
+                enemy.healthEvent.CallGetBurnEvent();
+                enemy.healthStatus = HealthStatus.Burned;
             }
         }
     }

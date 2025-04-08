@@ -23,8 +23,9 @@ MonoBehaviour:
   hasAttackMove: 1
   attackMoveTriggerDistance: 4
   attackMoveEfficentDistance: 9
-  attackMoveBaseCooldown: 1.5
   countdownDurationBeforeDashAttack: 0.4
+  attackMoveDashDuration: 0.3
+  attackMoveBaseCooldown: 0.4
   deflectionValue: 0
   enemyBehaviour: 2
   isEnemyBoss: 0

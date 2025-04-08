@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_GoldenCloak
   m_EditorClassIdentifier: 
   passiveItemName: Golden Cloak
+  price: 90
   passiveItemSprite: {fileID: -1175291460, guid: 93630d53a573fe7448c9b73c03e62a0e, type: 3}
   passiveItemCategory: 1
   passiveItemType: 25

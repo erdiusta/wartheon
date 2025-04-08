@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_VenomTouchedGloves
   m_EditorClassIdentifier: 
   passiveItemName: Venom-Touched Gloves
+  price: 80
   passiveItemSprite: {fileID: -1986367084, guid: c2c78e6ba4d962f45bc463364c53b088, type: 3}
   passiveItemCategory: 1
   passiveItemType: 27

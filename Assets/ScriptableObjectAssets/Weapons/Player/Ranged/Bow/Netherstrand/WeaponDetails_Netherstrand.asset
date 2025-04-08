@@ -26,7 +26,7 @@ MonoBehaviour:
   wieldType: 1
   elementalBias: 5
   elementalForgeRate: 0.15
-  price: 220
+  price: 110
   weaponFrontSprite: {fileID: -997089411, guid: fc669d9a19e44524c83865dfd4df61a3, type: 3}
   weaponRearSprite: {fileID: -997089411, guid: fc669d9a19e44524c83865dfd4df61a3, type: 3}
   weaponAnimatorController: {fileID: 9100000, guid: 7396412aae83fb64283b547d7c7d2ec1, type: 2}
@@ -35,6 +35,8 @@ MonoBehaviour:
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  canBurn: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
   hasStunDamage: 0
@@ -63,6 +65,10 @@ MonoBehaviour:
   hasPhysicalDamage: 1
   meleeDamageMin: 0
   meleeDamageMax: 0
+  meleeDamageElementalBias: 0
+  secondMeleeDamageMin: 4
+  secondMeleeDamageMax: 7
+  secondMeleeDamageElementalBias: 0
   criticalHitChance: 0
   criticalHitDamageMultiplier: 0
   weaponCooldownDuration: 1.2

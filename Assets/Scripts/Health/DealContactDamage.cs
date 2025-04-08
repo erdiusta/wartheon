@@ -107,6 +107,7 @@ public class DealContactDamage : MonoBehaviour
 
                                     if (player.onStealth) return;
 
+                                    CheckBurnStatus(player);
                                     CheckPoisonStatus(player);
                                     CheckAcidStatus(player);
                                     CheckStunStatus(player);
@@ -226,6 +227,25 @@ public class DealContactDamage : MonoBehaviour
             // Apply knockback and damage the enemy
             //enemy.enemyAI.TriggerKnockback(transform.position - collision.transform.position);
             enemy.health.TakeDamage(damageDone, transform.position, collision.transform.position, false);
+        }
+    }
+
+    /// <summary>
+    /// Check burn status
+    /// </summary>
+    private void CheckBurnStatus(Player player)
+    {
+        if (player.isImmunetoBurn) return;
+
+        if (enemy.enemyDetails.canBurn)
+        {
+            // Check get poisoned
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.burnChance - player.additionalNegativeStatusEffectNegatorModifier)
+            {
+                player.healthEvent.CallGetBurnEvent();
+                player.healthStatus = HealthStatus.Burned;
+            }
         }
     }
 

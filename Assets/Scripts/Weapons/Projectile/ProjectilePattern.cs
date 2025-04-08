@@ -29,7 +29,7 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement, bool fallingFromSkies = false, bool isPenetrationArrow = false,
         int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None,
         GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None,
-        VenomancerPhase venomancerPhase = VenomancerPhase.None)
+        VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
     {
         this.projectileDetails = projectileDetails;
         this.projectileSpeed = projectileSpeed;

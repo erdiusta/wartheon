@@ -5,6 +5,7 @@ public class FlashManager : MonoBehaviour
     [SerializeField] Material originalMaterial;
     [SerializeField] Material whiteFlashMaterial;
     [SerializeField] Material redFlashMaterial;
+    [SerializeField] Material burnMaterial;
     [SerializeField] Material poisonMaterial;
 
     public void FlashCharacter(SpriteRenderer sprite, Material material)
@@ -25,6 +26,11 @@ public class FlashManager : MonoBehaviour
     public void PoisonFlashCharacter(SpriteRenderer sprite)
     {
         sprite.material = poisonMaterial;
+    }
+
+    public void BurnFlashCharacter(SpriteRenderer sprite)
+    {
+        sprite.material = burnMaterial;
     }
 
     public void UnflashCharacter(SpriteRenderer sprite)

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_RubyPendant
   m_EditorClassIdentifier: 
   passiveItemName: Ruby Pendant
+  price: 60
   passiveItemSprite: {fileID: -1730366199, guid: 018880022526e984da66e4c2c3e2f039, type: 3}
   passiveItemCategory: 1
   passiveItemType: 15

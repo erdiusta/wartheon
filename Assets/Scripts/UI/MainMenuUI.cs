@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuUI : MonoBehaviour
 {
+    public static int currentDungeonLevelListIndex = 0;
+
     [SerializeField] GameObject playButton;
     [SerializeField] GameObject quitButton;
 
@@ -14,6 +16,42 @@ public class MainMenuUI : MonoBehaviour
 
         //// Load character selector scene additively
         //SceneManager.LoadScene("CharacterSelectorScene", LoadSceneMode.Additive);
+    }
+
+    private void Update()
+    {
+        if (InputManager.Instance.levelOneButton.action.WasPressedThisFrame())
+        {
+            currentDungeonLevelListIndex = 0;
+        }
+        else if (InputManager.Instance.levelTwoButton.action.WasPressedThisFrame())
+        {
+            currentDungeonLevelListIndex = 1;
+        }
+        else if (InputManager.Instance.levelThreeButton.action.WasPressedThisFrame())
+        {
+            currentDungeonLevelListIndex = 2;
+        }
+        else if (InputManager.Instance.levelFourButton.action.WasPressedThisFrame())
+        {
+            currentDungeonLevelListIndex = 3;
+        }
+        else if (InputManager.Instance.levelFiveButton.action.WasPressedThisFrame())
+        {
+            currentDungeonLevelListIndex = 4;
+        }
+        else if (InputManager.Instance.levelSixButton.action.WasPressedThisFrame())
+        {
+            currentDungeonLevelListIndex = 5;
+        }
+        else if (InputManager.Instance.levelSevenButton.action.WasPressedThisFrame())
+        {
+            currentDungeonLevelListIndex = 6;
+        }
+        else if (InputManager.Instance.levelEightButton.action.WasPressedThisFrame())
+        {
+            currentDungeonLevelListIndex = 7;
+        }
     }
 
     /// <summary>

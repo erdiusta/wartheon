@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_MantleOfStars
   m_EditorClassIdentifier: 
   passiveItemName: Mantle of Stars
+  price: 65
   passiveItemSprite: {fileID: 501850421, guid: c8f1a7ec9f3b5214291a0670d01b3444, type: 3}
   passiveItemCategory: 1
   passiveItemType: 23

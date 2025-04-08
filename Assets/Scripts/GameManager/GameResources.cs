@@ -189,6 +189,19 @@ public class GameResources : MonoBehaviour
     #endregion
     public GameObject dustTrailPrefab;
 
+    #region Header NPC
+    [Space(10)]
+    [Header("NPC")]
+    #endregion
+    #region Tooltip
+    [Tooltip("NPC arrays")]
+    #endregion
+    public GameObject[] npcPrefabs;
+    #region Tooltip
+    [Tooltip("Gamble dice animator")]
+    #endregion
+    public RuntimeAnimatorController gambleDiceAnimatorController;
+
     #region Header CHESTS
     [Space(10)]
     [Header("CHESTS")]

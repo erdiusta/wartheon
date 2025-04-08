@@ -24,12 +24,14 @@ MonoBehaviour:
   hasAttackMove: 1
   attackMoveTriggerDistance: 3
   attackMoveEfficentDistance: 8
-  attackMoveBaseCooldown: 8
   countdownDurationBeforeDashAttack: 0.4
+  attackMoveDashDuration: 0.3
+  attackMoveBaseCooldown: 8
   deflectionValue: 0.1
   enemyBehaviour: 5
   isEnemyBoss: 1
   isSummonedMinion: 0
+  isDummy: 0
   hasAnimator: 0
   elementalBias: 4
   elementalForgeRate: 0.5
@@ -45,12 +47,14 @@ MonoBehaviour:
   deflectChance: 0
   dealtMeleeDamageMin: 12
   dealtMeleeDamageMax: 15
+  canBurn: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
   hasAcid: 0
   acidEfficiency: 0
-  hasStunDamage: 0
-  stunChance: 0
+  hasStunDamage: 1
+  stunChance: 0.1
   hasFrostDamage: 0
   frostChance: 0
   hasCurseDamage: 0
@@ -66,6 +70,7 @@ MonoBehaviour:
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 0}
   roarSoundEffect: {fileID: 11400000, guid: ef2729d19d19b8d47b541e62c36572d5, type: 2}
+  chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 11400000, guid: 71d59ccd3b42f8c44bb49444dd57d8e9, type: 2}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}

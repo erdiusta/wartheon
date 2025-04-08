@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_RingOfSagacity
   m_EditorClassIdentifier: 
   passiveItemName: Ring of Sagacity
+  price: 60
   passiveItemSprite: {fileID: -1465421659, guid: 46a1c1f81280deb409bf538bbe415511, type: 3}
   passiveItemCategory: 1
   passiveItemType: 31

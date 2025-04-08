@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_EnchantersSpire
   m_EditorClassIdentifier: 
   passiveItemName: Enchanter's Spire
+  price: 65
   passiveItemSprite: {fileID: 1269658673, guid: de39efb0cb324154ba6fb5b4144e5a77, type: 3}
   passiveItemCategory: 1
   passiveItemType: 21

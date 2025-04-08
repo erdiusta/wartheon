@@ -18,6 +18,13 @@ public class HealthEvent : MonoBehaviour
         GetPoisoned?.Invoke(this);
     }
 
+    public event Action<HealthEvent> GetBurned;
+
+    public void CallGetBurnEvent()
+    {
+        GetBurned?.Invoke(this);
+    }
+
     public event Action<HealthEvent> GetAcid;
 
     public void CallGetAcidEvent()
@@ -65,6 +72,13 @@ public class HealthEvent : MonoBehaviour
     public void CallGetBlindEvent()
     {
         GetBlind?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> BurnCured;
+
+    public void CallBurnCuredEvent()
+    {
+        BurnCured?.Invoke(this);
     }
 
     public event Action<HealthEvent> PoisonCured;

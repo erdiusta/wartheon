@@ -88,6 +88,7 @@ public class RoomTemplateSO : ScriptableObject
             previousPrefab = prefab;
             EditorUtility.SetDirty(this);
         }
+
         HelperUtilities.ValidateCheckNullValue(this, nameof(prefab), prefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(battleMusic), battleMusic);
         HelperUtilities.ValidateCheckNullValue(this, nameof(ambientMusic), ambientMusic);

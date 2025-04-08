@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_SapphirePendant
   m_EditorClassIdentifier: 
   passiveItemName: Sapphire Pendant
+  price: 60
   passiveItemSprite: {fileID: -156958037, guid: 66052117e1ecbdf4d8bb54e8981bb83e, type: 3}
   passiveItemCategory: 1
   passiveItemType: 16

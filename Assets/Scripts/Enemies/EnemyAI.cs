@@ -57,6 +57,7 @@ public class EnemyAI : MonoBehaviour
     float knockbackTimeWeight;
     bool patrolPathFound;
     EnemyPhase enemyPhaseAtPreviousFrame;
+    bool isCollided;
 
     // PHYSICS
     [HideInInspector] public bool isAttacking;
@@ -149,7 +150,6 @@ public class EnemyAI : MonoBehaviour
     {
         if (isAttacking) return;
 
-
         attackMoveTimer -= Time.deltaTime;
 
         // Movement cooldown timer
@@ -161,7 +161,7 @@ public class EnemyAI : MonoBehaviour
             currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).y);
         Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
             enemyCellPosition.y - currentRoom.templateLowerBounds.y);
-
+       
         // If enemy is in wall or pool tile, make enemy go away from there
         if (currentRoom.instantiatedRoom?.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 0 || currentRoom.instantiatedRoom?.
             GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) > 1)
@@ -742,7 +742,7 @@ public class EnemyAI : MonoBehaviour
         yield return waitForFixedUpdate;
 
         // Let FixedUpdate() handle movement during dashing, just wait for the dash duration to complete
-        while (dashTimer <= 0.6f)
+        while (dashTimer <= enemy.enemyDetails.attackMoveDashDuration)
         {
             bool obstacleFound;
 
@@ -850,7 +850,7 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     protected void FireWeapon(bool isLaser = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, 
         GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None,
-        VenomancerPhase venomancerPhase = VenomancerPhase.None)
+        VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
@@ -872,7 +872,7 @@ public class EnemyAI : MonoBehaviour
                 if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
 
                 enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false,
-                    false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase);
+                    false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
             }
         }
     }

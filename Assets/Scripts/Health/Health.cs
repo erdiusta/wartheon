@@ -27,9 +27,11 @@ public class Health : MonoBehaviour
     float immunityTime = 0f;
     SpriteRenderer spriteRenderer;
     WaitForSeconds waitForSecondsSpriteFlashInterval = new WaitForSeconds(spriteFlashInterval);
+    Coroutine burnCoroutine;
     Coroutine poisonCoroutine;
     Coroutine bleedingCoroutine;
     int poisonPeriodCount = 0;
+    int burnPeriodCount = 0;
     bool isProjectileHit = false;
     Decoy decoy;
 
@@ -111,6 +113,13 @@ public class Health : MonoBehaviour
                     poisonCoroutine = StartCoroutine(GraduallyHealthReduceDuetoPoison());
                 }
             }
+            else if (player.healthStatus == HealthStatus.Burned)
+            {
+                if (burnCoroutine == null)
+                {
+                    burnCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBurn());
+                }
+            }
         }
         else if (enemy != null)
         {
@@ -119,6 +128,13 @@ public class Health : MonoBehaviour
                 if (poisonCoroutine == null)
                 {
                     poisonCoroutine = StartCoroutine(GraduallyHealthReduceDuetoPoison());
+                }
+                else if (player.healthStatus == HealthStatus.Burned)
+                {
+                    if (burnCoroutine == null)
+                    {
+                        burnCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBurn());
+                    }
                 }
             }
         }
@@ -331,7 +347,6 @@ public class Health : MonoBehaviour
             if (enemy.health.GetCurrentHealth() > 0f)
             {
                 enemy.animateEnemy.ResetAnimatonParameters();
-                enemy.animator.SetBool(Settings.getHit, true);
                 enemy.animator.SetBool(Settings.block, false);
                 SoundEffectManager.Instance.PlaySoundEffect(GetComponent<Enemy>().enemyDetails.getHitSoundEffect);
             }
@@ -358,7 +373,6 @@ public class Health : MonoBehaviour
         else
         {
             enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animator.SetBool(Settings.getHit, false);
             enemy.animator.SetBool(Settings.block, true);
             SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.deflectSoundEffect);
         }
@@ -367,7 +381,6 @@ public class Health : MonoBehaviour
 
         fxAnimatorPlayed = false; // Reset hit fx animation
         hitFXAnimator.SetInteger(Settings.impactNumber, 0);
-        enemy.animator.SetBool(Settings.getHit, false);
         enemy.animator.SetBool(Settings.block, false);
         isBlocking = false;
         getHitCoroutine = null;
@@ -460,6 +473,14 @@ public class Health : MonoBehaviour
                     flashManager.UnflashCharacter(spriteRenderer);
                     yield return waitForSecondsSpriteFlashInterval;
                 }
+                if (player != null && player.healthStatus == HealthStatus.Burned)
+                {
+                    flashManager.BurnFlashCharacter(spriteRenderer);
+                    yield return waitForSecondsSpriteFlashInterval;
+
+                    flashManager.UnflashCharacter(spriteRenderer);
+                    yield return waitForSecondsSpriteFlashInterval;
+                }
                 else
                 {
                     flashManager.WhiteFlashCharacter(spriteRenderer);
@@ -480,6 +501,41 @@ public class Health : MonoBehaviour
 
         isProjectileHit = false; // Reset the projectile hit flag
         immunityCoroutine = null;
+    }
+
+    /// <summary>
+    /// Gradually reduce health - Burn
+    /// </summary>
+    IEnumerator GraduallyHealthReduceDuetoBurn()
+    {
+        burnPeriodCount++;
+
+        int damageAmount = 7;
+        // Trigger health event
+        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, damageAmount);
+        TakeDamage(damageAmount, Vector2.zero, transform.position, false);
+
+        float rndNumber = Random.Range(0f, 1f);
+
+        if (rndNumber > 0.5f && burnPeriodCount > 2)
+        {
+            if (player != null)
+            {
+                player.healthStatus = HealthStatus.Normal;
+                player.healthEvent.CallBurnCuredEvent();
+            }
+            if (enemy != null)
+            {
+                enemy.healthStatus = HealthStatus.Normal;
+                enemy.healthEvent.CallBurnCuredEvent();
+            }
+
+            burnPeriodCount = 0;
+        }
+
+        yield return new WaitForSeconds(2.5f);
+
+        burnCoroutine = null; // Reset the coroutine reference when it's finished
     }
 
     /// <summary>
@@ -516,7 +572,6 @@ public class Health : MonoBehaviour
 
         poisonCoroutine = null; // Reset the coroutine reference when it's finished
     }
-
 
 
     /// <summary>

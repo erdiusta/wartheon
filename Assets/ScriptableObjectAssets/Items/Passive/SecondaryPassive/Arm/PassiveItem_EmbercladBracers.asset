@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_EmbercladBracers
   m_EditorClassIdentifier: 
   passiveItemName: Emberclad Bracers
+  price: 40
   passiveItemSprite: {fileID: -953836881, guid: bfc92e00648ae524f81f8cc79176da77, type: 3}
   passiveItemCategory: 1
   passiveItemType: 26

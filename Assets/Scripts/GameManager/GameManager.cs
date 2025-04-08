@@ -175,6 +175,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         base.Awake();
 
+        currentDungeonLevelListIndex = MainMenuUI.currentDungeonLevelListIndex;
+
         // Set player details - saved in current player scriptable object from the main menu
         playerDetails = GameResources.Instance.currentPlayer.playerDetails;
 
@@ -199,7 +201,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void OnEnable()
     {
         StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
-        //StaticEventHandler.OnDropPickedUp += StaticEventHandler_OnDropPickedUp;
         StaticEventHandler.OnRoomEnemiesDefeated += StaticEventHandler_OnRoomEnemiesDefeated;
         StaticEventHandler.OnDecoySpawned += StaticEventHandler_OnDecoySpawned;
         StaticEventHandler.OnHourglassSpawned += StaticEventHandler_OnHourglassSpawned;
@@ -218,7 +219,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void OnDisable()
     {
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
-        //StaticEventHandler.OnDropPickedUp -= StaticEventHandler_OnDropPickedUp;
         StaticEventHandler.OnRoomEnemiesDefeated -= StaticEventHandler_OnRoomEnemiesDefeated;
         StaticEventHandler.OnDecoySpawned -= StaticEventHandler_OnDecoySpawned;
         StaticEventHandler.OnHourglassSpawned -= StaticEventHandler_OnHourglassSpawned;
@@ -1083,17 +1083,24 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Fade in canvas to display text message
         yield return StartCoroutine(Fade(0f, 1f, 2f, new Color(0f, 0f, 0f, 0.4f)));
 
-        // Display level completed
-        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! \n\nYOU'VE SURVIVED THIS DUNGEON " +
-            "LEVEL", Color.yellow, 5f));
-
-        // Fade out canvas
-        yield return StartCoroutine(Fade(1f, 0f, 2f, new Color(0f, 0f, 0f, 0.4f)));
-
         // Increase index to next level
         currentDungeonLevelListIndex++;
 
-        PlayDungeonLevel(currentDungeonLevelListIndex);
+        if (currentDungeonLevelListIndex >= 8)
+        {
+            gameState = GameState.gameWon;
+        }
+        else
+        {
+            // Display level completed
+            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! \n\nYOU'VE SURVIVED THIS DUNGEON " +
+                "LEVEL", Color.yellow, 5f));
+
+            // Fade out canvas
+            yield return StartCoroutine(Fade(1f, 0f, 2f, new Color(0f, 0f, 0f, 0.4f)));
+
+            PlayDungeonLevel(currentDungeonLevelListIndex);
+        }
     }
 
     /// <summary>
@@ -1131,8 +1138,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         yield return StartCoroutine(Fade(0f, 1f, 2f, Color.black));
 
         // Display game won
-        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE DEFEATED THE DUNGEON", 
-            Color.green, 3f));
+        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE SECURED THE WARTHEON", 
+            Color.green, 7f));
 
         yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.yellow, 0f));
 

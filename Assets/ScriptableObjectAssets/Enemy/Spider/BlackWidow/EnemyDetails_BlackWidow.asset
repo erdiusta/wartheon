@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: EnemyDetails_BlackWidow
   m_EditorClassIdentifier: 
   enemyName: Black Widow
+  enemyDetails: 
   enemyCategory: 17
   enemyPrefab: {fileID: 7183228443647751644, guid: d45f52343d7aff846a5fc9a6d45cc9f4, type: 3}
   enemyType: 0
   movementDetails: {fileID: 11400000, guid: b19c3712e6c61934c8f89df46ad2032a, type: 2}
   experiencePoint: 60
   chaseDistance: 14
-  hasAttackMove: 0
+  hasAttackMove: 1
   attackMoveTriggerDistance: 3
   attackMoveEfficentDistance: 9
   attackMoveBaseCooldown: 1.5
@@ -28,6 +29,7 @@ MonoBehaviour:
   enemyBehaviour: 2
   isEnemyBoss: 0
   isSummonedMinion: 0
+  isDummy: 0
   hasAnimator: 0
   elementalBias: 5
   elementalForgeRate: 0.4
@@ -64,6 +66,7 @@ MonoBehaviour:
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: bb4cdfaa3e5c20b4d87687e7b68870c7, type: 2}
   roarSoundEffect: {fileID: 0}
+  chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}

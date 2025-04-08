@@ -25,5 +25,14 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference OKButton;
     public InputActionReference jumpButton;
 
+    public InputActionReference levelOneButton;
+    public InputActionReference levelTwoButton;
+    public InputActionReference levelThreeButton;
+    public InputActionReference levelFourButton;
+    public InputActionReference levelFiveButton;
+    public InputActionReference levelSixButton;
+    public InputActionReference levelSevenButton;
+    public InputActionReference levelEightButton;
+
     [HideInInspector] public bool isPressedPreviousFrame;
 }

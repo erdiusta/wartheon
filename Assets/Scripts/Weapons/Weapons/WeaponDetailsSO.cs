@@ -86,6 +86,14 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float acidEfficiency = 0.4f;
     #region Tooltip
+    [Tooltip("Check if weapon can burn")]
+    #endregion Tooltip
+    public bool canBurn;
+    #region Tooltip
+    [Tooltip("The chance of weapon's burn effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float burnChance = 0f;
+    #region Tooltip
     [Tooltip("Check if weapon has poison")]
     #endregion Tooltip
     public bool isPoisonous;

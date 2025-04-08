@@ -9,12 +9,30 @@ public class FireWeaponEvent : MonoBehaviour
     public void CallFireWeaponEvent(bool fire, bool firePreviousFrame, Enemy belongingEnemy, bool isLaser, AimDirection aimDirection, float aimAngle, float weaponAimAngle,
         Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None,
         TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
-        FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None)
+        FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None,
+        MoldranPhase moldranPhase = MoldranPhase.None)
     {
-        OnFireWeapon?.Invoke(this, new FireWeaponEventArgs { fire = fire, firePreviousFrame = firePreviousFrame, belongingEnemy = belongingEnemy, isLaser = isLaser, 
-            aimDirection = aimDirection, aimAngle = aimAngle, weaponAimAngle = weaponAimAngle, weaponAimDirectionVector = weaponAimDirectionVector, headShotHappened = headShotHappened, 
-            isActiveItem = isActiveItem, isPenetrationArrow = isPenetrationArrow, centaurPhase = centaurPhase, treantPhase = treantPhase, galvanusPhase = galvanusPhase,
-            sepharothPhase = sepharothPhase, frostWrymPhase = frostWrymPhase, venomancerPhase = venomancerPhase
+        OnFireWeapon?.Invoke(this, new FireWeaponEventArgs
+        {
+            fire = fire,
+            firePreviousFrame = firePreviousFrame,
+            belongingEnemy = belongingEnemy,
+            isLaser = isLaser,
+            aimDirection = aimDirection,
+            aimAngle = aimAngle,
+            weaponAimAngle = weaponAimAngle,
+            weaponAimDirectionVector = weaponAimDirectionVector,
+            headShotHappened = headShotHappened,
+            isActiveItem = isActiveItem,
+            isPenetrationArrow = isPenetrationArrow,
+            centaurPhase = centaurPhase,
+            treantPhase = treantPhase,
+            galvanusPhase = galvanusPhase,
+            sepharothPhase = sepharothPhase,
+            frostWrymPhase = frostWrymPhase,
+            venomancerPhase = venomancerPhase,
+            fireWrymPhase = fireWrymPhase,
+            moldranPhase = moldranPhase
         });
     }
 
@@ -45,6 +63,8 @@ public class FireWeaponEventArgs : EventArgs
     public SepharothPhase sepharothPhase;
     public FrostWrymPhase frostWrymPhase;
     public VenomancerPhase venomancerPhase;
+    public FireWrymPhase fireWrymPhase;
+    public MoldranPhase moldranPhase;
 }
 
 public class FireFocusedShotEventArgs : EventArgs

@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: Frost Wrym Icicle
   isPlayerProjectile: 0
-  projectileSprite: {fileID: 21300000, guid: 913939d3305163b42af7ac7d37218381, type: 3}
   projectilePrefabArray:
   - {fileID: 2585463276777236944, guid: cf929e1aa614d9d4d85909cf1ef19903, type: 3}
   projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -44,6 +43,8 @@ MonoBehaviour:
   stunChance: 0
   hasFrostDamage: 1
   frostChance: 0.2
+  hasBurnDamage: 0
+  burnChance: 0
   hasBlindDamage: 0
   blindChance: 0
   hasCurseDamage: 0
@@ -54,7 +55,7 @@ MonoBehaviour:
   projectileSpawnAmountMax: 1
   projectileSpawnIntervalMin: 1
   projectileSpawnIntervalMax: 1
-  projectileImpactSoundEffect: {fileID: 11400000, guid: 9e542a5e72bb37e42bcdc07dc47e4943, type: 2}
+  projectileImpactSoundEffect: {fileID: 11400000, guid: 1d008007c583c0f40869a22500460b49, type: 2}
   isProjectileTrail: 0
   projectileTrailTime: 0
   projectileTrailMaterial: {fileID: 0}

@@ -15,6 +15,13 @@ public enum Character
     Lyrisa
 }
 
+public enum NpcType
+{
+    Vendor,
+    BlackMarketSeller,
+    Gambler
+}
+
 public enum GameState
 {
     gameStarted,
@@ -121,6 +128,7 @@ public enum HealthStatus
 {
     Normal,
     Poisoned,
+    Burned
 }
 
 public enum ArmorStatus
@@ -402,6 +410,26 @@ public enum VenomancerPhase
     SlamGround,
     ToxicPool,
     SludgeThrow
+}
+
+public enum FireWrymPhase
+{
+    None,
+    Wait,
+    FireProjectile,
+    FirePillar,
+    TailAttack,
+    FireBreath
+}
+
+public enum MoldranPhase
+{
+    None,
+    Wait,
+    Projectile,
+    Spike,
+    SwingAttack,
+    Heal
 }
 
 public enum BookPage

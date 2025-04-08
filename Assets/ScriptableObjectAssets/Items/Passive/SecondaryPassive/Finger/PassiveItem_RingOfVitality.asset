@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_RingOfVitality
   m_EditorClassIdentifier: 
   passiveItemName: Ring of Vitality
+  price: 60
   passiveItemSprite: {fileID: 164591451, guid: 3398955dfd3ea5246aab4a43b1eac84e, type: 3}
   passiveItemCategory: 1
   passiveItemType: 30

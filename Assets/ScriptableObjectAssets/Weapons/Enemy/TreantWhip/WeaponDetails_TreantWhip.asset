@@ -52,7 +52,7 @@ MonoBehaviour:
   weaponCurrentProjectile: {fileID: 11400000, guid: f9fb64df6ca344f4888dbe48b062e22f, type: 2}
   weaponSecondaryProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
-  weaponSwingSoundEffect: {fileID: 11400000, guid: 3b6db30b2f1be3747aa5427a4ff82696, type: 2}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: dd0a625fa5c659d46baa22c163c2b3dc, type: 2}
   weaponImpactSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 0

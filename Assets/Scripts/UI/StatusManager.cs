@@ -10,6 +10,7 @@ public class StatusManager : MonoBehaviour
     public GameObject stunImage;
     public GameObject frostImage;
     public GameObject curseImage;
+    public GameObject burnImage;
     public GameObject blockSpecialMoveImage;
     public GameObject gemSkinSpecialMoveImage;
     public GameObject deathImage;
@@ -30,6 +31,7 @@ public class StatusManager : MonoBehaviour
     {
         if (player != null)
         {
+            player.healthEvent.GetBurned += EnableBurnImage;
             player.healthEvent.GetPoisoned += EnablePoisonImage;
             player.healthEvent.GetAcid += EnableAcidImage;
             player.healthEvent.GetFrost += EnableFrostImage;
@@ -42,6 +44,7 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.OnDodged += HealthEvent_OnDodged;
             player.healthEvent.OnBlocked += HealthEvent_OnBlocked;
 
+            player.healthEvent.BurnCured += DisableBurnImage;
             player.healthEvent.PoisonCured += DisablePoisonImage;
             player.healthEvent.AcidCured += DisableAcidImage;
             player.healthEvent.FrostCured += DisableFrostImage;
@@ -54,6 +57,7 @@ public class StatusManager : MonoBehaviour
 
         if (enemy != null)
         {
+            enemy.healthEvent.GetBurned += EnableBurnImage;
             enemy.healthEvent.GetPoisoned += EnablePoisonImage;
             enemy.healthEvent.GetAcid += EnableAcidImage;
             enemy.healthEvent.GetFrost += EnableFrostImage;
@@ -67,6 +71,7 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.OnDodged += HealthEvent_OnDodged;
             enemy.healthEvent.OnBlocked += HealthEvent_OnBlocked;
 
+            enemy.healthEvent.BurnCured += DisableBurnImage;
             enemy.healthEvent.PoisonCured += DisablePoisonImage;
             enemy.healthEvent.AcidCured += DisableAcidImage;
             enemy.healthEvent.FrostCured += DisableFrostImage;
@@ -82,6 +87,7 @@ public class StatusManager : MonoBehaviour
     {
         if (player != null)
         {
+            player.healthEvent.GetBurned -= EnableBurnImage;
             player.healthEvent.GetPoisoned -= EnablePoisonImage;
             player.healthEvent.GetAcid -= EnableAcidImage;
             player.healthEvent.GetFrost -= EnableFrostImage;
@@ -94,6 +100,7 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.OnDodged -= HealthEvent_OnDodged;
             player.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
 
+            player.healthEvent.BurnCured -= DisableBurnImage;
             player.healthEvent.PoisonCured -= DisablePoisonImage;
             player.healthEvent.AcidCured -= DisableAcidImage;
             player.healthEvent.FrostCured -= DisableFrostImage;
@@ -106,6 +113,7 @@ public class StatusManager : MonoBehaviour
 
         if (enemy != null)
         {
+            enemy.healthEvent.GetBurned -= EnableBurnImage;
             enemy.healthEvent.GetPoisoned -= EnablePoisonImage;
             enemy.healthEvent.GetAcid -= EnableAcidImage;
             enemy.healthEvent.GetFrost -= EnableFrostImage;
@@ -119,6 +127,7 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.OnDodged -= HealthEvent_OnDodged;
             enemy.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
 
+            enemy.healthEvent.BurnCured -= DisableBurnImage;
             enemy.healthEvent.PoisonCured -= DisablePoisonImage;
             enemy.healthEvent.AcidCured -= DisableAcidImage;
             enemy.healthEvent.FrostCured -= DisableFrostImage;
@@ -184,6 +193,20 @@ public class StatusManager : MonoBehaviour
         else
         {
             logRoutine = StartCoroutine(WriteLog("GEM SKIN", Color.gray));
+        }
+    }
+
+    private void EnableBurnImage(HealthEvent healthEvent)
+    {
+        burnImage.SetActive(true);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+        else
+        {
+            logRoutine = StartCoroutine(WriteLog("BURNED", new Color(1f, 0.647f, 0f)));
         }
     }
 
@@ -316,6 +339,17 @@ public class StatusManager : MonoBehaviour
         if (logRoutine != null)
         {
             StopCoroutine(logRoutine);
+        }
+    }
+
+    private void DisableBurnImage(HealthEvent healthEvent)
+    {
+        burnImage.SetActive(false);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = null;
         }
     }
 

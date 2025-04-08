@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_WardenOfForest
   m_EditorClassIdentifier: 
   passiveItemName: Warden of Forest
+  price: 75
   passiveItemSprite: {fileID: -764861823, guid: 55d29e62ab0043845ac2ae862dd4e616, type: 3}
   passiveItemCategory: 1
   passiveItemType: 3

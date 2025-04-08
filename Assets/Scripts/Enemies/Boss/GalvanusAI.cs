@@ -29,9 +29,12 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Update()
     {
-        Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-            (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
-        lockedVector = direction;
+        if (GameManager.Instance.GetPlayer() != null)
+        {
+            Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
+                (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
+            lockedVector = direction;
+        }
 
         // Initialize vectors, angles, directions and aim
         float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_OminousGripOfThunder
   m_EditorClassIdentifier: 
   passiveItemName: Ominous Grip Of Thunder
+  price: 60
   passiveItemSprite: {fileID: -1793462748, guid: e925814fb6a70124fafec632729711af, type: 3}
   passiveItemCategory: 1
   passiveItemType: 6

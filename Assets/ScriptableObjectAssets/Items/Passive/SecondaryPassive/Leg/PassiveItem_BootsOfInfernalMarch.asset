@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_BootsOfInfernalMarch
   m_EditorClassIdentifier: 
   passiveItemName: Boots of Infernal March
+  price: 80
   passiveItemSprite: {fileID: -132351650, guid: dcc8c08ff0e639c459de76adced6b107, type: 3}
   passiveItemCategory: 1
   passiveItemType: 29

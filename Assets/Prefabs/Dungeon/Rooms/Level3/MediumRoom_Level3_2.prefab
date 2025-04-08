@@ -2443,8 +2443,8 @@ Transform:
   m_GameObject: {fileID: 1721273780403618776}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2, y: -12.75, z: 0.07001205}
-  m_LocalScale: {x: 1.3, y: 1.1, z: 1}
+  m_LocalPosition: {x: 2.0635, y: -12.1288, z: 0.07001205}
+  m_LocalScale: {x: 0.98467004, y: 1.6458131, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 184427997071410409}
@@ -2495,9 +2495,9 @@ SpriteMask:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66bb625b1faa464489e1eee8785182fd, type: 3}
   m_MaskAlphaCutoff: 0
-  m_FrontSortingLayerID: -257139871
+  m_FrontSortingLayerID: -1838912663
   m_BackSortingLayerID: 0
-  m_FrontSortingLayer: 3
+  m_FrontSortingLayer: 8
   m_BackSortingLayer: 0
   m_FrontSortingOrder: 15
   m_BackSortingOrder: 0
@@ -2777,8 +2777,8 @@ Transform:
   m_GameObject: {fileID: 4415356078475750171}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 20.8, y: -0.87, z: 0.07001205}
-  m_LocalScale: {x: 1.3, y: 2.3, z: 1}
+  m_LocalPosition: {x: 20.4992, y: -0.8469, z: 0.07001205}
+  m_LocalScale: {x: 1.4592856, y: 1.6469557, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 184427997071410409}
@@ -2829,9 +2829,9 @@ SpriteMask:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66bb625b1faa464489e1eee8785182fd, type: 3}
   m_MaskAlphaCutoff: 0
-  m_FrontSortingLayerID: -257139871
+  m_FrontSortingLayerID: -1838912663
   m_BackSortingLayerID: 0
-  m_FrontSortingLayer: 3
+  m_FrontSortingLayer: 8
   m_BackSortingLayer: 0
   m_FrontSortingOrder: 15
   m_BackSortingOrder: 0
@@ -2864,8 +2864,8 @@ Transform:
   m_GameObject: {fileID: 4463466831011209338}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.06, y: 16, z: 0.07001205}
-  m_LocalScale: {x: 1.3, y: 1.1, z: 1}
+  m_LocalPosition: {x: 6.06, y: 14.488, z: 0.07001205}
+  m_LocalScale: {x: 0.9640453, y: 2.3452988, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 184427997071410409}
@@ -2916,9 +2916,9 @@ SpriteMask:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66bb625b1faa464489e1eee8785182fd, type: 3}
   m_MaskAlphaCutoff: 0
-  m_FrontSortingLayerID: -257139871
+  m_FrontSortingLayerID: -1838912663
   m_BackSortingLayerID: 0
-  m_FrontSortingLayer: 3
+  m_FrontSortingLayer: 8
   m_BackSortingLayer: 0
   m_FrontSortingOrder: 15
   m_BackSortingOrder: 0
@@ -11473,8 +11473,8 @@ Transform:
   m_GameObject: {fileID: 7665539718170418457}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.0606, y: 1.6406, z: 0.07001205}
-  m_LocalScale: {x: 9.243912, y: 8.575654, z: 1}
+  m_LocalPosition: {x: 5.15, y: 1.716, z: 0.07001205}
+  m_LocalScale: {x: 9.001891, y: 7.971024, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 184427997071410409}
@@ -11525,9 +11525,9 @@ SpriteMask:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66bb625b1faa464489e1eee8785182fd, type: 3}
   m_MaskAlphaCutoff: 0
-  m_FrontSortingLayerID: -257139871
+  m_FrontSortingLayerID: -1838912663
   m_BackSortingLayerID: 0
-  m_FrontSortingLayer: 3
+  m_FrontSortingLayer: 8
   m_BackSortingLayer: 0
   m_FrontSortingOrder: 15
   m_BackSortingOrder: 0
@@ -20609,8 +20609,8 @@ Transform:
   m_GameObject: {fileID: 8927349951185623075}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.63, y: -5.91, z: 0.07001205}
-  m_LocalScale: {x: 1.32327, y: 2.3, z: 1}
+  m_LocalPosition: {x: -10.399, y: -5.8268, z: 0.07001205}
+  m_LocalScale: {x: 1.5387768, y: 1.6411777, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 184427997071410409}
@@ -20661,9 +20661,9 @@ SpriteMask:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66bb625b1faa464489e1eee8785182fd, type: 3}
   m_MaskAlphaCutoff: 0
-  m_FrontSortingLayerID: -257139871
+  m_FrontSortingLayerID: -1838912663
   m_BackSortingLayerID: 0
-  m_FrontSortingLayer: 3
+  m_FrontSortingLayer: 8
   m_BackSortingLayer: 0
   m_FrontSortingOrder: 15
   m_BackSortingOrder: 0

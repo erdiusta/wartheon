@@ -53,13 +53,17 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public float attackMoveEfficentDistance = 8f;
     #region Tooltip
-    [Tooltip("Cooldown duration after special attack performed")]
-    #endregion
-    public float attackMoveBaseCooldown = 8f;
-    #region Tooltip
     [Tooltip("Countdown duration before dash attack")]
     #endregion
     public float countdownDurationBeforeDashAttack = 0.4f;
+    #region Tooltip
+    [Tooltip("Attack move dash duration")]
+    #endregion
+    public float attackMoveDashDuration = 0.3f;
+    #region Tooltip
+    [Tooltip("Cooldown duration after special attack performed")]
+    #endregion
+    public float attackMoveBaseCooldown = 0.6f;
     #region Tooltip
     [Tooltip("Base evasivenes of the enemy to dodge player")]
     #endregion
@@ -151,6 +155,14 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Enemy dealt damage by melee max")]
     #endregion
     public int dealtMeleeDamageMax = 15;
+    #region Tooltip
+    [Tooltip("Check if enemy can burn")]
+    #endregion
+    public bool canBurn = false;
+    #region Tooltip
+    [Tooltip("Check enemy's burn chance")]
+    #endregion
+    [Range(0f, 1f)] public float burnChance = 0f;
     #region Tooltip
     [Tooltip("Check if enemy is a poisonous")]
     #endregion

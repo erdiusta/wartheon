@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_RingOfTempestStrikes
   m_EditorClassIdentifier: 
   passiveItemName: Ring of Tempest Strikes
+  price: 75
   passiveItemSprite: {fileID: -2059665674, guid: e74a9e73c95933d47ae99fff41eebca8, type: 3}
   passiveItemCategory: 1
   passiveItemType: 9

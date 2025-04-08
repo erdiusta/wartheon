@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_RingOfFortune
   m_EditorClassIdentifier: 
   passiveItemName: Ring of Fortune
+  price: 60
   passiveItemSprite: {fileID: -723512233, guid: e55198ea0eb8c7b448934be1923762c7, type: 3}
   passiveItemCategory: 1
   passiveItemType: 1

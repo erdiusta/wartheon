@@ -426,7 +426,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
             enemy.animateEnemy.ResetAnimatonParameters();
             enemy.animator.SetBool(Settings.cast, true);
 
-            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
+            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.chargeSoundEffect);
 
             yield return null;
 
@@ -602,7 +602,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
 
                 yield return null;
 
-                SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.attackSoundEffect);
+                SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
             }
 
             enemy.animator.SetBool(Settings.cast, false);

@@ -76,7 +76,6 @@ public static class Settings
 
     // Animator parameters - Damage
     public static int death = Animator.StringToHash("death");
-    public static int getHit = Animator.StringToHash("getHit");
 
     // Animator parameters - Ranged Attack
     public static int rangedWeaponAttack = Animator.StringToHash("rangedWeaponAttack");

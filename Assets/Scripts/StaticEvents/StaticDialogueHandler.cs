@@ -9,4 +9,20 @@ public static class StaticDialogueHandler
     {
         OnInsufficientFunds?.Invoke();
     }
+
+    // Gamble lost event
+    public static event Action OnGambleLost;
+
+    public static void CallGambleLostEvent()
+    {
+        OnGambleLost?.Invoke();
+    }
+
+    // Gamble won event
+    public static event Action OnGambleWon;
+
+    public static void CallGambleWonEvent()
+    {
+        OnGambleWon?.Invoke();
+    }
 }

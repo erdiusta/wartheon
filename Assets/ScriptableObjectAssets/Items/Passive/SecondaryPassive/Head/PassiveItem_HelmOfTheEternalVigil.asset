@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_HelmOfTheEternalVigil
   m_EditorClassIdentifier: 
   passiveItemName: Helm of the Eternal Vigil
+  price: 100
   passiveItemSprite: {fileID: -577114582, guid: 7ced6e0284666b64c8551ecd97ef7f89, type: 3}
   passiveItemCategory: 1
   passiveItemType: 10

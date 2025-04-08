@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_WingedSandals
   m_EditorClassIdentifier: 
   passiveItemName: Winged Sandals
+  price: 80
   passiveItemSprite: {fileID: 1544063838, guid: 4581abbd55aee3f448728ad4cf656834, type: 3}
   passiveItemCategory: 1
   passiveItemType: 5

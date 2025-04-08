@@ -61,4 +61,12 @@ MonoBehaviour:
   pause: {fileID: 3463766678715258796, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   OKButton: {fileID: -1751478761642137596, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   jumpButton: {fileID: 7022676829501651627, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  levelOneButton: {fileID: -2973245912978842571, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  levelTwoButton: {fileID: -4956730332513720876, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  levelThreeButton: {fileID: 1906744791049229034, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  levelFourButton: {fileID: 1912120723692738794, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  levelFiveButton: {fileID: 2952374036190202649, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  levelSixButton: {fileID: 2457149901991876265, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  levelSevenButton: {fileID: 4157537419127556453, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  levelEightButton: {fileID: 5389635443193591162, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   isPressedPreviousFrame: 0

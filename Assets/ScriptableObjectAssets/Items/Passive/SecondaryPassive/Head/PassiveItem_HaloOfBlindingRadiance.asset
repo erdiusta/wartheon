@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_HaloOfBlindingRadiance
   m_EditorClassIdentifier: 
   passiveItemName: Halo of Blinding Radiance
+  price: 65
   passiveItemSprite: {fileID: 1421873618, guid: 587f16283549f5f478c72dc45e9aea79, type: 3}
   passiveItemCategory: 1
   passiveItemType: 7

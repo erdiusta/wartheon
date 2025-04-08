@@ -599,6 +599,31 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
 
             // Save gameobject reference.
             room.instantiatedRoom = instantiatedRoom;
+
+            // Instantiate npc object to the shop room
+            if (room.roomNodeType.isShopRoom)
+            {
+                int npcIndex = 0;
+                int randomNum = Random.Range(1, 101);
+
+                if (randomNum < 60)
+                {
+                    npcIndex = 0;
+                }
+                else if (randomNum < 80)
+                {
+                    npcIndex = 1;
+                }
+                else
+                {
+                    npcIndex = 2;
+                }
+
+                // Instantiate NPC into the shop room
+                GameObject npcGameObject = Instantiate(GameResources.Instance.npcPrefabs[npcIndex], instantiatedRoom.transform.position, 
+                    Quaternion.identity, instantiatedRoom.transform);
+                npcGameObject.transform.localPosition = new Vector3(4f, 9f, 0f);
+            }
         }
     }
 

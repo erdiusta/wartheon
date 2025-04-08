@@ -86,6 +86,14 @@ public static class StaticEventHandler
         OnWeaponSwitched?.Invoke();
     }
 
+    // Gamble completed event
+    public static event Action OnGambleCompleted;
+
+    public static void CallGambleCompletedEvent()
+    {
+        OnGambleCompleted?.Invoke();
+    }
+
     // Book weapon pick-up event
     public static event Action<WeaponAddedToBookArgs> OnWeaponPickedUp;
 

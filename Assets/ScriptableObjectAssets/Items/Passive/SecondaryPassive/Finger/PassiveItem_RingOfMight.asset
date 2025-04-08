@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_RingOfMight
   m_EditorClassIdentifier: 
   passiveItemName: Ring of Might
+  price: 60
   passiveItemSprite: {fileID: -1634220546, guid: 2f33e4c8959d774478495d7f8743ab0b, type: 3}
   passiveItemCategory: 1
   passiveItemType: 28

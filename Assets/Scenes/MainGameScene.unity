@@ -17876,9 +17876,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.016544119
+    y: 0.042553194
     width: 1
-    height: 0.9667969
+    height: 0.91601884
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 40
@@ -23211,11 +23211,20 @@ MonoBehaviour:
   - poolSize: 100
     prefab: {fileID: 2585463276777236944, guid: 7b3a8f85af3a7874abf6cf9ae4dc6503, type: 3}
     componentType: IFireable
+  - poolSize: 200
+    prefab: {fileID: 2585463276777236944, guid: 0ce913dd6a41ffe429970ac109a211a5, type: 3}
+    componentType: IFireable
   - poolSize: 100
     prefab: {fileID: 2585463276777236944, guid: 34d9254a31186964b972ba00f92adf09, type: 3}
     componentType: IFireable
   - poolSize: 20
     prefab: {fileID: 2585463276777236944, guid: cf929e1aa614d9d4d85909cf1ef19903, type: 3}
+    componentType: IFireable
+  - poolSize: 20
+    prefab: {fileID: 2585463276777236944, guid: 49edb7c65df966a4cacdd9aa8461b53a, type: 3}
+    componentType: IFireable
+  - poolSize: 30
+    prefab: {fileID: 2585463276777236944, guid: 77be9b8149244e94aa33dd768c1c4191, type: 3}
     componentType: IFireable
   - poolSize: 20
     prefab: {fileID: 2585463276777236944, guid: 6654918e3e6085e438932084ca382112, type: 3}
@@ -64406,6 +64415,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1850477920}
   - component: {fileID: 1850477919}
+  - component: {fileID: 1850477921}
   m_Layer: 0
   m_Name: Global Light 2D
   m_TagString: Untagged
@@ -64480,6 +64490,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1850477921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1850477918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a68ba3d22485fb428ef693999fcc0bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  light2D: {fileID: 1850477919}
 --- !u!1 &1855963324
 GameObject:
   m_ObjectHideFlags: 0

@@ -173,6 +173,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public float blindModifier = 0f;
     [HideInInspector] public float additionalBlindMakerModifier = 0f;
     [HideInInspector] public bool hasRingOfFortune;
+    [HideInInspector] public bool isImmunetoBurn;
     [HideInInspector] public bool isImmunetoPoison;
     [HideInInspector] public bool isImmunetoFrost;
     [HideInInspector] public bool isImmunetoBlind;

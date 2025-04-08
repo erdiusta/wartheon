@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_FrostboundChainmail
   m_EditorClassIdentifier: 
   passiveItemName: Frostbound Chainmail
+  price: 75
   passiveItemSprite: {fileID: 1545659278, guid: 962db2b0d6e182c498b707810d3a0e27, type: 3}
   passiveItemCategory: 1
   passiveItemType: 33

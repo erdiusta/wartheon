@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_TopazPendant
   m_EditorClassIdentifier: 
   passiveItemName: Topaz Pendant
+  price: 60
   passiveItemSprite: {fileID: 946695169, guid: 92b0dee2544ff5648a9496e23dfc82aa, type: 3}
   passiveItemCategory: 1
   passiveItemType: 17

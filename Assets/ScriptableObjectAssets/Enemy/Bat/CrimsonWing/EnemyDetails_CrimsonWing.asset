@@ -20,7 +20,7 @@ MonoBehaviour:
   movementDetails: {fileID: 11400000, guid: fd748e26b50acb7429ee469d93b95acb, type: 2}
   experiencePoint: 50
   chaseDistance: 15
-  hasAttackMove: 0
+  hasAttackMove: 1
   attackMoveTriggerDistance: 5
   attackMoveEfficentDistance: 4
   attackMoveBaseCooldown: 1

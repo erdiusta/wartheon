@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: Pixie Projectile
   isPlayerProjectile: 0
-  projectileSprite: {fileID: 21300000, guid: 1dcb15e5e19fefd40956f26ae70322bb, type: 3}
   projectilePrefabArray:
   - {fileID: 2585463276777236944, guid: 796b076dc70c8484389ba4a810ab08c6, type: 3}
   projectileMaterial: {fileID: 2100000, guid: 18b84b9cc8c777e4ea0d2d443fcf7a92, type: 2}
@@ -24,10 +23,18 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 11400000, guid: c878fe71ddf59bf45a3ce89fde7670cc, type: 2}
   projectileDamageMin: 6
   projectileDamageMax: 12
-  projectileSpeedMin: 7
-  projectileSpeedMax: 8
+  projectileSpeedMin: 14
+  projectileSpeedMax: 16
   projectileRange: 14
   projectileRotationSpeed: 1
+  isBomb: 0
+  isTrap: 0
+  hasLifeTime: 0
+  lifeDuration: 15
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
   hasAcid: 0
   acidEfficiency: 0
   isPoisonous: 0
@@ -36,6 +43,8 @@ MonoBehaviour:
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   hasCurseDamage: 0
   curseChance: 0
   projectileSpreadMin: 6
@@ -50,3 +59,5 @@ MonoBehaviour:
   projectileTrailMaterial: {fileID: 2100000, guid: 5b1210c7205efe84b9d8aaf7e6da652d, type: 2}
   projectileTrailStartWidth: 0.4
   projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

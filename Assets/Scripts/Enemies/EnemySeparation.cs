@@ -14,7 +14,10 @@ public class EnemySeparation : MonoBehaviour
 
     private void Update()
     {
-        SeparateFromOthers();
+        if (!enemy.isDead)
+        {
+            SeparateFromOthers();
+        }
     }
 
     void SeparateFromOthers()

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_SandweaversSash
   m_EditorClassIdentifier: 
   passiveItemName: Sandweaver's Sash
+  price: 80
   passiveItemSprite: {fileID: -2091915227, guid: 5c25204f54b94fa4fa3111d8769e6d66, type: 3}
   passiveItemCategory: 1
   passiveItemType: 14

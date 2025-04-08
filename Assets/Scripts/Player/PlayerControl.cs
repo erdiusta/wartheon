@@ -1393,6 +1393,9 @@ public class PlayerControl : MonoBehaviour
                 if (collider2D.GetComponent<CapsuleCollider2D>() != null)
                 {
                     Interaction interaction = collider2D.GetComponent<Interaction>();
+
+                    if (interaction.GetComponent<NPC>() != null && interaction.GetComponent<NPC>().npcType == NpcType.Gambler) return;
+
                     interaction.TriggerDialogue();
                 }
             }

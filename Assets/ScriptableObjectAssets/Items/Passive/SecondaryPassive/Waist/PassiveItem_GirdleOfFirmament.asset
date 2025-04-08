@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_GirdleOfFirmament
   m_EditorClassIdentifier: 
   passiveItemName: Girdle of Firmament
+  price: 85
   passiveItemSprite: {fileID: 1213384245, guid: 8a10f2efe2a9f3940a50ebb65605e14a, type: 3}
   passiveItemCategory: 1
   passiveItemType: 12

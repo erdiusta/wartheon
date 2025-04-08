@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_VenomweaveVest
   m_EditorClassIdentifier: 
   passiveItemName: Venomweave Vest
+  price: 75
   passiveItemSprite: {fileID: 1578962967, guid: 8e49a74c5fe6fd447bf4d957e16456a6, type: 3}
   passiveItemCategory: 1
   passiveItemType: 34

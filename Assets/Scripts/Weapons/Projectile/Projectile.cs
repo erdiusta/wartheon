@@ -287,6 +287,7 @@ public class Projectile : MonoBehaviour, IFireable
                     if (dotProduct > blockingThreshold - 1f)
                     {
                         // Status checks
+                        CheckBurnStatus(player);
                         CheckPoisonStatus(player);
                         CheckAcidStatus(player);
                         CheckFrostStatus(player);
@@ -303,6 +304,7 @@ public class Projectile : MonoBehaviour, IFireable
                         if (player.meleeAttackMainHand.IsAttacking)
                         {
                             // Status checks
+                            CheckBurnStatus(player);
                             CheckPoisonStatus(player);
                             CheckAcidStatus(player);
                             CheckFrostStatus(player);
@@ -326,6 +328,7 @@ public class Projectile : MonoBehaviour, IFireable
                 else
                 {
                     // Status checks
+                    CheckBurnStatus(player);
                     CheckPoisonStatus(player);
                     CheckAcidStatus(player);
                     CheckFrostStatus(player);
@@ -386,6 +389,7 @@ public class Projectile : MonoBehaviour, IFireable
                         if (activeItemDetails == null)
                         {
                             // Status checks - PROJECTILE
+                            CheckBurnStatus(enemy);
                             CheckPoisonStatus(enemy);
                             CheckAcidStatus(enemy);
                             CheckFrostStatus(enemy);
@@ -399,6 +403,7 @@ public class Projectile : MonoBehaviour, IFireable
                         else
                         {
                             // Status checks - ACTIVE ITEM
+                            CheckBurnStatus(enemy, true);
                             CheckPoisonStatus(enemy, true);
                             CheckAcidStatus(enemy, true);
                             CheckFrostStatus(enemy, true);
@@ -416,6 +421,7 @@ public class Projectile : MonoBehaviour, IFireable
                     if (activeItemDetails == null)
                     {
                         // Status checks - PROJECTILE
+                        CheckBurnStatus(enemy);
                         CheckPoisonStatus(enemy);
                         CheckAcidStatus(enemy);
                         CheckFrostStatus(enemy);
@@ -429,6 +435,7 @@ public class Projectile : MonoBehaviour, IFireable
                     else
                     {
                         // Status checks - ACTIVE ITEM
+                        CheckBurnStatus(enemy, true);
                         CheckPoisonStatus(enemy, true);
                         CheckAcidStatus(enemy, true);
                         CheckFrostStatus(enemy, true);
@@ -446,6 +453,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (activeItemDetails == null)
                 {
                     // Status checks - PROJECTILE
+                    CheckBurnStatus(enemy);
                     CheckPoisonStatus(enemy);
                     CheckAcidStatus(enemy);
                     CheckFrostStatus(enemy);
@@ -459,6 +467,7 @@ public class Projectile : MonoBehaviour, IFireable
                 else
                 {
                     // Status checks - ACTIVE ITEM
+                    CheckBurnStatus(enemy, true);
                     CheckPoisonStatus(enemy, true);
                     CheckAcidStatus(enemy, true);
                     CheckFrostStatus(enemy, true);
@@ -801,7 +810,8 @@ public class Projectile : MonoBehaviour, IFireable
         float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false, bool fallingFromSkies = false,
         bool isPenetrationArrow = false, int projectileCounter = 0, int projectilesPerShot = 0,CentaurPhase centaurPhase = CentaurPhase.None,
         TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
-        FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None)
+        FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None,
+        MoldranPhase moldranPhase = MoldranPhase.None)
     {
         #region Projectile
 
@@ -824,7 +834,7 @@ public class Projectile : MonoBehaviour, IFireable
 
         // Set fire direction
         SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, projectilesPerShot, centaurPhase, treantPhase, galvanusPhase,
-            sepharothPhase, frostWrymPhase, venomancerPhase);
+            sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
 
         //// Set projectile sprite
         //spriteRenderer.sprite = projectileDetails.projectileSprite;
@@ -832,8 +842,12 @@ public class Projectile : MonoBehaviour, IFireable
         // Play sound if it is a unique projectile
         if (galvanusPhase == GalvanusPhase.Lightning)
         {
-            SoundEffectManager.Instance.PlaySoundEffect(projectileDetails.projectileImpactSoundEffect);
+
             lightningStroke = true;
+        }
+        else if (frostWrymPhase == FrostWrymPhase.Icicle || fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
+        {
+            SoundEffectManager.Instance.PlaySoundEffect(projectileDetails.projectileImpactSoundEffect);
         }
 
         // Set initial projectile material depending on whether there is an projectile charge period
@@ -976,7 +990,7 @@ public class Projectile : MonoBehaviour, IFireable
     private void SetFireDirection(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
         int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, 
         GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None,
-        VenomancerPhase venomancerPhase = VenomancerPhase.None)
+        VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
     {
         if (centaurPhase == CentaurPhase.SpreadArrowShot)
         {
@@ -992,7 +1006,7 @@ public class Projectile : MonoBehaviour, IFireable
             // Set the fire direction angle based on the projectile index
             fireDirectionAngle = startAngle + (angleIncrement * projectileCounter);
         }
-        else if (frostWrymPhase == FrostWrymPhase.IceProjectile)
+        else if (frostWrymPhase == FrostWrymPhase.IceProjectile || fireWrymPhase == FireWrymPhase.FireProjectile || moldranPhase == MoldranPhase.Projectile)
         {
             // Define the total angle spread (e.g., 45 degrees spread)
             float totalSpreadAngle = 30f;
@@ -1083,7 +1097,8 @@ public class Projectile : MonoBehaviour, IFireable
         }
 
         // Set projectile rotation
-        if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain)
+        if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain ||
+            fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
         {
             transform.eulerAngles = new Vector3(0f, 0f, 0f);
         }
@@ -1341,6 +1356,74 @@ public class Projectile : MonoBehaviour, IFireable
 
                 // Set gameobject active (the particle system is set to automatically disable the gameobject once finished)
                 projectileHitEffect.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check burn status - Player
+    /// </summary>
+    private void CheckBurnStatus(Player player, bool isActiveItem = false)
+    {
+        if (player.isImmunetoBurn) return;
+
+        if (!isActiveItem)
+        {
+            if (projectileDetails.hasBurnDamage)
+            {
+                // Check get poisoned
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.burnChance - player.additionalNegativeStatusEffectNegatorModifier)
+                {
+                    player.healthEvent.CallGetBurnEvent();
+                    player.healthStatus = HealthStatus.Burned;
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasBurnDamage)
+            {
+                // Check get poisoned
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.burnChance - player.additionalNegativeStatusEffectNegatorModifier)
+                {
+                    player.healthEvent.CallGetBurnEvent();
+                    player.healthStatus = HealthStatus.Burned;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check burn status - Enemy
+    /// </summary>
+    private void CheckBurnStatus(Enemy enemy, bool isActiveItem = false)
+    {
+        if (!isActiveItem)
+        {
+            if (projectileDetails.hasBurnDamage)
+            {
+                // Check get bleeding
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.burnChance)
+                {
+                    enemy.healthEvent.CallGetBurnEvent();
+                    enemy.healthStatus = HealthStatus.Burned;
+                }
+            }
+        }
+        else
+        {
+            if (activeItemDetails.hasBurnDamage)
+            {
+                // Check get bleeding
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < activeItemDetails.burnChance)
+                {
+                    enemy.healthEvent.CallGetBurnEvent();
+                    enemy.healthStatus = HealthStatus.Burned;
+                }
             }
         }
     }

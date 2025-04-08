@@ -200,13 +200,16 @@ public class Destroyed : MonoBehaviour
             enemy.health.fxAnimatorPlayed = true;
             enemy.animateEnemy.ResetAnimatonParameters();
             enemy.enemyAI.isDashing = false;
+            enemy.isDead = true;
             enemy.enemyAI.isAttacking = false;
             enemy.enemyAI.StopAllCoroutines();
             enemy.enemyAI.enabled = false;
             enemy.health.StopAllCoroutines();
             enemy.health.ResetStatusInCaseOfDeath();
             enemy.health.enabled = false;
-            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+            enemy.rb2D.mass = 5000;
+            enemy.rb2D.linearVelocity = Vector2.zero;
+            enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
             enemy.animateEnemy.SetDeathAnimationParameters();
             enemy.fireWeapon.enabled = false;
             GetComponent<PolygonCollider2D>().enabled = false;

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_GildedGuardian
   m_EditorClassIdentifier: 
   passiveItemName: Gilded Guardian
+  price: 80
   passiveItemSprite: {fileID: -1107406195, guid: 463bdf097a165f04ca0e52929b678cb4, type: 3}
   passiveItemCategory: 1
   passiveItemType: 19

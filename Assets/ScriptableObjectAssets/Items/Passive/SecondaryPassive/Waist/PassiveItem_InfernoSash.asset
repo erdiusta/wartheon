@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_InfernoSash
   m_EditorClassIdentifier: 
   passiveItemName: Inferno Sash
+  price: 80
   passiveItemSprite: {fileID: 2132175683, guid: 0b0a220787f3c1b459ad8c98d887efd6, type: 3}
   passiveItemCategory: 1
   passiveItemType: 11

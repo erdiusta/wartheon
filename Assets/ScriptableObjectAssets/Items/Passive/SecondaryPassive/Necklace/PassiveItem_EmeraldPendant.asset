@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_EmeraldPendant
   m_EditorClassIdentifier: 
   passiveItemName: Emerald Pendant
+  price: 60
   passiveItemSprite: {fileID: 1691932167, guid: 62944e2995d972c4aba5ce2641105933, type: 3}
   passiveItemCategory: 1
   passiveItemType: 18

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_ChestplateOfTheLastLight
   m_EditorClassIdentifier: 
   passiveItemName: Chestplace of The Last Light
+  price: 70
   passiveItemSprite: {fileID: 1298061671, guid: 8bd5c74ff4eb1bf469f127731e676e91, type: 3}
   passiveItemCategory: 1
   passiveItemType: 8

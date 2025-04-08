@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_ShadowCloak
   m_EditorClassIdentifier: 
   passiveItemName: Shadow Cloak
+  price: 40
   passiveItemSprite: {fileID: -859460399, guid: ffeef3e9c4e3703459da4ed3aefb4970, type: 3}
   passiveItemCategory: 1
   passiveItemType: 2

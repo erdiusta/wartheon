@@ -58,7 +58,6 @@ public class AnimateEnemy : MonoBehaviour
         // Set idle
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, true);
-        enemy.animator.SetBool(Settings.getHit, false);
         enemy.animator.SetBool(Settings.isAttack, false);
         enemy.animator.SetBool(Settings.block, false);
     }
@@ -73,7 +72,6 @@ public class AnimateEnemy : MonoBehaviour
         // Set Moving
         enemy.animator.SetBool(Settings.isIdle, false);
         enemy.animator.SetBool(Settings.isMoving, true);
-        enemy.animator.SetBool(Settings.getHit, false);
         enemy.animator.SetBool(Settings.isAttack, false);
         enemy.animator.SetBool(Settings.death, false);
     }
@@ -88,7 +86,6 @@ public class AnimateEnemy : MonoBehaviour
         // Set Moving
         enemy.animator.SetBool(Settings.isIdle, false);
         enemy.animator.SetBool(Settings.isMoving, false);
-        enemy.animator.SetBool(Settings.getHit, false);
         enemy.animator.SetBool(Settings.isAttack, true);
         enemy.animator.SetBool(Settings.death, false);
     }
@@ -101,7 +98,6 @@ public class AnimateEnemy : MonoBehaviour
         enemy.animator.SetBool(Settings.isAttack, false);
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, false);
-        enemy.animator.SetBool(Settings.getHit, false);
         enemy.animator.SetBool(Settings.death, true);
     }
 
@@ -116,11 +112,6 @@ public class AnimateEnemy : MonoBehaviour
         enemy.animator.SetBool(Settings.isFrozen, false);
 
         enemy.animator.SetBool(Settings.dash, false);
-
-        if (HasParameter(enemy.animator, Settings.getHit))
-        {
-            enemy.animator.SetBool(Settings.getHit, false);
-        }
 
         if (HasParameter(enemy.animator, Settings.block))
         {

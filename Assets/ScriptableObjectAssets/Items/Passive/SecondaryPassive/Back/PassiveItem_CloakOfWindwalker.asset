@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PassiveItem_CloakOfWindwalker
   m_EditorClassIdentifier: 
   passiveItemName: Cloak of Windwalker
+  price: 65
   passiveItemSprite: {fileID: 1077031388, guid: 730911d8613983a41bc609bd010e0a57, type: 3}
   passiveItemCategory: 1
   passiveItemType: 24

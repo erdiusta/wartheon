@@ -55,7 +55,7 @@ MonoBehaviour:
   projectileSpawnAmountMax: 1
   projectileSpawnIntervalMin: 1
   projectileSpawnIntervalMax: 1
-  projectileImpactSoundEffect: {fileID: 11400000, guid: 9e542a5e72bb37e42bcdc07dc47e4943, type: 2}
+  projectileImpactSoundEffect: {fileID: 11400000, guid: f52cb6e5e500b464e8ecb6661db98334, type: 2}
   isProjectileTrail: 0
   projectileTrailTime: 0
   projectileTrailMaterial: {fileID: 0}
