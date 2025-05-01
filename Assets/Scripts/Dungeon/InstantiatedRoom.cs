@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Drawing;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -402,7 +403,10 @@ public class InstantiatedRoom : MonoBehaviour
 
                     // Instantiate boss icon for minimap by door
                     GameObject bossIcon = Instantiate(GameResources.Instance.minimapBossPrefab, gameObject.transform);
-                    bossIcon.transform.localPosition = door.transform.localPosition;
+
+                    // Calculate 'world' grid parent doorway position
+                    Vector2 center = (Vector2)(room.lowerBounds + room.upperBounds) / 2f;
+                    bossIcon.transform.position = new Vector3(center.x, center.y, 0f);
                 }
             }
         }

@@ -63,18 +63,20 @@ MonoBehaviour:
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: d9310b552f23add4ba3fc5d78262c472, type: 2}
       ratio: 3
-    - dungeonObject: {fileID: 11400000, guid: ed3cbae0dbf241a43bed7f179097efe3, type: 2}
-      ratio: 2
-    - dungeonObject: {fileID: 11400000, guid: 6bf0ddf131d80cb4fab6782b836cf701, type: 2}
-      ratio: 2
-    - dungeonObject: {fileID: 11400000, guid: 669eeea2e0efa024f81cb84e14941385, type: 2}
-      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: a1b9c68ed342cdc4b95427441b677f96, type: 2}
       ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: ed3cbae0dbf241a43bed7f179097efe3, type: 2}
+      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 2e9bd0ac3edf7744fbc331db58a8e41f, type: 2}
-      ratio: 4
-    - dungeonObject: {fileID: 11400000, guid: c3d5918e91b2ed04dae2bad71b04cf0a, type: 2}
-      ratio: 4
+      ratio: 3
+    - dungeonObject: {fileID: 11400000, guid: 6bf0ddf131d80cb4fab6782b836cf701, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: a37b2f82156e3984490019f57e56e9a9, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 669eeea2e0efa024f81cb84e14941385, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: d94ad4b57ac666845bf13d6f394737bf, type: 2}
+      ratio: 2
   roomEnemySpawnParametersList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     minTotalEnemiesToSpawn: 5

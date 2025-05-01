@@ -24,8 +24,9 @@ MonoBehaviour:
   hasAttackMove: 1
   attackMoveTriggerDistance: 2
   attackMoveEfficentDistance: 1
-  attackMoveBaseCooldown: 1
   countdownDurationBeforeDashAttack: 0.8
+  attackMoveDashDuration: 0.3
+  attackMoveBaseCooldown: 1
   deflectionValue: 0.3
   enemyBehaviour: 2
   isEnemyBoss: 0
@@ -46,6 +47,8 @@ MonoBehaviour:
   deflectChance: 0.3
   dealtMeleeDamageMin: 14
   dealtMeleeDamageMax: 18
+  canBurn: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
   hasAcid: 0
@@ -116,7 +119,7 @@ MonoBehaviour:
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
       ratio: 3
-  - dungeonLevel: {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
       ratio: 100
@@ -289,7 +292,7 @@ MonoBehaviour:
       ratio: 3
     - dungeonObject: {fileID: 11400000, guid: 2709e31502b5c5d45a59d45fc94517bf, type: 2}
       ratio: 2
-  - dungeonLevel: {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
       ratio: 3
@@ -394,7 +397,7 @@ MonoBehaviour:
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 021aeb4586ce4d04baf855c55d1060ad, type: 2}
       ratio: 2
-  - dungeonLevel: {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 1f86dee846542cb4d8dfb9ee6b9df4dd, type: 2}
       ratio: 1
@@ -427,7 +430,7 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: de3069107c9b24d449fb00b8754c0be5, type: 2}
       ratio: 1
-  - dungeonLevel: {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 6c3c2883b1d8ce3419ac65103f8b7908, type: 2}
       ratio: 1

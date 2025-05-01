@@ -15,8 +15,8 @@ MonoBehaviour:
   guid: a582933b1ff938b4a995192204bd53f3
   prefab: {fileID: 2121098485114120195, guid: bcf1454ec58d8d34d96fd34b6017a5bc, type: 3}
   previousPrefab: {fileID: 2121098485114120195, guid: bcf1454ec58d8d34d96fd34b6017a5bc, type: 3}
-  battleMusic: {fileID: 11400000, guid: 4825f7897e3fbff4ba5fce28e75616c4, type: 2}
-  ambientMusic: {fileID: 11400000, guid: 61cc5cb1e41586045b964b7d8fbfb5aa, type: 2}
+  battleMusic: {fileID: 11400000, guid: db8342256f12f17419a46bf56ce1c99b, type: 2}
+  ambientMusic: {fileID: 11400000, guid: 5d560b0fd7de43a4a81de13f636f35e7, type: 2}
   roomNodeType: {fileID: 11400000, guid: ea0f419264e97d74fbdcd6b375de40aa, type: 2}
   lowerBounds: {x: -12, y: -3}
   upperBounds: {x: 22, y: 28}
@@ -64,11 +64,21 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: a1b9c68ed342cdc4b95427441b677f96, type: 2}
-      ratio: 5
+      ratio: 3
+    - dungeonObject: {fileID: 11400000, guid: 1596db3f35ab8c84cb3cc1109d23d3fe, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: ed3cbae0dbf241a43bed7f179097efe3, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 7003df06b6aeb2842b4af819308f3d97, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 2e9bd0ac3edf7744fbc331db58a8e41f, type: 2}
+      ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 2e8a2f631035f1e4ea036a2406a2005a, type: 2}
+      ratio: 3
     - dungeonObject: {fileID: 11400000, guid: c955b4e0116dd7046ae1405b3381ee8c, type: 2}
-      ratio: 4
+      ratio: 3
     - dungeonObject: {fileID: 11400000, guid: 3e7e3db75a901a445a2a877d3f030404, type: 2}
-      ratio: 4
+      ratio: 2
   roomEnemySpawnParametersList:
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
     minTotalEnemiesToSpawn: 8

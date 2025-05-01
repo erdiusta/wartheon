@@ -36,6 +36,21 @@ public enum GameState
     restartGame
 }
 
+public enum CinematicPhase
+{
+    openingScene,
+    riftOpening,
+    mobSpilledFromRift,
+    finalSpeech,
+    closingScene
+}
+
+public enum MoldranSpeechOrder
+{
+    firstSpeech,
+    secondSpeech
+}
+
 public enum ActiveItemType
 {
     Generic,
@@ -321,7 +336,12 @@ public enum EnemyCategory
     FireWrym,
     Moldran,
     Slime,
-    Beholder
+    Beholder,
+    Blightpump,
+    AirElemental,
+    EarthElemental,
+    WaterElemental,
+    IceNexarion
 }
 
 public enum EnemyBehaviour

@@ -23,7 +23,9 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference dropActiveItem;
     public InputActionReference pause;
     public InputActionReference OKButton;
+    public InputActionReference escapeButton;
     public InputActionReference jumpButton;
+    public InputActionReference invisibleButton;
 
     public InputActionReference levelOneButton;
     public InputActionReference levelTwoButton;

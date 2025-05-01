@@ -35,14 +35,14 @@ MonoBehaviour:
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
-  canBurn: 0
-  burnChance: 0
-  isPoisonous: 0
-  poisonChance: 0
-  hasStunDamage: 0
-  stunChance: 0
-  hasFrostDamage: 0
-  frostChance: 0
+  canBurn: 1
+  burnChance: 0.05
+  isPoisonous: 1
+  poisonChance: 0.05
+  hasStunDamage: 1
+  stunChance: 0.05
+  hasFrostDamage: 1
+  frostChance: 0.05
   hasBlindDamage: 0
   blindChance: 0
   canDrainHealth: 0

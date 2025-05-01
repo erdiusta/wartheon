@@ -197,6 +197,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: moldran-move_back_4
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.512, y: 0.374}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c3ee9b199d74484d95ba1652b32c7b4
+      internalID: 1613858537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moldran-move_back_5
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.512, y: 0.374}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0da45fe8782c45247a65946b1bdb6334
+      internalID: -932024275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -215,6 +259,8 @@ TextureImporter:
       moldran-move_back_1: 881779290
       moldran-move_back_2: 1010619590
       moldran-move_back_3: 902903403
+      moldran-move_back_4: 1613858537
+      moldran-move_back_5: -932024275
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

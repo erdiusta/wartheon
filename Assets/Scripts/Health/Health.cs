@@ -129,12 +129,12 @@ public class Health : MonoBehaviour
                 {
                     poisonCoroutine = StartCoroutine(GraduallyHealthReduceDuetoPoison());
                 }
-                else if (player.healthStatus == HealthStatus.Burned)
+            }
+            else if (enemy.healthStatus == HealthStatus.Burned)
+            {
+                if (burnCoroutine == null)
                 {
-                    if (burnCoroutine == null)
-                    {
-                        burnCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBurn());
-                    }
+                    burnCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBurn());
                 }
             }
         }

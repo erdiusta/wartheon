@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 2879659695578517348}
   m_Layer: 20
   m_Name: DestroyableItem
-  m_TagString: Untagged
+  m_TagString: environment
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -200,6 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d4e9dff447ef649a71b93436f1041f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitFXAnimator: {fileID: 0}
   currentHealth: 0
   isDamageable: 1
   enemy: {fileID: 0}
@@ -207,6 +208,7 @@ MonoBehaviour:
   isDodging: 0
   suddenDeathHappened: 0
   flashManager: {fileID: 0}
+  fxAnimatorPlayed: 0
 --- !u!114 &3042279324210234784
 MonoBehaviour:
   m_ObjectHideFlags: 0

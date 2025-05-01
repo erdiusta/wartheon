@@ -15,6 +15,7 @@ MonoBehaviour:
   levelNumber: 2
   levelName: THUNDER VAULT
   roomTemplateList:
+  - {fileID: 11400000, guid: cd7f908f918af8f418ed32873eca283b, type: 2}
   - {fileID: 11400000, guid: 5f22c28e4db59374daf56921873ef460, type: 2}
   - {fileID: 11400000, guid: 584883a52a8bd2048900bdc7a9c70c5b, type: 2}
   - {fileID: 11400000, guid: 0254f8cd6349d0740b3bd34e92370996, type: 2}
@@ -38,7 +39,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c81d637720dde4640a629f5d96439a16, type: 2}
   - {fileID: 11400000, guid: 6da2881898d53a74492349dd47090be8, type: 2}
   - {fileID: 11400000, guid: 369cbc9222a02a8418462305ebad0b2e, type: 2}
-  - {fileID: 11400000, guid: cd7f908f918af8f418ed32873eca283b, type: 2}
   roomNodeGraphList:
   - {fileID: 11400000, guid: c8997c9c929e7b843881fc2049256b6b, type: 2}
   - {fileID: 11400000, guid: a84e3b299c5e0e04486c2701d0009921, type: 2}

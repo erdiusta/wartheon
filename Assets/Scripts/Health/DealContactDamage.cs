@@ -146,6 +146,10 @@ public class DealContactDamage : MonoBehaviour
                 receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
                 //enemy.enemyAI.TriggerKnockback((transform.position - collision.transform.position));
             }
+            else if (collision.tag == "PracticeDummy" || collision.tag == "environment")
+            {
+                return;
+            }
             else
             {
                 if (tag != Settings.playerWeapon)

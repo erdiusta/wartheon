@@ -32,10 +32,11 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     Enemy enemy;
     WeaponDetailsSO toBeDroppedMainWeaponDetails;
     WeaponDetailsSO toBeDroppedOffWeaponDetails;
-    WeaponDetailsSO weaponDetails;
+
+    public WeaponDetailsSO weaponDetails;
     PassiveItemDetailsSO toBeDroppedPassiveItemDetails;
-    PassiveItemDetailsSO passiveItemDetails;
-    ActiveItemDetailsSO activeItemDetails;
+    public PassiveItemDetailsSO passiveItemDetails;
+    public ActiveItemDetailsSO activeItemDetails;
     int ammoPercent;
 
     Animator pickUpAnimator;
@@ -235,26 +236,17 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                 {
                                     if (passiveItemDetails != null)
                                     {
-                                        if (!player.mainHandSlotFilled)
+                                        int currentPrice = (int)(passiveItemDetails.price * (1 + player.additinalNPCCostModifier));
+
+                                        if (GameManager.Instance.GetPlayer().coins.coinAmount >= currentPrice && !isPurchasing)
                                         {
-                                            //if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player))
-                                            //{
-                                            //    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
-                                            //    return;
-                                            //}
+                                            isPurchasing = true;
 
-                                            int currentPrice = (int)(passiveItemDetails.price * (1 + player.additinalNPCCostModifier));
-
-                                            if (GameManager.Instance.GetPlayer().coins.coinAmount >= currentPrice && !isPurchasing)
-                                            {
-                                                isPurchasing = true;
-
-                                                ChestItemPassiveItemDropPickUpProcess(player);
-                                            }
-                                            else
-                                            {
-                                                StaticDialogueHandler.CallInsufficientFundsEvent();
-                                            }
+                                            ChestItemPassiveItemDropPickUpProcess(player);
+                                        }
+                                        else
+                                        {
+                                            StaticDialogueHandler.CallInsufficientFundsEvent();
                                         }
                                     }
                                 }

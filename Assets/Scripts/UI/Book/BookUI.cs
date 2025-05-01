@@ -885,7 +885,6 @@ public class BookUI : MonoBehaviour
             {
                 weaponSlot.GetComponent<Image>().color = Color.white;
             }
-
         }
     }
 
@@ -915,7 +914,6 @@ public class BookUI : MonoBehaviour
             {
                 passiveSlot.GetComponent<Image>().color = Color.white;
             }
-
         }
     }
 
@@ -945,7 +943,6 @@ public class BookUI : MonoBehaviour
             {
                 activeSlot.GetComponent<Image>().color = Color.white;
             }
-
         }
     }
 
@@ -975,7 +972,6 @@ public class BookUI : MonoBehaviour
             {
                 mobSlot.GetComponent<Image>().color = Color.white;
             }
-
         }
     }
 
@@ -1049,6 +1045,8 @@ public class BookUI : MonoBehaviour
                     mobSlot.mobUnlocked = true;
                     mobSlot.GetComponent<Image>().color = Color.white;
                 }
+
+                mobSlot.GetComponent<Image>().color = Color.white;
             }
         }
         else
@@ -1064,6 +1062,8 @@ public class BookUI : MonoBehaviour
                     mobSlot.mobUnlocked = true;
                     mobSlot.GetComponent<Image>().color = Color.white;
                 }
+
+                mobSlot.GetComponent<Image>().color = Color.white;
             }
         }
     }
@@ -1125,6 +1125,8 @@ public class BookUI : MonoBehaviour
                 weaponSlot.weaponUnlocked = true;
                 weaponSlot.GetComponent<Image>().color = Color.white;
             }
+
+            weaponSlot.GetComponent<Image>().color = Color.white;
         }
     }
 
@@ -1137,7 +1139,7 @@ public class BookUI : MonoBehaviour
             if (weaponSlot.weaponUnlocked == true && weaponSlot.weaponDetails.weaponTitle == weaponHoverArgs.weaponTitle)
             {
                 weaponTitleText.text = weaponSlot.weaponDetails.weaponName;
-                weaponDetailsText.text = "weaponSlot.mobDetails.enemyDetails;";
+                weaponDetailsText.text = "";
             }
         }
     }
@@ -1161,6 +1163,8 @@ public class BookUI : MonoBehaviour
                 passiveSlot.passiveUnlocked = true;
                 passiveSlot.GetComponent<Image>().color = Color.white;
             }
+
+            passiveSlot.GetComponent<Image>().color = Color.white;
         }
     }
 
@@ -1173,7 +1177,7 @@ public class BookUI : MonoBehaviour
             if (passiveSlot.passiveUnlocked == true && passiveSlot.passiveItemDetails.passiveItemType == passiveHoverArgs.passiveItemType)
             {
                 passivesTitleText.text = passiveSlot.passiveItemDetails.passiveItemName;
-                passivesDetailsText.text = "passiveSlot.passiveItemDetails.passiveItemName;";
+                passivesDetailsText.text = "";
             }
         }
     }

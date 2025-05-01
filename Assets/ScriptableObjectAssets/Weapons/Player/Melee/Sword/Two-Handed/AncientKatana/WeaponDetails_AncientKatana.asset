@@ -32,7 +32,7 @@ MonoBehaviour:
   weaponAnimatorController: {fileID: 9100000, guid: 0bdb90476edb4b94f9d3c2c117425bf9, type: 2}
   weaponHoverAnimatorController: {fileID: 9100000, guid: 21e16997976246844b6585ed4994d05f, type: 2}
   canKillSuddenly: 1
-  suddenKillChance: 0.1
+  suddenKillChance: 0.05
   hasAcid: 0
   acidEfficiency: 0
   canBurn: 0

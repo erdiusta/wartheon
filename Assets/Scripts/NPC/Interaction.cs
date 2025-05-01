@@ -17,19 +17,29 @@ public class Interaction : MonoBehaviour
         StaticDialogueHandler.OnInsufficientFunds += StaticDialogueHandler_OnInsufficientFunds;
         StaticDialogueHandler.OnGambleLost += StaticDialogueHandler_OnGambleLost;
         StaticDialogueHandler.OnGambleWon += StaticDialogueHandler_OnGambleWon;
+
+        StaticDialogueHandler.OnMoldranTalk += StaticDialogueHandler_OnMoldranTalk;
     }
+
 
     private void OnDisable()
     {
         StaticDialogueHandler.OnInsufficientFunds -= StaticDialogueHandler_OnInsufficientFunds;
         StaticDialogueHandler.OnGambleLost -= StaticDialogueHandler_OnGambleLost;
         StaticDialogueHandler.OnGambleWon -= StaticDialogueHandler_OnGambleWon;
+
+        StaticDialogueHandler.OnMoldranTalk -= StaticDialogueHandler_OnMoldranTalk;
     }
 
     private void Start()
     {
         sentences = new Queue<string>();
         nameText.color = Color.magenta;
+    }
+
+    private void StaticDialogueHandler_OnMoldranTalk(MoldranDialogueEventArgs moldranDialogueEventArgs)
+    {
+        StartDialogue(dialogues[moldranDialogueEventArgs.dialogueNumber], moldranTalk: true, moldranDialogueEventArgs.moldranSpeechOrder);
     }
 
     private void StaticDialogueHandler_OnInsufficientFunds()
@@ -59,7 +69,7 @@ public class Interaction : MonoBehaviour
     /// <summary>
     /// Trigger to start a dialogue
     /// </summary>
-    public void StartDialogue(Dialogue dialogue)
+    public void StartDialogue(Dialogue dialogue, bool moldranTalk = false, MoldranSpeechOrder moldranSpeechOrder = MoldranSpeechOrder.firstSpeech)
     {
         if (!dialogueStarted)
         {
@@ -74,42 +84,93 @@ public class Interaction : MonoBehaviour
         }
 
         nameText.text = dialogue.name;
-        DisplayNextSentence();
+
+        if (moldranTalk)
+        {
+            StartCoroutine(AutoPlayDialogueCoroutine(moldranSpeechOrder));
+        }
+        else
+        {
+            DisplayNextSentence(moldranTalk);
+        }
+    }
+
+    /// <summary>
+    /// Auto play dialogue
+    /// </summary>
+    private IEnumerator AutoPlayDialogueCoroutine(MoldranSpeechOrder moldranSpeechOrder = MoldranSpeechOrder.firstSpeech)
+    {
+        while (sentences.Count > 0)
+        {
+            string sentence = sentences.Dequeue();
+            dialogueText.text = "";
+
+            foreach (char letter in sentence.ToCharArray())
+            {
+                dialogueText.text += letter;
+                yield return new WaitForSeconds(0.05f); // typing speed
+            }
+
+            yield return new WaitForSeconds(2f); // wait after sentence
+        }
+
+        switch (moldranSpeechOrder)
+        {
+            case MoldranSpeechOrder.firstSpeech:
+                CinematicSceneManager.Instance.cinematicPhase = CinematicPhase.riftOpening;
+                break;
+            case MoldranSpeechOrder.secondSpeech:
+                CinematicSceneManager.Instance.cinematicPhase = CinematicPhase.closingScene;
+                break;
+            default:
+                break;
+        }
+
+        // End of all sentences
+        EndDialogue(moldranTalk: true);
     }
 
     /// <summary>
     /// Start next sentence
     /// </summary>
-    public void DisplayNextSentence()
+    public void DisplayNextSentence(bool moldranTalk = false)
     {
         if (sentences.Count == 0)
         {
-            EndDialogue();
+            EndDialogue(moldranTalk);
             return;
         }
 
         string sentence = sentences.Dequeue();
         StopAllCoroutines();
-        StartCoroutine(TypeSentence(sentence));
+        StartCoroutine(TypeSentence(sentence, moldranTalk));
     }
 
-    IEnumerator TypeSentence(string sentence)
+    IEnumerator TypeSentence(string sentence, bool moldranTalk = false)
     {
         dialogueText.text = "";
 
         foreach (char letter in sentence.ToCharArray())
         {
             dialogueText.text += letter;
-            yield return new WaitForSeconds(0.03f);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
     /// <summary>
     /// Finalize the dialogue
     /// </summary>
-    void EndDialogue()
+    void EndDialogue(bool moldranTalk = false)
     {
         dialoguePanel.SetActive(false);
         dialogueStarted = false;
+        dialogueText.text = "";
+
+        // Optional: Do something extra if it's Moldran's cinematic dialogue
+        if (moldranTalk)
+        {
+            // For example, trigger a follow-up event or cutscene
+            StaticDialogueHandler.CallMoldranFinishedEvent();
+        }
     }
 }

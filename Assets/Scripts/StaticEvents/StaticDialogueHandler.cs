@@ -25,4 +25,26 @@ public static class StaticDialogueHandler
     {
         OnGambleWon?.Invoke();
     }
+
+    // Moldran cutsene talk
+    public static event Action<MoldranDialogueEventArgs> OnMoldranTalk;
+
+    public static void CallMoldranTalkEvent(int dialogueNumber, MoldranSpeechOrder moldranSpeechOrder)
+    {
+        OnMoldranTalk?.Invoke(new MoldranDialogueEventArgs { dialogueNumber = dialogueNumber, moldranSpeechOrder = moldranSpeechOrder });
+    }
+
+    // Moldran cutsene talk finished
+    public static event Action OnMoldranFinished;
+
+    public static void CallMoldranFinishedEvent()
+    {
+        OnMoldranFinished?.Invoke();
+    }
+}
+
+public class MoldranDialogueEventArgs: EventArgs
+{
+    public int dialogueNumber;
+    public MoldranSpeechOrder moldranSpeechOrder;
 }

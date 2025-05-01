@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -34,6 +35,8 @@ public class PlayerControl : MonoBehaviour
     [HideInInspector] public MeleeAttackType meleeAttackTypeMainHand = MeleeAttackType.None;
     [HideInInspector] public MeleeAttackType meleeAttackTypeOffHand = MeleeAttackType.None;
 
+    List<SpriteRenderer> allSpriteRenderers = new List<SpriteRenderer>();
+
     private void Awake()
     {
         player = GetComponent<Player>();
@@ -52,6 +55,8 @@ public class PlayerControl : MonoBehaviour
     private void Start()
     {
         waitForFixedUpdate = new WaitForFixedUpdate();
+
+        allSpriteRenderers.Add(player.spriteRenderer);
 
         // Set player animation speed
         SetPlayerAnimationSpeed();
@@ -72,19 +77,6 @@ public class PlayerControl : MonoBehaviour
         if (isPlayerMovementDisabled) return;
 
         if (isPlayerRolling) return;
-
-        //if (!isPlayerRolling)
-        //{
-
-        //    // Reset roll animation parameters
-        //    player.animatePlayer.InitializeRollAnimationParameters();
-
-        //}
-        //// If player is rolling then return
-        //else
-        //{
-        //    return;
-        //}
 
         switch (player.moveStatus)
         {
@@ -793,7 +785,7 @@ public class PlayerControl : MonoBehaviour
 
         player.moveStatus = MoveStatus.Idle;
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
-        player.healthEvent.CallStunCuredEvent();
+        player.healthEvent.CallFrostCuredEvent();
         player.animator.SetBool(Settings.isFrozen, false);
         player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
         frostCoroutine = null;

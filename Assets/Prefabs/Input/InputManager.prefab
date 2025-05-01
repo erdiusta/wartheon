@@ -60,7 +60,9 @@ MonoBehaviour:
   dropActiveItem: {fileID: 3940752818712815275, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   pause: {fileID: 3463766678715258796, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   OKButton: {fileID: -1751478761642137596, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  escapeButton: {fileID: -6144101037263858964, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   jumpButton: {fileID: 7022676829501651627, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  invisibleButton: {fileID: 543932677018655109, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   levelOneButton: {fileID: -2973245912978842571, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   levelTwoButton: {fileID: -4956730332513720876, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   levelThreeButton: {fileID: 1906744791049229034, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}

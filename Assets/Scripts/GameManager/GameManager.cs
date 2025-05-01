@@ -276,6 +276,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case "Corridor EW":
                 return;
 
+            case "Entrance":
+                //TrailerModeItemsSpilling(roomChangedEventArgs);
+                break;
+
             default:
 
                 if (!visitedRooms.Contains(currentRoom))
@@ -314,6 +318,92 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
 
         visitedRooms.Add(currentRoom);
+    }
+
+    private static void TrailerModeItemsSpilling(RoomChangedEventArgs roomChangedEventArgs)
+    {
+        Transform chestItemContainerTransform = roomChangedEventArgs.room.instantiatedRoom.GetComponentInChildren<ChestItemContainer>().transform;
+        ChestItemContainer chestItemContainer = chestItemContainerTransform.GetComponent<ChestItemContainer>();
+
+        if (roomChangedEventArgs.room.prefab.CompareTag("trailerOnly"))
+        {
+
+            Transform playerCharsContainerTransform = chestItemContainer.transform.GetChild(0);
+            Transform npcCharsContainerTransform = chestItemContainer.transform.GetChild(1);
+
+            for (int i = 0; i < GameResources.Instance.npcPrefabs.Length; i++)
+            {
+                if (i < 3)
+                {
+                    GameObject npcObject = Instantiate(GameResources.Instance.npcPrefabs[i], npcCharsContainerTransform);
+
+                    // Calculate 'world' grid parent doorway position
+                    Vector2 center = (Vector2)(roomChangedEventArgs.room.lowerBounds + roomChangedEventArgs.room.upperBounds) / 2f;
+
+                    npcObject.transform.position += new Vector3(i * 2, 0f, 0f);
+                }
+                else if (i < 7)
+                {
+                    GameObject playerObject = Instantiate(GameResources.Instance.npcPrefabs[i], playerCharsContainerTransform);
+
+                    // Calculate 'world' grid parent doorway position
+                    Vector2 center = (Vector2)(roomChangedEventArgs.room.lowerBounds + new Vector2Int(2, 2) +
+                        roomChangedEventArgs.room.upperBounds + new Vector2Int(2, 2)) / 2f;
+
+                    playerObject.transform.position += new Vector3(i * 2, 0f, 0f);
+                }
+            }
+        }
+        else if (roomChangedEventArgs.room.prefab.CompareTag("trailerBoss"))
+        {
+            GameObject moldranObject = Instantiate(GameResources.Instance.npcPrefabs[7], chestItemContainerTransform);
+        }
+        else
+        {
+            // Weapon populate loop
+            for (int i = 0; i < chestItemContainerTransform.GetChild(0).childCount; i++)
+            {
+                ChestItem chestItem = chestItemContainerTransform.GetChild(0).GetChild(i).GetComponent<ChestItem>();
+
+                chestItem.hasWeaponDrop = true;
+                Weapon weapon = new Weapon();
+                weapon.weaponDetails = chestItemContainer.chestWeaponItems[i];
+
+                chestItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, chestItem.transform.position);
+            }
+
+            // Active item populate loop
+            for (int i = 0; i < chestItemContainerTransform.GetChild(1).childCount; i++)
+            {
+                ChestItem chestItem = chestItemContainerTransform.GetChild(1).GetChild(i).GetComponent<ChestItem>();
+
+                chestItem.hasActiveDrop = true;
+                ActiveItem activeItem = new ActiveItem();
+                activeItem.activeItemDetails = chestItemContainer.chestActiveItems[i];
+
+                chestItem.Initialize(activeItem, activeItem.activeItemDetails.activeItemSprite, chestItem.transform.position);
+            }
+
+            // Passive item populate loop
+            for (int i = 0; i < chestItemContainerTransform.GetChild(2).childCount; i++)
+            {
+                ChestItem chestItem = chestItemContainerTransform.GetChild(2).GetChild(i).GetComponent<ChestItem>();
+
+                if (chestItemContainer.chestPassiveItems[i].passiveItemCategory == PassiveItemCategory.Primary)
+                {
+                    chestItem.hasPrimaryPassiveDrop = true;
+                }
+                else if (chestItemContainer.chestPassiveItems[i].passiveItemCategory == PassiveItemCategory.Secondary)
+                {
+                    chestItem.hasSecondaryPassiveDrop = true;
+                }
+
+                PassiveItem passiveItem = new PassiveItem();
+                passiveItem.passiveItemDetails = chestItemContainer.chestPassiveItems[i];
+
+                chestItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, chestItem.transform.position);
+            }
+        }
     }
 
     //private void StaticEventHandler_OnDropPickedUp(IntroductionPopUpUIArgs introductionPopUpUIArgs)

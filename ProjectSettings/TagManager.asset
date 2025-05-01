@@ -34,6 +34,9 @@ TagManager:
   - orionTag
   - hoverableTag
   - PracticeDummy
+  - environment
+  - trailerOnly
+  - trailerBoss
   layers:
   - Default
   - TransparentFX

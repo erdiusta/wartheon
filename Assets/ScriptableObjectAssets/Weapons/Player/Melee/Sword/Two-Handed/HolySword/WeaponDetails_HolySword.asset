@@ -44,7 +44,7 @@ MonoBehaviour:
   hasFrostDamage: 0
   frostChance: 0
   hasBlindDamage: 1
-  blindChance: 1
+  blindChance: 0.15
   canDrainHealth: 0
   healthDrainChance: 0
   weaponRightShootPosition: {x: 0, y: 0, z: 0}

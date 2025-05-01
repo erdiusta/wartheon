@@ -2243,7 +2243,7 @@ MonoBehaviour:
   isClone: 0
   forcefieldTransform: {fileID: 0}
   levelUpAnimator: {fileID: 2946168106481843369}
-  levelUpDetails: {fileID: 11400000, guid: 40ba893ce07dd0b4c809a5726349ecc3, type: 2}
+  levelUpDetails: {fileID: 11400000, guid: 07cc225c07df4fc41bc370fc7d1a17a8, type: 2}
   playerDetails: {fileID: 0}
   healthEvent: {fileID: 0}
   health: {fileID: 0}

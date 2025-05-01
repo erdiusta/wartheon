@@ -15,6 +15,7 @@ MonoBehaviour:
   levelNumber: 1
   levelName: FOLIAGE HALL
   roomTemplateList:
+  - {fileID: 11400000, guid: 29ada3c6b2c89004a8582af9cab3d064, type: 2}
   - {fileID: 11400000, guid: 2bf236b951afe5c4eb1ec3d048a53256, type: 2}
   - {fileID: 11400000, guid: aade02a20938c7241824e006dad8b4d3, type: 2}
   - {fileID: 11400000, guid: fbe123a28aca03848be2a535a7e7e14e, type: 2}
@@ -38,7 +39,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 994fc03a9dae49148ace325604e3a457, type: 2}
   - {fileID: 11400000, guid: 84a2a0e9344f111499e126330c0ceb69, type: 2}
   - {fileID: 11400000, guid: 6a959d38d77d59b4d80d53475133bfbe, type: 2}
-  - {fileID: 11400000, guid: 29ada3c6b2c89004a8582af9cab3d064, type: 2}
   roomNodeGraphList:
   - {fileID: 11400000, guid: c8997c9c929e7b843881fc2049256b6b, type: 2}
   - {fileID: 11400000, guid: a84e3b299c5e0e04486c2701d0009921, type: 2}

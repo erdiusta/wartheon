@@ -149,7 +149,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""name"": ""Next Level"",
                     ""type"": ""Button"",
                     ""id"": ""3b0e4693-45cd-4916-a40b-cd72c5b3fd82"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -203,7 +203,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""name"": ""Active Item"",
                     ""type"": ""Button"",
                     ""id"": ""e519b454-f121-4a2a-83d1-e7e4bcf37a0a"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -221,7 +221,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""name"": ""Pause"",
                     ""type"": ""Button"",
                     ""id"": ""b30105a8-6f93-4de1-8386-2d72d9be7ff5"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -230,7 +230,16 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""name"": ""OK"",
                     ""type"": ""Button"",
                     ""id"": ""31262818-23d1-4859-bfcc-3e1d071d4a34"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Esc"",
+                    ""type"": ""Button"",
+                    ""id"": ""e8e626a8-68e9-472f-9baa-2f217f7ce5f1"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -311,6 +320,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""name"": ""Level8"",
                     ""type"": ""Button"",
                     ""id"": ""4b9df06e-edf7-4aef-b500-7c8913acb416"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Invisibility"",
+                    ""type"": ""Button"",
+                    ""id"": ""80bfc361-8518-4d70-9e83-7d60bd3e2a34"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -691,6 +709,28 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Level8"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""885ca37f-fd47-47c2-991a-646fc6186925"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Esc"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f3e96402-217e-43ff-9daf-8967f443c0d4"",
+                    ""path"": ""<Keyboard>/#(P)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Invisibility"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -715,6 +755,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_DropActiveItem = m_PlayerInput.FindAction("Drop Active Item", throwIfNotFound: true);
         m_PlayerInput_Pause = m_PlayerInput.FindAction("Pause", throwIfNotFound: true);
         m_PlayerInput_OK = m_PlayerInput.FindAction("OK", throwIfNotFound: true);
+        m_PlayerInput_Esc = m_PlayerInput.FindAction("Esc", throwIfNotFound: true);
         m_PlayerInput_Jump = m_PlayerInput.FindAction("Jump", throwIfNotFound: true);
         m_PlayerInput_Level1 = m_PlayerInput.FindAction("Level1", throwIfNotFound: true);
         m_PlayerInput_Level2 = m_PlayerInput.FindAction("Level2", throwIfNotFound: true);
@@ -724,6 +765,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_Level6 = m_PlayerInput.FindAction("Level6", throwIfNotFound: true);
         m_PlayerInput_Level7 = m_PlayerInput.FindAction("Level7", throwIfNotFound: true);
         m_PlayerInput_Level8 = m_PlayerInput.FindAction("Level8", throwIfNotFound: true);
+        m_PlayerInput_Invisibility = m_PlayerInput.FindAction("Invisibility", throwIfNotFound: true);
     }
 
     ~@Controls()
@@ -820,6 +862,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_DropActiveItem;
     private readonly InputAction m_PlayerInput_Pause;
     private readonly InputAction m_PlayerInput_OK;
+    private readonly InputAction m_PlayerInput_Esc;
     private readonly InputAction m_PlayerInput_Jump;
     private readonly InputAction m_PlayerInput_Level1;
     private readonly InputAction m_PlayerInput_Level2;
@@ -829,6 +872,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_Level6;
     private readonly InputAction m_PlayerInput_Level7;
     private readonly InputAction m_PlayerInput_Level8;
+    private readonly InputAction m_PlayerInput_Invisibility;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerInput".
     /// </summary>
@@ -905,6 +949,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @OK => m_Wrapper.m_PlayerInput_OK;
         /// <summary>
+        /// Provides access to the underlying input action "PlayerInput/Esc".
+        /// </summary>
+        public InputAction @Esc => m_Wrapper.m_PlayerInput_Esc;
+        /// <summary>
         /// Provides access to the underlying input action "PlayerInput/Jump".
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_PlayerInput_Jump;
@@ -940,6 +988,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerInput/Level8".
         /// </summary>
         public InputAction @Level8 => m_Wrapper.m_PlayerInput_Level8;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerInput/Invisibility".
+        /// </summary>
+        public InputAction @Invisibility => m_Wrapper.m_PlayerInput_Invisibility;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1014,6 +1066,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @OK.started += instance.OnOK;
             @OK.performed += instance.OnOK;
             @OK.canceled += instance.OnOK;
+            @Esc.started += instance.OnEsc;
+            @Esc.performed += instance.OnEsc;
+            @Esc.canceled += instance.OnEsc;
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
@@ -1041,6 +1096,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Level8.started += instance.OnLevel8;
             @Level8.performed += instance.OnLevel8;
             @Level8.canceled += instance.OnLevel8;
+            @Invisibility.started += instance.OnInvisibility;
+            @Invisibility.performed += instance.OnInvisibility;
+            @Invisibility.canceled += instance.OnInvisibility;
         }
 
         /// <summary>
@@ -1100,6 +1158,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @OK.started -= instance.OnOK;
             @OK.performed -= instance.OnOK;
             @OK.canceled -= instance.OnOK;
+            @Esc.started -= instance.OnEsc;
+            @Esc.performed -= instance.OnEsc;
+            @Esc.canceled -= instance.OnEsc;
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
@@ -1127,6 +1188,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Level8.started -= instance.OnLevel8;
             @Level8.performed -= instance.OnLevel8;
             @Level8.canceled -= instance.OnLevel8;
+            @Invisibility.started -= instance.OnInvisibility;
+            @Invisibility.performed -= instance.OnInvisibility;
+            @Invisibility.canceled -= instance.OnInvisibility;
         }
 
         /// <summary>
@@ -1280,6 +1344,13 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnOK(InputAction.CallbackContext context);
         /// <summary>
+        /// Method invoked when associated input action "Esc" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEsc(InputAction.CallbackContext context);
+        /// <summary>
         /// Method invoked when associated input action "Jump" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
@@ -1342,5 +1413,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLevel8(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Invisibility" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInvisibility(InputAction.CallbackContext context);
     }
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Enemy))]
 [DisallowMultipleComponent]
 public class AnimateEnemy : MonoBehaviour
 {

@@ -1345,7 +1345,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -257139871
   m_SortingLayer: 3
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &641761456179918266
 MonoBehaviour:
@@ -2061,6 +2061,9 @@ MonoBehaviour:
   hasOffHandWeapon: 0
   isGambleChestItem: 0
   gambleValue: 0
+  weaponDetails: {fileID: 0}
+  passiveItemDetails: {fileID: 0}
+  activeItemDetails: {fileID: 0}
 --- !u!61 &6777748807740845358
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3339,7 +3342,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -257139871
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 728537738, guid: 68cc6c99e30b6f546a9a931f5ef536fe, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
