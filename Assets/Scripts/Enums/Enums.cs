@@ -139,11 +139,12 @@ public enum MoveStatus
     Frozen
 }
 
+[System.Flags]
 public enum HealthStatus
 {
-    Normal,
-    Poisoned,
-    Burned
+    Normal = 0,
+    Poisoned = 1 << 0, // 1
+    Burned = 1 << 1 // 2
 }
 
 public enum ArmorStatus

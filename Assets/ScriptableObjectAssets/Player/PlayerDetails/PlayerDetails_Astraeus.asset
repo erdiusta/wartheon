@@ -84,8 +84,6 @@ MonoBehaviour:
   startingWeaponList:
   - {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
   - {fileID: 11400000, guid: dcef6f3daf8893b4988d223ddb74107a, type: 2}
-  - {fileID: 11400000, guid: b415640f0d1ca4d41b24898c8eab10bd, type: 2}
-  - {fileID: 11400000, guid: dc70bba435344054aa98ff671fae1024, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: 3640f47ca78384741a1cfa06c932e212, type: 3}
   playerHandSprite: {fileID: 21300000, guid: 61f9f1056a5486644b029259a89f6cce, type: 3}
   playerBookSprite: {fileID: 1307114046, guid: 5d12ab0ad64a9914b9b6ff838f7feeb7, type: 3}

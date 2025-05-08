@@ -111,6 +111,7 @@ public class DealContactDamage : MonoBehaviour
                                     CheckPoisonStatus(player);
                                     CheckAcidStatus(player);
                                     CheckStunStatus(player);
+                                    CheckFrostStatus(player);
                                     CheckCurseStatus(player);
                                     CheckBlindStatus(player);
 
@@ -248,7 +249,7 @@ public class DealContactDamage : MonoBehaviour
             if (randomDice < enemy.enemyDetails.burnChance - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 player.healthEvent.CallGetBurnEvent();
-                player.healthStatus = HealthStatus.Burned;
+                player.healthStatus |= HealthStatus.Burned; // Add Burned status
             }
         }
     }
@@ -267,7 +268,7 @@ public class DealContactDamage : MonoBehaviour
             if (randomDice < enemy.enemyDetails.poisonChance - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 player.healthEvent.CallGetPoisonedEvent();
-                player.healthStatus = HealthStatus.Poisoned;
+                player.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
             }
         }
     }

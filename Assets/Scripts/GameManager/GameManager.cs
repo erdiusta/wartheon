@@ -406,79 +406,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
     }
 
-    //private void StaticEventHandler_OnDropPickedUp(IntroductionPopUpUIArgs introductionPopUpUIArgs)
-    //{
-    //    switch (introductionPopUpUIArgs.dropType)
-    //    {
-    //        case DropType.PassiveItem:
-    //            PassiveItem passiveItem = (PassiveItem)introductionPopUpUIArgs.receivable;
-
-    //            if (passiveItem == null) return;
-
-    //            // PRIMARY PASSIVES
-    //            if (passiveItem.passiveItemDetails.passiveItemName == "Silver Coin")
-    //            {
-    //                IntroductionPopUpProcess("SILVER\nCOIN" ,"Coin for buying things.", passiveItem.passiveItemDetails.passiveItemSprite);
-    //            }
-    //            if (passiveItem.passiveItemDetails.passiveItemName == "Golden Coin")
-    //            {
-    //                IntroductionPopUpProcess("GOLDEN\nCOIN", "Worth 5 silver coins.", passiveItem.passiveItemDetails.passiveItemSprite);
-    //            }
-    //            else if (passiveItem.passiveItemDetails.passiveItemName == "Quiver")
-    //            {
-    //                IntroductionPopUpProcess("QUIVER", "Refills projectiles for bow class weapons.", passiveItem.passiveItemDetails.passiveItemSprite);
-    //            }
-    //            else if (passiveItem.passiveItemDetails.passiveItemName == "Medicine")
-    //            {
-    //                IntroductionPopUpProcess("MEDICINE", "Cures basic negative status effects.", passiveItem.passiveItemDetails.passiveItemSprite);
-    //            }
-    //            else if (passiveItem.passiveItemDetails.passiveItemName == "Holy Water")
-    //            {
-    //                IntroductionPopUpProcess("HOLY\nWATER", "Cures curse.", passiveItem.passiveItemDetails.passiveItemSprite);
-    //            }
-    //            else if (passiveItem.passiveItemDetails.passiveItemName == "Health")
-    //            {
-    //                IntroductionPopUpProcess("HEALTH", "Recovers one heart - 20 hp.", passiveItem.passiveItemDetails.passiveItemSprite);
-    //            }
-    //            else if (passiveItem.passiveItemDetails.passiveItemName == "Key")
-    //            {
-    //                IntroductionPopUpProcess("KEY", "You will need it for opening chests.", passiveItem.passiveItemDetails.passiveItemSprite);
-    //            }
-    //            break;
-    //        case DropType.ActiveItem:
-    //            break;
-    //        case DropType.Weapon:
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //}
-
-    //private void IntroductionPopUpProcess(string weaponTextContent, string introductionTextContent, Sprite itemSprite)
-    //{
-    //    if (introductionTextRoutine == null)
-    //    {
-    //        introductionTextRoutine = StartCoroutine(IntroductionTextRoutine(weaponTextContent, introductionTextContent, itemSprite));
-    //    }
-    //    else
-    //    {
-    //        StopCoroutine(introductionTextRoutine);
-    //        introductionTextRoutine = StartCoroutine(IntroductionTextRoutine(weaponTextContent, introductionTextContent, itemSprite));
-    //    }
-    //}
-
-    //IEnumerator IntroductionTextRoutine(string weaponTextContent, string introductionTextContent, Sprite itemSprite)
-    //{
-    //    introductionPopUp.SetActive(true);
-    //    weaponText.text = weaponTextContent;
-    //    introductionText.text = introductionTextContent;
-    //    introductionItemImage.sprite = itemSprite;
-
-    //    yield return new WaitForSeconds(4f);
-
-    //    introductionPopUp.SetActive(false);
-    //    introductionTextRoutine = null;
-    //}
 
     private void StaticEventHandler_OnRoomEnemiesDefeated(RoomEnemiesDefeatedArgs roomEnemiesDefeatedArgs)
     {
@@ -968,6 +895,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         else if (gameState == GameState.gamePaused)
         {
             BackFromAudioMenu(); // If inside the audio menu then esc is clicked return to the default pause menu when esc clicked again
+            BackFromControlsMenu();
 
             pauseMenu.SetActive(false);
             GetPlayer().playerControl.EnablePlayer();
@@ -996,7 +924,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Open audio menu
 
         pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Audio";
-        Transform audioContainer = pauseContainer.GetChild(3);
+        Transform audioContainer = pauseContainer.GetChild(4);
         audioContainer.GetChild(0).gameObject.SetActive(false); // Disable audio text
         audioContainer.GetChild(1).gameObject.SetActive(true); // Enable music volume contents
         audioContainer.GetChild(2).gameObject.SetActive(true); // Enable sound volume contents
@@ -1013,13 +941,65 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
 
         // Close audio menu
-        Transform audioContainer = pauseContainer.GetChild(3);
+        Transform audioContainer = pauseContainer.GetChild(4);
         audioContainer.GetChild(0).gameObject.SetActive(true); // Enable audio text
         audioContainer.GetChild(1).gameObject.SetActive(false); // Disable music volume contents
         audioContainer.GetChild(2).gameObject.SetActive(false); // Disable sound volume contents
         audioContainer.GetComponent<Image>().enabled = true;
         audioContainer.GetComponent<Button>().enabled = true;
         audioContainer.gameObject.SetActive(false);
+
+        for (int i = 0; i < pauseContainer.childCount; i++)
+        {
+            if (i == 0 || i == 1) continue;
+
+            pauseContainer.GetChild(i).gameObject.SetActive(true);
+        }
+
+        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Options";
+    }
+
+    /// <summary>
+    /// Called from Controls button
+    /// </summary>
+    public void OpenControlsMenu()
+    {
+        // Clear buttons on pause menu
+        Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
+
+        for (int i = 0; i < pauseContainer.childCount; i++)
+        {
+            if (i == 0 || i == 1) continue;
+
+            pauseContainer.GetChild(i).gameObject.SetActive(false);
+        }
+
+        // Open audio menu
+
+        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Controls";
+        Transform controlsContainer = pauseContainer.GetChild(3);
+        controlsContainer.GetChild(0).gameObject.SetActive(false); // Disable controls text
+        controlsContainer.GetComponent<Image>().enabled = false;
+        controlsContainer.GetComponent<Button>().enabled = false;
+        controlsContainer.gameObject.SetActive(true);
+        controlsContainer.GetChild(1).gameObject.SetActive(true); // Enable scroll area
+    }
+
+
+    /// <summary>
+    /// Called from Back button in Controls menu
+    /// </summary>
+    public void BackFromControlsMenu()
+    {
+        Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
+
+        // Close audio menu
+        Transform controlsContainer = pauseContainer.GetChild(3);
+        controlsContainer.GetChild(0).gameObject.SetActive(true); // Enable controls text
+        controlsContainer.GetChild(1).gameObject.SetActive(false); // Disable scroll area
+        controlsContainer.GetComponent<Image>().enabled = true;
+        controlsContainer.GetComponent<Button>().enabled = true;
+        controlsContainer.gameObject.SetActive(false);
 
         for (int i = 0; i < pauseContainer.childCount; i++)
         {
@@ -1176,10 +1156,15 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Increase index to next level
         currentDungeonLevelListIndex++;
 
-        if (currentDungeonLevelListIndex >= 8)
+        // DEMO CASE
+        if (currentDungeonLevelListIndex >= 2)
         {
             gameState = GameState.gameWon;
         }
+        //if (currentDungeonLevelListIndex >= 8)
+        //{
+        //    gameState = GameState.gameWon;
+        //}
         else
         {
             // Display level completed
@@ -1227,9 +1212,15 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Fade Out
         yield return StartCoroutine(Fade(0f, 1f, 2f, Color.black));
 
-        // Display game won
-        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE SECURED THE WARTHEON", 
+
+        // Display game won - DEMO
+        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE COMPLETED DEMO!",
             Color.green, 7f));
+
+
+        //// Display game won
+        //yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE SECURED THE WARTHEON", 
+        //    Color.green, 7f));
 
         yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.yellow, 0f));
 

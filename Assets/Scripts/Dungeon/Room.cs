@@ -24,6 +24,7 @@ public class Room
     public bool isLit = false;
     public bool isClearedOfEnemies = false;
     public bool isPreviouslyVisited = false;
+    public bool shopRoomGoodsCreated = false;
 
     public Room()
     {

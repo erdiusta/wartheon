@@ -750,9 +750,15 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             if (passiveItem.passiveItemDetails.passiveItemName == "Medicine")
             {
                 // HEALTH STATUS CHECKS
-                if (player.healthStatus == HealthStatus.Poisoned)
+                if ((player.healthStatus & HealthStatus.Poisoned) != 0)
                 {
                     player.healthEvent.CallPoisonCuredEvent();
+                    player.healthStatus &= ~HealthStatus.Poisoned; // Remove poisoned status
+                }
+                if ((player.healthStatus & HealthStatus.Burned) != 0)
+                {
+                    player.healthEvent.CallBurnCuredEvent();
+                    player.healthStatus &= ~HealthStatus.Burned; // Remove burned status
                 }
 
                 player.healthStatus = HealthStatus.Normal;

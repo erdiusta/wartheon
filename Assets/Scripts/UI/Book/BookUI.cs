@@ -1045,8 +1045,6 @@ public class BookUI : MonoBehaviour
                     mobSlot.mobUnlocked = true;
                     mobSlot.GetComponent<Image>().color = Color.white;
                 }
-
-                mobSlot.GetComponent<Image>().color = Color.white;
             }
         }
         else
@@ -1062,8 +1060,6 @@ public class BookUI : MonoBehaviour
                     mobSlot.mobUnlocked = true;
                     mobSlot.GetComponent<Image>().color = Color.white;
                 }
-
-                mobSlot.GetComponent<Image>().color = Color.white;
             }
         }
     }
@@ -1125,8 +1121,6 @@ public class BookUI : MonoBehaviour
                 weaponSlot.weaponUnlocked = true;
                 weaponSlot.GetComponent<Image>().color = Color.white;
             }
-
-            weaponSlot.GetComponent<Image>().color = Color.white;
         }
     }
 

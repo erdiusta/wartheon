@@ -1376,7 +1376,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomDice < projectileDetails.burnChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.healthEvent.CallGetBurnEvent();
-                    player.healthStatus = HealthStatus.Burned;
+                    player.healthStatus |= HealthStatus.Burned; // Add Burned status
                 }
             }
         }
@@ -1389,7 +1389,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomDice < activeItemDetails.burnChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.healthEvent.CallGetBurnEvent();
-                    player.healthStatus = HealthStatus.Burned;
+                    player.healthStatus |= HealthStatus.Burned; // Add Burned status
                 }
             }
         }
@@ -1409,7 +1409,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomDice < projectileDetails.burnChance)
                 {
                     enemy.healthEvent.CallGetBurnEvent();
-                    enemy.healthStatus = HealthStatus.Burned;
+                    enemy.healthStatus |= HealthStatus.Burned; // Add Burned status
                 }
             }
         }
@@ -1422,7 +1422,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomDice < activeItemDetails.burnChance)
                 {
                     enemy.healthEvent.CallGetBurnEvent();
-                    enemy.healthStatus = HealthStatus.Burned;
+                    enemy.healthStatus |= HealthStatus.Burned; // Add Burned status
                 }
             }
         }
@@ -1444,7 +1444,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomDice < projectileDetails.poisonChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.healthEvent.CallGetPoisonedEvent();
-                    player.healthStatus = HealthStatus.Poisoned;
+                    player.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
                 }
             }
         }
@@ -1457,7 +1457,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomDice < activeItemDetails.poisonChance - player.additionalNegativeStatusEffectNegatorModifier)
                 {
                     player.healthEvent.CallGetPoisonedEvent();
-                    player.healthStatus = HealthStatus.Poisoned;
+                    player.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
                 }
             }
         }
@@ -1477,7 +1477,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomDice < projectileDetails.poisonChance)
                 {
                     enemy.healthEvent.CallGetPoisonedEvent();
-                    enemy.healthStatus = HealthStatus.Poisoned;
+                    enemy.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
                 }
             }
         }
@@ -1490,7 +1490,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomDice < activeItemDetails.poisonChance)
                 {
                     enemy.healthEvent.CallGetPoisonedEvent();
-                    enemy.healthStatus = HealthStatus.Poisoned;
+                    enemy.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
                 }
             }
         }

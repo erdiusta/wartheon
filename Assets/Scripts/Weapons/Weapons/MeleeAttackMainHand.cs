@@ -359,7 +359,7 @@ public class MeleeAttackMainHand : MonoBehaviour
             if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.burnChance)
             {
                 enemy.healthEvent.CallGetBurnEvent();
-                enemy.healthStatus = HealthStatus.Burned;
+                enemy.healthStatus |= HealthStatus.Burned; // Add Burned status
             }
         }
     }
@@ -376,7 +376,7 @@ public class MeleeAttackMainHand : MonoBehaviour
             if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.poisonChance)
             {
                 enemy.healthEvent.CallGetPoisonedEvent();
-                enemy.healthStatus = HealthStatus.Poisoned;
+                enemy.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
             }
         }
     }

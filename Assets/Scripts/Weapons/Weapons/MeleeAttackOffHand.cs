@@ -109,6 +109,7 @@ public class MeleeAttackOffHand : MonoBehaviour
                                     CheckAcidStatus(enemy);
                                     CheckFrostStatus(enemy);
                                     CheckStunStatus(enemy);
+                                    CheckBurnStatus(enemy);
                                     CheckPoisonStatus(enemy);
                                     CheckBlindStatus(enemy);
                                 }
@@ -174,6 +175,7 @@ public class MeleeAttackOffHand : MonoBehaviour
                                     CheckAcidStatus(enemy);
                                     CheckFrostStatus(enemy);
                                     CheckStunStatus(enemy);
+                                    CheckBurnStatus(enemy);
                                     CheckPoisonStatus(enemy);
                                     CheckBlindStatus(enemy);
                                 }
@@ -388,6 +390,24 @@ public class MeleeAttackOffHand : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Check burn status
+    /// </summary>
+    private void CheckBurnStatus(Enemy enemy, bool isActiveItem = false)
+    {
+        if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.canBurn)
+        {
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.burnChance)
+            {
+                enemy.healthEvent.CallGetBurnEvent();
+                enemy.healthStatus |= HealthStatus.Burned; // Add Burned status
+            }
+        }
+    }
+
     /// <summary>
     /// Check poison status
     /// </summary>
@@ -400,7 +420,7 @@ public class MeleeAttackOffHand : MonoBehaviour
             if (randomDice < player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.poisonChance)
             {
                 enemy.healthEvent.CallGetPoisonedEvent();
-                enemy.healthStatus = HealthStatus.Poisoned;
+                enemy.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
             }
         }
     }
@@ -413,11 +433,11 @@ public class MeleeAttackOffHand : MonoBehaviour
     {
         EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
 
-        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frozen
+        if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasFrostDamage && enemyMovementAI.moveStatus != MoveStatus.Frozen
             && enemy.health.currentHealth > 0)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.frostChance)
+            if (randomDice < player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.frostChance)
             {
                 enemy.enemyAI.moveStatus = MoveStatus.Frozen;
             }

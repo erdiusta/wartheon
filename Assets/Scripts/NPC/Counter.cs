@@ -54,7 +54,7 @@ public class Counter : MonoBehaviour
     private void StaticEventHandler_OnRoomChanged(RoomChangedEventArgs roomChangedEventArgs)
     {
         // If the room is shop room then start spawning chest items
-        if (roomChangedEventArgs.room.roomNodeType.isShopRoom)
+        if (roomChangedEventArgs.room.roomNodeType.isShopRoom && !roomChangedEventArgs.room.shopRoomGoodsCreated)
         {
             // Get npc type of the shop room
             NpcType npcType = roomChangedEventArgs.room.instantiatedRoom.GetComponentInChildren<NPC>().npcType;
@@ -129,6 +129,8 @@ public class Counter : MonoBehaviour
                 default:
                     break;
             }
+
+            roomChangedEventArgs.room.shopRoomGoodsCreated = true;
         }
     }
 

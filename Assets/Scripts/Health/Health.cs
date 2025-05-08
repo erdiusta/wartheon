@@ -96,7 +96,10 @@ public class Health : MonoBehaviour
 
         if (player != null)
         {
-            if (player.selectedPassiveItem?.GetCurrentChestPassiveItem() != null && player.selectedPassiveItem.GetCurrentChestPassiveItem().passiveItemDetails.passiveItemType ==
+            // Passive item effect
+            PassiveItem chestItem = player.selectedPassiveItem?.GetCurrentChestPassiveItem();
+
+            if (chestItem != null && player.selectedPassiveItem.GetCurrentChestPassiveItem().passiveItemDetails.passiveItemType ==
                 PassiveItemType.ChestplateOfTheLastLight && currentHealth < maximumHealth * 0.5f)
             {
                 player.thirtyPercentDamageAbsorbIsActive = true;
@@ -106,36 +109,62 @@ public class Health : MonoBehaviour
                 player.thirtyPercentDamageAbsorbIsActive = false;
             }
 
-            if (player.healthStatus == HealthStatus.Poisoned)
+            // Poison effect
+            if ((player.healthStatus & HealthStatus.Poisoned) != 0)
             {
                 if (poisonCoroutine == null)
                 {
                     poisonCoroutine = StartCoroutine(GraduallyHealthReduceDuetoPoison());
                 }
             }
-            else if (player.healthStatus == HealthStatus.Burned)
+            else if (poisonCoroutine != null)
+            {
+                StopCoroutine(poisonCoroutine);
+                poisonCoroutine = null;
+            }
+
+            // Burn effect
+            if ((player.healthStatus & HealthStatus.Burned) != 0)
             {
                 if (burnCoroutine == null)
                 {
                     burnCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBurn());
                 }
+            }
+            else if (burnCoroutine != null)
+            {
+                StopCoroutine(burnCoroutine);
+                burnCoroutine = null;
             }
         }
         else if (enemy != null)
         {
-            if (enemy.healthStatus == HealthStatus.Poisoned)
+            // Poison effect
+            if ((enemy.healthStatus & HealthStatus.Poisoned) != 0)
             {
                 if (poisonCoroutine == null)
                 {
                     poisonCoroutine = StartCoroutine(GraduallyHealthReduceDuetoPoison());
                 }
             }
-            else if (enemy.healthStatus == HealthStatus.Burned)
+            else if (poisonCoroutine != null)
+            {
+                StopCoroutine(poisonCoroutine);
+                poisonCoroutine = null;
+            }
+
+            // Burn effect
+            if ((enemy.healthStatus & HealthStatus.Burned) != 0)
             {
                 if (burnCoroutine == null)
                 {
                     burnCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBurn());
                 }
+            }
+            else if (burnCoroutine != null)
+            {
+                StopCoroutine(burnCoroutine);
+                burnCoroutine = null;
             }
         }
         else if (decoy != null)
@@ -465,21 +494,27 @@ public class Health : MonoBehaviour
                 flashManager.UnflashCharacter(spriteRenderer);
                 yield return waitForSecondsSpriteFlashInterval;
 
-                if (player != null && player.healthStatus == HealthStatus.Poisoned)
+                if (player != null)
                 {
-                    flashManager.PoisonFlashCharacter(spriteRenderer);
-                    yield return waitForSecondsSpriteFlashInterval;
+                    bool flashed = false;
 
-                    flashManager.UnflashCharacter(spriteRenderer);
-                    yield return waitForSecondsSpriteFlashInterval;
-                }
-                if (player != null && player.healthStatus == HealthStatus.Burned)
-                {
-                    flashManager.BurnFlashCharacter(spriteRenderer);
-                    yield return waitForSecondsSpriteFlashInterval;
+                    if ((player.healthStatus & HealthStatus.Poisoned) != 0)
+                    {
+                        flashManager.PoisonFlashCharacter(spriteRenderer);
+                        flashed = true;
+                    }
+                    if ((player.healthStatus & HealthStatus.Burned) != 0)
+                    {
+                        flashManager.BurnFlashCharacter(spriteRenderer);
+                        flashed = true;
+                    }
 
-                    flashManager.UnflashCharacter(spriteRenderer);
-                    yield return waitForSecondsSpriteFlashInterval;
+                    if (flashed)
+                    {
+                        yield return waitForSecondsSpriteFlashInterval;
+                        flashManager.UnflashCharacter(spriteRenderer);
+                        yield return waitForSecondsSpriteFlashInterval;
+                    }
                 }
                 else
                 {
