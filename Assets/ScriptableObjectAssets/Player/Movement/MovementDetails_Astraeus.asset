@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: MovementDetails_Astraeus
   m_EditorClassIdentifier: 
   baseMoveSpeed: 4.75
-  rollSpeed: 10
+  rollSpeed: 8
   rollDistance: 7
-  rollCooldownTime: 0.2
+  rollCooldownTime: 0.16

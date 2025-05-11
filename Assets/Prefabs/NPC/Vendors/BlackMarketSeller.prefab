@@ -127,8 +127,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.112356186, y: 0.73960686}
-  m_Size: {x: 8.82802, y: 9.824772}
+  m_Offset: {x: 0, y: 1}
+  m_Size: {x: 5, y: 5}
   m_Direction: 0
 --- !u!50 &2949632287361592263
 Rigidbody2D:
@@ -194,13 +194,32 @@ MonoBehaviour:
   dialogues:
   - name: Murn the Whisper
     sentences:
-    - You can't find these ware at anywhere else!
+    - You can't find these wares at anywhere else!
   - name: Murn the Whisper
     sentences:
     - Buy something then maybe I can give you a hint related to your adventure.
   - name: Murn the Whisper
     sentences:
     - Sorry man. I can't make discount.
+  - name: Hermes Haven
+    sentences:
+    - That's all I can say. I wish you good fortune.
+  - name: Hermes Haven
+    sentences:
+    - 'When you press "I" at Stats page, you will I, II, III buttons at bottem-left. '
+    - You can drag weapons between them. So you equip off-hand to your desired weapon
+      set than current one.
+  - name: Hermes Haven
+    sentences:
+    - When level-up, don't forget to open your Glossary book at Build page and consume
+      your Build Point.
+  - name: Hermes Haven
+    sentences:
+    - The more percentage your weapon has an elemental bias, the more elemental damage
+      than physical damage.
+  - name: Hermes Haven
+    sentences:
+    - Every mob is more resistant to some elements and vulnerable to others.
   nameText: {fileID: 9155516492479711910}
   dialogueText: {fileID: 1790351835186083326}
   dialoguePanel: {fileID: 6285277385364679491}
@@ -217,6 +236,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   npcType: 1
+  tradeDone: 0
+  hintGiven: 0
 --- !u!1 &4449388465730631123
 GameObject:
   m_ObjectHideFlags: 0

@@ -32,12 +32,13 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     Enemy enemy;
     WeaponDetailsSO toBeDroppedMainWeaponDetails;
     WeaponDetailsSO toBeDroppedOffWeaponDetails;
+    bool trackPlayer;
 
     public WeaponDetailsSO weaponDetails;
     PassiveItemDetailsSO toBeDroppedPassiveItemDetails;
     public PassiveItemDetailsSO passiveItemDetails;
     public ActiveItemDetailsSO activeItemDetails;
-    int ammoPercent;
+    Player player;
 
     Animator pickUpAnimator;
 
@@ -50,6 +51,11 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         boxCollider2D = GetComponent<BoxCollider2D>();
     }
 
+    private void Start()
+    {
+        player = GameManager.Instance.GetPlayer();
+    }
+
     private void OnEnable()
     {
         if (transform.parent != null)
@@ -58,6 +64,29 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             {
                 enemy = GetComponentInParent<Enemy>();
             }
+        }
+
+        StaticEventHandler.OnEnemiesCleared += StaticEventHandler_OnEnemiesCleared;
+    }
+
+    private void OnDisable()
+    {
+        StaticEventHandler.OnEnemiesCleared -= StaticEventHandler_OnEnemiesCleared;
+    }
+
+    private void Update()
+    {
+        if (hasPrimaryPassiveDrop && trackPlayer)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, player.transform.position + new Vector3(0f, 0.5f, 0f), 6f * Time.deltaTime);
+        }
+    }
+
+    private void StaticEventHandler_OnEnemiesCleared()
+    {
+        if (hasPrimaryPassiveDrop)
+        {
+            trackPlayer = true;
         }
     }
 
@@ -174,7 +203,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                             if (GameManager.Instance.GetPlayer().coins.coinAmount >= currentPrice && !isPurchasing)
                                             {
                                                 isPurchasing = true;
-
+                                                StaticDialogueHandler.CallTradeCompletedEvent();
                                                 ChestItemWeaponDropPickUpProcess(player);
 
                                                 //CollectWeaponItem(player);
@@ -241,7 +270,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                                         if (GameManager.Instance.GetPlayer().coins.coinAmount >= currentPrice && !isPurchasing)
                                         {
                                             isPurchasing = true;
-
+                                            StaticDialogueHandler.CallTradeCompletedEvent();
                                             ChestItemPassiveItemDropPickUpProcess(player);
                                         }
                                         else
@@ -268,6 +297,8 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         }
                         else if (hasPrimaryPassiveDrop)
                         {
+
+
                             CollectPassiveItem(player);
                         }
                     }

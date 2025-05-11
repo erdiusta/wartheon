@@ -544,10 +544,13 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
             {
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger || player.activeWeapon.GetCurrentMainHandWeapon().
-                    weaponDetails.weaponClass == WeaponClass.Claw)
+                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger)
                 {
                     player.animator.Play("EmptyShortDW", 0, 0);  // Play short smear animation for dual wield
+                }
+                else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Claw)
+                {
+                    player.animator.Play("EmptyThrustDW", 0, 0);  // Play thrust smear animation for dual wield
                 }
                 else
                 {

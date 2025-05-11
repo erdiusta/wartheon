@@ -28,6 +28,8 @@ public class HealthUI : MonoBehaviour
 
     private void OnEnable()
     {
+        TrySubscribeToHealthEvents();
+
         player.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
     }
 
@@ -36,6 +38,19 @@ public class HealthUI : MonoBehaviour
         player.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
     }
 
+    private void TrySubscribeToHealthEvents()
+    {
+        if (player == null) player = GameManager.Instance.GetPlayer();
+
+        if (player != null)
+        {
+            player.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged; // prevent duplicates
+            player.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
+
+            //// Optional: Update UI once on init
+            //UpdateHealth(new HealthEventArgs());
+        }
+    }
 
     private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {
@@ -44,8 +59,8 @@ public class HealthUI : MonoBehaviour
 
     private void UpdateHealth(HealthEventArgs healthEventArgs)
     {
-        UpdateHealthBar();
         UpdateHealthText();
+        UpdateHealthBar();
     }
 
     private void UpdateHealthText()
@@ -56,7 +71,7 @@ public class HealthUI : MonoBehaviour
 
     private void UpdateHealthBar()
     {
-        StartCoroutine(UpdateHealthBarRoutine());
+        if (gameObject.activeInHierarchy) StartCoroutine(UpdateHealthBarRoutine());
     }
 
     /// <summary>

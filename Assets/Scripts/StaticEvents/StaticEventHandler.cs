@@ -4,12 +4,28 @@ using UnityEngine;
 
 public static class StaticEventHandler
 {
+    // Cheat code activated
+    public static event Action OnCheatActivated;
+
+    public static void CallCheatActivatedEvent()
+    {
+        OnCheatActivated?.Invoke();
+    }
+
     // Room changed event
     public static event Action<RoomChangedEventArgs> OnRoomChanged;
 
     public static void CallRoomChangedEvent(Room room)
     {
         OnRoomChanged?.Invoke(new RoomChangedEventArgs { room = room });
+    }
+
+    // All enemies cleared in the room
+    public static event Action OnEnemiesCleared;
+
+    public static void CallEnemiesClearedEvent()
+    {
+        OnEnemiesCleared?.Invoke();
     }
 
     // Stats changed event

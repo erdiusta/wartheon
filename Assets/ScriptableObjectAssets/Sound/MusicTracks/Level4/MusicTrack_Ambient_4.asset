@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: MusicTrack_Ambient_4
   m_EditorClassIdentifier: 
   musicName: Ambient 4
-  musicClip: {fileID: 8300000, guid: 4338d569f6db730448b32de2f107704e, type: 3}
+  musicClip: {fileID: 8300000, guid: bbf9fdef953a644428837154386142b0, type: 3}
   musicVolume: 0.5

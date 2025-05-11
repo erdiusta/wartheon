@@ -416,6 +416,8 @@ public class PlayerControl : MonoBehaviour
         // Reset when fire button is released
         if (InputManager.Instance.attack.action.WasReleasedThisFrame())
         {
+            isSoundPlayed = false;
+
             if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
             {
                 // Reset firing flag when releasing button for precharge weapons
@@ -583,6 +585,7 @@ public class PlayerControl : MonoBehaviour
     private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {
         // Trigger reset prechager mechanism in case a hit taken during the precharge
+        player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
         player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
     }
 
@@ -1385,8 +1388,9 @@ public class PlayerControl : MonoBehaviour
                 if (collider2D.GetComponent<CapsuleCollider2D>() != null)
                 {
                     Interaction interaction = collider2D.GetComponent<Interaction>();
+                    NPC npc = interaction.GetComponent<NPC>();
 
-                    if (interaction.GetComponent<NPC>() != null && interaction.GetComponent<NPC>().npcType == NpcType.Gambler) return;
+                    if (npc != null && interaction.GetComponent<NPC>().npcType == NpcType.Gambler) return;
 
                     interaction.TriggerDialogue();
                 }

@@ -98,6 +98,16 @@ public class MusicManager : SingletonMonobehaviour<MusicManager>
         yield return new WaitForSeconds(fadeInTime);
     }
 
+    public void SetVolume(int value)
+    {
+        int maxMusicVolume = 20;
+        musicVolume = value;
+
+        if (musicVolume >= maxMusicVolume) return;
+
+        SetMusicVolume(musicVolume);
+    }
+
     /// <summary>
     /// Increase music volume
     /// </summary>
@@ -138,5 +148,7 @@ public class MusicManager : SingletonMonobehaviour<MusicManager>
             GameResources.Instance.musicMasterMixerGroup.audioMixer.SetFloat("musicVolume", HelperUtilities.LinearToDecibels(musicVolume));
         }
     }
+
+    public int GetMusicVolume() => musicVolume;
 }
 

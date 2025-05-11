@@ -10,6 +10,14 @@ public static class StaticDialogueHandler
         OnInsufficientFunds?.Invoke();
     }
 
+    // Get hint event
+    public static event Action OnTradeCompleted;
+
+    public static void CallTradeCompletedEvent()
+    {
+        OnTradeCompleted?.Invoke();
+    }
+
     // Gamble lost event
     public static event Action OnGambleLost;
 

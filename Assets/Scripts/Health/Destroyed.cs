@@ -224,7 +224,14 @@ public class Destroyed : MonoBehaviour
             if (player.currentLevel == player.levelUpDetails.playerLevelDataList[i].playerLevel &&
                 player.currentGainedTotalExperiencePoints >= player.levelUpDetails.playerLevelDataList[i].levelUpExpPointForNextLevel)
             {
-                player.currentLevel++;
+                if (GameManager.isDemo && player.currentLevel >= 4)
+                {
+
+                }
+                else
+                {
+                    player.currentLevel++;
+                }
             }
         }
         #endregion

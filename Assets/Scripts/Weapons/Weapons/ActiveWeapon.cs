@@ -274,11 +274,15 @@ public class ActiveWeapon : MonoBehaviour
         }
         else
         {
-            playerAnimator.SetInteger(Settings.thrustSize, 0);
-
-            if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Dagger || currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw)
+            if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Dagger)
             {
-                playerAnimator.SetInteger(Settings.smearSize, 1); // Set smear size to 1 for dagger or claws
+                playerAnimator.SetInteger(Settings.thrustSize, 0);
+                playerAnimator.SetInteger(Settings.smearSize, 1); // Set smear size to 1 for dagger
+            }
+            else if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw)
+            {
+                playerAnimator.SetInteger(Settings.smearSize, 0);
+                playerAnimator.SetInteger(Settings.thrustSize, 1); // Set smear size to 1 for claws
             }
             else
             {

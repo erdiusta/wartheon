@@ -8,6 +8,7 @@ public class CinematicSceneManager : SingletonMonobehaviour<CinematicSceneManage
     [SerializeField] Light2D light2D;
     [SerializeField] GameObject moldranObject;
     [SerializeField] GameObject riftObject;
+    [SerializeField] SoundEffectSO riftOpenSoundEffect;
 
     [HideInInspector] public  CinematicPhase cinematicPhase = CinematicPhase.openingScene;
 
@@ -26,11 +27,14 @@ public class CinematicSceneManager : SingletonMonobehaviour<CinematicSceneManage
     float riftOpenTimer = 0f;
     bool fadeInCompleted;
     bool riftAnimationRun;
+    bool riftOpened = false; // Used for playing open rift sound
+
 
     float fadeOutTimer = 0f;
     float fadeOutDuration = 5f;
     bool fadeOutCompleted;
     bool finalSpeechTriggered;
+
 
     private void Start()
     {
@@ -38,6 +42,9 @@ public class CinematicSceneManager : SingletonMonobehaviour<CinematicSceneManage
         riftAnimator = riftObject.GetComponent<Animator>();
         riftMobContainerTransform = riftObject.transform.GetChild(0);
         riftMobContainer = riftMobContainerTransform.GetComponent<RiftMobContainer>();
+
+        // Play music
+        MusicManager.Instance.PlayMusic(GameResources.Instance.cutsceneMusic);
     }
 
     private void Update()
@@ -45,6 +52,12 @@ public class CinematicSceneManager : SingletonMonobehaviour<CinematicSceneManage
         if (InputManager.Instance.OKButton.action.WasPressedThisFrame() || InputManager.Instance.escapeButton.action.WasPressedThisFrame())
         {
             SceneManager.LoadScene("MainMenuScene");
+        }
+
+        if (riftOpened && riftOpenSoundEffect != null)
+        {
+            SoundEffectManager.Instance.PlaySoundEffect(riftOpenSoundEffect);
+            riftOpened = false;
         }
 
         switch (cinematicPhase)
@@ -213,6 +226,7 @@ public class CinematicSceneManager : SingletonMonobehaviour<CinematicSceneManage
     private void OpenRift()
     {
         riftAnimator.SetTrigger("openRift");
+        riftOpened = true;
 
         riftOpenTimer += Time.deltaTime;
 

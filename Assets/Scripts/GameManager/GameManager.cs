@@ -13,15 +13,28 @@ using System;
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
 {
+    public static bool isDemo = true;
+
     #region Header GAMEOBJECT REFERENCES
     [Space(10)]
     [Header("GAMEOBJECT REFERENCES")]
     #endregion Header GAMEOBJECT REFERENCES
 
+    [Space(10)]
+    [Header("PAUSE MENU REFERENCES")]
     #region Tooltip
     [Tooltip("Populate with pause menu gameobject in the hierarchy")]
     #endregion
     [SerializeField] GameObject pauseMenu;
+    [SerializeField] SoundEffectSO buttonClickSound;
+    [SerializeField] GameObject settingsMenuUI;
+    [SerializeField] Slider musicVolumeSlider;
+    [SerializeField] Slider soundVolumeSlider;
+    [SerializeField] Toggle fullscreenToggle;
+    [SerializeField] Image fullScreenCheckmarkImage;
+    [SerializeField] Toggle vsyncToggle;
+    [SerializeField] Image vysncCheckmarkImage;
+
     #region Tooltip
     [Tooltip("Populate with the MessageText textmeshpro component in the FadeScreenUI")]
     #endregion
@@ -40,10 +53,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Tooltip("Populate with Light2D component")]
     #endregion
     public Light2D light2D;
-
-    // Tilemap member
-    public Tilemap currentRoomSideTileMap;
-    public Tilemap currentRoomFrontTilemap;
 
     // Book members
     public GameObject bookView;
@@ -175,7 +184,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         base.Awake();
 
-        currentDungeonLevelListIndex = MainMenuUI.currentDungeonLevelListIndex;
+        //currentDungeonLevelListIndex = MainMenuUI.currentDungeonLevelListIndex;
 
         // Set player details - saved in current player scriptable object from the main menu
         playerDetails = GameResources.Instance.currentPlayer.playerDetails;
@@ -472,6 +481,26 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         // Set screen to black
         StartCoroutine(Fade(0f, 1f, 0f, Color.black));
+
+        // PAUSE MENU 
+        // Sync toggle with current fullscreen state
+        fullscreenToggle.isOn = Screen.fullScreen;
+        UpdateFullScreenCheckmarkVisibility(fullscreenToggle.isOn);
+
+        // Sync toggle with current V-Sync state (1 = on, 0 = off)
+        bool vsyncEnabled = QualitySettings.vSyncCount > 0;
+        vsyncToggle.isOn = vsyncEnabled;
+        UpdateVysncCheckmarkVisibility(vsyncEnabled);
+
+        // Music and sound sliders
+        musicVolumeSlider.value = MusicManager.Instance.GetMusicVolume();
+        soundVolumeSlider.value = SoundEffectManager.Instance.GetSoundVolume();
+
+        // Add Listeners
+        musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeSliderChanged);
+        soundVolumeSlider.onValueChanged.AddListener(OnSoundVolumeSliderChanged);
+        fullscreenToggle.onValueChanged.AddListener(OnFullScreenToggleChanged);
+        vsyncToggle.onValueChanged.AddListener(OnVsyncToggleChanged);
 
         // Ensure the volume has a Vignette effect and store a reference to it
         if (volume != null && volume.profile.TryGet(out vignette))
@@ -894,7 +923,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
         else if (gameState == GameState.gamePaused)
         {
-            BackFromAudioMenu(); // If inside the audio menu then esc is clicked return to the default pause menu when esc clicked again
+            BackFromSettingsMenu(); // If inside the audio menu then esc is clicked return to the default pause menu when esc clicked again
             BackFromControlsMenu();
 
             pauseMenu.SetActive(false);
@@ -907,47 +936,41 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     }
 
     /// <summary>
-    /// Called from Audio button
+    /// Called from Settings button
     /// </summary>
-    public void OpenAudioMenu()
+    public void OpenSettingsMenu()
     {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
         // Clear buttons on pause menu
         Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
 
         for (int i = 0; i < pauseContainer.childCount; i++)
         {
-            if (i == 0 || i == 1) continue;
+            if (i == 0 || i == 1) continue; // Exclude frame and headline text
 
             pauseContainer.GetChild(i).gameObject.SetActive(false);
         }
 
-        // Open audio menu
-
-        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Audio";
-        Transform audioContainer = pauseContainer.GetChild(4);
-        audioContainer.GetChild(0).gameObject.SetActive(false); // Disable audio text
-        audioContainer.GetChild(1).gameObject.SetActive(true); // Enable music volume contents
-        audioContainer.GetChild(2).gameObject.SetActive(true); // Enable sound volume contents
-        audioContainer.GetComponent<Image>().enabled = false;
-        audioContainer.GetComponent<Button>().enabled = false;
-        audioContainer.gameObject.SetActive(true);
+        // Open settings menu
+        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "SETTINGS";
+        Transform settingsContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(1);
+        settingsContainer.gameObject.SetActive(true);
     }
 
     /// <summary>
-    /// Called from Back button in Audio menu
+    /// Called from Back button in Settings menu
     /// </summary>
-    public void BackFromAudioMenu()
+    public void BackFromSettingsMenu()
     {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
         Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
 
         // Close audio menu
-        Transform audioContainer = pauseContainer.GetChild(4);
-        audioContainer.GetChild(0).gameObject.SetActive(true); // Enable audio text
-        audioContainer.GetChild(1).gameObject.SetActive(false); // Disable music volume contents
-        audioContainer.GetChild(2).gameObject.SetActive(false); // Disable sound volume contents
-        audioContainer.GetComponent<Image>().enabled = true;
-        audioContainer.GetComponent<Button>().enabled = true;
-        audioContainer.gameObject.SetActive(false);
+        Transform settingsContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(1);
+        settingsContainer.gameObject.SetActive(false); // Disable settings container
+
 
         for (int i = 0; i < pauseContainer.childCount; i++)
         {
@@ -956,7 +979,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             pauseContainer.GetChild(i).gameObject.SetActive(true);
         }
 
-        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Options";
+        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "PAUSE MENU";
     }
 
     /// <summary>
@@ -964,6 +987,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void OpenControlsMenu()
     {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
         // Clear buttons on pause menu
         Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
 
@@ -991,6 +1016,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void BackFromControlsMenu()
     {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
         Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
 
         // Close audio menu
@@ -1011,11 +1038,49 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Options";
     }
 
+    private void OnFullScreenToggleChanged(bool isOn)
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        Screen.fullScreen = isOn;
+        UpdateFullScreenCheckmarkVisibility(isOn);
+    }
+
+    private void UpdateFullScreenCheckmarkVisibility(bool show)
+    {
+        fullScreenCheckmarkImage.enabled = show;
+    }
+
+    private void OnVsyncToggleChanged(bool isOn)
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        QualitySettings.vSyncCount = isOn ? 1 : 0;
+        UpdateVysncCheckmarkVisibility(isOn);
+    }
+
+    private void UpdateVysncCheckmarkVisibility(bool show)
+    {
+        vysncCheckmarkImage.enabled = show;
+    }
+
+    private void OnMusicVolumeSliderChanged(float newValue)
+    {
+        MusicManager.Instance.SetVolume((int)newValue);
+    }
+
+    private void OnSoundVolumeSliderChanged(float newValue)
+    {
+        SoundEffectManager.Instance.SetVolume((int)newValue);
+    }
+
     /// <summary>
     /// Called from Play Game button
     /// </summary>
     public void QuitGame()
     {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
         SceneManager.LoadScene("MainMenuScene");
     }
 
@@ -1024,6 +1089,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void ExitGame()
     {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
         Application.Quit();
     }
 
@@ -1157,14 +1224,14 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         currentDungeonLevelListIndex++;
 
         // DEMO CASE
-        if (currentDungeonLevelListIndex >= 2)
+        if (currentDungeonLevelListIndex >= 2 && isDemo)
         {
             gameState = GameState.gameWon;
         }
-        //if (currentDungeonLevelListIndex >= 8)
-        //{
-        //    gameState = GameState.gameWon;
-        //}
+        else if (currentDungeonLevelListIndex >= 8)
+        {
+            gameState = GameState.gameWon;
+        }
         else
         {
             // Display level completed
@@ -1212,15 +1279,16 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Fade Out
         yield return StartCoroutine(Fade(0f, 1f, 2f, Color.black));
 
-
         // Display game won - DEMO
-        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE COMPLETED DEMO!",
+        if (isDemo)
+        {
+            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE COMPLETED DEMO!",
+                Color.green, 7f));
+        }
+
+        // Display game won
+        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE SECURED THE WARTHEON",
             Color.green, 7f));
-
-
-        //// Display game won
-        //yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE SECURED THE WARTHEON", 
-        //    Color.green, 7f));
 
         yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.yellow, 0f));
 

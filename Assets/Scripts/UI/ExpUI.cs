@@ -20,6 +20,10 @@ public class ExpUI : MonoBehaviour
     [Tooltip("Populate with the level text")]
     #endregion Tooltip
     [SerializeField] TextMeshProUGUI levelText;
+    #region Tooltip
+    [Tooltip("Populate with the demo text")]
+    #endregion Tooltip
+    [SerializeField] TextMeshProUGUI demoText;
 
     private void Awake()
     {
@@ -59,9 +63,19 @@ public class ExpUI : MonoBehaviour
     /// </summary>
     private IEnumerator UpdateExpBarRoutine()
     {
+        float barFill;
+
         // Update availability bar
-        float barFill = (float)(player.currentGainedTotalExperiencePoints - player.levelUpDetails.playerLevelDataList[player.currentLevel - 1].levelUpExpPointForNextLevel) / 
-            (float)player.levelUpDetails.playerLevelDataList[player.currentLevel].levelUpExpPointForNextLevel;
+        if (GameManager.isDemo && player.currentLevel >= 4)
+        {
+            barFill = 1f; // EXCEED DEMO LIMIT
+            demoText.gameObject.SetActive(true);
+        }
+        else
+        {
+            barFill = (float)(player.currentGainedTotalExperiencePoints - player.levelUpDetails.playerLevelDataList[player.currentLevel - 1].levelUpExpPointForNextLevel) /
+                (float)player.levelUpDetails.playerLevelDataList[player.currentLevel].levelUpExpPointForNextLevel;
+        }
 
         // Update bar fill
         expBar.transform.localScale = new Vector3(barFill, 1f, 1f);

@@ -14925,11 +14925,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 312786131199480866, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.x
-      value: 1.1875
+      value: 0.4375
       objectReference: {fileID: 0}
     - target: {fileID: 312786131199480866, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.y
-      value: 2.5
+      value: 1.125
       objectReference: {fileID: 0}
     - target: {fileID: 312786131199480866, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Sprite
@@ -15033,11 +15033,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1694001904705187332, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.x
-      value: 0.375
+      value: 0.4375
       objectReference: {fileID: 0}
     - target: {fileID: 1694001904705187332, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.y
-      value: 1.1875
+      value: 1.125
       objectReference: {fileID: 0}
     - target: {fileID: 1694001904705187332, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Sprite
@@ -15070,6 +15070,14 @@ PrefabInstance:
     - target: {fileID: 2111572377593781178, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2226921973809070019, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
+      propertyPath: boxHeight
+      value: 3.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2226921973809070019, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
+      propertyPath: boxLength
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 2327260788624308843, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_IsActive
@@ -15347,10 +15355,6 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 1307114046, guid: 5d12ab0ad64a9914b9b6ff838f7feeb7, type: 3}
-    - target: {fileID: 7906384514217505790, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
-      propertyPath: m_MaskInteraction
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7936086671000619909, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1.05

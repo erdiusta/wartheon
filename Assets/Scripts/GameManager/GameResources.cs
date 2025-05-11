@@ -63,6 +63,10 @@ public class GameResources : MonoBehaviour
     #endregion
     public MusicTrackSO mainMenuMusic;
     #region Tooltip
+    [Tooltip("Cutscene music scriptable object")]
+    #endregion
+    public MusicTrackSO cutsceneMusic;
+    #region Tooltip
     [Tooltip("Music on full snapshot")]
     #endregion
     public AudioMixerSnapshot musicOnFullSnaphot;
@@ -163,23 +167,6 @@ public class GameResources : MonoBehaviour
     #endregion
     public Sprite lockSlotIcon;
 
-    #region Header UI
-    [Space(10)]
-    [Header("UI")]
-    #endregion
-    #region Tooltip
-    [Tooltip("Populate with heart image prefab")]
-    #endregion
-    public GameObject heartPrefab;
-    #region Tooltip
-    [Tooltip("Populate with half heart image prefab")]
-    #endregion
-    public GameObject halfHeartPrefab;
-    #region Tooltip
-    [Tooltip("Populate with projectile icon prefab")]
-    #endregion
-    public GameObject projectileIconPrefab;
-
     #region Header
     [Space(10)]
     [Header("DUST")]
@@ -264,9 +251,6 @@ public class GameResources : MonoBehaviour
         HelperUtilities.ValidateCheckNullValue(this, nameof(musicOnFullSnaphot), musicOnFullSnaphot);
         HelperUtilities.ValidateCheckNullValue(this, nameof(musicLowSnapshot), musicLowSnapshot);
         HelperUtilities.ValidateCheckNullValue(this, nameof(musicOffSnapshot), musicOffSnapshot);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(heartPrefab), heartPrefab);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(halfHeartPrefab), halfHeartPrefab);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(projectileIconPrefab), projectileIconPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(chestItemPrefab), chestItemPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(heartIcon), heartIcon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(bulletIcon), bulletIcon);

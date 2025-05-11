@@ -217,6 +217,7 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         if (currentEnemyCount <= 0 && enemiesSpawnedSoFar == enemiesToSpawn)
         {
             currentRoom.isClearedOfEnemies = true;
+            StaticEventHandler.CallEnemiesClearedEvent();
 
             // Set game state
             if (GameManager.Instance.gameState == GameState.engagingEnemies)

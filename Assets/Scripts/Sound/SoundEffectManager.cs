@@ -34,6 +34,16 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
         sound.gameObject.SetActive(false);
     }
 
+    public void SetVolume(int value)
+    {
+        int maxSoundVolume = 20;
+        soundVolume = value;
+
+        if (soundVolume >= maxSoundVolume) return;
+
+        SetSoundVolume(soundVolume);
+    }
+
     /// <summary>
     /// Increase sound volume
     /// </summary>
@@ -74,4 +84,6 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
             GameResources.Instance.soundMasterMixerGroup.audioMixer.SetFloat("soundVolume", HelperUtilities.LinearToDecibels(soundVolume));
         }
     }
+
+    public int GetSoundVolume() => soundVolume;
 }

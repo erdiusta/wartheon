@@ -127,8 +127,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.112356186, y: 0.73960686}
-  m_Size: {x: 8.82802, y: 9.824772}
+  m_Offset: {x: 0, y: 1}
+  m_Size: {x: 5, y: 5}
   m_Direction: 0
 --- !u!50 &2949632287361592263
 Rigidbody2D:
@@ -221,6 +221,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   npcType: 2
+  tradeDone: 0
+  hintGiven: 0
 --- !u!1 &4449388465730631123
 GameObject:
   m_ObjectHideFlags: 0

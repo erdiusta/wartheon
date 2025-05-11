@@ -54,6 +54,7 @@ MonoBehaviour:
   currentPlayer: {fileID: 11400000, guid: bdc48d7a1898cca47b62df50366f8c9a, type: 2}
   musicMasterMixerGroup: {fileID: 1624570340859876765, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   mainMenuMusic: {fileID: 11400000, guid: 1bdaf3d9e77162142a7d389b5f99296e, type: 2}
+  cutsceneMusic: {fileID: 11400000, guid: 3bf0801f92c57f146b50c912b0c6ed18, type: 2}
   musicOnFullSnaphot: {fileID: 24500006, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   musicLowSnapshot: {fileID: -3696781970601211204, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   musicOffSnapshot: {fileID: -3379933783261973729, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
@@ -66,6 +67,7 @@ MonoBehaviour:
   healthPickup: {fileID: 11400000, guid: 4638ce053d31bdd4595c3991e645fac9, type: 2}
   weaponPickup: {fileID: 11400000, guid: 89c2519ed7c7c0546a8b53183833b881, type: 2}
   ammoPickup: {fileID: 11400000, guid: ac672474329ba2c44bac9040ffa01664, type: 2}
+  riftOpenSoundEffect: {fileID: 11400000, guid: b8acb485b72568a4e94c05cdd9a3555a, type: 2}
   dimmedMaterial: {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
   litMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   variableLitShader: {fileID: -6465566751694194690, guid: 8b29df74515c0774885e41dce7f3e546, type: 3}

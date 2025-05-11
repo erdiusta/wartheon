@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: EnemyDetails_Galvanus
   m_EditorClassIdentifier: 
   enemyName: Galvanus
-  enemyDetails: A golem-like sentry creature charged with electicity. Stay away from
-    its jolts causing stun.
+  enemyDetails: A golem-like sentry creature charged with electricity. Stay away
+    from its jolts causing stun.
   enemyCategory: 22
   enemyPrefab: {fileID: 7183228443647751644, guid: 0774227b2500d3e468ac2f5f15dea51f, type: 3}
   enemyType: 1
@@ -216,6 +216,6 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
       ratio: 1
-  primaryPassiveDropChanceMax: 0
-  dropSpawnChanceMin: 0
-  dropSpawnChanceMax: 0
+  primaryPassiveDropChanceMax: 8
+  dropSpawnChanceMin: 100
+  dropSpawnChanceMax: 100

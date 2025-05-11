@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: MovementDetails_Lyrisa
   m_EditorClassIdentifier: 
   baseMoveSpeed: 4.75
-  rollSpeed: 10
+  rollSpeed: 5
   rollDistance: 6
-  rollCooldownTime: 0.2
+  rollCooldownTime: 0.11

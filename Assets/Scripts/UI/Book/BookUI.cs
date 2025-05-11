@@ -688,7 +688,7 @@ public class BookUI : MonoBehaviour
         characterName.text = player.playerDetails.playerCharacterName;
         strengthText.text = $"Strength : {player.currentStrengthValue}";
         constitutionText.text = $"Constitution : {player.currentConstitutionValue}";
-        dexterityText.text = $"Dexterity : {player.playerDetails.primaryStats.dexterity}";
+        dexterityText.text = $"Dexterity : {player.currentDexterityValue}";
         intelligenceText.text = $"Intelligence : {player.currentIntelligenceValue}";
         agilityText.text = $"Agility : {player.currentAgilityValue}";
         physicalResistanceText.text = $"Physical : {player.currentPhysicalResistanceValue * 100} %";
@@ -1157,8 +1157,6 @@ public class BookUI : MonoBehaviour
                 passiveSlot.passiveUnlocked = true;
                 passiveSlot.GetComponent<Image>().color = Color.white;
             }
-
-            passiveSlot.GetComponent<Image>().color = Color.white;
         }
     }
 
@@ -1245,7 +1243,6 @@ public class BookUI : MonoBehaviour
                             // Ironheart Endurance
                             player.currentConstitutionValue++;
                             player.UpdatePlayerHealth(10, false, true);
-
                             break;
                         case Character.Erebus:
                             // Shadow Endurance
@@ -1584,6 +1581,8 @@ public class BookUI : MonoBehaviour
                     player.UpdateDamageValues();
                     player.UpdateWeaponHandlingAndCriticalValues();
                     player.UpdateBlockAndEvasivenessValues();
+                    player.healthEvent.CallHealthChangedEvent(((float)player.health.currentHealth / (float)player.health.GetMaximumHealth()),
+                        player.health.currentHealth, 0);
                 }
             }
         }

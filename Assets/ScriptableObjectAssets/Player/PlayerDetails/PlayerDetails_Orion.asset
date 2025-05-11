@@ -19,10 +19,10 @@ MonoBehaviour:
   collectibleWeaponsArray: []
   bodyRuntimeAnimatorController: {fileID: 9100000, guid: 3cbcb1e9936af724d841b9df0fe0c7ae, type: 2}
   primaryStats:
-    strength: 5
+    strength: 3
     dexterity: 7
     constitution: 5
-    intelligence: 4
+    intelligence: 5
     agility: 6
   physicalResistance: 0.05
   fireResistance: 0

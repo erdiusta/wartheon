@@ -17,6 +17,10 @@ PrefabInstance:
       value: 0.215
       objectReference: {fileID: 0}
     - target: {fileID: -5271647833751286019, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5271647833751286019, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
       value: 0.5123522
       objectReference: {fileID: 0}
@@ -330,11 +334,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8497238629979407875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: contactDamageAmountMax
-      value: 5
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 8497238629979407875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: contactDamageAmountMin
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8901436270454263267, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: knockbackForce
@@ -346,6 +350,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: e1299cbb88db8ac4e843927fdb93b3d6, type: 2}
     m_RemovedComponents:
     - {fileID: -8087453122606573849, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 1489624854237943964, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     m_RemovedGameObjects:
     - {fileID: 5135288035861418495, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     m_AddedGameObjects: []

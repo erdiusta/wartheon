@@ -197,8 +197,7 @@ MonoBehaviour:
     - So I will open that rift to wield the power.
   - name: Moldran
     sentences:
-    - Ha ha ha! My soldiers are scattered everywhere. I am the ruler of Wartheon
-      now.
+    - Yes! My soldiers are scattered everywhere. I will rule Wartheon from now on.
   nameText: {fileID: 9155516492479711910}
   dialogueText: {fileID: 1790351835186083326}
   dialoguePanel: {fileID: 6285277385364679491}

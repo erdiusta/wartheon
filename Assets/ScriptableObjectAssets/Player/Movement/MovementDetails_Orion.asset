@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: MovementDetails_Orion
   m_EditorClassIdentifier: 
   baseMoveSpeed: 4.75
-  rollSpeed: 10
+  rollSpeed: 7
   rollDistance: 8
-  rollCooldownTime: 0.2
+  rollCooldownTime: 0.14

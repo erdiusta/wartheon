@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: EnemyDetails_Beholder
   m_EditorClassIdentifier: 
   enemyName: Beholder
-  enemyDetails: A levitating monstrosity. Beware its eye. Its beam can stun.
+  enemyDetails: A Levitating Monstrosity. Beware Eye. Beam Can Stun and Blind. Air
+    Elemental Bias.
   enemyCategory: 29
   enemyPrefab: {fileID: 7183228443647751644, guid: 0b3efa271d8b32a479ad2a79ed18246f, type: 3}
   enemyType: 0
@@ -52,14 +53,14 @@ MonoBehaviour:
   poisonChance: 0
   hasAcid: 0
   acidEfficiency: 0
-  hasStunDamage: 0
-  stunChance: 0
+  hasStunDamage: 1
+  stunChance: 0.15
   hasFrostDamage: 0
   frostChance: 0
-  hasCurseDamage: 1
-  curseChance: 0.15
-  hasBlindDamage: 0
-  blindChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasBlindDamage: 1
+  blindChance: 0.15
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
@@ -103,7 +104,7 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
-      ratio: 4
+      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
       ratio: 4
   - dungeonLevel: {fileID: 11400000, guid: c3413b0ad50f98a4ba7edfccd5230ccf, type: 2}
@@ -117,7 +118,7 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
-      ratio: 4
+      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
       ratio: 4
   - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
@@ -131,7 +132,7 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
-      ratio: 4
+      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
       ratio: 4
   weaponsByLevelList:
@@ -449,6 +450,6 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: 44da56b0da740104f85243ed6b962b09, type: 2}
       ratio: 1
-  primaryPassiveDropChanceMax: 5
+  primaryPassiveDropChanceMax: 4
   dropSpawnChanceMin: 10
   dropSpawnChanceMax: 25

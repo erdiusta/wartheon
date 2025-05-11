@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: EnemyDetails_Ravagevine
   m_EditorClassIdentifier: 
   enemyName: Ravagevine
-  enemyDetails: Carnivorous plant. Stronger than Snapthorn. Has 40% earth elemental
-    bias
+  enemyDetails: A Carnivorous Plant. Stronger than Snapthorn. Earth elemental bias.
+    Can Poison and Acid.
   enemyCategory: 15
   enemyPrefab: {fileID: 7183228443647751644, guid: b88660872eecf66428c001321949e06c, type: 3}
   enemyType: 0
@@ -23,7 +23,7 @@ MonoBehaviour:
   chaseDistance: 11
   hasAttackMove: 1
   attackMoveTriggerDistance: 3
-  attackMoveEfficentDistance: 5
+  attackMoveEfficentDistance: 6
   countdownDurationBeforeDashAttack: 0.4
   attackMoveDashDuration: 0.3
   attackMoveBaseCooldown: 2.5
@@ -50,9 +50,9 @@ MonoBehaviour:
   canBurn: 0
   burnChance: 0
   isPoisonous: 1
-  poisonChance: 0.15
-  hasAcid: 0
-  acidEfficiency: 0
+  poisonChance: 0.25
+  hasAcid: 1
+  acidEfficiency: 0.25
   hasStunDamage: 0
   stunChance: 0
   hasFrostDamage: 0
@@ -102,7 +102,7 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
-      ratio: 4
+      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
       ratio: 4
   - dungeonLevel: {fileID: 11400000, guid: 99c1ae446f4b95c4c9302a8443678c1d, type: 2}
@@ -116,7 +116,7 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
-      ratio: 4
+      ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
       ratio: 4
   weaponsByLevelList:
@@ -334,6 +334,6 @@ MonoBehaviour:
       ratio: 1
     - dungeonObject: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
       ratio: 1
-  primaryPassiveDropChanceMax: 5
+  primaryPassiveDropChanceMax: 4
   dropSpawnChanceMin: 15
   dropSpawnChanceMax: 25

@@ -12,21 +12,24 @@ public class Interaction : MonoBehaviour
     public Queue<string> sentences;
     bool dialogueStarted = false;
 
+    NPC npc;
+
     private void OnEnable()
     {
         StaticDialogueHandler.OnInsufficientFunds += StaticDialogueHandler_OnInsufficientFunds;
         StaticDialogueHandler.OnGambleLost += StaticDialogueHandler_OnGambleLost;
         StaticDialogueHandler.OnGambleWon += StaticDialogueHandler_OnGambleWon;
+        StaticDialogueHandler.OnTradeCompleted += StaticDialogueHandler_OnTradeCompleted;
 
         StaticDialogueHandler.OnMoldranTalk += StaticDialogueHandler_OnMoldranTalk;
     }
-
 
     private void OnDisable()
     {
         StaticDialogueHandler.OnInsufficientFunds -= StaticDialogueHandler_OnInsufficientFunds;
         StaticDialogueHandler.OnGambleLost -= StaticDialogueHandler_OnGambleLost;
         StaticDialogueHandler.OnGambleWon -= StaticDialogueHandler_OnGambleWon;
+        StaticDialogueHandler.OnTradeCompleted -= StaticDialogueHandler_OnTradeCompleted;
 
         StaticDialogueHandler.OnMoldranTalk -= StaticDialogueHandler_OnMoldranTalk;
     }
@@ -35,6 +38,13 @@ public class Interaction : MonoBehaviour
     {
         sentences = new Queue<string>();
         nameText.color = Color.magenta;
+
+        npc = GetComponent<NPC>();
+    }
+
+    private void StaticDialogueHandler_OnTradeCompleted()
+    {
+        npc.tradeDone = true;
     }
 
     private void StaticDialogueHandler_OnMoldranTalk(MoldranDialogueEventArgs moldranDialogueEventArgs)
@@ -61,9 +71,25 @@ public class Interaction : MonoBehaviour
 
     public void TriggerDialogue()
     {
-        int randomNum = Random.Range(0, 2);
+        if (npc.tradeDone)
+        {
+            if (npc.hintGiven)
+            {
+                StartDialogue(dialogues[3]);
+            }
+            else
+            {
+                int randomNum = Random.Range(4, dialogues.Count);
+                StartDialogue(dialogues[randomNum]);
+                npc.hintGiven = true;
+            }
+        }
+        else
+        {
+            int randomNum = Random.Range(0, 2);
 
-        StartDialogue(dialogues[randomNum]);
+            StartDialogue(dialogues[randomNum]);
+        }
     }
 
     /// <summary>
