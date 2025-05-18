@@ -1,11 +1,21 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.SceneManagement;
 
 public class CheatCodeListener : SingletonMonobehaviour<CheatCodeListener>
 {
-    string cheatCode = "KUKULI";
+    string kukuliCheatCode = "KUKULI";
+    string ustasoftCheatCode = "USTASOFT";
     string inputBuffer = string.Empty;
+
+    string[] cheats;
+
+    private void Start()
+    {
+        cheats = new string[] { kukuliCheatCode, ustasoftCheatCode };
+    }
 
     private void Update()
     {
@@ -22,15 +32,32 @@ public class CheatCodeListener : SingletonMonobehaviour<CheatCodeListener>
                 {
                     inputBuffer += keyChar;
 
-                    // Trim buffer if too long
-                    if (inputBuffer.Length > cheatCode.Length)
-                        inputBuffer = inputBuffer.Substring(inputBuffer.Length - cheatCode.Length);
+                    // Trim buffer to the maximum cheat length
+                    int maxCheatLength = cheats.Max(c => c.Length);
+                    if (inputBuffer.Length > maxCheatLength)
+                        inputBuffer = inputBuffer.Substring(inputBuffer.Length - maxCheatLength);
 
-                    if (inputBuffer == cheatCode)
+                    for (int i = 0; i < cheats.Length; i++)
                     {
-                        StaticEventHandler.CallCheatActivatedEvent();
-                        GameManager.isDemo = false;
-                        Debug.Log("Cheat code activated! Full game unlocked.");
+                        if (inputBuffer.EndsWith(cheats[i]))
+                        {
+                            if (cheats[i] == kukuliCheatCode)
+                            {
+                                if (SceneManager.GetActiveScene().name == "MainMenuScene")
+                                {
+                                    StaticEventHandler.CallCheatActivatedEvent();
+                                    GameManager.isDemo = false;
+                                }
+                                else
+                                {
+                                    Debug.Log("SORRY MAN TOO LATE");
+                                }
+                            }
+                            else if (cheats[i] == ustasoftCheatCode)
+                            {
+                                StaticEventHandler.CallCheatActivatedEvent();
+                            }
+                        }
                     }
                 }
             }

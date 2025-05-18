@@ -59,6 +59,7 @@ MonoBehaviour:
   musicLowSnapshot: {fileID: -3696781970601211204, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   musicOffSnapshot: {fileID: -3379933783261973729, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   soundMasterMixerGroup: {fileID: -1070493446473311056, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
+  nextLevelSoundEffect: {fileID: 11400000, guid: 47b00a3f3bfad5c4cbefa098298290da, type: 2}
   openBookSoundEffect: {fileID: 11400000, guid: 410e9bb2402a01a48b3cabc627f11701, type: 2}
   closeBookSoundEffect: {fileID: 11400000, guid: ddebddc112a095147a3e5177f8ab94b1, type: 2}
   doorOpenCloseSoundEffect: {fileID: 11400000, guid: 58ec3915700e1db40b117db8be25656d, type: 2}
@@ -67,7 +68,6 @@ MonoBehaviour:
   healthPickup: {fileID: 11400000, guid: 4638ce053d31bdd4595c3991e645fac9, type: 2}
   weaponPickup: {fileID: 11400000, guid: 89c2519ed7c7c0546a8b53183833b881, type: 2}
   ammoPickup: {fileID: 11400000, guid: ac672474329ba2c44bac9040ffa01664, type: 2}
-  riftOpenSoundEffect: {fileID: 11400000, guid: b8acb485b72568a4e94c05cdd9a3555a, type: 2}
   dimmedMaterial: {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
   litMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   variableLitShader: {fileID: -6465566751694194690, guid: 8b29df74515c0774885e41dce7f3e546, type: 3}
@@ -79,9 +79,6 @@ MonoBehaviour:
   preferredEnemyPathTile: {fileID: 11400000, guid: a8f63dbc7bc1f46479620586f36f00e0, type: 2}
   bookWeaponSlot: {fileID: 5499570960415012034, guid: 57827440d6b492d4c8b2c2c7723f9158, type: 3}
   lockSlotIcon: {fileID: 21300000, guid: 0f39839699a5d5348b14439733365e2d, type: 3}
-  heartPrefab: {fileID: 7585392605064363868, guid: becfc86faf78d674f92971eda671b95a, type: 3}
-  halfHeartPrefab: {fileID: 7585392605064363868, guid: 8386f841730857947b3db24aa3a75bbe, type: 3}
-  projectileIconPrefab: {fileID: 3767299040992984232, guid: 13d7dc9c29e09c54089f573a4705eaaa, type: 3}
   dustTrailPrefab: {fileID: 8196255681527788008, guid: 9e1e12b38f4aaa94db184b78672ad703, type: 3}
   npcPrefabs:
   - {fileID: 2991652199720112011, guid: 1982ac6c38346bb46bc9a89ae18910d0, type: 3}

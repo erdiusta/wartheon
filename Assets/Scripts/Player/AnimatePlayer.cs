@@ -69,6 +69,7 @@ public class AnimatePlayer : MonoBehaviour
         player.animator.SetBool(Settings.isIdle, true);
         player.animator.SetBool(Settings.isRoll, false);
         player.animator.SetBool(Settings.isAttack, false);
+        player.animator.SetBool(Settings.isParry, false);
 
         player.animator.SetFloat(Settings.motionType, 0f);
     }
@@ -115,11 +116,26 @@ public class AnimatePlayer : MonoBehaviour
         player.animator.SetBool(Settings.isAttack, false);
         player.animator.SetBool(Settings.isIdle, false);
         player.animator.SetBool(Settings.isRoll, true);
+        player.animator.SetBool(Settings.isParry, false);
 
         player.animator.SetBool(Settings.rollDown, false);
         player.animator.SetBool(Settings.rollRight, false);
         player.animator.SetBool(Settings.rollLeft, false);
         player.animator.SetBool(Settings.rollUp, false);
+
+        player.animator.SetFloat(Settings.motionType, -1f);
+    }
+
+    /// <summary>
+    /// Initialize parry animation parameters
+    /// </summary>
+    public void InitializeParryAnimationParameters()
+    {
+        player.animator.SetBool(Settings.isMoving, false);
+        player.animator.SetBool(Settings.isAttack, false);
+        player.animator.SetBool(Settings.isIdle, false);
+        player.animator.SetBool(Settings.isRoll, false);
+        player.animator.SetBool(Settings.isParry, true);
 
         player.animator.SetFloat(Settings.motionType, -1f);
     }
@@ -160,11 +176,9 @@ public class AnimatePlayer : MonoBehaviour
         player.animator.SetBool(Settings.isMoving, false);
         player.animator.SetBool(Settings.isIdle, false);
         player.animator.SetBool(Settings.isRoll, false);
+        player.animator.SetBool(Settings.isParry, false);
 
-        if (HasParameter(player.animator, Settings.block))
-        {
-            player.animator.SetBool(Settings.block, false);
-        }
+        player.animator.SetBool(Settings.block, false);
 
         player.animator.SetBool(Settings.death, false);
     }

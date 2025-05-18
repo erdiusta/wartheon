@@ -22,11 +22,11 @@ MonoBehaviour:
   experiencePoint: 80
   chaseDistance: 11
   hasAttackMove: 1
-  attackMoveTriggerDistance: 3
-  attackMoveEfficentDistance: 6
+  attackMoveTriggerDistance: 4
+  attackMoveEfficentDistance: 9
   countdownDurationBeforeDashAttack: 0.4
   attackMoveDashDuration: 0.3
-  attackMoveBaseCooldown: 2.5
+  attackMoveBaseCooldown: 1
   deflectionValue: 0
   enemyBehaviour: 2
   isEnemyBoss: 0

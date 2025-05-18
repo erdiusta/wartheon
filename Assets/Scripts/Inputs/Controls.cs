@@ -333,6 +333,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Parry"",
+                    ""type"": ""Button"",
+                    ""id"": ""6d7bc76d-a876-4cf5-8cfd-2f5b43d66fb9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -731,6 +740,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Invisibility"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f34883b3-4acc-4298-aefc-5fc2ed7783e1"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Parry"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -766,6 +786,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_Level7 = m_PlayerInput.FindAction("Level7", throwIfNotFound: true);
         m_PlayerInput_Level8 = m_PlayerInput.FindAction("Level8", throwIfNotFound: true);
         m_PlayerInput_Invisibility = m_PlayerInput.FindAction("Invisibility", throwIfNotFound: true);
+        m_PlayerInput_Parry = m_PlayerInput.FindAction("Parry", throwIfNotFound: true);
     }
 
     ~@Controls()
@@ -873,6 +894,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_Level7;
     private readonly InputAction m_PlayerInput_Level8;
     private readonly InputAction m_PlayerInput_Invisibility;
+    private readonly InputAction m_PlayerInput_Parry;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerInput".
     /// </summary>
@@ -993,6 +1015,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Invisibility => m_Wrapper.m_PlayerInput_Invisibility;
         /// <summary>
+        /// Provides access to the underlying input action "PlayerInput/Parry".
+        /// </summary>
+        public InputAction @Parry => m_Wrapper.m_PlayerInput_Parry;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
@@ -1099,6 +1125,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Invisibility.started += instance.OnInvisibility;
             @Invisibility.performed += instance.OnInvisibility;
             @Invisibility.canceled += instance.OnInvisibility;
+            @Parry.started += instance.OnParry;
+            @Parry.performed += instance.OnParry;
+            @Parry.canceled += instance.OnParry;
         }
 
         /// <summary>
@@ -1191,6 +1220,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Invisibility.started -= instance.OnInvisibility;
             @Invisibility.performed -= instance.OnInvisibility;
             @Invisibility.canceled -= instance.OnInvisibility;
+            @Parry.started -= instance.OnParry;
+            @Parry.performed -= instance.OnParry;
+            @Parry.canceled -= instance.OnParry;
         }
 
         /// <summary>
@@ -1420,5 +1452,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInvisibility(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Parry" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnParry(InputAction.CallbackContext context);
     }
 }

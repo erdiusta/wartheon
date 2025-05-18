@@ -88,6 +88,10 @@ public class GameResources : MonoBehaviour
     #endregion
     public AudioMixerGroup soundMasterMixerGroup;
     #region Tooltip
+    [Tooltip("CNext level musics")]
+    #endregion
+    public SoundEffectSO nextLevelSoundEffect;
+    #region Tooltip
     [Tooltip("Open book sound effect")]
     #endregion Tooltip
     public SoundEffectSO openBookSoundEffect;

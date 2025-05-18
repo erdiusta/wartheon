@@ -28,7 +28,7 @@ public class InstantiatedRoom : MonoBehaviour
     #region Tooltip
     [Tooltip("Populate with the environment child placeholder gameobject ")]
     #endregion Tooltip
-    [SerializeField] GameObject environmentGameObject;
+    public GameObject environmentGameObject;
 
     #region Header MASK REFERENCES
     [Space(10)]
@@ -401,12 +401,12 @@ public class InstantiatedRoom : MonoBehaviour
                 {
                     doorComponent.isBossRoomDoor = true;
 
-                    // Instantiate boss icon for minimap by door
-                    GameObject bossIcon = Instantiate(GameResources.Instance.minimapBossPrefab, gameObject.transform);
+                    //// Instantiate boss icon for minimap by door
+                    //GameObject bossIcon = Instantiate(GameResources.Instance.minimapBossPrefab, gameObject.transform);
 
-                    // Calculate 'world' grid parent doorway position
-                    Vector2 center = (Vector2)(room.lowerBounds + room.upperBounds) / 2f;
-                    bossIcon.transform.position = new Vector3(center.x, center.y, 0f);
+                    //// Calculate 'world' grid parent doorway position
+                    //Vector2 center = (Vector2)(room.lowerBounds + room.upperBounds) / 2f;
+                    //bossIcon.transform.position = new Vector3(center.x, center.y, 0f);
                 }
             }
         }

@@ -715,7 +715,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 2}
+  m_AnchoredPosition: {x: 0, y: 0.375}
   m_SizeDelta: {x: 0.6, y: 0.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &7306540470382058320
@@ -810,8 +810,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 9
-  m_fontSizeBase: 9
+  m_fontSize: 7
+  m_fontSizeBase: 7
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2214,7 +2214,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0.1
+  m_LinearDamping: 3
   m_AngularDamping: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -2243,7 +2243,7 @@ MonoBehaviour:
   isClone: 0
   forcefieldTransform: {fileID: 0}
   levelUpAnimator: {fileID: 2946168106481843369}
-  levelUpDetails: {fileID: 11400000, guid: 07cc225c07df4fc41bc370fc7d1a17a8, type: 2}
+  levelUpDetails: {fileID: 11400000, guid: 40ba893ce07dd0b4c809a5726349ecc3, type: 2}
   playerDetails: {fileID: 0}
   healthEvent: {fileID: 0}
   health: {fileID: 0}
@@ -2424,6 +2424,7 @@ MonoBehaviour:
   isSoundPlayed: 0
   movementTimer: 0
   isPlayerRolling: 0
+  playerBodycenterPosition: {x: 0, y: 0, z: 0}
   meleeAttackTypeMainHand: 0
   meleeAttackTypeOffHand: 0
 --- !u!114 &8675837940116119588
@@ -2640,6 +2641,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 1048576
+  isColliding: 0
 --- !u!114 &305337201806947726
 MonoBehaviour:
   m_ObjectHideFlags: 0

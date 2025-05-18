@@ -19,7 +19,10 @@ public class Decoy : MonoBehaviour
 
     private void Start()
     {
-        health.SetMaximumHealth(30);
+        if (tag == "Dummy" )
+        {
+            health.SetMaximumHealth(30);
+        }
     }
 
     public ActiveItem InitializeDecoy()

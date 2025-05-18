@@ -104,6 +104,7 @@ public class ChestItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerExit(PointerEventData eventData)
     {
         GameManager.Instance.CloseTooltipPanel();
+        GameManager.Instance.CloseTooltipEquippedPanel();
     }
 
     private void OnTriggerStay2D(Collider2D collision)

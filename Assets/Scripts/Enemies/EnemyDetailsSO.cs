@@ -40,6 +40,9 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Distance to the player before enemy starts chasing")]
     #endregion
     public float chaseDistance = 50f;
+
+    [Space(10)]
+    [Header("ATTACK MOVE DETAILS")]
     #region Tooltip
     [Tooltip("Check if enemy has an attack move in a certain distance")]
     #endregion
@@ -64,6 +67,8 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Cooldown duration after special attack performed")]
     #endregion
     public float attackMoveBaseCooldown = 0.6f;
+
+    [Space(10)]
     #region Tooltip
     [Tooltip("Base evasivenes of the enemy to dodge player")]
     #endregion

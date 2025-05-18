@@ -3,17 +3,12 @@ using System;
 
 public class MeleeAttackEvent : MonoBehaviour
 {
-    public event Action<MeleeAttackEvent, MeleeAttackEventArgs> OnRightHandMeleeAttack;
-    public event Action<MeleeAttackEvent, MeleeAttackEventArgs> OnLeftHandMeleeAttack;
+    public event Action<MeleeAttackEvent, MeleeAttackEventArgs> OnAttack;
 
-    public void CallMainHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon, MeleeAttackType meleeAttackType, bool isBloodDrain = false)
+    public void CallAttackEvent(AimDirection aimDirection, Weapon weapon, MeleeAttackType meleeAttackType, MeleeHand meleeHand,bool isBloodDrain = false)
     {
-        OnRightHandMeleeAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon, meleeAttackType = meleeAttackType, isBloodDrain = isBloodDrain });
-    }
-
-    public void CallOffHandWeaponAnimEvent(AimDirection aimDirection, Weapon weapon, MeleeAttackType meleeAttackType)
-    {
-        OnLeftHandMeleeAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon, meleeAttackType = meleeAttackType});
+        OnAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon, meleeAttackType = meleeAttackType, meleeHand = meleeHand,
+            isBloodDrain = isBloodDrain });
     }
 }
 
@@ -23,4 +18,5 @@ public class MeleeAttackEventArgs : EventArgs
     public Weapon weapon;
     public MeleeAttackType meleeAttackType;
     public bool isBloodDrain;
+    public MeleeHand meleeHand;
 }

@@ -12,11 +12,11 @@ public class PlayerControl : MonoBehaviour
     [HideInInspector] public Coroutine unstealthRoutine;
     [HideInInspector] public float movementTimer = 0;
     [HideInInspector] public bool isPlayerRolling;
+    [HideInInspector] public bool IsParrying => isParrying;
+    [HideInInspector] public Vector3 playerBodycenterPosition;
 
     Vector2 movementInput;
     Player player;
-    bool leftMouseDownPreviousFrame = false;
-    bool rightMouseDownPreviousFrame = false;
     bool isPlayerMovementDisabled = false;
     Coroutine teleportParticleRoutine;
     Coroutine dropCoroutine;
@@ -26,6 +26,11 @@ public class PlayerControl : MonoBehaviour
     Coroutine playerRollCoroutine;
     WaitForFixedUpdate waitForFixedUpdate;
     float playerRollCooldownTimer = 0f;
+    bool isParrying;
+    float playerParryDurationTimer = 0f;
+    float playerParryCooldownTimer = 0f;
+    float playerParryEffectiveDuration = 0.4f;
+    float playerParryCooldownDuration = 1.6f;
     bool particlePlayed;
     float unstealthImmunityTime = 2f;
     AimDirection aimDirection;
@@ -73,6 +78,8 @@ public class PlayerControl : MonoBehaviour
 
     private void Update()
     {
+        playerBodycenterPosition = player.transform.position + new Vector3(0f, 0.65f, 0f);
+
         // If player movement disabled then return
         if (isPlayerMovementDisabled) return;
 
@@ -87,6 +94,8 @@ public class PlayerControl : MonoBehaviour
                 MovementInput();
                 // Player roll cooldown timer
                 PlayerRollCooldownTimer();
+                // Player parry cooldown timer
+                PlayerParryCooldownTimer();
                 // Process the player use item input
                 UseItemInput();
                 // Process the player use special move input
@@ -164,7 +173,7 @@ public class PlayerControl : MonoBehaviour
     private void MovementInput()
     {
         // Ensure movement doesn't override attack animations
-        if (player.meleeAttackMainHand.IsAttacking)
+        if (player.meleeAttackMainHand.IsAttacking || isParrying)
         {
             player.movementByVelocity.MovementInput = new Vector2(0f, 0f);
             return;
@@ -203,7 +212,7 @@ public class PlayerControl : MonoBehaviour
             if (!jumpButtonDown)
             {
                 // Trigger movement event
-                player.movementByVelocity.MoveRigidbody(direction, player.movementByVelocity.moveSpeed);
+                player.movementByVelocity.MoveRigidbody(direction.normalized, player.movementByVelocity.moveSpeed);
 
                 // Trigger move animations
                 player.animatePlayer.SetMovementAnimationParameters();
@@ -231,6 +240,24 @@ public class PlayerControl : MonoBehaviour
         if (playerRollCooldownTimer >= 0f)
         {
             playerRollCooldownTimer -= Time.deltaTime;
+        }
+    }
+
+    private void PlayerParryCooldownTimer()
+    {
+        if (playerParryDurationTimer >= 0f)
+        {
+            playerParryDurationTimer -= Time.deltaTime;
+        }
+        else if(isParrying)
+        {
+            isParrying = false;
+            player.animatePlayer.SetIdleAnimationParameters();
+        }
+
+        if (playerParryCooldownTimer >= 0f)
+        {
+            playerParryCooldownTimer -= Time.deltaTime;
         }
     }
 
@@ -300,6 +327,9 @@ public class PlayerControl : MonoBehaviour
         // Process the player active item input
         FireActiveItemInput(weaponDirection, weaponAngleDegrees, playerAngleDegrees, playerAimDirection);
 
+        // Process the player parry input
+        ParryWeaponInput(weaponDirection, weaponAngleDegrees, playerAngleDegrees, playerAimDirection);
+
         // Switch weapon input
         SwitchWeaponInput();
     }
@@ -348,25 +378,22 @@ public class PlayerControl : MonoBehaviour
         // Fire when left mouse button is clicked - melee
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
         {
-            // Check for quick tap input
             if (InputManager.Instance.attack.action.WasPressedThisFrame())
             {
-                #region MeleeAttackType
+                // MAIN-HAND
+                if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
+                {
+                    MeleeAttackType mainHandAttackType = DetermineAttackType(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails);
 
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasSwing)
-                {
-                    meleeAttackTypeMainHand = MeleeAttackType.Swing;
-                }
-                else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasThrust)
-                {
-                    meleeAttackTypeMainHand = MeleeAttackType.Thrust;
+                    player.meleeAttackEvent.CallAttackEvent(aimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), mainHandAttackType, MeleeHand.MainHand);
                 }
 
-                #endregion
-
-                if (!player.meleeAttackMainHand.IsAttacking)
+                // OFF-HAND
+                if (player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
                 {
-                    player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), meleeAttackTypeMainHand);
+                    MeleeAttackType offHandAttackType = DetermineAttackType(player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails);
+
+                    player.meleeAttackEvent.CallAttackEvent(aimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), offHandAttackType, MeleeHand.OffHand);
                 }
             }
 
@@ -385,7 +412,7 @@ public class PlayerControl : MonoBehaviour
                         player.meleeAttackMainHand.IsAttacking = true;
                     }
 
-                    player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
+                    player.meleeAttackEvent.CallAttackEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None, MeleeHand.None);
                 }
 
                 // Start precharge process (firePreviousFrame is false because firing hasn't happened yet)
@@ -404,7 +431,7 @@ public class PlayerControl : MonoBehaviour
                 if (!player.activeWeapon.GetCurrentMainHandWeapon().onCooldown)
                 {
                     player.meleeAttackMainHand.IsAttacking = true;
-                    player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
+                    player.meleeAttackEvent.CallAttackEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None, MeleeHand.None);
                 }
             }
 
@@ -428,6 +455,14 @@ public class PlayerControl : MonoBehaviour
             player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
                 playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
         }
+    }
+
+    private MeleeAttackType DetermineAttackType(WeaponDetailsSO weaponDetails)
+    {
+        if (weaponDetails.hasSwing) return MeleeAttackType.Swing;
+        if (weaponDetails.hasThrust) return MeleeAttackType.Thrust;
+
+        return MeleeAttackType.Swing; // default fallback
     }
 
     /// <summary>
@@ -560,6 +595,38 @@ public class PlayerControl : MonoBehaviour
                 {
                     player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, true);
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Parry weapon input
+    /// </summary>
+    private void ParryWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
+    {
+        if (player.activeWeapon.GetCurrentMainHandWeapon() != null && !player.meleeAttackMainHand.IsAttacking)
+        {
+            switch (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass)
+            {
+                case WeaponClass.Sword:
+                case WeaponClass.Axe:
+                case WeaponClass.Hammer:
+                case WeaponClass.Spear:
+                case WeaponClass.Dagger:
+                case WeaponClass.Claw:
+                    if (InputManager.Instance.parryButton.action.IsPressed() && !isParrying && playerParryCooldownTimer < 0)
+                    {
+                        isParrying = true;
+                        player.animatePlayer.ResetAnimatonParameters();
+                        player.animatePlayer.InitializeParryAnimationParameters();
+
+                        // Set cooldown timer
+                        playerParryCooldownTimer = playerParryCooldownDuration;
+                        playerParryDurationTimer = playerParryEffectiveDuration;
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -1186,7 +1253,7 @@ public class PlayerControl : MonoBehaviour
 
                 if (enemy.health != null)
                 {
-                    enemy.health.TakeDamage(player.seismicSlamDamage, transform.position, enemy.health.transform.position, false);
+                    enemy.health.TakeDamage(player.seismicSlamDamage, transform.position, enemy.health.transform.position, false, MeleeHand.None);
                 }
             }
         }
@@ -1231,7 +1298,7 @@ public class PlayerControl : MonoBehaviour
     {
         player.meleeAttackMainHand.IsAttacking = true;
         meleeAttackTypeMainHand = MeleeAttackType.Thrust;
-        player.meleeAttackEvent.CallMainHandWeaponAnimEvent(AimDirection.Up, player.activeWeapon.GetCurrentMainHandWeapon(), meleeAttackTypeMainHand, true);
+        player.meleeAttackEvent.CallAttackEvent(AimDirection.Up, player.activeWeapon.GetCurrentMainHandWeapon(), meleeAttackTypeMainHand, MeleeHand.MainHand, true);
     }
 
     /// <summary>
@@ -1284,7 +1351,7 @@ public class PlayerControl : MonoBehaviour
         isSoundPlayed = false;
 
         player.meleeAttackMainHand.IsAttacking = true;
-        player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
+        player.meleeAttackEvent.CallAttackEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None, MeleeHand.None);
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
@@ -1320,7 +1387,7 @@ public class PlayerControl : MonoBehaviour
         isSoundPlayed = false;
 
         player.meleeAttackMainHand.IsAttacking = true;
-        player.meleeAttackEvent.CallMainHandWeaponAnimEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None);
+        player.meleeAttackEvent.CallAttackEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), MeleeAttackType.None, MeleeHand.None);
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
@@ -1372,6 +1439,11 @@ public class PlayerControl : MonoBehaviour
                                 SoundEffectManager.Instance.PlaySoundEffect(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemSwingSoundEffect);
                                 iusable.StartChestProcess();
                             }
+                        }
+                        else
+                        {
+                            // Lockpick failed
+                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.BobbyPinFailed);
                         }
                     }
 
@@ -1789,8 +1861,8 @@ public class PlayerControl : MonoBehaviour
     {
         if (player == null) return;
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, player.seismicSlamCircleRadius);
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawWireSphere(transform.position, player.seismicSlamCircleRadius);
     }
 
     public void PopulateActiveItemsToBook(Sprite sprite)

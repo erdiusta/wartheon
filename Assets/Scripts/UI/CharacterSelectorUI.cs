@@ -19,6 +19,11 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
     [SerializeField] Light2D astraeusSpotlight;
     [SerializeField] Light2D orionSpotlight;
     [SerializeField] Light2D erebusSpotlight;
+    [Space(10)]
+    [SerializeField] GameObject astraeusDetailsPopUp;
+    [SerializeField] GameObject erebusDetailsPopUp;
+    [SerializeField] GameObject lyrisaDetailsPopUp;
+    [SerializeField] GameObject orionDetailsPopUp;
 
     PlayerDetailsSO[] playerDetailsList;
     CurrentPlayerSO currentPlayer;
@@ -59,7 +64,22 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        DisableAllSpotlights();
+        if (eventData.pointerEnter.CompareTag(Settings.astraeusTag))
+        {
+            DisableDetailsPopup(ref astraeusDetailsPopUp);
+        }
+        else if (eventData.pointerEnter.CompareTag(Settings.erebusTag))
+        {
+            DisableDetailsPopup(ref erebusDetailsPopUp);
+        }
+        else if (eventData.pointerEnter.CompareTag(Settings.lyrisaTag))
+        {
+            DisableDetailsPopup(ref lyrisaDetailsPopUp);
+        }
+        else if (eventData.pointerEnter.CompareTag(Settings.orionTag))
+        {
+            DisableDetailsPopup(ref orionDetailsPopUp);
+        }
     }
 
     public void HoverLyrisa()
@@ -68,6 +88,7 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         selectedPlayerIndex = 0;
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
         lyrisaSpotlight.gameObject.SetActive(true);
+        lyrisaDetailsPopUp.SetActive(true);
     }
 
     public void HoverAstraeus()
@@ -76,6 +97,7 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         selectedPlayerIndex = 1;
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
         astraeusSpotlight.gameObject.SetActive(true);
+        astraeusDetailsPopUp.SetActive(true);
     }
 
     public void HoverOrion()
@@ -84,6 +106,7 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         selectedPlayerIndex = 2;
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
         orionSpotlight.gameObject.SetActive(true);
+        orionDetailsPopUp.SetActive(true);
     }
 
     public void HoverErebus()
@@ -92,6 +115,20 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         selectedPlayerIndex = 3;
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
         erebusSpotlight.gameObject.SetActive(true);
+        erebusDetailsPopUp.SetActive(true);
+    }
+
+    private void DisableDetailsPopup(ref GameObject popupObject)
+    {
+        popupObject.SetActive(false);
+    }
+
+    public void BackButton()
+    {
+        // Unload the current additive scene
+        StaticEventHandler.CallAdditiveSceneRemoveEvent();
+
+        SceneManager.UnloadSceneAsync(gameObject.scene);
     }
 
     public void StartGame()

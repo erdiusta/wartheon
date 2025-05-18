@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: Bronze Hunting Bow Arrow
   isPlayerProjectile: 1
-  projectileSprite: {fileID: 21300000, guid: f58d782a1395b2e438b94eba1d2d2a12, type: 3}
   projectilePrefabArray:
   - {fileID: 3547249067481803369, guid: 8fe1786649bf05c44b43dab6fda52c63, type: 3}
   projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -22,12 +21,20 @@ MonoBehaviour:
   projectileChargeMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   belongingWeaponDetails: {fileID: 11400000, guid: 7d667d84917d5cd48a742ff0880df489, type: 2}
   projectileHitEffect: {fileID: 11400000, guid: 9e888f32de5d60a429c75fb52a068ded, type: 2}
-  projectileDamageMin: 10
-  projectileDamageMax: 14
+  projectileDamageMin: 8
+  projectileDamageMax: 12
   projectileSpeedMin: 14
   projectileSpeedMax: 16
   projectileRange: 16
   projectileRotationSpeed: 1
+  isBomb: 0
+  isTrap: 0
+  hasLifeTime: 0
+  lifeDuration: 15
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
   hasAcid: 1
   acidEfficiency: 0.1
   isPoisonous: 0
@@ -36,6 +43,10 @@ MonoBehaviour:
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  hasBurnDamage: 0
+  burnChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   hasCurseDamage: 0
   curseChance: 0
   projectileSpreadMin: 0.5
@@ -50,3 +61,5 @@ MonoBehaviour:
   projectileTrailMaterial: {fileID: 0}
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

@@ -4,6 +4,14 @@ using UnityEngine;
 
 public static class StaticEventHandler
 {
+    // Additive scene removed
+    public static event Action OnAdditiveSceneRemoved;
+
+    public static void CallAdditiveSceneRemoveEvent()
+    {
+        OnAdditiveSceneRemoved?.Invoke();
+    }
+
     // Cheat code activated
     public static event Action OnCheatActivated;
 

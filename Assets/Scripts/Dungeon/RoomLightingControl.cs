@@ -77,13 +77,19 @@ public class RoomLightingControl : MonoBehaviour
             yield return null;
         }
 
-        // Set material back to lit material
+        // Set material back to lit material - ROOM TILEMAPS
         instantiatedRoom.groundTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.decoration1Tilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.decoration2Tilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.sideTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.frontTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.minimapTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
+
+        // Set material back to lit material - ROOM PROPS & LIGHTS
+        foreach (Transform item in instantiatedRoom.environmentGameObject.transform)
+        {
+            item.GetComponentInChildren<SpriteRenderer>().material = GameResources.Instance.litMaterial;
+        }
     }
 
     /// <summary>

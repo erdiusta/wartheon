@@ -6,9 +6,9 @@ public class HealthEvent : MonoBehaviour
 {
     public event Action<HealthEvent, HealthEventArgs> OnHealthChanged;
 
-    public void CallHealthChangedEvent(float healthPercent, int healthAmount, int damageAmount)
+    public void CallHealthChangedEvent(float healthPercent, int healthAmount, int damageAmount, MeleeHand hand)
     {
-        OnHealthChanged?.Invoke(this, new HealthEventArgs { healthPercent = healthPercent, healthAmount = healthAmount, damageAmount = damageAmount });
+        OnHealthChanged?.Invoke(this, new HealthEventArgs { healthPercent = healthPercent, healthAmount = healthAmount, damageAmount = damageAmount, hand = hand});
     }
 
     public event Action<HealthEvent> GetPoisoned;
@@ -151,11 +151,22 @@ public class HealthEvent : MonoBehaviour
         OnGemSkinSpecialMoveEnded?.Invoke(this);
     }
 
+    public event Action<HealthEvent> OnParried;
+
+    public void CallParryEvent()
+    {
+        OnParried?.Invoke(this);
+
+        SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.parrySoundEffect);
+    }
+
     public event Action<HealthEvent> OnDodged;
 
     public void CallDodgeEvent()
     {
         OnDodged?.Invoke(this);
+
+        SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.dodgeSoundEffect);
     }
 
     public event Action<HealthEvent> OnBlocked;
@@ -163,6 +174,8 @@ public class HealthEvent : MonoBehaviour
     public void CallBlockEvent()
     {
         OnBlocked?.Invoke(this);
+
+        SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.blockSoundEffect);
     }
 
     public event Action<HealthEvent> OnCriticalHit;
@@ -185,5 +198,6 @@ public class HealthEventArgs : EventArgs
     public float healthPercent;
     public int healthAmount;
     public int damageAmount;
+    public MeleeHand hand;
 }
 

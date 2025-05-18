@@ -36,6 +36,9 @@ MonoBehaviour:
   hitImmunityTime: 1
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
+  blockSoundEffect: {fileID: 11400000, guid: 5a66c8bf2077f0a4caf767997e7b7749, type: 2}
+  dodgeSoundEffect: {fileID: 11400000, guid: 47e336b005c25684099a3b05096549a8, type: 2}
+  parrySoundEffect: {fileID: 11400000, guid: 1f535785069b176429525f2fb0e96cc7, type: 2}
   specialMoveOneImage: {fileID: 21300000, guid: 8382a280217407c45a5d379f1e1fa89a, type: 3}
   specialMoveOneSoundEffect: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
   specialMoveOneCooldownDuration: 25

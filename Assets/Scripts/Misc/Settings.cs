@@ -85,6 +85,9 @@ public static class Settings
     // Animator parameters - Shield
     public static int block = Animator.StringToHash("block");
 
+    // Animator parameters - Parry
+    public static int isParry = Animator.StringToHash("parry");
+
     // Animator parameters - Enemy
     public const float baseSpeedForEnemyAnimations = 2.5f;
 

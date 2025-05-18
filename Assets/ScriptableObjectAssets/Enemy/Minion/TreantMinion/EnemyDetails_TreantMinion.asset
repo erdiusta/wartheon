@@ -13,19 +13,24 @@ MonoBehaviour:
   m_Name: EnemyDetails_TreantMinion
   m_EditorClassIdentifier: 
   enemyName: Treant Minion
+  enemyDetails: 
+  enemyCategory: 0
   enemyPrefab: {fileID: 7183228443647751644, guid: ca99fd265a6304a4081b6907ec3eb5c9, type: 3}
   enemyType: 2
   movementDetails: {fileID: 11400000, guid: 182204ff6305c3946801d9e2eaf62980, type: 2}
   experiencePoint: 0
   chaseDistance: 12
   hasAttackMove: 1
-  attackMoveTriggerDistance: 3
-  attackMoveEfficentDistance: 5
+  attackMoveTriggerDistance: 4
+  attackMoveEfficentDistance: 9
+  countdownDurationBeforeDashAttack: 0.4
+  attackMoveDashDuration: 0.3
   attackMoveBaseCooldown: 1
   deflectionValue: 0
   enemyBehaviour: 2
   isEnemyBoss: 0
   isSummonedMinion: 1
+  isDummy: 0
   hasAnimator: 0
   elementalBias: 3
   elementalForgeRate: 0.2
@@ -39,6 +44,10 @@ MonoBehaviour:
   darkResistance: 0
   hasShield: 0
   deflectChance: 0
+  dealtMeleeDamageMin: 12
+  dealtMeleeDamageMax: 15
+  canBurn: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
   hasAcid: 0
@@ -60,6 +69,7 @@ MonoBehaviour:
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: 8520316363d6f1f459f854b545c0ab3f, type: 2}
   roarSoundEffect: {fileID: 0}
+  chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
@@ -77,10 +87,10 @@ MonoBehaviour:
   hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
+  primaryPassiveItemsByLevelList: []
   weaponsByLevelList: []
-  passiveItemsByLevelList: []
+  secondaryPassiveItemsByLevelList: []
   activeItemsByLevelList: []
+  primaryPassiveDropChanceMax: 0
   dropSpawnChanceMin: 100
   dropSpawnChanceMax: 100
-  numberOfItemsToSpawnMin: 1
-  numberOfItemsToSpawnMax: 1

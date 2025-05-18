@@ -1582,7 +1582,7 @@ public class BookUI : MonoBehaviour
                     player.UpdateWeaponHandlingAndCriticalValues();
                     player.UpdateBlockAndEvasivenessValues();
                     player.healthEvent.CallHealthChangedEvent(((float)player.health.currentHealth / (float)player.health.GetMaximumHealth()),
-                        player.health.currentHealth, 0);
+                        player.health.currentHealth, 0, MeleeHand.None);
                 }
             }
         }

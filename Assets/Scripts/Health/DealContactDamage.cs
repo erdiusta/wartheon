@@ -23,7 +23,7 @@ public class DealContactDamage : MonoBehaviour
     [SerializeField] private LayerMask layerMask;
 
     Enemy enemy; 
-    bool isColliding = false;
+    [HideInInspector] public bool isColliding = false;
 
     private void Awake()
     {
@@ -74,6 +74,13 @@ public class DealContactDamage : MonoBehaviour
 
                 if (enemy.enemyAI.isAttacking)
                 {
+                    if (player.playerControl.IsParrying)
+                    {
+                        player.healthEvent.CallParryEvent();
+                        player.health.PostHitImmunity(true);
+                        return;
+                    }
+
                     float blindPenalty = enemy.isBlind ? 0.5f : 0f;
 
                     // Evasiveness - dodge check
@@ -147,9 +154,13 @@ public class DealContactDamage : MonoBehaviour
                 receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
                 //enemy.enemyAI.TriggerKnockback((transform.position - collision.transform.position));
             }
-            else if (collision.tag == "PracticeDummy" || collision.tag == "environment")
+            else if (collision.tag == "PracticeDummy")
             {
                 return;
+            }
+            else if (collision.tag == "environment")
+            {
+                receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
             }
             else
             {
@@ -231,7 +242,7 @@ public class DealContactDamage : MonoBehaviour
 
             // Apply knockback and damage the enemy
             //enemy.enemyAI.TriggerKnockback(transform.position - collision.transform.position);
-            enemy.health.TakeDamage(damageDone, transform.position, collision.transform.position, false);
+            enemy.health.TakeDamage(damageDone, transform.position, collision.transform.position, false, MeleeHand.MainHand);
         }
     }
 

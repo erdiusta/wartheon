@@ -1,13 +1,14 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class DamageDisplay : MonoBehaviour
 {
     [SerializeField] TMP_Text damageDisplayTextPrefab; // Prefab for damage text
     [SerializeField] Transform damageTextSpawnPoint; // The point where the damage text will appear
     [SerializeField] Transform criticalTextSpawnPoint; // The point where the critical hit text will appear
-    [SerializeField] Transform headShotTextSpawnPoint; // The point where the head shot te
+    [SerializeField] Transform headShotTextSpawnPoint; // The point where the head shot text will appear
 
     [SerializeField] Color criticalHitColor = new Color(1, 0.93f, 0.59f);
     [SerializeField] Color headShotColor = Color.red;
@@ -56,14 +57,14 @@ public class DamageDisplay : MonoBehaviour
 
     private void HealthEvent_OnHealthChangedForDecoy(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {
-        DisplayDamage(healthEventArgs.damageAmount);
+        DisplayDamage(healthEventArgs.damageAmount, healthEventArgs.hand);
     }
 
     private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {
         if (!enemy.health.suddenDeathHappened && healthEventArgs.damageAmount > 0)
         {
-            DisplayDamage(healthEventArgs.damageAmount);
+            DisplayDamage(healthEventArgs.damageAmount, healthEventArgs.hand);
         }
     }
 
@@ -86,11 +87,19 @@ public class DamageDisplay : MonoBehaviour
     /// <summary>
     /// Display amount of damage
     /// </summary>
-    private void DisplayDamage(int damageAmount)
+    private void DisplayDamage(int damageAmount, MeleeHand hand = MeleeHand.None)
     {
         var damageText = Instantiate(damageDisplayTextPrefab, damageTextSpawnPoint.position, Quaternion.identity, damageTextSpawnPoint);
+
+        damageText.transform.localPosition = Vector3.zero;
+
+        if (hand == MeleeHand.OffHand) damageText.transform.localPosition += new Vector3(-0.3f, 0.5f, 0f);
+        else if (hand == MeleeHand.MainHand) damageText.transform.localPosition += new Vector3(0.3f, 0f, 0f);
+
         damageText.text = damageAmount.ToString();
-        AnimateText(damageText, displayDuration);
+
+        float delay = hand == MeleeHand.OffHand ? 0.05f : 0f;
+        AnimateText(damageText, displayDuration, delay);
     }
 
     /// <summary>
@@ -99,7 +108,10 @@ public class DamageDisplay : MonoBehaviour
     private void DisplayCriticalDamage()
     {
         var criticalText = Instantiate(damageDisplayTextPrefab, criticalTextSpawnPoint.position, Quaternion.identity, criticalTextSpawnPoint);
+
         criticalText.color = criticalHitColor;
+        criticalText.transform.localPosition += new Vector3(0f, 0f, 0f);
+
         criticalText.text = "CRITICAL HIT";
         AnimateText(criticalText, criticalHitDuration);
     }
@@ -110,20 +122,22 @@ public class DamageDisplay : MonoBehaviour
     private void DisplayHeadShot()
     {
         var headShotText = Instantiate(damageDisplayTextPrefab, headShotTextSpawnPoint.position, Quaternion.identity, headShotTextSpawnPoint);
+
+        headShotText.transform.localPosition += new Vector3(0f, 0f, 0f);
         headShotText.color = headShotColor;
+
         headShotText.text = "HEAD SHOT";
         AnimateText(headShotText, headShotDuration);
     }
 
-    private void AnimateText(TMP_Text text, float duration)
+    private void AnimateText(TMP_Text text, float duration, float delay = 0f)
     {
-
         Vector3 startPosition = text.transform.position;
-        Vector3 endPosition = startPosition + popUpOffset;
+        Vector3 endPosition = startPosition + popUpOffset; // e.g., new Vector3(0, 0.5f, 0)
 
-        LeanTween.move(text.gameObject, endPosition, popUpDuration).setEase(LeanTweenType.linear);
-        LeanTween.scale(text.gameObject, Vector3.zero, popUpDuration).setEaseInOutBounce().setDelay(duration);
+        LeanTween.move(text.gameObject, endPosition, popUpDuration).setEase(LeanTweenType.linear).setDelay(delay);
+        LeanTween.scale(text.gameObject, Vector3.zero, popUpDuration).setEaseInOutBounce().setDelay(duration + delay);
 
-        Destroy(text.gameObject, duration + popUpDuration);
+        Destroy(text.gameObject, duration + popUpDuration + delay);
     }
 }

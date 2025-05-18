@@ -22,12 +22,12 @@ MonoBehaviour:
   experiencePoint: 50
   chaseDistance: 15
   hasAttackMove: 1
-  attackMoveTriggerDistance: 5
-  attackMoveEfficentDistance: 4
-  countdownDurationBeforeDashAttack: 0.8
+  attackMoveTriggerDistance: 4
+  attackMoveEfficentDistance: 9
+  countdownDurationBeforeDashAttack: 0.4
   attackMoveDashDuration: 0.3
-  attackMoveBaseCooldown: 1
-  deflectionValue: 0.1
+  attackMoveBaseCooldown: 0.4
+  deflectionValue: 0.2
   enemyBehaviour: 0
   isEnemyBoss: 0
   isSummonedMinion: 0

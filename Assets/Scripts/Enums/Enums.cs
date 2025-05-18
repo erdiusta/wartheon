@@ -508,7 +508,15 @@ public enum PopUpReason
     EquipMainHandFirst,
     CantMoveYourMainHandWithEmptyOffHand,
     YourHandsFull,
-    DontMeetRequiredPrimaryStats
+    DontMeetRequiredPrimaryStats,
+    BobbyPinFailed
+}
+
+public enum MeleeHand
+{
+    None,
+    MainHand,
+    OffHand
 }
 
 public enum DropType

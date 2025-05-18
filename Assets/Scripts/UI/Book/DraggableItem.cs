@@ -154,33 +154,6 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 {
                     Destroy(originalParent.GetChild(0).gameObject);
                 }
-
-                //// For drop issue, don't assign weapon to null reference
-                //if (player.weaponSlotSetArray[originalIndex - 1][0] == null && 
-                //    player.weaponSlotSetArray[originalIndex - 1][1] == null)
-                //{
-                //    Destroy(belongigSlotParentTransform.gameObject);
-                //    receivable = null;
-                //    Destroy(this);
-                //}
-                //if (belongingSlot != null)
-                //{
-                //    if (belongingSlot.slotType == SlotType.WeaponMainHand)
-                //    {
-                //        if (player.activeWeapon.weaponToBeDropped.weaponDetails.wieldType == WieldType.TwoHanded)
-                //        {
-                //            // Clear lock icon at off-hand slot when dropping two-handed weapon
-                //            InventoryManager.Instance.ClearIntendedElementInOffHandEquippedSlot(0);
-                //        }
-                //    }
-                //    else if (belongingSlot.slotType == SlotType.Active)
-                //    {
-                //        // Clear children duplicate slots if has
-                //        InventoryManager.Instance.ClearIntendedElementInActiveItemEquippedSlot();
-                //    }
-
-                //    receivable = null;
-                //}
             }
             else if (eventData.pointerEnter.CompareTag(Settings.bookCover))
             {

@@ -2,6 +2,7 @@ using Unity.Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class DungeonMap : SingletonMonobehaviour<DungeonMap>
 {
@@ -49,15 +50,12 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
     private void GetRoomClicked()
     {
         // Convert screen position to world position
-        Vector3 checkedPos = dungeonMapCamera.ScreenToWorldPoint(Input.mousePosition);
-
-        if (checkedPos == null) return;
-
-        Vector3 worldPosition = checkedPos;
-        worldPosition = new Vector3(worldPosition.x, worldPosition.y, 0f);
+        Vector3 worldPosition = dungeonMapCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 
         // Check for collisions at cursor position
         Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(new Vector2(worldPosition.x, worldPosition.y), 1f);
+
+        if (collider2DArray == null || collider2DArray.Length == 0) return;
 
         // Check if any of the colliders are a room
         foreach (Collider2D collider2D in collider2DArray)
@@ -71,6 +69,7 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
                 {
                     // Move player to room
                     StartCoroutine(MovePlayerToRoom(worldPosition, instantiatedRoom.room));
+                    break;
                 }
             }
         }
@@ -115,11 +114,11 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
         GameManager.Instance.previousGameState = GameManager.Instance.gameState;
         GameManager.Instance.gameState = GameState.dungeonOverviewMap;
 
-        // Disable player
-        GameManager.Instance.GetPlayer().playerControl.DisablePlayer();
+        //// Disable player
+        //GameManager.Instance.GetPlayer().playerControl.DisablePlayer();
 
-        // Disable main camera and enable dungeon overview camera
-        cameraMain.gameObject.SetActive(false);
+        //// Disable main camera and enable dungeon overview camera
+        //cameraMain.gameObject.SetActive(false);
         dungeonMapCamera.gameObject.SetActive(true);
 
         // Ensure all rooms are active so they can be displayed

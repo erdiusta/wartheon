@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.XR;
+using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(MeleeAttackEvent))]
@@ -35,14 +37,14 @@ public class MeleeAttackMainHand : MonoBehaviour
 
     private void OnEnable()
     {
-        meleeAttackEvent.OnRightHandMeleeAttack += MeleeAttackEvent_MainHandMeleeAttack;
+        meleeAttackEvent.OnAttack += MeleeAttackEvent_MainHandMeleeAttack;
         rightHandAnimationEventHelper.OnAnimationMainHandEventTriggered.AddListener(ResetIsAttackingRightHand);
         rightHandAnimationEventHelper.OnAttackMainHandPerformed.AddListener(DetectColliders);
     }
 
     private void OnDisable()
     {
-        meleeAttackEvent.OnRightHandMeleeAttack -= MeleeAttackEvent_MainHandMeleeAttack;
+        meleeAttackEvent.OnAttack -= MeleeAttackEvent_MainHandMeleeAttack;
         rightHandAnimationEventHelper.OnAnimationMainHandEventTriggered.RemoveListener(ResetIsAttackingRightHand);
         rightHandAnimationEventHelper.OnAttackMainHandPerformed.RemoveListener(DetectColliders);
     }
@@ -65,65 +67,68 @@ public class MeleeAttackMainHand : MonoBehaviour
     {
         if (!IsAttacking) return;
 
+        Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+        MeleeAttackType mainHandMeleeAttackType = mainHandWeapon.weaponDetails.hasSwing ? MeleeAttackType.Swing : MeleeAttackType.Thrust;
+
+        DetectHandHit(mainHandWeapon, mainHandMeleeAttackType, MeleeHand.MainHand, isBloodDrain);
+
+        // Optional: also include off-hand detection here if desired
+        Weapon offHandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
+
+        if (offHandWeapon?.weaponDetails.isMeleeWeapon == true)
+        {
+            MeleeAttackType offHandMeleeAttackType = offHandWeapon.weaponDetails.hasSwing ? MeleeAttackType.Swing : MeleeAttackType.Thrust;
+            DetectHandHit(offHandWeapon, offHandMeleeAttackType, MeleeHand.OffHand, isBloodDrain);
+        }
+    }
+
+    private void DetectHandHit(Weapon weapon, MeleeAttackType attackType, MeleeHand hand, bool isBloodDrain)
+    {
+        Transform originTransform = attackType == MeleeAttackType.Swing
+            ? circleOriginTransform
+            : boxOriginTransform;
+
+        Collider2D attackCollider = originTransform.GetComponent<Collider2D>();
+
         int hitCount = 0;
 
-        while (true) // Loop until we get all colliders
+        while (true)
         {
-            switch (player.playerControl.meleeAttackTypeMainHand)
-            {
-                case MeleeAttackType.Swing:
-                    hitCount = Physics2D.OverlapCollider(circleOriginTransform.GetComponent<Collider2D>(), _contactFilter, _colliders);
-                    break;
-                case MeleeAttackType.Thrust:
-                    hitCount = Physics2D.OverlapCollider(boxOriginTransform.GetComponent<Collider2D>(), _contactFilter, _colliders);
-                    break;
-                default:
-                    return;
-            }
+            hitCount = Physics2D.OverlapCollider(attackCollider, _contactFilter, _colliders);
 
-            // If the array is too small, increase its size and retry
-            if (hitCount == _colliders.Length)
-            {
-                _colliders = new Collider2D[_colliders.Length * 2]; // Double the size
-                continue;
-            }
-            break;
+            if (hitCount < _colliders.Length) break;
+
+            _colliders = new Collider2D[_colliders.Length * 2];
         }
 
-        // Use Span<T> to process only the valid colliders
         Span<Collider2D> hitSpan = _colliders.AsSpan(0, hitCount);
 
         foreach (var collider in hitSpan)
         {
-            // Check if the collider belongs to an environment object
-            if (collider.TryGetComponent(out Environment environment))
-            {
-                if (collider.TryGetComponent(out Health environmentHealth))
-                {
-                    environmentHealth.TakeDamage(100, transform.position, collider.transform.position, false);
-                }
-                continue; // Skip further checks
-            }
-
-            // Ignore unwanted objects
             if (collider.CompareTag(Settings.playerTag) ||
                 collider.CompareTag(Settings.decoyTag) ||
-                collider.CompareTag(Settings.chestItemTag)) continue;
+                collider.CompareTag(Settings.chestItemTag))
+                continue;
 
-            // Check if the collider has a Health component
-            if (!collider.TryGetComponent(out Health enemyHealth)) continue;
-
-            // Special check for practice dummy (doesn't exit early now)
-            if (collider.CompareTag("PracticeDummy"))
+            // Handle destructibles / environment
+            if (collider.TryGetComponent(out Environment environment) &&
+                collider.TryGetComponent(out Health envHealth))
             {
-                DummyCheck(collider);
-                continue; // Continue instead of return, so other enemies are processed
+                envHealth.TakeDamage(100, transform.position, collider.transform.position, false, hand);
+                continue;
             }
 
-            // Check if the collider is an actual enemy
+            if (!collider.TryGetComponent(out Health enemyHealth)) continue;
+
+            if (collider.CompareTag("PracticeDummy"))
+            {
+                DummyCheck(collider, hand);
+                continue;
+            }
+
             if (!collider.TryGetComponent(out Enemy enemy)) continue;
 
-            // Hit calculation (determines if the attack lands)
+            // Calculate hit chance
             bool attackHits = player.currentWeaponHandlingValue * 100 - enemy.enemyDetails.deflectionValue * 100 > Random.Range(0, 100);
 
             if (attackHits)
@@ -136,20 +141,18 @@ public class MeleeAttackMainHand : MonoBehaviour
 
                 if (enemyHealth.suddenDeathHappened)
                 {
-                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false);
-                    continue; // Move to the next enemy
+                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false, hand);
+                    continue;
                 }
 
                 int inflictedDamage = isBloodDrain
-                    ? Mathf.Max((int)(enemyHealth.currentHealth * (0.2f + player.bloodDrainSkillAdditionalDamagePercentageModifier)), CalculateDamageAmount(enemy))
-                    : CalculateDamageAmount(enemy);
+                    ? Mathf.Max((int)(enemyHealth.currentHealth * (0.2f + player.bloodDrainSkillAdditionalDamagePercentageModifier)),
+                                CalculateDamageAmount(enemy, weapon, hand)): CalculateDamageAmount(enemy, weapon, hand);
 
-                if (enemyHealth != null)
-                {
-                    enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
-                }
+                bool bypass = hand == MeleeHand.OffHand; // only bypass for off-hand hits
+                enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false, hand, bypass);
 
-                SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
+                SoundEffectManager.Instance.PlaySoundEffect(weapon.weaponDetails.weaponImpactSoundEffect);
 
                 if (!enemy.enemyDetails.isEnemyBoss)
                 {
@@ -168,11 +171,11 @@ public class MeleeAttackMainHand : MonoBehaviour
             }
             else
             {
-                // Enemy dodged the attack
+                // Enemy dodged
                 enemyHealth.isDodging = true;
                 enemy.healthEvent.CallDodgeEvent();
                 enemyHealth.PostHitImmunity(true);
-                enemyHealth.TakeDamage(0, transform.position, enemyHealth.transform.position, false);
+                enemyHealth.TakeDamage(0, transform.position, enemyHealth.transform.position, false, hand);
             }
         }
     }
@@ -180,73 +183,54 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <summary>
     /// Calculate damage amount
     /// </summary>
-    private int CalculateDamageAmount(Enemy enemy)
+    private int CalculateDamageAmount(Enemy enemy, Weapon weapon, MeleeHand hand)
     {
-        // Damage produced by player
-        int damageDone = player.isCursed ? player.currentMainHandMinDamageValue : Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
-        int offHandDamageDone = player.isCursed ? player.currentOffHandMinDamageValue : Random.Range(player.currentOffHandMinDamageValue, player.currentOffHandMinDamageValue);
-        damageDone += offHandDamageDone;
+        int damageDone = player.isCursed
+            ? (hand == MeleeHand.MainHand ? player.currentMainHandMinDamageValue : player.currentOffHandMinDamageValue)
+            : Random.Range(
+                hand == MeleeHand.MainHand ? player.currentMainHandMinDamageValue : player.currentOffHandMinDamageValue,
+                hand == MeleeHand.MainHand ? player.currentMainHandMaxDamageValue : player.currentOffHandMaxDamageValue
+            );
 
         bool criticalHitHappened = CriticalHitHappened();
 
-        // Critical hit check
         if (criticalHitHappened)
         {
             enemy.healthEvent.CallCriticalHitEvent();
             SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.criticalHitSoundEffect);
         }
 
-        // Calculate damage after critical hit check
+        float critMultiplier = weapon.weaponDetails.criticalHitDamageMultiplier + player.additionalCriticalMeleeDamageModifier;
+
         if (player.onStealth)
+            critMultiplier += player.additionalCriticalDamageOnStealth;
+
+        damageDone = criticalHitHappened ? (int)(damageDone * critMultiplier) : damageDone;
+
+        int baseElemental = (int)(weapon.weaponDetails.elementalForgeRate * damageDone);
+        int elementalDamage = (int)(baseElemental * (1 + player.additionalElementalDamageModifier));
+        int nonElementalDamage = damageDone - baseElemental;
+
+        int inflictedNonElemental = (int)(nonElementalDamage * (1 - enemy.currentPhysicalResistance));
+        int inflictedElemental = 0;
+
+        switch (weapon.weaponDetails.elementalBias)
         {
-            damageDone = criticalHitHappened ? (int)(damageDone * (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
-                player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnStealth)) : damageDone;
-        }
-        else
-        {
-            damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
-                player.additionalCriticalMeleeDamageModifier) : damageDone;
-        }
-
-        // Segregate elemental and non-elemental damage
-        int elementalDamage = (int)(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.elementalForgeRate * damageDone);
-
-        int additionalElementalDamage = (int)(elementalDamage * player.additionalElementalDamageModifier);
-        elementalDamage += additionalElementalDamage;
-
-        int nonElementalDamage = damageDone - elementalDamage + additionalElementalDamage;
-
-        int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - enemy.currentPhysicalResistance));
-
-        int inflictedElementalDamage = 0;
-        // Calculate inflicted elemental damage
-        switch (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.elementalBias)
-        {
-            case ElementalBias.None:
-                break;
             case ElementalBias.Fire:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.fireResistance));
-                break;
+                inflictedElemental = (int)(elementalDamage * (1 - enemy.enemyDetails.fireResistance)); break;
             case ElementalBias.Water:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.waterResistance));
-                break;
+                inflictedElemental = (int)(elementalDamage * (1 - enemy.enemyDetails.waterResistance)); break;
             case ElementalBias.Earth:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.earthResistance));
-                break;
+                inflictedElemental = (int)(elementalDamage * (1 - enemy.enemyDetails.earthResistance)); break;
             case ElementalBias.Air:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.airResistance));
-                break;
+                inflictedElemental = (int)(elementalDamage * (1 - enemy.enemyDetails.airResistance)); break;
             case ElementalBias.Dark:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.darkResistance));
-                break;
+                inflictedElemental = (int)(elementalDamage * (1 - enemy.enemyDetails.darkResistance)); break;
             case ElementalBias.Light:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - enemy.enemyDetails.lightResistance));
-                break;
-            default:
-                break;
+                inflictedElemental = (int)(elementalDamage * (1 - enemy.enemyDetails.lightResistance)); break;
         }
 
-        return inflictedElementalDamage + inflictedNonElementalDamage;
+        return inflictedNonElemental + inflictedElemental;
     }
 
     /// <summary>
@@ -339,7 +323,7 @@ public class MeleeAttackMainHand : MonoBehaviour
             if (randomDice < 0.25f)
             {
                 enemyHealth.suddenDeathHappened = true;
-                enemyHealth.TakeDamage(5000, transform.position, enemy.transform.position, false);
+                enemyHealth.TakeDamage(5000, transform.position, enemy.transform.position, false, MeleeHand.MainHand);
                 enemy.destroyedEvent.CallDestroyedEvent(false);
                 enemy.healthEvent.CallGetShatteredEvent();
                 SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
@@ -579,32 +563,44 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <summary>
     /// Dummy hit interactions
     /// </summary>
-    private void DummyCheck(Collider2D collider)
+    private void DummyCheck(Collider2D collider, MeleeHand hand)
     {
         Health health = collider.GetComponent<Health>();
 
         // Damage produced by player
-        int damageDone = player.isCursed ? player.currentMainHandMinDamageValue : Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
-        int offHandDamageDone = player.isCursed ? player.currentOffHandMinDamageValue : Random.Range(player.currentOffHandMinDamageValue, player.currentOffHandMinDamageValue);
-        damageDone += offHandDamageDone;
+        int damageDone = player.isCursed
+            ? (hand == MeleeHand.MainHand ? player.currentMainHandMinDamageValue : player.currentOffHandMinDamageValue)
+            : Random.Range(hand == MeleeHand.MainHand ? player.currentMainHandMinDamageValue : player.currentOffHandMinDamageValue,
+                hand == MeleeHand.MainHand ? player.currentMainHandMaxDamageValue : player.currentOffHandMaxDamageValue);
+
+        Weapon weapon = new Weapon();
+
+        if (hand == MeleeHand.MainHand)
+        {
+            weapon = player.activeWeapon.GetCurrentMainHandWeapon();
+        }
+        else
+        {
+            weapon = player.activeWeapon.GetCurrentOffHandWeapon();
+        }
 
         bool criticalHitHappened = CriticalHitHappened();
 
         // Calculate damage after critical hit check
         if (player.onStealth)
         {
-            damageDone = criticalHitHappened ? (int)(damageDone * (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
-                player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnStealth)) : damageDone;
+            damageDone = criticalHitHappened ? (int)(damageDone * (weapon.weaponDetails.criticalHitDamageMultiplier +player.additionalCriticalMeleeDamageModifier + 
+                player.additionalCriticalDamageOnStealth)) : damageDone;
         }
         else
         {
-            damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+            damageDone = criticalHitHappened ? (int)(damageDone * weapon.weaponDetails.criticalHitDamageMultiplier +
                 player.additionalCriticalMeleeDamageModifier) : damageDone;
         }
 
-        health.PostHitImmunity();
-        health.TakeDamage(damageDone, transform.position, health.transform.position, false);
-        collider.GetComponent<HealthEvent>().CallHealthChangedEvent(damageDone / 1000000000, 1000000000, damageDone);
+
+        bool bypass = hand == MeleeHand.OffHand; // only bypass for off-hand hits
+        health.TakeDamage(damageDone, transform.position, health.transform.position, false, hand, bypass);
     }
 
     IEnumerator DelayAttackRightHand(Weapon weapon)

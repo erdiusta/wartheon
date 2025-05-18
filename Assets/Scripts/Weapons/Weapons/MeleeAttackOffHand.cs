@@ -35,14 +35,14 @@ public class MeleeAttackOffHand : MonoBehaviour
 
     private void OnEnable()
     {
-        meleeAttackEvent.OnLeftHandMeleeAttack += MeleeAttackEvent_OnLeftHandMeleeAttack;
+        //meleeAttackEvent.OnLeftHandMeleeAttack += MeleeAttackEvent_OnLeftHandMeleeAttack;
         //leftHandAnimationEventHelper.OnAnimationOffHandEventTriggered.AddListener(ResetIsAttackingLeftHand);
         //leftHandAnimationEventHelper.OnAttackOffHandPerformed.AddListener(DetectColliders);
     }
 
     private void OnDisable()
     {
-        meleeAttackEvent.OnLeftHandMeleeAttack -= MeleeAttackEvent_OnLeftHandMeleeAttack;
+        //meleeAttackEvent.OnLeftHandMeleeAttack -= MeleeAttackEvent_OnLeftHandMeleeAttack;
         //leftHandAnimationEventHelper.OnAnimationOffHandEventTriggered.RemoveListener(ResetIsAttackingLeftHand);
         //leftHandAnimationEventHelper.OnAttackOffHandPerformed.RemoveListener(DetectColliders);
     }

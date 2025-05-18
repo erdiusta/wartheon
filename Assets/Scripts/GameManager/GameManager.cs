@@ -30,10 +30,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [SerializeField] GameObject settingsMenuUI;
     [SerializeField] Slider musicVolumeSlider;
     [SerializeField] Slider soundVolumeSlider;
-    [SerializeField] Toggle fullscreenToggle;
-    [SerializeField] Image fullScreenCheckmarkImage;
+    [SerializeField] Toggle postProcessingToggle;
+    [SerializeField] Image postProcessingCheckmarkImage;
     [SerializeField] Toggle vsyncToggle;
     [SerializeField] Image vysncCheckmarkImage;
+    [SerializeField] TMP_Dropdown resolutionDropdown;
+    [SerializeField] TMP_Dropdown screenModeDropDown;
+    [SerializeField] TMP_Dropdown refreshRateDropdown;
 
     #region Tooltip
     [Tooltip("Populate with the MessageText textmeshpro component in the FadeScreenUI")]
@@ -84,6 +87,26 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public TextMeshProUGUI masteryText1;
     public TextMeshProUGUI masteryText2;
     public TextMeshProUGUI masteryText3;
+
+    [Space(10)]
+    // Tooltip panel equipped
+    public GameObject tooltipPanelEquipped;
+    public TextMeshProUGUI headerTextEquipped;
+    public TextMeshProUGUI levelTextEquipped;
+    public TextMeshProUGUI equippedText;
+    public TextMeshProUGUI weaponClassTextEquipped;
+    public TextMeshProUGUI hitSpeedTextEquipped;
+    public TextMeshProUGUI weaponWieldTextEquipped;
+    public TextMeshProUGUI damageTextEquipped;
+    public TextMeshProUGUI baseHandlingTextEquipped;
+    public TextMeshProUGUI crHitChanceTextEquipped;
+    public TextMeshProUGUI crHitDamageTextEquipped;
+    public TextMeshProUGUI elementalBiasTextEquipped;
+    public TextMeshProUGUI elementTextEquipped;
+    public TextMeshProUGUI elementalForgeRateTextEquipped;
+    public TextMeshProUGUI masteryText1Equipped;
+    public TextMeshProUGUI masteryText2Equipped;
+    public TextMeshProUGUI masteryText3Equipped;
 
     [Space(10)]
     [SerializeField]GameObject introductionPopUp;
@@ -138,6 +161,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     HashSet<Room> visitedRooms = new HashSet<Room>();
     Enemy bossEnemy;
     float blindTimer = 0f;
+
+    // Pause Menu
+    Resolution[] resolutions;
+    Dictionary<string, List<int>> resolutionToHzMap;
+    List<string> resolutionOptions;
 
     // Weapon Level 
     [Header("WEAPON LEVEL COLORS")]
@@ -482,25 +510,48 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Set screen to black
         StartCoroutine(Fade(0f, 1f, 0f, Color.black));
 
-        // PAUSE MENU 
+        // PAUSE MENU
+        // Initialize and categorize resolutions
+        resolutions = Screen.resolutions;
+        resolutionToHzMap = new Dictionary<string, List<int>>();
+        resolutionOptions = new List<string>();
+
+        foreach (Resolution res in resolutions)
+        {
+            string key = $"{res.width} x {res.height}";
+            int hz = (int)res.refreshRateRatio.value;
+
+            if (!resolutionToHzMap.ContainsKey(key))
+            {
+                resolutionToHzMap[key] = new List<int>();
+                resolutionOptions.Add(key);
+            }
+
+            if (!resolutionToHzMap[key].Contains(hz)) resolutionToHzMap[key].Add(hz);
+        }
+
+        // Sort Hz lists
+        foreach (var kvp in resolutionToHzMap) kvp.Value.Sort();
+
+        // Populate resolution dropdown
+        resolutionDropdown.ClearOptions();
+        resolutionDropdown.AddOptions(resolutionOptions);
+        resolutionDropdown.onValueChanged.AddListener(OnResolutionDropdownChanged);
+
         // Sync toggle with current fullscreen state
-        fullscreenToggle.isOn = Screen.fullScreen;
-        UpdateFullScreenCheckmarkVisibility(fullscreenToggle.isOn);
+        LoadSettingsFromPlayerPrefs();
 
-        // Sync toggle with current V-Sync state (1 = on, 0 = off)
-        bool vsyncEnabled = QualitySettings.vSyncCount > 0;
-        vsyncToggle.isOn = vsyncEnabled;
-        UpdateVysncCheckmarkVisibility(vsyncEnabled);
+        // Screen modes
+        screenModeDropDown.ClearOptions();
+        screenModeDropDown.AddOptions(new List<string> { "Exclusive Fullscreen", "Borderless Window", "Windowed" });
 
-        // Music and sound sliders
-        musicVolumeSlider.value = MusicManager.Instance.GetMusicVolume();
-        soundVolumeSlider.value = SoundEffectManager.Instance.GetSoundVolume();
-
-        // Add Listeners
+        // Add listeners
         musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeSliderChanged);
         soundVolumeSlider.onValueChanged.AddListener(OnSoundVolumeSliderChanged);
-        fullscreenToggle.onValueChanged.AddListener(OnFullScreenToggleChanged);
+        postProcessingToggle.onValueChanged.AddListener(OnPostProcessingToggleChanged);
         vsyncToggle.onValueChanged.AddListener(OnVsyncToggleChanged);
+        refreshRateDropdown.onValueChanged.AddListener(OnRefreshRateChanged);
+        screenModeDropDown.onValueChanged.AddListener(SetScreenMode);
 
         // Ensure the volume has a Vignette effect and store a reference to it
         if (volume != null && volume.profile.TryGet(out vignette))
@@ -1038,17 +1089,150 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Options";
     }
 
-    private void OnFullScreenToggleChanged(bool isOn)
+    private void LoadSettingsFromPlayerPrefs()
+    {
+        // Music Volume
+        if (PlayerPrefs.HasKey("MusicVolume"))
+        {
+            float musicVol = PlayerPrefs.GetFloat("MusicVolume");
+            musicVolumeSlider.value = musicVol;
+            MusicManager.Instance.SetVolume((int)musicVol);
+        }
+
+        // Sound Volume
+        if (PlayerPrefs.HasKey("SoundVolume"))
+        {
+            float soundVol = PlayerPrefs.GetFloat("SoundVolume");
+            soundVolumeSlider.value = soundVol;
+            SoundEffectManager.Instance.SetVolume((int)soundVol);
+        }
+
+        // Post-processing
+        if (PlayerPrefs.HasKey("PostProcessing"))
+        {
+            bool pp = PlayerPrefs.GetInt("PostProcessing") == 1;
+            postProcessingToggle.isOn = pp;
+            PostProcessingEnabler.Instance.isOn = pp;
+            UpdatePostProcessingCheckmarkVisibility(pp);
+        }
+
+        // VSync
+        if (PlayerPrefs.HasKey("Vsync"))
+        {
+            bool vsync = PlayerPrefs.GetInt("Vsync") == 1;
+            vsyncToggle.isOn = vsync;
+            QualitySettings.vSyncCount = vsync ? 1 : 0;
+            UpdateVysncCheckmarkVisibility(vsync);
+        }
+
+        // Resolution
+        if (PlayerPrefs.HasKey("ResolutionIndex") && PlayerPrefs.HasKey("RefreshRateIndex"))
+        {
+            int resIndex = PlayerPrefs.GetInt("ResolutionIndex");
+            int hzIndex = PlayerPrefs.GetInt("RefreshRateIndex");
+
+            resolutionDropdown.value = Mathf.Clamp(resIndex, 0, resolutionOptions.Count - 1);
+            OnResolutionDropdownChanged(resolutionDropdown.value); // populates refreshRateDropdown
+
+            string selectedRes = resolutionOptions[resolutionDropdown.value];
+            int clampedHz = Mathf.Clamp(hzIndex, 0, resolutionToHzMap[selectedRes].Count - 1);
+            refreshRateDropdown.value = clampedHz;
+
+            ApplyResolution();
+        }
+
+        // Screen Mode
+        if (PlayerPrefs.HasKey("ScreenModeIndex"))
+        {
+            int modeIndex = PlayerPrefs.GetInt("ScreenModeIndex");
+            screenModeDropDown.value = modeIndex;
+            SetScreenMode(modeIndex);
+        }
+
+        resolutionDropdown.RefreshShownValue();
+        refreshRateDropdown.RefreshShownValue();
+        screenModeDropDown.RefreshShownValue();
+    }
+
+    private void OnResolutionDropdownChanged(int index)
+    {
+        string selectedRes = resolutionOptions[index];
+        List<int> hzOptions = resolutionToHzMap[selectedRes];
+
+        // Convert Hz list to readable labels
+        List<string> hzLabels = hzOptions.ConvertAll(hz => hz + " Hz");
+
+        refreshRateDropdown.ClearOptions();
+        refreshRateDropdown.AddOptions(hzLabels);
+
+        // Set dropdown.value *after* options are added and always within bounds
+        refreshRateDropdown.value = Mathf.Clamp(refreshRateDropdown.value, 0, hzOptions.Count - 1);
+
+        refreshRateDropdown.RefreshShownValue();
+
+        // Immediately apply resolution with new Hz
+        ApplyResolution();
+    }
+
+    private void OnRefreshRateChanged(int hzIndex)
+    {
+        ApplyResolution();
+    }
+
+    private void ApplyResolution()
+    {
+        string selectedRes = resolutionOptions[resolutionDropdown.value];
+        string[] parts = selectedRes.Split('x');
+        int width = int.Parse(parts[0].Trim());
+        int height = int.Parse(parts[1].Trim());
+
+        List<int> hzList = resolutionToHzMap[selectedRes];
+        int safeHzIndex = Mathf.Clamp(refreshRateDropdown.value, 0, hzList.Count - 1);
+        int selectedHz = hzList[safeHzIndex];
+
+        // Create the RefreshRate struct directly
+        var refreshRate = new RefreshRate
+        {
+            numerator = (uint)selectedHz,
+            denominator = 1
+        };
+        Screen.SetResolution(width, height, Screen.fullScreenMode, refreshRate);
+    }
+
+    private void SetScreenMode(int modeIndex)
+    {
+        //SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        switch (modeIndex)
+        {
+            case 0:
+                Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+                break;
+            case 1:
+                Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+                break;
+            case 2:
+                Screen.fullScreenMode = FullScreenMode.Windowed;
+                break;
+            default:
+                break;
+        }
+
+        //// Re-apply resolution to honor screen mode change
+        //ApplyResolution();
+    }
+
+    private void OnPostProcessingToggleChanged(bool isOn)
     {
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
-        Screen.fullScreen = isOn;
-        UpdateFullScreenCheckmarkVisibility(isOn);
+        PostProcessingEnabler.Instance.isOn = isOn;
+        UpdatePostProcessingCheckmarkVisibility(isOn);
     }
 
-    private void UpdateFullScreenCheckmarkVisibility(bool show)
+    private void UpdatePostProcessingCheckmarkVisibility(bool show)
     {
-        fullScreenCheckmarkImage.enabled = show;
+        postProcessingCheckmarkImage.enabled = show;
     }
 
     private void OnVsyncToggleChanged(bool isOn)
@@ -1161,6 +1345,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         string messageText = "LEVEL " + (currentDungeonLevelListIndex + 1).ToString() + "\n\n" + dungeonLevelList[currentDungeonLevelListIndex].
             levelName.ToUpper();
+
+        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.nextLevelSoundEffect);
 
         yield return StartCoroutine(DisplayMessageRoutine(messageText, Color.yellow, 2f));
 
@@ -1505,6 +1691,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case PopUpReason.DontMeetRequiredPrimaryStats:
                 warningText.text = "You don't have required stat points to wield this weapon.";
                 break;
+            case PopUpReason.BobbyPinFailed:
+                warningText.text = "Lockpick with Bobby Pin failed.";
+                break;
             default:
                 break;
         }
@@ -1513,7 +1702,21 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public void UpdateTooltipPanelInfo(IReceivable receivable, bool hasWeaponDrop, bool hasActiveDrop, bool hasSecondaryPassiveDrop)
     {
         tooltipPanel.SetActive(true);
+        if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+        {
+            if (receivable is Weapon)
+            {
+                Weapon weapon = (Weapon)receivable;
+
+                if (weapon.weaponDetails.weaponClass != WeaponClass.Shield)
+                {
+                    tooltipPanelEquipped.SetActive(true);
+                }
+            }
+        }
+
         ClearTooltipPanel();
+        ClearTooltipEquippedPanel();
 
         if (hasSecondaryPassiveDrop)
         {
@@ -1803,11 +2006,152 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                         break;
                 }
 
+                Weapon equippedWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+
+                // Equipped
+                if (equippedWeapon != null && weapon.weaponDetails.weaponClass != WeaponClass.Shield)
+                {
+                    switch (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponLevel)
+                    {
+                        case WeaponLevel.Basic:
+                            headerTextEquipped.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                            levelTextEquipped.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                            break;
+                        case WeaponLevel.Enchanted:
+                            headerTextEquipped.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                            levelTextEquipped.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                            break;
+                        case WeaponLevel.Mythic:
+                            headerTextEquipped.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                            levelTextEquipped.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                            break;
+                        case WeaponLevel.Legendary:
+                            headerTextEquipped.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
+                            levelTextEquipped.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    equippedText.text = "Equipped";
+                    headerTextEquipped.text = equippedWeapon.weaponDetails.weaponName;
+                    levelTextEquipped.text = $"({equippedWeapon.weaponDetails.weaponLevel.ToString()})";
+                    weaponClassTextEquipped.text = $"Class: {equippedWeapon.weaponDetails.weaponClass.ToString()}";
+                    hitSpeedTextEquipped.text = $"Speed: {equippedWeapon.weaponDetails.weaponHitSpeed.ToString()}";
+                    weaponWieldTextEquipped.text = $"Wield Type: {equippedWeapon.weaponDetails.wieldType.ToString()}";
+
+                    if (equippedWeapon.weaponDetails.isMeleeWeapon)
+                    {
+                        damageTextEquipped.text = $"Damage: {equippedWeapon.weaponDetails.meleeDamageMin}-{equippedWeapon.weaponDetails.meleeDamageMax}";
+                    }
+                    else
+                    {
+                        damageTextEquipped.text = $"Damage: {equippedWeapon.weaponDetails.weaponCurrentProjectile.projectileDamageMin}-{equippedWeapon.weaponDetails.weaponCurrentProjectile.projectileDamageMax}";
+                    }
+
+                    int dropWeaponDamageMax = weaponDetails.isMeleeWeapon ? weaponDetails.meleeDamageMax : weaponDetails.weaponCurrentProjectile.projectileDamageMax;
+                    int equippedWeaponDamageMax = equippedWeapon.weaponDetails.isMeleeWeapon ? equippedWeapon.weaponDetails.meleeDamageMax : 
+                        equippedWeapon.weaponDetails.weaponCurrentProjectile.projectileDamageMax;
+
+                    if (equippedWeaponDamageMax > dropWeaponDamageMax)
+                    {
+                        damageTextEquipped.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
+                        damageText.colorGradient = new VertexGradient(Color.red, Color.red, Color.red, Color.red);
+                    }
+                    else if (equippedWeaponDamageMax == dropWeaponDamageMax)
+                    {
+                        damageTextEquipped.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
+                        damageText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
+                    }
+                    else
+                    {
+                        damageTextEquipped.colorGradient = new VertexGradient(Color.red, Color.red, Color.red, Color.red);
+                        damageText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
+                    }
+
+                    baseHandlingTextEquipped.text = $"Base Handling: {equippedWeapon.weaponDetails.weaponBaseHandling * 100}%";
+                    crHitChanceTextEquipped.text = $"Base Cr. Hit Chance: {equippedWeapon.weaponDetails.criticalHitChance * 100}%";
+
+                    if (equippedWeapon.weaponDetails.isMeleeWeapon)
+                    {
+                        crHitDamageTextEquipped.text = $"Base Cr. Hit Damage: {(equippedWeapon.weaponDetails.criticalHitDamageMultiplier + player.additionalCriticalMeleeDamageModifier) * 100}%";
+                    }
+                    else
+                    {
+                        crHitDamageTextEquipped.text = $"Base Cr. Hit Damage: {equippedWeapon.weaponDetails.criticalHitDamageMultiplier * 100}%";
+                    }
+
+                    elementalBiasTextEquipped.text = "Elemental Bias:";
+
+                    // Populate text field based on the related elemental info
+                    switch (equippedWeapon.weaponDetails.elementalBias)
+                    {
+                        case ElementalBias.None:
+                            elementTextEquipped.colorGradient = new VertexGradient(noneElementalColor1, noneElementalColor1, noneElementalColor2, noneElementalColor2);
+                            break;
+                        case ElementalBias.Fire:
+                            elementTextEquipped.colorGradient = new VertexGradient(fireColor1, fireColor1, fireColor2, fireColor2);
+                            break;
+                        case ElementalBias.Water:
+                            elementTextEquipped.colorGradient = new VertexGradient(waterColor1, waterColor1, waterColor2, waterColor2);
+                            break;
+                        case ElementalBias.Earth:
+                            elementTextEquipped.colorGradient = new VertexGradient(earthColor1, earthColor1, earthColor2, earthColor2);
+                            break;
+                        case ElementalBias.Air:
+                            elementTextEquipped.colorGradient = new VertexGradient(airColor1, airColor1, airColor2, airColor2);
+                            break;
+                        case ElementalBias.Dark:
+                            elementTextEquipped.colorGradient = new VertexGradient(darkColor1, darkColor1, darkColor2, darkColor2);
+                            break;
+                        case ElementalBias.Light:
+                            elementTextEquipped.colorGradient = new VertexGradient(lightColor1, lightColor1, lightColor2, lightColor2);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    elementTextEquipped.text = equippedWeapon.weaponDetails.elementalBias.ToString();
+                    elementalForgeRateTextEquipped.text = $"El. Forge Rate: {equippedWeapon.weaponDetails.elementalForgeRate * 100}%";
+
+                    switch (equippedWeapon.weaponDetails.weaponLevel)
+                    {
+                        case WeaponLevel.Basic:
+                            masteryText1Equipped.gameObject.SetActive(false);
+                            masteryText2Equipped.gameObject.SetActive(false);
+                            masteryText3Equipped.gameObject.SetActive(false);
+                            break;
+                        case WeaponLevel.Enchanted:
+                            masteryText1Equipped.gameObject.SetActive(true);
+                            masteryText1Equipped.text = "Enchanted Mastery: Locked";
+                            masteryText2Equipped.gameObject.SetActive(false);
+                            masteryText3Equipped.gameObject.SetActive(false);
+                            break;
+                        case WeaponLevel.Mythic:
+                            masteryText1Equipped.gameObject.SetActive(true);
+                            masteryText1Equipped.text = "Enchanted Mastery: Locked";
+                            masteryText2Equipped.gameObject.SetActive(true);
+                            masteryText2Equipped.text = "Mythic Mastery: Locked";
+                            masteryText3Equipped.gameObject.SetActive(false);
+                            break;
+                        case WeaponLevel.Legendary:
+                            masteryText1Equipped.gameObject.SetActive(true);
+                            masteryText1Equipped.text = "Enchanted Mastery: Locked";
+                            masteryText2Equipped.gameObject.SetActive(true);
+                            masteryText2Equipped.text = "Mythic Mastery: Locked";
+                            masteryText3Equipped.gameObject.SetActive(true);
+                            masteryText3Equipped.text = "Legendary Mastery: Locked";
+                            break;
+                        default:
+                            break;
+
+                    }
+                }
+
                 headerText.text = weaponDetails.weaponName;
                 levelText.text = $"({weaponDetails.weaponLevel.ToString()})";
 
                 requirementText.text = UpdateRequirementText(weaponDetails);
-
                 weaponClassText.text = $"Class: {weaponDetails.weaponClass.ToString()}";
 
                 if (weaponDetails.weaponClass == WeaponClass.Shield)
@@ -1958,9 +2302,22 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
     }
 
+    private void ClearTooltipEquippedPanel()
+    {
+        foreach (Transform child in tooltipPanelEquipped.transform)
+        {
+            child.GetComponent<TextMeshProUGUI>().text = string.Empty;
+        }
+    }
+
     public void CloseTooltipPanel()
     {
         tooltipPanel.SetActive(false);
+    }
+
+    public void CloseTooltipEquippedPanel()
+    {
+        tooltipPanelEquipped.SetActive(false);
     }
 
     public void CloseWarningPopUpMenu()

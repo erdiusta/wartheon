@@ -94,6 +94,18 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Death sound effect")]
     #endregion
     public SoundEffectSO deathSoundEffect;
+    #region Tooltip
+    [Tooltip("Block sound effect")]
+    #endregion
+    public SoundEffectSO blockSoundEffect;
+    #region Tooltip
+    [Tooltip("Dodge sound effect")]
+    #endregion
+    public SoundEffectSO dodgeSoundEffect;
+    #region Tooltip
+    [Tooltip("Parry sound effect")]
+    #endregion
+    public SoundEffectSO parrySoundEffect;
 
     #region SPECIAL MOVE SETTINGS
     [Space(10)]

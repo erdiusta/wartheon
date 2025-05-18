@@ -67,7 +67,7 @@ MonoBehaviour:
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}
-  deathSoundEffect: {fileID: 11400000, guid: bb4cdfaa3e5c20b4d87687e7b68870c7, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: 73bdcef1309c33b4a9fc0e18020024d6, type: 2}
   roarSoundEffect: {fileID: 0}
   chargeSoundEffect: {fileID: 0}
   attackSoundEffect: {fileID: 0}

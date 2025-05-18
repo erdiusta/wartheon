@@ -22,9 +22,9 @@ MonoBehaviour:
   experiencePoint: 60
   chaseDistance: 6
   hasAttackMove: 1
-  attackMoveTriggerDistance: 2
-  attackMoveEfficentDistance: 1
-  countdownDurationBeforeDashAttack: 0.8
+  attackMoveTriggerDistance: 4
+  attackMoveEfficentDistance: 9
+  countdownDurationBeforeDashAttack: 0.4
   attackMoveDashDuration: 0.3
   attackMoveBaseCooldown: 1
   deflectionValue: 0.3

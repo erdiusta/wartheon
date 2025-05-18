@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: Phoenixbolt Bolt
   isPlayerProjectile: 1
-  projectileSprite: {fileID: 21300000, guid: 35287454ad842574080549528057c022, type: 3}
   projectilePrefabArray:
   - {fileID: 3547249067481803369, guid: d2bf635c5fcb4fb40a8dc04ec29e4de3, type: 3}
   projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -22,12 +21,20 @@ MonoBehaviour:
   projectileChargeMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   belongingWeaponDetails: {fileID: 11400000, guid: d1ad59e3858be1c4292099b1a50f3d11, type: 2}
   projectileHitEffect: {fileID: 11400000, guid: a9ec9a673fcdeea47a9014c8929ee1b6, type: 2}
-  projectileDamageMin: 15
-  projectileDamageMax: 19
+  projectileDamageMin: 14
+  projectileDamageMax: 18
   projectileSpeedMin: 24
   projectileSpeedMax: 30
   projectileRange: 18
   projectileRotationSpeed: 1
+  isBomb: 0
+  isTrap: 0
+  hasLifeTime: 0
+  lifeDuration: 15
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
   hasAcid: 0
   acidEfficiency: 0
   isPoisonous: 0
@@ -36,6 +43,10 @@ MonoBehaviour:
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  hasBurnDamage: 0
+  burnChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   hasCurseDamage: 0
   curseChance: 0
   projectileSpreadMin: 0.5
@@ -50,3 +61,5 @@ MonoBehaviour:
   projectileTrailMaterial: {fileID: 0}
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

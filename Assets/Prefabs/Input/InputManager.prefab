@@ -63,6 +63,7 @@ MonoBehaviour:
   escapeButton: {fileID: -6144101037263858964, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   jumpButton: {fileID: 7022676829501651627, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   invisibleButton: {fileID: 543932677018655109, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  parryButton: {fileID: -8829189971212813033, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   levelOneButton: {fileID: -2973245912978842571, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   levelTwoButton: {fileID: -4956730332513720876, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   levelThreeButton: {fileID: 1906744791049229034, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}

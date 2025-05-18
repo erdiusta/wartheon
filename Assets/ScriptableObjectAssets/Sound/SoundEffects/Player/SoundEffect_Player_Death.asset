@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Player Get Death
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 9936db3c70d65c24e9d785a114338a9d, type: 3}
+  - {fileID: 8300000, guid: 73639a9a195070142b50fbe2cca3b0e1, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 1

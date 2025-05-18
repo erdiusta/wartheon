@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Enemy))]
 [DisallowMultipleComponent]
@@ -57,7 +54,6 @@ public class EnemyAI : MonoBehaviour
     float knockbackTimeWeight;
     bool patrolPathFound;
     EnemyPhase enemyPhaseAtPreviousFrame;
-    bool isCollided;
 
     // PHYSICS
     [HideInInspector] public bool isAttacking;
@@ -137,12 +133,6 @@ public class EnemyAI : MonoBehaviour
         {
             // Move towards the locked target position
             enemy.movementToPosition.AttackMoveRigidbodyByPosition(lockedVector, moveSpeed * 2f);
-
-            //// Check for collision with the player
-            //if (IsCollidedWithPlayer())
-            //{
-            //    StopDashing(); // Stop dashing if colliding with player
-            //}
         }
     }
 

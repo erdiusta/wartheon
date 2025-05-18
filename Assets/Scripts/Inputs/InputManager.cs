@@ -26,6 +26,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference escapeButton;
     public InputActionReference jumpButton;
     public InputActionReference invisibleButton;
+    public InputActionReference parryButton;
 
     public InputActionReference levelOneButton;
     public InputActionReference levelTwoButton;

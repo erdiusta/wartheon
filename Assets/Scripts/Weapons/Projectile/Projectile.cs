@@ -382,7 +382,7 @@ public class Projectile : MonoBehaviour, IFireable
                     {
                         enemy.health.isBlocking = true;
                         enemy.healthEvent.CallDodgeEvent();
-                        enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
+                        enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, collision, false);
                     }
                     else
                     {
@@ -791,8 +791,8 @@ public class Projectile : MonoBehaviour, IFireable
         }
 
         health.PostHitImmunity();
-        health.TakeDamage(damageDone, transform.position, health.transform.position, false);
-        collider.GetComponent<HealthEvent>().CallHealthChangedEvent(damageDone / 1000000000, 1000000000, damageDone);
+        health.TakeDamage(damageDone, transform.position, health.transform.position, collider, false);
+        collider.GetComponent<HealthEvent>().CallHealthChangedEvent(damageDone / 1000000000, 1000000000, damageDone, MeleeHand.None);
     }
 
     IEnumerator ColliderTimeThreshold()
@@ -1926,7 +1926,7 @@ public class Projectile : MonoBehaviour, IFireable
                         Player player = collider.GetComponent<Player>();
 
                         int inflictedDamage = CalculateDamageAmount(null, true);
-                        player.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, player.transform.position, false);
+                        player.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, player.transform.position, collider, false);
 
                         CheckAcidStatus(player);
                         CheckStunStatus(player);
@@ -1945,7 +1945,7 @@ public class Projectile : MonoBehaviour, IFireable
                         Enemy enemy = collider.GetComponent<Enemy>();
 
                         int inflictedDamage = CalculateDamageAmount(enemy);
-                        enemy.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false);
+                        enemy.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, enemy.transform.position, collider, false);
 
                         CheckAcidStatus(enemy, true);
                         CheckStunStatus(enemy, true);
@@ -1962,12 +1962,12 @@ public class Projectile : MonoBehaviour, IFireable
                 if (isEnemy)
                 {
                     collider.GetComponent<Health>().TakeDamage(Random.Range(projectileDetails.burstDamageMin, projectileDetails.burstDamageMax),
-                        transform.position, collider.transform.position, false);
+                        transform.position, collider.transform.position, collider, false);
                 }
                 else
                 {
                     collider.GetComponent<Health>().TakeDamage(Random.Range(activeItemDetails.burstDamageMin, activeItemDetails.burstDamageMax),
-                        transform.position, collider.transform.position, false);
+                        transform.position, collider.transform.position, collider, false);
                 }
             }
         }

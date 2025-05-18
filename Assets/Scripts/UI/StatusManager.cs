@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StatusManager : MonoBehaviour
 {
@@ -41,8 +42,9 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetBlockSpecialMove += EnableBlockSkillImage;
             player.healthEvent.GetGemSkinSpecialMove += EnableGemSkinSkillImage;
             player.healthEvent.GetDeath += EnableDeathImage;
-            player.healthEvent.OnDodged += HealthEvent_OnDodged;
+            player.healthEvent.OnDodged += HealthEvent_OnDodged;    
             player.healthEvent.OnBlocked += HealthEvent_OnBlocked;
+            player.healthEvent.OnParried += HealthEvent_OnParried;
 
             player.healthEvent.BurnCured += DisableBurnImage;
             player.healthEvent.PoisonCured += DisablePoisonImage;
@@ -99,6 +101,7 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetDeath -= EnableDeathImage;
             player.healthEvent.OnDodged -= HealthEvent_OnDodged;
             player.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
+            player.healthEvent.OnParried -= HealthEvent_OnParried;
 
             player.healthEvent.BurnCured -= DisableBurnImage;
             player.healthEvent.PoisonCured -= DisablePoisonImage;
@@ -139,6 +142,18 @@ public class StatusManager : MonoBehaviour
         }
     }
 
+    private void HealthEvent_OnParried(HealthEvent healthEvent)
+    {
+        ClearLog();
+
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+
+        logRoutine = StartCoroutine(WriteLog("PARRIED", Color.white));
+    }
+
     private void HealthEvent_OnDodged(HealthEvent healthEvent)
     {
         ClearLog();
@@ -147,10 +162,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("DODGED", Color.white));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("DODGED", Color.white));
     }
 
     private void HealthEvent_OnBlocked(HealthEvent healthEvent)
@@ -161,10 +174,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("BLOCKED", Color.white));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("BLOCKED", Color.white));
     }
 
     private void EnableBlockSkillImage(HealthEvent healthEvent)
@@ -176,10 +187,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("BLOCKED", Color.gray));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("BLOCKED", Color.gray));
     }
 
     private void EnableGemSkinSkillImage(HealthEvent healthEvent)
@@ -190,10 +199,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("GEM SKIN", Color.gray));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("GEM SKIN", Color.gray));
     }
 
     private void EnableBurnImage(HealthEvent healthEvent)
@@ -204,10 +211,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("BURNED", new Color(1f, 0.647f, 0f)));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("BURNED", new Color(1f, 0.647f, 0f)));
     }
 
     private void EnablePoisonImage(HealthEvent healthEvent)
@@ -218,10 +223,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("POISONED", Color.green));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("POISONED", Color.green));
     }
 
     private void EnableAcidImage(HealthEvent healthEvent)
@@ -232,10 +235,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("ACIDIFIED - ARMOR DOWN", Color.red));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("ACIDIFIED - ARMOR DOWN", Color.red));
     }
 
     private void EnableFrostImage(HealthEvent healthEvent)
@@ -246,10 +247,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("FROZEN", new Color(0.15f, 0.66f, 0.88f)));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("FROZEN", new Color(0.15f, 0.66f, 0.88f)));
     }
 
     private void EnableStunImage(HealthEvent healthEvent)
@@ -260,10 +259,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("STUNNED", Color.yellow));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("STUNNED", Color.yellow));
     }
 
     private void EnableCurseImage(HealthEvent healthEvent)
@@ -274,10 +271,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("CURSED", Color.magenta));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("CURSED", Color.magenta));
     }
 
     private void EnableDeathImage(HealthEvent healthEvent)
@@ -288,10 +283,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("INSTANT DEATH", Color.white));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("INSTANT DEATH", Color.white));
     }
 
     private void EnableShatterLog(HealthEvent healthEvent)
@@ -302,10 +295,8 @@ public class StatusManager : MonoBehaviour
             StopCoroutine(logRoutine);
             logRoutine = StartCoroutine(WriteLog("SHATTERED", new Color(0.16f, 0.54f, 0.8f)));
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("SHATTERED", new Color(0.16f, 0.54f, 0.8f)));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("SHATTERED", new Color(0.16f, 0.54f, 0.8f)));
     }
 
     private void EnableBlindImage(HealthEvent healthEvent)
@@ -316,10 +307,8 @@ public class StatusManager : MonoBehaviour
         {
             StopCoroutine(logRoutine);
         }
-        else
-        {
-            logRoutine = StartCoroutine(WriteLog("BLIND", Color.yellow));
-        }
+
+        logRoutine = StartCoroutine(WriteLog("BLIND", Color.yellow));
     }
 
     private void DisableBlockSkillImage(HealthEvent healthEvent)

@@ -20,7 +20,6 @@ public class Chest : MonoBehaviour, IUsable
     WeaponDetailsSO weaponDetails;
     int ammoPercent;
     Animator animator;
-    SpriteRenderer spriteRenderer;
     bool isEnabled = false;
 
     GameObject chestItemGameObject;
@@ -30,7 +29,6 @@ public class Chest : MonoBehaviour, IUsable
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
         messageTextTMP = GetComponentInChildren<TextMeshPro>();
     }
 
@@ -185,36 +183,5 @@ public class Chest : MonoBehaviour, IUsable
 
         // Make sure drop completed
         dropCompleted = true;
-    }
-
-    /// <summary>
-    /// Collect the weapon and add it to the players weapons list
-    /// </summary>
-    private void CollectWeaponItem()
-    {
-        // Check item exists and has been materialized
-        if (chestItem == null) return;
-
-        // Add weapon to player
-        GameManager.Instance.GetPlayer().UpdateWieldedWeapons(weaponDetails, true, false);
-
-        // Play pickup sound effect
-        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
-
-        weaponDetails = null;
-        Destroy(chestItemGameObject);
-        UpdateChestState();
-    }
-
-    /// <summary>
-    /// Display message above chest
-    /// </summary>
-    private IEnumerator DisplayMessage(string messageText, float messageDisplayTime)
-    {
-        messageTextTMP.text = messageText;
-
-        yield return new WaitForSeconds(messageDisplayTime);
-
-        messageTextTMP.text = "";
     }
 }
