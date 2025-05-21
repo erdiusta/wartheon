@@ -22,7 +22,8 @@ public class BuildSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         if (!isLocked)
         {
-            buildDescriptionContainer.gameObject.SetActive(true);
+            StaticEventHandler.CallBuildInfoHoveredEvent(indexNumber);
+            //buildDescriptionContainer.gameObject.SetActive(true);
         }
     }
 
@@ -30,7 +31,8 @@ public class BuildSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         if (!isLocked)
         {
-            buildDescriptionContainer.gameObject.SetActive(false);
+            StaticEventHandler.CallBuildInfoUnhoveredEvent(indexNumber);
+            //buildDescriptionContainer.gameObject.SetActive(false);
         }
     }
 

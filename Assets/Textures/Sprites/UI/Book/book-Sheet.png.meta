@@ -3,7 +3,7 @@ guid: 71a1dbec037eed943bdab9828986e012
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -67,7 +67,7 @@ TextureImporter:
   swizzle: 50462976
   cookieLightType: 0
   platformSettings:
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 8192
     resizeAlgorithm: 0
@@ -80,7 +80,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -93,7 +93,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -106,8 +106,8 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
+  - serializedVersion: 4
+    buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -119,7 +119,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -132,7 +132,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Server
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -152,13 +152,14 @@ TextureImporter:
       name: book-Sheet_0
       rect:
         serializedVersion: 2
-        x: 66
+        x: 0
         y: 0
-        width: 252
-        height: 192
-      alignment: 9
-      pivot: {x: 0.5, y: 0}
+        width: 576
+        height: 384
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -173,13 +174,14 @@ TextureImporter:
       name: book-Sheet_1
       rect:
         serializedVersion: 2
-        x: 386
+        x: 576
         y: 0
-        width: 252
-        height: 192
-      alignment: 9
-      pivot: {x: 0.5, y: 0}
+        width: 576
+        height: 384
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -194,13 +196,14 @@ TextureImporter:
       name: book-Sheet_2
       rect:
         serializedVersion: 2
-        x: 706
+        x: 1152
         y: 0
-        width: 252
-        height: 192
-      alignment: 9
-      pivot: {x: 0.5, y: 0}
+        width: 576
+        height: 384
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -215,13 +218,14 @@ TextureImporter:
       name: book-Sheet_3
       rect:
         serializedVersion: 2
-        x: 1026
+        x: 1728
         y: 0
-        width: 252
-        height: 192
-      alignment: 9
-      pivot: {x: 0.5, y: 0}
+        width: 576
+        height: 384
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -236,13 +240,14 @@ TextureImporter:
       name: book-Sheet_4
       rect:
         serializedVersion: 2
-        x: 1346
+        x: 2304
         y: 0
-        width: 252
-        height: 192
-      alignment: 9
-      pivot: {x: 0.5, y: 0}
+        width: 576
+        height: 384
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -257,13 +262,14 @@ TextureImporter:
       name: book-Sheet_5
       rect:
         serializedVersion: 2
-        x: 1666
+        x: 2880
         y: 0
-        width: 252
-        height: 192
-      alignment: 9
-      pivot: {x: 0.5, y: 0}
+        width: 576
+        height: 384
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -278,13 +284,14 @@ TextureImporter:
       name: book-Sheet_6
       rect:
         serializedVersion: 2
-        x: 1986
+        x: 3456
         y: 0
-        width: 252
-        height: 192
-      alignment: 9
-      pivot: {x: 0.5, y: 0}
+        width: 576
+        height: 384
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -299,13 +306,14 @@ TextureImporter:
       name: book-Sheet_7
       rect:
         serializedVersion: 2
-        x: 2306
+        x: 4032
         y: 0
-        width: 252
-        height: 192
-      alignment: 9
-      pivot: {x: 0.5, y: 0}
+        width: 576
+        height: 384
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -316,28 +324,8 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: book-Sheet_8
-      rect:
-        serializedVersion: 2
-        x: 2626
-        y: 0
-        width: 252
-        height: 192
-      alignment: 9
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 66ee5501fcfeada488c1dba36d7964f7
-      internalID: 2040119415
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 58774df2d854f4948b578ff4949a58e0
@@ -347,6 +335,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
     nameFileIdTable:
       book-Sheet_0: 787058442
       book-Sheet_1: -1577707828
@@ -356,7 +346,6 @@ TextureImporter:
       book-Sheet_5: 2044492404
       book-Sheet_6: 1410606579
       book-Sheet_7: 1610760521
-      book-Sheet_8: 2040119415
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

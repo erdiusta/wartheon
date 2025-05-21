@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public static class StaticEventHandler
@@ -18,6 +19,30 @@ public static class StaticEventHandler
     public static void CallCheatActivatedEvent()
     {
         OnCheatActivated?.Invoke();
+    }
+
+    // Build Info Hovered
+    public static event Action<BuildPointsArgs> OnBuildInfoHovered;
+
+    public static void CallBuildInfoHoveredEvent(int buildIndex)
+    {
+        OnBuildInfoHovered?.Invoke(new BuildPointsArgs { buildIndex = buildIndex});
+    }
+
+    // Build Info Unhovered
+    public static event Action<BuildPointsArgs> OnBuildInfoUnhovered;
+
+    public static void CallBuildInfoUnhoveredEvent(int buildIndex)
+    {
+        OnBuildInfoUnhovered?.Invoke(new BuildPointsArgs { buildIndex = buildIndex });
+    }
+
+    // Build point used
+    public static event Action<BuildPointsArgs> OnBuildPointUsed;
+
+    public static void CallBuildPointsUsed(int buildIndex)
+    {
+        OnBuildPointUsed?.Invoke(new BuildPointsArgs { buildIndex = buildIndex });
     }
 
     // Room changed event
@@ -60,47 +85,13 @@ public static class StaticEventHandler
         OnCameraShaken?.Invoke(new CameraShakeArgs { shakeIntensity = shakeIntensity, shakeDuration = shakeDuration });
     }
 
-    #region Book Weapon Events
-    //// Weapon added to main hand on book event
-    //public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToMainHandBook;
+    // Open book's build page
+    public static event Action OnBuildPageOpened;
 
-    //public static void CallWeaponAddedToMainHandBook(Weapon weapon, bool onlySwitch)
-    //{
-    //    OnWeaponAddedToMainHandBook?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, onlySwitch = onlySwitch});
-    //}
-
-    //// Main hand weapon removed from main hand on book event
-    //public static event Action OnWeaponRemovedFromMainHandBook;
-
-    //public static void CallWeaponRemovedFromMainHandBook()
-    //{
-    //    OnWeaponRemovedFromMainHandBook?.Invoke();
-    //}
-
-    //// Weapon added to off-hand on book event
-    //public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToOffHandBook;
-
-    //public static void CallWeaponAddedToOffHandBook(Weapon weapon)
-    //{
-    //    OnWeaponAddedToOffHandBook?.Invoke(new WeaponAddedToBookArgs { weapon = weapon});
-    //}
-
-    //// Weapon swapped at main hand
-    //public static event Action<WeaponAddedToBookArgs> OnWeaponSwappedAtOffHand;
-
-    //public static void CallWeaponSwappedAtOffHand(Weapon weapon)
-    //{
-    //    OnWeaponSwappedAtOffHand?.Invoke(new WeaponAddedToBookArgs { weapon = weapon });
-    //}
-
-    //// Off-hand weapon removed from off-hand on book event
-    //public static event Action OnWeaponRemovedFromOffHandBook;
-
-    //public static void CallWeaponRemovedFromOffHandBook()
-    //{
-    //    OnWeaponRemovedFromOffHandBook?.Invoke();
-    //}
-    #endregion
+    public static void CallOpenBuildPageEvent()
+    {
+        OnBuildPageOpened?.Invoke();
+    }
 
     // Book weapon switch event
     public static event Action OnWeaponSwitched;
@@ -221,14 +212,6 @@ public static class StaticEventHandler
     public static void CallCompassDisabled()
     {
         OnCompassDisabled?.Invoke();
-    }
-
-    // Build point used
-    public static event Action<BuildPointsArgs> OnBuildPointUsed;
-
-    public static void CallBuildPointsUsed(int unlockedBuildIconIndexNumber)
-    {
-        OnBuildPointUsed?.Invoke(new BuildPointsArgs { unlockedBuildIconIndexNumber = unlockedBuildIconIndexNumber });
     }
 
     // Level up
@@ -401,7 +384,7 @@ public class IntroductionPopUpUIArgs : EventArgs
 
 public class BuildPointsArgs : EventArgs
 {
-    public int unlockedBuildIconIndexNumber;
+    public int buildIndex;
 }
 
 public class MobHoverArgs : EventArgs

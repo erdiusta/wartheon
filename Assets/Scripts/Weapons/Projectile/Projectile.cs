@@ -792,7 +792,7 @@ public class Projectile : MonoBehaviour, IFireable
 
         health.PostHitImmunity();
         health.TakeDamage(damageDone, transform.position, health.transform.position, collider, false);
-        collider.GetComponent<HealthEvent>().CallHealthChangedEvent(damageDone / 1000000000, 1000000000, damageDone, MeleeHand.None);
+        collider.GetComponent<HealthEvent>().CallHealthChangedEvent(1000000000, damageDone, MeleeHand.None);
     }
 
     IEnumerator ColliderTimeThreshold()

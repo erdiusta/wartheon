@@ -16,7 +16,6 @@ public class Chest : MonoBehaviour, IUsable
     [Tooltip("Populate withItemSpawnPoint transform")]
     #endregion Tooltip
     [SerializeField] private Transform itemSpawnPoint;
-    int healthPercent;
     WeaponDetailsSO weaponDetails;
     int ammoPercent;
     Animator animator;

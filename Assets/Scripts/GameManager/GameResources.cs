@@ -206,14 +206,6 @@ public class GameResources : MonoBehaviour
     #endregion
     public Sprite heartIcon;
     #region Tooltip
-    [Tooltip("Populate with bullet icon sprite")]
-    #endregion
-    public Sprite bulletIcon;
-    #region Tooltip
-    [Tooltip("Populate with bullet icon ammo drop sprite")]
-    #endregion
-    public Sprite ammoDropIcon;
-    #region Tooltip
     [Tooltip("Populate with ammo hover animator controller")]
     #endregion
     public RuntimeAnimatorController ammoHoverAnimatorController;
@@ -257,7 +249,6 @@ public class GameResources : MonoBehaviour
         HelperUtilities.ValidateCheckNullValue(this, nameof(musicOffSnapshot), musicOffSnapshot);
         HelperUtilities.ValidateCheckNullValue(this, nameof(chestItemPrefab), chestItemPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(heartIcon), heartIcon);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(bulletIcon), bulletIcon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(minimapBossPrefab), minimapBossPrefab);
     }
 #endif

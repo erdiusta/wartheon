@@ -296,6 +296,10 @@ MonoBehaviour:
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 021aeb4586ce4d04baf855c55d1060ad, type: 2}
       ratio: 2
+    - dungeonObject: {fileID: 11400000, guid: 9257872b795a94e41a66d9c55b43cd9e, type: 2}
+      ratio: 1
+    - dungeonObject: {fileID: 11400000, guid: 6d5f38bae8f9c1b4dbe5ce3eb248977d, type: 2}
+      ratio: 1
   - dungeonLevel: {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 1f86dee846542cb4d8dfb9ee6b9df4dd, type: 2}
@@ -338,5 +342,5 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
       ratio: 1
   primaryPassiveDropChanceMax: 3
-  dropSpawnChanceMin: 10
-  dropSpawnChanceMax: 20
+  dropSpawnChanceMin: 100
+  dropSpawnChanceMax: 100

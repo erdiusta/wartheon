@@ -308,7 +308,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     {
                         weaponClassText.text = "+5% Cr. Hit Chance";
                         hitSpeedText.text = "+10% Cr. Hit Chance When";
-                        weaponWieldText.text = "Dual-Wield Dagger or Claw Equipped";
+                        weaponWieldText.text = "Dual-Wield Dagger or";
+                        damageText.text = "Claw Equipped";
                     }
                     else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
                     {

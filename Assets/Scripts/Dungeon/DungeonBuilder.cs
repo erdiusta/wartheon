@@ -43,7 +43,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     /// <summary>
     /// Generate random dungeon, returns true if dungeon built, false if failed
     /// </summary>
-    public bool GenerateDungeon(DungeonLevelSO currentDungeonLevel)
+    public bool GenerateDungeon(DungeonLevelSO currentDungeonLevel, bool tutorialEnabled)
     {
         roomTemplateList = currentDungeonLevel.roomTemplateList;
 

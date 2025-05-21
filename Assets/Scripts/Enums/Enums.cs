@@ -1,3 +1,30 @@
+
+public enum TutorialPhase
+{
+    Start,
+    Move,
+    PickUpWeapon,
+    AimAndFire,
+    PickUpActiveItem,
+    UseActiveItem,
+    PickUpPassive,
+    MinimapCheck,
+    OverviewMapCheck,
+    SecondRoom,
+    MeleeCombat,
+    Parry,
+    DodgeRoll,
+    SpecialSkill,
+    LevelUp,
+    OpenBook,
+    BuildsPage,
+    StatsPage,
+    WeaponSetSwitch,
+    OtherCollectionsPage,
+    FinishTutorial
+}
+
+
 public enum Orientation
 {
     North,

@@ -9,11 +9,13 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
 using System;
+using UnityEngine.EventSystems;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
 {
     public static bool isDemo = true;
+    public static bool tutorialEnabled = false;
 
     #region Header GAMEOBJECT REFERENCES
     [Space(10)]
@@ -61,11 +63,24 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     public GameObject bookView;
     public GameObject bookCover;
 
+    // Level up panel
+    public GameObject levelUpPanel;
+    float levelUpPanelTimer;
+    float levelUpPanelPopupDuration = 3f;
+
     // Gameplay UI
     public GameObject gamePlayUI;
+    public GameObject buttonBuildButton;
 
     // Pop-ups
     public GameObject warningPopUp;
+
+    [Space(10)]
+    [Header("SPECIAL UI LAYER REFERENCES")]
+    // Special UI layer
+    public GraphicRaycaster uiRaycaster;
+    public EventSystem eventSystem;
+    public LayerMask specialUILayerMask;
 
     [Space(10)]
     [Header("TOOLTIP PANEL REFERENCES")]
@@ -116,8 +131,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     [HideInInspector] public bool glossaryBookOpen;
     [HideInInspector] public bool turnPageCompleted;
-    [HideInInspector] public bool zoomOutFinished;
-    [HideInInspector] public bool zoomInFinished;
+    [HideInInspector] public bool bookZoomOutFinished;
+    [HideInInspector] public bool bookZoomInFinished;
+    [HideInInspector] public bool levelUpZoomOutFinished;
+    [HideInInspector] public bool levelUpZoomInFinished;
     [HideInInspector] public bool statsPageChanged;
 
     [HideInInspector] public bool popUpWindowOpen;
@@ -166,6 +183,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     Resolution[] resolutions;
     Dictionary<string, List<int>> resolutionToHzMap;
     List<string> resolutionOptions;
+
+    // Tooltip close timer
+    float tooltipPanelTimer = 3f;
+    float tooltipPanelEquippedTimer = 3f;
 
     // Weapon Level 
     [Header("WEAPON LEVEL COLORS")]
@@ -237,6 +258,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void OnEnable()
     {
+        StaticEventHandler.OnLevelUp += StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
         StaticEventHandler.OnRoomEnemiesDefeated += StaticEventHandler_OnRoomEnemiesDefeated;
         StaticEventHandler.OnDecoySpawned += StaticEventHandler_OnDecoySpawned;
@@ -255,6 +277,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void OnDisable()
     {
+        StaticEventHandler.OnLevelUp -= StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
         StaticEventHandler.OnRoomEnemiesDefeated -= StaticEventHandler_OnRoomEnemiesDefeated;
         StaticEventHandler.OnDecoySpawned -= StaticEventHandler_OnDecoySpawned;
@@ -355,6 +378,30 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
 
         visitedRooms.Add(currentRoom);
+    }
+
+    private void StaticEventHandler_OnLevelUp()
+    {
+        levelUpPanel.SetActive(true);
+        levelUpPanel.GetComponentInChildren<Animator>().SetTrigger(Settings.zoomIn);
+        levelUpPanelTimer = 0f;
+
+        buttonBuildButton.SetActive(true);
+    }
+
+    public void ClickOpenCharacterBuild()
+    {
+        if (!bookView.activeSelf)
+        {
+            gamePlayUI.SetActive(false);
+            bookView.SetActive(true);
+            bookCover.SetActive(true);
+            glossaryBookOpen = true;
+            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+            bookView.GetComponent<Animator>().SetTrigger(Settings.zoomIn);
+        }
+
+        StaticEventHandler.CallOpenBuildPageEvent();
     }
 
     private static void TrailerModeItemsSpilling(RoomChangedEventArgs roomChangedEventArgs)
@@ -566,9 +613,19 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void Update()
     {
+        TooltipPanelResetCheck();
+
         HandleBook();
         HandlePopUp();
+        HandleLevelUpPanel();
+
+        // GAME STATE
         HandleGameState();
+
+        if (player.currentBuildPoints == 0)
+        {
+            buttonBuildButton.SetActive(false);
+        }
 
         if (EnemySpawner.Instance.isBossInstantiated)
         {
@@ -598,6 +655,31 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             player.healthEvent.CallBlindCuredEvent();
             player.UpdateCurrentHandlingValues();
             StaticEventHandler.CallPrimaryStatsChangedEvent();
+        }
+    }
+
+    private void TooltipPanelResetCheck()
+    {
+        if (tooltipPanel.activeSelf)
+        {
+            tooltipPanelTimer -= Time.deltaTime;
+
+            if (tooltipPanelEquippedTimer <= 0f)
+            {
+                tooltipPanel.SetActive(false);
+                tooltipPanelTimer = 3f;
+            }
+        }
+
+        if (tooltipPanelEquipped.activeSelf)
+        {
+            tooltipPanelEquippedTimer -= Time.deltaTime;
+
+            if (tooltipPanelEquippedTimer <= 0f)
+            {
+                tooltipPanelEquipped.SetActive(false);
+                tooltipPanelEquippedTimer = 3f;
+            }
         }
     }
 
@@ -643,16 +725,16 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         if (!bookView.activeSelf) { gamePlayUI.SetActive(true); }
 
-        if (zoomInFinished)
+        if (bookZoomInFinished)
         {
-            zoomInFinished = false;
+            bookZoomInFinished = false;
             bookView.GetComponent<Animator>().enabled = false;
             bookView.GetComponent<Animator>().enabled = true;
         }
 
-        if (zoomOutFinished)
+        if (bookZoomOutFinished)
         {
-            zoomOutFinished = false;
+            bookZoomOutFinished = false;
             bookView.GetComponent<Animator>().enabled = false;
             bookView.GetComponent<Animator>().enabled = true;
             bookView.SetActive(false);
@@ -688,6 +770,28 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
     }
 
+    private void HandleLevelUpPanel()
+    {
+        levelUpPanelTimer += Time.deltaTime;
+
+        if (levelUpZoomInFinished)
+        {
+            levelUpPanelTimer = 0f;
+        }
+        else if (levelUpPanelTimer > levelUpPanelPopupDuration && levelUpPanel.activeInHierarchy)
+        {
+            levelUpZoomInFinished = false;
+            levelUpPanel.GetComponentInChildren<Animator>().SetTrigger(Settings.zoomOut);
+        }
+
+        if (levelUpZoomOutFinished)
+        {
+            levelUpZoomOutFinished = false;
+            levelUpPanel.SetActive(false);
+
+        }
+    }
+
     private void HandlePopUp()
     {
         if (popUpWindowOpen)
@@ -701,7 +805,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     public void CloseBookInCasePauseClick()
     {
-        zoomOutFinished = false;
+        bookZoomOutFinished = false;
         bookView.GetComponent<Animator>().enabled = false;
         bookView.GetComponent<Animator>().enabled = true;
         bookView.SetActive(false);
@@ -718,7 +822,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         switch (gameState)
         {
             case GameState.gameStarted:
-                // Play first level
+                // Play first level or tutorial
                 PlayDungeonLevel(currentDungeonLevelListIndex);
                 gameState = GameState.playingLevel;
 
@@ -1052,7 +1156,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         // Open audio menu
 
-        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Controls";
+        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "CONTROLS";
         Transform controlsContainer = pauseContainer.GetChild(3);
         controlsContainer.GetChild(0).gameObject.SetActive(false); // Disable controls text
         controlsContainer.GetComponent<Image>().enabled = false;
@@ -1086,7 +1190,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             pauseContainer.GetChild(i).gameObject.SetActive(true);
         }
 
-        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Options";
+        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "PAUSE MENU";
     }
 
     private void LoadSettingsFromPlayerPrefs()
@@ -1312,7 +1416,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void PlayDungeonLevel(int dungeonLevelListIndex)
     {
         // Build dungeon for level
-        bool dungeonBuiltSucessfully = DungeonBuilder.Instance.GenerateDungeon(dungeonLevelList[dungeonLevelListIndex]);
+        bool dungeonBuiltSucessfully = DungeonBuilder.Instance.GenerateDungeon(dungeonLevelList[dungeonLevelListIndex], tutorialEnabled);
 
         if (!dungeonBuiltSucessfully)
         {
@@ -1343,7 +1447,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         GetPlayer().playerControl.DisablePlayer();
 
-        string messageText = "LEVEL " + (currentDungeonLevelListIndex + 1).ToString() + "\n\n" + dungeonLevelList[currentDungeonLevelListIndex].
+        string messageText = "LEVEL " + (currentDungeonLevelListIndex).ToString() + "\n\n" + dungeonLevelList[currentDungeonLevelListIndex].
             levelName.ToUpper();
 
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.nextLevelSoundEffect);
@@ -1410,11 +1514,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         currentDungeonLevelListIndex++;
 
         // DEMO CASE
-        if (currentDungeonLevelListIndex >= 2 && isDemo)
+        if (currentDungeonLevelListIndex >= 3 && isDemo)
         {
             gameState = GameState.gameWon;
         }
-        else if (currentDungeonLevelListIndex >= 8)
+        else if (currentDungeonLevelListIndex >= 9)
         {
             gameState = GameState.gameWon;
         }
@@ -1583,9 +1687,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     }
 
     /// <summary>
-    /// Set health bar value with health percent between 0 and 1
+    /// Set health bar value with health between 0 and 1
     /// </summary>
-    public void SetHealthBarValue(float healthPercent, Enemy enemy)
+    public void SetHealthBarValue(float healthValue, Enemy enemy)
     {
         if (enemy != null)
         {
@@ -1596,7 +1700,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                     StopCoroutine(healthBarCoroutine);
                 }
 
-                healthBarCoroutine = StartCoroutine(SmoothHealthBarChange(healthPercent));
+                healthBarCoroutine = StartCoroutine(SmoothHealthBarChange(healthValue));
             }
         }
     }
@@ -1848,7 +1952,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
                 {
-                    weaponClassText.text = "+1 Stength";
+                    weaponClassText.text = "+1 Strength";
                 }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfVitality)
                 {
@@ -2046,7 +2150,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                     }
                     else
                     {
-                        damageTextEquipped.text = $"Damage: {equippedWeapon.weaponDetails.weaponCurrentProjectile.projectileDamageMin}-{equippedWeapon.weaponDetails.weaponCurrentProjectile.projectileDamageMax}";
+                        damageTextEquipped.text = $"Damage: {equippedWeapon.weaponDetails.weaponCurrentProjectile.projectileDamageMin}-" +
+                            $"{equippedWeapon.weaponDetails.weaponCurrentProjectile.projectileDamageMax}";
                     }
 
                     int dropWeaponDamageMax = weaponDetails.isMeleeWeapon ? weaponDetails.meleeDamageMax : weaponDetails.weaponCurrentProjectile.projectileDamageMax;
@@ -2163,6 +2268,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 {
                     hitSpeedText.text = $"Speed: {weaponDetails.weaponHitSpeed.ToString()}";
                     weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
+
                     if (weaponDetails.isMeleeWeapon)
                     {
                         damageText.text = $"Damage: {weaponDetails.meleeDamageMin}-{weaponDetails.meleeDamageMax}";

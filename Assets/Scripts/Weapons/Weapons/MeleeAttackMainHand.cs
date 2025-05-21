@@ -84,9 +84,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
     private void DetectHandHit(Weapon weapon, MeleeAttackType attackType, MeleeHand hand, bool isBloodDrain)
     {
-        Transform originTransform = attackType == MeleeAttackType.Swing
-            ? circleOriginTransform
-            : boxOriginTransform;
+        Transform originTransform = attackType == MeleeAttackType.Swing ? circleOriginTransform : boxOriginTransform;
 
         Collider2D attackCollider = originTransform.GetComponent<Collider2D>();
 

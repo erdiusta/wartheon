@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22943cb44bb6d5e4cbb81f6f6c20488d, type: 3}
   m_Name: DungeonLevel_Level2
   m_EditorClassIdentifier: 
-  levelNumber: 1
+  levelNumber: 2
   levelName: FOLIAGE HALL
   roomTemplateList:
   - {fileID: 11400000, guid: 29ada3c6b2c89004a8582af9cab3d064, type: 2}
@@ -40,7 +40,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 84a2a0e9344f111499e126330c0ceb69, type: 2}
   - {fileID: 11400000, guid: 6a959d38d77d59b4d80d53475133bfbe, type: 2}
   roomNodeGraphList:
-  - {fileID: 11400000, guid: c8997c9c929e7b843881fc2049256b6b, type: 2}
   - {fileID: 11400000, guid: a84e3b299c5e0e04486c2701d0009921, type: 2}
   - {fileID: 11400000, guid: 83336e1f18024cb409ccb1759c1c29b2, type: 2}
   - {fileID: 11400000, guid: ce4e1f012f37944438e6487df6ad92ad, type: 2}

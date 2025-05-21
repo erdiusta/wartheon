@@ -18,6 +18,7 @@ public class BookUI : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI characterName;
     [SerializeField] Image characterImage;
+    [SerializeField] Image characterSeparatorImage;
 
     [SerializeField] TextMeshProUGUI strengthText;
     [SerializeField] TextMeshProUGUI constitutionText;
@@ -63,7 +64,11 @@ public class BookUI : MonoBehaviour
     Transform offHandWeaponEquipped;
 
     Transform buildTreeFrame;
+    Transform buildDescriptonInnerPanel;
     Transform buildPointsTransform;
+    Transform buildTextContainer;
+    TextMeshProUGUI buildTitleText;
+    TextMeshProUGUI buildDetailsText;
     Player player;
 
     // WEAPONS
@@ -93,6 +98,8 @@ public class BookUI : MonoBehaviour
 
     private void Awake()
     {
+        characterSeparatorImage = transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
+
         // Active Item Slot
         activeItemSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(0);
 
@@ -107,6 +114,7 @@ public class BookUI : MonoBehaviour
         passiveItemLegSlot = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(7);
 
         player = GameManager.Instance.GetPlayer();
+        characterSeparatorImage.sprite = player.playerDetails.playerMiniMapIcon;
 
         UpdatePlayerStatInfo(player);
 
@@ -163,10 +171,16 @@ public class BookUI : MonoBehaviour
 
     private void OnEnable()
     {
+        StaticEventHandler.OnBuildPageOpened += StaticEventHandler_OnBuildPageOpened;
+
         // BOOK WEAPON EVENTS
         StaticEventHandler.OnWeaponPickedUp += StaticEventHandler_OnWeaponPickedUp;
         StaticEventHandler.OnWeaponSwitched += StaticEventHandler_OnWeaponSwitched;
         StaticEventHandler.OnWeaponDropped += StaticEventHandler_OnWeaponDropped;
+
+        // BUILD EVENTS
+        StaticEventHandler.OnBuildInfoHovered += StaticEventHandler_OnBuildInfoHovered;
+        StaticEventHandler.OnBuildInfoUnhovered += StaticEventHandler_OnBuildInfoUnhovered;
 
         // BEASTIARY EVENTS
         StaticEventHandler.OnMobUnlocked += StaticEventHandler_OnMobUnlocked;
@@ -200,6 +214,8 @@ public class BookUI : MonoBehaviour
 
     private void OnDisable()
     {
+        StaticEventHandler.OnBuildPageOpened -= StaticEventHandler_OnBuildPageOpened;
+
         // BOOK WEAPON EVENTS
         StaticEventHandler.OnWeaponPickedUp -= StaticEventHandler_OnWeaponPickedUp;
         StaticEventHandler.OnWeaponSwitched -= StaticEventHandler_OnWeaponSwitched;
@@ -238,8 +254,35 @@ public class BookUI : MonoBehaviour
     private void Start()
     {
         buildTreeFrame = buildPage.GetChild(0).GetChild(1);
-        buildPointsTransform = buildPage.GetChild(0).GetChild(2);
+        buildDescriptonInnerPanel = buildPage.GetChild(0).GetChild(2);
+        buildTextContainer = buildPage.GetChild(0).GetChild(3);
+        buildPointsTransform = buildPage.GetChild(0).GetChild(4);
+        buildTitleText = buildTextContainer.GetChild(0).GetComponent<TextMeshProUGUI>();
+        buildDetailsText = buildTextContainer.GetChild(1).GetComponent<TextMeshProUGUI>();
+
+        buildTitleText.text = string.Empty;
+        buildDetailsText.text = string.Empty;
+
+
+
         PopulateCharactersBuildDetails();
+    }
+
+    private void StaticEventHandler_OnBuildPageOpened()
+    {
+        OpenBuildPage();
+    }
+
+    private void StaticEventHandler_OnBuildInfoHovered(BuildPointsArgs buildPointsArgs)
+    {
+        buildTitleText.text = player.playerDetails.charBuildDetails[buildPointsArgs.buildIndex].characterBuildName;
+        buildDetailsText.text = player.playerDetails.charBuildDetails[buildPointsArgs.buildIndex].characterBuildDetails;
+    }
+
+    private void StaticEventHandler_OnBuildInfoUnhovered(BuildPointsArgs buildPointsArgs)
+    {
+        buildTitleText.text = string.Empty;
+        buildDetailsText.text = string.Empty;
     }
 
     private void StaticEventHandler_OnWeaponPickedUp(WeaponAddedToBookArgs weaponAddedToBookArgs)
@@ -812,6 +855,7 @@ public class BookUI : MonoBehaviour
                 case BookPage.Build:
                     EnableBuildsPage();
                     buildPage.GetChild(0).gameObject.SetActive(true);
+                    buildDescriptonInnerPanel.gameObject.SetActive(true);
                     break;
                 default:
                     break;
@@ -839,12 +883,12 @@ public class BookUI : MonoBehaviour
     {
         for (int i = 0; i < buildTreeFrame.childCount; i++)
         {
-            // Manipulate build title 
-            buildTreeFrame.GetChild(i).GetChild(buildTreeFrame.GetChild(i).childCount - 1).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                player.playerDetails.charBuildDetails[i].characterBuildName;
-            // Manipulate detailed info title
-            buildTreeFrame.GetChild(i).GetChild(buildTreeFrame.GetChild(i).childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().text =
-                player.playerDetails.charBuildDetails[i].characterBuildDetails;
+            //// Manipulate build title 
+            //buildTreeFrame.GetChild(i).GetChild(buildTreeFrame.GetChild(i).childCount - 1).GetChild(0).GetComponent<TextMeshProUGUI>().text =
+            //    player.playerDetails.charBuildDetails[i].characterBuildName;
+            //// Manipulate detailed info title
+            //buildTreeFrame.GetChild(i).GetChild(buildTreeFrame.GetChild(i).childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().text =
+            //    player.playerDetails.charBuildDetails[i].characterBuildDetails;
             // Manipulate build icon
             buildTreeFrame.GetChild(i).GetComponent<Image>().sprite = player.playerDetails.charBuildDetails[i].characterBuildImage;
         }
@@ -1224,7 +1268,7 @@ public class BookUI : MonoBehaviour
     private void StaticEventHandler_OnBuildPointUsed(BuildPointsArgs buildPointsArgs)
     {
         buildPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentBuildPoints.ToString();
-        UnlockBelowBuildIcon(buildPointsArgs.unlockedBuildIconIndexNumber);
+        UnlockBelowBuildIcon(buildPointsArgs.buildIndex);
         SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.buildActivationSoundEffect);
         ActivateBuild(buildPointsArgs);
     }
@@ -1233,7 +1277,7 @@ public class BookUI : MonoBehaviour
     {
         for (int i = 0; i < buildTreeFrame.childCount; i++)
         {
-            if (i == buildPointsArgs.unlockedBuildIconIndexNumber)
+            if (i == buildPointsArgs.buildIndex)
             {
                 if (i == 0)
                 {
@@ -1581,8 +1625,7 @@ public class BookUI : MonoBehaviour
                     player.UpdateDamageValues();
                     player.UpdateWeaponHandlingAndCriticalValues();
                     player.UpdateBlockAndEvasivenessValues();
-                    player.healthEvent.CallHealthChangedEvent(((float)player.health.currentHealth / (float)player.health.GetMaximumHealth()),
-                        player.health.currentHealth, 0, MeleeHand.None);
+                    player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                 }
             }
         }

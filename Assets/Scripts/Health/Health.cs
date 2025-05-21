@@ -46,7 +46,7 @@ public class Health : MonoBehaviour
     {
         // Trigger a health event for UI update
         // Trigger health event
-        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, 0, MeleeHand.None);
+        healthEvent.CallHealthChangedEvent(currentHealth, 0, MeleeHand.None);
 
         // Attempt to load enemy / player / decoy components
         player = GetComponent<Player>();
@@ -267,12 +267,12 @@ public class Health : MonoBehaviour
                 // Set health bar as the percentage of health remaining
                 if (GameManager.Instance.healthBarContainer.activeSelf)
                 {
-                    GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)maximumHealth, enemy);
+                    GameManager.Instance.SetHealthBarValue(currentHealth, enemy);
                 }
             }
 
             // Trigger health event
-            healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, damageAmount, MeleeHand.None);
+            healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, MeleeHand.None);
         }
     }
 
@@ -356,7 +356,7 @@ public class Health : MonoBehaviour
             }
 
             // Trigger health event
-            healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, damageAmount, hand);
+            healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, hand);
         }
     }
 
@@ -552,7 +552,7 @@ public class Health : MonoBehaviour
 
         int damageAmount = 7;
         // Trigger health event
-        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, damageAmount, MeleeHand.None);
+        healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, MeleeHand.None);
         TakeDamage(damageAmount, Vector2.zero, transform.position, false, MeleeHand.None);
 
         float rndNumber = Random.Range(0f, 1f);
@@ -587,7 +587,7 @@ public class Health : MonoBehaviour
 
         int damageAmount = 7;
         // Trigger health event
-        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, damageAmount, MeleeHand.None);
+        healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, MeleeHand.None);
         TakeDamage(damageAmount, Vector2.zero, transform.position, false, MeleeHand.None);
 
         float rndNumber = Random.Range(0f, 1f);
@@ -668,7 +668,7 @@ public class Health : MonoBehaviour
         }
 
         // Trigger health event
-        healthEvent.CallHealthChangedEvent(((float)currentHealth / (float)maximumHealth), currentHealth, 0, MeleeHand.None);
+        healthEvent.CallHealthChangedEvent(currentHealth, 0, MeleeHand.None);
         StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
     }
 

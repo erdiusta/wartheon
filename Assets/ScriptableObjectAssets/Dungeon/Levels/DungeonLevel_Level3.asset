@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22943cb44bb6d5e4cbb81f6f6c20488d, type: 3}
   m_Name: DungeonLevel_Level3
   m_EditorClassIdentifier: 
-  levelNumber: 2
+  levelNumber: 3
   levelName: THUNDER VAULT
   roomTemplateList:
   - {fileID: 11400000, guid: cd7f908f918af8f418ed32873eca283b, type: 2}
@@ -40,7 +40,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6da2881898d53a74492349dd47090be8, type: 2}
   - {fileID: 11400000, guid: 369cbc9222a02a8418462305ebad0b2e, type: 2}
   roomNodeGraphList:
-  - {fileID: 11400000, guid: c8997c9c929e7b843881fc2049256b6b, type: 2}
   - {fileID: 11400000, guid: a84e3b299c5e0e04486c2701d0009921, type: 2}
   - {fileID: 11400000, guid: 83336e1f18024cb409ccb1759c1c29b2, type: 2}
   - {fileID: 11400000, guid: ce4e1f012f37944438e6487df6ad92ad, type: 2}

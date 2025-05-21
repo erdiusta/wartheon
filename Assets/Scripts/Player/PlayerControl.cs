@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Player))]
 [DisallowMultipleComponent]
@@ -249,7 +250,7 @@ public class PlayerControl : MonoBehaviour
         {
             playerParryDurationTimer -= Time.deltaTime;
         }
-        else if(isParrying)
+        else if (isParrying)
         {
             isParrying = false;
             player.animatePlayer.SetIdleAnimationParameters();
@@ -378,7 +379,7 @@ public class PlayerControl : MonoBehaviour
         // Fire when left mouse button is clicked - melee
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
         {
-            if (InputManager.Instance.attack.action.WasPressedThisFrame())
+            if (InputManager.Instance.attack.action.WasPressedThisFrame() && !IsClickingSpecificUILayer() && !isParrying)
             {
                 // MAIN-HAND
                 if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
@@ -403,7 +404,8 @@ public class PlayerControl : MonoBehaviour
         // Fire for precharge weapons (fire once after precharge)
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
         {
-            if (InputManager.Instance.attack.action.IsPressed() && !player.activeWeapon.GetCurrentMainHandWeapon().firingCompletedIfWeaponIsPrecharged) // Only trigger once per hold
+            if (InputManager.Instance.attack.action.IsPressed() && !player.activeWeapon.GetCurrentMainHandWeapon().firingCompletedIfWeaponIsPrecharged 
+                && !IsClickingSpecificUILayer()) // Only trigger once per hold
             {
                 if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
                 {
@@ -421,7 +423,8 @@ public class PlayerControl : MonoBehaviour
             }
         }
         // Fire for non-precharge weapons (fire once per press)
-        else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime == 0f && InputManager.Instance.attack.action.WasPressedThisFrame())
+        else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime == 0f && InputManager.Instance.attack.action.WasPressedThisFrame()
+            && !IsClickingSpecificUILayer())
         {
             isSoundPlayed = false;
 
@@ -614,7 +617,7 @@ public class PlayerControl : MonoBehaviour
                 case WeaponClass.Spear:
                 case WeaponClass.Dagger:
                 case WeaponClass.Claw:
-                    if (InputManager.Instance.parryButton.action.IsPressed() && !isParrying && playerParryCooldownTimer < 0)
+                    if (InputManager.Instance.parryButton.action.WasPressedThisFrame() && !isParrying && playerParryCooldownTimer < 0)
                     {
                         isParrying = true;
                         player.animatePlayer.ResetAnimatonParameters();
@@ -654,6 +657,29 @@ public class PlayerControl : MonoBehaviour
         // Trigger reset prechager mechanism in case a hit taken during the precharge
         player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
         player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
+    }
+
+    public bool IsClickingSpecificUILayer()
+    {
+        PointerEventData pointerData = new PointerEventData(GameManager.Instance.eventSystem)
+        {
+            position = Mouse.current.position.ReadValue()
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        GameManager.Instance.uiRaycaster.Raycast(pointerData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            if ((GameManager.Instance.specialUILayerMask.value & (1 << result.gameObject.layer)) != 0)
+            {
+                Debug.Log("SHIT");
+
+                return true; // Clicked on a UI element within the target layer
+            }
+        }
+
+        return false;
     }
 
     private void SwitchWeaponInput(bool onStart = false)

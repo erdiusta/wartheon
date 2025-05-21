@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22943cb44bb6d5e4cbb81f6f6c20488d, type: 3}
   m_Name: DungeonLevel_Level4
   m_EditorClassIdentifier: 
-  levelNumber: 3
+  levelNumber: 4
   levelName: SANCTUARY
   roomTemplateList:
   - {fileID: 11400000, guid: d7e57f5af29c26848b05f1d51bb36f52, type: 2}
@@ -40,7 +40,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2950b767b1b75bb41a6fb9c1074ac3b1, type: 2}
   - {fileID: 11400000, guid: 8e2ef1f5fafe7a54d84558ffb10661f9, type: 2}
   roomNodeGraphList:
-  - {fileID: 11400000, guid: c8997c9c929e7b843881fc2049256b6b, type: 2}
   - {fileID: 11400000, guid: a84e3b299c5e0e04486c2701d0009921, type: 2}
   - {fileID: 11400000, guid: 83336e1f18024cb409ccb1759c1c29b2, type: 2}
   - {fileID: 11400000, guid: ce4e1f012f37944438e6487df6ad92ad, type: 2}

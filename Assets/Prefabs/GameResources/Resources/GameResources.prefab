@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomNodeTypeList: {fileID: 11400000, guid: 9b6ce2f11d8d4d546a3fefba4b866ddd, type: 2}
+  tutorialRoomNodeTypeList: {fileID: 11400000, guid: c10f5235bcd33fa42bcf047a3d31fb87, type: 2}
   playerSelectionPrefab: {fileID: 8110264131267041669, guid: a63acdfc3f394f54b973738f5fa8ea20, type: 3}
   playerDetailsArray:
   - {fileID: 11400000, guid: 3c718eafb0e25534e830534a8fb1e2dc, type: 2}

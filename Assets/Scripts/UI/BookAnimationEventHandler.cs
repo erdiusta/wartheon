@@ -43,11 +43,11 @@ public class BookAnimationEventHandler : MonoBehaviour
 
     private void OpenBook()
     {
-        GameManager.Instance.zoomInFinished = true;
+        GameManager.Instance.bookZoomInFinished = true;
     }
 
     private void CloseBook()
     {
-        GameManager.Instance.zoomOutFinished = true;
+        GameManager.Instance.bookZoomOutFinished = true;
     }
 }

@@ -18,8 +18,8 @@ MonoBehaviour:
   battleMusic: {fileID: 11400000, guid: cc7c0850d0d08d44380e89f69d40b7c1, type: 2}
   ambientMusic: {fileID: 11400000, guid: 35cd1ab5374e9a24b9d9b3b176163a6c, type: 2}
   roomNodeType: {fileID: 11400000, guid: 3fe2efa4d5f202c40a07d37b9725f105, type: 2}
-  lowerBounds: {x: 0, y: -4}
-  upperBounds: {x: 9, y: 10}
+  lowerBounds: {x: 0, y: 0}
+  upperBounds: {x: 9, y: 6}
   doorwayList:
   - position: {x: 0, y: 2}
     orientation: 3

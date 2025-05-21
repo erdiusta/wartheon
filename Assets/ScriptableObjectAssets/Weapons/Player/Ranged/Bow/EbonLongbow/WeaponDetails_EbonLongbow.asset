@@ -56,7 +56,7 @@ MonoBehaviour:
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 9e94351610df36548be272034fa0be42, type: 2}
   weaponImpactSoundEffect: {fileID: 0}
-  isMeleeWeapon: 1
+  isMeleeWeapon: 0
   isShield: 0
   projectileDeflectRatio: 0
   circleRadius: 0
