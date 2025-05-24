@@ -2,36 +2,47 @@ using UnityEngine;
 
 public class SelectedActiveItem : MonoBehaviour
 {
-    SetActiveWeaponEvent setActiveWeaponEvent;
+    SetActiveItemEvent setActiveItemEvent;
     ActiveItem currentActiveItem;
 
     private void Awake()
     {
-        setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
+        setActiveItemEvent = GetComponent<SetActiveItemEvent>();
     }
 
     private void OnEnable()
     {
-        setActiveWeaponEvent.OnSelectedActiveItem += SetActiveWeaponEvent_OnSelectedActiveItem;
-        setActiveWeaponEvent.OnRemovedActiveItem += SetActiveWeaponEvent_OnRemovedActiveItem;
+
+        if (setActiveItemEvent == null)
+        {
+            Debug.LogError("setActiveItemEvent is null on " + gameObject.name);
+            return;
+        }
+
+        setActiveItemEvent.OnSelectedActiveItem += SetActiveItemEvent_OnSelectedActiveItem;
+        setActiveItemEvent.OnRemovedActiveItem += SetActiveItemEvent_OnRemovedActiveItem;
     }
 
     private void OnDisable()
     {
-        setActiveWeaponEvent.OnSelectedActiveItem -= SetActiveWeaponEvent_OnSelectedActiveItem;
-        setActiveWeaponEvent.OnRemovedActiveItem -= SetActiveWeaponEvent_OnRemovedActiveItem;
+        setActiveItemEvent.OnSelectedActiveItem -= SetActiveItemEvent_OnSelectedActiveItem;
+        setActiveItemEvent.OnRemovedActiveItem -= SetActiveItemEvent_OnRemovedActiveItem;
     }
 
-    private void SetActiveWeaponEvent_OnSelectedActiveItem(SetActiveWeaponEvent setActiveWeaponEvent, SetSelectedActiveItemArgs setSelectedActiveItemArgs)
+    private void SetActiveItemEvent_OnSelectedActiveItem(SetActiveItemEvent setActiveItemEvent, SetSelectedActiveItemArgs setSelectedActiveItemArgs)
     {
+        Debug.Log($"[Event Triggered] by {gameObject.name}", gameObject);
+
         SetActiveItem(setSelectedActiveItemArgs.activeItem);
 
+        StaticEventHandler.CallItemAddedToActiveItemSlot(setSelectedActiveItemArgs.activeItem.activeItemDetails.activeItemSprite);
         StaticEventHandler.CallActiveUnlockedEvent(setSelectedActiveItemArgs.activeItem.activeItemDetails.activeItemType);
     }
 
-    private void SetActiveWeaponEvent_OnRemovedActiveItem(SetActiveWeaponEvent setActiveWeaponEvent)
+    private void SetActiveItemEvent_OnRemovedActiveItem(SetActiveItemEvent setActiveItemEvent)
     {
         currentActiveItem = null;
+        StaticEventHandler.CallItemRemovedFromActiveItemSlot();
     }
 
     private void SetActiveItem(ActiveItem activeItem)

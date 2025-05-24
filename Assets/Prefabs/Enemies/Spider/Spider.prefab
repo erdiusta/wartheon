@@ -291,7 +291,7 @@ PrefabInstance:
     - target: {fileID: 4484463956873996418, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: -3126052078805161472, guid: d9190846f589a2b45bee7e0a202a2f87, type: 2}
+      objectReference: {fileID: -6719382211919318480, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
     - target: {fileID: 4782664586805523434, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 0
@@ -311,15 +311,7 @@ PrefabInstance:
     - target: {fileID: 5788763560476751888, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: -3126052078805161472, guid: d9190846f589a2b45bee7e0a202a2f87, type: 2}
-    - target: {fileID: 6195632694955144991, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: d9190846f589a2b45bee7e0a202a2f87, type: 2}
-    - target: {fileID: 6195632694955144991, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: -3126052078805161472, guid: d9190846f589a2b45bee7e0a202a2f87, type: 2}
+      objectReference: {fileID: -6719382211919318480, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
     - target: {fileID: 6195632694955144991, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 0
@@ -397,14 +389,6 @@ PrefabInstance:
       value: 0.2703578
       objectReference: {fileID: 0}
     - target: {fileID: 7150230896634044282, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: d9190846f589a2b45bee7e0a202a2f87, type: 2}
-    - target: {fileID: 7150230896634044282, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: -3126052078805161472, guid: d9190846f589a2b45bee7e0a202a2f87, type: 2}
-    - target: {fileID: 7150230896634044282, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
@@ -436,6 +420,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 7279418093595782800, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -6719382211919318480, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
     - target: {fileID: 7396973610872839575, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Layer
       value: 16

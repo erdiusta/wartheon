@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
 using System;
+using NUnit.Framework.Constraints;
 
 #region REQUIRE COMPONENTS
 [RequireComponent(typeof(HealthEvent))]
@@ -63,6 +64,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public MeleeAttackMainHand meleeAttackMainHand;
     [HideInInspector] public RangedAttackEvent rangedAttackEvent;
     [HideInInspector] public SetActiveWeaponEvent setActiveWeaponEvent;
+    [HideInInspector] public SetActiveItemEvent setActiveItemEvent;
     [HideInInspector] public SetPassiveItemEvent setPassiveItemEvent; 
     [HideInInspector] public AimWeapon aimWeapon;
     [HideInInspector] public ActiveWeapon activeWeapon;
@@ -211,6 +213,7 @@ public class Player : MonoBehaviour
         rangedAttackEvent = GetComponentInChildren<RangedAttackEvent>();
         meleeAttackMainHand = GetComponent<MeleeAttackMainHand>();
         setActiveWeaponEvent = GetComponent<SetActiveWeaponEvent>();
+        setActiveItemEvent = GetComponent<SetActiveItemEvent>();
         setPassiveItemEvent = GetComponent<SetPassiveItemEvent>();
         aimWeapon = GetComponent<AimWeapon>();
         activeWeapon = GetComponent<ActiveWeapon>();
@@ -348,14 +351,35 @@ public class Player : MonoBehaviour
     /// </summary>
     public void UpdateWieldedWeapons(WeaponDetailsSO weaponDetails, bool pickingUp, bool onStart)
     {
-        AddNextWeaponToPlayer(weaponDetails, pickingUp, onStart, false);
+        // If inventory is full replace weapon
+        if (InventoryManager.Instance.IsInventoryFull())
+        {
+            AddNextWeaponToPlayer(weaponDetails, pickingUp, onStart, false);
 
-        // Set player starting health
-        UpdatePlayerHealth(0, false, false);
-        UpdateDamageValues();
-        UpdateWeaponHandlingAndCriticalValues();
-        UpdateBlockAndEvasivenessValues();
-        UpdateSpeedValue();
+            // Set player starting health
+            UpdatePlayerHealth(0, false, false);
+            UpdateDamageValues();
+            UpdateWeaponHandlingAndCriticalValues();
+            UpdateBlockAndEvasivenessValues();
+            UpdateSpeedValue();
+
+            StaticEventHandler.CallPrimaryStatsChangedEvent();
+        }
+        else
+        {
+            // Add it to inventory slot
+            Weapon weapon = new Weapon
+            {
+                weaponDetails = weaponDetails,
+                weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
+                onInventorySlot = true
+            };
+
+            int retrievedInventoryIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(weapon);
+
+            StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, retrievedInventoryIndex);
+            StaticEventHandler.CallWeaponUnlockedEvent(weaponDetails.weaponTitle);
+        }
     }
 
     /// <summary>
@@ -561,10 +585,8 @@ public class Player : MonoBehaviour
 
         chestItem.boxCollider2D.enabled = false;
 
-        playerControl.PopulateActiveItemsToBook(activeItemDetails.activeItemSprite);
-
         // Set the added active item as active
-        setActiveWeaponEvent.CallSelectedActiveItem(activeItem);
+        setActiveItemEvent.CallSelectedActiveItem(activeItem);
 
         // Set hasActiveDrop flag to true
         chestItem.hasActiveDrop = true; 
@@ -579,8 +601,6 @@ public class Player : MonoBehaviour
         // Declare this chest item as to-be-dropped chest item
         ChestItem.toBeDroppedChestItem = chestItem;
         ChestItem.toBeDroppedChestItem.toBeDroppedActiveItem = activeItem;
-
-        StaticEventHandler.CallActiveUnlockedEvent(activeItemDetails.activeItemType);
 
         return activeItem;
     }
@@ -986,14 +1006,14 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Set player health from playerDetails SO
     /// </summary>
-    public void UpdatePlayerHealth(int healthPercent, bool shouldHealthFilled, bool isMaxHealthChanged)
+    public void UpdatePlayerHealth(int healthIncrease, bool shouldHealthFilled, bool isMaxHealthChanged)
     {
         if (isMaxHealthChanged)
         {
             health.SetMaximumHealth(20 + currentConstitutionValue * 10, shouldHealthFilled);
         }
 
-        health.AddHealth(healthPercent);
+        health.AddHealth(healthIncrease);
     }
 
     /// <summary>

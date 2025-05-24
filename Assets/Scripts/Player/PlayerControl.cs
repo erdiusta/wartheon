@@ -16,6 +16,10 @@ public class PlayerControl : MonoBehaviour
     [HideInInspector] public bool IsParrying => isParrying;
     [HideInInspector] public Vector3 playerBodycenterPosition;
 
+    // Input gamepad
+    [SerializeField] float cursorSpeed = 1000f;
+    Vector2 lastValidGamepadAimInput = Vector2.zero;
+    
     Vector2 movementInput;
     Player player;
     bool isPlayerMovementDisabled = false;
@@ -64,6 +68,11 @@ public class PlayerControl : MonoBehaviour
 
         allSpriteRenderers.Add(player.spriteRenderer);
 
+        if (InputManager.IsGamepad())
+        {
+            lastValidGamepadAimInput = Vector2.right;
+        }
+
         // Set player animation speed
         SetPlayerAnimationSpeed();
     }
@@ -101,8 +110,6 @@ public class PlayerControl : MonoBehaviour
                 UseItemInput();
                 // Process the player use special move input
                 SpecialMoveInput();
-                // Drop the player's active item if have
-                DropActiveItemInput();
                 break;
             case MoveStatus.Stagger:
                 isPlayerRolling = false;
@@ -335,32 +342,55 @@ public class PlayerControl : MonoBehaviour
         SwitchWeaponInput();
     }
 
-    private void AimWeaponInput(out Vector3 weaponDirection, out float weaponAngleDegrees, out float playerAngleDegrees, out AimDirection playerAimDirection, out AttackDirection playerAttackDirection)
+    private void AimWeaponInput(out Vector3 weaponDirection, out float weaponAngleDegrees, out float playerAngleDegrees, out AimDirection playerAimDirection, 
+        out AttackDirection playerAttackDirection)
     {
-        // Get mouse world position
-        Vector3 mouseWorldPosition = HelperUtilities.GetMouseWorldPosition();
+        playerAngleDegrees = 0f;
+        weaponAngleDegrees = 0f;
+        weaponDirection = Vector2.zero;
 
-        // Calculate direction vector of mouse cursor from weapon shoot position
-        weaponDirection = (mouseWorldPosition - player.activeWeapon.GetRightHandShootPosition());
+        Vector3 aimDirectionVec = Vector3.right; // Default direction
+        Vector3 playerPos = transform.position;
+        Vector3 weaponShootPos = player.activeWeapon.GetMainHandShootPosition();
 
-        // Calculate direction vector of mouse cursor from player transform position
-        Vector3 playerDirection = (mouseWorldPosition - transform.position);
+        Vector2 rightStickInput = InputManager.Instance.gamepadAim.action.ReadValue<Vector2>();
 
-        // Get weapon to cursor angle
-        weaponAngleDegrees = HelperUtilities.GetAngleFromVector(weaponDirection);
+        if (InputManager.IsGamepad())
+        {
+            if (rightStickInput.sqrMagnitude > 0.01f)
+            {
+                lastValidGamepadAimInput = rightStickInput.normalized;
+            }
 
-        // Get player to cursor angle
-        playerAngleDegrees = HelperUtilities.GetAngleFromVector(playerDirection);
+            if (lastValidGamepadAimInput.sqrMagnitude > 0.01f)
+            {
+                aimDirectionVec = lastValidGamepadAimInput;
+                weaponDirection = aimDirectionVec;
+                weaponAngleDegrees = HelperUtilities.GetAngleFromVector(aimDirectionVec);
+                playerAngleDegrees = weaponAngleDegrees;
+            }
+        }
+        else
+        {
+            lastValidGamepadAimInput = Vector2.zero;
 
-        // Set player aim direction
+            Vector3 mouseWorldPos = HelperUtilities.GetMouseWorldPosition();
+
+            weaponDirection = mouseWorldPos - weaponShootPos;
+            Vector3 playerDirection = mouseWorldPos - playerPos;
+
+            weaponAngleDegrees = HelperUtilities.GetAngleFromVector(weaponDirection);
+            playerAngleDegrees = HelperUtilities.GetAngleFromVector(playerDirection);
+        }
+
+        // Direction parsing
         playerAimDirection = HelperUtilities.GetAimDirection(playerAngleDegrees);
         aimDirection = playerAimDirection;
 
-        // Set player attack direction
         playerAttackDirection = HelperUtilities.GetAttackDirection(playerAngleDegrees);
         attackDirection = playerAttackDirection;
 
-        // Trigger weapon aim methods
+        // Apply results
         player.aimWeapon.Aim(playerAimDirection, playerAttackDirection, playerAngleDegrees);
         player.animatePlayer.InitializeAimAnimationParameters();
         player.animatePlayer.SetAimWeaponAnimationParameters(playerAimDirection, playerAttackDirection);
@@ -684,7 +714,7 @@ public class PlayerControl : MonoBehaviour
 
     private void SwitchWeaponInput(bool onStart = false)
     {
-        float scrollValue = (InputManager.Instance.switchWeapon.action.ReadValue<Vector2>().normalized).y;
+        float scrollValue = (InputManager.Instance.switchWeaponByWheel.action.ReadValue<Vector2>().normalized).y;
 
         // Switch weapon if mouse scroll wheel selecetd
         if (scrollValue < 0f)
@@ -701,7 +731,22 @@ public class PlayerControl : MonoBehaviour
 
     public void NextWeaponSet(bool onlySwitch, bool mouseWheel, bool onStart, int setNumber = 0)
     {
-        if (mouseWheel)
+        if (setNumber > 0)
+        {
+            // Cache previous weapon slot index
+            InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+
+            // Set previous index
+            player.previousSetIndex = player.currentWeaponSlotSetIndex;
+
+            // Increment the current weapon slot set index
+            player.currentWeaponSlotSetIndex = setNumber;
+
+            SetWeaponSetByIndex(onlySwitch, onStart);
+
+            InventoryManager.Instance.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+        }
+        else if (mouseWheel)
         {
             // Cache previous weapon slot index
             InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
@@ -718,6 +763,10 @@ public class PlayerControl : MonoBehaviour
             }
 
             SetWeaponSetByIndex(onlySwitch, onStart);
+
+            InventoryManager.Instance.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+
+            HighlightWeaponSetButton(); //Light and color settings
         }
         else
         {
@@ -728,9 +777,11 @@ public class PlayerControl : MonoBehaviour
 
             player.currentWeaponSlotSetIndex = setNumber;
             SetWeaponSetByIndex(onlySwitch, onStart);
-        }
 
-        HighlightWeaponSetButton(); //Light and color settings
+            InventoryManager.Instance.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+
+            HighlightWeaponSetButton(); //Light and color settings
+        }
     }
 
     public void PreviousWeaponSet(bool onlySwitch, bool onStart)
@@ -749,21 +800,13 @@ public class PlayerControl : MonoBehaviour
         }
 
         SetWeaponSetByIndex(onlySwitch, onStart);
+        InventoryManager.Instance.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
 
         HighlightWeaponSetButton();
     }
 
-    public void SetWeaponSetByIndex(bool onlySwitch, bool onStart)
+    public void SetWeaponSetByIndex(bool onlySwitch, bool onStart, bool dragFromInventory = false, bool dragToInventory = false)
     {
-        //// ACTIVE WEAPON VARIABLES SWITCH
-        //if (player.weaponSlotSetArray[player.previousSetIndex - 1][1] != null)
-        //{
-        //    if (!dragMainSlotOff)
-        //    {
-        //        player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
-        //    }
-        //}
-
         // WEAPON SLOTS SWITCH
         if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null) // If next slot contains a main-hand weapon
         {
@@ -821,14 +864,14 @@ public class PlayerControl : MonoBehaviour
         player.UpdateSpeedValue();
 
         // Book UI SWITCH
-        StaticEventHandler.CallWeaponSwitchedEventForBook();
+        if(!dragFromInventory && !dragToInventory) StaticEventHandler.CallWeaponSwitchedEventForBook();
     }
 
     /// <summary>
     /// Highlight weapon set button to be seen clearly
     /// </summary>
     private void HighlightWeaponSetButton()
-    {
+    {       
         // Get the button container
         Transform buttonContainer = GameManager.Instance.bookView.transform.GetChild(1).GetChild(3).GetChild(0);
 
@@ -846,6 +889,7 @@ public class PlayerControl : MonoBehaviour
         // Highlight the current button
         Button highlightedButton = buttonContainer.GetChild(player.currentWeaponSlotSetIndex - 1).GetComponent<Button>();
         ColorBlock highlightedCb = highlightedButton.colors;
+
         highlightedButton.image.color = highlightedCb.highlightedColor;
     }
 
@@ -1496,18 +1540,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Drop current active weapon
-    /// </summary>
-    private void DropActiveItemInput()
-    {
-        if (InputManager.Instance.dropActiveItem.action.WasPressedThisFrame())
-        {
-            DropProcess(DropType.ActiveItem);
-        }
-    }
-
-    public bool DropProcess(DropType dropType, IReceivable receivable = null, bool isWeaponSwapping = false, bool dropOffHand = false)
+    public bool DropProcess(DropType dropType, ItemGeneric itemGeneric = null, bool isWeaponSwapping = false, bool dropOffHand = false, bool isInventoryItem = false, int inventoryIndex = -1)
     {
         if (dropType == DropType.ActiveItem)
         {
@@ -1537,14 +1570,12 @@ public class PlayerControl : MonoBehaviour
                 // Store remaining charge count during drop process
                 ChestItem.toBeDroppedChestItem.remainingItemCharge = player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge;
 
-                player.setActiveWeaponEvent.CallRemovedActiveItem();
+                player.setActiveItemEvent.CallRemovedActiveItem();
 
                 // Update stat values
                 player.UpdateDamageValues();
                 player.UpdateWeaponHandlingAndCriticalValues();
                 player.UpdateBlockAndEvasivenessValues();
-
-                RemoveActiveItemFromBook();
 
                 ChestItem.toBeDroppedChestItem.transform.SetParent(null);
                 ChestItem.toBeDroppedChestItem.isPickedUp = false;
@@ -1556,42 +1587,117 @@ public class PlayerControl : MonoBehaviour
         }
         else if (dropType == DropType.PassiveItem)
         {
-            PassiveItem passiveItem = (PassiveItem)receivable;
+            PassiveItem passiveItem = (PassiveItem)itemGeneric;
 
-            GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-            ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
-            ChestItem.toBeDroppedChestItem = chestItem;
+            if (isInventoryItem)
+            {
+                GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+                ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
+                ChestItem.toBeDroppedChestItem = chestItem;
 
-            ChestItem.toBeDroppedChestItem.hasSecondaryPassiveDrop = true;
-            ChestItem.toBeDroppedChestItem.droppedByPlayer = true;
-            ChestItem.toBeDroppedChestItem.isColliding = true;
+                ChestItem.toBeDroppedChestItem.hasSecondaryPassiveDrop = true;
+                ChestItem.toBeDroppedChestItem.droppedByPlayer = true;
+                ChestItem.toBeDroppedChestItem.isColliding = true;
 
-            ChestItem.toBeDroppedChestItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, transform.position);
+                ChestItem.toBeDroppedChestItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, transform.position);
 
-            // Disable some components during equipped
-            ChestItem.toBeDroppedChestItem.spriteRenderer.enabled = true;
-            ChestItem.toBeDroppedChestItem.animator.enabled = true;
-            ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
-         
-            // Update stat values
-            player.setPassiveItemEvent.CallRemovePassiveItem(passiveItem.passiveItemDetails.passiveItemSlotName);
+                // Disable some components during equipped
+                ChestItem.toBeDroppedChestItem.spriteRenderer.enabled = true;
+                ChestItem.toBeDroppedChestItem.animator.enabled = true;
+                ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
 
-            player.UpdateDamageValues();
-            player.UpdateWeaponHandlingAndCriticalValues();
-            player.UpdateBlockAndEvasivenessValues();
+                // Empty inventory slot
+                InventoryManager.Instance.EmptyItemFromInventory(inventoryIndex);
 
-            ChestItem.toBeDroppedChestItem.transform.SetParent(null);
-            ChestItem.toBeDroppedChestItem.isPickedUp = false;
+                // Book update
+                StaticEventHandler.CallInventoryPassiveItemDroppedEventForBook(inventoryIndex);
 
-            // Make sure drop completed
-            ChestItem.toBeDroppedChestItem.boxCollider2D.enabled = true;
-            ChestItem.toBeDroppedChestItem.isColliding = false;
+                ChestItem.toBeDroppedChestItem.transform.SetParent(null);
+                ChestItem.toBeDroppedChestItem.isPickedUp = false;
+
+                // Make sure drop completed
+                ChestItem.toBeDroppedChestItem.boxCollider2D.enabled = true;
+                ChestItem.toBeDroppedChestItem.isColliding = false;
+
+                if (dropCoroutine == null)
+                {
+                    dropCoroutine = StartCoroutine(MoveItemDown(ChestItem.toBeDroppedChestItem));
+                }
+            }
+            else
+            {
+
+                GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+                ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
+                ChestItem.toBeDroppedChestItem = chestItem;
+
+                ChestItem.toBeDroppedChestItem.hasSecondaryPassiveDrop = true;
+                ChestItem.toBeDroppedChestItem.droppedByPlayer = true;
+                ChestItem.toBeDroppedChestItem.isColliding = true;
+
+                ChestItem.toBeDroppedChestItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, transform.position);
+
+                // Disable some components during equipped
+                ChestItem.toBeDroppedChestItem.spriteRenderer.enabled = true;
+                ChestItem.toBeDroppedChestItem.animator.enabled = true;
+                ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
+
+                // Update stat values
+                player.setPassiveItemEvent.CallRemovePassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName, false);
+
+                player.UpdateDamageValues();
+                player.UpdateWeaponHandlingAndCriticalValues();
+                player.UpdateBlockAndEvasivenessValues();
+
+                ChestItem.toBeDroppedChestItem.transform.SetParent(null);
+                ChestItem.toBeDroppedChestItem.isPickedUp = false;
+
+                // Make sure drop completed
+                ChestItem.toBeDroppedChestItem.boxCollider2D.enabled = true;
+                ChestItem.toBeDroppedChestItem.isColliding = false;
+            }
         }
         else if(dropType == DropType.Weapon)
         {
-            Weapon weapon = (Weapon)receivable;
+            Weapon weapon = (Weapon)itemGeneric;
 
-            if (weapon.onMainHand)
+            if (isInventoryItem)
+            {
+                GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+                ChestItem chestItem = chestItemObject.GetComponent<ChestItem>();
+                ChestItem.toBeDroppedChestItem = chestItem;
+
+                ChestItem.toBeDroppedChestItem.hasWeaponDrop = true;
+                ChestItem.toBeDroppedChestItem.droppedByPlayer = true;
+                ChestItem.toBeDroppedChestItem.isColliding = true;
+                ChestItem.toBeDroppedChestItem.hasMainHandWeapon = true;
+
+                ChestItem.toBeDroppedChestItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
+
+                // Break free from the player object
+                ChestItem.toBeDroppedChestItem.spriteRenderer.enabled = true;
+                ChestItem.toBeDroppedChestItem.animator.enabled = true;
+                ChestItem.toBeDroppedChestItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
+
+                // Empty inventory slot
+                InventoryManager.Instance.EmptyItemFromInventory(inventoryIndex);
+
+                // Book update
+                StaticEventHandler.CallInventoryWeaponDroppedEventForBook(inventoryIndex);
+
+                ChestItem.toBeDroppedChestItem.transform.SetParent(null);
+                ChestItem.toBeDroppedChestItem.isPickedUp = false;
+
+                // Make sure drop completed
+                ChestItem.toBeDroppedChestItem.boxCollider2D.enabled = true;
+                ChestItem.toBeDroppedChestItem.isColliding = false;
+
+                if (dropCoroutine == null)
+                {
+                    dropCoroutine = StartCoroutine(MoveItemDown(ChestItem.toBeDroppedChestItem));
+                }
+            }
+            else if (weapon.onMainHand)
             {
                 if (!IsMainHandDropPossible(isWeaponSwapping))
                 {
@@ -1889,16 +1995,6 @@ public class PlayerControl : MonoBehaviour
 
         //Gizmos.color = Color.red;
         //Gizmos.DrawWireSphere(transform.position, player.seismicSlamCircleRadius);
-    }
-
-    public void PopulateActiveItemsToBook(Sprite sprite)
-    {
-        StaticEventHandler.CallItemAddedToActiveItemSlot(sprite);
-    }
-
-    public void RemoveActiveItemFromBook()
-    {
-        StaticEventHandler.CallItemRemovedFromActiveItemSlot();
     }
 
     public void PopulatePassiveItemsToBook(Sprite sprite, PassiveItemSlotName itemSlotName)

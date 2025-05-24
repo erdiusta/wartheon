@@ -12,62 +12,55 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>
     public int originalSlotIndex = 1;
     public bool mainHandDropped;
 
-    public void ClearMainHandEquippedSlot()
+    public ItemGeneric[] inventoryArray = new ItemGeneric[5];
+
+    public int CurrentWeaponSlotSetIndex { get { return currentWeaponSlotSetIndex; } set { currentWeaponSlotSetIndex = value; } }
+
+    int currentWeaponSlotSetIndex = 1;
+
+    /// <summary>
+    /// Check if inventory is full or not
+    /// </summary>
+    public bool IsInventoryFull()
     {
-        for (int i = 0; i < mainHandEquippedSlot.childCount; i++)
+        for (int i = 0; i < inventoryArray.Length; i++)
         {
-            Destroy(mainHandEquippedSlot.GetChild(i).gameObject);
+            if (inventoryArray[i] == null) return false;
         }
+
+        return true;
     }
 
-    public void ClearOffHandEquippedSlot()
+    public int PlaceItemToLowestPossibleIndexSlot(ItemGeneric receivable)
     {
-        for (int i = 0; i < offHandEquippedSlot.childCount; i++)
+        for (int i = 0; i < inventoryArray.Length; i++)
         {
-            Destroy(offHandEquippedSlot.GetChild(i).gameObject);
+            if (inventoryArray[i] == null)
+            {
+                inventoryArray[i] = receivable;
+                return i;
+            }
         }
+
+        return -1;
     }
 
-    public void ClearActiveItemEquippedSlot()
+    public int FindIndexOfItem(ItemGeneric item)
     {
-        for (int i = 0; i < activeItemEquippedSlot.childCount; i++)
+        for (int i = 0; i < inventoryArray.Length; i++)
         {
-            Destroy(activeItemEquippedSlot.GetChild(i).gameObject);
+            if (inventoryArray[i] == item) return i;
         }
+
+        return -1;
     }
 
-    public void ClearIntendedElementInMainHandEquippedSlot(int childNum)
+    public void EmptyItemFromInventory(int index)
     {
-        Destroy(mainHandEquippedSlot.GetChild(childNum).gameObject);
+        inventoryArray[index] = null;
     }
 
-    public void ClearIntendedElementInOffHandEquippedSlot(int childNum)
-    {
-        Destroy(offHandEquippedSlot.GetChild(childNum).gameObject);
-        EnableOffHandBackgroundDisableEquipped();
-    }
-
-    public void ClearIntendedElementInActiveItemEquippedSlot()
-    {
-        ClearActiveItemEquippedSlot();
-        EnableActiveItemBackgroundDisableEquipped();
-    }
-
-    private void EnableOffHandBackgroundDisableEquipped()
-    {
-        offHandBackgroundSlot.gameObject.SetActive(true);
-        offHandEquippedSlot.gameObject.SetActive(false);
-    }
-
-    private void EnableActiveItemBackgroundDisableEquipped()
-    {
-        activeItemBackgroundSlot.gameObject.SetActive(true);
-        activeItemEquippedSlot.gameObject.SetActive(false);
-    }
-
-    public int GetMainHandEquippedChildCounts() => mainHandEquippedSlot.childCount;
-
-    public int GetOffHandEquippedChildCounts() => offHandEquippedSlot.childCount;
+    public ItemGeneric GetInventoryItem(int indexNumber) => inventoryArray[indexNumber];
 
     public GameObject GetDropButtonObject() => dropButton;
 

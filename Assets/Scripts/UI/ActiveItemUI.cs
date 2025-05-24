@@ -30,16 +30,26 @@ public class ActiveItemUI : MonoBehaviour
 
     private void OnEnable()
     {
-        player.setActiveWeaponEvent.OnSelectedActiveItem += SetActiveWeaponEvent_OnSelectedActiveItem;
-        player.setActiveWeaponEvent.OnRemovedActiveItem += SetActiveWeaponEvent_OnRemovedActiveItem;
+        player.setActiveItemEvent.OnSelectedActiveItem += SetActiveItemEvent_OnSelectedActiveItem;
+        player.setActiveItemEvent.OnRemovedActiveItem += SetActiveItemEvent_OnRemovedActiveItem;
         player.weaponFiredEvent.OnActiveItemFired += WeaponFiredEvent_OnActiveItemFired;
     }
 
     private void OnDisable()
     {
-        player.setActiveWeaponEvent.OnSelectedActiveItem -= SetActiveWeaponEvent_OnSelectedActiveItem;
-        player.setActiveWeaponEvent.OnRemovedActiveItem -= SetActiveWeaponEvent_OnRemovedActiveItem;
+        player.setActiveItemEvent.OnSelectedActiveItem -= SetActiveItemEvent_OnSelectedActiveItem;
+        player.setActiveItemEvent.OnRemovedActiveItem -= SetActiveItemEvent_OnRemovedActiveItem;
         player.weaponFiredEvent.OnActiveItemFired -= WeaponFiredEvent_OnActiveItemFired;
+    }
+
+    private void SetActiveItemEvent_OnSelectedActiveItem(SetActiveItemEvent setActiveItemEvent, SetSelectedActiveItemArgs setSelectedActiveItemArgs)
+    {
+        SetSelectedActiveItem(setSelectedActiveItemArgs.activeItem);
+    }
+
+    private void SetActiveItemEvent_OnRemovedActiveItem(SetActiveItemEvent setActiveItemEvent)
+    {
+        RemoveSelectedActiveItem();
     }
 
     private void Start()
@@ -48,15 +58,6 @@ public class ActiveItemUI : MonoBehaviour
         SetSelectedActiveItem(player.selectedActiveItem.GetCurrentActiveItem());
     }
 
-    private void SetActiveWeaponEvent_OnSelectedActiveItem(SetActiveWeaponEvent setActiveWeaponEvent, SetSelectedActiveItemArgs setSelectedActiveItemArgs)
-    {
-        SetSelectedActiveItem(setSelectedActiveItemArgs.activeItem);
-    }
-
-    private void SetActiveWeaponEvent_OnRemovedActiveItem(SetActiveWeaponEvent setActiveWeaponEvent)
-    {
-        RemoveSelectedActiveItem();
-    }
 
     private void WeaponFiredEvent_OnActiveItemFired(WeaponFiredEvent weaponFiredEvent, ActiveItemFiredEventArgs activeItemFiredEventArgs)
     {

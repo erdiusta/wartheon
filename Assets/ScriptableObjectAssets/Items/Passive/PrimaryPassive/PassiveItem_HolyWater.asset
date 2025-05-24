@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: PassiveItem_HolyWater
   m_EditorClassIdentifier: 
   passiveItemName: Holy Water
+  price: 0
   passiveItemSprite: {fileID: 1584913688, guid: 23d23930d7db08b4587c704d13c6f4e5, type: 3}
   passiveItemCategory: 0
+  primaryPassiveItemName: 6
   passiveItemType: 0
-  itemSlotName: 0
+  passiveItemSlotName: 0
   passiveItemAnimatorController: {fileID: 9100000, guid: f760fd9786f26524cbd614b58fa1745e, type: 2}

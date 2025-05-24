@@ -100,6 +100,17 @@ public enum PassiveItemCategory
     Secondary
 }
 
+public enum PrimaryPassiveItemName
+{
+    None,
+    Health,
+    SilverCoin,
+    GoldCoin,
+    Key,
+    Medicine,
+    HolyWater
+}
+
 public enum PassiveItemType
 {
     Generic,
@@ -509,7 +520,8 @@ public enum SlotType
     Passive,
     Active,
     WeaponMainHand,
-    WeaponOffHand
+    WeaponOffHand,
+    None
 }
 
 public enum ItemSwapPos

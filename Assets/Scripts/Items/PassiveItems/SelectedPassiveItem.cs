@@ -46,6 +46,15 @@ public class SelectedPassiveItem : MonoBehaviour
     {
         player = GameManager.Instance.GetPlayer();
 
+        //// DEBUG
+        //if (!InventoryManager.Instance.IsInventoryFull() && setPassiveItemEventArgs.passiveItem.onInventorySlot == false)
+        //{
+        //    setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
+        //    int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
+        //    StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
+        //    return;
+        //}
+
         switch (setPassiveItemEventArgs.passiveItemSlotName)
         {
             case PassiveItemSlotName.Head:
@@ -92,6 +101,17 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
                     isHeadEquipped = true;
+                    StaticEventHandler.CallPrimaryStatsChangedEvent();
+                }
+                else
+                {
+                    // Head slot is full, equip in inventory slot if there is room
+                    if (!InventoryManager.Instance.IsInventoryFull())
+                    {
+                        setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
+                        int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
+                        StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
+                    }
                 }
                 break;
             case PassiveItemSlotName.Chest:
@@ -128,7 +148,18 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
                     isChestEquipped = true;
+                    StaticEventHandler.CallPrimaryStatsChangedEvent();
 
+                }
+                else
+                {
+                    // Chest slot is full, equip in inventory slot if there is room
+                    if (!InventoryManager.Instance.IsInventoryFull())
+                    {
+                        setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
+                        int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
+                        StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
+                    }
                 }
                 break;
             case PassiveItemSlotName.Neck:
@@ -156,6 +187,17 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
                     isNeckEquipped = true;
+                    StaticEventHandler.CallPrimaryStatsChangedEvent();
+                }
+                else
+                {
+                    // Neck slot is full, equip in inventory slot if there is room
+                    if (!InventoryManager.Instance.IsInventoryFull())
+                    {
+                        setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
+                        int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
+                        StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
+                    }
                 }
                 break;
             case PassiveItemSlotName.Finger:
@@ -189,6 +231,17 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
                     isFingerEquipped = true;
+                    StaticEventHandler.CallPrimaryStatsChangedEvent();
+                }
+                else
+                {
+                    // Finger slot is full, equip in inventory slot if there is room
+                    if (!InventoryManager.Instance.IsInventoryFull())
+                    {
+                        setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
+                        int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
+                        StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
+                    }
                 }
                 break;
             case PassiveItemSlotName.Back:
@@ -234,6 +287,17 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
                     isBackEquipped = true;
+                    StaticEventHandler.CallPrimaryStatsChangedEvent();
+                }
+                else
+                {
+                    // Back slot is full, equip in inventory slot if there is room
+                    if (!InventoryManager.Instance.IsInventoryFull())
+                    {
+                        setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
+                        int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
+                        StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
+                    }
                 }
                 break;
             case PassiveItemSlotName.Waist:
@@ -274,6 +338,17 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
                     isWaistEquipped = true;
+                    StaticEventHandler.CallPrimaryStatsChangedEvent();
+                }
+                else
+                {
+                    // Waist slot is full, equip in inventory slot if there is room
+                    if (!InventoryManager.Instance.IsInventoryFull())
+                    {
+                        setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
+                        int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
+                        StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
+                    }
                 }
                 break;
             case PassiveItemSlotName.Arm:
@@ -302,6 +377,17 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
                     isArmEquipped = true;
+                    StaticEventHandler.CallPrimaryStatsChangedEvent();
+                }
+                else
+                {
+                    // Arm slot is full, equip in inventory slot if there is room
+                    if (!InventoryManager.Instance.IsInventoryFull())
+                    {
+                        setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
+                        int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
+                        StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
+                    }
                 }
                 break;
             case PassiveItemSlotName.Leg:
@@ -322,19 +408,37 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.playerControl.PopulatePassiveItemsToBook(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite,
                         setPassiveItemEventArgs.passiveItemSlotName);
                     isLegEquipped = true;
+                    StaticEventHandler.CallPrimaryStatsChangedEvent();
+                }
+                else
+                {
+                    // Leg slot is full, equip in inventory slot if there is room
+                    if (!InventoryManager.Instance.IsInventoryFull())
+                    {
+                        setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
+                        int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
+                        StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
+                    }
                 }
                 break;
             default:
                 break;
         }
 
-        StaticEventHandler.CallPrimaryStatsChangedEvent();
         StaticEventHandler.CallPassiveUnlockedEvent(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemType);
     }
 
     private void SetPassiveItemEvent_OnRemovedPassiveItem(SetPassiveItemEvent setPassiveItemEvent, SetPassiveItemEventArgs setPassiveItemEventArgs)
     {
         player = GameManager.Instance.GetPlayer();
+
+        // Place item to inventory slot if inventory is not full and it is really drag into inventory action - NOT DROP
+        if (!InventoryManager.Instance.IsInventoryFull() && setPassiveItemEventArgs.dragIntoInventory)
+        {
+            setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
+            int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
+            StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
+        }
 
         switch (setPassiveItemEventArgs.passiveItemSlotName)
         {
@@ -377,7 +481,7 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.2f, 2);
                     }
 
-                    player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
+                    StaticEventHandler.CallItemRemovedFromPassiveItemSlot(setPassiveItemEventArgs.passiveItemSlotName);
                     headPassiveItem = null;
                     isHeadEquipped = false;
                 }
@@ -411,7 +515,7 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.isImmunetoPoison = false;
                     }
 
-                    player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
+                    StaticEventHandler.CallItemRemovedFromPassiveItemSlot(setPassiveItemEventArgs.passiveItemSlotName);
                     chestPassiveItem = null;
                     isChestEquipped = false;
                 }
@@ -436,7 +540,7 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue - 0.2f, 2);
                     }
 
-                    player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
+                    StaticEventHandler.CallItemRemovedFromPassiveItemSlot(setPassiveItemEventArgs.passiveItemSlotName);
                     neckPassiveItem = null;
                     isNeckEquipped = false;
                 }
@@ -467,7 +571,7 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.additionalDropChanceModifier -= 0.15f;
                     }
 
-                    player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
+                    StaticEventHandler.CallItemRemovedFromPassiveItemSlot(setPassiveItemEventArgs.passiveItemSlotName);
                     fingerPassiveItem = null;
                     isFingerEquipped = false;
                 }
@@ -510,7 +614,7 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.currentAgilityValue--;
                     }
 
-                    player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
+                    StaticEventHandler.CallItemRemovedFromPassiveItemSlot(setPassiveItemEventArgs.passiveItemSlotName);
                     backPassiveItem = null;
                     isBackEquipped = false;
                 }
@@ -548,7 +652,7 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.additionalMeleeCriticalHitChanceModifier -= 0.05f;
                     }
 
-                    player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
+                    StaticEventHandler.CallItemRemovedFromPassiveItemSlot(setPassiveItemEventArgs.passiveItemSlotName);
                     waistPassiveItem = null;
                     isWaistEquipped = false;
                 }
@@ -574,7 +678,7 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.isImmunetoPoison = false;
                     }
 
-                    player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
+                    StaticEventHandler.CallItemRemovedFromPassiveItemSlot(setPassiveItemEventArgs.passiveItemSlotName);
                     armPassiveItem = null;
                     isArmEquipped = false;
                 }
@@ -592,7 +696,7 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.15f, 2);
                     }
 
-                    player.playerControl.RemovePassiveItemFromBook(setPassiveItemEventArgs.passiveItemSlotName);
+                    StaticEventHandler.CallItemRemovedFromPassiveItemSlot(setPassiveItemEventArgs.passiveItemSlotName);
                     legPassiveItem = null;
                     isLegEquipped = false;
                 }

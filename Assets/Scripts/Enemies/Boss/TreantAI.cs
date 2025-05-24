@@ -367,7 +367,7 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
         {
             enemy.animator.SetFloat(Settings.motionType, 4f);
 
-            enemy.health.AddHealth((int)(20f / enemy.health.GetMaximumHealth() * 100));
+            enemy.health.AddHealth(20);
 
             SoundEffectManager.Instance.PlaySoundEffect(enemyDetails.chargeSoundEffect);
 

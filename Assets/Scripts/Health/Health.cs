@@ -644,9 +644,8 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Increase health by specified percent
     /// </summary>
-    public void AddHealth(int healthPercent)
+    public void AddHealth(int healthIncrease)
     {
-        int healthIncrease = Mathf.RoundToInt((maximumHealth * healthPercent) / 100f);
         int totalHealth = currentHealth + healthIncrease;
 
         if (totalHealth > maximumHealth)

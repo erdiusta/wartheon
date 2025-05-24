@@ -4,9 +4,13 @@ using UnityEngine.EventSystems;
 
 public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    public static Slot selectedSlot;
+    public DraggableItem selectedSlotDraggableItem;
+
     public SlotType slotType;
     public PassiveItemSlotName passiveItemSlotName;
     public RectTransform tooltipPanel;
+    public int inventoryIndexNumber;
 
     Player player;
     Transform backgroundTransform;
@@ -71,6 +75,23 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         UpdateTooltipPanelInfo();
     }
 
+    /// <summary>
+    /// Open tooltip panel when hovering over the related item or weapon
+    /// </summary>
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        tooltipPanel.gameObject.SetActive(true);
+        UpdateTooltipPanelInfo();
+    }
+
+    /// <summary>
+    /// Close tooltip panel when stop hovering over the related item or weapon
+    /// </summary>
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        tooltipPanel.gameObject.SetActive(false);
+    }
+
     private void UpdateTooltipPanelInfo()
     {
         Transform currentChild = null;
@@ -97,68 +118,82 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             masteryText2.text = string.Empty;
             masteryText3.text = string.Empty;
 
-            switch (passiveItemSlotName)
+            if(inventoryIndexNumber >= 0) // Inventory slot check
             {
-                case PassiveItemSlotName.None:
-                    break;
-                case PassiveItemSlotName.Head:
-                    if (player.selectedPassiveItem.headPassiveItem == null)
+                for (int i = 0; i < InventoryManager.Instance.inventoryArray.Length; i++)
+                {
+                    if (inventoryIndexNumber == i && InventoryManager.Instance.inventoryArray[i] == null)
                     {
                         tooltipPanel.gameObject.SetActive(false);
                         return;
                     }
-                    break;
-                case PassiveItemSlotName.Chest:
-                    if (player.selectedPassiveItem.chestPassiveItem == null)
-                    {
-                        tooltipPanel.gameObject.SetActive(false);
-                        return;
-                    }
-                    break;
-                case PassiveItemSlotName.Neck:
-                    if (player.selectedPassiveItem.neckPassiveItem == null)
-                    {
-                        tooltipPanel.gameObject.SetActive(false);
-                        return;
-                    }
-                    break;
-                case PassiveItemSlotName.Finger:
-                    if (player.selectedPassiveItem.fingerPassiveItem == null)
-                    {
-                        tooltipPanel.gameObject.SetActive(false);
-                        return;
-                    }
-                    break;
-                case PassiveItemSlotName.Back:
-                    if (player.selectedPassiveItem.backPassiveItem == null)
-                    {
-                        tooltipPanel.gameObject.SetActive(false);
-                        return;
-                    }
-                    break;
-                case PassiveItemSlotName.Waist:
-                    if (player.selectedPassiveItem.waistPassiveItem == null)
-                    {
-                        tooltipPanel.gameObject.SetActive(false);
-                        return;
-                    }
-                    break;
-                case PassiveItemSlotName.Arm:
-                    if (player.selectedPassiveItem.armPassiveItem == null)
-                    {
-                        tooltipPanel.gameObject.SetActive(false);
-                        return;
-                    }
-                    break;
-                case PassiveItemSlotName.Leg:
-                    if (player.selectedPassiveItem.legPassiveItem == null)
-                    {
-                        tooltipPanel.gameObject.SetActive(false);
-                        return;
-                    }
-                    break;
-                default:
-                    break;
+                }
+            }
+            else
+            {
+                switch (passiveItemSlotName)
+                {
+                    case PassiveItemSlotName.None:
+                        break;
+                    case PassiveItemSlotName.Head:
+                        if (player.selectedPassiveItem.headPassiveItem == null)
+                        {
+                            tooltipPanel.gameObject.SetActive(false);
+                            return;
+                        }
+                        break;
+                    case PassiveItemSlotName.Chest:
+                        if (player.selectedPassiveItem.chestPassiveItem == null)
+                        {
+                            tooltipPanel.gameObject.SetActive(false);
+                            return;
+                        }
+                        break;
+                    case PassiveItemSlotName.Neck:
+                        if (player.selectedPassiveItem.neckPassiveItem == null)
+                        {
+                            tooltipPanel.gameObject.SetActive(false);
+                            return;
+                        }
+                        break;
+                    case PassiveItemSlotName.Finger:
+                        if (player.selectedPassiveItem.fingerPassiveItem == null)
+                        {
+                            tooltipPanel.gameObject.SetActive(false);
+                            return;
+                        }
+                        break;
+                    case PassiveItemSlotName.Back:
+                        if (player.selectedPassiveItem.backPassiveItem == null)
+                        {
+                            tooltipPanel.gameObject.SetActive(false);
+                            return;
+                        }
+                        break;
+                    case PassiveItemSlotName.Waist:
+                        if (player.selectedPassiveItem.waistPassiveItem == null)
+                        {
+                            tooltipPanel.gameObject.SetActive(false);
+                            return;
+                        }
+                        break;
+                    case PassiveItemSlotName.Arm:
+                        if (player.selectedPassiveItem.armPassiveItem == null)
+                        {
+                            tooltipPanel.gameObject.SetActive(false);
+                            return;
+                        }
+                        break;
+                    case PassiveItemSlotName.Leg:
+                        if (player.selectedPassiveItem.legPassiveItem == null)
+                        {
+                            tooltipPanel.gameObject.SetActive(false);
+                            return;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
 
             // Check if the slot is occupied
@@ -403,8 +438,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                     if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Dummy)
                     {
-                        weaponClassText.text = "Distracts Enemies Until Being";
-                        hitSpeedText.text = "Destroyed";
+                        weaponClassText.text = "Distracts Enemies Until";
+                        hitSpeedText.text = "Being Destroyed";
                     }
                     else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Potion)
                     {
@@ -423,7 +458,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Boomerang)
                     {
                         weaponClassText.text = "Strikes And Return, Useful";
-                        hitSpeedText.text = "AoE DamageFor Stunning Enemies";
+                        hitSpeedText.text = "For Stunning Enemies";
                     }
                     else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Hourglass)
                     {
@@ -437,7 +472,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     }
                     else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Pentagram)
                     {
-                        weaponClassText.text = "Trap for Enemies To Step On";
+                        weaponClassText.text = "Trap for Enemies To";
+                        hitSpeedText.text = "Step On";
                     }
                     else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Summoner)
                     {
@@ -475,7 +511,18 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         }
         else if (slotType == SlotType.WeaponMainHand || slotType == SlotType.WeaponOffHand)
         {
-            if (slotType == SlotType.WeaponMainHand)
+            if (inventoryIndexNumber >= 0) // Inventory slot check
+            {
+                for (int i = 0; i < InventoryManager.Instance.inventoryArray.Length; i++)
+                {
+                    if (inventoryIndexNumber == i && InventoryManager.Instance.inventoryArray[i] == null)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                        return;
+                    }
+                }
+            }
+            else if (slotType == SlotType.WeaponMainHand)
             {
                 if (player.activeWeapon.GetCurrentMainHandWeapon() == null)
                 {
@@ -637,23 +684,81 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 }
             }
         }
+        else
+        {
+            // Close tooltip bar for empty inventory slots
+            tooltipPanel.gameObject.SetActive(false);
+        }
     }
 
-    /// <summary>
-    /// Open tooltip panel when hovering over the related item or weapon
-    /// </summary>
-    public void OnPointerEnter(PointerEventData eventData)
+    public void OnClick()
     {
-        tooltipPanel.gameObject.SetActive(true);
-        UpdateTooltipPanelInfo();
-    }
+        if (selectedSlot == null)
+        {
+            if (equippedTransform.childCount > 0)
+            {
+                DraggableItem draggableItem = equippedTransform.GetChild(0).GetComponent<DraggableItem>();
 
-    /// <summary>
-    /// Close tooltip panel when stop hovering over the related item or weapon
-    /// </summary>
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        tooltipPanel.gameObject.SetActive(false);
+                if (slotType == SlotType.WeaponMainHand)
+                {
+                    Weapon weapon = draggableItem.GetDraggedWeapon();
+                    selectedSlot = this;
+                }
+                else if (slotType == SlotType.WeaponOffHand)
+                {
+                    Weapon weapon = draggableItem.GetDraggedWeapon();
+                    selectedSlot = this;
+                }
+                else if (slotType == SlotType.Passive)
+                {
+                    PassiveItem passiveItem = draggableItem.GetDraggedPassiveItem();
+                    selectedSlot = this;
+                }
+                else if (slotType == SlotType.Active)
+                {
+                    ActiveItem activeItem = draggableItem.GetDraggedActiveItem();
+                    selectedSlot = this;
+                }
+
+                selectedSlot.selectedSlotDraggableItem = draggableItem;
+            }
+        }
+        else if (selectedSlot == this)
+        {
+            // Clicked same slot again - deselect
+            selectedSlot.selectedSlotDraggableItem = null;
+            selectedSlot = null;
+        }
+        else
+        {
+            // Prevent placing ActiveItem into invalid slot
+            if (selectedSlot.selectedSlotDraggableItem.itemGeneric is ActiveItem)
+            {
+                // Optionally show a sound or UI feedback here
+                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                return;
+            }
+
+            // Second click - perform item transfer or swap
+            MoveItemToSlot(ref selectedSlot.selectedSlotDraggableItem, true);
+
+            // BookUIWrapper
+            BookUIRefreshHelper.RefreshBookUIAfterItemPlacement(
+                selectedSlot.selectedSlotDraggableItem.itemGeneric,
+                selectedSlot,
+                this // <- 'this' is the targetSlot
+            );
+
+            // Clear old visual
+            if (selectedSlot.equippedTransform.childCount > 0)
+            {
+                Transform oldChild = selectedSlot.equippedTransform.GetChild(0);
+                Destroy(oldChild.gameObject);
+            }
+
+            selectedSlot.selectedSlotDraggableItem = null;
+            selectedSlot = null;
+        }
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -663,10 +768,14 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
         if (draggableItem != null)
         {
-            // If dragged item is not a weapon, cancel the swap or move
-            if (draggableItem.receivable is not Weapon) return;
+            // If dragged item is active item, cancel the swap or move
+            if (draggableItem.itemGeneric is ActiveItem) return;
 
-            if (draggableItem.receivable is Weapon && (slotType == SlotType.Active || slotType == SlotType.Passive)) return;
+            // Only place weapon to weapon slots
+            if (draggableItem.itemGeneric is Weapon && (slotType == SlotType.Active || slotType == SlotType.Passive)) return;
+
+            // Only place passive item to passive item slots
+            if (draggableItem.itemGeneric is PassiveItem && (slotType == SlotType.Active || slotType == SlotType.WeaponMainHand || slotType == SlotType.WeaponOffHand)) return;
 
             Transform currentChild = null;
 
@@ -693,7 +802,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 draggableItem.justMoveNotSwap = true;
 
                 // If slot is not occupied, just relocate selected item
-                MoveItemToSlot(draggableItem);
+                MoveItemToSlot(ref draggableItem);
             }
         }
     }
@@ -704,8 +813,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
         if (currentSlotsDraggableItem.isLockIcon) return;
 
-        Weapon draggableItemWeapon = (Weapon)draggableItem.receivable;
-        Weapon currentSlotsDraggableItemWeapon = (Weapon)currentSlotsDraggableItem.receivable;
+        Weapon draggableItemWeapon = (Weapon)draggableItem.itemGeneric;
+        Weapon currentSlotsDraggableItemWeapon = (Weapon)currentSlotsDraggableItem.itemGeneric;
 
         // Move slot's weapon to draggable item's previous slot
         // Draggable item is on main hand
@@ -836,15 +945,206 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         }
     }
 
-    private void MoveItemToSlot(DraggableItem draggableItem)
+    private void MoveItemToSlot(ref DraggableItem draggableItem, bool clickTransport = false)
     {
-        BackgroundAndEquippedSlotTransactions(draggableItem);
+        ItemGeneric draggableItemGeneric = draggableItem.itemGeneric;
+
+        if (draggableItemGeneric.onInventorySlot) // If weapon moved from inventory slot
+        {
+            // Remove draggable item from inventory
+            InventoryManager.Instance.EmptyItemFromInventory(draggableItem.belongingSlot.inventoryIndexNumber);
+
+            if (draggableItemGeneric is Weapon)
+            {
+                Weapon draggableInventoryWeapon = (Weapon)draggableItemGeneric;
+
+                if (slotType == SlotType.WeaponMainHand)
+                {
+                    // Put draggable item to current slot
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableInventoryWeapon;
+                    draggableInventoryWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                    draggableInventoryWeapon.onInventorySlot = false;
+                    draggableInventoryWeapon.onMainHand = true;
+                    player.mainHandSlotFilled = false;
+
+                    // Activation
+                    player.playerControl.SetWeaponSetByIndex(true, false, true);
+
+                    // Book update
+                    StaticEventHandler.CallInventoryWeaponDroppedEventForBook(draggableItem.belongingSlot.inventoryIndexNumber);
+                }
+                else if (slotType == SlotType.WeaponOffHand)
+                {
+                    // Put draggable item to current slot
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableInventoryWeapon;
+                    draggableInventoryWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                    draggableInventoryWeapon.onInventorySlot = false;
+                    draggableInventoryWeapon.onMainHand = false;
+                    player.offHandSlotFilled = false;
+
+                    // Activation
+                    player.playerControl.SetWeaponSetByIndex(true, false, true);
+
+                    // Book update
+                    StaticEventHandler.CallInventoryWeaponDroppedEventForBook(draggableItem.belongingSlot.inventoryIndexNumber);
+                }
+            }
+            else if (draggableItemGeneric is PassiveItem)
+            {
+                PassiveItem draggableInventoryPassiveItem = (PassiveItem)draggableItemGeneric;
+
+                player.setPassiveItemEvent.CallEquipPassiveItem(draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
+                draggableInventoryPassiveItem.onInventorySlot = false;
+
+                // Book update
+                StaticEventHandler.CallInventoryPassiveItemDroppedEventForBook(draggableItem.belongingSlot.inventoryIndexNumber);
+            }
+
+            return; // This is dragged from inventory so don't go further
+        }
+
+        if (draggableItem.itemGeneric is Weapon)
+        {
+            Weapon draggableItemWeapon = (Weapon)draggableItem.itemGeneric;
+
+            if (draggableItemWeapon.onMainHand)
+            {
+                if (inventoryIndexNumber >= 0 && !InventoryManager.Instance.IsInventoryFull())
+                {
+                    // Empty weapon on hand
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
+
+                    // Place weapon into inventory
+                    int invetoryIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(draggableItemWeapon);
+
+                    draggableItemWeapon.onInventorySlot = true;
+                    draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
+
+                    player.playerControl.SetWeaponSetByIndex(true, false, false, true);
+
+                    StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(draggableItemWeapon, invetoryIndex);
+
+                }
+                else if (slotType == SlotType.WeaponMainHand)
+                {
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
+
+                    // Put draggable item to current slot
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
+
+                    draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                    player.playerControl.SetWeaponSetByIndex(true, false);
+                }
+                else
+                {
+                    if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
+                    {
+                        GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EmptyOffHandFirst);
+                        draggableItem.swapCancelled = true;
+                        return;
+                    }
+                    else
+                    {
+                        if (draggableItemWeapon.weaponBelongingToWhichMainHandSet == player.currentWeaponSlotSetIndex)
+                        {
+                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.CantMoveYourMainHandWithEmptyOffHand);
+                            draggableItem.swapCancelled = true;
+                            return;
+                        }
+                    }
+
+                    if (draggableItem.transactionOnTheSameSet)
+                    {
+                        GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.CantMoveYourMainHandWithEmptyOffHand);
+                        draggableItem.swapCancelled = true;
+                        return;
+                    }
+
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
+                    player.mainHandSlotFilled = false; // Change flag so this empty slot can be used for future pick-ups
+
+                    // Put draggable item to current slot
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
+                    draggableItemWeapon.onMainHand = false;
+
+                    draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
+                    draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                    draggableItem.dragMainSlotOff = true;
+                    player.playerControl.SetWeaponSetByIndex(true, false);
+                }
+            }
+            else
+            {
+                if (inventoryIndexNumber >= 0 && !InventoryManager.Instance.IsInventoryFull())
+                {
+                    // Empty weapon on off-hand
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
+
+                    // Place weapon into inventory
+                    int inventoryIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(draggableItemWeapon);
+
+                    draggableItemWeapon.onInventorySlot = true;
+                    draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
+
+                    player.playerControl.SetWeaponSetByIndex(true, false, false, true);
+
+                    StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(draggableItemWeapon, inventoryIndex);
+
+                }
+                else if (slotType == SlotType.WeaponMainHand)
+                {
+                    if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
+                    {
+                        GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
+                        draggableItem.swapCancelled = true;
+                        return;
+                    }
+
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
+
+                    // Put draggable item to current slot
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
+                    draggableItemWeapon.onMainHand = true;
+
+                    draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
+                    draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                    player.playerControl.SetWeaponSetByIndex(true, false);
+                }
+                else
+                {
+                    if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] == null)
+                    {
+                        GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EquipMainHandFirst);
+                        draggableItem.swapCancelled = true;
+                        return;
+                    }
+
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
+                    player.offHandSlotFilled = false; // Change flag so this empty slot can be used for future pick-ups
+
+                    // Put draggable item to current slot
+                    player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
+
+                    draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                    player.playerControl.SetWeaponSetByIndex(true, false);
+                }
+            }
+        }
+        else if (draggableItem.itemGeneric is PassiveItem)
+        {
+            if (!InventoryManager.Instance.IsInventoryFull())
+            {
+                PassiveItem draggableInventoryPassiveItem = (PassiveItem)draggableItemGeneric;
+
+                player.setPassiveItemEvent.CallRemovePassiveItem(draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName, true);
+            }
+        }
     }
 
     private void SwapProcess(DraggableItem draggableItem, DraggableItem currentSlotsDraggableItem, ItemSwapPos itemSwapPos)
     {
-        Weapon draggableItemWeapon = (Weapon)draggableItem.receivable;
-        Weapon currentSlotsDraggableItemWeapon = (Weapon)currentSlotsDraggableItem.receivable;
+        Weapon draggableItemWeapon = (Weapon)draggableItem.itemGeneric;
+        Weapon currentSlotsDraggableItemWeapon = (Weapon)currentSlotsDraggableItem.itemGeneric;
 
         switch (itemSwapPos)
         {
@@ -927,108 +1227,6 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 break;
             default:
                 break;
-        }
-    }
-
-    private void BackgroundAndEquippedSlotTransactions(DraggableItem draggableItem)
-    {
-        Weapon draggableItemWeapon = (Weapon)draggableItem.receivable;
-
-        if (draggableItemWeapon.onMainHand)
-        {
-            if (slotType == SlotType.WeaponMainHand)
-            {
-                if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
-                {
-                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EmptyOffHandFirst);
-                    draggableItem.swapCancelled = true;
-                    return;
-                }
-
-                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
-
-                // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
-
-                draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                player.playerControl.SetWeaponSetByIndex(true, false);
-            }
-            else
-            {
-                if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
-                {
-                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EmptyOffHandFirst);
-                    draggableItem.swapCancelled = true;
-                    return;
-                }
-                else
-                {
-                    if (draggableItemWeapon.weaponBelongingToWhichMainHandSet == player.currentWeaponSlotSetIndex)
-                    {
-                        GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.CantMoveYourMainHandWithEmptyOffHand);
-                        draggableItem.swapCancelled = true;
-                        return;
-                    }
-                }
-
-                if (draggableItem.transactionOnTheSameSet)
-                {
-                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.CantMoveYourMainHandWithEmptyOffHand);
-                    draggableItem.swapCancelled = true;
-                    return;
-                }
-
-                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
-                player.mainHandSlotFilled = false; // Change flag so this empty slot can be used for future pick-ups
-
-                // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
-                draggableItemWeapon.onMainHand = false; 
-
-                draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
-                draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                draggableItem.dragMainSlotOff = true;
-                player.playerControl.SetWeaponSetByIndex(true, false);
-            }
-        }
-        else
-        {
-            if (slotType == SlotType.WeaponMainHand)
-            {
-                if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
-                {
-                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
-                    draggableItem.swapCancelled = true;
-                    return;
-                }
-                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
-
-                // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
-                draggableItemWeapon.onMainHand = true;
-
-                draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
-                draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
-                player.playerControl.SetWeaponSetByIndex(true, false);
-            }
-            else
-            {
-                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] == null)
-                {
-                    GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.EquipMainHandFirst);
-                    draggableItem.swapCancelled = true;
-                    return;
-                }
-
-                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
-                player.offHandSlotFilled = false; // Change flag so this empty slot can be used for future pick-ups
-
-                // Put draggable item to current slot
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
-
-                draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
-                player.playerControl.SetWeaponSetByIndex(true, false);
-            }
         }
     }
 }

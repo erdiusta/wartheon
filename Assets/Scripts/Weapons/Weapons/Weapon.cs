@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class Weapon : IReceivable
+public class Weapon : ItemGeneric
 {
     public WeaponDetailsSO weaponDetails;
     public float activeWeaponHandling;

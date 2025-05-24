@@ -5869,6 +5869,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentCanvas: {fileID: 1225281908}
+  firstSelectedButton: {fileID: 1998817662}
   lyrisaSpotlight: {fileID: 839741704}
   astraeusSpotlight: {fileID: 1122751029}
   orionSpotlight: {fileID: 1534800513}
@@ -6583,6 +6584,7 @@ GameObject:
   - component: {fileID: 1398037659}
   - component: {fileID: 1398037658}
   - component: {fileID: 1398037657}
+  - component: {fileID: 1398037660}
   - component: {fileID: 1398037656}
   m_Layer: 5
   m_Name: Astraeus
@@ -6640,12 +6642,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
+    m_SelectOnUp: {fileID: 1998817665}
+    m_SelectOnDown: {fileID: 1787334955}
+    m_SelectOnLeft: {fileID: 1998817665}
+    m_SelectOnRight: {fileID: 1559524529}
   m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -6721,6 +6723,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1398037654}
   m_CullTransparentMesh: 0
+--- !u!114 &1398037660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398037654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31b718b08a8b4ff43899ce1b6f13f52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1398322637
 GameObject:
   m_ObjectHideFlags: 0
@@ -7444,6 +7458,7 @@ GameObject:
   - component: {fileID: 1559524531}
   - component: {fileID: 1559524530}
   - component: {fileID: 1559524529}
+  - component: {fileID: 1559524532}
   - component: {fileID: 1559524528}
   m_Layer: 5
   m_Name: Lyrisa
@@ -7501,12 +7516,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
+    m_SelectOnUp: {fileID: 1998817665}
+    m_SelectOnDown: {fileID: 2054239297}
+    m_SelectOnLeft: {fileID: 1398037657}
+    m_SelectOnRight: {fileID: 1998817665}
   m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -7582,6 +7597,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1559524526}
   m_CullTransparentMesh: 0
+--- !u!114 &1559524532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1559524526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31b718b08a8b4ff43899ce1b6f13f52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1565360521
 GameObject:
   m_ObjectHideFlags: 0
@@ -9494,6 +9521,7 @@ GameObject:
   - component: {fileID: 1787334957}
   - component: {fileID: 1787334956}
   - component: {fileID: 1787334955}
+  - component: {fileID: 1787334958}
   - component: {fileID: 1787334954}
   m_Layer: 5
   m_Name: Erebus
@@ -9551,12 +9579,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
+    m_SelectOnUp: {fileID: 1398037657}
+    m_SelectOnDown: {fileID: 1998817665}
+    m_SelectOnLeft: {fileID: 1998817665}
+    m_SelectOnRight: {fileID: 2054239297}
   m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 0.22352941, g: 0.19607843, b: 0.36862746, a: 1}
@@ -9632,6 +9660,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1787334952}
   m_CullTransparentMesh: 0
+--- !u!114 &1787334958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1787334952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31b718b08a8b4ff43899ce1b6f13f52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1825057088
 GameObject:
   m_ObjectHideFlags: 0
@@ -11022,12 +11062,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
+    m_SelectOnUp: {fileID: 2054239297}
+    m_SelectOnDown: {fileID: 1559524529}
+    m_SelectOnLeft: {fileID: 1559524529}
+    m_SelectOnRight: {fileID: 1398037657}
   m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 0.22352941, g: 0.19607843, b: 0.36862746, a: 1}
@@ -11719,6 +11759,7 @@ GameObject:
   - component: {fileID: 2054239299}
   - component: {fileID: 2054239298}
   - component: {fileID: 2054239297}
+  - component: {fileID: 2054239300}
   - component: {fileID: 2054239296}
   m_Layer: 5
   m_Name: Orion
@@ -11776,12 +11817,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
+    m_SelectOnUp: {fileID: 1559524529}
+    m_SelectOnDown: {fileID: 1998817665}
+    m_SelectOnLeft: {fileID: 1787334955}
+    m_SelectOnRight: {fileID: 1998817665}
   m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -11857,6 +11898,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2054239294}
   m_CullTransparentMesh: 0
+--- !u!114 &2054239300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2054239294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31b718b08a8b4ff43899ce1b6f13f52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2067004787
 GameObject:
   m_ObjectHideFlags: 0

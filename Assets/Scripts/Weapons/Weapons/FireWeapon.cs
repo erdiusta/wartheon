@@ -4,7 +4,6 @@ using System.Collections;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(ActiveWeapon))]
-[RequireComponent(typeof(SelectedActiveItem))]
 [RequireComponent(typeof(FireWeaponEvent))]
 [RequireComponent(typeof(WeaponFiredEvent))]
 [DisallowMultipleComponent]
@@ -395,7 +394,7 @@ public class FireWeapon : MonoBehaviour
         Grid grid = currentRoom.instantiatedRoom.grid;
 
         // Default position
-        Vector3 projectileSpawnPoint = activeWeapon.GetRightHandShootPosition();
+        Vector3 projectileSpawnPoint = activeWeapon.GetMainHandShootPosition();
 
         
         // Loop for number of projectile per shot
@@ -555,7 +554,7 @@ public class FireWeapon : MonoBehaviour
             {
                 if (sepharothPhase != SepharothPhase.InvisibleAndMine && venomancerPhase != VenomancerPhase.ToxicPool)
                 {
-                    projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetRightHandShootPosition(), Quaternion.identity);
+                    projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetMainHandShootPosition(), Quaternion.identity);
                 }
                 else
                 {
@@ -633,7 +632,7 @@ public class FireWeapon : MonoBehaviour
             float projectileSpeed = Random.Range(currentActiveItem.projectileSpeedMin, currentActiveItem.projectileSpeedMax);
 
             // Get Gameobject with IFireable component
-            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(activeItemPrefab, activeWeapon.GetRightHandShootPosition(), Quaternion.identity);
+            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(activeItemPrefab, activeWeapon.GetMainHandShootPosition(), Quaternion.identity);
 
             // Initialize projectile
             projectile.InitializeProjectile(headShotHappened, currentActiveItem, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector);

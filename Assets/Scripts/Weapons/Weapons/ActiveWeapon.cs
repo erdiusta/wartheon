@@ -362,7 +362,7 @@ public class ActiveWeapon : MonoBehaviour
 
     public Weapon GetCurrentMainHandWeapon() => currentMainHandWeapon;
 
-    public Vector3 GetRightHandShootPosition() => weaponMainHandShootPositionTransform.position;
+    public Vector3 GetMainHandShootPosition() => weaponMainHandShootPositionTransform.position;
 
     public Vector3 GetRightHandShootEffectPosition() => weaponMainHandEffectPositionTransform.position;
 

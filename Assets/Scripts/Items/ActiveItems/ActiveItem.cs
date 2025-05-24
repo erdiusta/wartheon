@@ -1,5 +1,5 @@
 
-public class ActiveItem : IReceivable
+public class ActiveItem : ItemGeneric
 {
     public ActiveItemDetailsSO activeItemDetails;
     public int activeItemMaxCharge;

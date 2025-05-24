@@ -342,5 +342,5 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
       ratio: 1
   primaryPassiveDropChanceMax: 3
-  dropSpawnChanceMin: 100
-  dropSpawnChanceMax: 100
+  dropSpawnChanceMin: 10
+  dropSpawnChanceMax: 20

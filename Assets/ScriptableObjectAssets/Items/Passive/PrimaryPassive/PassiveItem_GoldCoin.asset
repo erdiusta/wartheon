@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: PassiveItem_GoldCoin
   m_EditorClassIdentifier: 
   passiveItemName: Golden Coin
+  price: 0
   passiveItemSprite: {fileID: -2005721635, guid: 296d193b7927cc448abaa0c7f8602630, type: 3}
   passiveItemCategory: 0
+  primaryPassiveItemName: 3
   passiveItemType: 0
   passiveItemSlotName: 0
   passiveItemAnimatorController: {fileID: 9100000, guid: 734ee2a97bd933c4cb65c070ece3cfd7, type: 2}

@@ -110,31 +110,31 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""AttackMainHand"",
-                    ""type"": ""Button"",
-                    ""id"": ""b6e4faac-d540-4546-b3ec-247340f8f0dc"",
-                    ""expectedControlType"": ""Button"",
+                    ""name"": ""Gamepad Aim"",
+                    ""type"": ""Value"",
+                    ""id"": ""b0e106f8-b792-47a6-92a9-2710a8799ff2"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""AttackOffHand"",
-                    ""type"": ""Button"",
-                    ""id"": ""f30d7e66-c6ea-48c7-997e-4fab32af75c3"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Switch Weapon"",
+                    ""name"": ""Switch Weapon By Wheel"",
                     ""type"": ""Value"",
                     ""id"": ""998c6550-a423-4173-8e81-4f3b01ffe040"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Switch Weapon By Button"",
+                    ""type"": ""Button"",
+                    ""id"": ""b6ff72ee-f7e9-4c6b-b5af-fcd20a8f14ac"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 },
                 {
                     ""name"": ""Overview Map Full View"",
@@ -158,13 +158,22 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""name"": ""Interaction"",
                     ""type"": ""Button"",
                     ""id"": ""f6a57153-f43f-49a1-a783-3142b3dcd37d"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Special Move1"",
+                    ""name"": ""Normal Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""b6e4faac-d540-4546-b3ec-247340f8f0dc"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Special Attack1"",
                     ""type"": ""Button"",
                     ""id"": ""18d82115-ffab-441e-8d09-3ba1ec79990b"",
                     ""expectedControlType"": """",
@@ -173,7 +182,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Special Move2"",
+                    ""name"": ""Special Attack2"",
                     ""type"": ""Button"",
                     ""id"": ""51383c56-5677-4948-b9f9-6c6a8c09340d"",
                     ""expectedControlType"": """",
@@ -182,10 +191,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Special Move3"",
+                    ""name"": ""Special Attack3"",
                     ""type"": ""Button"",
                     ""id"": ""46ae1878-7aca-4762-8ed3-8e1dd8568c34"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -194,7 +203,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""name"": ""Book View"",
                     ""type"": ""Button"",
                     ""id"": ""7dc35769-e66a-4a05-b64f-65457e84e1cd"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -209,15 +218,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Drop Active Item"",
-                    ""type"": ""Button"",
-                    ""id"": ""57a24197-87d1-451b-b001-6978b6035f29"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Pause"",
                     ""type"": ""Button"",
                     ""id"": ""b30105a8-6f93-4de1-8386-2d72d9be7ff5"",
@@ -227,25 +227,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""OK"",
-                    ""type"": ""Button"",
-                    ""id"": ""31262818-23d1-4859-bfcc-3e1d071d4a34"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Esc"",
-                    ""type"": ""Button"",
-                    ""id"": ""e8e626a8-68e9-472f-9baa-2f217f7ce5f1"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Jump"",
+                    ""name"": ""Roll"",
                     ""type"": ""Button"",
                     ""id"": ""ba81aa0c-1493-458c-a89f-3607f09eba71"",
                     ""expectedControlType"": """",
@@ -456,6 +438,61 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
+                    ""name"": ""Gamepad Left Stick"",
+                    ""id"": ""d40fe0de-edc6-48e3-a5c8-6ccc8f7ecd70"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""16b04dbc-7670-4e29-8cbb-d21547b0a762"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""0413d3f5-c590-4a94-b0f2-2fd30ec7f57b"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""4d14a4d0-66c3-4ecf-b216-b49a0cfe5888"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""cdbe85f6-9cc6-43d4-94b2-3d5c86086136"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": """",
                     ""id"": ""86fb0878-bfac-4897-ac76-07495ed1ddba"",
                     ""path"": ""<Mouse>/position"",
@@ -468,23 +505,34 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""04ade5ee-43f2-441b-bcd1-0069021e4ef4"",
-                    ""path"": ""<Mouse>/leftButton"",
+                    ""id"": ""7ce9c384-c314-41fb-bcda-721ad8eed8ba"",
+                    ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AttackMainHand"",
+                    ""action"": ""Gamepad Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""4d47e589-c7ce-4ddb-980d-792c58f9d643"",
-                    ""path"": ""<Mouse>/rightButton"",
+                    ""id"": ""04ade5ee-43f2-441b-bcd1-0069021e4ef4"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AttackOffHand"",
+                    ""action"": ""Normal Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dd3cf521-b952-4889-a120-5dc8eb3657ee"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Normal Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -495,7 +543,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Switch Weapon"",
+                    ""action"": ""Switch Weapon By Wheel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -523,8 +571,30 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""9f8467a0-b9a7-4991-9cca-99c3d758a21c"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Next Level"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""244ce1a2-fb9e-4bab-b713-3dd66aa7e4c3"",
                     ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interaction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a1c1b1b1-8c8b-4a61-a436-bc6657c98c32"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -539,7 +609,18 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Special Move1"",
+                    ""action"": ""Special Attack1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""25b979ac-d6bd-424a-899a-6498daa42919"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Special Attack1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -547,6 +628,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""9005a554-be1b-4f34-912e-4a59d030f8d8"",
                     ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Book View"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9693bc16-d0b0-4522-bc9c-b2fae97696f8"",
+                    ""path"": ""<Gamepad>/select"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -567,12 +659,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""4d8f7d31-fb01-41c7-b9f8-1d8c8e814874"",
-                    ""path"": ""<Keyboard>/g"",
+                    ""id"": ""98bc0bc9-026e-4b6e-9b0c-935fa72ec7b9"",
+                    ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Drop Active Item"",
+                    ""action"": ""Active Item"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -589,12 +681,34 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""ac6ce27e-bcc7-41e6-be77-d47a0ac65851"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""53fcfa54-f0e4-48fa-804e-4e62c8b2ad69"",
                     ""path"": ""<Keyboard>/2"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Special Move2"",
+                    ""action"": ""Special Attack2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f3cefd89-5930-4925-bb58-d5c5a49d52ab"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Special Attack2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -605,18 +719,18 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Special Move3"",
+                    ""action"": ""Special Attack3"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""59830bbf-568c-4d8e-ae29-5c33d79af385"",
-                    ""path"": ""<Keyboard>/enter"",
+                    ""id"": ""3d2259d8-5f33-4bd2-9bcb-679252231133"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""OK"",
+                    ""action"": ""Special Attack3"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -627,7 +741,18 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Jump"",
+                    ""action"": ""Roll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""54f3d784-6af1-493b-8a1b-db5c2cb64ac9"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -721,17 +846,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""885ca37f-fd47-47c2-991a-646fc6186925"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Esc"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""f3e96402-217e-43ff-9daf-8967f443c0d4"",
                     ""path"": ""<Keyboard>/#(P)"",
                     ""interactions"": """",
@@ -751,6 +865,202 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Parry"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""44b0dd49-62b6-407b-85ea-c315d008269c"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Switch Weapon By Button"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""UIActions"",
+            ""id"": ""5f7d0306-8215-4cf0-8546-7a4aad31aec7"",
+            ""actions"": [
+                {
+                    ""name"": ""UIAction"",
+                    ""type"": ""Value"",
+                    ""id"": ""fcd83a3f-9a8b-44d2-af39-d19475d7328f"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""ebfa3c56-0951-4dff-b7a0-016e68576c6c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""type"": ""Value"",
+                    ""id"": ""c9829de9-a0e1-43a6-8a21-5ffdee18137f"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""OK"",
+                    ""type"": ""Button"",
+                    ""id"": ""cd05a32a-2413-4824-b143-d5a876f6d8f8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Esc"",
+                    ""type"": ""Button"",
+                    ""id"": ""866f756f-093c-4e7b-9bce-ee05921b40c5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""2D Vector - Dpad"",
+                    ""id"": ""f5cac4a2-b28d-4b78-85ae-68d4d734ae00"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIAction"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""172cc30b-e9f5-4d41-ab24-fc8198110a8c"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""181cb0dc-465e-4318-927c-12d3e9ff42f7"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""1692b808-6935-41ee-a45e-e359f6b91c1b"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""71f10172-c14b-4278-bf22-311270f933d5"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8450a220-01e5-495b-902e-2c48907ff56e"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""178330f5-de99-4c1f-82f2-446df6afb6f2"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""570cd404-4c06-41e3-9ee2-7d4143b65693"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fd7d3f66-c5d0-4601-b3d1-e8e5823e480c"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OK"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b7a9a08b-89be-449a-84a6-d4b6f6f277e5"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OK"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c715f4ef-d7ab-472f-8d3a-1e255149e22a"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Esc"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""39360aef-f21b-4228-a462-fc5acd8cf528"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Esc"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -761,22 +1071,20 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput = asset.FindActionMap("PlayerInput", throwIfNotFound: true);
         m_PlayerInput_Movement = m_PlayerInput.FindAction("Movement", throwIfNotFound: true);
         m_PlayerInput_PointerPosition = m_PlayerInput.FindAction("Pointer Position", throwIfNotFound: true);
-        m_PlayerInput_AttackMainHand = m_PlayerInput.FindAction("AttackMainHand", throwIfNotFound: true);
-        m_PlayerInput_AttackOffHand = m_PlayerInput.FindAction("AttackOffHand", throwIfNotFound: true);
-        m_PlayerInput_SwitchWeapon = m_PlayerInput.FindAction("Switch Weapon", throwIfNotFound: true);
+        m_PlayerInput_GamepadAim = m_PlayerInput.FindAction("Gamepad Aim", throwIfNotFound: true);
+        m_PlayerInput_SwitchWeaponByWheel = m_PlayerInput.FindAction("Switch Weapon By Wheel", throwIfNotFound: true);
+        m_PlayerInput_SwitchWeaponByButton = m_PlayerInput.FindAction("Switch Weapon By Button", throwIfNotFound: true);
         m_PlayerInput_OverviewMapFullView = m_PlayerInput.FindAction("Overview Map Full View", throwIfNotFound: true);
         m_PlayerInput_NextLevel = m_PlayerInput.FindAction("Next Level", throwIfNotFound: true);
         m_PlayerInput_Interaction = m_PlayerInput.FindAction("Interaction", throwIfNotFound: true);
-        m_PlayerInput_SpecialMove1 = m_PlayerInput.FindAction("Special Move1", throwIfNotFound: true);
-        m_PlayerInput_SpecialMove2 = m_PlayerInput.FindAction("Special Move2", throwIfNotFound: true);
-        m_PlayerInput_SpecialMove3 = m_PlayerInput.FindAction("Special Move3", throwIfNotFound: true);
+        m_PlayerInput_NormalAttack = m_PlayerInput.FindAction("Normal Attack", throwIfNotFound: true);
+        m_PlayerInput_SpecialAttack1 = m_PlayerInput.FindAction("Special Attack1", throwIfNotFound: true);
+        m_PlayerInput_SpecialAttack2 = m_PlayerInput.FindAction("Special Attack2", throwIfNotFound: true);
+        m_PlayerInput_SpecialAttack3 = m_PlayerInput.FindAction("Special Attack3", throwIfNotFound: true);
         m_PlayerInput_BookView = m_PlayerInput.FindAction("Book View", throwIfNotFound: true);
         m_PlayerInput_ActiveItem = m_PlayerInput.FindAction("Active Item", throwIfNotFound: true);
-        m_PlayerInput_DropActiveItem = m_PlayerInput.FindAction("Drop Active Item", throwIfNotFound: true);
         m_PlayerInput_Pause = m_PlayerInput.FindAction("Pause", throwIfNotFound: true);
-        m_PlayerInput_OK = m_PlayerInput.FindAction("OK", throwIfNotFound: true);
-        m_PlayerInput_Esc = m_PlayerInput.FindAction("Esc", throwIfNotFound: true);
-        m_PlayerInput_Jump = m_PlayerInput.FindAction("Jump", throwIfNotFound: true);
+        m_PlayerInput_Roll = m_PlayerInput.FindAction("Roll", throwIfNotFound: true);
         m_PlayerInput_Level1 = m_PlayerInput.FindAction("Level1", throwIfNotFound: true);
         m_PlayerInput_Level2 = m_PlayerInput.FindAction("Level2", throwIfNotFound: true);
         m_PlayerInput_Level3 = m_PlayerInput.FindAction("Level3", throwIfNotFound: true);
@@ -787,11 +1095,19 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_Level8 = m_PlayerInput.FindAction("Level8", throwIfNotFound: true);
         m_PlayerInput_Invisibility = m_PlayerInput.FindAction("Invisibility", throwIfNotFound: true);
         m_PlayerInput_Parry = m_PlayerInput.FindAction("Parry", throwIfNotFound: true);
+        // UIActions
+        m_UIActions = asset.FindActionMap("UIActions", throwIfNotFound: true);
+        m_UIActions_UIAction = m_UIActions.FindAction("UIAction", throwIfNotFound: true);
+        m_UIActions_Cancel = m_UIActions.FindAction("Cancel", throwIfNotFound: true);
+        m_UIActions_Scroll = m_UIActions.FindAction("Scroll", throwIfNotFound: true);
+        m_UIActions_OK = m_UIActions.FindAction("OK", throwIfNotFound: true);
+        m_UIActions_Esc = m_UIActions.FindAction("Esc", throwIfNotFound: true);
     }
 
     ~@Controls()
     {
         UnityEngine.Debug.Assert(!m_PlayerInput.enabled, "This will cause a leak and performance issues, Controls.PlayerInput.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UIActions.enabled, "This will cause a leak and performance issues, Controls.UIActions.Disable() has not been called.");
     }
 
     /// <summary>
@@ -869,22 +1185,20 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private List<IPlayerInputActions> m_PlayerInputActionsCallbackInterfaces = new List<IPlayerInputActions>();
     private readonly InputAction m_PlayerInput_Movement;
     private readonly InputAction m_PlayerInput_PointerPosition;
-    private readonly InputAction m_PlayerInput_AttackMainHand;
-    private readonly InputAction m_PlayerInput_AttackOffHand;
-    private readonly InputAction m_PlayerInput_SwitchWeapon;
+    private readonly InputAction m_PlayerInput_GamepadAim;
+    private readonly InputAction m_PlayerInput_SwitchWeaponByWheel;
+    private readonly InputAction m_PlayerInput_SwitchWeaponByButton;
     private readonly InputAction m_PlayerInput_OverviewMapFullView;
     private readonly InputAction m_PlayerInput_NextLevel;
     private readonly InputAction m_PlayerInput_Interaction;
-    private readonly InputAction m_PlayerInput_SpecialMove1;
-    private readonly InputAction m_PlayerInput_SpecialMove2;
-    private readonly InputAction m_PlayerInput_SpecialMove3;
+    private readonly InputAction m_PlayerInput_NormalAttack;
+    private readonly InputAction m_PlayerInput_SpecialAttack1;
+    private readonly InputAction m_PlayerInput_SpecialAttack2;
+    private readonly InputAction m_PlayerInput_SpecialAttack3;
     private readonly InputAction m_PlayerInput_BookView;
     private readonly InputAction m_PlayerInput_ActiveItem;
-    private readonly InputAction m_PlayerInput_DropActiveItem;
     private readonly InputAction m_PlayerInput_Pause;
-    private readonly InputAction m_PlayerInput_OK;
-    private readonly InputAction m_PlayerInput_Esc;
-    private readonly InputAction m_PlayerInput_Jump;
+    private readonly InputAction m_PlayerInput_Roll;
     private readonly InputAction m_PlayerInput_Level1;
     private readonly InputAction m_PlayerInput_Level2;
     private readonly InputAction m_PlayerInput_Level3;
@@ -915,17 +1229,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @PointerPosition => m_Wrapper.m_PlayerInput_PointerPosition;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/AttackMainHand".
+        /// Provides access to the underlying input action "PlayerInput/GamepadAim".
         /// </summary>
-        public InputAction @AttackMainHand => m_Wrapper.m_PlayerInput_AttackMainHand;
+        public InputAction @GamepadAim => m_Wrapper.m_PlayerInput_GamepadAim;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/AttackOffHand".
+        /// Provides access to the underlying input action "PlayerInput/SwitchWeaponByWheel".
         /// </summary>
-        public InputAction @AttackOffHand => m_Wrapper.m_PlayerInput_AttackOffHand;
+        public InputAction @SwitchWeaponByWheel => m_Wrapper.m_PlayerInput_SwitchWeaponByWheel;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/SwitchWeapon".
+        /// Provides access to the underlying input action "PlayerInput/SwitchWeaponByButton".
         /// </summary>
-        public InputAction @SwitchWeapon => m_Wrapper.m_PlayerInput_SwitchWeapon;
+        public InputAction @SwitchWeaponByButton => m_Wrapper.m_PlayerInput_SwitchWeaponByButton;
         /// <summary>
         /// Provides access to the underlying input action "PlayerInput/OverviewMapFullView".
         /// </summary>
@@ -939,17 +1253,21 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Interaction => m_Wrapper.m_PlayerInput_Interaction;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/SpecialMove1".
+        /// Provides access to the underlying input action "PlayerInput/NormalAttack".
         /// </summary>
-        public InputAction @SpecialMove1 => m_Wrapper.m_PlayerInput_SpecialMove1;
+        public InputAction @NormalAttack => m_Wrapper.m_PlayerInput_NormalAttack;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/SpecialMove2".
+        /// Provides access to the underlying input action "PlayerInput/SpecialAttack1".
         /// </summary>
-        public InputAction @SpecialMove2 => m_Wrapper.m_PlayerInput_SpecialMove2;
+        public InputAction @SpecialAttack1 => m_Wrapper.m_PlayerInput_SpecialAttack1;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/SpecialMove3".
+        /// Provides access to the underlying input action "PlayerInput/SpecialAttack2".
         /// </summary>
-        public InputAction @SpecialMove3 => m_Wrapper.m_PlayerInput_SpecialMove3;
+        public InputAction @SpecialAttack2 => m_Wrapper.m_PlayerInput_SpecialAttack2;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerInput/SpecialAttack3".
+        /// </summary>
+        public InputAction @SpecialAttack3 => m_Wrapper.m_PlayerInput_SpecialAttack3;
         /// <summary>
         /// Provides access to the underlying input action "PlayerInput/BookView".
         /// </summary>
@@ -959,25 +1277,13 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ActiveItem => m_Wrapper.m_PlayerInput_ActiveItem;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/DropActiveItem".
-        /// </summary>
-        public InputAction @DropActiveItem => m_Wrapper.m_PlayerInput_DropActiveItem;
-        /// <summary>
         /// Provides access to the underlying input action "PlayerInput/Pause".
         /// </summary>
         public InputAction @Pause => m_Wrapper.m_PlayerInput_Pause;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/OK".
+        /// Provides access to the underlying input action "PlayerInput/Roll".
         /// </summary>
-        public InputAction @OK => m_Wrapper.m_PlayerInput_OK;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/Esc".
-        /// </summary>
-        public InputAction @Esc => m_Wrapper.m_PlayerInput_Esc;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/Jump".
-        /// </summary>
-        public InputAction @Jump => m_Wrapper.m_PlayerInput_Jump;
+        public InputAction @Roll => m_Wrapper.m_PlayerInput_Roll;
         /// <summary>
         /// Provides access to the underlying input action "PlayerInput/Level1".
         /// </summary>
@@ -1050,15 +1356,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @PointerPosition.started += instance.OnPointerPosition;
             @PointerPosition.performed += instance.OnPointerPosition;
             @PointerPosition.canceled += instance.OnPointerPosition;
-            @AttackMainHand.started += instance.OnAttackMainHand;
-            @AttackMainHand.performed += instance.OnAttackMainHand;
-            @AttackMainHand.canceled += instance.OnAttackMainHand;
-            @AttackOffHand.started += instance.OnAttackOffHand;
-            @AttackOffHand.performed += instance.OnAttackOffHand;
-            @AttackOffHand.canceled += instance.OnAttackOffHand;
-            @SwitchWeapon.started += instance.OnSwitchWeapon;
-            @SwitchWeapon.performed += instance.OnSwitchWeapon;
-            @SwitchWeapon.canceled += instance.OnSwitchWeapon;
+            @GamepadAim.started += instance.OnGamepadAim;
+            @GamepadAim.performed += instance.OnGamepadAim;
+            @GamepadAim.canceled += instance.OnGamepadAim;
+            @SwitchWeaponByWheel.started += instance.OnSwitchWeaponByWheel;
+            @SwitchWeaponByWheel.performed += instance.OnSwitchWeaponByWheel;
+            @SwitchWeaponByWheel.canceled += instance.OnSwitchWeaponByWheel;
+            @SwitchWeaponByButton.started += instance.OnSwitchWeaponByButton;
+            @SwitchWeaponByButton.performed += instance.OnSwitchWeaponByButton;
+            @SwitchWeaponByButton.canceled += instance.OnSwitchWeaponByButton;
             @OverviewMapFullView.started += instance.OnOverviewMapFullView;
             @OverviewMapFullView.performed += instance.OnOverviewMapFullView;
             @OverviewMapFullView.canceled += instance.OnOverviewMapFullView;
@@ -1068,36 +1374,30 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Interaction.started += instance.OnInteraction;
             @Interaction.performed += instance.OnInteraction;
             @Interaction.canceled += instance.OnInteraction;
-            @SpecialMove1.started += instance.OnSpecialMove1;
-            @SpecialMove1.performed += instance.OnSpecialMove1;
-            @SpecialMove1.canceled += instance.OnSpecialMove1;
-            @SpecialMove2.started += instance.OnSpecialMove2;
-            @SpecialMove2.performed += instance.OnSpecialMove2;
-            @SpecialMove2.canceled += instance.OnSpecialMove2;
-            @SpecialMove3.started += instance.OnSpecialMove3;
-            @SpecialMove3.performed += instance.OnSpecialMove3;
-            @SpecialMove3.canceled += instance.OnSpecialMove3;
+            @NormalAttack.started += instance.OnNormalAttack;
+            @NormalAttack.performed += instance.OnNormalAttack;
+            @NormalAttack.canceled += instance.OnNormalAttack;
+            @SpecialAttack1.started += instance.OnSpecialAttack1;
+            @SpecialAttack1.performed += instance.OnSpecialAttack1;
+            @SpecialAttack1.canceled += instance.OnSpecialAttack1;
+            @SpecialAttack2.started += instance.OnSpecialAttack2;
+            @SpecialAttack2.performed += instance.OnSpecialAttack2;
+            @SpecialAttack2.canceled += instance.OnSpecialAttack2;
+            @SpecialAttack3.started += instance.OnSpecialAttack3;
+            @SpecialAttack3.performed += instance.OnSpecialAttack3;
+            @SpecialAttack3.canceled += instance.OnSpecialAttack3;
             @BookView.started += instance.OnBookView;
             @BookView.performed += instance.OnBookView;
             @BookView.canceled += instance.OnBookView;
             @ActiveItem.started += instance.OnActiveItem;
             @ActiveItem.performed += instance.OnActiveItem;
             @ActiveItem.canceled += instance.OnActiveItem;
-            @DropActiveItem.started += instance.OnDropActiveItem;
-            @DropActiveItem.performed += instance.OnDropActiveItem;
-            @DropActiveItem.canceled += instance.OnDropActiveItem;
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
-            @OK.started += instance.OnOK;
-            @OK.performed += instance.OnOK;
-            @OK.canceled += instance.OnOK;
-            @Esc.started += instance.OnEsc;
-            @Esc.performed += instance.OnEsc;
-            @Esc.canceled += instance.OnEsc;
-            @Jump.started += instance.OnJump;
-            @Jump.performed += instance.OnJump;
-            @Jump.canceled += instance.OnJump;
+            @Roll.started += instance.OnRoll;
+            @Roll.performed += instance.OnRoll;
+            @Roll.canceled += instance.OnRoll;
             @Level1.started += instance.OnLevel1;
             @Level1.performed += instance.OnLevel1;
             @Level1.canceled += instance.OnLevel1;
@@ -1145,15 +1445,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @PointerPosition.started -= instance.OnPointerPosition;
             @PointerPosition.performed -= instance.OnPointerPosition;
             @PointerPosition.canceled -= instance.OnPointerPosition;
-            @AttackMainHand.started -= instance.OnAttackMainHand;
-            @AttackMainHand.performed -= instance.OnAttackMainHand;
-            @AttackMainHand.canceled -= instance.OnAttackMainHand;
-            @AttackOffHand.started -= instance.OnAttackOffHand;
-            @AttackOffHand.performed -= instance.OnAttackOffHand;
-            @AttackOffHand.canceled -= instance.OnAttackOffHand;
-            @SwitchWeapon.started -= instance.OnSwitchWeapon;
-            @SwitchWeapon.performed -= instance.OnSwitchWeapon;
-            @SwitchWeapon.canceled -= instance.OnSwitchWeapon;
+            @GamepadAim.started -= instance.OnGamepadAim;
+            @GamepadAim.performed -= instance.OnGamepadAim;
+            @GamepadAim.canceled -= instance.OnGamepadAim;
+            @SwitchWeaponByWheel.started -= instance.OnSwitchWeaponByWheel;
+            @SwitchWeaponByWheel.performed -= instance.OnSwitchWeaponByWheel;
+            @SwitchWeaponByWheel.canceled -= instance.OnSwitchWeaponByWheel;
+            @SwitchWeaponByButton.started -= instance.OnSwitchWeaponByButton;
+            @SwitchWeaponByButton.performed -= instance.OnSwitchWeaponByButton;
+            @SwitchWeaponByButton.canceled -= instance.OnSwitchWeaponByButton;
             @OverviewMapFullView.started -= instance.OnOverviewMapFullView;
             @OverviewMapFullView.performed -= instance.OnOverviewMapFullView;
             @OverviewMapFullView.canceled -= instance.OnOverviewMapFullView;
@@ -1163,36 +1463,30 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Interaction.started -= instance.OnInteraction;
             @Interaction.performed -= instance.OnInteraction;
             @Interaction.canceled -= instance.OnInteraction;
-            @SpecialMove1.started -= instance.OnSpecialMove1;
-            @SpecialMove1.performed -= instance.OnSpecialMove1;
-            @SpecialMove1.canceled -= instance.OnSpecialMove1;
-            @SpecialMove2.started -= instance.OnSpecialMove2;
-            @SpecialMove2.performed -= instance.OnSpecialMove2;
-            @SpecialMove2.canceled -= instance.OnSpecialMove2;
-            @SpecialMove3.started -= instance.OnSpecialMove3;
-            @SpecialMove3.performed -= instance.OnSpecialMove3;
-            @SpecialMove3.canceled -= instance.OnSpecialMove3;
+            @NormalAttack.started -= instance.OnNormalAttack;
+            @NormalAttack.performed -= instance.OnNormalAttack;
+            @NormalAttack.canceled -= instance.OnNormalAttack;
+            @SpecialAttack1.started -= instance.OnSpecialAttack1;
+            @SpecialAttack1.performed -= instance.OnSpecialAttack1;
+            @SpecialAttack1.canceled -= instance.OnSpecialAttack1;
+            @SpecialAttack2.started -= instance.OnSpecialAttack2;
+            @SpecialAttack2.performed -= instance.OnSpecialAttack2;
+            @SpecialAttack2.canceled -= instance.OnSpecialAttack2;
+            @SpecialAttack3.started -= instance.OnSpecialAttack3;
+            @SpecialAttack3.performed -= instance.OnSpecialAttack3;
+            @SpecialAttack3.canceled -= instance.OnSpecialAttack3;
             @BookView.started -= instance.OnBookView;
             @BookView.performed -= instance.OnBookView;
             @BookView.canceled -= instance.OnBookView;
             @ActiveItem.started -= instance.OnActiveItem;
             @ActiveItem.performed -= instance.OnActiveItem;
             @ActiveItem.canceled -= instance.OnActiveItem;
-            @DropActiveItem.started -= instance.OnDropActiveItem;
-            @DropActiveItem.performed -= instance.OnDropActiveItem;
-            @DropActiveItem.canceled -= instance.OnDropActiveItem;
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
-            @OK.started -= instance.OnOK;
-            @OK.performed -= instance.OnOK;
-            @OK.canceled -= instance.OnOK;
-            @Esc.started -= instance.OnEsc;
-            @Esc.performed -= instance.OnEsc;
-            @Esc.canceled -= instance.OnEsc;
-            @Jump.started -= instance.OnJump;
-            @Jump.performed -= instance.OnJump;
-            @Jump.canceled -= instance.OnJump;
+            @Roll.started -= instance.OnRoll;
+            @Roll.performed -= instance.OnRoll;
+            @Roll.canceled -= instance.OnRoll;
             @Level1.started -= instance.OnLevel1;
             @Level1.performed -= instance.OnLevel1;
             @Level1.canceled -= instance.OnLevel1;
@@ -1256,6 +1550,146 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="PlayerInputActions" /> instance referencing this action map.
     /// </summary>
     public PlayerInputActions @PlayerInput => new PlayerInputActions(this);
+
+    // UIActions
+    private readonly InputActionMap m_UIActions;
+    private List<IUIActionsActions> m_UIActionsActionsCallbackInterfaces = new List<IUIActionsActions>();
+    private readonly InputAction m_UIActions_UIAction;
+    private readonly InputAction m_UIActions_Cancel;
+    private readonly InputAction m_UIActions_Scroll;
+    private readonly InputAction m_UIActions_OK;
+    private readonly InputAction m_UIActions_Esc;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "UIActions".
+    /// </summary>
+    public struct UIActionsActions
+    {
+        private @Controls m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public UIActionsActions(@Controls wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "UIActions/UIAction".
+        /// </summary>
+        public InputAction @UIAction => m_Wrapper.m_UIActions_UIAction;
+        /// <summary>
+        /// Provides access to the underlying input action "UIActions/Cancel".
+        /// </summary>
+        public InputAction @Cancel => m_Wrapper.m_UIActions_Cancel;
+        /// <summary>
+        /// Provides access to the underlying input action "UIActions/Scroll".
+        /// </summary>
+        public InputAction @Scroll => m_Wrapper.m_UIActions_Scroll;
+        /// <summary>
+        /// Provides access to the underlying input action "UIActions/OK".
+        /// </summary>
+        public InputAction @OK => m_Wrapper.m_UIActions_OK;
+        /// <summary>
+        /// Provides access to the underlying input action "UIActions/Esc".
+        /// </summary>
+        public InputAction @Esc => m_Wrapper.m_UIActions_Esc;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_UIActions; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="UIActionsActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(UIActionsActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="UIActionsActions" />
+        public void AddCallbacks(IUIActionsActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UIActionsActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UIActionsActionsCallbackInterfaces.Add(instance);
+            @UIAction.started += instance.OnUIAction;
+            @UIAction.performed += instance.OnUIAction;
+            @UIAction.canceled += instance.OnUIAction;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
+            @Scroll.started += instance.OnScroll;
+            @Scroll.performed += instance.OnScroll;
+            @Scroll.canceled += instance.OnScroll;
+            @OK.started += instance.OnOK;
+            @OK.performed += instance.OnOK;
+            @OK.canceled += instance.OnOK;
+            @Esc.started += instance.OnEsc;
+            @Esc.performed += instance.OnEsc;
+            @Esc.canceled += instance.OnEsc;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="UIActionsActions" />
+        private void UnregisterCallbacks(IUIActionsActions instance)
+        {
+            @UIAction.started -= instance.OnUIAction;
+            @UIAction.performed -= instance.OnUIAction;
+            @UIAction.canceled -= instance.OnUIAction;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
+            @Scroll.started -= instance.OnScroll;
+            @Scroll.performed -= instance.OnScroll;
+            @Scroll.canceled -= instance.OnScroll;
+            @OK.started -= instance.OnOK;
+            @OK.performed -= instance.OnOK;
+            @OK.canceled -= instance.OnOK;
+            @Esc.started -= instance.OnEsc;
+            @Esc.performed -= instance.OnEsc;
+            @Esc.canceled -= instance.OnEsc;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UIActionsActions.UnregisterCallbacks(IUIActionsActions)" />.
+        /// </summary>
+        /// <seealso cref="UIActionsActions.UnregisterCallbacks(IUIActionsActions)" />
+        public void RemoveCallbacks(IUIActionsActions instance)
+        {
+            if (m_Wrapper.m_UIActionsActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="UIActionsActions.AddCallbacks(IUIActionsActions)" />
+        /// <seealso cref="UIActionsActions.RemoveCallbacks(IUIActionsActions)" />
+        /// <seealso cref="UIActionsActions.UnregisterCallbacks(IUIActionsActions)" />
+        public void SetCallbacks(IUIActionsActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UIActionsActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UIActionsActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="UIActionsActions" /> instance referencing this action map.
+    /// </summary>
+    public UIActionsActions @UIActions => new UIActionsActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "PlayerInput" which allows adding and removing callbacks.
     /// </summary>
@@ -1278,26 +1712,26 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPointerPosition(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "AttackMainHand" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Gamepad Aim" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnAttackMainHand(InputAction.CallbackContext context);
+        void OnGamepadAim(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "AttackOffHand" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Switch Weapon By Wheel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnAttackOffHand(InputAction.CallbackContext context);
+        void OnSwitchWeaponByWheel(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Switch Weapon" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Switch Weapon By Button" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSwitchWeapon(InputAction.CallbackContext context);
+        void OnSwitchWeaponByButton(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Overview Map Full View" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1320,26 +1754,33 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInteraction(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Special Move1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Normal Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSpecialMove1(InputAction.CallbackContext context);
+        void OnNormalAttack(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Special Move2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Special Attack1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSpecialMove2(InputAction.CallbackContext context);
+        void OnSpecialAttack1(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Special Move3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Special Attack2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSpecialMove3(InputAction.CallbackContext context);
+        void OnSpecialAttack2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Special Attack3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSpecialAttack3(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Book View" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1355,13 +1796,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnActiveItem(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Drop Active Item" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnDropActiveItem(InputAction.CallbackContext context);
-        /// <summary>
         /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
@@ -1369,26 +1803,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPause(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "OK" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Roll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnOK(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Esc" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnEsc(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Jump" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnJump(InputAction.CallbackContext context);
+        void OnRoll(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Level1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1459,5 +1879,48 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnParry(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UIActions" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="UIActionsActions.AddCallbacks(IUIActionsActions)" />
+    /// <seealso cref="UIActionsActions.RemoveCallbacks(IUIActionsActions)" />
+    public interface IUIActionsActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "UIAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUIAction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Cancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCancel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Scroll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnScroll(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "OK" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOK(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Esc" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEsc(InputAction.CallbackContext context);
     }
 }

@@ -1,11 +1,7 @@
-using UnityEngine.UI;
-using TMPro;
 using UnityEngine;
 
 public class PauseMenuUI : MonoBehaviour
 {
-    [SerializeField] GameObject settingsMenuUI;
-
     private void OnEnable()
     {
         Time.timeScale = 0f;

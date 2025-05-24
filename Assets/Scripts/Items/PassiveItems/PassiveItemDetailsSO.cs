@@ -24,6 +24,10 @@ public class PassiveItemDetailsSO : ScriptableObject
     #endregion Tooltip
     public PassiveItemCategory passiveItemCategory;
     #region Tooltip
+    [Tooltip("Passive name if passive is primary")]
+    #endregion Tooltip
+    public PrimaryPassiveItemName primaryPassiveItemName;
+    #region Tooltip
     [Tooltip("The passive item type for the item")]
     #endregion Tooltip
     public PassiveItemType passiveItemType;

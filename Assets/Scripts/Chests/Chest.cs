@@ -172,6 +172,8 @@ public class Chest : MonoBehaviour, IUsable
 
         while (elapsedTime < 2f)
         {
+            if (itemTransform == null) break;
+
             elapsedTime += Time.deltaTime; // Increment time based on frame rate
             itemTransform.position = Vector3.Lerp(initialPosition, targetPosition, elapsedTime);
             yield return null; // Wait for the next frame

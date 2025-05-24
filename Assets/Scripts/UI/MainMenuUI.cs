@@ -5,35 +5,49 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using System;
+using UnityEngine.EventSystems;
 
-public class MainMenuUI : MonoBehaviour
+public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 {
     public static int currentDungeonLevelListIndex = 0;
 
-    [SerializeField] GameObject playButton;
-    [SerializeField] GameObject settingsButton;
-    [SerializeField] GameObject quitButton;
+    public Button playButton;
+    [SerializeField] Button settingsButton;
+    [SerializeField] Button quitButton;
     [SerializeField] GameObject cheatCodeObject;
     [SerializeField] SoundEffectSO buttonClickSound;
 
     [Space(10)]
     [Header("SETTINGS")]
-    [Space(10)]
     [SerializeField] GameObject settingsMenuUI;
-    [SerializeField] Slider musicVolumeSlider;
-    [SerializeField] Slider soundVolumeSlider;
+    [SerializeField] Button settingsBackButton;
+    [Header("Video")]
+    [SerializeField] TMP_Dropdown resolutionDropdown;
+    [SerializeField] TMP_Dropdown screenModeDropdown;
+    [SerializeField] TMP_Dropdown refreshRateDropdown;
     [SerializeField] Toggle postProcessingToggle;
-    [SerializeField] Image  postProcessingCheckmarkImage;
+    [SerializeField] Image postProcessingCheckmarkImage;
     [SerializeField] Toggle vsyncToggle;
     [SerializeField] Image vysncCheckmarkImage;
-    [SerializeField] TMP_Dropdown resolutionDropdown;
-    [SerializeField] TMP_Dropdown screenModeDropDown;
-    [SerializeField] TMP_Dropdown refreshRateDropdown;
+
+    [Space(10)]
+    [Header("Audio")]
+    [SerializeField] Slider musicVolumeSlider;
+    [SerializeField] Slider soundVolumeSlider;
+
+    [Space(10)]
+    [Header("Game")]
+    [SerializeField] Toggle dynamicCameraToggle;
+    [SerializeField] Image dynamicCameraCheckmarkImage;
 
     Resolution[] resolutions;
     Dictionary<string, List<int>> resolutionToHzMap;
     List<string> resolutionOptions;
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     private void OnEnable()
     {
@@ -55,13 +69,13 @@ public class MainMenuUI : MonoBehaviour
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
 
-        playButton.SetActive(true);
-        settingsButton.SetActive(true);
-        quitButton.SetActive(true);
+        playButton.gameObject.SetActive(true);
+        settingsButton.gameObject.SetActive(true);
+        quitButton.gameObject.SetActive(true);
 
-        playButton.GetComponent<Button>().interactable = true;
-        settingsButton.GetComponent<Button>().interactable = true;
-        quitButton.GetComponent<Button>().interactable = true;
+        playButton.interactable = true;
+        settingsButton.interactable = true;
+        quitButton.interactable = true;
     }
 
     private void StaticEventHandler_OnCheatActivated()
@@ -142,26 +156,30 @@ public class MainMenuUI : MonoBehaviour
             OnResolutionDropdownChanged(highestIndex, true); // make sure Hz list is also updated
         }
 
+        // For first launch default dynamiceCameraFollowToggle is false
+        dynamicCameraToggle.isOn = false;
+
         //  Now that resolutions and dropdown are ready, load saved settings
         LoadPlayerPrefs();
 
         // Populate screen modes
-        screenModeDropDown.ClearOptions();
-        screenModeDropDown.AddOptions(new List<string> { "Exclusive Fullscreen", "Borderless Window", "Windowed" });
-        if (PlayerPrefs.HasKey("ScreenModeIndex")) screenModeDropDown.value = PlayerPrefs.GetInt("ScreenModeIndex");
-        else screenModeDropDown.value = (int)Screen.fullScreenMode;
-        screenModeDropDown.RefreshShownValue();
+        screenModeDropdown.ClearOptions();
+        screenModeDropdown.AddOptions(new List<string> { "Exclusive Fullscreen", "Borderless Window", "Windowed" });
+        if (PlayerPrefs.HasKey("ScreenModeIndex")) screenModeDropdown.value = PlayerPrefs.GetInt("ScreenModeIndex");
+        else screenModeDropdown.value = (int)Screen.fullScreenMode;
+        screenModeDropdown.RefreshShownValue();
 
         // Play music
         MusicManager.Instance.PlayMusic(GameResources.Instance.mainMenuMusic, 0f, 2f);
 
         // Add other listeners
-        musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeSliderChanged);
-        soundVolumeSlider.onValueChanged.AddListener(OnSoundVolumeSliderChanged);
         postProcessingToggle.onValueChanged.AddListener(OnPostProcessingToggleChanged);
         vsyncToggle.onValueChanged.AddListener(OnVsyncToggleChanged);
         refreshRateDropdown.onValueChanged.AddListener(index => OnRefreshRateChanged(index, false));
-        screenModeDropDown.onValueChanged.AddListener(SetScreenMode);
+        screenModeDropdown.onValueChanged.AddListener(SetScreenMode);
+        musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeSliderChanged);
+        soundVolumeSlider.onValueChanged.AddListener(OnSoundVolumeSliderChanged);
+        dynamicCameraToggle.onValueChanged.AddListener(OnDynamicCameraFollowToggleChanged);
     }
 
     /// <summary>
@@ -175,13 +193,13 @@ public class MainMenuUI : MonoBehaviour
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
 
-        playButton.GetComponent<Button>().interactable = false;
-        settingsButton.GetComponent<Button>().interactable = false;
-        quitButton.GetComponent<Button>().interactable = false;
+        playButton.interactable = false;
+        settingsButton.interactable = false;
+        quitButton.interactable = false;
 
-        playButton.SetActive(false);
-        settingsButton.SetActive(false);
-        quitButton.SetActive(false);
+        playButton.gameObject.SetActive(false);
+        settingsButton.gameObject.SetActive(false);
+        quitButton.gameObject.SetActive(false);
 
         // Save player prefs
         SavePlayerPrefs();
@@ -199,15 +217,24 @@ public class MainMenuUI : MonoBehaviour
 
         settingsMenuUI.SetActive(true);
 
-        playButton.GetComponent<Button>().interactable = false;
-        settingsButton.GetComponent<Button>().interactable = false;
-        quitButton.GetComponent<Button>().interactable = false;
+        playButton.interactable = false;
+        settingsButton.interactable = false;
+        quitButton.interactable = false;
 
-        playButton.SetActive(false);
-        settingsButton.SetActive(false);
-        quitButton.SetActive(false);
+        playButton.gameObject.SetActive(false);
+        settingsButton.gameObject.SetActive(false);
+        quitButton.gameObject.SetActive(false);
+
+        ////currentSettingsMenuIndex = 0;
+        //StartCoroutine(SelectFirst());
     }
 
+    //private IEnumerator SelectFirst()
+    //{
+    //    // wait one frame so the UI has time to enable
+    //    yield return null;
+    //    EventSystem.current.SetSelectedGameObject(elements[currentSettingsMenuIndex].gameObject);
+    //}
 
     private void OnPostProcessingToggleChanged(bool isOn)
     {
@@ -319,6 +346,19 @@ public class MainMenuUI : MonoBehaviour
         vysncCheckmarkImage.enabled = show;
     }
 
+    private void OnDynamicCameraFollowToggleChanged(bool isOn)
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        InterScenesSingleton.dynamicCameraFollowEnabled = isOn ? true : false;
+        UpdateDynamicCameraFollowCheckmarkVisibility(isOn);
+    }
+
+    private void UpdateDynamicCameraFollowCheckmarkVisibility(bool show)
+    {
+        dynamicCameraCheckmarkImage.enabled = show;
+    }
+
     private void OnMusicVolumeSliderChanged(float newValue)
     {
         MusicManager.Instance.SetVolume((int)newValue);
@@ -338,13 +378,13 @@ public class MainMenuUI : MonoBehaviour
 
         settingsMenuUI.SetActive(false);
 
-        playButton.SetActive(true);
-        settingsButton.SetActive(true);
-        quitButton.SetActive(true);
+        playButton.gameObject.SetActive(true);
+        settingsButton.gameObject.SetActive(true);
+        quitButton.gameObject.SetActive(true);
 
-        playButton.GetComponent<Button>().interactable = true;
-        settingsButton.GetComponent<Button>().interactable = true;
-        quitButton.GetComponent<Button>().interactable = true;
+        playButton.interactable = true;
+        settingsButton.interactable = true;
+        quitButton.interactable = true;
     }
 
     /// <summary>
@@ -353,13 +393,17 @@ public class MainMenuUI : MonoBehaviour
     private void SavePlayerPrefs()
     {
         // Save settings to PlayerPrefs
-        PlayerPrefs.SetFloat("MusicVolume", musicVolumeSlider.value);
-        PlayerPrefs.SetFloat("SoundVolume", soundVolumeSlider.value);
+        // Video
+        PlayerPrefs.SetInt("ResolutionIndex", resolutionDropdown.value);
+        PlayerPrefs.SetInt("ScreenModeIndex", screenModeDropdown.value);
+        PlayerPrefs.SetInt("RefreshRateIndex", refreshRateDropdown.value);
         PlayerPrefs.SetInt("PostProcessing", postProcessingToggle.isOn ? 1 : 0);
         PlayerPrefs.SetInt("Vsync", vsyncToggle.isOn ? 1 : 0);
-        PlayerPrefs.SetInt("ResolutionIndex", resolutionDropdown.value);
-        PlayerPrefs.SetInt("ScreenModeIndex", screenModeDropDown.value);
-        PlayerPrefs.SetInt("RefreshRateIndex", refreshRateDropdown.value);
+        // Audio
+        PlayerPrefs.SetFloat("MusicVolume", musicVolumeSlider.value);
+        PlayerPrefs.SetFloat("SoundVolume", soundVolumeSlider.value);
+        // Game
+        PlayerPrefs.SetInt("DynamicCamera", dynamicCameraToggle.isOn ? 1 : 0);
 
         PlayerPrefs.Save();
     }
@@ -369,22 +413,7 @@ public class MainMenuUI : MonoBehaviour
     /// </summary>
     private void LoadPlayerPrefs()
     {
-        // Load music volume
-        if (PlayerPrefs.HasKey("MusicVolume"))
-        {
-            float musicVol = PlayerPrefs.GetFloat("MusicVolume");
-            musicVolumeSlider.value = musicVol;
-            MusicManager.Instance.SetVolume((int)musicVol);
-        }
-
-        // Load sound volume
-        if (PlayerPrefs.HasKey("SoundVolume"))
-        {
-            float soundVol = PlayerPrefs.GetFloat("SoundVolume");
-            soundVolumeSlider.value = soundVol;
-            SoundEffectManager.Instance.SetVolume((int)soundVol);
-        }
-
+        // VIDEO
         // Load post-processing toggle
         if (PlayerPrefs.HasKey("PostProcessing"))
         {
@@ -423,15 +452,55 @@ public class MainMenuUI : MonoBehaviour
         if (PlayerPrefs.HasKey("ScreenModeIndex"))
         {
             int screenModeIndex = PlayerPrefs.GetInt("ScreenModeIndex");
-            screenModeDropDown.value = screenModeIndex;
+            screenModeDropdown.value = screenModeIndex;
             SetScreenMode(screenModeIndex); // Applies the setting
         }
 
         refreshRateDropdown.RefreshShownValue();
         resolutionDropdown.RefreshShownValue();
-        screenModeDropDown.RefreshShownValue();
+        screenModeDropdown.RefreshShownValue();
+
+        // AUDIO
+        // Load music volume
+        if (PlayerPrefs.HasKey("MusicVolume"))
+        {
+            float musicVol = PlayerPrefs.GetFloat("MusicVolume");
+            musicVolumeSlider.value = musicVol;
+            MusicManager.Instance.SetVolume((int)musicVol);
+        }
+
+        // Load sound volume
+        if (PlayerPrefs.HasKey("SoundVolume"))
+        {
+            float soundVol = PlayerPrefs.GetFloat("SoundVolume");
+            soundVolumeSlider.value = soundVol;
+            SoundEffectManager.Instance.SetVolume((int)soundVol);
+        }
+
+        // GAME
+        // Load Dynamic amera toggle
+        if (PlayerPrefs.HasKey("DynamicCamera"))
+        {
+            bool dynamicCamera = PlayerPrefs.GetInt("DynamicCamera") == 1;
+            dynamicCameraToggle.isOn = dynamicCamera;
+            InterScenesSingleton.dynamicCameraFollowEnabled = dynamicCamera;
+            UpdateDynamicCameraFollowCheckmarkVisibility(dynamicCamera);
+        }
     }
 
+    public IEnumerator HandleReturnFromCharacterScene()
+    {
+        // Wait until the scene is actually unloaded
+        while (SceneManager.GetSceneByName("CharacterSelectorScene").isLoaded)
+        {
+            yield return null;
+        }
+
+        // Set Play Button as selected
+        yield return null; // Wait 1 more frame just to be sure
+
+        EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+    }
 
     /// <summary>
     /// Called from the Exit Game Button

@@ -28,18 +28,28 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Tooltip("Populate with pause menu gameobject in the hierarchy")]
     #endregion
     [SerializeField] GameObject pauseMenu;
-    [SerializeField] SoundEffectSO buttonClickSound;
+    [SerializeField] GameObject resumeButton;
     [SerializeField] GameObject settingsMenuUI;
-    [SerializeField] Slider musicVolumeSlider;
-    [SerializeField] Slider soundVolumeSlider;
+    [SerializeField] SoundEffectSO buttonClickSound;
+
+    [Header("Video")]
+    [SerializeField] TMP_Dropdown resolutionDropdown;
+    [SerializeField] TMP_Dropdown screenModeDropDown;
+    [SerializeField] TMP_Dropdown refreshRateDropdown;
     [SerializeField] Toggle postProcessingToggle;
     [SerializeField] Image postProcessingCheckmarkImage;
     [SerializeField] Toggle vsyncToggle;
     [SerializeField] Image vysncCheckmarkImage;
-    [SerializeField] TMP_Dropdown resolutionDropdown;
-    [SerializeField] TMP_Dropdown screenModeDropDown;
-    [SerializeField] TMP_Dropdown refreshRateDropdown;
 
+    [Header("Audio")]
+    [SerializeField] Slider musicVolumeSlider;
+    [SerializeField] Slider soundVolumeSlider;
+
+    [Header("Game")]
+    [SerializeField] Toggle dynamicCameraToggle;
+    [SerializeField] Image dynamicCameraCheckmarkImage;
+
+    [Space(10)]
     #region Tooltip
     [Tooltip("Populate with the MessageText textmeshpro component in the FadeScreenUI")]
     #endregion
@@ -593,12 +603,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         screenModeDropDown.AddOptions(new List<string> { "Exclusive Fullscreen", "Borderless Window", "Windowed" });
 
         // Add listeners
-        musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeSliderChanged);
-        soundVolumeSlider.onValueChanged.AddListener(OnSoundVolumeSliderChanged);
-        postProcessingToggle.onValueChanged.AddListener(OnPostProcessingToggleChanged);
-        vsyncToggle.onValueChanged.AddListener(OnVsyncToggleChanged);
         refreshRateDropdown.onValueChanged.AddListener(OnRefreshRateChanged);
         screenModeDropDown.onValueChanged.AddListener(SetScreenMode);
+        postProcessingToggle.onValueChanged.AddListener(OnPostProcessingToggleChanged);
+        vsyncToggle.onValueChanged.AddListener(OnVsyncToggleChanged);
+        musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeSliderChanged);
+        soundVolumeSlider.onValueChanged.AddListener(OnSoundVolumeSliderChanged);
+        dynamicCameraToggle.onValueChanged.AddListener(OnDynamicCameraFollowToggleChanged);
 
         // Ensure the volume has a Vignette effect and store a reference to it
         if (volume != null && volume.profile.TryGet(out vignette))
@@ -754,12 +765,14 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             if (bookView.activeSelf)
             {
+                Time.timeScale = 1f;
                 gamePlayUI.SetActive(true);
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
                 bookView.GetComponent<Animator>().SetTrigger(Settings.zoomOut);
             }
             else
             {
+                Time.timeScale = 0f;
                 gamePlayUI.SetActive(false);
                 bookView.SetActive(true);
                 bookCover.SetActive(true);
@@ -837,6 +850,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                     // If book is open, firstly close the book instead of opening pause menu
                     if (bookView.activeSelf)
                     {
+                        Time.timeScale = 1f;
                         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
                         bookView.GetComponent<Animator>().SetTrigger(Settings.zoomOut);
                     }
@@ -1075,6 +1089,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             // Set game state
             previousGameState = gameState;
             gameState = GameState.gamePaused;
+
+            // Delay setting selection to next frame to ensure layout is updated
+            StartCoroutine(SetResumeButtonAsFirstSelected());
         }
         else if (gameState == GameState.gamePaused)
         {
@@ -1089,6 +1106,15 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             previousGameState = GameState.gamePaused;
         }
     }
+    IEnumerator SetResumeButtonAsFirstSelected()
+    {
+        yield return null; // wait one frame
+
+        EventSystem.current.SetSelectedGameObject(null); // Clear selection to force new one
+        EventSystem.current.SetSelectedGameObject(resumeButton);
+
+        Debug.Log("Now selected: " + EventSystem.current.currentSelectedGameObject?.name);
+    }
 
     /// <summary>
     /// Called from Settings button
@@ -1098,7 +1124,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         // Clear buttons on pause menu
-        Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
+        Transform pauseContainer = pauseMenu.transform.GetChild(0);
 
         for (int i = 0; i < pauseContainer.childCount; i++)
         {
@@ -1109,7 +1135,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         // Open settings menu
         pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "SETTINGS";
-        Transform settingsContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(1);
+        Transform settingsContainer = pauseMenu.transform.GetChild(1);
         settingsContainer.gameObject.SetActive(true);
     }
 
@@ -1120,10 +1146,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
-        Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
+        Transform pauseContainer = pauseMenu.transform.GetChild(0);
 
         // Close audio menu
-        Transform settingsContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(1);
+        Transform settingsContainer = pauseMenu.transform.GetChild(1);
         settingsContainer.gameObject.SetActive(false); // Disable settings container
 
 
@@ -1145,7 +1171,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         // Clear buttons on pause menu
-        Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
+        Transform pauseContainer = pauseMenu.transform.GetChild(0);
 
         for (int i = 0; i < pauseContainer.childCount; i++)
         {
@@ -1173,7 +1199,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
-        Transform pauseContainer = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(0);
+        Transform pauseContainer = pauseMenu.transform.GetChild(0);
 
         // Close audio menu
         Transform controlsContainer = pauseContainer.GetChild(3);
@@ -1195,40 +1221,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void LoadSettingsFromPlayerPrefs()
     {
-        // Music Volume
-        if (PlayerPrefs.HasKey("MusicVolume"))
-        {
-            float musicVol = PlayerPrefs.GetFloat("MusicVolume");
-            musicVolumeSlider.value = musicVol;
-            MusicManager.Instance.SetVolume((int)musicVol);
-        }
-
-        // Sound Volume
-        if (PlayerPrefs.HasKey("SoundVolume"))
-        {
-            float soundVol = PlayerPrefs.GetFloat("SoundVolume");
-            soundVolumeSlider.value = soundVol;
-            SoundEffectManager.Instance.SetVolume((int)soundVol);
-        }
-
-        // Post-processing
-        if (PlayerPrefs.HasKey("PostProcessing"))
-        {
-            bool pp = PlayerPrefs.GetInt("PostProcessing") == 1;
-            postProcessingToggle.isOn = pp;
-            PostProcessingEnabler.Instance.isOn = pp;
-            UpdatePostProcessingCheckmarkVisibility(pp);
-        }
-
-        // VSync
-        if (PlayerPrefs.HasKey("Vsync"))
-        {
-            bool vsync = PlayerPrefs.GetInt("Vsync") == 1;
-            vsyncToggle.isOn = vsync;
-            QualitySettings.vSyncCount = vsync ? 1 : 0;
-            UpdateVysncCheckmarkVisibility(vsync);
-        }
-
+        // VIDEO
         // Resolution
         if (PlayerPrefs.HasKey("ResolutionIndex") && PlayerPrefs.HasKey("RefreshRateIndex"))
         {
@@ -1253,9 +1246,55 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             SetScreenMode(modeIndex);
         }
 
+        // Post-processing
+        if (PlayerPrefs.HasKey("PostProcessing"))
+        {
+            bool pp = PlayerPrefs.GetInt("PostProcessing") == 1;
+            postProcessingToggle.isOn = pp;
+            PostProcessingEnabler.Instance.isOn = pp;
+            UpdatePostProcessingCheckmarkVisibility(pp);
+        }
+
+        // VSync
+        if (PlayerPrefs.HasKey("Vsync"))
+        {
+            bool vsync = PlayerPrefs.GetInt("Vsync") == 1;
+            vsyncToggle.isOn = vsync;
+            QualitySettings.vSyncCount = vsync ? 1 : 0;
+            UpdateVysncCheckmarkVisibility(vsync);
+        }
+
         resolutionDropdown.RefreshShownValue();
         refreshRateDropdown.RefreshShownValue();
         screenModeDropDown.RefreshShownValue();
+
+        // AUDIO
+        // Music Volume
+        if (PlayerPrefs.HasKey("MusicVolume"))
+        {
+            float musicVol = PlayerPrefs.GetFloat("MusicVolume");
+            musicVolumeSlider.value = musicVol;
+            MusicManager.Instance.SetVolume((int)musicVol);
+        }
+
+        // Sound Volume
+        if (PlayerPrefs.HasKey("SoundVolume"))
+        {
+            float soundVol = PlayerPrefs.GetFloat("SoundVolume");
+            soundVolumeSlider.value = soundVol;
+            SoundEffectManager.Instance.SetVolume((int)soundVol);
+        }
+
+        // GAME
+        // Load Dynamic amera toggle
+        if (PlayerPrefs.HasKey("DynamicCamera"))
+        {
+            bool dynamicCamera = PlayerPrefs.GetInt("DynamicCamera") == 1;
+            dynamicCameraToggle.isOn = dynamicCamera;
+            InterScenesSingleton.dynamicCameraFollowEnabled = dynamicCamera;
+            StaticEventHandler.CallDynamicCameraToggled(dynamicCameraToggle.isOn);
+            UpdateDynamicCameraFollowCheckmarkVisibility(dynamicCamera);
+        }
     }
 
     private void OnResolutionDropdownChanged(int index)
@@ -1337,6 +1376,20 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void UpdatePostProcessingCheckmarkVisibility(bool show)
     {
         postProcessingCheckmarkImage.enabled = show;
+    }
+
+    private void OnDynamicCameraFollowToggleChanged(bool isOn)
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        InterScenesSingleton.dynamicCameraFollowEnabled = isOn ? true : false;
+        StaticEventHandler.CallDynamicCameraToggled(dynamicCameraToggle.isOn);
+        UpdateDynamicCameraFollowCheckmarkVisibility(isOn);
+    }
+
+    private void UpdateDynamicCameraFollowCheckmarkVisibility(bool show)
+    {
+        dynamicCameraCheckmarkImage.enabled = show;
     }
 
     private void OnVsyncToggleChanged(bool isOn)
@@ -1803,14 +1856,14 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
     }
 
-    public void UpdateTooltipPanelInfo(IReceivable receivable, bool hasWeaponDrop, bool hasActiveDrop, bool hasSecondaryPassiveDrop)
+    public void UpdateTooltipPanelInfo(ItemGeneric itemGeneric, bool hasWeaponDrop, bool hasActiveDrop, bool hasSecondaryPassiveDrop)
     {
         tooltipPanel.SetActive(true);
         if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
         {
-            if (receivable is Weapon)
+            if (itemGeneric is Weapon)
             {
-                Weapon weapon = (Weapon)receivable;
+                Weapon weapon = (Weapon)itemGeneric;
 
                 if (weapon.weaponDetails.weaponClass != WeaponClass.Shield)
                 {
@@ -1824,11 +1877,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         if (hasSecondaryPassiveDrop)
         {
-            if (receivable is PassiveItem)
+            if (itemGeneric is PassiveItem)
             {
                 headerText.colorGradient = new VertexGradient(passiveItemColor, passiveItemColor, passiveItemColor, passiveItemColor);
                 levelText.colorGradient = new VertexGradient(passiveItemColor, passiveItemColor, passiveItemColor, passiveItemColor);
-                PassiveItem passiveItem = (PassiveItem)receivable;
+                PassiveItem passiveItem = (PassiveItem)itemGeneric;
                 PassiveItemDetailsSO passiveItemDetails = passiveItem.passiveItemDetails;
 
                 headerText.text = passiveItemDetails.passiveItemName;
@@ -2019,11 +2072,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
         if (hasActiveDrop)
         {
-            if (receivable is ActiveItem)
+            if (itemGeneric is ActiveItem)
             {
                 headerText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
                 levelText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
-                ActiveItem activeItem = (ActiveItem)receivable;
+                ActiveItem activeItem = (ActiveItem)itemGeneric;
                 ActiveItemDetailsSO activeItemDetails = activeItem.activeItemDetails;
 
                 headerText.text = activeItemDetails.activeItemName;
@@ -2082,9 +2135,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         if (hasWeaponDrop)
         {
-            if (receivable is Weapon)
+            if (itemGeneric is Weapon)
             {
-                Weapon weapon = (Weapon)receivable;
+                Weapon weapon = (Weapon)itemGeneric;
                 WeaponDetailsSO weaponDetails = weapon.weaponDetails;
 
                 // Populate text field based on the related weapon info

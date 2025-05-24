@@ -161,6 +161,8 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
     private void TransitionToNextPhase()
     {
+        if (GameManager.Instance.GetPlayer() == null) return;
+
         // Check if the player is on stealth
         if (GameManager.Instance.GetPlayer().onStealth)
         {

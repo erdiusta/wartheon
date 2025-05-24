@@ -12,6 +12,11 @@ public class CheatCodeListener : SingletonMonobehaviour<CheatCodeListener>
 
     string[] cheats;
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     private void Start()
     {
         cheats = new string[] { kukuliCheatCode, ustasoftCheatCode };

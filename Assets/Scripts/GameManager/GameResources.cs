@@ -100,6 +100,10 @@ public class GameResources : MonoBehaviour
     #endregion Tooltip
     public SoundEffectSO closeBookSoundEffect;
     #region Tooltip
+    [Tooltip("Invalid action sound effect")]
+    #endregion Tooltip
+    public SoundEffectSO invalidActionSoundEffect;
+    #region Tooltip
     [Tooltip("Door open close sound effect")]
     #endregion Tooltip
     public SoundEffectSO doorOpenCloseSoundEffect;

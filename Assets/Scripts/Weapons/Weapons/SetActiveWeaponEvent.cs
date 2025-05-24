@@ -45,20 +45,6 @@ public class SetActiveWeaponEvent : MonoBehaviour
     {
         OnOneHandWeaponEquipped?.Invoke(this, new SetActiveWeaponEventArgs { isWeaponSwapping = isWeaponSwapping});
     }
-
-    public event Action<SetActiveWeaponEvent, SetSelectedActiveItemArgs> OnSelectedActiveItem;
-
-    public void CallSelectedActiveItem(ActiveItem activeItem)
-    {
-        OnSelectedActiveItem?.Invoke(this, new SetSelectedActiveItemArgs { activeItem = activeItem });
-    }
-
-    public event Action<SetActiveWeaponEvent> OnRemovedActiveItem;
-
-    public void CallRemovedActiveItem()
-    {
-        OnRemovedActiveItem?.Invoke(this);
-    }
 }
 
 public class SetActiveWeaponEventArgs : EventArgs
@@ -68,9 +54,4 @@ public class SetActiveWeaponEventArgs : EventArgs
     public bool isWeaponSwapping;
     public bool onStart;
     public bool onSwitch;
-}
-
-public class SetSelectedActiveItemArgs : EventArgs
-{
-    public ActiveItem activeItem;
 }

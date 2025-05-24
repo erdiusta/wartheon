@@ -1,5 +1,5 @@
 
-public class PassiveItem : IReceivable
+public class PassiveItem : ItemGeneric
 {
     public PassiveItemDetailsSO passiveItemDetails;
     public int activePrice;

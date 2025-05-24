@@ -13,6 +13,30 @@ public static class StaticEventHandler
         OnAdditiveSceneRemoved?.Invoke();
     }
 
+    // Character button selected
+    public static event Action<CharacterButtonArgs> OnCharacterButtonSelected;
+
+    public static void CallCharacterButtonSelectedEvent(string charName)
+    {
+        OnCharacterButtonSelected?.Invoke(new CharacterButtonArgs { charName = charName });
+    }
+
+    // Character buttons deselected
+    public static event Action OnCharacterButtonDeselected;
+
+    public static void CallCharacterButtonDeselectedEvent()
+    {
+        OnCharacterButtonDeselected?.Invoke();
+    }
+
+    // Dynamic camera follow toggle changed
+    public static event Action<DynamicCameraFollowArgs> OnDynamicCameraToggled;
+
+    public static void CallDynamicCameraToggled(bool isOn)
+    {
+        OnDynamicCameraToggled?.Invoke(new DynamicCameraFollowArgs { isOn = isOn });
+    }
+
     // Cheat code activated
     public static event Action OnCheatActivated;
 
@@ -117,6 +141,22 @@ public static class StaticEventHandler
         OnWeaponPickedUp?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, pickedUpByOffHand = pickedUpByOffHand });
     }
 
+    // Book weapon pick-up and tranport to inventory event
+    public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToInventory;
+
+    public static void CallOnWeaponAddedToInventoryEventForBook(Weapon weapon, int inventoryIndexNumber)
+    {
+        OnWeaponAddedToInventory?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, inventoryIndexNumber = inventoryIndexNumber });
+    }
+
+    // Book weapon 
+    public static event Action<WeaponAddedToBookArgs> OnInventoryWeaponDropped;
+
+    public static void CallInventoryWeaponDroppedEventForBook(int inventoryIndexNumber)
+    {
+        OnInventoryWeaponDropped?.Invoke(new WeaponAddedToBookArgs { inventoryIndexNumber = inventoryIndexNumber });
+    }
+
     // Book weapon drop event
     public static event Action<WeaponAddedToBookArgs> OnWeaponDropped;
 
@@ -126,11 +166,11 @@ public static class StaticEventHandler
     }
 
     // Item added to active item slot on book event
-    public static event Action<ItemAddedToBookArgs> OnItemAddedToActiveItemSlot;
+    public static event Action<PassiveItemAddedToBookArgs> OnItemAddedToActiveItemSlot;
 
     public static void CallItemAddedToActiveItemSlot(Sprite itemSprite)
     {
-        OnItemAddedToActiveItemSlot?.Invoke(new ItemAddedToBookArgs { itemSprite = itemSprite });
+        OnItemAddedToActiveItemSlot?.Invoke(new PassiveItemAddedToBookArgs { itemSprite = itemSprite });
     }
 
     // Item removed from active item slot on book event
@@ -143,19 +183,35 @@ public static class StaticEventHandler
     }
 
     // Item added to passiveitem slot on book event
-    public static event Action<ItemAddedToBookArgs> OnItemAddedToPassiveItemSlot;
+    public static event Action<PassiveItemAddedToBookArgs> OnItemAddedToPassiveItemSlot;
 
     public static void CallItemAddedToPassiveItemSlot(Sprite itemSprite, PassiveItemSlotName itemSlotName)
     {
-        OnItemAddedToPassiveItemSlot?.Invoke(new ItemAddedToBookArgs { itemSprite = itemSprite, itemSlotName = itemSlotName });
+        OnItemAddedToPassiveItemSlot?.Invoke(new PassiveItemAddedToBookArgs { itemSprite = itemSprite, itemSlotName = itemSlotName });
+    }
+
+    // Item added to passiveitem inventory slot on book event
+    public static event Action<PassiveItemAddedToBookArgs> OnPassiveItemAddedToInventorySlot;
+
+    public static void CallPassiveItemAddedToInventorySlot(Sprite itemSprite, int inventoryIndexNumber)
+    {
+        OnPassiveItemAddedToInventorySlot?.Invoke(new PassiveItemAddedToBookArgs { itemSprite = itemSprite, inventoryIndexNumber = inventoryIndexNumber });
+    }
+
+    // Item removed from passiveitem inventory slot on book event
+    public static event Action<PassiveItemAddedToBookArgs> OnInventoryPassiveItemDropped;
+
+    public static void CallInventoryPassiveItemDroppedEventForBook(int inventoryIndexNumber)
+    {
+        OnInventoryPassiveItemDropped?.Invoke(new PassiveItemAddedToBookArgs { inventoryIndexNumber = inventoryIndexNumber });
     }
 
     // Item removed from passive item slot on book event
-    public static event Action<ItemRemovedFromBookArgs> OnItemRemovedFromPassiveItemSlot;
+    public static event Action<PassiveItemRemovedFromBookArgs> OnItemRemovedFromPassiveItemSlot;
 
     public static void CallItemRemovedFromPassiveItemSlot(PassiveItemSlotName itemSlotName)
     {
-        OnItemRemovedFromPassiveItemSlot?.Invoke(new ItemRemovedFromBookArgs { itemSlotName = itemSlotName});
+        OnItemRemovedFromPassiveItemSlot?.Invoke(new PassiveItemRemovedFromBookArgs { itemSlotName = itemSlotName});
     }
 
     // Health change on book event
@@ -169,7 +225,7 @@ public static class StaticEventHandler
     // Introduction ui screen opened event
     public static event Action<IntroductionPopUpUIArgs> OnDropPickedUp;
 
-    public static void CallIntroductionPopUpEvent(DropType dropType, IReceivable receivable)
+    public static void CallIntroductionPopUpEvent(DropType dropType, ItemGeneric receivable)
     {
         OnDropPickedUp?.Invoke(new IntroductionPopUpUIArgs { dropType = dropType, receivable = receivable });
     }
@@ -339,6 +395,16 @@ public class RoomEnemiesDefeatedArgs : EventArgs
     public List<GameObject> summonedEnemies;
 }
 
+public class CharacterButtonArgs : EventArgs
+{
+    public string charName;
+}
+
+public class DynamicCameraFollowArgs : EventArgs
+{
+    public bool isOn;
+}
+
 public class CameraShakeArgs : EventArgs
 {
     public float shakeIntensity;
@@ -352,18 +418,21 @@ public class WeaponAddedToBookArgs : EventArgs
     public SlotType slotType;
     public bool onStart;
     public bool onlySwitch;
+    public int inventoryIndexNumber;
 }
 
-public class ItemAddedToBookArgs : EventArgs
+public class PassiveItemAddedToBookArgs : EventArgs
 {
     public Sprite itemSprite;
     public PassiveItemSlotName itemSlotName;
+    public int inventoryIndexNumber;
 }
 
-public class ItemRemovedFromBookArgs : EventArgs
+public class PassiveItemRemovedFromBookArgs : EventArgs
 {
     public Sprite itemSprite;
     public PassiveItemSlotName itemSlotName;
+    public int inventoryIndexNumber;
 }
 
 public class HealthChangedArgs : EventArgs
@@ -379,7 +448,7 @@ public class DecoySpawnedArgs : EventArgs
 public class IntroductionPopUpUIArgs : EventArgs
 {
     public DropType dropType;
-    public IReceivable receivable;
+    public ItemGeneric receivable;
 }
 
 public class BuildPointsArgs : EventArgs

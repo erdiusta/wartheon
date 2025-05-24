@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
-using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 [DisallowMultipleComponent]
 public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
@@ -11,6 +11,7 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
     [Tooltip("Populate this with the parent canvas")]
     #endregion
     [SerializeField] Canvas parentCanvas;
+    [SerializeField] GameObject firstSelectedButton;
 
     [Space(10)]
     [Header("CHARACTER SPOTLIGHTS")]
@@ -34,6 +35,46 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         playerDetailsList = GameResources.Instance.playerDetailsArray;
         currentPlayer = GameResources.Instance.currentPlayer;
     }
+    void OnEnable()
+    {
+        // Delay selection until the next frame to ensure UI is ready
+        StartCoroutine(SetFirstSelected());
+
+        StaticEventHandler.OnCharacterButtonSelected += StaticEventHandler_OnCharacterButtonSelected;
+        StaticEventHandler.OnCharacterButtonDeselected += StaticEventHandler_OnCharacterButtonDeselected;
+    }
+
+    private void OnDisable()
+    {
+        StaticEventHandler.OnCharacterButtonSelected -= StaticEventHandler_OnCharacterButtonSelected;
+        StaticEventHandler.OnCharacterButtonDeselected -= StaticEventHandler_OnCharacterButtonDeselected;
+    }
+
+    private void StaticEventHandler_OnCharacterButtonDeselected()
+    {
+        DisableDetailsPopup(ref astraeusDetailsPopUp);
+        DisableDetailsPopup(ref erebusDetailsPopUp);
+        DisableDetailsPopup(ref orionDetailsPopUp);
+        DisableDetailsPopup(ref lyrisaDetailsPopUp);
+    }
+
+    private void StaticEventHandler_OnCharacterButtonSelected(CharacterButtonArgs characterButtonArgs)
+    {
+        if (characterButtonArgs.charName == Settings.astraeus) HoverAstraeus();
+        else if (characterButtonArgs.charName == Settings.erebus) HoverErebus();
+        else if (characterButtonArgs.charName == Settings.lyrisa) HoverLyrisa();
+        else if (characterButtonArgs.charName == Settings.orion) HoverOrion();
+    }
+
+    private IEnumerator SetFirstSelected()
+    {
+        yield return null; // wait 1 frame
+
+        if (firstSelectedButton != null)
+        {
+            EventSystem.current.SetSelectedGameObject(firstSelectedButton);
+        }
+    }
 
     private void Start()
     {
@@ -44,42 +85,28 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (eventData.pointerEnter.CompareTag(Settings.astraeusTag))
-        {
-            HoverAstraeus();
-        }
-        else if (eventData.pointerEnter.CompareTag(Settings.lyrisaTag))
-        {
-            HoverLyrisa();
-        }
-        else if (eventData.pointerEnter.CompareTag(Settings.erebusTag))
-        {
-            HoverErebus();
-        }
-        else if (eventData.pointerEnter.CompareTag(Settings.orionTag))
-        {
-            HoverOrion();
-        }
+        OpenCharacterTooltip(eventData);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (eventData.pointerEnter.CompareTag(Settings.astraeusTag))
-        {
-            DisableDetailsPopup(ref astraeusDetailsPopUp);
-        }
-        else if (eventData.pointerEnter.CompareTag(Settings.erebusTag))
-        {
-            DisableDetailsPopup(ref erebusDetailsPopUp);
-        }
-        else if (eventData.pointerEnter.CompareTag(Settings.lyrisaTag))
-        {
-            DisableDetailsPopup(ref lyrisaDetailsPopUp);
-        }
-        else if (eventData.pointerEnter.CompareTag(Settings.orionTag))
-        {
-            DisableDetailsPopup(ref orionDetailsPopUp);
-        }
+        CloseCharacterTooltip(eventData);
+    }
+
+    private void OpenCharacterTooltip(PointerEventData eventData)
+    {
+        if (eventData.pointerEnter.CompareTag(Settings.astraeusTag)) HoverAstraeus();
+        else if (eventData.pointerEnter.CompareTag(Settings.lyrisaTag)) HoverLyrisa();
+        else if (eventData.pointerEnter.CompareTag(Settings.erebusTag)) HoverErebus();
+        else if (eventData.pointerEnter.CompareTag(Settings.orionTag)) HoverOrion();
+    }
+
+    private void CloseCharacterTooltip(PointerEventData eventData)
+    {
+        DisableDetailsPopup(ref astraeusDetailsPopUp);
+        DisableDetailsPopup(ref erebusDetailsPopUp);
+        DisableDetailsPopup(ref lyrisaDetailsPopUp);
+        DisableDetailsPopup(ref orionDetailsPopUp);
     }
 
     public void HoverLyrisa()
@@ -125,6 +152,9 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void BackButton()
     {
+        // Set Play Button as selected
+        MainMenuUI.Instance.StartCoroutine(MainMenuUI.Instance.HandleReturnFromCharacterScene());
+
         // Unload the current additive scene
         StaticEventHandler.CallAdditiveSceneRemoveEvent();
 
@@ -143,13 +173,4 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         orionSpotlight.gameObject.SetActive(false);
         erebusSpotlight.gameObject.SetActive(false);
     }
-
-    #region Validation
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(parentCanvas), parentCanvas);
-    }
-#endif
-    #endregion
 }

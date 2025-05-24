@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    [HideInInspector] public IReceivable receivable;
+    [HideInInspector] public ItemGeneric itemGeneric;
     [HideInInspector] public Transform originalParent;
     [HideInInspector] public Transform bookStatsPageContainer;
     [HideInInspector] public bool swapCancelled;
@@ -96,7 +96,6 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         if (contactSuccessful)
         {
-
             if (justMoveNotSwap) return; // This is only valid for swaps
         }
 
@@ -107,14 +106,14 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             if (belongingSlot != null)
             {
-                if (belongingSlot.slotType == SlotType.WeaponMainHand)
+                if (belongingSlot.slotType == SlotType.WeaponMainHand && belongingSlot.inventoryIndexNumber == -1)
                 {
-                    Weapon weapon = (Weapon)receivable;
+                    Weapon weapon = (Weapon)itemGeneric;
                     player.weaponSlotSetArray[weapon.weaponBelongingToWhichMainHandSet - 1][0] = weapon;
                 }
-                else if (belongingSlot.slotType == SlotType.WeaponOffHand)
+                else if (belongingSlot.slotType == SlotType.WeaponOffHand && belongingSlot.inventoryIndexNumber == -1)
                 {
-                    Weapon weapon = (Weapon)receivable;
+                    Weapon weapon = (Weapon)itemGeneric;
                     player.weaponSlotSetArray[weapon.weaponBelongingToWhichOffHandSet - 1][1] = weapon;
                 }
             }
@@ -188,37 +187,38 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         if (belongingSlot != null)
         {
-            if (belongingSlot.slotType == SlotType.WeaponMainHand)
+            if (belongingSlot.slotType == SlotType.WeaponMainHand && belongingSlot.inventoryIndexNumber == -1)
             {
-                Weapon weapon = (Weapon)receivable;
+                Weapon weapon = (Weapon)itemGeneric;
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = weapon;
             }
-            else if (belongingSlot.slotType == SlotType.WeaponOffHand)
+            else if (belongingSlot.slotType == SlotType.WeaponOffHand && belongingSlot.inventoryIndexNumber == -1)
             {
-                Weapon weapon = (Weapon)receivable;
+                Weapon weapon = (Weapon)itemGeneric;
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = weapon;
             }
         }
     }
 
-    public Weapon GetDraggedWeapon() => (Weapon)receivable;
 
-    public ActiveItem GetDraggedActiveItem() => (ActiveItem)receivable;
+    public Weapon GetDraggedWeapon() => (Weapon)itemGeneric;
 
-    public PassiveItem GetDraggedPassiveItem() => (PassiveItem)receivable;
+    public ActiveItem GetDraggedActiveItem() => (ActiveItem)itemGeneric;
+
+    public PassiveItem GetDraggedPassiveItem() => (PassiveItem)itemGeneric;
 
     public int GetSetNumber()
     {
         if (belongingSlot != null)
         {
-            if (belongingSlot.slotType == SlotType.WeaponMainHand)
+            if (belongingSlot.slotType == SlotType.WeaponMainHand && belongingSlot.inventoryIndexNumber == -1)
             {
-                Weapon weapon = (Weapon)receivable;
+                Weapon weapon = (Weapon)itemGeneric;
                 return weapon.weaponBelongingToWhichMainHandSet;
             }
-            else if (belongingSlot.slotType == SlotType.WeaponOffHand)
+            else if (belongingSlot.slotType == SlotType.WeaponOffHand && belongingSlot.inventoryIndexNumber == -1)
             {
-                Weapon weapon = (Weapon)receivable;
+                Weapon weapon = (Weapon)itemGeneric;
                 return weapon.weaponBelongingToWhichOffHandSet;
             }
         }
@@ -230,71 +230,78 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         if (belongingSlot != null)
         {
-            if (belongingSlot.slotType == SlotType.WeaponMainHand)
+            if (belongingSlot.slotType == SlotType.WeaponMainHand && belongingSlot.inventoryIndexNumber == -1)
             {
-                Weapon weapon = (Weapon)receivable;
+                Weapon weapon = (Weapon)itemGeneric;
                 weapon.weaponBelongingToWhichMainHandSet = newSetIndex;
             }
-            else if (belongingSlot.slotType == SlotType.WeaponOffHand)
+            else if (belongingSlot.slotType == SlotType.WeaponOffHand && belongingSlot.inventoryIndexNumber == -1)
             {
-                Weapon weapon = (Weapon)receivable;
+                Weapon weapon = (Weapon)itemGeneric;
                 weapon.weaponBelongingToWhichOffHandSet = newSetIndex;
             }
         }
     }
 
-    private IReceivable GetReceivableInfo()
+    private ItemGeneric GetReceivableInfo()
     {
-        if (belongingSlot != null)
+        if (belongingSlot != null) 
         {
-            switch (belongingSlot.slotType)
+            if (belongingSlot.inventoryIndexNumber == -1) // Non-inventory item
             {
-                case SlotType.Passive:
-                    switch (belongingSlot.passiveItemSlotName)
-                    {
-                        case PassiveItemSlotName.Head:
-                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentHeadPassiveItem();
-                            break;
-                        case PassiveItemSlotName.Chest:
-                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentChestPassiveItem();
-                            break;
-                        case PassiveItemSlotName.Neck:
-                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentNeckPassiveItem();
-                            break;
-                        case PassiveItemSlotName.Finger:
-                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentFingerPassiveItem();
-                            break;
-                        case PassiveItemSlotName.Back:
-                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentBackPassiveItem();
-                            break;
-                        case PassiveItemSlotName.Waist:
-                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentWaistPassiveItem();
-                            break;
-                        case PassiveItemSlotName.Arm:
-                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentArmPassiveItem();
-                            break;
-                        case PassiveItemSlotName.Leg:
-                            receivable = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentLegPassiveItem();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case SlotType.Active:
-                    receivable = GameManager.Instance.GetPlayer().selectedActiveItem.GetCurrentActiveItem();
-                    break;
-                case SlotType.WeaponMainHand:
-                    receivable = GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon();
-                    break;
-                case SlotType.WeaponOffHand:
-                    receivable = GameManager.Instance.GetPlayer().activeWeapon.GetCurrentOffHandWeapon();
-                    break;
-                default:
-                    break;
+                switch (belongingSlot.slotType)
+                {
+                    case SlotType.Passive:
+                        switch (belongingSlot.passiveItemSlotName)
+                        {
+                            case PassiveItemSlotName.Head:
+                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentHeadPassiveItem();
+                                break;
+                            case PassiveItemSlotName.Chest:
+                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentChestPassiveItem();
+                                break;
+                            case PassiveItemSlotName.Neck:
+                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentNeckPassiveItem();
+                                break;
+                            case PassiveItemSlotName.Finger:
+                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentFingerPassiveItem();
+                                break;
+                            case PassiveItemSlotName.Back:
+                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentBackPassiveItem();
+                                break;
+                            case PassiveItemSlotName.Waist:
+                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentWaistPassiveItem();
+                                break;
+                            case PassiveItemSlotName.Arm:
+                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentArmPassiveItem();
+                                break;
+                            case PassiveItemSlotName.Leg:
+                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentLegPassiveItem();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case SlotType.Active:
+                        itemGeneric = GameManager.Instance.GetPlayer().selectedActiveItem.GetCurrentActiveItem();
+                        break;
+                    case SlotType.WeaponMainHand:
+                        itemGeneric = GameManager.Instance.GetPlayer().activeWeapon.GetCurrentMainHandWeapon();
+                        break;
+                    case SlotType.WeaponOffHand:
+                        itemGeneric = GameManager.Instance.GetPlayer().activeWeapon.GetCurrentOffHandWeapon();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (belongingSlot.inventoryIndexNumber >= 0) // Inventory Item
+            {
+                itemGeneric = InventoryManager.Instance.GetInventoryItem(belongingSlot.inventoryIndexNumber);
             }
         }
 
-        return receivable;
+        return itemGeneric;
     }
 
     public Transform GetTopLevelParent(Transform child, int level)

@@ -27243,7 +27243,6 @@ GameObject:
   - component: {fileID: -8087453122606573849}
   - component: {fileID: 4716338610028615223}
   - component: {fileID: 9183617335226411885}
-  - component: {fileID: 554938303889344163}
   - component: {fileID: 1489624854237943964}
   - component: {fileID: 73392255774783380}
   m_Layer: 16
@@ -27827,18 +27826,6 @@ MonoBehaviour:
   headShotDuration: 0.5
   popUpOffset: {x: 0, y: 1, z: 0}
   popUpDuration: 0.2
---- !u!114 &554938303889344163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7736189416814370986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3152a0b0bab69846ad02b521e8e5289, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1489624854237943964
 MonoBehaviour:
   m_ObjectHideFlags: 0

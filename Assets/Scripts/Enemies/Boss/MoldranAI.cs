@@ -484,7 +484,7 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
             enemy.animator.SetBool(Settings.cast, true);
             enemy.animator.SetInteger(Settings.attackType, 0);
 
-            enemy.health.AddHealth((int)(20f / enemy.health.GetMaximumHealth() * 100));
+            enemy.health.AddHealth(20);
 
             yield return new WaitForSeconds(2f);
 
