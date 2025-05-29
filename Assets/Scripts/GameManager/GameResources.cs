@@ -116,17 +116,22 @@ public class GameResources : MonoBehaviour
     #endregion
     public SoundEffectSO chestLock;
     #region Tooltip
+    [Tooltip("Populate with the coin pickup sound effect")]
+    #endregion
+    public SoundEffectSO coinPickup;
+    #region Tooltip
     [Tooltip("Populate with the health pickup sound effect")]
     #endregion
     public SoundEffectSO healthPickup;
     #region Tooltip
+    [Tooltip("Populate with the item pickup sound effect")]
+    #endregion
+    public SoundEffectSO itemPickup;
+    #region Tooltip
     [Tooltip("Populate with the weapon pickup sound effect")]
     #endregion
     public SoundEffectSO weaponPickup;
-    #region Tooltip
-    [Tooltip("Populate with the ammo pickup sound effect")]
-    #endregion
-    public SoundEffectSO ammoPickup;
+
 
     #region Header MATERIALS
     [Space(10)]
@@ -238,8 +243,9 @@ public class GameResources : MonoBehaviour
         HelperUtilities.ValidateCheckNullValue(this, nameof(soundMasterMixerGroup), soundMasterMixerGroup);
         HelperUtilities.ValidateCheckNullValue(this, nameof(doorOpenCloseSoundEffect), doorOpenCloseSoundEffect);
         HelperUtilities.ValidateCheckNullValue(this, nameof(chestOpen), chestOpen);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(coinPickup), coinPickup);
         HelperUtilities.ValidateCheckNullValue(this, nameof(healthPickup), healthPickup);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(ammoPickup), ammoPickup);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(itemPickup), itemPickup);
         HelperUtilities.ValidateCheckNullValue(this, nameof(weaponPickup), weaponPickup);
         HelperUtilities.ValidateCheckNullValue(this, nameof(litMaterial), litMaterial);
         HelperUtilities.ValidateCheckNullValue(this, nameof(dimmedMaterial), dimmedMaterial);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Policy;
 using UnityEditor;
 using UnityEngine;
 
@@ -166,11 +167,11 @@ public static class StaticEventHandler
     }
 
     // Item added to active item slot on book event
-    public static event Action<PassiveItemAddedToBookArgs> OnItemAddedToActiveItemSlot;
+    public static event Action<SetSelectedActiveItemArgs> OnItemAddedToActiveItemSlot;
 
-    public static void CallItemAddedToActiveItemSlot(Sprite itemSprite)
+    public static void CallItemAddedToActiveItemSlot(ActiveItem activeItem)
     {
-        OnItemAddedToActiveItemSlot?.Invoke(new PassiveItemAddedToBookArgs { itemSprite = itemSprite });
+        OnItemAddedToActiveItemSlot?.Invoke(new SetSelectedActiveItemArgs { activeItem = activeItem });
     }
 
     // Item removed from active item slot on book event
@@ -185,17 +186,17 @@ public static class StaticEventHandler
     // Item added to passiveitem slot on book event
     public static event Action<PassiveItemAddedToBookArgs> OnItemAddedToPassiveItemSlot;
 
-    public static void CallItemAddedToPassiveItemSlot(Sprite itemSprite, PassiveItemSlotName itemSlotName)
+    public static void CallItemAddedToPassiveItemSlot(PassiveItem passiveItem, PassiveItemSlotName itemSlotName)
     {
-        OnItemAddedToPassiveItemSlot?.Invoke(new PassiveItemAddedToBookArgs { itemSprite = itemSprite, itemSlotName = itemSlotName });
+        OnItemAddedToPassiveItemSlot?.Invoke(new PassiveItemAddedToBookArgs { passiveItem = passiveItem, itemSlotName = itemSlotName });
     }
 
     // Item added to passiveitem inventory slot on book event
     public static event Action<PassiveItemAddedToBookArgs> OnPassiveItemAddedToInventorySlot;
 
-    public static void CallPassiveItemAddedToInventorySlot(Sprite itemSprite, int inventoryIndexNumber)
+    public static void CallPassiveItemAddedToInventorySlot(PassiveItem passiveItem, int inventoryIndexNumber)
     {
-        OnPassiveItemAddedToInventorySlot?.Invoke(new PassiveItemAddedToBookArgs { itemSprite = itemSprite, inventoryIndexNumber = inventoryIndexNumber });
+        OnPassiveItemAddedToInventorySlot?.Invoke(new PassiveItemAddedToBookArgs { passiveItem = passiveItem, inventoryIndexNumber = inventoryIndexNumber });
     }
 
     // Item removed from passiveitem inventory slot on book event
@@ -212,6 +213,26 @@ public static class StaticEventHandler
     public static void CallItemRemovedFromPassiveItemSlot(PassiveItemSlotName itemSlotName)
     {
         OnItemRemovedFromPassiveItemSlot?.Invoke(new PassiveItemRemovedFromBookArgs { itemSlotName = itemSlotName});
+    }
+
+    // Passive items swapped between passive slot and inventory
+    public static event Action<PassiveItemAddedToBookArgs> OnPassiveItemsSwapped;
+
+    public static void CallPassiveItemsSwappedEvent(PassiveItem slotPassiveItem, PassiveItem inventoryPassiveItem, int inventoryIndexNumber)
+    {
+        OnPassiveItemsSwapped?.Invoke(new PassiveItemAddedToBookArgs { passiveItem = slotPassiveItem, inventoryPassiveItem = inventoryPassiveItem, 
+            inventoryIndexNumber = inventoryIndexNumber
+        });
+    }
+
+    // Weapons swapped between weapon slot and inventory
+    public static event Action<WeaponAddedToBookArgs> OnWeaponsSwappedWithInventory;
+
+    public static void CallWeaponsSwappedWithInventoryEvent(Weapon slotWeapon, Weapon inventoryWeapon, int inventoryIndexNumber, int weaponSetNumber, bool onMainHand, 
+        DraggableItem slotWeaponDraggableItem, DraggableItem inventoryWeaponDraggableItem)
+    {
+        OnWeaponsSwappedWithInventory?.Invoke(new WeaponAddedToBookArgs { weapon = slotWeapon, intentoryWeapon = inventoryWeapon, inventoryIndexNumber = inventoryIndexNumber,
+            weaponSetNumber = weaponSetNumber, onMainHand = onMainHand, slotWeaponDraggableItem = slotWeaponDraggableItem, inventoryWeaponDraggableItem = inventoryWeaponDraggableItem});
     }
 
     // Health change on book event
@@ -414,18 +435,25 @@ public class CameraShakeArgs : EventArgs
 public class WeaponAddedToBookArgs : EventArgs
 {
     public Weapon weapon;
+    public Weapon intentoryWeapon;
     public bool pickedUpByOffHand;
     public SlotType slotType;
     public bool onStart;
     public bool onlySwitch;
     public int inventoryIndexNumber;
+    public int weaponSetNumber;
+    public bool onMainHand;
+    public DraggableItem slotWeaponDraggableItem;
+    public DraggableItem inventoryWeaponDraggableItem;
 }
 
 public class PassiveItemAddedToBookArgs : EventArgs
 {
-    public Sprite itemSprite;
+    public PassiveItem passiveItem;
+    public PassiveItem inventoryPassiveItem;
     public PassiveItemSlotName itemSlotName;
     public int inventoryIndexNumber;
+    public int targetItemIndexNumber;
 }
 
 public class PassiveItemRemovedFromBookArgs : EventArgs

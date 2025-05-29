@@ -8,8 +8,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
-using System;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.Controls;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
@@ -22,14 +22,27 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [Header("GAMEOBJECT REFERENCES")]
     #endregion Header GAMEOBJECT REFERENCES
 
+    InputActionAsset actions;
+
     [Space(10)]
     [Header("PAUSE MENU REFERENCES")]
     #region Tooltip
     [Tooltip("Populate with pause menu gameobject in the hierarchy")]
     #endregion
     [SerializeField] GameObject pauseMenu;
-    [SerializeField] GameObject resumeButton;
-    [SerializeField] GameObject settingsMenuUI;
+    [SerializeField] GameObject pauseContainer;
+    [SerializeField] GameObject settingsContainer;
+    [SerializeField] GameObject controlsContainer;
+    [SerializeField] GameObject keyboardRebindingsContainer;
+    [SerializeField] GameObject gamepadRebindingsContainer;
+
+    [Space(10)]
+    [SerializeField] Button resumeButton;
+    [SerializeField] Button controlsButton;
+    [SerializeField] Button settingsButton;
+    [SerializeField] Button quitGameButton;
+    [SerializeField] Button exitButton;
+
     [SerializeField] SoundEffectSO buttonClickSound;
 
     [Header("Video")]
@@ -173,8 +186,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [HideInInspector] public GameState previousGameState;
     [HideInInspector] public Decoy decoy;
     [HideInInspector] public int exploredRoomCount = 0;
+    [HideInInspector] public Queue<InstantiatedRoom> lastThreeRooms = new Queue<InstantiatedRoom>();
 
-    Coroutine introductionTextRoutine;
+
     bool bossHealthInitializationOnProcess;
     float invisibleTimer = 0f;
     const int ROOM_CONST = 6;
@@ -186,6 +200,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     bool isFading = false;
     Vignette vignette;
     HashSet<Room> visitedRooms = new HashSet<Room>();
+
     Enemy bossEnemy;
     float blindTimer = 0f;
 
@@ -194,9 +209,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     Dictionary<string, List<int>> resolutionToHzMap;
     List<string> resolutionOptions;
 
-    // Tooltip close timer
-    float tooltipPanelTimer = 3f;
-    float tooltipPanelEquippedTimer = 3f;
+    // Tooltip
+    TooltipSource currentTooltipSource;
 
     // Weapon Level 
     [Header("WEAPON LEVEL COLORS")]
@@ -457,7 +471,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             // Weapon populate loop
             for (int i = 0; i < chestItemContainerTransform.GetChild(0).childCount; i++)
             {
-                ChestItem chestItem = chestItemContainerTransform.GetChild(0).GetChild(i).GetComponent<ChestItem>();
+                DropItem chestItem = chestItemContainerTransform.GetChild(0).GetChild(i).GetComponent<DropItem>();
 
                 chestItem.hasWeaponDrop = true;
                 Weapon weapon = new Weapon();
@@ -469,7 +483,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             // Active item populate loop
             for (int i = 0; i < chestItemContainerTransform.GetChild(1).childCount; i++)
             {
-                ChestItem chestItem = chestItemContainerTransform.GetChild(1).GetChild(i).GetComponent<ChestItem>();
+                DropItem chestItem = chestItemContainerTransform.GetChild(1).GetChild(i).GetComponent<DropItem>();
 
                 chestItem.hasActiveDrop = true;
                 ActiveItem activeItem = new ActiveItem();
@@ -481,7 +495,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             // Passive item populate loop
             for (int i = 0; i < chestItemContainerTransform.GetChild(2).childCount; i++)
             {
-                ChestItem chestItem = chestItemContainerTransform.GetChild(2).GetChild(i).GetComponent<ChestItem>();
+                DropItem chestItem = chestItemContainerTransform.GetChild(2).GetChild(i).GetComponent<DropItem>();
 
                 if (chestItemContainer.chestPassiveItems[i].passiveItemCategory == PassiveItemCategory.Primary)
                 {
@@ -499,7 +513,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             }
         }
     }
-
 
     private void StaticEventHandler_OnRoomEnemiesDefeated(RoomEnemiesDefeatedArgs roomEnemiesDefeatedArgs)
     {
@@ -554,6 +567,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void Start()
     {
+        actions = InputManager.Instance.actions;
+
         previousGameState = GameState.gameStarted;
         gameState = GameState.gameStarted;
 
@@ -624,8 +639,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void Update()
     {
-        TooltipPanelResetCheck();
-
         HandleBook();
         HandlePopUp();
         HandleLevelUpPanel();
@@ -669,36 +682,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
     }
 
-    private void TooltipPanelResetCheck()
-    {
-        if (tooltipPanel.activeSelf)
-        {
-            tooltipPanelTimer -= Time.deltaTime;
-
-            if (tooltipPanelEquippedTimer <= 0f)
-            {
-                tooltipPanel.SetActive(false);
-                tooltipPanelTimer = 3f;
-            }
-        }
-
-        if (tooltipPanelEquipped.activeSelf)
-        {
-            tooltipPanelEquippedTimer -= Time.deltaTime;
-
-            if (tooltipPanelEquippedTimer <= 0f)
-            {
-                tooltipPanelEquipped.SetActive(false);
-                tooltipPanelEquippedTimer = 3f;
-            }
-        }
-    }
-
     IEnumerator EnemyHealthBarInitialization()
     {
         bossHealthInitializationOnProcess = true;
 
-        float completeInvisibleDuration = 1.5f;
+        float completeInvisibleDuration = 1f;
 
         bossEnemy = EnemySpawner.Instance.GetBoss();
         healthBarContainer.SetActive(true);
@@ -711,10 +699,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
             float newAlpha = 0.2f; // Default to start value
 
-            if (invisibleTimer > 1.2f) newAlpha = 1f;
-            else if (invisibleTimer > 0.9f) newAlpha = 0.8f;
-            else if (invisibleTimer > 0.6f) newAlpha = 0.6f;
-            else if (invisibleTimer > 0.3f) newAlpha = 0.4f;
+            if (invisibleTimer > 0.8f) newAlpha = 1f;
+            else if (invisibleTimer > 0.6f) newAlpha = 0.8f;
+            else if (invisibleTimer > 0.3f) newAlpha = 0.6f;
+            else if (invisibleTimer > 0.2f) newAlpha = 0.4f;
 
             // Apply alpha change
             Image barImage = healthBarContainer.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
@@ -1095,7 +1083,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
         else if (gameState == GameState.gamePaused)
         {
-            BackFromSettingsMenu(); // If inside the audio menu then esc is clicked return to the default pause menu when esc clicked again
+            // Close all pause menu window panels
+            ExitFromKeyboardMouseRebindingsMenu();
+            ExitFromGamepadRebindingsMenu();
+            BackFromSettingsMenu();
             BackFromControlsMenu();
 
             pauseMenu.SetActive(false);
@@ -1106,14 +1097,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             previousGameState = GameState.gamePaused;
         }
     }
+
     IEnumerator SetResumeButtonAsFirstSelected()
     {
         yield return null; // wait one frame
 
         EventSystem.current.SetSelectedGameObject(null); // Clear selection to force new one
-        EventSystem.current.SetSelectedGameObject(resumeButton);
-
-        Debug.Log("Now selected: " + EventSystem.current.currentSelectedGameObject?.name);
+        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
     }
 
     /// <summary>
@@ -1124,19 +1114,104 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         // Clear buttons on pause menu
-        Transform pauseContainer = pauseMenu.transform.GetChild(0);
+        Transform buttonContainer = pauseContainer.transform.GetChild(1);
 
-        for (int i = 0; i < pauseContainer.childCount; i++)
+        for (int i = 0; i < buttonContainer.transform.childCount; i++)
         {
-            if (i == 0 || i == 1) continue; // Exclude frame and headline text
-
-            pauseContainer.GetChild(i).gameObject.SetActive(false);
+            buttonContainer.transform.GetChild(i).gameObject.SetActive(false);
         }
 
+        // Write head-line text
+        pauseContainer.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "SETTINGS";
+
         // Open settings menu
-        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "SETTINGS";
-        Transform settingsContainer = pauseMenu.transform.GetChild(1);
-        settingsContainer.gameObject.SetActive(true);
+        settingsContainer.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called from the Controls Button
+    /// </summary>
+    public void OpenControlsMenu()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        // Clear buttons on pause menu
+        Transform buttonContainer = pauseContainer.transform.GetChild(1);
+
+        for (int i = 0; i < buttonContainer.transform.childCount; i++)
+        {
+            buttonContainer.transform.GetChild(i).gameObject.SetActive(false);
+        }
+
+        // Open controls menu
+        pauseContainer.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "CONTROLS";
+
+        // Get controls ui
+        controlsContainer.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called from the Keyboard&Mouse Button
+    /// </summary>
+    public void OpenKeyboardMouseRebindingsMenu()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        // Close controls container ui
+        controlsContainer.gameObject.SetActive(false);
+
+        // Open keyboard&mouse menu
+        pauseContainer.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "KEYBOARD&MOUSE";
+
+        keyboardRebindingsContainer.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called from the Gamepad Button
+    /// </summary>
+    public void OpenGamepadRebindingsMenu()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        // Close controls container ui
+        controlsContainer.gameObject.SetActive(false);
+
+        // Open gamepad menu
+        pauseContainer.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "GAMEPAD";
+
+        gamepadRebindingsContainer.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called from the Keyboard&Mouse Button
+    /// </summary>
+    public void ExitFromKeyboardMouseRebindingsMenu(bool escClicked = false)
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        // Close keyboard controls container ui
+        keyboardRebindingsContainer.gameObject.SetActive(false);
+
+        // Open keyboard&mouse menu
+        pauseContainer.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "CONTROLS";
+
+        controlsContainer.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called from the Gamepad Button
+    /// </summary>
+    public void ExitFromGamepadRebindingsMenu(bool escClicked = false)
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        // Close game pad controls container ui
+        gamepadRebindingsContainer.gameObject.SetActive(false);
+
+        // Open gamepad menu
+        pauseContainer.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "CONTROLS";
+
+        controlsContainer.SetActive(true);
     }
 
     /// <summary>
@@ -1146,51 +1221,19 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
-        Transform pauseContainer = pauseMenu.transform.GetChild(0);
+        // Close settings menu
+        settingsContainer.SetActive(false); // Disable settings container
 
-        // Close audio menu
-        Transform settingsContainer = pauseMenu.transform.GetChild(1);
-        settingsContainer.gameObject.SetActive(false); // Disable settings container
+        // Get and activate button container
+        Transform buttonContainer = pauseContainer.transform.GetChild(1);
 
-
-        for (int i = 0; i < pauseContainer.childCount; i++)
+        for (int i = 0; i < buttonContainer.transform.childCount; i++)
         {
-            if (i == 0 || i == 1) continue;
-
-            pauseContainer.GetChild(i).gameObject.SetActive(true);
+            buttonContainer.transform.GetChild(i).gameObject.SetActive(true);
         }
 
-        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "PAUSE MENU";
+        pauseContainer.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "PAUSE MENU";
     }
-
-    /// <summary>
-    /// Called from Controls button
-    /// </summary>
-    public void OpenControlsMenu()
-    {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
-        // Clear buttons on pause menu
-        Transform pauseContainer = pauseMenu.transform.GetChild(0);
-
-        for (int i = 0; i < pauseContainer.childCount; i++)
-        {
-            if (i == 0 || i == 1) continue;
-
-            pauseContainer.GetChild(i).gameObject.SetActive(false);
-        }
-
-        // Open audio menu
-
-        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "CONTROLS";
-        Transform controlsContainer = pauseContainer.GetChild(3);
-        controlsContainer.GetChild(0).gameObject.SetActive(false); // Disable controls text
-        controlsContainer.GetComponent<Image>().enabled = false;
-        controlsContainer.GetComponent<Button>().enabled = false;
-        controlsContainer.gameObject.SetActive(true);
-        controlsContainer.GetChild(1).gameObject.SetActive(true); // Enable scroll area
-    }
-
 
     /// <summary>
     /// Called from Back button in Controls menu
@@ -1199,24 +1242,18 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
-        Transform pauseContainer = pauseMenu.transform.GetChild(0);
+        // Close controls menu
+        controlsContainer.gameObject.SetActive(false); // Disable settings container
 
-        // Close audio menu
-        Transform controlsContainer = pauseContainer.GetChild(3);
-        controlsContainer.GetChild(0).gameObject.SetActive(true); // Enable controls text
-        controlsContainer.GetChild(1).gameObject.SetActive(false); // Disable scroll area
-        controlsContainer.GetComponent<Image>().enabled = true;
-        controlsContainer.GetComponent<Button>().enabled = true;
-        controlsContainer.gameObject.SetActive(false);
+        // Get and activate button container
+        Transform buttonContainer = pauseContainer.transform.GetChild(1);
 
-        for (int i = 0; i < pauseContainer.childCount; i++)
+        for (int i = 0; i < buttonContainer.transform.childCount; i++)
         {
-            if (i == 0 || i == 1) continue;
-
-            pauseContainer.GetChild(i).gameObject.SetActive(true);
+            buttonContainer.transform.GetChild(i).gameObject.SetActive(true);
         }
 
-        pauseContainer.GetChild(1).GetComponent<TextMeshProUGUI>().text = "PAUSE MENU";
+        pauseContainer.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "PAUSE MENU";
     }
 
     private void LoadSettingsFromPlayerPrefs()
@@ -1294,6 +1331,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             InterScenesSingleton.dynamicCameraFollowEnabled = dynamicCamera;
             StaticEventHandler.CallDynamicCameraToggled(dynamicCameraToggle.isOn);
             UpdateDynamicCameraFollowCheckmarkVisibility(dynamicCamera);
+        }
+
+        // CONTROLS
+        if (PlayerPrefs.HasKey("Rebinds"))
+        {
+            var rebinds = PlayerPrefs.GetString("Rebinds");
+            if (!string.IsNullOrEmpty(rebinds)) actions.LoadBindingOverridesFromJson(rebinds);
         }
     }
 
@@ -1435,6 +1479,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         Application.Quit();
     }
 
+
     private void ControlDisplayDungeonOverviewMap(InputAction.CallbackContext context)
     {
         // While playing the level handle the tab key for the dungeon overview map.
@@ -1505,48 +1550,96 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.nextLevelSoundEffect);
 
-        yield return StartCoroutine(DisplayMessageRoutine(messageText, Color.yellow, 2f));
+        yield return StartCoroutine(DisplayMessageRoutine(messageText, Color.yellow, 1f, true));
 
         GetPlayer().playerControl.EnablePlayer();
 
         // Fade In
-        yield return StartCoroutine(Fade(1f, 0f, 2f, Color.black));
+        yield return StartCoroutine(Fade(1f, 0f, 1.5f, Color.black));
 
     }
 
     /// <summary>
     /// Display the message text for displaySeconds  - if displaySeconds =0 then the message is displayed until the return key is pressed
     /// </summary>
-    private IEnumerator DisplayMessageRoutine(string text, Color textColor, float displaySeconds)
+    private IEnumerator DisplayMessageRoutine(string text, Color textColor, float displaySeconds, bool timed = false)
     {
         // Set text
         messageTextTMP.SetText(text);
         messageTextTMP.color = textColor;
 
-        // Display the message for the given time
-        if (displaySeconds > 0f)
-        {
-            float timer = displaySeconds;
+        float inputBuffer = 0.5f; // Delay before input is accepted
+        float timer = 0f;
 
-            while (timer > 0f && !InputManager.Instance.nextLevel.action.WasPerformedThisFrame())
+        // Wait for buffer to expire
+        while (timer < inputBuffer)
+        {
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (timed)
+        {
+            // Display the message for the given time
+            if (displaySeconds > 0f)
             {
-                timer -= Time.deltaTime;
+                float displayTimer = displaySeconds;
+
                 yield return null;
+
+                while (displayTimer > 0f && !AnyInputPressed())
+                {
+                    displayTimer -= Time.deltaTime;
+                    yield return null;
+                }
+
+                if (gameState == GameState.levelCompleted)
+                {
+                    ClearAllRoomItemsOnLevelEnd();
+                }
+            }
+            else
+            // else display the message until the return button is pressed
+            {
+                while (!AnyInputPressed()) yield return null;
+                
             }
         }
         else
-        // else display the message until the return button is pressed
         {
-            while (!InputManager.Instance.nextLevel.action.WasPerformedThisFrame())
+            // Stay in this loop unless next level key is pressed
+            while (!AnyInputPressed())
             {
                 yield return null;
             }
         }
 
-        yield return null;
-
         // Clear text
         messageTextTMP.SetText("");
+    }
+
+
+    /// <summary>
+    /// Input check for any button with any device
+    /// </summary>
+    private bool AnyInputPressed()
+    {
+        // Exception buttons such as movement, scroll or pick up
+        if (InputManager.Instance.movement.action.WasPressedThisFrame() || InputManager.Instance.pointerPosition.action.WasPressedThisFrame() ||
+            InputManager.Instance.gamepadAim.action.WasPressedThisFrame() || InputManager.Instance.interaction.action.WasPressedThisFrame()) return false;
+
+        if (Keyboard.current.anyKey.wasPressedThisFrame || Mouse.current.leftButton.wasPressedThisFrame || Mouse.current.rightButton.wasPressedThisFrame) return true;
+
+        // Any button on gamepad
+        if (Gamepad.current != null)
+        {
+            foreach (var control in Gamepad.current.allControls)
+            {
+                if (control is ButtonControl button && button.wasPressedThisFrame) return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -1578,8 +1671,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         else
         {
             // Display level completed
-            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! \n\nYOU'VE SURVIVED THIS DUNGEON " +
-                "LEVEL", Color.yellow, 5f));
+            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU'VE SURVIVED\n\nTHIS DUNGEON " +
+                "LEVEL! PRESS ANY KEY FOR NEXT LEVEL!", Color.yellow, 5f));
 
             // Fade out canvas
             yield return StartCoroutine(Fade(1f, 0f, 2f, new Color(0f, 0f, 0f, 0.4f)));
@@ -1597,14 +1690,18 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         Image image = canvasGroup.GetComponent<Image>();
         image.color = backgroundColor;
 
-        float time = 0;
+        float elapsed = 0f;
 
-        while (time <= fadeSeconds)
+        while (elapsed < fadeSeconds)
         {
-            time += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(startFadeAlpha, targetFadeAlpha, time / fadeSeconds);
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / fadeSeconds);
+            canvasGroup.alpha = Mathf.Lerp(startFadeAlpha, targetFadeAlpha, t);
             yield return null;
         }
+
+        // Ensure exact final value
+        canvasGroup.alpha = targetFadeAlpha;
 
         isFading = false;
     }
@@ -1628,10 +1725,12 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE COMPLETED DEMO!",
                 Color.green, 7f));
         }
-
-        // Display game won
-        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE SECURED THE WARTHEON",
-            Color.green, 7f));
+        else
+        {
+            // Display game won
+            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE SECURED THE WARTHEON",
+                Color.green, 7f));
+        }
 
         yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.yellow, 0f));
 
@@ -1656,7 +1755,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         yield return StartCoroutine(Fade(0f, 1f, 2f, Color.black));
 
         // Disable enemies (FindObjectsOfType is resource hungry - but ok to use in this end of game situation)
-        Enemy[] enemyArray = FindObjectsOfType<Enemy>();
+        Enemy[] enemyArray = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
         foreach (Enemy enemy in enemyArray)
         {
             enemy.gameObject.SetActive(false);
@@ -1664,7 +1763,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         // Display game lost
         yield return StartCoroutine(DisplayMessageRoutine("BAD LUCK " + player.playerDetails.playerCharacterName + 
-            "! YOU HAVE\nSUCCUMBED TO THE DUNGEON", Color.red, 2f));
+            "! YOU HAVE\nSUCCUMBED TO THE DUNGEON", Color.red, 2f, true));
 
         yield return StartCoroutine(DisplayMessageRoutine("PRESS ENTER TO RESTART THE GAME", Color.yellow, 0f));
 
@@ -1753,7 +1852,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                     StopCoroutine(healthBarCoroutine);
                 }
 
-                healthBarCoroutine = StartCoroutine(SmoothHealthBarChange(healthValue));
+                float targetScaleValue = healthValue / enemy.health.GetMaximumHealth();
+
+                healthBarCoroutine = StartCoroutine(SmoothHealthBarChange(targetScaleValue));
             }
         }
     }
@@ -1851,13 +1952,20 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case PopUpReason.BobbyPinFailed:
                 warningText.text = "Lockpick with Bobby Pin failed.";
                 break;
+            case PopUpReason.SummonerFailed:
+                warningText.text = "Try to summon your creature in the room full of enemies.";
+                break;
             default:
                 break;
         }
     }
 
-    public void UpdateTooltipPanelInfo(ItemGeneric itemGeneric, bool hasWeaponDrop, bool hasActiveDrop, bool hasSecondaryPassiveDrop)
+    public void UpdateTooltipPanelInfo(ItemGeneric itemGeneric, bool hasWeaponDrop, bool hasActiveDrop, bool hasSecondaryPassiveDrop, TooltipSource source)
     {
+        if (currentTooltipSource == source) return;
+
+        currentTooltipSource = source;
+
         tooltipPanel.SetActive(true);
         if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
         {
@@ -2453,8 +2561,36 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         return requirementString;
     }
 
+    public void RegisterRoomVisit(InstantiatedRoom room)
+    {
+        if (lastThreeRooms.Contains(room)) return;
+
+        if (room.IsCorridor()) return;
+
+        if (lastThreeRooms.Count == 3)
+        {
+            InstantiatedRoom roomToClear = lastThreeRooms.Dequeue();
+            roomToClear.DestroyAllDroppedItems();
+        }
+
+        lastThreeRooms.Enqueue(room);
+        Debug.Log("Enqueued room count is " + lastThreeRooms.Count);
+    }
+
+    public void ClearAllRoomItemsOnLevelEnd()
+    {
+        foreach (InstantiatedRoom room in lastThreeRooms)
+        {
+            room.DestroyAllDroppedItems();
+        }
+
+        lastThreeRooms.Clear();
+    }
+
     private void ClearTooltipPanel()
     {
+        currentTooltipSource = TooltipSource.None;
+
         foreach (Transform child in tooltipPanel.transform)
         {
             child.GetComponent<TextMeshProUGUI>().text = string.Empty;

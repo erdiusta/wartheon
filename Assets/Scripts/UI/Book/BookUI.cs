@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class BookUI : MonoBehaviour
+public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 {
     [Header("PAGE HEADERS")]
     [Space(10)]
@@ -105,6 +106,8 @@ public class BookUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI bossDetailsText;
     [SerializeField] Transform bossImageContainer;
 
+    bool bookStatPageOpen;
+
     private void Awake()
     {
         characterSeparatorImage = transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
@@ -192,6 +195,8 @@ public class BookUI : MonoBehaviour
         StaticEventHandler.OnPassiveItemAddedToInventorySlot += StaticEventHandler_OnPassiveItemAddedToInventorySlot;
         StaticEventHandler.OnInventoryWeaponDropped += StaticEventHandler_OnInventoryWeaponDropped;
         StaticEventHandler.OnInventoryPassiveItemDropped += StaticEventHandler_OnInventoryPassiveItemDropped;
+        StaticEventHandler.OnPassiveItemsSwapped += StaticEventHandler_OnPassiveItemsSwapped;
+        StaticEventHandler.OnWeaponsSwappedWithInventory += StaticEventHandler_OnWeaponsSwappedWithInventory;
 
         // BUILD EVENTS
         StaticEventHandler.OnBuildInfoHovered += StaticEventHandler_OnBuildInfoHovered;
@@ -241,6 +246,8 @@ public class BookUI : MonoBehaviour
         StaticEventHandler.OnPassiveItemAddedToInventorySlot -= StaticEventHandler_OnPassiveItemAddedToInventorySlot;
         StaticEventHandler.OnInventoryWeaponDropped -= StaticEventHandler_OnInventoryWeaponDropped;
         StaticEventHandler.OnInventoryPassiveItemDropped -= StaticEventHandler_OnInventoryPassiveItemDropped;
+        StaticEventHandler.OnPassiveItemsSwapped -= StaticEventHandler_OnPassiveItemsSwapped;
+        StaticEventHandler.OnWeaponsSwappedWithInventory -= StaticEventHandler_OnWeaponsSwappedWithInventory;
 
         // BEASTIARY EVENTS
         StaticEventHandler.OnMobUnlocked -= StaticEventHandler_OnMobUnlocked;
@@ -285,6 +292,58 @@ public class BookUI : MonoBehaviour
         buildDetailsText.text = string.Empty;
 
         PopulateCharactersBuildDetails();
+    }
+
+    public void OnSelect(BaseEventData eventData)
+    {
+        if (weaponsPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
+        else if (passivesPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
+        else if (activesPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
+        else if (beastiaryPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
+        else if (bossesPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
+    }
+
+    public void OnDeselect(BaseEventData eventData)
+    {
+        if (buildPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
+        else if (weaponsPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
+        else if (passivesPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
+        else if (activesPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
+        else if (beastiaryPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
+        else if (bossesPage.GetChild(0).gameObject.activeSelf)
+        {
+
+        }
     }
 
     private void StaticEventHandler_OnBuildPageOpened()
@@ -352,7 +411,10 @@ public class BookUI : MonoBehaviour
         inventoryItemEquipped.gameObject.SetActive(true);
 
         GameObject inventoryItem = Instantiate(GameResources.Instance.bookWeaponSlot, inventoryItemEquipped);
-        inventoryItem.GetComponent<Image>().sprite = weapon.weaponDetails.weaponFrontSprite;
+
+        // Set Draggable Item
+        DraggableItem inventoryDraggableItem = inventoryItem.GetComponent<DraggableItem>();
+        inventoryDraggableItem.SetDraggableItem(weapon, equippedInventroySlot.GetComponent<Slot>(), weapon.weaponDetails.weaponFrontSprite, ItemSlotStatus.Inventory);
     }
 
     private void StaticEventHandler_OnInventoryWeaponDropped(WeaponAddedToBookArgs weaponAddedToBookArgs)
@@ -381,15 +443,16 @@ public class BookUI : MonoBehaviour
 
     private void StaticEventHandler_OnPassiveItemAddedToInventorySlot(PassiveItemAddedToBookArgs passiveItemAddedToBookArgs)
     {
-        StartCoroutine(InventoryPassiveItemAddRoutine(passiveItemAddedToBookArgs.itemSprite, passiveItemAddedToBookArgs.inventoryIndexNumber));
+        StartCoroutine(InventoryPassiveItemAddRoutine(passiveItemAddedToBookArgs.passiveItem, passiveItemAddedToBookArgs.inventoryIndexNumber));
     }
 
-    IEnumerator InventoryPassiveItemAddRoutine(Sprite itemSprite, int index)
+    IEnumerator InventoryPassiveItemAddRoutine(PassiveItem passiveItem, int index)
     {
         yield return new WaitForEndOfFrame();
 
         Transform equippedInventroySlot = inventoryParent.GetChild(index);
         equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.Passive;
+        equippedInventroySlot.GetComponent<Slot>().passiveItemSlotName = passiveItem.passiveItemDetails.passiveItemSlotName;
 
         Transform inventoryItemBackground = equippedInventroySlot.GetChild(0);
         Transform inventoryItemEquipped = equippedInventroySlot.GetChild(1);
@@ -397,7 +460,10 @@ public class BookUI : MonoBehaviour
         inventoryItemEquipped.gameObject.SetActive(true);
 
         GameObject inventoryItem = Instantiate(GameResources.Instance.bookWeaponSlot, inventoryItemEquipped);
-        inventoryItem.GetComponent<Image>().sprite = itemSprite;
+
+        // Set Draggable Item
+        DraggableItem inventoryDraggableItem = inventoryItem.GetComponent<DraggableItem>();
+        inventoryDraggableItem.SetDraggableItem(passiveItem, equippedInventroySlot.GetComponent<Slot>(), passiveItem.passiveItemDetails.passiveItemSprite, ItemSlotStatus.Inventory);
     }
 
     private void StaticEventHandler_OnInventoryPassiveItemDropped(PassiveItemAddedToBookArgs passiveItemAddedToBookArgs)
@@ -411,6 +477,7 @@ public class BookUI : MonoBehaviour
 
         Transform equippedInventroySlot = inventoryParent.GetChild(index);
         equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.None; // Reset inventory slot
+        equippedInventroySlot.GetComponent<Slot>().passiveItemSlotName = PassiveItemSlotName.None;
 
         Transform inventoryItemBackground = equippedInventroySlot.GetChild(0);
         Transform inventoryItemEquipped = equippedInventroySlot.GetChild(1);
@@ -422,6 +489,105 @@ public class BookUI : MonoBehaviour
 
         inventoryItemBackground.gameObject.SetActive(true);
         inventoryItemEquipped.gameObject.SetActive(false);
+    }
+
+    private void StaticEventHandler_OnWeaponsSwappedWithInventory(WeaponAddedToBookArgs weaponAddedToBookArgs)
+    {
+        StartCoroutine(SlotAndInventoryWeaponSwapRoutine(weaponAddedToBookArgs.weapon, weaponAddedToBookArgs.intentoryWeapon, weaponAddedToBookArgs.inventoryIndexNumber,
+            weaponAddedToBookArgs.weaponSetNumber, weaponAddedToBookArgs.onMainHand, weaponAddedToBookArgs.slotWeaponDraggableItem, weaponAddedToBookArgs.inventoryWeaponDraggableItem));
+    }
+
+    IEnumerator SlotAndInventoryWeaponSwapRoutine(Weapon slotWeapon, Weapon inventoryWeapon, int index, int weaponSetNumber, bool onMainHand, DraggableItem slotWeaponDraggableItem,
+        DraggableItem inventoryWeaponDraggableItem)
+    {
+        Sprite slotWeaponSprite = slotWeapon.weaponDetails.weaponFrontSprite;
+        Sprite inventoryWeaponSprite = inventoryWeapon.weaponDetails.weaponFrontSprite;
+
+        yield return new WaitUntil(() => !DraggableItem.IsDragging);
+        yield return new WaitForEndOfFrame();
+
+        Transform inventorySlotTransform = inventoryParent.GetChild(index).GetChild(1);
+        Transform weaponSlotTransform = (onMainHand ? mainHandWeaponSlot : offHandWeaponSlot).GetChild(1);
+
+        // Clean up visuals from both slots
+        foreach (Transform child in weaponSlotTransform) Destroy(child.gameObject);
+        foreach (Transform child in inventorySlotTransform) Destroy(child.gameObject);
+
+        // Create inventory-side draggable (slot weapon goes to inventory)
+        if (slotWeapon != null)
+        {
+            GameObject inventoryItem = Instantiate(GameResources.Instance.bookWeaponSlot, inventorySlotTransform);
+            DraggableItem newInventoryDraggable = inventoryItem.GetComponent<DraggableItem>();
+
+            Slot inventorySlot = inventorySlotTransform.parent.GetComponent<Slot>();
+            newInventoryDraggable.SetDraggableItem(slotWeapon, inventorySlot, slotWeaponSprite, ItemSlotStatus.Inventory);
+        }
+
+        ItemSlotStatus validItemSlotStatus = onMainHand ? ItemSlotStatus.MainHand : ItemSlotStatus.OffHand;
+
+        // Create weapon slot draggable (inventory weapon goes to equipped slot)
+        if (inventoryWeapon != null)
+        {
+            GameObject weaponItem = Instantiate(GameResources.Instance.bookWeaponSlot, weaponSlotTransform);
+            DraggableItem newWeaponDraggable = weaponItem.GetComponent<DraggableItem>();
+
+            Slot equippedSlot = weaponSlotTransform.parent.GetComponent<Slot>();
+            newWeaponDraggable.SetDraggableItem(inventoryWeapon, equippedSlot, inventoryWeaponSprite, validItemSlotStatus);
+
+            // Optional: If you're hovering or selecting, update selection references
+            if (Slot.selectedSlot != null && Slot.selectedSlot.selectedSlotDraggableItem == inventoryWeaponDraggableItem)
+            {
+                Slot.selectedSlot.selectedSlotDraggableItem = newWeaponDraggable;
+            }
+        }
+
+        UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
+    }
+
+
+    private void StaticEventHandler_OnPassiveItemsSwapped(PassiveItemAddedToBookArgs passiveItemAddedToBookArgs)
+    {
+        StartCoroutine(PassiveItemSwapRoutine(passiveItemAddedToBookArgs.passiveItem, passiveItemAddedToBookArgs.inventoryPassiveItem, passiveItemAddedToBookArgs.inventoryIndexNumber));
+    }
+
+    IEnumerator PassiveItemSwapRoutine(PassiveItem slotPassiveItem, PassiveItem inventoryPassiveItem, int index)
+    {
+        yield return new WaitUntil(() => !DraggableItem.IsDragging);
+        yield return new WaitForEndOfFrame(); // Also wait one frame for UI updates to settle
+
+        Transform equippedInventorySlot = inventoryParent.GetChild(index);
+        Transform inventoryItemEquipped = equippedInventorySlot.GetChild(1);
+        DraggableItem inventoryPassiveDraggableItem = inventoryItemEquipped.GetComponentInChildren<DraggableItem>();
+
+        Transform slot = GetEquippedSlot(slotPassiveItem.passiveItemDetails.passiveItemSlotName);
+        Transform slotEquipped = slot.GetChild(1);
+        DraggableItem slotPassiveDraggableItem = slotEquipped.GetComponentInChildren<DraggableItem>();
+
+        // Swap
+        if (slotPassiveDraggableItem != null && inventoryPassiveDraggableItem != null)
+        {
+            SafeReparentDraggableItem(slotPassiveDraggableItem, inventoryItemEquipped);
+            SafeReparentDraggableItem(inventoryPassiveDraggableItem, slotEquipped);
+        }
+
+        UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
+    }
+
+    private void SafeReparentDraggableItem(DraggableItem item, Transform newParent)
+    {
+        if (item.transform.parent != newParent)
+        {
+            item.transform.SetParent(newParent, false);
+            item.rectTransform.anchoredPosition = Vector2.zero;
+
+            if (item.TryGetComponent(out CanvasGroup group))
+            {
+                group.alpha = 1f;
+                group.blocksRaycasts = true;
+            }
+
+            item.originalParent = newParent;
+        }
     }
 
     private void StaticEventHandler_OnWeaponSwitched()
@@ -573,12 +739,12 @@ public class BookUI : MonoBehaviour
         healthText.text = $"Health : {player.health.GetCurrentHealth()} / {player.health.GetMaximumHealth()}";
     }
 
-    private void StaticEventHandler_OnItemAddedToActiveItemSlot(PassiveItemAddedToBookArgs itemAddedToBookArgs)
+    private void StaticEventHandler_OnItemAddedToActiveItemSlot(SetSelectedActiveItemArgs itemAddedToBookArgs)
     {
-        StartCoroutine(DelayedPickUpActiveItemSlot(itemAddedToBookArgs.itemSprite));
+        StartCoroutine(DelayedPickUpActiveItemSlot(itemAddedToBookArgs.activeItem));
     }
 
-    IEnumerator DelayedPickUpActiveItemSlot(Sprite sprite)
+    IEnumerator DelayedPickUpActiveItemSlot(ActiveItem activeItem)
     {
         // Wait for end of frame
         yield return new WaitForEndOfFrame();
@@ -587,8 +753,8 @@ public class BookUI : MonoBehaviour
         Transform activeItemEquipped = activeItemSlot.GetChild(1);
         activeItemBackground.gameObject.SetActive(false);
         activeItemEquipped.gameObject.SetActive(true);
-        GameObject activeItem = Instantiate(GameResources.Instance.bookWeaponSlot, activeItemEquipped);
-        activeItem.GetComponent<Image>().sprite = sprite;
+        GameObject activeItemGameObject = Instantiate(GameResources.Instance.bookWeaponSlot, activeItemEquipped);
+        activeItemGameObject.GetComponent<Image>().sprite = activeItem.activeItemDetails.activeItemSprite;
     }
 
     private void StaticEventHandler_OnItemRemovedFromActiveItemSlot()
@@ -631,122 +797,32 @@ public class BookUI : MonoBehaviour
 
     private void StaticEventHandler_OnItemAddedToPassiveItemSlot(PassiveItemAddedToBookArgs itemAddedToBookArgs)
     {
-        StartCoroutine(PassiveItemAddRoutine(itemAddedToBookArgs.itemSprite, itemAddedToBookArgs.itemSlotName));
+        StartCoroutine(PassiveItemAddRoutine(itemAddedToBookArgs.passiveItem, itemAddedToBookArgs.itemSlotName));
     }
 
-    IEnumerator PassiveItemAddRoutine(Sprite itemSprite, PassiveItemSlotName itemSlotName)
+    IEnumerator PassiveItemAddRoutine(PassiveItem passiveItem, PassiveItemSlotName itemSlotName)
     {
         yield return new WaitForEndOfFrame();
 
-        GameObject passiveItem = new GameObject();
         Transform background;
         Transform equipped;
+        GameObject passiveItemObject = new GameObject();
 
-        switch (itemSlotName)
+        Transform passiveItemSlot = GetEquippedSlot(itemSlotName);
+        background = passiveItemSlot.GetChild(0);
+        equipped = passiveItemSlot.GetChild(1);
+        background.gameObject.SetActive(false);
+        equipped.gameObject.SetActive(true);
+
+        // Loop through all child objects and destroy them
+        for (int i = equipped.childCount - 1; i >= 0; i--)
         {
-            case PassiveItemSlotName.Head:
-                background = passiveItemHeadSlot.GetChild(0);
-                equipped = passiveItemHeadSlot.GetChild(1);
-                background.gameObject.SetActive(false);
-                equipped.gameObject.SetActive(true);
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    Destroy(equipped.GetChild(i).gameObject);
-                }
-                passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
-
-                break;
-            case PassiveItemSlotName.Chest:
-                background = passiveItemChestSlot.GetChild(0);
-                equipped = passiveItemChestSlot.GetChild(1);
-                background.gameObject.SetActive(false);
-                equipped.gameObject.SetActive(true);
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    Destroy(equipped.GetChild(i).gameObject);
-                }
-                passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
-                break;
-            case PassiveItemSlotName.Neck:
-                background = passiveItemNeckSlot.GetChild(0);
-                equipped = passiveItemNeckSlot.GetChild(1);
-                background.gameObject.SetActive(false);
-                equipped.gameObject.SetActive(true);
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    Destroy(equipped.GetChild(i).gameObject);
-                }
-                passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
-                break;
-            case PassiveItemSlotName.Finger:
-                background = passiveItemFingerSlot.GetChild(0);
-                equipped = passiveItemFingerSlot.GetChild(1);
-                background.gameObject.SetActive(false);
-                equipped.gameObject.SetActive(true);
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    Destroy(equipped.GetChild(i).gameObject);
-                }
-                passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
-                break;
-            case PassiveItemSlotName.Back:
-                background = passiveItemBackSlot.GetChild(0);
-                equipped = passiveItemBackSlot.GetChild(1);
-                background.gameObject.SetActive(false);
-                equipped.gameObject.SetActive(true);
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    Destroy(equipped.GetChild(i).gameObject);
-                }
-                passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
-                break;
-            case PassiveItemSlotName.Waist:
-                background = passiveItemWaistSlot.GetChild(0);
-                equipped = passiveItemWaistSlot.GetChild(1);
-                background.gameObject.SetActive(false);
-                equipped.gameObject.SetActive(true);
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    Destroy(equipped.GetChild(i).gameObject);
-                }
-                passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
-                break;
-            case PassiveItemSlotName.Arm:
-                background = passiveItemArmSlot.GetChild(0);
-                equipped = passiveItemArmSlot.GetChild(1);
-                background.gameObject.SetActive(false);
-                equipped.gameObject.SetActive(true);
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    Destroy(equipped.GetChild(i).gameObject);
-                }
-                Debug.Log(GameManager.Instance.GetPlayer().currentAirResistanceValue);
-                passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
-                break;
-            case PassiveItemSlotName.Leg:
-                background = passiveItemLegSlot.GetChild(0);
-                equipped = passiveItemLegSlot.GetChild(1);
-                background.gameObject.SetActive(false);
-                equipped.gameObject.SetActive(true);
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    Destroy(equipped.GetChild(i).gameObject);
-                }
-                passiveItem = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
-                break;
-            default:
-                break;
+            Destroy(equipped.GetChild(i).gameObject);
         }
 
-        passiveItem.GetComponent<Image>().sprite = itemSprite;
+        passiveItemObject = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
+        passiveItemObject.GetComponent<Image>().sprite = passiveItem.passiveItemDetails.passiveItemSprite;
+
         UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
     }
 
@@ -763,125 +839,37 @@ public class BookUI : MonoBehaviour
         Transform background;
         Transform equipped;
 
-        switch (passiveItemSlotName)
+        Transform passiveItemSlot = GetEquippedSlot(passiveItemSlotName);
+        background = passiveItemSlot.GetChild(0);
+        equipped = passiveItemSlot.GetChild(1);
+
+        // Loop through all child objects and destroy them
+        for (int i = equipped.childCount - 1; i >= 0; i--)
         {
-            case PassiveItemSlotName.Head:
-                background = passiveItemHeadSlot.GetChild(0);
-                equipped = passiveItemHeadSlot.GetChild(1);
-
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    passiveItemAtSlot = equipped.GetChild(i).gameObject;
-                    Destroy(passiveItemAtSlot);
-                }
-
-                background.gameObject.SetActive(true);
-                equipped.gameObject.SetActive(false);
-                break;
-            case PassiveItemSlotName.Chest:
-                background = passiveItemChestSlot.GetChild(0);
-                equipped = passiveItemChestSlot.GetChild(1);
-
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    passiveItemAtSlot = equipped.GetChild(i).gameObject;
-                    Destroy(passiveItemAtSlot);
-                }
-
-                background.gameObject.SetActive(true);
-                equipped.gameObject.SetActive(false);
-                break;
-            case PassiveItemSlotName.Neck:
-                background = passiveItemNeckSlot.GetChild(0);
-                equipped = passiveItemNeckSlot.GetChild(1);
-
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    passiveItemAtSlot = equipped.GetChild(i).gameObject;
-                    Destroy(passiveItemAtSlot);
-                }
-
-                background.gameObject.SetActive(true);
-                equipped.gameObject.SetActive(false);
-                break;
-            case PassiveItemSlotName.Finger:
-                background = passiveItemFingerSlot.GetChild(0);
-                equipped = passiveItemFingerSlot.GetChild(1);
-
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    passiveItemAtSlot = equipped.GetChild(i).gameObject;
-                    Destroy(passiveItemAtSlot);
-                }
-
-                background.gameObject.SetActive(true);
-                equipped.gameObject.SetActive(false);
-                break;
-            case PassiveItemSlotName.Back:
-                background = passiveItemBackSlot.GetChild(0);
-                equipped = passiveItemBackSlot.GetChild(1);
-
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    passiveItemAtSlot = equipped.GetChild(i).gameObject;
-                    Destroy(passiveItemAtSlot);
-                }
-
-                background.gameObject.SetActive(true);
-                equipped.gameObject.SetActive(false);
-                break;
-            case PassiveItemSlotName.Waist:
-                background = passiveItemWaistSlot.GetChild(0);
-                equipped = passiveItemWaistSlot.GetChild(1);
-
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    passiveItemAtSlot = equipped.GetChild(i).gameObject;
-                    Destroy(passiveItemAtSlot);
-                }
-
-                background.gameObject.SetActive(true);
-                equipped.gameObject.SetActive(false);
-                break;
-            case PassiveItemSlotName.Arm:
-                background = passiveItemArmSlot.GetChild(0);
-                equipped = passiveItemArmSlot.GetChild(1);
-
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    passiveItemAtSlot = equipped.GetChild(i).gameObject;
-                    Destroy(passiveItemAtSlot);
-                }
-
-                background.gameObject.SetActive(true);
-                equipped.gameObject.SetActive(false);
-                break;
-            case PassiveItemSlotName.Leg:
-                background = passiveItemLegSlot.GetChild(0);
-                equipped = passiveItemLegSlot.GetChild(1);
-
-                // Loop through all child objects and destroy them
-                for (int i = equipped.childCount - 1; i >= 0; i--)
-                {
-                    passiveItemAtSlot = equipped.GetChild(i).gameObject;
-                    Destroy(passiveItemAtSlot);
-                }
-
-                background.gameObject.SetActive(true);
-                equipped.gameObject.SetActive(false);
-                break;
-            default:
-                break;
+            passiveItemAtSlot = equipped.GetChild(i).gameObject;
+            Destroy(passiveItemAtSlot);
         }
 
+        background.gameObject.SetActive(true);
+        equipped.gameObject.SetActive(false);
+
         UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
+    }
+
+    Transform GetEquippedSlot(PassiveItemSlotName slotName)
+    {
+        return slotName switch
+        {
+            PassiveItemSlotName.Head => passiveItemHeadSlot,
+            PassiveItemSlotName.Chest => passiveItemChestSlot,
+            PassiveItemSlotName.Neck => passiveItemNeckSlot,
+            PassiveItemSlotName.Finger => passiveItemFingerSlot,
+            PassiveItemSlotName.Back => passiveItemBackSlot,
+            PassiveItemSlotName.Waist => passiveItemWaistSlot,
+            PassiveItemSlotName.Arm => passiveItemArmSlot,
+            PassiveItemSlotName.Leg => passiveItemLegSlot,
+            _ => null,
+        };
     }
 
     private void UpdatePlayerStatInfo(Player player)
@@ -915,6 +903,8 @@ public class BookUI : MonoBehaviour
     {
         if (buildPage.GetChild(0).gameObject.activeSelf) return;
 
+        bookStatPageOpen = false;
+
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Build));
     }
@@ -922,6 +912,8 @@ public class BookUI : MonoBehaviour
     public void OpenStatsPage()
     {
         if (statsPage.GetChild(0).gameObject.activeSelf) return;
+
+        bookStatPageOpen = false;
 
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Stats));
@@ -931,6 +923,8 @@ public class BookUI : MonoBehaviour
     {
         if (weaponsPage.GetChild(0).gameObject.activeSelf) return;
 
+        bookStatPageOpen = false;
+
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Weapons));
     }
@@ -938,6 +932,8 @@ public class BookUI : MonoBehaviour
     public void OpenPassivesPage()
     {
         if (passivesPage.GetChild(0).gameObject.activeSelf) return;
+
+        bookStatPageOpen = false;
 
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Passives));
@@ -947,6 +943,8 @@ public class BookUI : MonoBehaviour
     {
         if (activesPage.GetChild(0).gameObject.activeSelf) return;
 
+        bookStatPageOpen = false;
+
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Actives));
     }
@@ -955,6 +953,8 @@ public class BookUI : MonoBehaviour
     {
         if (beastiaryPage.GetChild(0).gameObject.activeSelf) return;
 
+        bookStatPageOpen = false;
+
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Beastiary));
     }
@@ -962,6 +962,8 @@ public class BookUI : MonoBehaviour
     public void OpenBossesPage()
     {
         if (bossesPage.GetChild(0).gameObject.activeSelf) return;
+
+        bookStatPageOpen = false;
 
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Bosses));
@@ -1058,6 +1060,8 @@ public class BookUI : MonoBehaviour
         {
             child.gameObject.SetActive(false);
         }
+
+        bookStatPageOpen = false;
     }
 
     private void EnableStatPage()
@@ -1066,6 +1070,8 @@ public class BookUI : MonoBehaviour
         {
             child.gameObject.SetActive(true);
         }
+
+        bookStatPageOpen = true;
     }
 
 
@@ -1085,7 +1091,8 @@ public class BookUI : MonoBehaviour
 
             if (weaponSlot.weaponUnlocked)
             {
-                weaponSlot.GetComponent<Image>().color = Color.white;
+                weaponSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                weaponSlot.GetComponent<Button>().interactable = true;
             }
         }
     }
@@ -1114,7 +1121,8 @@ public class BookUI : MonoBehaviour
 
             if (passiveSlot.passiveUnlocked)
             {
-                passiveSlot.GetComponent<Image>().color = Color.white;
+                passiveSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                passiveSlot.GetComponent<Button>().interactable = true;
             }
         }
     }
@@ -1143,7 +1151,8 @@ public class BookUI : MonoBehaviour
 
             if (activeSlot.activeUnlocked)
             {
-                activeSlot.GetComponent<Image>().color = Color.white;
+                activeSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                activeSlot.GetComponent<Button>().interactable = true;
             }
         }
     }
@@ -1172,7 +1181,8 @@ public class BookUI : MonoBehaviour
 
             if (mobSlot.mobUnlocked)
             {
-                mobSlot.GetComponent<Image>().color = Color.white;
+                mobSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                mobSlot.GetComponent<Button>().interactable = true;
             }
         }
     }
@@ -1201,9 +1211,9 @@ public class BookUI : MonoBehaviour
 
             if (mobSlot.mobUnlocked)
             {
-                mobSlot.GetComponent<Image>().color = Color.white;
+                mobSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                mobSlot.GetComponent<Button>().interactable = true;
             }
-
         }
     }
 
@@ -1245,7 +1255,8 @@ public class BookUI : MonoBehaviour
                 if (mobSlot.mobDetails.enemyCategory == mobUnlockArgs.mobCategory)
                 {
                     mobSlot.mobUnlocked = true;
-                    mobSlot.GetComponent<Image>().color = Color.white;
+                    mobSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                    mobSlot.GetComponent<Button>().interactable = true;
                 }
             }
         }
@@ -1260,7 +1271,8 @@ public class BookUI : MonoBehaviour
                 if (mobSlot.mobDetails.enemyCategory == mobUnlockArgs.mobCategory)
                 {
                     mobSlot.mobUnlocked = true;
-                    mobSlot.GetComponent<Image>().color = Color.white;
+                    mobSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                    mobSlot.GetComponent<Button>().interactable = true;
                 }
             }
         }
@@ -1321,7 +1333,8 @@ public class BookUI : MonoBehaviour
             if (weaponSlot.weaponDetails.weaponTitle == weaponUnlockArgs.weaponTitle)
             {
                 weaponSlot.weaponUnlocked = true;
-                weaponSlot.GetComponent<Image>().color = Color.white;
+                weaponSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                weaponSlot.GetComponent<Button>().interactable = true;
             }
         }
     }
@@ -1357,7 +1370,8 @@ public class BookUI : MonoBehaviour
             if (passiveSlot.passiveItemDetails.passiveItemType == passiveUnlockArgs.passiveItemType)
             {
                 passiveSlot.passiveUnlocked = true;
-                passiveSlot.GetComponent<Image>().color = Color.white;
+                passiveSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                passiveSlot.GetComponent<Button>().interactable = true;
             }
         }
     }
@@ -1393,7 +1407,8 @@ public class BookUI : MonoBehaviour
             if (activeSlot.activeItemDetails.activeItemType == activeUnlockArgs.activeItemType)
             {
                 activeSlot.activeUnlocked = true;
-                activeSlot.GetComponent<Image>().color = Color.white;
+                activeSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                activeSlot.GetComponent<Button>().interactable = true;
             }
         }
     }
@@ -1801,7 +1816,11 @@ public class BookUI : MonoBehaviour
     {
         if (indexNumber < buildTreeFrame.childCount - 3)
         {
-            buildTreeFrame.GetChild(indexNumber + 3).GetChild(1).gameObject.SetActive(false);
+            Image buildImage = buildTreeFrame.GetChild(indexNumber + 3).GetComponent<Image>();
+            buildImage.color = new Color(1f, 1f, 1f, 1f);
+
+            //buildTreeFrame.GetChild(indexNumber + 3).GetChild(1).gameObject.SetActive(false);
+
             buildTreeFrame.GetChild(indexNumber + 3).GetComponent<BuildSlot>().isLocked = false;
         }
     }

@@ -15,9 +15,9 @@ public class Counter : MonoBehaviour
     [SerializeField] List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> vendorPassiveItemSpawnByLevelList;
     [SerializeField] List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> blackMarketPassiveItemSpawnByLevelList;
 
-    [SerializeField] ChestItem firstChestItem;
-    [SerializeField] ChestItem secondChestItem;
-    [SerializeField] ChestItem thirdChestItem;
+    [SerializeField] DropItem firstChestItem;
+    [SerializeField] DropItem secondChestItem;
+    [SerializeField] DropItem thirdChestItem;
 
     Player player;
     List<int> gambleValuesList = new List<int>();
@@ -159,9 +159,9 @@ public class Counter : MonoBehaviour
 
         int variationNumber = Random.Range(1, 3);
 
-        firstChestItem.isGambleChestItem = true;
-        secondChestItem.isGambleChestItem = true;
-        thirdChestItem.isGambleChestItem = true;
+        firstChestItem.isGambleDropItem = true;
+        secondChestItem.isGambleDropItem = true;
+        thirdChestItem.isGambleDropItem = true;
 
         int gambleValueOne = 0;
         int gambleValueTwo = 0;
@@ -195,7 +195,7 @@ public class Counter : MonoBehaviour
     /// <summary>
     /// Instantiate a weapon item for the player to collect
     /// </summary>
-    private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails, ChestItem chestItem)
+    private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails, DropItem chestItem)
     {
         if (chestItem == null) return;
 
@@ -238,7 +238,7 @@ public class Counter : MonoBehaviour
     /// <summary>
     /// Instantiate a passive item for the player to collect
     /// </summary>
-    private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails, ChestItem chestItem)
+    private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails, DropItem chestItem)
     {
         if (chestItem == null) return;
 
@@ -276,7 +276,7 @@ public class Counter : MonoBehaviour
     /// <summary>
     /// Gamble reset
     /// </summary>
-    private void RetrieveGambleTableValue(ref ChestItem chestItem, int gambleValue)
+    private void RetrieveGambleTableValue(ref DropItem chestItem, int gambleValue)
     {
         if (chestItem == null) return;
 
@@ -287,7 +287,7 @@ public class Counter : MonoBehaviour
     /// <summary>
     /// Gamble reset
     /// </summary>
-    private void ResetGambleTable(ref ChestItem chestItem)
+    private void ResetGambleTable(ref DropItem chestItem)
     {
         chestItem.gambleValue = 0;
         chestItem.isColliding = false;
@@ -297,7 +297,7 @@ public class Counter : MonoBehaviour
 
 public class CounterChestItem
 {
-    public ChestItem chestItem;
+    public DropItem chestItem;
     public int counterChestItemIndexNumber;
     public int indexGambleValue;
 }

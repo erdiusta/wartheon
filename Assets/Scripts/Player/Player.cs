@@ -100,7 +100,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public int previousSetIndex = 1;
     [HideInInspector] public BranchMastery branchMastery;
     [HideInInspector] public WeaponMastery weaponMastery;
-    [HideInInspector] public ChestItem activeItemChestItem;
+    [HideInInspector] public DropItem activeItemChestItem;
 
     // PLAYER PRIMARY STATS
     [HideInInspector] public int currentStrengthValue;
@@ -327,7 +327,7 @@ public class Player : MonoBehaviour
     private void CreatePlayerStartingActiveItem()
     {
         GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        activeItemChestItem = chestItemObject.GetComponent<ChestItem>();
+        activeItemChestItem = chestItemObject.GetComponent<DropItem>();
 
         activeItemChestItem.remainingItemCharge = playerDetails.selectedActiveItem.activeItemMaxCharge;
         AddActiveItemToPlayer(playerDetails.selectedActiveItem, activeItemChestItem, activeItemChestItem.remainingItemCharge);
@@ -372,7 +372,7 @@ public class Player : MonoBehaviour
             {
                 weaponDetails = weaponDetails,
                 weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
-                onInventorySlot = true
+                itemSlotStatus = ItemSlotStatus.Inventory
             };
 
             int retrievedInventoryIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(weapon);
@@ -572,7 +572,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Add an active item to the player
     /// </summary>
-    public ActiveItem AddActiveItemToPlayer(ActiveItemDetailsSO activeItemDetails, ChestItem chestItem, int remainingItemCharge)
+    public ActiveItem AddActiveItemToPlayer(ActiveItemDetailsSO activeItemDetails, DropItem chestItem, int remainingItemCharge)
     {
         ActiveItem activeItem = new ActiveItem();
 
@@ -599,20 +599,31 @@ public class Player : MonoBehaviour
         chestItem.animator.enabled = false;
 
         // Declare this chest item as to-be-dropped chest item
-        ChestItem.toBeDroppedChestItem = chestItem;
-        ChestItem.toBeDroppedChestItem.toBeDroppedActiveItem = activeItem;
+        DropItem.toBeDroppedDropItem = chestItem;
+        DropItem.toBeDroppedDropItem.toBeDroppedActiveItem = activeItem;
 
         return activeItem;
     }
 
-    public PassiveItem AddPassiveItemToPlayer(PassiveItemDetailsSO passiveItemDetails, ChestItem chestItem = null)
+    public PassiveItem AddPassiveItemToPlayer(PassiveItemDetailsSO passiveItemDetails, DropItem chestItem = null)
     {
         PassiveItem passiveItem = new PassiveItem
         {
             passiveItemDetails = passiveItemDetails
         };
 
-        setPassiveItemEvent.CallEquipPassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
+        EquipResult result = new EquipResult();
+        setPassiveItemEvent.CallEquipPassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName, result);
+
+        if (result.placedIntoInventory)
+        {
+            int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(passiveItem);
+            StaticEventHandler.CallPassiveItemAddedToInventorySlot(passiveItem, inventoryItemIndex);
+        }
+        else
+        {
+            StaticEventHandler.CallItemAddedToPassiveItemSlot(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
+        }
 
         return passiveItem;
     }
@@ -631,7 +642,7 @@ public class Player : MonoBehaviour
                 {
                     weaponDetails = weaponDetails,
                     weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
-                    onMainHand = false
+                    itemSlotStatus = ItemSlotStatus.OffHand
                 };
 
                 if (pickingUp)
@@ -644,7 +655,7 @@ public class Player : MonoBehaviour
                             {
                                 weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] = weapon;
                                 weapon.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;                               
-                                ActivateWeapon(weapon, !weapon.onMainHand, currentWeaponSlotSetIndex, onStart, onlySwitch);
+                                ActivateWeapon(weapon, weapon.itemSlotStatus, currentWeaponSlotSetIndex, onStart, onlySwitch);
                                 StaticEventHandler.CallWeaponUnlockedEvent(weapon.weaponDetails.weaponTitle);
 
                                 if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
@@ -674,7 +685,7 @@ public class Player : MonoBehaviour
                                 weapon.weaponBelongingToWhichOffHandSet = 1;
                                 if (currentWeaponSlotSetIndex == 1)
                                 {
-                                    ActivateWeapon(weapon, !weapon.onMainHand, 1, onStart, onlySwitch);
+                                    ActivateWeapon(weapon, weapon.itemSlotStatus, 1, onStart, onlySwitch);
                                 }
                                 if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon additions are excluded
                                 {
@@ -693,7 +704,7 @@ public class Player : MonoBehaviour
                                 weaponSlotSetArray[1][1] = weapon;
                                 if (currentWeaponSlotSetIndex == 2)
                                 {
-                                    ActivateWeapon(weapon, !weapon.onMainHand, 2, onStart, onlySwitch);
+                                    ActivateWeapon(weapon, weapon.itemSlotStatus, 2, onStart, onlySwitch);
                                 }
                                 weapon.weaponBelongingToWhichOffHandSet = 2;
                                 StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
@@ -710,7 +721,7 @@ public class Player : MonoBehaviour
                                 weaponSlotSetArray[2][1] = weapon;
                                 if (currentWeaponSlotSetIndex == 3)
                                 {
-                                    ActivateWeapon(weapon, !weapon.onMainHand, 3, onStart, onlySwitch);
+                                    ActivateWeapon(weapon, weapon.itemSlotStatus, 3, onStart, onlySwitch);
                                 }
                                 weapon.weaponBelongingToWhichOffHandSet = 3;
                                 StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
@@ -734,7 +745,7 @@ public class Player : MonoBehaviour
             {
                 weaponDetails = weaponDetails,
                 weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
-                onMainHand = true
+                itemSlotStatus = ItemSlotStatus.MainHand
             };
 
             if (weaponDetails.weaponClass != WeaponClass.Shield)
@@ -745,7 +756,7 @@ public class Player : MonoBehaviour
                     {
                         weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] = weapon;
                         weapon.weaponBelongingToWhichMainHandSet = currentWeaponSlotSetIndex;
-                        ActivateWeapon(weapon, !weapon.onMainHand, currentWeaponSlotSetIndex, onStart, onlySwitch);
+                        ActivateWeapon(weapon, weapon.itemSlotStatus, currentWeaponSlotSetIndex, onStart, onlySwitch);
                         StaticEventHandler.CallWeaponUnlockedEvent(weapon.weaponDetails.weaponTitle);
 
                         if (!onStart)
@@ -770,7 +781,7 @@ public class Player : MonoBehaviour
                         weapon.weaponBelongingToWhichMainHandSet = 1;
                         if (currentWeaponSlotSetIndex == 1)
                         {
-                            ActivateWeapon(weapon, !weapon.onMainHand, 1, onStart, onlySwitch);
+                            ActivateWeapon(weapon, weapon.itemSlotStatus, 1, onStart, onlySwitch);
                         }
                         if (!onStart)
                         {
@@ -785,7 +796,7 @@ public class Player : MonoBehaviour
                         weapon.weaponBelongingToWhichMainHandSet = 2;
                         if (currentWeaponSlotSetIndex == 2)
                         {
-                            ActivateWeapon(weapon, !weapon.onMainHand, 2, onStart, onlySwitch);
+                            ActivateWeapon(weapon, weapon.itemSlotStatus, 2, onStart, onlySwitch);
                         }
                         if (!onStart)
                         {
@@ -800,7 +811,7 @@ public class Player : MonoBehaviour
                         weapon.weaponBelongingToWhichMainHandSet = 3;
                         if (currentWeaponSlotSetIndex == 3)
                         {
-                            ActivateWeapon(weapon, !weapon.onMainHand, 3, onStart, onlySwitch);
+                            ActivateWeapon(weapon, weapon.itemSlotStatus, 3, onStart, onlySwitch);
                         }
                         if (!onStart)
                         {
@@ -827,7 +838,7 @@ public class Player : MonoBehaviour
                 {
                     weaponDetails = weaponDetails,
                     weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
-                    onMainHand = false
+                    itemSlotStatus = ItemSlotStatus.OffHand
                 };
 
                 if (weaponSlotSetArray[0][1] == null)
@@ -836,7 +847,7 @@ public class Player : MonoBehaviour
                     weapon.weaponBelongingToWhichOffHandSet = 1;
                     if (currentWeaponSlotSetIndex == 1)
                     {
-                        ActivateWeapon(weapon, !weapon.onMainHand, 1, onStart, onlySwitch);
+                        ActivateWeapon(weapon, weapon.itemSlotStatus, 1, onStart, onlySwitch);
                     }
                     if (!onStart) // On start book ui events like Populate doesn't work due to script execution order so onStart weapon addition are excluded
                     {
@@ -849,7 +860,7 @@ public class Player : MonoBehaviour
                     weapon.weaponBelongingToWhichOffHandSet = 2;
                     if (currentWeaponSlotSetIndex == 2)
                     {
-                        ActivateWeapon(weapon, !weapon.onMainHand, 2, onStart, onlySwitch);
+                        ActivateWeapon(weapon, weapon.itemSlotStatus, 2, onStart, onlySwitch);
                     }
 
                     StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
@@ -860,7 +871,7 @@ public class Player : MonoBehaviour
                     weapon.weaponBelongingToWhichOffHandSet = 3;
                     if (currentWeaponSlotSetIndex == 3)
                     {
-                        ActivateWeapon(weapon, !weapon.onMainHand, 3, onStart, onlySwitch);
+                        ActivateWeapon(weapon, weapon.itemSlotStatus, 3, onStart, onlySwitch);
                     }
 
                     StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
@@ -875,9 +886,9 @@ public class Player : MonoBehaviour
 
     }
     
-    public void ActivateWeapon(Weapon weapon, bool isOffHand, int setIndex, bool onStart, bool onSwitch)
+    public void ActivateWeapon(Weapon weapon, ItemSlotStatus itemSlotStatus, int setIndex, bool onStart, bool onSwitch)
     {
-        if (!isOffHand)
+        if (itemSlotStatus == ItemSlotStatus.MainHand)
         {
             // Set the added weapon as active - main hand
             setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, setIndex, onStart, onSwitch);

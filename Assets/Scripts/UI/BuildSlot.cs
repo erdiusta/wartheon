@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-public class BuildSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class BuildSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
     [HideInInspector] public bool isSelected;
 
@@ -43,7 +43,26 @@ public class BuildSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             isSelected = true;
             selectedBuildImageTransform.gameObject.SetActive(true);
             GameManager.Instance.GetPlayer().currentBuildPoints--;
-            StaticEventHandler.CallBuildPointsUsed(indexNumber); // This is for activating build unlocked image
+            StaticEventHandler.CallBuildPointsUsed(indexNumber); // This is for activating build
+                                                                 // ed image
+        }
+    }
+
+    public void OnSelect(BaseEventData eventData)
+    {
+        if (!isLocked)
+        {
+            StaticEventHandler.CallBuildInfoHoveredEvent(indexNumber);
+            //buildDescriptionContainer.gameObject.SetActive(true);
+        }
+    }
+
+    public void OnDeselect(BaseEventData eventData)
+    {
+        if (!isLocked)
+        {
+            StaticEventHandler.CallBuildInfoUnhoveredEvent(indexNumber);
+            //buildDescriptionContainer.gameObject.SetActive(false);
         }
     }
 }

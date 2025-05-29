@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Seismic Slam
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 6f253a71adc23e0449255b85675a093e, type: 3}
+  - {fileID: 8300000, guid: bf2a7afebf2002443826306e4a10d22a, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 0.4

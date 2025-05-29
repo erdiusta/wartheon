@@ -7,7 +7,7 @@ public static class BookUIRefreshHelper
         // Weapon placed into inventory
         if (item is Weapon weapon)
         {
-            if (weapon.onInventorySlot)
+            if (weapon.itemSlotStatus == ItemSlotStatus.Inventory)
             {
                 int index = InventoryManager.Instance.FindIndexOfItem(weapon);
                 StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, index);
@@ -23,10 +23,10 @@ public static class BookUIRefreshHelper
         // Passive item placed into inventory
         else if (item is PassiveItem passive)
         {
-            if (passive.onInventorySlot)
+            if (passive.itemSlotStatus == ItemSlotStatus.Inventory)
             {
                 int index = InventoryManager.Instance.FindIndexOfItem(passive);
-                StaticEventHandler.CallPassiveItemAddedToInventorySlot(passive.passiveItemDetails.passiveItemSprite, index);
+                StaticEventHandler.CallPassiveItemAddedToInventorySlot(passive, index);
             }
             else
             {

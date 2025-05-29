@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Drawing;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -72,20 +70,18 @@ public class InstantiatedRoom : MonoBehaviour
     // Delete chest items when exiting rooms
     private void OnTriggerExit2D(Collider2D collision)
     {
-        // If the player triggered the collider
-        if (collision.tag == Settings.playerTag && room == GameManager.Instance.GetCurrentRoom())
+        if (collision.CompareTag(Settings.playerTag))
         {
-            ChestItem[] chestItems = FindObjectsByType<ChestItem>(FindObjectsSortMode.None);
+            if (IsCorridor()) return;
 
-            for (int i = 0; i < chestItems.Length; i++)
-            {
-                if (chestItems[i].GetComponentInParent<Player>() != null) continue;
-
-                if(chestItems[i].GetComponentInParent<Counter>() != null) continue;
-
-                Destroy(chestItems[i].gameObject);
-            }
+            GameManager.Instance.RegisterRoomVisit(this);
         }
+    }
+
+    public bool IsCorridor()
+    {
+        string typeName = room.roomNodeType.roomNodeTypeName;
+        return typeName == "Corridor" || typeName == "Corridor NS" || typeName == "Corridor EW";
     }
 
     /// <summary>
@@ -474,8 +470,22 @@ public class InstantiatedRoom : MonoBehaviour
         StartCoroutine(UnlockDoorsRoutine(doorUnlockDelay));
     }
 
+    public void DestroyAllDroppedItems()
+    {
+        DropItem[] dropItems = GetComponentsInChildren<DropItem>(true);
+
+        foreach (DropItem item in dropItems)
+        {
+            if (item.GetComponentInParent<Player>() != null) continue;
+            if (item.GetComponentInParent<Counter>() != null) continue;
+
+            Destroy(item.gameObject);
+        }
+    }
+
     /// <summary>
-    /// Unlock the room doors routine
+    /// 
+    /// the room doors routine
     /// </summary>
     IEnumerator UnlockDoorsRoutine(float doorUnlockDelay)
     {

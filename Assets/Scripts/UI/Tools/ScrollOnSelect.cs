@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class ScrollOnSelect : MonoBehaviour, ISelectHandler
 {
@@ -15,6 +16,8 @@ public class ScrollOnSelect : MonoBehaviour, ISelectHandler
     public void OnSelect(BaseEventData eventData)
     {
         if (scrollRect == null) return;
+
+        if(Mouse.current.leftButton.wasPressedThisFrame) return;
 
         RectTransform content = scrollRect.content;
         RectTransform selected = GetComponent<RectTransform>();

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
     public WeaponDetailsSO weaponDetails;
 
@@ -16,7 +16,8 @@ public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if (weaponDetails.weaponTitle == WeaponTitle.Hatchet || weaponDetails.weaponTitle == WeaponTitle.Shield)
                 {
                     weaponUnlocked = true;
-                    transform.GetComponent<Image>().color = Color.white;
+                    transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                    transform.GetComponent<Button>().interactable = true;
                 }
                 break;
             case Character.Erebus:
@@ -24,20 +25,24 @@ public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     weaponUnlocked = true;
                     transform.GetComponent<Image>().color = Color.white;
+                    transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                    transform.GetComponent<Button>().interactable = true;
                 }
                 break;
             case Character.Orion:
                 if (weaponDetails.weaponTitle == WeaponTitle.CrudeBow || weaponDetails.weaponTitle == WeaponTitle.Dirk)
                 {
                     weaponUnlocked = true;
-                    transform.GetComponent<Image>().color = Color.white;
+                    transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                    transform.GetComponent<Button>().interactable = true;
                 }
                 break;
             case Character.Lyrisa:
                 if (weaponDetails.weaponTitle == WeaponTitle.OldStaff)
                 {
                     weaponUnlocked = true;
-                    transform.GetComponent<Image>().color = Color.white;
+                    transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                    transform.GetComponent<Button>().interactable = true;
                 }
                 break;
             default:
@@ -55,6 +60,19 @@ public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void OnPointerExit(PointerEventData eventData)
+    {
+        StaticEventHandler.CallWeaponUnhoveredEvent();
+    }
+
+    public void OnSelect(BaseEventData eventData)
+    {
+        if (weaponUnlocked)
+        {
+            StaticEventHandler.CallWeaponHoveredEvent(weaponDetails.weaponTitle);
+        }
+    }
+
+    public void OnDeselect(BaseEventData eventData)
     {
         StaticEventHandler.CallWeaponUnhoveredEvent();
     }

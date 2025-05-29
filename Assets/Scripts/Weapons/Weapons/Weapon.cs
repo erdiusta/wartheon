@@ -4,7 +4,6 @@ public class Weapon : ItemGeneric
 {
     public WeaponDetailsSO weaponDetails;
     public float activeWeaponHandling;
-    public bool onMainHand;
     public int weaponBelongingToWhichMainHandSet;
     public int weaponBelongingToWhichOffHandSet;
     public int weaponRemainingProjectile;

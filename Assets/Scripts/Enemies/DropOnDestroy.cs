@@ -4,14 +4,12 @@ using Random = UnityEngine.Random;
 
 public class DropOnDestroy : MonoBehaviour
 {
-    [HideInInspector] public GameObject chestItemGameObject;
+    [HideInInspector] public GameObject dropItemGameObject;
 
     List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> enemyPrimaryPassiveItemDropList;
     List<SpawnableObjectsByLevel<WeaponDetailsSO>> enemyWeaponDropList;
     List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> enemySecondaryPassiveItemDropList;
     List<SpawnableObjectsByLevel<ActiveItemDetailsSO>> enemyActiveItemDropList;
-    int ammoPercent;
-    int characterIndexNo;
 
     int dropSpawnChanceMin;
     int dropSpawnChanceMax;
@@ -22,7 +20,7 @@ public class DropOnDestroy : MonoBehaviour
     PassiveItemDetailsSO primaryPassiveItemDetails;
     PassiveItemDetailsSO secondaryPassiveItemDetails;
     ActiveItemDetailsSO activeItemDetails;
-    ChestItem chestItem;
+    DropItem chestItem;
     Enemy enemy;
     Player player;
 
@@ -61,7 +59,7 @@ public class DropOnDestroy : MonoBehaviour
 
         if (!RandomDropCheck())
         {
-            Destroy(chestItemGameObject);
+            Destroy(dropItemGameObject);
             return;
         }
 
@@ -153,12 +151,12 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiateChestItem()
     {
-        chestItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        chestItem = chestItemGameObject.GetComponent<ChestItem>();
+        dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+        chestItem = dropItemGameObject.GetComponent<DropItem>();
         chestItem.droppedByPlayer = false;
 
         // Set collider to true
-        chestItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
+        dropItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
     }
 
     /// <summary>
@@ -229,7 +227,7 @@ public class DropOnDestroy : MonoBehaviour
         }
         else
         {
-            Destroy(chestItemGameObject);
+            Destroy(dropItemGameObject);
             return null;
         }
     }

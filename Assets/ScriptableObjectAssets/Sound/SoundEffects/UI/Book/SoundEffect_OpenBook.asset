@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: OpenBook
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: ef42c04ac93244741b8257938fe446de, type: 3}
+  - {fileID: 8300000, guid: 957d2373d2348074481fc2feff214a33, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 1

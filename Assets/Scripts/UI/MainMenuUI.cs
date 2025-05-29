@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using System;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 {
@@ -13,6 +13,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     public Button playButton;
     [SerializeField] Button settingsButton;
+    [SerializeField] Button controlsButton;
     [SerializeField] Button quitButton;
     [SerializeField] GameObject cheatCodeObject;
     [SerializeField] SoundEffectSO buttonClickSound;
@@ -40,9 +41,26 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     [SerializeField] Toggle dynamicCameraToggle;
     [SerializeField] Image dynamicCameraCheckmarkImage;
 
+    [Space(10)]
+    [Header("CONTROLS")]
+    [SerializeField] GameObject controlsMenuUI;
+    [SerializeField] Button keyboardMouseButton;
+    [SerializeField] Button gamepadButton;
+    [SerializeField] Button controlsBackButton;
+
+    [Header("Keyboard&Mouse Rebindings Menu")]
+    [SerializeField] GameObject keyboardRebindingsMenuUI;
+    [SerializeField] Button keyboardRebindingsBackButton;
+
+    [Header("Gamepad Rebindings Menu")]
+    [SerializeField] GameObject gamepadRebindingsMenuUI;
+    [SerializeField] Button gamepadRebindingsBackButton;
+
     Resolution[] resolutions;
     Dictionary<string, List<int>> resolutionToHzMap;
     List<string> resolutionOptions;
+
+    InputActionAsset actions;
 
     protected override void Awake()
     {
@@ -61,6 +79,13 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         StaticEventHandler.OnAdditiveSceneRemoved -= StaticEventHandler_OnAdditiveSceneRemoved;
     }
 
+    private void Update()
+    {
+        if (RebindState.IsRebinding) return;
+
+        // Optionally support Left/Right if you want later
+    }
+
     private void StaticEventHandler_OnAdditiveSceneRemoved()
     {
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
@@ -71,10 +96,12 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
         playButton.gameObject.SetActive(true);
         settingsButton.gameObject.SetActive(true);
+        controlsButton.gameObject.SetActive(true);
         quitButton.gameObject.SetActive(true);
 
         playButton.interactable = true;
         settingsButton.interactable = true;
+        controlsButton.interactable = true;
         quitButton.interactable = true;
     }
 
@@ -94,6 +121,8 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     void Start()
     {
+        actions = InputManager.Instance.actions;
+
         // Initialize and categorize resolutions
         resolutions = Screen.resolutions;
         resolutionToHzMap = new Dictionary<string, List<int>>();
@@ -195,10 +224,12 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
         playButton.interactable = false;
         settingsButton.interactable = false;
+        controlsButton.interactable = false;
         quitButton.interactable = false;
 
         playButton.gameObject.SetActive(false);
         settingsButton.gameObject.SetActive(false);
+        controlsButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
 
         // Save player prefs
@@ -206,6 +237,26 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
         // Load character selector scene additively
         SceneManager.LoadScene("CharacterSelectorScene", LoadSceneMode.Additive);
+    }
+
+    /// <summary>
+    /// Called from the Controls Button
+    /// </summary>
+    public void OpenControls()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        controlsMenuUI.SetActive(true);
+
+        playButton.interactable = false;
+        settingsButton.interactable = false;
+        controlsButton.interactable = false;
+        quitButton.interactable = false;
+
+        playButton.gameObject.SetActive(false);
+        settingsButton.gameObject.SetActive(false);
+        controlsButton.gameObject.SetActive(false);
+        quitButton.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -219,22 +270,50 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
         playButton.interactable = false;
         settingsButton.interactable = false;
+        controlsButton.interactable = false;
         quitButton.interactable = false;
 
         playButton.gameObject.SetActive(false);
         settingsButton.gameObject.SetActive(false);
+        controlsButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
-
-        ////currentSettingsMenuIndex = 0;
-        //StartCoroutine(SelectFirst());
     }
 
-    //private IEnumerator SelectFirst()
-    //{
-    //    // wait one frame so the UI has time to enable
-    //    yield return null;
-    //    EventSystem.current.SetSelectedGameObject(elements[currentSettingsMenuIndex].gameObject);
-    //}
+    /// <summary>
+    /// Called from the Keyboard&Mouse Button
+    /// </summary>
+    public void OpenKeyboardMouseRebindingsMenu()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        keyboardRebindingsMenuUI.SetActive(true);
+
+        keyboardMouseButton.interactable = false;
+        gamepadButton.interactable = false;
+        controlsBackButton.interactable = false;
+
+        keyboardMouseButton.gameObject.SetActive(false);
+        gamepadButton.gameObject.SetActive(false);
+        controlsBackButton.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Called from the Gamepad Button
+    /// </summary>
+    public void OpenGamepadRebindingsMenu()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        gamepadRebindingsMenuUI.SetActive(true);
+
+        keyboardMouseButton.interactable = false;
+        gamepadButton.interactable = false;
+        controlsBackButton.interactable = false;
+
+        keyboardMouseButton.gameObject.SetActive(false);
+        gamepadButton.gameObject.SetActive(false);
+        controlsBackButton.gameObject.SetActive(false);
+    }
 
     private void OnPostProcessingToggleChanged(bool isOn)
     {
@@ -369,6 +448,54 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         SoundEffectManager.Instance.SetVolume((int)newValue);
     }
 
+    public void OpenKeyboardControls()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        // Save player prefs
+        SavePlayerPrefs();
+    }
+
+    public void ExitControlsMenu()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        // Save player prefs
+        SavePlayerPrefs();
+
+        controlsMenuUI.SetActive(false);
+
+        playButton.gameObject.SetActive(true);
+        settingsButton.gameObject.SetActive(true);
+        controlsButton.gameObject.SetActive(true);
+        quitButton.gameObject.SetActive(true);
+
+        playButton.interactable = true;
+        settingsButton.interactable = true;
+        controlsButton.interactable = true;
+        quitButton.interactable = true;
+    }
+
+
+    public void ReturnToControlsMenu()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        // Save player prefs
+        SavePlayerPrefs();
+
+        keyboardRebindingsMenuUI.SetActive(false);
+        gamepadRebindingsMenuUI.SetActive(false);
+
+        keyboardMouseButton.interactable = true;
+        gamepadButton.interactable = true;
+        controlsBackButton.interactable = true;
+
+        keyboardMouseButton.gameObject.SetActive(true);
+        gamepadButton.gameObject.SetActive(true);
+        controlsBackButton.gameObject.SetActive(true);
+    }
+
     public void ExitSettingMenu()
     {
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
@@ -380,10 +507,12 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
         playButton.gameObject.SetActive(true);
         settingsButton.gameObject.SetActive(true);
+        controlsButton.gameObject.SetActive(true);
         quitButton.gameObject.SetActive(true);
 
         playButton.interactable = true;
         settingsButton.interactable = true;
+        controlsButton.interactable = true;
         quitButton.interactable = true;
     }
 
@@ -393,6 +522,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     private void SavePlayerPrefs()
     {
         // Save settings to PlayerPrefs
+        // SETTINGS
         // Video
         PlayerPrefs.SetInt("ResolutionIndex", resolutionDropdown.value);
         PlayerPrefs.SetInt("ScreenModeIndex", screenModeDropdown.value);
@@ -404,6 +534,9 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         PlayerPrefs.SetFloat("SoundVolume", soundVolumeSlider.value);
         // Game
         PlayerPrefs.SetInt("DynamicCamera", dynamicCameraToggle.isOn ? 1 : 0);
+        // CONTROLS
+        var rebinds = actions.SaveBindingOverridesAsJson();
+        PlayerPrefs.SetString("Rebinds", rebinds);
 
         PlayerPrefs.Save();
     }
@@ -485,6 +618,13 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
             dynamicCameraToggle.isOn = dynamicCamera;
             InterScenesSingleton.dynamicCameraFollowEnabled = dynamicCamera;
             UpdateDynamicCameraFollowCheckmarkVisibility(dynamicCamera);
+        }
+
+        // CONTROLS
+        if (PlayerPrefs.HasKey("Rebinds"))
+        {
+            var rebinds = PlayerPrefs.GetString("Rebinds");
+            if (!string.IsNullOrEmpty(rebinds)) actions.LoadBindingOverridesFromJson(rebinds);
         }
     }
 

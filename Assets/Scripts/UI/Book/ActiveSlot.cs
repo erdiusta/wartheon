@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ActiveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ActiveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
     public ActiveItemDetailsSO activeItemDetails;
 
@@ -54,6 +54,19 @@ public class ActiveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void OnPointerExit(PointerEventData eventData)
+    {
+        StaticEventHandler.CallActiveUnhoveredEvent();
+    }
+
+    public void OnSelect(BaseEventData eventData)
+    {
+        if (activeUnlocked)
+        {
+            StaticEventHandler.CallActiveHoveredEvent(activeItemDetails.activeItemType);
+        }
+    }
+
+    public void OnDeselect(BaseEventData eventData)
     {
         StaticEventHandler.CallActiveUnhoveredEvent();
     }

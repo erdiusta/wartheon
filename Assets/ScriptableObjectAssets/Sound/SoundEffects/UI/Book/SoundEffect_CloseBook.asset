@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Close Book
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 9e394bb6514adae4ba0c4a9849c075da, type: 3}
+  - {fileID: 8300000, guid: 38f971109aa98be43832153fa48788b3, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 1

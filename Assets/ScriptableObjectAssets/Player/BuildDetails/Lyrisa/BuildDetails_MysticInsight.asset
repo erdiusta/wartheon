@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   belongingCharacter: 3
   characterBuildImage: {fileID: 1079010012, guid: b87206805ea5b754aa677a16066a6002, type: 3}
-  characterBuildName: Arcane Fortitude
+  characterBuildName: Mystic Insight
   characterBuildDetails: Grants +1 Intelligence

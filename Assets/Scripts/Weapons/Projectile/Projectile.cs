@@ -30,15 +30,12 @@ public class Projectile : MonoBehaviour, IFireable
     bool overrideProjectileMovement;
     bool isColliding;
     Vector3 velocity;
-    bool isProjectile = true;
     PolygonCollider2D polygonCollider2D;
-    Rigidbody2D rb2d;
     bool headShotHappened;
     bool isPenetrationArrow;
     float countDown = 3f;
     float blastRadius = 5f;
     Coroutine explosionRoutine;
-    Decoy decoy;
     int damageDone = 0;
     bool lightningStroke;
     bool isHittingWall; // Flag is for wall hit check for penetration arrow
@@ -46,7 +43,6 @@ public class Projectile : MonoBehaviour, IFireable
     // Laser features
     [SerializeField] float angleSpeed = 10f;  // How fast the laser extends
 
-    float currentLength = 0f;  // Tracks how long the laser currently is
     bool isLaserBeam;
     float laserDuration;
     float laserDurationOffset = 0.4f;
@@ -65,8 +61,6 @@ public class Projectile : MonoBehaviour, IFireable
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         polygonCollider2D = GetComponent<PolygonCollider2D>();
-        rb2d = GetComponent<Rigidbody2D>();
-        decoy = GetComponent<Decoy>();
     }
 
     private void OnEnable()

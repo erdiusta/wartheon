@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d6199204684cd648b889173cefd23c8, type: 3}
   m_Name: SoundEffect_PickUpWeapon
   m_EditorClassIdentifier: 
-  soundEffectName: Key Pick Weapon
+  soundEffectName: Weapon Pick Up
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: f1c6508b839d80a4592131f761d35773, type: 3}
+  - {fileID: 8300000, guid: e643fae3462837f44be474b272e05cb0, type: 3}
+  - {fileID: 8300000, guid: 739cfa8d27b220c41aa10c3bf40b3f1f, type: 3}
   soundEffectPitchRandomVariationMin: 0.75
   soundEffectPitchRandomVariationMax: 1.25
-  soundEffectVolume: 0.8
+  soundEffectVolume: 1

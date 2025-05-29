@@ -35,7 +35,7 @@ public class SelectedActiveItem : MonoBehaviour
 
         SetActiveItem(setSelectedActiveItemArgs.activeItem);
 
-        StaticEventHandler.CallItemAddedToActiveItemSlot(setSelectedActiveItemArgs.activeItem.activeItemDetails.activeItemSprite);
+        StaticEventHandler.CallItemAddedToActiveItemSlot(setSelectedActiveItemArgs.activeItem);
         StaticEventHandler.CallActiveUnlockedEvent(setSelectedActiveItemArgs.activeItem.activeItemDetails.activeItemType);
     }
 

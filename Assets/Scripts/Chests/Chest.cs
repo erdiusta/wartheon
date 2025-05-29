@@ -22,7 +22,7 @@ public class Chest : MonoBehaviour, IUsable
     bool isEnabled = false;
 
     GameObject chestItemGameObject;
-    ChestItem chestItem;
+    DropItem chestItem;
     TextMeshPro messageTextTMP;
 
     private void Awake()
@@ -138,7 +138,7 @@ public class Chest : MonoBehaviour, IUsable
     private void InstantiateItem()
     {
         chestItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        chestItem = chestItemGameObject.GetComponent<ChestItem>();
+        chestItem = chestItemGameObject.GetComponent<DropItem>();
     }
 
     public void PlayLock()

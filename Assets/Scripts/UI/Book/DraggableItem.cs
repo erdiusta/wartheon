@@ -1,10 +1,14 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    public static bool IsDragging = false;
+
     [HideInInspector] public ItemGeneric itemGeneric;
     [HideInInspector] public Transform originalParent;
+    [HideInInspector] public RectTransform rectTransform;
     [HideInInspector] public Transform bookStatsPageContainer;
     [HideInInspector] public bool swapCancelled;
     [HideInInspector] public Slot belongingSlot;
@@ -14,9 +18,9 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public bool justMoveNotSwap;
     [HideInInspector] public bool isLockIcon;
     [HideInInspector] public bool dragMainSlotOff;
+    [HideInInspector] public Image image;
 
     CanvasGroup canvasGroup;
-    RectTransform rectTransform;
     Canvas canvas;
     Vector2 originalPosition;
     Player player;
@@ -24,9 +28,10 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     private void Awake()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-        rectTransform = GetComponent<RectTransform>();
-        canvas = GetComponentInParent<Canvas>();
+        if (rectTransform == null) rectTransform = GetComponent<RectTransform>();
+        if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
+        if (image == null) image = GetComponent<Image>();
+        if (canvas == null) canvas = GetComponentInParent<Canvas>();
     }
 
     private void OnEnable()
@@ -52,7 +57,9 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnDrag(PointerEventData eventData)
     {
-        rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        IsDragging = true;
+
+        rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;  // HERE
 
         // Check if the item is dropped on one of the weapon set buttons
         if (eventData.pointerEnter != null && eventData.pointerEnter.CompareTag(Settings.weaponSetButton))
@@ -96,7 +103,11 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         if (contactSuccessful)
         {
-            if (justMoveNotSwap) return; // This is only valid for swaps
+            if (justMoveNotSwap)
+            {
+                IsDragging = false;
+                return; // This is only valid for swaps
+            }
         }
 
         transactionOnTheSameSet = true;
@@ -127,6 +138,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 }
             }
 
+            IsDragging = false;
             return;
         }
 
@@ -181,6 +193,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         contactSuccessful = false;
         justMoveNotSwap = false;
+
+        IsDragging = false;
     }
 
     private void RevertWeaponBackToBelongingSlots()
@@ -200,6 +214,27 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         }
     }
 
+    public void SetDraggableItem(ItemGeneric itemGeneric, Slot belongingSlot, Sprite sprite, ItemSlotStatus itemSlotStatus)
+    {
+        this.itemGeneric = itemGeneric;
+        this.belongingSlot = belongingSlot;
+
+        itemGeneric.itemSlotStatus = itemSlotStatus;
+
+        if (image == null) image = GetComponent<Image>();
+        if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
+        if (rectTransform == null) rectTransform = GetComponent<RectTransform>();
+        if (canvas == null) canvas = GetComponentInParent<Canvas>();
+
+        image.sprite = sprite;
+
+        // Reset transform state
+        transform.localScale = Vector3.one;
+        rectTransform.anchoredPosition = Vector2.zero;
+
+        // Set original parent (for drag return)
+        originalParent = belongingSlot.equippedTransform;
+    }
 
     public Weapon GetDraggedWeapon() => (Weapon)itemGeneric;
 

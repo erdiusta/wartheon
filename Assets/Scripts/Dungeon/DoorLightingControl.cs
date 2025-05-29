@@ -15,7 +15,8 @@ public class DoorLightingControl : MonoBehaviour
     }
 
     /// <summary>
-    /// Fade in door
+    /// 
+    /// in door
     /// </summary>
     public void FadeInDoor(Door door)
     {

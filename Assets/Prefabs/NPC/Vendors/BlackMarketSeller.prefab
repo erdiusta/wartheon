@@ -201,23 +201,23 @@ MonoBehaviour:
   - name: Murn the Whisper
     sentences:
     - Sorry man. I can't make discount.
-  - name: Hermes Haven
+  - name: Murn the Whisper
     sentences:
     - That's all I can say. I wish you good fortune.
-  - name: Hermes Haven
+  - name: Murn the Whisper
     sentences:
     - 'When you press "I" at Stats page, you will I, II, III buttons at bottem-left. '
     - You can drag weapons between them. So you equip off-hand to your desired weapon
       set than current one.
-  - name: Hermes Haven
+  - name: Murn the Whisper
     sentences:
     - When level-up, don't forget to open your Glossary book at Build page and consume
       your Build Point.
-  - name: Hermes Haven
+  - name: Murn the Whisper
     sentences:
     - The more percentage your weapon has an elemental bias, the more elemental damage
       than physical damage.
-  - name: Hermes Haven
+  - name: Murn the Whisper
     sentences:
     - Every mob is more resistant to some elements and vulnerable to others.
   nameText: {fileID: 9155516492479711910}

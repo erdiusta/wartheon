@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d2c8608202c1954d992ac6322264eb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actions: {fileID: -944628639613478452, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   pointerPosition: {fileID: -2020365906605296236, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   gamepadAim: {fileID: 8906811796957083406, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   movement: {fileID: -1868886686725831558, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
@@ -72,7 +73,7 @@ MonoBehaviour:
   levelEightButton: {fileID: 5389635443193591162, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   OKButton: {fileID: -1104434806055026426, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   escapeButton: {fileID: 6101426676883284784, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  uiInteraction: {fileID: -1422576417689974817, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  uiNavigate: {fileID: -1422576417689974817, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   scroll: {fileID: -1453440245202400245, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  cancelButton: {fileID: 7125279607174081996, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  tooltip: {fileID: 1454321611818126562, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   isPressedPreviousFrame: 0

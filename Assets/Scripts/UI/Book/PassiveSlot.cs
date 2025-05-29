@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PassiveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class PassiveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {    
     public PassiveItemDetailsSO passiveItemDetails;
 
@@ -16,6 +16,19 @@ public class PassiveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     }
 
     public void OnPointerExit(PointerEventData eventData)
+    {
+        StaticEventHandler.CallPassiveUnhoveredEvent();
+    }
+
+    public void OnSelect(BaseEventData eventData)
+    {
+        if (passiveUnlocked)
+        {
+            StaticEventHandler.CallPassiveHoveredEvent(passiveItemDetails.passiveItemType);
+        }
+    }
+
+    public void OnDeselect(BaseEventData eventData)
     {
         StaticEventHandler.CallPassiveUnhoveredEvent();
     }

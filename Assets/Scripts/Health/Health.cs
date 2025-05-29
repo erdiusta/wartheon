@@ -244,6 +244,12 @@ public class Health : MonoBehaviour
             }
             else if (enemy != null)
             {
+                // Set health bar as the percentage of health remaining
+                if (GameManager.Instance.healthBarContainer.activeSelf)
+                {
+                    GameManager.Instance.SetHealthBarValue(currentHealth, enemy);
+                }
+
                 if (getHitCoroutine == null)
                 {
                     if (!isBlocking || !isDodging)
@@ -259,15 +265,6 @@ public class Health : MonoBehaviour
                     fxAnimatorPlayed = true; // Reset hit fx animation
 
                     enemy.dropOnDestroy.DropProcess();
-                }
-            }
-
-            if (enemy != null)
-            {
-                // Set health bar as the percentage of health remaining
-                if (GameManager.Instance.healthBarContainer.activeSelf)
-                {
-                    GameManager.Instance.SetHealthBarValue(currentHealth, enemy);
                 }
             }
 
@@ -331,7 +328,7 @@ public class Health : MonoBehaviour
                     // Set health bar as the percentage of health remaining
                     if (GameManager.Instance.healthBarContainer.activeSelf)
                     {
-                        GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)maximumHealth, enemy);
+                        GameManager.Instance.SetHealthBarValue(currentHealth, enemy);
                     }
 
                     if (getHitCoroutine != null)
@@ -662,7 +659,7 @@ public class Health : MonoBehaviour
             // Set health bar as the percentage of health remaining
             if (GameManager.Instance.healthBarContainer.activeSelf)
             {
-                GameManager.Instance.SetHealthBarValue((float)currentHealth / (float)maximumHealth, enemy);
+                GameManager.Instance.SetHealthBarValue(currentHealth, enemy);
             }
         }
 

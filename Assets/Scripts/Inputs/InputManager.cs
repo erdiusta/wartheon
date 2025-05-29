@@ -1,15 +1,15 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
-using UnityEngine.InputSystem.LowLevel;
 
 public class InputManager : SingletonMonobehaviour<InputManager>
 {
-    #region INPUT ACTION REFERENCES
     static InputDevice currentDevice;
-
+    public InputActionAsset actions;
     Vector2 lastMousePosition;
 
+    #region INPUT ACTION REFERENCES
     [Space(10)]
     [Header("INPUT ACTION REFERENCES")]
     #endregion
@@ -44,19 +44,32 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     [Header("UI")]
     public InputActionReference OKButton;
     public InputActionReference escapeButton;
-    public InputActionReference uiInteraction;
+    public InputActionReference uiNavigate;
     public InputActionReference scroll;
-    public InputActionReference cancelButton;
+    public InputActionReference tooltip;
 
     [HideInInspector] public bool isPressedPreviousFrame;
 
     protected override void Awake()
     {
         base.Awake();
+
+        SetUpInputActions();
+    }
+
+    private void OnEnable()
+    {
+        tooltip.action.performed += OnShowTooltipPerformed;
+    }
+
+    private void OnDisable()
+    {
+        tooltip.action.performed -= OnShowTooltipPerformed;
     }
 
     private void Update()
     {
+        // Update the last hovered UI element (under pointer)
         if (Mouse.current != null)
         {
             Vector2 currentMousePosition = HelperUtilities.GetMouseWorldPosition();
@@ -106,6 +119,42 @@ public class InputManager : SingletonMonobehaviour<InputManager>
             if (gamepadUsed)
             {
                 currentDevice = Gamepad.current;
+            }
+        }
+    }
+
+    private void SetUpInputActions()
+    {
+
+    }
+
+    public void OnShowTooltipPerformed(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+
+        if (EventSystem.current.currentSelectedGameObject == null) return;
+
+        Slot currentSlot = EventSystem.current.currentSelectedGameObject.GetComponent<Slot>();
+
+        if (currentSlot != null && currentSlot.equippedTransform.childCount > 0)
+        {
+            if (currentSlot.tooltipPanel != null)
+            {
+                bool isActive = currentSlot.tooltipPanel.gameObject.activeSelf;
+
+                // Toggle tooltip
+                currentSlot.tooltipPanel.gameObject.SetActive(!isActive);
+
+                if (!isActive)
+                {
+                    currentSlot.UpdateTooltipPanelInfo();
+                    Slot.currentOpenTooltip = currentSlot.tooltipPanel.gameObject;
+                }
+                else
+                {
+                    if (Slot.currentOpenTooltip == currentSlot.tooltipPanel)
+                        Slot.currentOpenTooltip = null;
+                }
             }
         }
     }

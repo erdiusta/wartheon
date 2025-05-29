@@ -191,7 +191,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     IEnumerator CooldownRoutine(Weapon currentWeapon)
     {
-        if (currentWeapon.onMainHand)
+        if (currentWeapon.itemSlotStatus == ItemSlotStatus.MainHand)
         {
             cooldownBarParent.gameObject.SetActive(true);
         }

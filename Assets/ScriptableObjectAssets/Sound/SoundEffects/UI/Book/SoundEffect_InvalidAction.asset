@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Invalid Action
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 1848ba12f87be0e4f861aa6dd43d9ebe, type: 3}
+  - {fileID: 8300000, guid: f1367ba30db184e49ac99454d290a4ff, type: 3}
   soundEffectPitchRandomVariationMin: 1
   soundEffectPitchRandomVariationMax: 1
   soundEffectVolume: 0.4

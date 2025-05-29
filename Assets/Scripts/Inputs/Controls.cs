@@ -110,6 +110,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""Switch Weapon Wheel"",
+                    ""type"": ""Value"",
+                    ""id"": ""5bdb3a54-ca13-47ad-9264-437032e0ab2f"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
                     ""name"": ""Gamepad Aim"",
                     ""type"": ""Value"",
                     ""id"": ""b0e106f8-b792-47a6-92a9-2710a8799ff2"",
@@ -119,16 +128,16 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Switch Weapon By Wheel"",
-                    ""type"": ""Value"",
+                    ""name"": ""Switch Weapon Forward"",
+                    ""type"": ""Button"",
                     ""id"": ""998c6550-a423-4173-8e81-4f3b01ffe040"",
-                    ""expectedControlType"": ""Vector2"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Switch Weapon By Button"",
+                    ""name"": ""Switch Weapon Back"",
                     ""type"": ""Button"",
                     ""id"": ""b6ff72ee-f7e9-4c6b-b5af-fcd20a8f14ac"",
                     ""expectedControlType"": """",
@@ -344,7 +353,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -355,7 +364,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -366,7 +375,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -377,62 +386,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Arrow Keys"",
-                    ""id"": ""aa6189b2-b85e-4b77-ba73-1d9537e4e5e4"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""902b3e87-4344-4d8f-8920-dee756966378"",
-                    ""path"": ""<Keyboard>/upArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""fde89b0a-3635-48a2-8201-451d4287e906"",
-                    ""path"": ""<Keyboard>/downArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""dc77f91c-f1d1-4e47-8a9e-fa592bbaa03a"",
-                    ""path"": ""<Keyboard>/leftArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""518d28dd-423f-43a9-b134-650326050201"",
-                    ""path"": ""<Keyboard>/rightArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -454,7 +408,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/leftStick/up"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -465,7 +419,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/leftStick/down"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -476,7 +430,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/leftStick/left"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -487,7 +441,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/leftStick/right"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -498,8 +452,19 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Mouse>/position"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Pointer Position"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b764338d-5f55-4e35-9ec3-c28cbfde052f"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Switch Weapon Wheel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -509,7 +474,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Gamepad Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -520,7 +485,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Normal Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -528,10 +493,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""dd3cf521-b952-4889-a120-5dc8eb3657ee"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Normal Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -539,11 +504,22 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""baae79a6-3d76-42aa-a4d6-f92cd70041e1"",
-                    ""path"": ""<Mouse>/scroll"",
+                    ""path"": ""<Mouse>/forwardButton"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Switch Weapon By Wheel"",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Switch Weapon Forward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e1bc1d2b-6096-4370-baeb-387fe664d7ee"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Switch Weapon Forward"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -553,7 +529,18 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/tab"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Overview Map Full View"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fc2b041c-3445-4683-89f5-dd8f2b477fe2"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Overview Map Full View"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -564,7 +551,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/enter"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Next Level"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -572,10 +559,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9f8467a0-b9a7-4991-9cca-99c3d758a21c"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/start"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Next Level"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -586,7 +573,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Interaction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -597,7 +584,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Interaction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -608,7 +595,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/1"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Special Attack1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -616,10 +603,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""25b979ac-d6bd-424a-899a-6498daa42919"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Special Attack1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -627,10 +614,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9005a554-be1b-4f34-912e-4a59d030f8d8"",
-                    ""path"": ""<Keyboard>/i"",
+                    ""path"": ""<Keyboard>/g"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Book View"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -641,7 +628,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/select"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Book View"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -652,7 +639,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Active Item"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -663,7 +650,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Active Item"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -674,7 +661,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -685,7 +672,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/start"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -696,7 +683,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/2"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Special Attack2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -704,10 +691,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""f3cefd89-5930-4925-bb58-d5c5a49d52ab"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Special Attack2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -718,7 +705,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/3"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Special Attack3"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -726,10 +713,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""3d2259d8-5f33-4bd2-9bcb-679252231133"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Special Attack3"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -740,7 +727,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -751,7 +738,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -868,12 +855,23 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""44b0dd49-62b6-407b-85ea-c315d008269c"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""id"": ""d4c5a85a-8bb4-4966-aa48-873a59148eaf"",
+                    ""path"": ""<Mouse>/backButton"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Switch Weapon By Button"",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Switch Weapon Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""44b0dd49-62b6-407b-85ea-c315d008269c"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Switch Weapon Back"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -884,22 +882,13 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             ""id"": ""5f7d0306-8215-4cf0-8546-7a4aad31aec7"",
             ""actions"": [
                 {
-                    ""name"": ""UIAction"",
+                    ""name"": ""UINavigate"",
                     ""type"": ""Value"",
                     ""id"": ""fcd83a3f-9a8b-44d2-af39-d19475d7328f"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""Cancel"",
-                    ""type"": ""Button"",
-                    ""id"": ""ebfa3c56-0951-4dff-b7a0-016e68576c6c"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 },
                 {
                     ""name"": ""Scroll"",
@@ -927,6 +916,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Tooltip"",
+                    ""type"": ""Button"",
+                    ""id"": ""117c2ea7-a1ad-4b28-95fc-10011c39d362"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -937,7 +935,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""UIAction"",
+                    ""action"": ""UINavigate"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -947,8 +945,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/dpad/up"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""UIAction"",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""UINavigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -958,8 +956,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/dpad/down"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""UIAction"",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""UINavigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -969,8 +967,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/dpad/left"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""UIAction"",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""UINavigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -980,8 +978,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""UIAction"",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""UINavigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -991,19 +989,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""UIAction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""178330f5-de99-4c1f-82f2-446df6afb6f2"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Cancel"",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""UINavigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1013,7 +1000,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Mouse>/scroll"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Scroll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1024,7 +1011,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/enter"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""OK"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1035,7 +1022,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""OK"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1046,34 +1033,74 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Esc"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""39360aef-f21b-4228-a462-fc5acd8cf528"",
-                    ""path"": ""<Gamepad>/start"",
+                    ""id"": ""1e9c8680-6557-483c-bdb9-fc9dc8c4a45e"",
+                    ""path"": ""<Gamepad>/select"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Esc"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9f34c5e7-a3c4-4272-bf1b-e324811d1473"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Tooltip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
             ]
         }
     ],
-    ""controlSchemes"": []
+    ""controlSchemes"": [
+        {
+            ""name"": ""Keyboard&Mouse"",
+            ""bindingGroup"": ""Keyboard&Mouse"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Keyboard>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                },
+                {
+                    ""devicePath"": ""<Mouse>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Gamepad"",
+            ""bindingGroup"": ""Gamepad"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Gamepad>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        }
+    ]
 }");
         // PlayerInput
         m_PlayerInput = asset.FindActionMap("PlayerInput", throwIfNotFound: true);
         m_PlayerInput_Movement = m_PlayerInput.FindAction("Movement", throwIfNotFound: true);
         m_PlayerInput_PointerPosition = m_PlayerInput.FindAction("Pointer Position", throwIfNotFound: true);
+        m_PlayerInput_SwitchWeaponWheel = m_PlayerInput.FindAction("Switch Weapon Wheel", throwIfNotFound: true);
         m_PlayerInput_GamepadAim = m_PlayerInput.FindAction("Gamepad Aim", throwIfNotFound: true);
-        m_PlayerInput_SwitchWeaponByWheel = m_PlayerInput.FindAction("Switch Weapon By Wheel", throwIfNotFound: true);
-        m_PlayerInput_SwitchWeaponByButton = m_PlayerInput.FindAction("Switch Weapon By Button", throwIfNotFound: true);
+        m_PlayerInput_SwitchWeaponForward = m_PlayerInput.FindAction("Switch Weapon Forward", throwIfNotFound: true);
+        m_PlayerInput_SwitchWeaponBack = m_PlayerInput.FindAction("Switch Weapon Back", throwIfNotFound: true);
         m_PlayerInput_OverviewMapFullView = m_PlayerInput.FindAction("Overview Map Full View", throwIfNotFound: true);
         m_PlayerInput_NextLevel = m_PlayerInput.FindAction("Next Level", throwIfNotFound: true);
         m_PlayerInput_Interaction = m_PlayerInput.FindAction("Interaction", throwIfNotFound: true);
@@ -1097,11 +1124,11 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_Parry = m_PlayerInput.FindAction("Parry", throwIfNotFound: true);
         // UIActions
         m_UIActions = asset.FindActionMap("UIActions", throwIfNotFound: true);
-        m_UIActions_UIAction = m_UIActions.FindAction("UIAction", throwIfNotFound: true);
-        m_UIActions_Cancel = m_UIActions.FindAction("Cancel", throwIfNotFound: true);
+        m_UIActions_UINavigate = m_UIActions.FindAction("UINavigate", throwIfNotFound: true);
         m_UIActions_Scroll = m_UIActions.FindAction("Scroll", throwIfNotFound: true);
         m_UIActions_OK = m_UIActions.FindAction("OK", throwIfNotFound: true);
         m_UIActions_Esc = m_UIActions.FindAction("Esc", throwIfNotFound: true);
+        m_UIActions_Tooltip = m_UIActions.FindAction("Tooltip", throwIfNotFound: true);
     }
 
     ~@Controls()
@@ -1185,9 +1212,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private List<IPlayerInputActions> m_PlayerInputActionsCallbackInterfaces = new List<IPlayerInputActions>();
     private readonly InputAction m_PlayerInput_Movement;
     private readonly InputAction m_PlayerInput_PointerPosition;
+    private readonly InputAction m_PlayerInput_SwitchWeaponWheel;
     private readonly InputAction m_PlayerInput_GamepadAim;
-    private readonly InputAction m_PlayerInput_SwitchWeaponByWheel;
-    private readonly InputAction m_PlayerInput_SwitchWeaponByButton;
+    private readonly InputAction m_PlayerInput_SwitchWeaponForward;
+    private readonly InputAction m_PlayerInput_SwitchWeaponBack;
     private readonly InputAction m_PlayerInput_OverviewMapFullView;
     private readonly InputAction m_PlayerInput_NextLevel;
     private readonly InputAction m_PlayerInput_Interaction;
@@ -1229,17 +1257,21 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @PointerPosition => m_Wrapper.m_PlayerInput_PointerPosition;
         /// <summary>
+        /// Provides access to the underlying input action "PlayerInput/SwitchWeaponWheel".
+        /// </summary>
+        public InputAction @SwitchWeaponWheel => m_Wrapper.m_PlayerInput_SwitchWeaponWheel;
+        /// <summary>
         /// Provides access to the underlying input action "PlayerInput/GamepadAim".
         /// </summary>
         public InputAction @GamepadAim => m_Wrapper.m_PlayerInput_GamepadAim;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/SwitchWeaponByWheel".
+        /// Provides access to the underlying input action "PlayerInput/SwitchWeaponForward".
         /// </summary>
-        public InputAction @SwitchWeaponByWheel => m_Wrapper.m_PlayerInput_SwitchWeaponByWheel;
+        public InputAction @SwitchWeaponForward => m_Wrapper.m_PlayerInput_SwitchWeaponForward;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/SwitchWeaponByButton".
+        /// Provides access to the underlying input action "PlayerInput/SwitchWeaponBack".
         /// </summary>
-        public InputAction @SwitchWeaponByButton => m_Wrapper.m_PlayerInput_SwitchWeaponByButton;
+        public InputAction @SwitchWeaponBack => m_Wrapper.m_PlayerInput_SwitchWeaponBack;
         /// <summary>
         /// Provides access to the underlying input action "PlayerInput/OverviewMapFullView".
         /// </summary>
@@ -1356,15 +1388,18 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @PointerPosition.started += instance.OnPointerPosition;
             @PointerPosition.performed += instance.OnPointerPosition;
             @PointerPosition.canceled += instance.OnPointerPosition;
+            @SwitchWeaponWheel.started += instance.OnSwitchWeaponWheel;
+            @SwitchWeaponWheel.performed += instance.OnSwitchWeaponWheel;
+            @SwitchWeaponWheel.canceled += instance.OnSwitchWeaponWheel;
             @GamepadAim.started += instance.OnGamepadAim;
             @GamepadAim.performed += instance.OnGamepadAim;
             @GamepadAim.canceled += instance.OnGamepadAim;
-            @SwitchWeaponByWheel.started += instance.OnSwitchWeaponByWheel;
-            @SwitchWeaponByWheel.performed += instance.OnSwitchWeaponByWheel;
-            @SwitchWeaponByWheel.canceled += instance.OnSwitchWeaponByWheel;
-            @SwitchWeaponByButton.started += instance.OnSwitchWeaponByButton;
-            @SwitchWeaponByButton.performed += instance.OnSwitchWeaponByButton;
-            @SwitchWeaponByButton.canceled += instance.OnSwitchWeaponByButton;
+            @SwitchWeaponForward.started += instance.OnSwitchWeaponForward;
+            @SwitchWeaponForward.performed += instance.OnSwitchWeaponForward;
+            @SwitchWeaponForward.canceled += instance.OnSwitchWeaponForward;
+            @SwitchWeaponBack.started += instance.OnSwitchWeaponBack;
+            @SwitchWeaponBack.performed += instance.OnSwitchWeaponBack;
+            @SwitchWeaponBack.canceled += instance.OnSwitchWeaponBack;
             @OverviewMapFullView.started += instance.OnOverviewMapFullView;
             @OverviewMapFullView.performed += instance.OnOverviewMapFullView;
             @OverviewMapFullView.canceled += instance.OnOverviewMapFullView;
@@ -1445,15 +1480,18 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @PointerPosition.started -= instance.OnPointerPosition;
             @PointerPosition.performed -= instance.OnPointerPosition;
             @PointerPosition.canceled -= instance.OnPointerPosition;
+            @SwitchWeaponWheel.started -= instance.OnSwitchWeaponWheel;
+            @SwitchWeaponWheel.performed -= instance.OnSwitchWeaponWheel;
+            @SwitchWeaponWheel.canceled -= instance.OnSwitchWeaponWheel;
             @GamepadAim.started -= instance.OnGamepadAim;
             @GamepadAim.performed -= instance.OnGamepadAim;
             @GamepadAim.canceled -= instance.OnGamepadAim;
-            @SwitchWeaponByWheel.started -= instance.OnSwitchWeaponByWheel;
-            @SwitchWeaponByWheel.performed -= instance.OnSwitchWeaponByWheel;
-            @SwitchWeaponByWheel.canceled -= instance.OnSwitchWeaponByWheel;
-            @SwitchWeaponByButton.started -= instance.OnSwitchWeaponByButton;
-            @SwitchWeaponByButton.performed -= instance.OnSwitchWeaponByButton;
-            @SwitchWeaponByButton.canceled -= instance.OnSwitchWeaponByButton;
+            @SwitchWeaponForward.started -= instance.OnSwitchWeaponForward;
+            @SwitchWeaponForward.performed -= instance.OnSwitchWeaponForward;
+            @SwitchWeaponForward.canceled -= instance.OnSwitchWeaponForward;
+            @SwitchWeaponBack.started -= instance.OnSwitchWeaponBack;
+            @SwitchWeaponBack.performed -= instance.OnSwitchWeaponBack;
+            @SwitchWeaponBack.canceled -= instance.OnSwitchWeaponBack;
             @OverviewMapFullView.started -= instance.OnOverviewMapFullView;
             @OverviewMapFullView.performed -= instance.OnOverviewMapFullView;
             @OverviewMapFullView.canceled -= instance.OnOverviewMapFullView;
@@ -1554,11 +1592,11 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     // UIActions
     private readonly InputActionMap m_UIActions;
     private List<IUIActionsActions> m_UIActionsActionsCallbackInterfaces = new List<IUIActionsActions>();
-    private readonly InputAction m_UIActions_UIAction;
-    private readonly InputAction m_UIActions_Cancel;
+    private readonly InputAction m_UIActions_UINavigate;
     private readonly InputAction m_UIActions_Scroll;
     private readonly InputAction m_UIActions_OK;
     private readonly InputAction m_UIActions_Esc;
+    private readonly InputAction m_UIActions_Tooltip;
     /// <summary>
     /// Provides access to input actions defined in input action map "UIActions".
     /// </summary>
@@ -1571,13 +1609,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// </summary>
         public UIActionsActions(@Controls wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "UIActions/UIAction".
+        /// Provides access to the underlying input action "UIActions/UINavigate".
         /// </summary>
-        public InputAction @UIAction => m_Wrapper.m_UIActions_UIAction;
-        /// <summary>
-        /// Provides access to the underlying input action "UIActions/Cancel".
-        /// </summary>
-        public InputAction @Cancel => m_Wrapper.m_UIActions_Cancel;
+        public InputAction @UINavigate => m_Wrapper.m_UIActions_UINavigate;
         /// <summary>
         /// Provides access to the underlying input action "UIActions/Scroll".
         /// </summary>
@@ -1590,6 +1624,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UIActions/Esc".
         /// </summary>
         public InputAction @Esc => m_Wrapper.m_UIActions_Esc;
+        /// <summary>
+        /// Provides access to the underlying input action "UIActions/Tooltip".
+        /// </summary>
+        public InputAction @Tooltip => m_Wrapper.m_UIActions_Tooltip;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1616,12 +1654,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_UIActionsActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_UIActionsActionsCallbackInterfaces.Add(instance);
-            @UIAction.started += instance.OnUIAction;
-            @UIAction.performed += instance.OnUIAction;
-            @UIAction.canceled += instance.OnUIAction;
-            @Cancel.started += instance.OnCancel;
-            @Cancel.performed += instance.OnCancel;
-            @Cancel.canceled += instance.OnCancel;
+            @UINavigate.started += instance.OnUINavigate;
+            @UINavigate.performed += instance.OnUINavigate;
+            @UINavigate.canceled += instance.OnUINavigate;
             @Scroll.started += instance.OnScroll;
             @Scroll.performed += instance.OnScroll;
             @Scroll.canceled += instance.OnScroll;
@@ -1631,6 +1666,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Esc.started += instance.OnEsc;
             @Esc.performed += instance.OnEsc;
             @Esc.canceled += instance.OnEsc;
+            @Tooltip.started += instance.OnTooltip;
+            @Tooltip.performed += instance.OnTooltip;
+            @Tooltip.canceled += instance.OnTooltip;
         }
 
         /// <summary>
@@ -1642,12 +1680,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UIActionsActions" />
         private void UnregisterCallbacks(IUIActionsActions instance)
         {
-            @UIAction.started -= instance.OnUIAction;
-            @UIAction.performed -= instance.OnUIAction;
-            @UIAction.canceled -= instance.OnUIAction;
-            @Cancel.started -= instance.OnCancel;
-            @Cancel.performed -= instance.OnCancel;
-            @Cancel.canceled -= instance.OnCancel;
+            @UINavigate.started -= instance.OnUINavigate;
+            @UINavigate.performed -= instance.OnUINavigate;
+            @UINavigate.canceled -= instance.OnUINavigate;
             @Scroll.started -= instance.OnScroll;
             @Scroll.performed -= instance.OnScroll;
             @Scroll.canceled -= instance.OnScroll;
@@ -1657,6 +1692,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Esc.started -= instance.OnEsc;
             @Esc.performed -= instance.OnEsc;
             @Esc.canceled -= instance.OnEsc;
+            @Tooltip.started -= instance.OnTooltip;
+            @Tooltip.performed -= instance.OnTooltip;
+            @Tooltip.canceled -= instance.OnTooltip;
         }
 
         /// <summary>
@@ -1690,6 +1728,32 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="UIActionsActions" /> instance referencing this action map.
     /// </summary>
     public UIActionsActions @UIActions => new UIActionsActions(this);
+    private int m_KeyboardMouseSchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme KeyboardMouseScheme
+    {
+        get
+        {
+            if (m_KeyboardMouseSchemeIndex == -1) m_KeyboardMouseSchemeIndex = asset.FindControlSchemeIndex("Keyboard&Mouse");
+            return asset.controlSchemes[m_KeyboardMouseSchemeIndex];
+        }
+    }
+    private int m_GamepadSchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme GamepadScheme
+    {
+        get
+        {
+            if (m_GamepadSchemeIndex == -1) m_GamepadSchemeIndex = asset.FindControlSchemeIndex("Gamepad");
+            return asset.controlSchemes[m_GamepadSchemeIndex];
+        }
+    }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "PlayerInput" which allows adding and removing callbacks.
     /// </summary>
@@ -1712,6 +1776,13 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPointerPosition(InputAction.CallbackContext context);
         /// <summary>
+        /// Method invoked when associated input action "Switch Weapon Wheel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwitchWeaponWheel(InputAction.CallbackContext context);
+        /// <summary>
         /// Method invoked when associated input action "Gamepad Aim" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
@@ -1719,19 +1790,19 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnGamepadAim(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Switch Weapon By Wheel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Switch Weapon Forward" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSwitchWeaponByWheel(InputAction.CallbackContext context);
+        void OnSwitchWeaponForward(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Switch Weapon By Button" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Switch Weapon Back" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSwitchWeaponByButton(InputAction.CallbackContext context);
+        void OnSwitchWeaponBack(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Overview Map Full View" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1888,19 +1959,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     public interface IUIActionsActions
     {
         /// <summary>
-        /// Method invoked when associated input action "UIAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "UINavigate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnUIAction(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Cancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnCancel(InputAction.CallbackContext context);
+        void OnUINavigate(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Scroll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1922,5 +1986,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnEsc(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Tooltip" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTooltip(InputAction.CallbackContext context);
     }
 }

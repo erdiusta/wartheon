@@ -66,9 +66,10 @@ MonoBehaviour:
   doorOpenCloseSoundEffect: {fileID: 11400000, guid: 58ec3915700e1db40b117db8be25656d, type: 2}
   chestOpen: {fileID: 11400000, guid: 5521acb02156e2d4c968c446b47c06f7, type: 2}
   chestLock: {fileID: 11400000, guid: 73e2c3425ccbe1e4bb80b3e9f40fba60, type: 2}
+  coinPickup: {fileID: 11400000, guid: ad7bf735bb720584ab21c162152dd747, type: 2}
   healthPickup: {fileID: 11400000, guid: 4638ce053d31bdd4595c3991e645fac9, type: 2}
+  itemPickup: {fileID: 11400000, guid: 0c046751a4ee285408725ea69f299bed, type: 2}
   weaponPickup: {fileID: 11400000, guid: 89c2519ed7c7c0546a8b53183833b881, type: 2}
-  ammoPickup: {fileID: 11400000, guid: ac672474329ba2c44bac9040ffa01664, type: 2}
   dimmedMaterial: {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
   litMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   variableLitShader: {fileID: -6465566751694194690, guid: 8b29df74515c0774885e41dce7f3e546, type: 3}

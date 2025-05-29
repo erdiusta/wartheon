@@ -24,6 +24,13 @@ public enum TutorialPhase
     FinishTutorial
 }
 
+public enum TooltipSource
+{
+    None,
+    Pointer,
+    Proximity
+}
+
 
 public enum Orientation
 {
@@ -502,6 +509,16 @@ public enum BookPage
     Build
 }
 
+public enum ItemSlotStatus
+{
+    None,
+    MainHand,
+    OffHand,
+    Active,
+    Passive,
+    Inventory
+}
+
 public enum PassiveItemSlotName
 {
     None,
@@ -521,16 +538,23 @@ public enum SlotType
     Active,
     WeaponMainHand,
     WeaponOffHand,
-    None
+    None,
+    Drop
 }
 
 public enum ItemSwapPos
 {
     None,
+    DragPassiveInventorySlotPassive,
+    DragPassiveSlotPassiveInventory,
     DragMainSlotMain,
     DragMainSlotOff,
     DragOffSlotMain,
-    DragOffSlotOff
+    DragOffSlotOff,
+    DragMainSlotInventory,
+    DragOffSlotInventory,
+    DragInventorySlotMain,
+    DragInventorySlotOff
 }
 
 public enum PopUpReason
@@ -548,7 +572,8 @@ public enum PopUpReason
     CantMoveYourMainHandWithEmptyOffHand,
     YourHandsFull,
     DontMeetRequiredPrimaryStats,
-    BobbyPinFailed
+    BobbyPinFailed,
+    SummonerFailed
 }
 
 public enum MeleeHand

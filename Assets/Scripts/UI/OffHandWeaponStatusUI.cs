@@ -250,7 +250,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     IEnumerator CooldownRoutine(Weapon currentWeapon)
     {
-        if (!currentWeapon.onMainHand)
+        if (currentWeapon.itemSlotStatus == ItemSlotStatus.OffHand)
         {
             cooldownBarParent.gameObject.SetActive(true);
         }
