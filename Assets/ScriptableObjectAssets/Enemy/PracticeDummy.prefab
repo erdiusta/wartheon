@@ -191,7 +191,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -257139871
   m_SortingLayer: 3
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 986175181, guid: 16fa578641c429e47b532271f1c113f4, type: 3}
   m_Color: {r: 0.9529412, g: 1, b: 0.46666667, a: 1}
   m_FlipX: 0
@@ -313,6 +313,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitFXAnimator: {fileID: 0}
   currentHealth: 0
+  maximumHealth: 0
   isDamageable: 1
   enemy: {fileID: 0}
   isBlocking: 0

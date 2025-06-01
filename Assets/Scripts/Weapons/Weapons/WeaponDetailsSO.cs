@@ -338,11 +338,11 @@ public class PrimaryStats
     /// <returns>True if the player meets the requirements, otherwise false.</returns>
     public bool MeetsRequirements(Player player)
     {
-        return player.currentStrengthValue >= strength &&
-               player.currentDexterityValue >= dexterity &&
-               player.currentConstitutionValue >= constitution &&
-               player.currentIntelligenceValue >= intelligence &&
-               player.currentAgilityValue >= agility;
+        return player.CurrentStrengthValue >= strength &&
+               player.CurrentDexterityValue >= dexterity &&
+               player.CurrentConstitutionValue >= constitution &&
+               player.CurrentIntelligenceValue >= intelligence &&
+               player.CurrentAgilityValue >= agility;
     }
 }
 

@@ -151,6 +151,20 @@ public class HealthEvent : MonoBehaviour
         OnGemSkinSpecialMoveEnded?.Invoke(this);
     }
 
+    public event Action<HealthEvent> OnLightFeetActive;
+
+    public void CallGetLightFeetEvent()
+    {
+        OnLightFeetActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnLightFeetWoreOff;
+
+    public void CallLightFeetWoreOffEvent()
+    {
+        OnLightFeetWoreOff?.Invoke(this);
+    }
+
     public event Action<HealthEvent> OnParried;
 
     public void CallParryEvent()

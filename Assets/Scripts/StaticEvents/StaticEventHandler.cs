@@ -1,7 +1,6 @@
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
-using System.Security.Policy;
-using UnityEditor;
 using UnityEngine;
 
 public static class StaticEventHandler
@@ -76,6 +75,23 @@ public static class StaticEventHandler
     public static void CallRoomChangedEvent(Room room)
     {
         OnRoomChanged?.Invoke(new RoomChangedEventArgs { room = room });
+    }
+
+    // Npc interaction start
+    public static event Action<NpcInteractionStartedArgs> OnNPCInteractionStarted;
+
+    public static void CallNPCInteractionStartedEvent(NpcType npcType)
+    {
+        OnNPCInteractionStarted?.Invoke(new NpcInteractionStartedArgs { npcType = npcType });
+    }
+
+    // Npc interaction end
+    public static event Action OnNPCInteractionEnded;
+
+
+    public static void CallNPCInteractionEndedEvent()
+    {
+        OnNPCInteractionEnded?.Invoke();
     }
 
     // All enemies cleared in the room
@@ -405,9 +421,19 @@ public static class StaticEventHandler
     }
 }
 
+public class GameplayUToggledEventArgs : EventArgs
+{
+    public bool isActive = false;
+}
+
 public class RoomChangedEventArgs : EventArgs
 {
     public Room room;
+}
+
+public class NpcInteractionStartedArgs : EventArgs
+{
+    public NpcType npcType;
 }
 
 public class RoomEnemiesDefeatedArgs : EventArgs

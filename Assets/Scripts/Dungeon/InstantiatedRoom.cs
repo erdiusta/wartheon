@@ -109,35 +109,35 @@ public class InstantiatedRoom : MonoBehaviour
 
         foreach (Tilemap tilemap in tilemaps)
         {
-            if (tilemap.gameObject.tag == "groundTilemap")
+            if (tilemap.gameObject.tag == Settings.groundTilemap)
             {
                 groundTilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == "decoration1Tilemap")
+            else if (tilemap.gameObject.tag == Settings.decoration1Tilemap)
             {
                 decoration1Tilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == "decoration2Tilemap")
+            else if (tilemap.gameObject.tag == Settings.decoration2Tilemap)
             {
                 decoration2Tilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == "sideTilemap")
+            else if (tilemap.gameObject.tag == Settings.sideTilemap)
             {
                 sideTilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == "frontTilemap")
+            else if (tilemap.gameObject.tag == Settings.frontTilemap)
             {
                 frontTilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == "collisionTilemap")
+            else if (tilemap.gameObject.tag == Settings.collisionTilemap)
             {
                 collisionTilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == "poolTilemap")
+            else if (tilemap.gameObject.tag == Settings.poolTilemap)
             {
                 poolTilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == "minimapTilemap")
+            else if (tilemap.gameObject.tag == Settings.minimapTilemap)
             {
                 minimapTilemap = tilemap;
             }

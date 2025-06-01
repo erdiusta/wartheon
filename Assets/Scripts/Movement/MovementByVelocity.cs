@@ -48,12 +48,6 @@ public class MovementByVelocity : MonoBehaviour
         StaticEventHandler.OnRoomChanged -= NeutralizeStatus;
     }
 
-    private void Start()
-    {
-        playerStartingSpeed = movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
-        moveSpeed = movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
-    }
-
     private void FixedUpdate()
     {
         Move();
@@ -148,7 +142,7 @@ public class MovementByVelocity : MonoBehaviour
         player.animator.SetBool(Settings.isStunned, false);
 
         // Reset stun status and allow other stun coroutines to be started
-        moveSpeed = movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
+        moveSpeed = movementDetails.GetBaseMoveSpeed() + player.CurrentAgilityValue * 0.25f;
         player.moveStatus = MoveStatus.Idle;
         stunPlayerRoutine = null;
     }
@@ -236,7 +230,7 @@ public class MovementByVelocity : MonoBehaviour
 
         yield return new WaitForSeconds(knockbackTimeWeight);
 
-        moveSpeed = movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
+        moveSpeed = movementDetails.GetBaseMoveSpeed() + player.CurrentAgilityValue * 0.25f;
         player.moveStatus = MoveStatus.Idle;
     }
 

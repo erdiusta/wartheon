@@ -1,14 +1,11 @@
-using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.XR;
 
 public class DamageDisplay : MonoBehaviour
 {
     [SerializeField] TMP_Text damageDisplayTextPrefab; // Prefab for damage text
     [SerializeField] Transform damageTextSpawnPoint; // The point where the damage text will appear
-    [SerializeField] Transform criticalTextSpawnPoint; // The point where the critical hit text will appear
-    [SerializeField] Transform headShotTextSpawnPoint; // The point where the head shot text will appear
+    [SerializeField] Transform textSpawnPoint; // The point where the critical hit text will appear
 
     [SerializeField] Color criticalHitColor = new Color(1, 0.93f, 0.59f);
     [SerializeField] Color headShotColor = Color.red;
@@ -107,7 +104,7 @@ public class DamageDisplay : MonoBehaviour
     /// </summary>
     private void DisplayCriticalDamage()
     {
-        var criticalText = Instantiate(damageDisplayTextPrefab, criticalTextSpawnPoint.position, Quaternion.identity, criticalTextSpawnPoint);
+        var criticalText = Instantiate(damageDisplayTextPrefab, textSpawnPoint.position, Quaternion.identity, textSpawnPoint);
 
         criticalText.color = criticalHitColor;
         criticalText.transform.localPosition += new Vector3(0f, 0f, 0f);
@@ -121,10 +118,10 @@ public class DamageDisplay : MonoBehaviour
     /// </summary>
     private void DisplayHeadShot()
     {
-        var headShotText = Instantiate(damageDisplayTextPrefab, headShotTextSpawnPoint.position, Quaternion.identity, headShotTextSpawnPoint);
+        var headShotText = Instantiate(damageDisplayTextPrefab, textSpawnPoint.position, Quaternion.identity, textSpawnPoint);
 
-        headShotText.transform.localPosition += new Vector3(0f, 0f, 0f);
         headShotText.color = headShotColor;
+        headShotText.transform.localPosition += new Vector3(0f, 0f, 0f);
 
         headShotText.text = "HEAD SHOT";
         AnimateText(headShotText, headShotDuration);

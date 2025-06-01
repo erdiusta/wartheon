@@ -9,6 +9,7 @@ public class Health : MonoBehaviour
     public Animator hitFXAnimator;
 
     [HideInInspector] public int currentHealth;
+    [HideInInspector] public int maximumHealth;
     [HideInInspector] public bool isDamageable = true;
     [HideInInspector] public Enemy enemy;
     [HideInInspector] public Coroutine getHitCoroutine;
@@ -19,7 +20,6 @@ public class Health : MonoBehaviour
     [HideInInspector] public const float spriteFlashInterval = 0.1f;
     [HideInInspector] public bool fxAnimatorPlayed;
 
-    int maximumHealth;
     HealthEvent healthEvent;
     Player player;
     Coroutine immunityCoroutine;

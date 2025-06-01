@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Decoy Hit
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 07226cae54270364ea899deb6a747e2e, type: 3}
+  - {fileID: 8300000, guid: 3758718a48e28be4491978cce9e6284e, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 1

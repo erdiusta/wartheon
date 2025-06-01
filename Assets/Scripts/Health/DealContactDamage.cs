@@ -301,7 +301,8 @@ public class DealContactDamage : MonoBehaviour
                 }
 
                 player.armorStatus = ArmorStatus.Acid;
-                player.currentPhysicalResistanceValue = (float)Math.Round(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.acidEfficiency * enemy.currentPhysicalResistance, 2);
+                player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue -  enemy.enemyDetails.acidEfficiency, 2);
+                player.currentPhysicalResistanceValue = Mathf.Clamp(player.currentPhysicalResistanceValue, player.currentPhysicalResistanceValue, 1f);
                 player.healthEvent.CallGetAcidEvent();
             }
         }

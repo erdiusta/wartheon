@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Hourglass Pulse
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 3a78f8aaa23f9dd4f9588e5b572314b2, type: 3}
+  - {fileID: 8300000, guid: 03bc143e0aaaa344894d6f4ada126d4d, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 1

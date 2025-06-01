@@ -67,7 +67,7 @@ public class SpecialMoveUI : MonoBehaviour
 
             player.specialMoveOneCooldownTimer += Time.deltaTime;
 
-            specialMoveOneDuration = player.playerDetails.specialMoveOneDuration;
+            specialMoveOneDuration = player.playerDetails.specialMoveOneEffectiveDuration;
 
             if (specialMoveOneDuration > 0)
             {
@@ -94,17 +94,17 @@ public class SpecialMoveUI : MonoBehaviour
             {
                 case Character.Astraeus:
                     // Block Skill
-                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoDuration * (1 + player.blockSkillAdditionalDurationModifier);
+                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoEffectiveDuration * (1 + player.blockSkillAdditionalDurationModifier);
                     break;
                 case Character.Erebus:
                     break;
                 case Character.Orion:
                     // Lightfeet Skill
-                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoDuration * (1 + player.additionalLightfeetSkillDurationModifier);
+                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoEffectiveDuration * (1 + player.additionalLightfeetSkillDurationModifier);
                     break;
                 case Character.Lyrisa:
                     // Barrier Skill
-                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoDuration * (1 + player.barrierSkillAdditionalDurationModifier);
+                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoEffectiveDuration * (1 + player.barrierSkillAdditionalDurationModifier);
                     break;
             }
 
@@ -126,7 +126,10 @@ public class SpecialMoveUI : MonoBehaviour
                     case Character.Orion:
                         if (player.specialMoveTwoDurationTimer >= specialMoveTwoDuration && !isSkillActive)
                         {
-                            player.movementByVelocity.moveSpeed -= 1f;
+                            player.additionalSpeedModifier -= 1f;
+                            player.UpdateSpeedValue();
+                            StaticEventHandler.CallPrimaryStatsChangedEvent();
+                            player.healthEvent.CallLightFeetWoreOffEvent();
                             isSkillActive = true;
                         }
                         break;
@@ -146,7 +149,7 @@ public class SpecialMoveUI : MonoBehaviour
                 // Ensure that the timer is not exceeding the duration
                 player.specialMoveTwoOnCooldown = false;
                 player.specialMoveTwoCooldownTimer = 0f;
-                isSkillActive = true;
+                isSkillActive = false;
                 player.specialMoveTwoDurationTimer = 0f;
                 ResetSpecialMoveCooldownSlot(2);
             }
@@ -158,7 +161,7 @@ public class SpecialMoveUI : MonoBehaviour
 
             player.specialMoveThreeCooldownTimer += Time.deltaTime;
 
-            specialMoveThreeDuration = player.playerDetails.specialMoveThreeDuration;
+            specialMoveThreeDuration = player.playerDetails.specialMoveThreeEffectiveDuration;
 
             if (specialMoveThreeDuration > 0)
             {

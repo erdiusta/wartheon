@@ -51,6 +51,7 @@ public enum Character
 
 public enum NpcType
 {
+    None,
     Vendor,
     BlackMarketSeller,
     Gambler

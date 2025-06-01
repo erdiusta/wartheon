@@ -146,10 +146,6 @@ public class GameResources : MonoBehaviour
     #endregion
     public Material litMaterial;
     #region Tooltip
-    [Tooltip("Populate with the Variable Lit Shader")]
-    #endregion
-    public Shader variableLitShader;
-    #region Tooltip
     [Tooltip("Populate with the Materialize Shader")]
     #endregion
     public Shader materializeShader;
@@ -249,7 +245,6 @@ public class GameResources : MonoBehaviour
         HelperUtilities.ValidateCheckNullValue(this, nameof(weaponPickup), weaponPickup);
         HelperUtilities.ValidateCheckNullValue(this, nameof(litMaterial), litMaterial);
         HelperUtilities.ValidateCheckNullValue(this, nameof(dimmedMaterial), dimmedMaterial);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(variableLitShader), variableLitShader);
         HelperUtilities.ValidateCheckNullValue(this, nameof(materializeShader), materializeShader);
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(enemyUnwalkableCollisionTilesArray), enemyUnwalkableCollisionTilesArray);
         HelperUtilities.ValidateCheckNullValue(this, nameof(preferredEnemyPathTile), preferredEnemyPathTile);

@@ -2376,7 +2376,6 @@ GameObject:
   m_Component:
   - component: {fileID: 148741159}
   - component: {fileID: 148741160}
-  - component: {fileID: 148741161}
   m_Layer: 5
   m_Name: GemepadRebindingsMenu
   m_TagString: Untagged
@@ -2418,19 +2417,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputActions: {fileID: -944628639613478452, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   _targetControlScheme: Gamepad
---- !u!114 &148741161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 148741158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b6c2da2db9374dada6761b5e35121c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  actions: {fileID: 0}
 --- !u!1 &163357316
 GameObject:
   m_ObjectHideFlags: 0
@@ -3876,7 +3862,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1185538350}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.49230775
+  m_Size: 0.4923077
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -10697,7 +10683,6 @@ GameObject:
   m_Component:
   - component: {fileID: 838278789}
   - component: {fileID: 838278790}
-  - component: {fileID: 838278791}
   m_Layer: 5
   m_Name: KeyboardRebindingsMenu
   m_TagString: Untagged
@@ -10739,19 +10724,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputActions: {fileID: -944628639613478452, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   _targetControlScheme: Keyboard&Mouse
---- !u!114 &838278791
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 838278788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b6c2da2db9374dada6761b5e35121c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  actions: {fileID: 0}
 --- !u!1 &849764402
 GameObject:
   m_ObjectHideFlags: 0
@@ -11033,9 +11005,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.7
-    width: 0.3111566
-    height: 0.3109091
+    y: 0
+    width: 0.99986535
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -16948,7 +16920,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Keyboard/Mouse
+  m_text: Keyboard&Mouse
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
   m_sharedMaterial: {fileID: -6719382211919318480, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
@@ -17818,7 +17790,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1963726722}
   m_HandleRect: {fileID: 1963726721}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 1.0000004
   m_Size: 0.71875
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -20569,7 +20541,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: KEYBOARD/MOUSE
+  m_text: KEYBOARD&MOUSE
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
   m_sharedMaterial: {fileID: -6719382211919318480, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
@@ -22107,7 +22079,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 162.5, y: 80.5}
+  m_AnchoredPosition: {x: 162, y: 35}
   m_SizeDelta: {x: 128.837, y: 20.41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1669819046
@@ -22132,7 +22104,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Cheat Activated
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d9190846f589a2b45bee7e0a202a2f87, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
   m_sharedMaterial: {fileID: -3126052078805161472, guid: d9190846f589a2b45bee7e0a202a2f87, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -22198,7 +22170,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1669819047

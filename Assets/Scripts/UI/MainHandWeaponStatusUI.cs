@@ -119,6 +119,21 @@ public class MainHandWeaponStatusUI : MonoBehaviour
         WeaponFired(weaponFiredEventArgs.weapon);
     }
 
+    IEnumerator FadeCanvasGroup(CanvasGroup cg, float targetAlpha, float duration)
+    {
+        float startAlpha = cg.alpha;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            cg.alpha = Mathf.Lerp(startAlpha, targetAlpha, time / duration);
+            time += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        cg.alpha = targetAlpha;
+    }
+
     /// <summary>
     /// Weapon fired update UI
     /// </summary>
@@ -154,6 +169,38 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     private void UpdateActiveWeaponImage(WeaponDetailsSO weaponDetails)
     {
         weaponImage.sprite = weaponDetails.weaponFrontSprite;
+    }
+
+    /// <summary>
+    /// Reset the weapon cooldown bar on the UI
+    /// </summary>
+    private void ResetWeaponCooldownBar(Weapon currentWeapon, bool stoppedPrematurely = false)
+    {
+        if (currentWeapon.weaponDetails.isMeleeWeapon)
+        {
+            cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
+        }
+        else if (currentWeapon.weaponDetails.weaponClass == WeaponClass.Bow || currentWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
+        {
+            cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalBowAttackCoolDownModifier));
+        }
+        else
+        {
+            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration;
+        }
+
+
+        // Set bar scale to 1
+        barImage.transform.localScale = new Vector3(1f, 1f, 1f);
+
+        if (!stoppedPrematurely)
+        {
+            barImage.color = new Color(1f, 1f, 1f, 0f);
+        }
+        else
+        {
+            player.activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged = false;
+        }
     }
 
     /// <summary>
@@ -230,38 +277,6 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     private void MakeWeaponInactive()
     {
         weaponImage.sprite = noWeaponSprite;
-    }
-
-    /// <summary>
-    /// Reset the weapon cooldown bar on the UI
-    /// </summary>
-    private void ResetWeaponCooldownBar(Weapon currentWeapon, bool stoppedPrematurely = false)
-    {
-        if (currentWeapon.weaponDetails.isMeleeWeapon)
-        {
-            cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
-        }
-        else if (currentWeapon.weaponDetails.weaponClass == WeaponClass.Bow || currentWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
-        {
-            cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalBowAttackCoolDownModifier));
-        }
-        else
-        {
-            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration;
-        }
-
-
-        // Set bar scale to 1
-        barImage.transform.localScale = new Vector3(1f, 1f, 1f);
-
-        if (!stoppedPrematurely)
-        {
-            barImage.color = new Color(1f, 1f, 1f, 0f);
-        }
-        else
-        {
-            player.activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged = false;
-        }
     }
 
     #region Validation

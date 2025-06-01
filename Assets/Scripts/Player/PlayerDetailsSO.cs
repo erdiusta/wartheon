@@ -108,10 +108,11 @@ public class PlayerDetailsSO : ScriptableObject
     public SoundEffectSO parrySoundEffect;
 
     #region SPECIAL MOVE SETTINGS
+    [Header("SPECIAL MOVE SETTINGS")]
+    [Header("Special Move One Details")]
     [Space(10)]
-    [Header("Special Move Settings")]
     #endregion
-    #region Tooltip
+    #region Special Move One
     [Tooltip("Special move image")]
     #endregion
     public Sprite specialMoveOneImage;
@@ -124,10 +125,13 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public float specialMoveOneCooldownDuration = 20f;
     #region
-    [Tooltip("Spacial move duration")]
+    [Tooltip("Spacial move effective duration")]
     #endregion
-    public float specialMoveOneDuration = 0f;
-    #region Tooltip
+    public float specialMoveOneEffectiveDuration = 0f;
+
+    #region Special Move Two
+    [Header("Special Move Two Details")]
+    [Space(10)]
     [Tooltip("Special move image")]
     #endregion
     public Sprite specialMoveTwoImage;
@@ -140,10 +144,13 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public float specialMoveTwoCooldownDuration = 20f;
     #region
-    [Tooltip("Spacial move duration")]
+    [Tooltip("Spacial move effective duration")]
     #endregion
-    public float specialMoveTwoDuration = 0f;
-    #region Tooltip
+    public float specialMoveTwoEffectiveDuration = 0f;
+
+    #region Special Move Three
+    [Header("Special Move Three Details")]
+    [Space(10)]
     [Tooltip("Special move image")]
     #endregion
     public Sprite specialMoveThreeImage;
@@ -156,10 +163,13 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public float specialMoveThreeCooldownDuration = 20f;
     #region
-    [Tooltip("Spacial move duration")]
+    [Tooltip("Spacial move effective duration")]
     #endregion
-    public float specialMoveThreeDuration = 0f;
-    #region
+    public float specialMoveThreeEffectiveDuration = 0f;
+
+    #region Misc
+    [Space(10)]
+    [Header("Misc")]
     [Tooltip("Cataclysm meteor prefab")]
     #endregion
     public ProjectileDetailsSO cataclysmMeteor;

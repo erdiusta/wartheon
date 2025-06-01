@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be803c3d22954c743afeeadf2eb708fd, type: 3}
   m_Name: MovementDetails_Lyrisa
   m_EditorClassIdentifier: 
-  baseMoveSpeed: 4.75
-  rollSpeed: 5
-  rollDistance: 6
-  rollCooldownTime: 0.11
+  baseMoveSpeed: 4.25
+  rollSpeed: 6.75
+  rollDistance: 4.5
+  rollCooldownTime: 0.2

@@ -147,6 +147,17 @@ public static class Settings
     public const float enemyChasePathRebuildCooldown = 0.3f;
     #endregion
 
+    #region TILEMAP PARAMETERS
+    public const string groundTilemap = "groundTilemap";
+    public const string decoration1Tilemap = "decoration1Tilemap";
+    public const string decoration2Tilemap = "decoration2Tilemap";
+    public const string sideTilemap = "sideTilemap";
+    public const string frontTilemap = "frontTilemap";
+    public const string collisionTilemap = "collisionTilemap";
+    public const string poolTilemap = "poolTilemap";
+    public const string minimapTilemap = "minimapTilemap";
+    #endregion
+
     #region ENEMY PARAMETERS
     public const int defaultEnemyHealth = 20;
     #endregion

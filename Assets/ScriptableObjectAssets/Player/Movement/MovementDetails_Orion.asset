@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be803c3d22954c743afeeadf2eb708fd, type: 3}
   m_Name: MovementDetails_Orion
   m_EditorClassIdentifier: 
-  baseMoveSpeed: 4.75
-  rollSpeed: 7
-  rollDistance: 8
-  rollCooldownTime: 0.14
+  baseMoveSpeed: 5.25
+  rollSpeed: 8.25
+  rollDistance: 5.5
+  rollCooldownTime: 0.2

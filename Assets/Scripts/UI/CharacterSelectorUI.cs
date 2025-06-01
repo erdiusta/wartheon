@@ -83,6 +83,14 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         astraeusSpotlight.gameObject.SetActive(true);
     }
 
+    private void Update()
+    {
+        if (InputManager.Instance.escapeButton.action.WasPressedThisFrame())
+        {
+            BackButton();
+        }
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         OpenCharacterTooltip(eventData);

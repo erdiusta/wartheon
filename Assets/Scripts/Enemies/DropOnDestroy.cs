@@ -14,20 +14,20 @@ public class DropOnDestroy : MonoBehaviour
     int dropSpawnChanceMin;
     int dropSpawnChanceMax;
 
-    //int numberOfItemsToSpawnMin;
-    //int numberOfItemsToSpawnMax;
     WeaponDetailsSO weaponDetails;
     PassiveItemDetailsSO primaryPassiveItemDetails;
     PassiveItemDetailsSO secondaryPassiveItemDetails;
     ActiveItemDetailsSO activeItemDetails;
-    DropItem chestItem;
+    DropItem dropItem;
     Enemy enemy;
     Player player;
+    Room currentRoom;
 
     private void Start()
     {
         enemy = GetComponent<Enemy>();
         player = GameManager.Instance.GetPlayer();
+        currentRoom = GameManager.Instance.GetCurrentRoom();
 
         SetDropList();
     }
@@ -47,10 +47,10 @@ public class DropOnDestroy : MonoBehaviour
             primaryPassiveItemDetails = GetPrimaryPassiveItemDetailsToSpawn(primaryPassiveItemNum);
 
             InstantiatePassiveItem(primaryPassiveItemDetails);
-            chestItem.transform.SetParent(null);
+            dropItem.transform.SetParent(null);
 
             Vector3 spawnPointDeviation = new Vector3(Random.Range(-2, 2), Random.Range(-2, 2), 0);
-            chestItem.transform.position += spawnPointDeviation;
+            dropItem.transform.position += spawnPointDeviation;
         }
 
         // OTHER DROPS PHASE IF HAS
@@ -77,19 +77,19 @@ public class DropOnDestroy : MonoBehaviour
         if (weaponDetails != null)
         {
             InstantiateWeaponItem(weaponDetails);
-            chestItem.transform.SetParent(null);
+            dropItem.transform.SetParent(currentRoom.instantiatedRoom.transform);
         }
 
         if (secondaryPassiveItemDetails != null)
         {
             InstantiatePassiveItem(secondaryPassiveItemDetails);
-            chestItem.transform.SetParent(null);
+            dropItem.transform.SetParent(currentRoom.instantiatedRoom.transform);
         }
 
         if (activeItemDetails != null)
         {
             InstantiateActiveItem(activeItemDetails);
-            chestItem.transform.SetParent(null);
+            dropItem.transform.SetParent(currentRoom.instantiatedRoom.transform);
         }
     }
 
@@ -152,8 +152,8 @@ public class DropOnDestroy : MonoBehaviour
     private void InstantiateChestItem()
     {
         dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        chestItem = dropItemGameObject.GetComponent<DropItem>();
-        chestItem.droppedByPlayer = false;
+        dropItem = dropItemGameObject.GetComponent<DropItem>();
+        dropItem.droppedByPlayer = false;
 
         // Set collider to true
         dropItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
@@ -164,13 +164,13 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails)
     {
-        if (chestItem == null) return;
+        if (dropItem == null) return;
 
-        chestItem.hasWeaponDrop = true;
+        dropItem.hasWeaponDrop = true;
         Weapon weapon = new Weapon();
         weapon.weaponDetails = weaponDetails;
 
-        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position);
+        dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position);
     }
 
     /// <summary>
@@ -178,21 +178,21 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails)
     {
-        if (chestItem == null) return;
+        if (dropItem == null) return;
 
         if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
         {
-            chestItem.hasPrimaryPassiveDrop = true;
+            dropItem.hasPrimaryPassiveDrop = true;
         }
         else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
         {
-            chestItem.hasSecondaryPassiveDrop = true;
+            dropItem.hasSecondaryPassiveDrop = true;
         }
 
         PassiveItem passiveItem = new PassiveItem();
         passiveItem.passiveItemDetails = passiveItemDetails;
 
-        chestItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position);
+        dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position);
     }
 
     /// <summary>
@@ -200,13 +200,13 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiateActiveItem(ActiveItemDetailsSO activeItemDetails)
     {
-        if (chestItem == null) return;
+        if (dropItem == null) return;
 
-        chestItem.hasActiveDrop = true;
+        dropItem.hasActiveDrop = true;
         ActiveItem activeItem = new ActiveItem();
         activeItem.activeItemDetails = activeItemDetails;
 
-        chestItem.Initialize(activeItem, activeItemDetails.activeItemSprite, transform.position);
+        dropItem.Initialize(activeItem, activeItemDetails.activeItemSprite, transform.position);
     }
 
     /// <summary>

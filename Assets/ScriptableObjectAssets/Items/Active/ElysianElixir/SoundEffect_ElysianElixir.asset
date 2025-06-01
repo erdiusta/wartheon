@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Elysian Elixir Drink
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: af65d2ea1bce8384cbb69c4e37f23de2, type: 3}
+  - {fileID: 8300000, guid: 7d5172e4f0497f546a693dcd2d1c465c, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 1

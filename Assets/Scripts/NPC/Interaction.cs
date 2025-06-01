@@ -6,9 +6,12 @@ using UnityEngine;
 public class Interaction : MonoBehaviour
 {
     public List<Dialogue> dialogues;
-    public TextMeshPro nameText;
-    public TextMeshPro dialogueText;
-    public GameObject dialoguePanel;
+
+    TextMeshProUGUI nameText;
+    TextMeshProUGUI dialogueText;
+    GameObject topLetterboxPanel;
+    GameObject bottomLetterboxPanel;
+
     public Queue<string> sentences;
     bool dialogueStarted = false;
 
@@ -16,6 +19,19 @@ public class Interaction : MonoBehaviour
 
     private void OnEnable()
     {
+        if (CinematicSceneManager.Instance != null) // Cinmatic talk
+        {
+            nameText = CinematicSceneManager.Instance.nameText;
+            dialogueText = CinematicSceneManager.Instance.dialogueText;
+        }
+        else
+        {
+            topLetterboxPanel = GameManager.Instance.topBar.gameObject;
+            bottomLetterboxPanel = GameManager.Instance.bottomBar.gameObject;
+            nameText = topLetterboxPanel.GetComponentInChildren<TextMeshProUGUI>();
+            dialogueText = bottomLetterboxPanel.GetComponentInChildren<TextMeshProUGUI>();
+        }
+
         StaticDialogueHandler.OnInsufficientFunds += StaticDialogueHandler_OnInsufficientFunds;
         StaticDialogueHandler.OnGambleLost += StaticDialogueHandler_OnGambleLost;
         StaticDialogueHandler.OnGambleWon += StaticDialogueHandler_OnGambleWon;
@@ -37,7 +53,6 @@ public class Interaction : MonoBehaviour
     private void Start()
     {
         sentences = new Queue<string>();
-        nameText.color = Color.magenta;
 
         npc = GetComponent<NPC>();
     }
@@ -99,7 +114,6 @@ public class Interaction : MonoBehaviour
     {
         if (!dialogueStarted)
         {
-            dialoguePanel.SetActive(true);
             sentences.Clear();
             dialogueStarted = true;
 
@@ -109,7 +123,7 @@ public class Interaction : MonoBehaviour
             }
         }
 
-        nameText.text = dialogue.name;
+        nameText.text = dialogue.name; // Title text
 
         if (moldranTalk)
         {
@@ -126,16 +140,22 @@ public class Interaction : MonoBehaviour
     /// </summary>
     private IEnumerator AutoPlayDialogueCoroutine(MoldranSpeechOrder moldranSpeechOrder = MoldranSpeechOrder.firstSpeech)
     {
+        yield return null; // Wait one frame to allow UI layout to appear
+
         while (sentences.Count > 0)
         {
             string sentence = sentences.Dequeue();
             dialogueText.text = "";
+
+            yield return null;
 
             foreach (char letter in sentence.ToCharArray())
             {
                 dialogueText.text += letter;
                 yield return new WaitForSeconds(0.05f); // typing speed
             }
+
+            Debug.Log(dialogueText.text);
 
             yield return new WaitForSeconds(2f); // wait after sentence
         }
@@ -176,6 +196,11 @@ public class Interaction : MonoBehaviour
     {
         dialogueText.text = "";
 
+        // Force layout update before writing starts
+        Canvas.ForceUpdateCanvases();
+
+        yield return null;
+
         foreach (char letter in sentence.ToCharArray())
         {
             dialogueText.text += letter;
@@ -188,7 +213,6 @@ public class Interaction : MonoBehaviour
     /// </summary>
     void EndDialogue(bool moldranTalk = false)
     {
-        dialoguePanel.SetActive(false);
         dialogueStarted = false;
         dialogueText.text = "";
 

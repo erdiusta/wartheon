@@ -92,7 +92,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     float levelUpPanelPopupDuration = 3f;
 
     // Gameplay UI
-    public GameObject gamePlayUI;
+    public GameplayUI gameplayUI;
     public GameObject buttonBuildButton;
 
     // Pop-ups
@@ -250,6 +250,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [SerializeField] Sprite standardSprite;
     [SerializeField] Sprite flashSprite;
 
+    // Letterbox Materials
+    [Header("Letterbox Cinematics")]
+    [Space(10)]
+    public Image topBar;
+    public Image bottomBar;
+    [SerializeField] float fadeDuration;
+
     // Check sprite overlap status
     bool spriteOverlapped = false;
 
@@ -289,6 +296,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         StaticEventHandler.OnHourglassSpawned += StaticEventHandler_OnHourglassSpawned;
         StaticEventHandler.OnHourglasExpired += StaticEventHandler_OnHourglasExpired;
 
+        StaticEventHandler.OnNPCInteractionStarted += StaticEventHandler_OnNPCInteractionStarted;
+        StaticEventHandler.OnNPCInteractionEnded += StaticEventHandler_OnNPCInteractionEnded;
+
         player.healthEvent.GetBlind += PlayerGetBlind;
         player.destroyedEvent.OnDestroyed += Player_OnDestroyed;
 
@@ -307,6 +317,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         StaticEventHandler.OnDecoySpawned -= StaticEventHandler_OnDecoySpawned;
         StaticEventHandler.OnHourglassSpawned -= StaticEventHandler_OnHourglassSpawned;
         StaticEventHandler.OnHourglasExpired -= StaticEventHandler_OnHourglasExpired;
+
+        StaticEventHandler.OnNPCInteractionStarted -= StaticEventHandler_OnNPCInteractionStarted;
+        StaticEventHandler.OnNPCInteractionEnded -= StaticEventHandler_OnNPCInteractionEnded;
 
         player.destroyedEvent.OnDestroyed -= Player_OnDestroyed;
         player.healthEvent.GetBlind -= PlayerGetBlind;
@@ -417,7 +430,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         if (!bookView.activeSelf)
         {
-            gamePlayUI.SetActive(false);
+            gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 0f, 0.6f); // Make transparent
+
             bookView.SetActive(true);
             bookCover.SetActive(true);
             glossaryBookOpen = true;
@@ -541,6 +555,52 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         vignette.color.value = new Color(1f, 1f, 1f);
         vignette.intensity.value = 0f;
+    }
+
+    private void StaticEventHandler_OnNPCInteractionStarted(NpcInteractionStartedArgs npcInteractionStartedArgs)
+    {
+        // Show Letterbox
+        topBar.gameObject.SetActive(true);
+        bottomBar.gameObject.SetActive(true);
+
+        StopAllCoroutines();
+        StartCoroutine(FadeBars(1f));
+    }
+
+    private void StaticEventHandler_OnNPCInteractionEnded()
+    {
+        // Hide Letterbox
+        StopAllCoroutines();
+        StartCoroutine(FadeBars(0f));
+
+        topBar.GetComponentInChildren<TextMeshProUGUI>().text = string.Empty;
+        bottomBar.GetComponentInChildren<TextMeshProUGUI>().text = string.Empty;
+        topBar.gameObject.SetActive(false);
+        bottomBar.gameObject.SetActive(false);
+    }
+
+    IEnumerator FadeBars(float targetAlpha)
+    {
+        float t = 0f;
+        Color topColor = topBar.color;
+        Color bottomColor = bottomBar.color;
+
+        float initialTopAlpha = topColor.a;
+        float initialBottomAlpha = bottomColor.a;
+
+        while (t < fadeDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            float alpha = Mathf.Lerp(initialTopAlpha, targetAlpha, t / fadeDuration);
+
+            topBar.color = new Color(topColor.r, topColor.g, topColor.b, alpha);
+            bottomBar.color = new Color(bottomColor.r, bottomColor.g, bottomColor.b, alpha);
+
+            yield return null;
+        }
+
+        topBar.color = new Color(topColor.r, topColor.g, topColor.b, targetAlpha);
+        bottomBar.color = new Color(bottomColor.r, bottomColor.g, bottomColor.b, targetAlpha);
     }
 
     /// <summary>
@@ -722,20 +782,16 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         if (pauseMenu.activeSelf) return;
 
-        if (!bookView.activeSelf) { gamePlayUI.SetActive(true); }
-
-        if (bookZoomInFinished)
+        if (!bookView.activeSelf) 
         {
-            bookZoomInFinished = false;
-            bookView.GetComponent<Animator>().enabled = false;
-            bookView.GetComponent<Animator>().enabled = true;
+            gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 1f, 0.6f);
         }
+
+        if (bookZoomInFinished) bookZoomInFinished = false;
 
         if (bookZoomOutFinished)
         {
             bookZoomOutFinished = false;
-            bookView.GetComponent<Animator>().enabled = false;
-            bookView.GetComponent<Animator>().enabled = true;
             bookView.SetActive(false);
             bookCover.SetActive(false);
             glossaryBookOpen = false;
@@ -745,28 +801,39 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             bookView.GetComponent<Animator>().SetBool(Settings.turnPage, false);
             turnPageCompleted = false;
-            bookView.GetComponent<Animator>().enabled = false;
-            bookView.GetComponent<Animator>().enabled = true;
         }
 
         if (InputManager.Instance.bookView.action.WasPressedThisFrame())
         {
             if (bookView.activeSelf)
             {
-                Time.timeScale = 1f;
-                gamePlayUI.SetActive(true);
+                gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 1f, 0.6f); // Opaque
+
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+
                 bookView.GetComponent<Animator>().SetTrigger(Settings.zoomOut);
+
+                player.meleeAttackMainHand.IsAttacking = false; // To be safe-side
+                player.playerControl.IsParrying = false;
+                player.playerControl.isPlayerRolling = false;
+
+                Time.timeScale = 1f;
             }
             else
             {
-                Time.timeScale = 0f;
-                gamePlayUI.SetActive(false);
                 bookView.SetActive(true);
                 bookCover.SetActive(true);
                 glossaryBookOpen = true;
+
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+
+                // First trigger the animation (it uses UnscaledTime, so it's safe to call here)
                 bookView.GetComponent<Animator>().SetTrigger(Settings.zoomIn);
+
+                Time.timeScale = 0f;
+
+                // Finally, hide gameplay UI
+                gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 0f, 0.6f); // Transparent
             }
         }
     }
@@ -824,6 +891,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             case GameState.gameStarted:
                 // Play first level or tutorial
+                currentDungeonLevelListIndex = InputManager.cachedLevelIndex;
+
                 PlayDungeonLevel(currentDungeonLevelListIndex);
                 gameState = GameState.playingLevel;
 
@@ -1543,7 +1612,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Set screen to black
         StartCoroutine(Fade(0f, 1f, 0f, Color.black));
 
-        GetPlayer().playerControl.DisablePlayer();
+        player.playerControl.IsParrying = false;
+        player.playerControl.isPlayerRolling = false;
+        player.meleeAttackMainHand.IsAttacking = false; // Reset values before disable
+        player.playerControl.DisablePlayer();
 
         string messageText = "LEVEL " + (currentDungeonLevelListIndex).ToString() + "\n\n" + dungeonLevelList[currentDungeonLevelListIndex].
             levelName.ToUpper();
@@ -1557,6 +1629,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Fade In
         yield return StartCoroutine(Fade(1f, 0f, 1.5f, Color.black));
 
+        canvasGroup.alpha = 0f;
     }
 
     /// <summary>
@@ -2545,11 +2618,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         if (requiredStats.agility > 0) requirementString += $"AGI: {requiredStats.agility} ";
 
-        if ((requiredStats.strength > 0 && player.currentStrengthValue< requiredStats.strength) ||
-            (requiredStats.dexterity > 0 && player.currentDexterityValue < requiredStats.dexterity) ||
-            (requiredStats.constitution > 0 && player.currentConstitutionValue < requiredStats.constitution) ||
-            (requiredStats.intelligence > 0 && player.currentIntelligenceValue < requiredStats.intelligence) ||
-            (requiredStats.agility > 0 && player.currentAgilityValue < requiredStats.agility))
+        if ((requiredStats.strength > 0 && player.CurrentStrengthValue< requiredStats.strength) ||
+            (requiredStats.dexterity > 0 && player.CurrentDexterityValue < requiredStats.dexterity) ||
+            (requiredStats.constitution > 0 && player.CurrentConstitutionValue < requiredStats.constitution) ||
+            (requiredStats.intelligence > 0 && player.CurrentIntelligenceValue < requiredStats.intelligence) ||
+            (requiredStats.agility > 0 && player.CurrentAgilityValue < requiredStats.agility))
         {
             requirementText.color = Color.red;
         }

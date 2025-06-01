@@ -17,34 +17,11 @@ public class GlobalLightManager : SingletonMonobehaviour<GlobalLightManager>
 
     private void Update()
     {
-        switch (GameManager.Instance.currentDungeonLevelListIndex)
-        {
-            case 0:
-                light2D.intensity = 0.15f;
-                break;
-            case 1:
-                light2D.intensity = 0.35f;
-                break;
-            case 2:
-                light2D.intensity = 0.25f;
-                break;
-            case 3:
-                light2D.intensity = 0.15f;
-                break;
-            case 4:
-                light2D.intensity = 0.4f;
-                break;
-            case 5:
-                light2D.intensity = 0.3f;
-                break;
-            case 6:
-                light2D.intensity = 0.35f;
-                break;
-            case 7:
-                light2D.intensity = 0.2f;
-                break;
-            default:
-                break;
-        }
+        light2D.intensity = GetLightIntenstiy(GameManager.Instance.currentDungeonLevelListIndex);
     }
+
+    private float GetLightIntenstiy(int index) => index switch
+    {
+        0 => 0.15f, 1 => 0.15f, 2 => 0.35f, 3 => 0.25f, 4 => 0.15f, 5 => 0.4f, 6 => 0.3f, 7 => 0.35f, 8 => 0.2f, _ => 0f
+    }; 
 }

@@ -42,15 +42,15 @@ MonoBehaviour:
   specialMoveOneImage: {fileID: 21300000, guid: 8382a280217407c45a5d379f1e1fa89a, type: 3}
   specialMoveOneSoundEffect: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
   specialMoveOneCooldownDuration: 25
-  specialMoveOneDuration: 0
+  specialMoveOneEffectiveDuration: 0
   specialMoveTwoImage: {fileID: 21300000, guid: 7e206eb66e3011e4988cd84fda6c6a24, type: 3}
   specialMoveTwoSoundEffect: {fileID: 11400000, guid: 31e1b327278476749be5bee20fd1b280, type: 2}
   specialMoveTwoCooldownDuration: 15
-  specialMoveTwoDuration: 8
+  specialMoveTwoEffectiveDuration: 8
   specialMoveThreeImage: {fileID: 21300000, guid: b818baaf0c97d73459e3fb39d89617d3, type: 3}
   specialMoveThreeSoundEffect: {fileID: 11400000, guid: 78ff5393a05efd8459a875c9ee1760d7, type: 2}
   specialMoveThreeCooldownDuration: 35
-  specialMoveThreeDuration: 12
+  specialMoveThreeEffectiveDuration: 20
   cataclysmMeteor: {fileID: 0}
   standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   headShotMaterial: {fileID: 0}

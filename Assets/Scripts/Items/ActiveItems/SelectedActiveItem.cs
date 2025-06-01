@@ -31,8 +31,6 @@ public class SelectedActiveItem : MonoBehaviour
 
     private void SetActiveItemEvent_OnSelectedActiveItem(SetActiveItemEvent setActiveItemEvent, SetSelectedActiveItemArgs setSelectedActiveItemArgs)
     {
-        Debug.Log($"[Event Triggered] by {gameObject.name}", gameObject);
-
         SetActiveItem(setSelectedActiveItemArgs.activeItem);
 
         StaticEventHandler.CallItemAddedToActiveItemSlot(setSelectedActiveItemArgs.activeItem);

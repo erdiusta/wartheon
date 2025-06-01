@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Shiruken Throw
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 2463e2e7bf7796c4cbad8b42ddd19e48, type: 3}
+  - {fileID: 8300000, guid: abc55976d9c436940adedeeb25bfbce8, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 1

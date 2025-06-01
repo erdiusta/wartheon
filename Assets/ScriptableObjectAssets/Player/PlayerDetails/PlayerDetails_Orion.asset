@@ -42,15 +42,15 @@ MonoBehaviour:
   specialMoveOneImage: {fileID: 21300000, guid: b41da492a31c20a42999b6ff0e3c82f3, type: 3}
   specialMoveOneSoundEffect: {fileID: 11400000, guid: 371fa797b2be9e342804b8ad3958bdf4, type: 2}
   specialMoveOneCooldownDuration: 20
-  specialMoveOneDuration: 4
+  specialMoveOneEffectiveDuration: 0
   specialMoveTwoImage: {fileID: 21300000, guid: 1bd30f02479e972429caf083f275ddfd, type: 3}
-  specialMoveTwoSoundEffect: {fileID: 11400000, guid: 65771ccd5a8ddb44bbeb1d4b0f60aeeb, type: 2}
-  specialMoveTwoCooldownDuration: 30
-  specialMoveTwoDuration: 20
+  specialMoveTwoSoundEffect: {fileID: 11400000, guid: 8cb0c975001857a4580d53cd4e0f34c6, type: 2}
+  specialMoveTwoCooldownDuration: 28
+  specialMoveTwoEffectiveDuration: 8
   specialMoveThreeImage: {fileID: 21300000, guid: 13aaa8f2fc43b404d9321589742bc82a, type: 3}
   specialMoveThreeSoundEffect: {fileID: 11400000, guid: 371fa797b2be9e342804b8ad3958bdf4, type: 2}
   specialMoveThreeCooldownDuration: 30
-  specialMoveThreeDuration: 4
+  specialMoveThreeEffectiveDuration: 0
   cataclysmMeteor: {fileID: 0}
   standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   headShotMaterial: {fileID: 2100000, guid: 789c835ce053eff46aa9989263c4fd54, type: 2}

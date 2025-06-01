@@ -206,11 +206,6 @@ public class Counter : MonoBehaviour
 
         chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, chestItem.transform.position);
 
-        if (weaponDetails.weaponClass == WeaponClass.Bow)
-        {
-            chestItem.transform.localPosition += new Vector3(0f, 1f, 0f);
-        }
-
         chestItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + weapon.activePrice.ToString();
     }
 
@@ -293,11 +288,4 @@ public class Counter : MonoBehaviour
         chestItem.isColliding = false;
         chestItem.animator.runtimeAnimatorController = GameResources.Instance.gambleDiceAnimatorController;
     }
-}
-
-public class CounterChestItem
-{
-    public DropItem chestItem;
-    public int counterChestItemIndexNumber;
-    public int indexGambleValue;
 }

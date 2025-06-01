@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be803c3d22954c743afeeadf2eb708fd, type: 3}
   m_Name: MovementDetails_Erebus
   m_EditorClassIdentifier: 
-  baseMoveSpeed: 4.75
-  rollSpeed: 10
-  rollDistance: 8
+  baseMoveSpeed: 5.25
+  rollSpeed: 9
+  rollDistance: 6
   rollCooldownTime: 0.2

@@ -49,8 +49,9 @@ MonoBehaviour:
   gamepadAim: {fileID: 8906811796957083406, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   movement: {fileID: -1868886686725831558, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   attack: {fileID: 4738310459945266975, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  switchWeaponByWheel: {fileID: -1489316078523976086, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  switchWeaponByButton: {fileID: -1394323629374981252, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  switchWeaponByWheel: {fileID: 1071493697763489595, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  switchWeaponForward: {fileID: -1489316078523976086, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  switchWeaponBack: {fileID: -1394323629374981252, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   overviewMapFullView: {fileID: -4451642181129647435, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   nextLevel: {fileID: -2122744234832147839, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   interaction: {fileID: -3128664531634483429, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
@@ -63,14 +64,6 @@ MonoBehaviour:
   jumpButton: {fileID: 7022676829501651627, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   invisibleButton: {fileID: 543932677018655109, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   parryButton: {fileID: -8829189971212813033, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  levelOneButton: {fileID: -2973245912978842571, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  levelTwoButton: {fileID: -4956730332513720876, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  levelThreeButton: {fileID: 1906744791049229034, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  levelFourButton: {fileID: 1912120723692738794, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  levelFiveButton: {fileID: 2952374036190202649, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  levelSixButton: {fileID: 2457149901991876265, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  levelSevenButton: {fileID: 4157537419127556453, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  levelEightButton: {fileID: 5389635443193591162, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   OKButton: {fileID: -1104434806055026426, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   escapeButton: {fileID: 6101426676883284784, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   uiNavigate: {fileID: -1422576417689974817, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}

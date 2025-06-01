@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: PentagramLock
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 8d233443ebe76c84e922606d3be146a2, type: 3}
+  - {fileID: 8300000, guid: 211faaa345322da46a6137a89db2fe7e, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 0.7

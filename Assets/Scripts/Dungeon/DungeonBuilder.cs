@@ -78,6 +78,12 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             {
                 // Instantiate Room Gameobjects
                 InstantiateRoomGameObjects();
+
+                // Reset lighting state for all instantiated rooms
+                foreach (KeyValuePair<string, Room> kvp in dungeonBuilderRoomDictionary)
+                {
+                    kvp.Value.isLit = false;
+                }
             }
         }
 

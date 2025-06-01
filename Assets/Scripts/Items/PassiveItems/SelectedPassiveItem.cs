@@ -46,15 +46,6 @@ public class SelectedPassiveItem : MonoBehaviour
     {
         player = GameManager.Instance.GetPlayer();
 
-        //// DEBUG
-        //if (!InventoryManager.Instance.IsInventoryFull() && setPassiveItemEventArgs.passiveItem.onInventorySlot == false)
-        //{
-        //    setPassiveItemEventArgs.passiveItem.onInventorySlot = true;
-        //    int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(setPassiveItemEventArgs.passiveItem);
-        //    StaticEventHandler.CallPassiveItemAddedToInventorySlot(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemSprite, inventoryItemIndex);
-        //    return;
-        //}
-
         switch (setPassiveItemEventArgs.passiveItemSlotName)
         {
             case PassiveItemSlotName.Head:
@@ -73,13 +64,13 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HelmOfTheEternalVigil)
                     {
-                        player.currentDexterityValue++;
+                        player.CurrentDexterityValue++;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.1f, 2);
-                        player.currentEvasivenessValue = (float)Math.Round(player.currentEvasivenessValue + 0.1f, 2);
+                        player.additionalEvasivenessModifier += 0.1f;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EnchantersSpire)
                     {
-                        player.currentIntelligenceValue++;
+                        player.CurrentIntelligenceValue++;
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.05f, 2);
                         player.currentEarthResistanceValue = (float)Math.Round(player.currentEarthResistanceValue + 0.05f, 2);
                         player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue + 0.05f, 2);
@@ -89,17 +80,16 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
                     {
-                        player.currentDexterityValue++;
-                        player.currentEvasivenessValue = (float)Math.Round(player.currentEvasivenessValue + 0.15f, 2);
+                        player.CurrentDexterityValue++;
+                        player.additionalEvasivenessModifier += 0.15f;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
                     {
-                        player.currentConstitutionValue++;
+                        player.CurrentConstitutionValue++;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.2f, 2);
                     }
 
                     isHeadEquipped = true;
-                    StaticEventHandler.CallPrimaryStatsChangedEvent();
                 }
                 else
                 {
@@ -117,12 +107,12 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
                     {
-                        player.currentStrengthValue++;
+                        player.CurrentStrengthValue++;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.3f, 2);
                     }
                     else if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BlazingHeartplate)
                     {
-                        player.currentStrengthValue++;
+                        player.CurrentStrengthValue++;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.2f, 2);
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.1f, 2);
                         player.additionalBowAttackCoolDownModifier -= 0.05f;
@@ -142,8 +132,6 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
 
                     isChestEquipped = true;
-                    StaticEventHandler.CallPrimaryStatsChangedEvent();
-
                 }
                 else
                 {
@@ -177,7 +165,6 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
 
                     isNeckEquipped = true;
-                    StaticEventHandler.CallPrimaryStatsChangedEvent();
                 }
                 else
                 {
@@ -201,15 +188,15 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
                     {
-                        player.currentStrengthValue++;
+                        player.CurrentStrengthValue++;
                     }
                     else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfVitality)
                     {
-                        player.currentConstitutionValue++;
+                        player.CurrentConstitutionValue++;
                     }
                     else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
                     {
-                        player.currentIntelligenceValue++;
+                        player.CurrentIntelligenceValue++;
                     }
                     else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
                     {
@@ -217,7 +204,6 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
 
                     isFingerEquipped = true;
-                    StaticEventHandler.CallPrimaryStatsChangedEvent();
                 }
                 else
                 {
@@ -236,12 +222,12 @@ public class SelectedPassiveItem : MonoBehaviour
                     if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                     {
                         player.additionalMeleeCriticalHitChanceModifier = (float)Math.Round(player.additionalMeleeCriticalHitChanceModifier + 0.05f, 2);
-                        player.UpdateCurrentCriticalHitChance();
+                        player.shadowCloakEquipped = true;
                     }
                     else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
                     {
-                        player.currentAgilityValue++;
-                        player.currentEvasivenessValue = (float)Math.Round(player.currentEvasivenessValue + 0.1f, 2);
+                        player.CurrentAgilityValue++;
+                        player.additionalEvasivenessModifier += 0.1f;
                     }
                     else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
                     {
@@ -252,24 +238,22 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue + 0.15f, 2);
                         player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue + 0.15f, 2);
                         player.currentDarkResistanceValue = (float)Math.Round(player.currentDarkResistanceValue + 0.15f, 2);
-                        player.UpdateDamageValues();
                     }
                     else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.CloakOfWindwalker)
                     {
-                        player.currentAgilityValue += 2;
+                        player.CurrentAgilityValue += 2;
                         player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue + 0.3f, 2);
                     }
                     else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldenCloak)
                     {
-                        player.currentStrengthValue++;
-                        player.currentDexterityValue++;
-                        player.currentConstitutionValue++;
-                        player.currentIntelligenceValue++;
-                        player.currentAgilityValue++;
+                        player.CurrentStrengthValue++;
+                        player.CurrentDexterityValue++;
+                        player.CurrentConstitutionValue++;
+                        player.CurrentIntelligenceValue++;
+                        player.CurrentAgilityValue++;
                     }
 
                     isBackEquipped = true;
-                    StaticEventHandler.CallPrimaryStatsChangedEvent();
                 }
                 else
                 {
@@ -287,12 +271,12 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
                     {
-                        player.currentIntelligenceValue++;
+                        player.CurrentIntelligenceValue++;
                         player.additionalCastDurationModifier -= 0.2f;
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
                     {
-                        player.currentConstitutionValue++;
+                        player.CurrentConstitutionValue++;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue + 0.05f, 2);
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.15f, 2);
                     }
@@ -304,19 +288,18 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
                     {
-                        player.currentStrengthValue++;
-                        player.currentAgilityValue++;
+                        player.CurrentStrengthValue++;
+                        player.CurrentAgilityValue++;
                         player.additionalMeleeAttackCoolDownModifier -= 0.05f;
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
                     {
-                        player.currentDexterityValue++;
-                        player.currentEvasivenessValue += 0.1f;
+                        player.CurrentDexterityValue++;
+                        player.additionalEvasivenessModifier += 0.1f;
                         player.additionalMeleeCriticalHitChanceModifier += 0.05f;
                     }
 
                     isWaistEquipped = true;
-                    StaticEventHandler.CallPrimaryStatsChangedEvent();
                 }
                 else
                 {
@@ -351,7 +334,6 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
 
                     isArmEquipped = true;
-                    StaticEventHandler.CallPrimaryStatsChangedEvent();
                 }
                 else
                 {
@@ -369,16 +351,15 @@ public class SelectedPassiveItem : MonoBehaviour
 
                     if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
                     {
-                        player.currentAgilityValue += 2;
+                        player.CurrentAgilityValue += 2;
                     }
                     else if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BootsOfInfernalMarch)
                     {
-                        player.currentAgilityValue++;
+                        player.CurrentAgilityValue++;
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.15f, 2);
                     }
 
                     isLegEquipped = true;
-                    StaticEventHandler.CallPrimaryStatsChangedEvent();
                 }
                 else
                 {
@@ -393,7 +374,11 @@ public class SelectedPassiveItem : MonoBehaviour
                 break;
         }
 
-        StaticEventHandler.CallPassiveUnlockedEvent(setPassiveItemEventArgs.passiveItem.passiveItemDetails.passiveItemType);
+        // Update stats values after weapon switch
+        player.RecalculateSecondaryStats();
+
+        // Update stat value displays on book ui
+        StaticEventHandler.CallPrimaryStatsChangedEvent();
     }
 
     private void SetPassiveItemEvent_OnRemovedPassiveItem(SetPassiveItemEvent setPassiveItemEvent, SetPassiveItemEventArgs setPassiveItemEventArgs)
@@ -422,9 +407,9 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HelmOfTheEternalVigil)
                     {
-                        player.currentDexterityValue--;
+                        player.CurrentDexterityValue--;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.1f, 2);
-                        player.currentEvasivenessValue -= 0.1f;
+                        player.additionalEvasivenessModifier -= 0.1f;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EnchantersSpire)
                     {
@@ -434,16 +419,16 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue - 0.05f, 2);
                         player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue - 0.05f, 2);
                         player.currentDarkResistanceValue = (float)Math.Round(player.currentDarkResistanceValue - 0.05f, 2);
-                        player.currentIntelligenceValue -= 1;
+                        player.CurrentIntelligenceValue -= 1;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
                     {
-                        player.currentDexterityValue--;
-                        player.currentEvasivenessValue = (float)Math.Round(player.currentEvasivenessValue - 0.15f, 2);
+                        player.CurrentDexterityValue--;
+                        player.additionalEvasivenessModifier -= 0.15f;
                     }
                     else if (headPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
                     {
-                        player.currentConstitutionValue--;
+                        player.CurrentConstitutionValue--;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.2f, 2);
                     }
 
@@ -456,12 +441,12 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
                     {
-                        player.currentStrengthValue--;
+                        player.CurrentStrengthValue--;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.3f, 2);
                     }
                     else if (chestPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BlazingHeartplate)
                     {
-                        player.currentStrengthValue--;
+                        player.CurrentStrengthValue--;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.2f, 2);
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.1f, 2);
                         player.additionalBowAttackCoolDownModifier += 0.05f;
@@ -519,15 +504,15 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
                     {
-                        player.currentStrengthValue--;
+                        player.CurrentStrengthValue--;
                     }
                     else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfVitality)
                     {
-                        player.currentConstitutionValue--;
+                        player.CurrentConstitutionValue--;
                     }
                     else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
                     {
-                        player.currentIntelligenceValue--;
+                        player.CurrentIntelligenceValue--;
                     }
                     else if (fingerPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
                     {
@@ -544,12 +529,12 @@ public class SelectedPassiveItem : MonoBehaviour
                     if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                     {
                         player.additionalMeleeCriticalHitChanceModifier = (float)Math.Round(player.additionalMeleeCriticalHitChanceModifier - 0.05f, 2);
-                        player.UpdateCurrentCriticalHitChance();
+                        player.shadowCloakEquipped = false; // Put here at the end intentionally, because additional cr. should be nullified above first
                     }
                     else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
                     {
-                        player.currentAgilityValue--;
-                        player.currentEvasivenessValue = (float)Math.Round(player.currentEvasivenessValue - 0.1f, 2);
+                        player.CurrentAgilityValue--;
+                        player.additionalEvasivenessModifier -= 0.1f;
                     }
                     else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
                     {
@@ -560,20 +545,19 @@ public class SelectedPassiveItem : MonoBehaviour
                         player.currentWaterResistanceValue = (float)Math.Round(player.currentWaterResistanceValue - 0.15f, 2);
                         player.currentLightResistanceValue = (float)Math.Round(player.currentLightResistanceValue - 0.15f, 2);
                         player.currentDarkResistanceValue = (float)Math.Round(player.currentDarkResistanceValue - 0.15f, 2);
-                        player.UpdateDamageValues();
                     }
                     else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.CloakOfWindwalker)
                     {
-                        player.currentAgilityValue -= 2;
+                        player.CurrentAgilityValue -= 2;
                         player.currentAirResistanceValue = (float)Math.Round(player.currentAirResistanceValue - 0.3f, 2);
                     }
                     else if (backPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldenCloak)
                     {
-                        player.currentStrengthValue--;
-                        player.currentDexterityValue--;
-                        player.currentConstitutionValue--;
-                        player.currentIntelligenceValue--;
-                        player.currentAgilityValue--;
+                        player.CurrentStrengthValue--;
+                        player.CurrentDexterityValue--;
+                        player.CurrentConstitutionValue--;
+                        player.CurrentIntelligenceValue--;
+                        player.CurrentAgilityValue--;
                     }
 
                     backPassiveItem = null;
@@ -585,12 +569,12 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
                     {
-                        player.currentIntelligenceValue--;
+                        player.CurrentIntelligenceValue--;
                         player.additionalCastDurationModifier += 0.2f;
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
                     {
-                        player.currentConstitutionValue--;
+                        player.CurrentConstitutionValue--;
                         player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue - 0.05f, 2);
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.15f, 2);
                     }
@@ -602,13 +586,13 @@ public class SelectedPassiveItem : MonoBehaviour
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
                     {
-                        player.currentStrengthValue--;
-                        player.currentAgilityValue--;
+                        player.CurrentStrengthValue--;
+                        player.CurrentAgilityValue--;
                         player.additionalMeleeAttackCoolDownModifier += 0.05f;
                     }
                     else if (waistPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
                     {
-                        player.currentDexterityValue--;
+                        player.CurrentDexterityValue--;
                         player.currentEvasivenessValue -= 0.1f;
                         player.additionalMeleeCriticalHitChanceModifier -= 0.05f;
                     }
@@ -646,14 +630,13 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
                     {
-                        player.currentAgilityValue -= 2;
+                        player.CurrentAgilityValue -= 2;
                     }
                     else if (legPassiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BootsOfInfernalMarch)
                     {
-                        player.currentAgilityValue--;
+                        player.CurrentAgilityValue--;
                         player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.15f, 2);
                     }
-
 
                     legPassiveItem = null;
                     isLegEquipped = false;
@@ -663,6 +646,10 @@ public class SelectedPassiveItem : MonoBehaviour
                 break;
         }
 
+        // Update stats values after weapon switch
+        player.RecalculateSecondaryStats();
+
+        // Update stat value displays on book ui
         StaticEventHandler.CallPrimaryStatsChangedEvent();
     }
 

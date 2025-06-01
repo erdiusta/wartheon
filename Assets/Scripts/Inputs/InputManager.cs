@@ -5,6 +5,8 @@ using UnityEngine.InputSystem.Controls;
 
 public class InputManager : SingletonMonobehaviour<InputManager>
 {
+    public static int cachedLevelIndex = 1;
+
     static InputDevice currentDevice;
     public InputActionAsset actions;
     Vector2 lastMousePosition;
@@ -19,7 +21,8 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference movement;
     public InputActionReference attack;
     public InputActionReference switchWeaponByWheel;
-    public InputActionReference switchWeaponByButton;
+    public InputActionReference switchWeaponForward;
+    public InputActionReference switchWeaponBack;
     public InputActionReference overviewMapFullView;
     public InputActionReference nextLevel;
     public InputActionReference interaction;
@@ -32,14 +35,6 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference jumpButton;
     public InputActionReference invisibleButton;
     public InputActionReference parryButton;
-    public InputActionReference levelOneButton;
-    public InputActionReference levelTwoButton;
-    public InputActionReference levelThreeButton;
-    public InputActionReference levelFourButton;
-    public InputActionReference levelFiveButton;
-    public InputActionReference levelSixButton;
-    public InputActionReference levelSevenButton;
-    public InputActionReference levelEightButton;
 
     [Header("UI")]
     public InputActionReference OKButton;
@@ -53,8 +48,6 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     protected override void Awake()
     {
         base.Awake();
-
-        SetUpInputActions();
     }
 
     private void OnEnable()
@@ -123,11 +116,6 @@ public class InputManager : SingletonMonobehaviour<InputManager>
         }
     }
 
-    private void SetUpInputActions()
-    {
-
-    }
-
     public void OnShowTooltipPerformed(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
@@ -157,6 +145,13 @@ public class InputManager : SingletonMonobehaviour<InputManager>
                 }
             }
         }
+    }
+
+    public bool AnyNonTooltipInputPressed()
+    {
+        return Keyboard.current.anyKey.wasPressedThisFrame ||
+               Mouse.current.leftButton.wasPressedThisFrame ||
+               Gamepad.current?.buttonSouth.wasPressedThisFrame == true;
     }
 
     public static bool IsGamepad() => currentDevice is Gamepad;

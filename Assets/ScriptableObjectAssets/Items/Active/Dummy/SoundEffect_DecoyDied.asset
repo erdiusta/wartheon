@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Decoy Died
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 3f9e90b93221cbb46bf9548c574299fb, type: 3}
+  - {fileID: 8300000, guid: e6fa804ec6c5a3b439b38b37a9c5fefe, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 1

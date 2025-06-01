@@ -245,78 +245,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Level1"",
-                    ""type"": ""Button"",
-                    ""id"": ""2c6d7f1b-55b9-431a-b2cb-24bbe74d71ca"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Level2"",
-                    ""type"": ""Button"",
-                    ""id"": ""55ed9a7e-0517-48a2-b01d-9ab7dc20a509"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Level3"",
-                    ""type"": ""Button"",
-                    ""id"": ""0bad9055-8642-4d2b-88ff-abdc9cd398b3"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Level4"",
-                    ""type"": ""Button"",
-                    ""id"": ""ea81c3eb-7379-4929-81e1-ebcab407b6d3"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Level5"",
-                    ""type"": ""Button"",
-                    ""id"": ""8c0c655c-c8e6-46a0-88af-6a1a8b36f1ca"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Level6"",
-                    ""type"": ""Button"",
-                    ""id"": ""af666e1a-834d-451a-a326-6452baba13a7"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Level7"",
-                    ""type"": ""Button"",
-                    ""id"": ""880b029f-8387-4f66-9839-26c18131a3b5"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Level8"",
-                    ""type"": ""Button"",
-                    ""id"": ""4b9df06e-edf7-4aef-b500-7c8913acb416"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Invisibility"",
                     ""type"": ""Button"",
                     ""id"": ""80bfc361-8518-4d70-9e83-7d60bd3e2a34"",
@@ -745,94 +673,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""62414bfc-63dc-44c2-8005-67f0e5419273"",
-                    ""path"": ""<Keyboard>/1"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Level1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""25af8af1-1caa-46aa-b26d-e00966825324"",
-                    ""path"": ""<Keyboard>/2"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Level2"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""979f3dcf-7150-4bef-b8d6-d5cab817a873"",
-                    ""path"": ""<Keyboard>/3"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Level3"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8eb9a897-26f4-482d-9704-e418a9ce69c6"",
-                    ""path"": ""<Keyboard>/4"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Level4"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d86d3ae9-0236-47bf-bbd7-9645004a0d6d"",
-                    ""path"": ""<Keyboard>/5"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Level5"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""308b6c09-b61d-444d-8fc6-0bde65eeb0ab"",
-                    ""path"": ""<Keyboard>/6"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Level6"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""81ee75bb-41d0-4510-8134-af4d64ab2a82"",
-                    ""path"": ""<Keyboard>/7"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Level7"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""4ca32010-b2d5-4106-b47a-f3b736860e98"",
-                    ""path"": ""<Keyboard>/8"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Level8"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""f3e96402-217e-43ff-9daf-8967f443c0d4"",
                     ""path"": ""<Keyboard>/#(P)"",
                     ""interactions"": """",
@@ -1041,7 +881,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""1e9c8680-6557-483c-bdb9-fc9dc8c4a45e"",
-                    ""path"": ""<Gamepad>/select"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
@@ -1112,14 +952,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_ActiveItem = m_PlayerInput.FindAction("Active Item", throwIfNotFound: true);
         m_PlayerInput_Pause = m_PlayerInput.FindAction("Pause", throwIfNotFound: true);
         m_PlayerInput_Roll = m_PlayerInput.FindAction("Roll", throwIfNotFound: true);
-        m_PlayerInput_Level1 = m_PlayerInput.FindAction("Level1", throwIfNotFound: true);
-        m_PlayerInput_Level2 = m_PlayerInput.FindAction("Level2", throwIfNotFound: true);
-        m_PlayerInput_Level3 = m_PlayerInput.FindAction("Level3", throwIfNotFound: true);
-        m_PlayerInput_Level4 = m_PlayerInput.FindAction("Level4", throwIfNotFound: true);
-        m_PlayerInput_Level5 = m_PlayerInput.FindAction("Level5", throwIfNotFound: true);
-        m_PlayerInput_Level6 = m_PlayerInput.FindAction("Level6", throwIfNotFound: true);
-        m_PlayerInput_Level7 = m_PlayerInput.FindAction("Level7", throwIfNotFound: true);
-        m_PlayerInput_Level8 = m_PlayerInput.FindAction("Level8", throwIfNotFound: true);
         m_PlayerInput_Invisibility = m_PlayerInput.FindAction("Invisibility", throwIfNotFound: true);
         m_PlayerInput_Parry = m_PlayerInput.FindAction("Parry", throwIfNotFound: true);
         // UIActions
@@ -1227,14 +1059,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_ActiveItem;
     private readonly InputAction m_PlayerInput_Pause;
     private readonly InputAction m_PlayerInput_Roll;
-    private readonly InputAction m_PlayerInput_Level1;
-    private readonly InputAction m_PlayerInput_Level2;
-    private readonly InputAction m_PlayerInput_Level3;
-    private readonly InputAction m_PlayerInput_Level4;
-    private readonly InputAction m_PlayerInput_Level5;
-    private readonly InputAction m_PlayerInput_Level6;
-    private readonly InputAction m_PlayerInput_Level7;
-    private readonly InputAction m_PlayerInput_Level8;
     private readonly InputAction m_PlayerInput_Invisibility;
     private readonly InputAction m_PlayerInput_Parry;
     /// <summary>
@@ -1316,38 +1140,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerInput/Roll".
         /// </summary>
         public InputAction @Roll => m_Wrapper.m_PlayerInput_Roll;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/Level1".
-        /// </summary>
-        public InputAction @Level1 => m_Wrapper.m_PlayerInput_Level1;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/Level2".
-        /// </summary>
-        public InputAction @Level2 => m_Wrapper.m_PlayerInput_Level2;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/Level3".
-        /// </summary>
-        public InputAction @Level3 => m_Wrapper.m_PlayerInput_Level3;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/Level4".
-        /// </summary>
-        public InputAction @Level4 => m_Wrapper.m_PlayerInput_Level4;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/Level5".
-        /// </summary>
-        public InputAction @Level5 => m_Wrapper.m_PlayerInput_Level5;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/Level6".
-        /// </summary>
-        public InputAction @Level6 => m_Wrapper.m_PlayerInput_Level6;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/Level7".
-        /// </summary>
-        public InputAction @Level7 => m_Wrapper.m_PlayerInput_Level7;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/Level8".
-        /// </summary>
-        public InputAction @Level8 => m_Wrapper.m_PlayerInput_Level8;
         /// <summary>
         /// Provides access to the underlying input action "PlayerInput/Invisibility".
         /// </summary>
@@ -1433,30 +1225,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Roll.started += instance.OnRoll;
             @Roll.performed += instance.OnRoll;
             @Roll.canceled += instance.OnRoll;
-            @Level1.started += instance.OnLevel1;
-            @Level1.performed += instance.OnLevel1;
-            @Level1.canceled += instance.OnLevel1;
-            @Level2.started += instance.OnLevel2;
-            @Level2.performed += instance.OnLevel2;
-            @Level2.canceled += instance.OnLevel2;
-            @Level3.started += instance.OnLevel3;
-            @Level3.performed += instance.OnLevel3;
-            @Level3.canceled += instance.OnLevel3;
-            @Level4.started += instance.OnLevel4;
-            @Level4.performed += instance.OnLevel4;
-            @Level4.canceled += instance.OnLevel4;
-            @Level5.started += instance.OnLevel5;
-            @Level5.performed += instance.OnLevel5;
-            @Level5.canceled += instance.OnLevel5;
-            @Level6.started += instance.OnLevel6;
-            @Level6.performed += instance.OnLevel6;
-            @Level6.canceled += instance.OnLevel6;
-            @Level7.started += instance.OnLevel7;
-            @Level7.performed += instance.OnLevel7;
-            @Level7.canceled += instance.OnLevel7;
-            @Level8.started += instance.OnLevel8;
-            @Level8.performed += instance.OnLevel8;
-            @Level8.canceled += instance.OnLevel8;
             @Invisibility.started += instance.OnInvisibility;
             @Invisibility.performed += instance.OnInvisibility;
             @Invisibility.canceled += instance.OnInvisibility;
@@ -1525,30 +1293,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Roll.started -= instance.OnRoll;
             @Roll.performed -= instance.OnRoll;
             @Roll.canceled -= instance.OnRoll;
-            @Level1.started -= instance.OnLevel1;
-            @Level1.performed -= instance.OnLevel1;
-            @Level1.canceled -= instance.OnLevel1;
-            @Level2.started -= instance.OnLevel2;
-            @Level2.performed -= instance.OnLevel2;
-            @Level2.canceled -= instance.OnLevel2;
-            @Level3.started -= instance.OnLevel3;
-            @Level3.performed -= instance.OnLevel3;
-            @Level3.canceled -= instance.OnLevel3;
-            @Level4.started -= instance.OnLevel4;
-            @Level4.performed -= instance.OnLevel4;
-            @Level4.canceled -= instance.OnLevel4;
-            @Level5.started -= instance.OnLevel5;
-            @Level5.performed -= instance.OnLevel5;
-            @Level5.canceled -= instance.OnLevel5;
-            @Level6.started -= instance.OnLevel6;
-            @Level6.performed -= instance.OnLevel6;
-            @Level6.canceled -= instance.OnLevel6;
-            @Level7.started -= instance.OnLevel7;
-            @Level7.performed -= instance.OnLevel7;
-            @Level7.canceled -= instance.OnLevel7;
-            @Level8.started -= instance.OnLevel8;
-            @Level8.performed -= instance.OnLevel8;
-            @Level8.canceled -= instance.OnLevel8;
             @Invisibility.started -= instance.OnInvisibility;
             @Invisibility.performed -= instance.OnInvisibility;
             @Invisibility.canceled -= instance.OnInvisibility;
@@ -1880,62 +1624,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRoll(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Level1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLevel1(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Level2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLevel2(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Level3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLevel3(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Level4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLevel4(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Level5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLevel5(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Level6" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLevel6(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Level7" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLevel7(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Level8" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLevel8(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Invisibility" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

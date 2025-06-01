@@ -42,10 +42,10 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] TextMeshProUGUI healthText;
     [SerializeField] TextMeshProUGUI damageText;
     [SerializeField] TextMeshProUGUI handlingText;
-    [SerializeField] TextMeshProUGUI criticalHitChanceText;
-    [SerializeField] TextMeshProUGUI criticalHitDamageText;
+    [SerializeField] TextMeshProUGUI criticalHitChanceDamageText;
     [SerializeField] TextMeshProUGUI blockRateText;
     [SerializeField] TextMeshProUGUI eveasivenessRateText;
+    [SerializeField] TextMeshProUGUI speedText;
 
     [SerializeField] Animator bookAnimator;
     [SerializeField] Transform mainHandWeaponSlot;
@@ -874,12 +874,14 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void UpdatePlayerStatInfo(Player player)
     {
+        float handling = player.currentWeaponHandlingValue ?? 0f;
+
         characterName.text = player.playerDetails.playerCharacterName;
-        strengthText.text = $"Strength : {player.currentStrengthValue}";
-        constitutionText.text = $"Constitution : {player.currentConstitutionValue}";
-        dexterityText.text = $"Dexterity : {player.currentDexterityValue}";
-        intelligenceText.text = $"Intelligence : {player.currentIntelligenceValue}";
-        agilityText.text = $"Agility : {player.currentAgilityValue}";
+        strengthText.text = $"Strength : {player.CurrentStrengthValue}";
+        constitutionText.text = $"Constitution : {player.CurrentConstitutionValue}";
+        dexterityText.text = $"Dexterity : {player.CurrentDexterityValue}";
+        intelligenceText.text = $"Intelligence : {player.CurrentIntelligenceValue}";
+        agilityText.text = $"Agility : {player.CurrentAgilityValue}";
         physicalResistanceText.text = $"Physical : {player.currentPhysicalResistanceValue * 100} %";
         fireResistanceText.text = $"Fire : {player.currentFireResistanceValue * 100} %";
         waterResistanceText.text = $"Water : {player.currentWaterResistanceValue * 100} %";
@@ -889,11 +891,14 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         darkResistanceText.text = $"Dark : {player.currentDarkResistanceValue * 100} %";
 
         healthText.text = $"Health: {player.health.GetCurrentHealth()} / {player.health.GetMaximumHealth()}";
-        damageText.text = $"Damage : {player.currentMainHandMinDamageValue}-{player.currentMainHandMaxDamageValue}({player.currentOffHandMinDamageValue}-{player.currentOffHandMaxDamageValue})";
-        handlingText.text = $"Handling: {player.currentWeaponHandlingValue * 100}% (Chance to hit)";
+        damageText.text = $"Damage : {player.currentMainHandMinDamageValue}-{player.currentMainHandMaxDamageValue}({player.currentOffHandMinDamageValue}-" +
+            $"{player.currentOffHandMaxDamageValue})";
+        handlingText.text = $"Handling: {handling * 100}% (Chance to hit)";
 
-        criticalHitChanceText.text = $"Cr.Hit Chance: {player.currentMainHandCriticalHitChance * 100}%({player.currentOffHandCriticalHitChance * 100}%)";
-        criticalHitDamageText.text = $"Cr.Hit Damage: {player.currentMainHandCriticalHitDamage * 100}%({player.currentOffHandCriticalHitDamage * 100}%).";
+        criticalHitChanceDamageText.text = $"Cr.Hit Chance/Damage: {player.currentMainHandCriticalHitChance * 100}%({player.currentOffHandCriticalHitChance * 100}%) - " +
+            $"{player.currentMainHandCriticalHitDamage * 100}%({player.currentOffHandCriticalHitDamage * 100})";
+
+        speedText.text = $"Speed: {player.movementByVelocity.moveSpeed}";
 
         blockRateText.text = $"Block Rate: {player.currentBlockValue * 100}%";
         eveasivenessRateText.text = $"Evasiveness Rate: {player.currentEvasivenessValue * 100}%";
@@ -1458,19 +1463,17 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                     {
                         case Character.Astraeus:
                             // Ironheart Endurance
-                            player.currentConstitutionValue++;
-                            player.UpdatePlayerHealth(10, false, true);
+                            player.CurrentConstitutionValue++;
+                            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                             break;
                         case Character.Erebus:
                             // Shadow Endurance
-                            player.currentConstitutionValue++;
-                            player.UpdatePlayerHealth(10, false, true);
+                            player.CurrentConstitutionValue++;
+                            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                             break;
                         case Character.Orion:
                             // Windrunner's Agility
-                            player.currentAgilityValue++;
-                            player.UpdateBlockAndEvasivenessValues();
-                            player.UpdateSpeedValue();
+                            player.CurrentAgilityValue++;
                             break;
                         case Character.Lyrisa:
                             // Granite Resolve
@@ -1484,25 +1487,19 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                     {
                         case Character.Astraeus:
                             // Colossal Might
-                            player.currentStrengthValue++; 
-                            player.UpdateDamageValues();
+                            player.CurrentStrengthValue++; 
                             break;
                         case Character.Erebus:
                             // Phantom Reflexes
-                            player.currentDexterityValue++;
-                            player.UpdateDamageValues();
-                            player.UpdateWeaponHandlingAndCriticalValues();
+                            player.CurrentDexterityValue++;
                             break;
                         case Character.Orion:
                             // Sharpshooter's Reflexes
-                            player.currentDexterityValue++;
-                            player.UpdateDamageValues();
-                            player.UpdateWeaponHandlingAndCriticalValues();
+                            player.CurrentDexterityValue++;
                             break;
                         case Character.Lyrisa:
                             // Mystic Insight
-                            player.currentIntelligenceValue++;
-                            player.UpdateDamageValues();
+                            player.CurrentIntelligenceValue++;
                             break;
                     }
                 }
@@ -1571,18 +1568,17 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                             break;
                         case Character.Erebus:
                             // Phantom Strength
-                            player.currentStrengthValue++;
-                            player.UpdateDamageValues();
+                            player.CurrentStrengthValue++;
                             break;
                         case Character.Orion:
                             // Steady Resolve
-                            player.currentConstitutionValue++;
-                            player.UpdatePlayerHealth(10, false, true);
+                            player.CurrentConstitutionValue++;
+                            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                             break;
                         case Character.Lyrisa:
                             // Ethereal Resilience
-                            player.currentConstitutionValue++;
-                            player.UpdatePlayerHealth(10, false, true);
+                            player.CurrentConstitutionValue++;
+                            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                             break;
                     }
                 }
@@ -1592,14 +1588,11 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                     {
                         case Character.Astraeus:
                             // Titan's Strength
-                            player.currentStrengthValue++;
-                            player.UpdateDamageValues();
+                            player.CurrentStrengthValue++;
                             break;
                         case Character.Erebus:
                             // Shadow Step
-                            player.currentAgilityValue++;
-                            player.UpdateBlockAndEvasivenessValues();
-                            player.UpdateSpeedValue();
+                            player.CurrentAgilityValue++;
                             break;
                         case Character.Orion:
                             // Rapid Execution
@@ -1660,8 +1653,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                             break;
                         case Character.Lyrisa:
                             // Runic Mastery
-                            player.currentIntelligenceValue++;
-                            player.UpdateDamageValues();
+                            player.CurrentIntelligenceValue++;
                             break;
                     }
                 }
@@ -1677,8 +1669,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                     {
                         case Character.Astraeus:
                             // Unyielding Will
-                            player.currentConstitutionValue++;
-                            player.UpdatePlayerHealth(10, false, true);
+                            player.CurrentConstitutionValue++;
+                            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                             break;
                         case Character.Erebus:
                             // Shadow Clone Mastery
@@ -1686,7 +1678,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                             break;
                         case Character.Orion:
                             // Enduring Marksman
-                            player.currentStrengthValue++;
+                            player.CurrentStrengthValue++;
                             player.currentPhysicalResistanceValue += 0.05f;
                             player.currentAirResistanceValue += 0.05f;
                             player.currentEarthResistanceValue += 0.05f;
@@ -1694,7 +1686,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                             player.currentWaterResistanceValue += 0.05f;
                             player.currentDarkResistanceValue += 0.05f;
                             player.currentLightResistanceValue += 0.05f;
-                            player.UpdateDamageValues();
                             break;
                         case Character.Lyrisa:
                             // Mindbender's Persuasion
@@ -1712,15 +1703,11 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                             break;
                         case Character.Erebus:
                             // Spectral Dexterity
-                            player.currentDexterityValue++;
-                            player.UpdateDamageValues();
-                            player.UpdateWeaponHandlingAndCriticalValues();
+                            player.CurrentDexterityValue++;
                             break;
                         case Character.Orion:
                             // Falcon's Grace
-                            player.currentDexterityValue++;
-                            player.UpdateDamageValues();
-                            player.UpdateWeaponHandlingAndCriticalValues();
+                            player.CurrentDexterityValue++;
                             break;
                         case Character.Lyrisa:
                             // Elemental Affinity
@@ -1789,15 +1776,11 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 else if (i == 17)
                 {
                     // Legacy
-                    player.currentStrengthValue++;
-                    player.currentDexterityValue++;
-                    player.currentConstitutionValue++;
-                    player.currentIntelligenceValue++;
-                    player.currentAgilityValue++;
-                    player.UpdatePlayerHealth(10, false, true);
-                    player.UpdateDamageValues();
-                    player.UpdateWeaponHandlingAndCriticalValues();
-                    player.UpdateBlockAndEvasivenessValues();
+                    player.CurrentStrengthValue++;
+                    player.CurrentDexterityValue++;
+                    player.CurrentConstitutionValue++;
+                    player.CurrentIntelligenceValue++;
+                    player.CurrentAgilityValue++;
                     player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                 }
             }

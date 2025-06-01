@@ -62,7 +62,7 @@ public class RoomLightingControl : MonoBehaviour
     IEnumerator FadeInRoomLightingRoutine(InstantiatedRoom instantiatedRoom)
     {
         // Create new material to fade in
-        Material material = new Material(GameResources.Instance.variableLitShader);
+        Material material = new Material(GameResources.Instance.dimmedMaterial);
 
         instantiatedRoom.groundTilemap.GetComponent<TilemapRenderer>().material = material;
         instantiatedRoom.decoration1Tilemap.GetComponent<TilemapRenderer>().material = material;
@@ -98,7 +98,7 @@ public class RoomLightingControl : MonoBehaviour
     private void FadeInEnvironmentLighting()
     {
         // Create new material to fade in
-        Material material = new Material(GameResources.Instance.variableLitShader);
+        Material material = new Material(GameResources.Instance.dimmedMaterial);
 
         // Get all environment components in room
         Environment[] environmentComponents = GetComponentsInChildren<Environment>();

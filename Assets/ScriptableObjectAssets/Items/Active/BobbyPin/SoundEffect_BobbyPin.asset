@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Bobby Pin Lockpick
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 162ab4d7779ef9c4c987e39e41f78886, type: 3}
+  - {fileID: 8300000, guid: ca367238aadab6942be89b9410759a3d, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 1

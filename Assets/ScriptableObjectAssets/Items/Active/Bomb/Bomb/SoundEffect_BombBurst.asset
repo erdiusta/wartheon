@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Bomb Burst
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: b9ce1ec16bc172546a7ea2d2e5846e47, type: 3}
+  - {fileID: 8300000, guid: 93c44d0e692b40741840eb373808270f, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 0.7

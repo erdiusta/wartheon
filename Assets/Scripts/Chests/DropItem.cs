@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -100,6 +99,11 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             CloseTooltip(); // only if pointer no longer over *any* UI
         }
 
+        if (isPointerOver && InputManager.Instance.AnyNonTooltipInputPressed())
+        {
+            CloseTooltip();
+        }
+
         if (hasPrimaryPassiveDrop && trackPlayer && !isPickedUp)
         {
             Vector3 targetPos = player.transform.position + new Vector3(0f, 0.5f, 0f);
@@ -134,7 +138,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return new Vector3(
             Mathf.Round(pos.x / SNAP_UNIT) * SNAP_UNIT,
             Mathf.Round(pos.y / SNAP_UNIT) * SNAP_UNIT,
-            transform.position.z // Keep Z unchanged
+            transform.position.z 
         );
     }
 
@@ -216,12 +220,21 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                     {
                         animator.SetBool(Settings.hovered, true);
 
+                        Counter counter = GetComponentInParent<Counter>();
+
+                        if (counter != null)
+                        {
+                            NpcType npcType = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<NPC>().npcType;
+
+                            StaticEventHandler.CallNPCInteractionStartedEvent(npcType);
+                        }
+
                         if (!tooltipVisibleFromProximity)
                         {
                             tooltipVisibleFromProximity = true;
 
                             // Show tooltip from proximity
-                            if (!hasPrimaryPassiveDrop && GetComponentInParent<Counter>() == null)
+                            if (!hasPrimaryPassiveDrop && !isGambleDropItem)
                             {
                                 GameManager.Instance.UpdateTooltipPanelInfo(genericItem, hasWeaponDrop, hasActiveDrop, hasSecondaryPassiveDrop, TooltipSource.Proximity);
                             }
@@ -231,12 +244,12 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                         {
                             if (InputManager.Instance.interaction.action.IsPressed())
                             {
-                                Counter counter = GetComponentInParent<Counter>();
-
                                 if (counter != null)
                                 {
                                     int gambleBlind = 10;
 
+                                    NPC gambleNpc = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<NPC>();
+                 
                                     if (!InputManager.Instance.isPressedPreviousFrame)
                                     {
                                         if (player.coins.coinAmount >= gambleBlind)
@@ -245,10 +258,12 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
                                             if (gambleValue < 0)
                                             {
+                                                SoundEffectManager.Instance.PlaySoundEffect(gambleNpc.gambleLostSoundEffect);
                                                 StaticDialogueHandler.CallGambleLostEvent(); // Gamble lost
                                             }
                                             else
                                             {
+                                                SoundEffectManager.Instance.PlaySoundEffect(gambleNpc.gambleWinSoundEffect);
                                                 StaticDialogueHandler.CallGambleWonEvent(); // Gamble won
                                             }
 
@@ -275,10 +290,12 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                         {
                             if (InputManager.Instance.interaction.action.IsPressed())
                             {
-                                Counter counter = GetComponentInParent<Counter>();
-
                                 if (counter != null)
                                 {
+                                    NpcType npcType = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<NPC>().npcType;
+
+                                    StaticEventHandler.CallNPCInteractionStartedEvent(npcType);
+
                                     if (weaponDetails != null)
                                     {
                                         if (!player.mainHandSlotFilled)
@@ -348,8 +365,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                         {
                             if (InputManager.Instance.interaction.action.IsPressed())
                             {
-                                Counter counter = GetComponentInParent<Counter>();
-
                                 if (counter != null)
                                 {
                                     if (passiveItemDetails != null)
@@ -733,6 +748,14 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         if (collision.tag == Settings.playerTag || collision.tag == Settings.playerWeapon)
         {
+
+            Counter counter = GetComponentInParent<Counter>();
+
+            if (counter != null)
+            {
+                StaticEventHandler.CallNPCInteractionEndedEvent();
+            }
+
             if (tooltipVisibleFromProximity)
             {
                 tooltipVisibleFromProximity = false;

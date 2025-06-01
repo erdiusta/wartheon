@@ -113,13 +113,10 @@ public class RoomTemplateSO : ScriptableObject
                     roomEnemySpawnParameters.minConcurrentEnemies, nameof(roomEnemySpawnParameters.maxConcurrentEnemies), 
                     roomEnemySpawnParameters.maxConcurrentEnemies, false);
 
-                bool isEnemyTypesListForDungeonLevel = false;
-
                 // Validate enemy types list
                 foreach (SpawnableObjectsByLevel<EnemyDetailsSO> dungeonObjectsByLevel in enemiesByLevelList)
                 {
                     if (dungeonObjectsByLevel.dungeonLevel == roomEnemySpawnParameters.dungeonLevel && dungeonObjectsByLevel.spawnableObjectRatioList.Count > 0)
-                        isEnemyTypesListForDungeonLevel = true;
 
                     HelperUtilities.ValidateCheckNullValue(this, nameof(dungeonObjectsByLevel.dungeonLevel), dungeonObjectsByLevel.dungeonLevel);
 
@@ -128,12 +125,6 @@ public class RoomTemplateSO : ScriptableObject
                         HelperUtilities.ValidateCheckNullValue(this, nameof(dungeonObjectRatio.dungeonObject), dungeonObjectRatio.dungeonObject);
                         HelperUtilities.ValidateCheckPositiveValue(this, nameof(dungeonObjectRatio.ratio), dungeonObjectRatio.ratio, false);
                     }
-                }
-
-                if (isEnemyTypesListForDungeonLevel == false && roomEnemySpawnParameters.dungeonLevel != null)
-                {
-                    Debug.Log("No enemy types specified in for dungeon level " + roomEnemySpawnParameters.dungeonLevel.levelName + " in gameobject " + 
-                        this.name.ToString());
                 }
             }
         }

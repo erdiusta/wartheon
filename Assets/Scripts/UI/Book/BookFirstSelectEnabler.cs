@@ -18,6 +18,5 @@ public class BookFirstSelectEnabler : MonoBehaviour
         yield return null; // wait one frame
 
         EventSystem.current.SetSelectedGameObject(charButton.gameObject);
-        Debug.Log("Now selected " + EventSystem.current.currentSelectedGameObject?.name);
     }
 }

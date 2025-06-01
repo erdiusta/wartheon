@@ -256,6 +256,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 285103968431491251, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 3cbcb1e9936af724d841b9df0fe0c7ae, type: 2}
     - target: {fileID: 312786131199480866, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.x
       value: 0.4375
@@ -332,6 +336,10 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1586052525438718976, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 3cbcb1e9936af724d841b9df0fe0c7ae, type: 2}
     - target: {fileID: 1623237600026897199, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -651,10 +659,6 @@ PrefabInstance:
     - target: {fileID: 8213552445980175040, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8213552445980175040, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
-      propertyPath: m_CullingMode
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8459880889773683550, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: circleRadius

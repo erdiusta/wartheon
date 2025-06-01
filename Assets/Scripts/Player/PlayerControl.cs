@@ -13,7 +13,7 @@ public class PlayerControl : MonoBehaviour
     [HideInInspector] public Coroutine unstealthRoutine;
     [HideInInspector] public float movementTimer = 0;
     [HideInInspector] public bool isPlayerRolling;
-    [HideInInspector] public bool IsParrying => isParrying;
+    [HideInInspector] public bool IsParrying { get => isParrying; set { isParrying = value; } }
     [HideInInspector] public Vector3 playerBodycenterPosition;
 
     // Input gamepad
@@ -722,13 +722,23 @@ public class PlayerControl : MonoBehaviour
     {
         float scrollValue = (InputManager.Instance.switchWeaponByWheel.action.ReadValue<Vector2>().normalized).y;
 
+        bool switchForward = false;
+        bool switchBack = false;
+
+        // If wheel is not active then check switch buttons
+        if (Mathf.Abs(scrollValue) < 0.05f)
+        {
+            switchForward = InputManager.Instance.switchWeaponForward.action.WasPressedThisFrame();
+            switchBack = InputManager.Instance.switchWeaponBack.action.WasPressedThisFrame();
+        }
+
         // Switch weapon if mouse scroll wheel selecetd
-        if (scrollValue < 0f)
+        if (scrollValue < 0f || switchBack)
         {
             PreviousWeaponSet(true, onStart);
         }
 
-        if (scrollValue > 0f)
+        if (scrollValue > 0f || switchForward)
         {
 
             NextWeaponSet(true, true, onStart);
@@ -863,11 +873,7 @@ public class PlayerControl : MonoBehaviour
         }
 
         // Update stats after weapon switch
-        player.UpdatePlayerHealth(0, false, false);
-        player.UpdateDamageValues();
-        player.UpdateWeaponHandlingAndCriticalValues();
-        player.UpdateBlockAndEvasivenessValues();
-        player.UpdateSpeedValue();
+        player.RecalculateSecondaryStats();
 
         // Book UI SWITCH
         if(!dragFromInventory && !dragToInventory && !inventorySwitch) StaticEventHandler.CallWeaponSwitchedEventForBook();
@@ -914,7 +920,7 @@ public class PlayerControl : MonoBehaviour
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallStunCuredEvent();
         player.animator.SetBool(Settings.isStunned, false);
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.CurrentAgilityValue * 0.25f;
         stunCoroutine = null;
     }
 
@@ -933,7 +939,7 @@ public class PlayerControl : MonoBehaviour
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallFrostCuredEvent();
         player.animator.SetBool(Settings.isFrozen, false);
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.CurrentAgilityValue * 0.25f;
         frostCoroutine = null;
     }
 
@@ -953,7 +959,9 @@ public class PlayerControl : MonoBehaviour
                     break;
 
                 case Character.Orion:
-                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
+                    if ((player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow ||
+                        player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow) &&
+                        !player.activeWeapon.GetCurrentMainHandWeapon().onCooldown)
                     {
                         HeadShot();
                         player.specialMoveOneOnCooldown = true;
@@ -1023,9 +1031,14 @@ public class PlayerControl : MonoBehaviour
                     player.specialMoveEvent.CallSpecialMoveUsedEvent(3);
                     break;
                 case Character.Orion:
-                    Penetrate();
-                    player.specialMoveThreeOnCooldown = true;
-                    player.specialMoveEvent.CallSpecialMoveUsedEvent(3);
+                    if ((player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow ||
+                        player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow) &&
+                        !player.activeWeapon.GetCurrentMainHandWeapon().onCooldown)
+                    {
+                        Penetrate();
+                        player.specialMoveThreeOnCooldown = true;
+                        player.specialMoveEvent.CallSpecialMoveUsedEvent(3);
+                    }
                     break;
                 case Character.Lyrisa:
                     Cataclysm();
@@ -1340,7 +1353,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void Block()
     {
-        if (player.specialMoveTwoDurationTimer < player.playerDetails.specialMoveTwoDuration * (1 + player.blockSkillAdditionalDurationModifier))
+        if (player.specialMoveTwoDurationTimer < player.playerDetails.specialMoveTwoEffectiveDuration * (1 + player.blockSkillAdditionalDurationModifier))
         {
             player.isBlockingActive = true;
             player.healthEvent.CallGetBlockSpecialMoveEvent(); // This is for displaying shield icon
@@ -1352,7 +1365,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void GemSkin()
     {
-        if (player.specialMoveThreeDurationTimer < player.playerDetails.specialMoveThreeDuration)
+        if (player.specialMoveThreeDurationTimer < player.playerDetails.specialMoveThreeEffectiveDuration)
         {
             player.isGemSkinActive = true;
             player.healthEvent.CallGetGemSkinSpecialMoveEvent(); // This is for displaying gem skin icon
@@ -1439,9 +1452,12 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void LightFeet()
     {
-        if (player.specialMoveTwoDurationTimer < player.playerDetails.specialMoveTwoDuration * (1 + player.additionalLightfeetSkillDurationModifier))
+        if (player.specialMoveTwoDurationTimer < player.playerDetails.specialMoveTwoEffectiveDuration * (1 + player.additionalLightfeetSkillDurationModifier))
         {
-            player.movementByVelocity.moveSpeed += 1f;
+            player.additionalSpeedModifier += 1f;
+            player.UpdateSpeedValue();
+            player.healthEvent.CallGetLightFeetEvent(); // This is for displaying light feet icon
+            StaticEventHandler.CallPrimaryStatsChangedEvent();
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
         }
     }
@@ -1954,7 +1970,7 @@ public class PlayerControl : MonoBehaviour
     public void EnablePlayer()
     {
         isPlayerMovementDisabled = false;
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.currentAgilityValue * 0.25f;
+        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.CurrentAgilityValue * 0.25f;
     }
 
     /// <summary>

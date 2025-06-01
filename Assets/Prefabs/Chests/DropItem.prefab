@@ -642,7 +642,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!95 &5958593666507895797
 Animator:
   serializedVersion: 7
@@ -834,12 +834,12 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.625, y: 2.375}
+  m_Size: {x: 0.75, y: 1.75}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!95 &504525753745202363
 Animator:
   serializedVersion: 7
@@ -2059,7 +2059,7 @@ MonoBehaviour:
   isColliding: 0
   hasMainHandWeapon: 0
   hasOffHandWeapon: 0
-  isGambleChestItem: 0
+  isGambleDropItem: 0
   gambleValue: 0
   isInitialized: 0
   weaponDetails: {fileID: 0}

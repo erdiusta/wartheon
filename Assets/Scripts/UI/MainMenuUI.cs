@@ -79,13 +79,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         StaticEventHandler.OnAdditiveSceneRemoved -= StaticEventHandler_OnAdditiveSceneRemoved;
     }
 
-    private void Update()
-    {
-        if (RebindState.IsRebinding) return;
-
-        // Optionally support Left/Right if you want later
-    }
-
     private void StaticEventHandler_OnAdditiveSceneRemoved()
     {
         SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
@@ -209,6 +202,38 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeSliderChanged);
         soundVolumeSlider.onValueChanged.AddListener(OnSoundVolumeSliderChanged);
         dynamicCameraToggle.onValueChanged.AddListener(OnDynamicCameraFollowToggleChanged);
+    }
+
+    
+    private void Update()
+    {
+        if (InputManager.Instance.escapeButton.action.WasPressedThisFrame())
+        {
+            if (settingsMenuUI.activeSelf)
+            {
+                ExitSettingMenu();
+                EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+            }
+
+            if (controlsMenuUI.activeSelf)
+            {
+                if (keyboardRebindingsMenuUI.activeSelf)
+                {
+                    ReturnToControlsMenu();
+                    EventSystem.current.SetSelectedGameObject(keyboardMouseButton.gameObject);
+                }
+                else if (gamepadRebindingsMenuUI.activeSelf)
+                {
+                    ReturnToControlsMenu();
+                    EventSystem.current.SetSelectedGameObject(gamepadButton.gameObject);
+                }
+                else
+                {
+                    ExitControlsMenu();
+                    EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+                }
+            }
+        }
     }
 
     /// <summary>

@@ -15,7 +15,7 @@ MonoBehaviour:
   soundEffectName: Chest Locked
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
-  - {fileID: 8300000, guid: 162ab4d7779ef9c4c987e39e41f78886, type: 3}
-  soundEffectPitchRandomVariationMin: 1
-  soundEffectPitchRandomVariationMax: 1
-  soundEffectVolume: 1
+  - {fileID: 8300000, guid: c76bcf67d8200094f9ae29180d3dcd2e, type: 3}
+  soundEffectPitchRandomVariationMin: 0.95
+  soundEffectPitchRandomVariationMax: 1.05
+  soundEffectVolume: 0.6

@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
@@ -9,6 +10,10 @@ public class CinematicSceneManager : SingletonMonobehaviour<CinematicSceneManage
     [SerializeField] GameObject moldranObject;
     [SerializeField] GameObject riftObject;
     [SerializeField] SoundEffectSO riftOpenSoundEffect;
+
+    // Cinematic dialogue box paneþ
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI dialogueText;
 
     [HideInInspector] public  CinematicPhase cinematicPhase = CinematicPhase.openingScene;
 
@@ -28,7 +33,6 @@ public class CinematicSceneManager : SingletonMonobehaviour<CinematicSceneManage
     bool fadeInCompleted;
     bool riftAnimationRun;
     bool riftOpened = false; // Used for playing open rift sound
-
 
     float fadeOutTimer = 0f;
     float fadeOutDuration = 5f;
