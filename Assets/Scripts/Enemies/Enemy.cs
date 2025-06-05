@@ -1,6 +1,8 @@
+using Pathfinding;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 
 #region REQUIRE COMPONENTS
 [RequireComponent(typeof(HealthEvent))]
@@ -31,6 +33,9 @@ using UnityEngine.Rendering;
 public class Enemy : MonoBehaviour
 {
     [HideInInspector] public EnemyDetailsSO enemyDetails;
+    [HideInInspector] public AIDestinationSetter aiDestinationSetter;
+    [HideInInspector] public Patrol patrol;
+    [HideInInspector] public AILerp aiLerp;
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
     [HideInInspector] public FireWeapon fireWeapon;
     [HideInInspector] public EnemyAIEvent enemyAIEvent;
@@ -62,6 +67,8 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public float currentPhysicalResistance;
     [HideInInspector] public bool isBlind;
     [HideInInspector] public bool isMaterializing;
+    [HideInInspector] public float currentMoveSpeed;
+    [HideInInspector] public float addionalSpeedModifier = 0f;
 
     float blindTimer;
     SetActiveWeaponEvent setActiveWeaponEvent;
@@ -94,6 +101,9 @@ public class Enemy : MonoBehaviour
         dropOnDestroy = GetComponent<DropOnDestroy>();
         statusManager = GetComponent<StatusManager>();
         damageDisplay = GetComponent<DamageDisplay>();
+        aiDestinationSetter = GetComponent<AIDestinationSetter>();
+        patrol = GetComponent<Patrol>();
+        aiLerp = GetComponent<AILerp>();
     }
 
     private void OnEnable()
@@ -156,21 +166,24 @@ public class Enemy : MonoBehaviour
     public void EnemyInitialization(EnemyDetailsSO enemyDetails, int enemySpawnNumber, DungeonLevelSO dungeonLevel)
     {
         this.enemyDetails = enemyDetails;
-        SetEnemyMovementUpdateFrame(enemySpawnNumber);
+        //SetEnemyMovementUpdateFrame(enemySpawnNumber);
         SetEnemyStartingHealth(dungeonLevel);
         SetEnemyStartingWeapon();
         SetEnemyAnimationSpeed();
         StartCoroutine(MaterializeEnemy());
     }
 
-    /// <summary>
-    /// Set enemy movement update frame 
-    /// </summary>
-    private void SetEnemyMovementUpdateFrame(int enemySpawnNumber)
-    {
-        // Set frame number that enemy should process it's updates
-        enemyAI.SetUpdateFrameNumber(enemySpawnNumber % Settings.targetFrameRateToSpreadPathfindingOver);
-    }
+    ///// <summary>
+    ///// Set enemy movement update frame 
+    ///// </summary>
+    //private void SetEnemyMovementUpdateFrame(int enemySpawnNumber)
+    //{
+    //    // Set frame number that enemy should process it's updates
+    //    if (enemyDetails.enemyCategory != EnemyCategory.None) // Skip this code for test purposes
+    //    {
+    //        enemyAI.SetUpdateFrameNumber(enemySpawnNumber % Settings.targetFrameRateToSpreadPathfindingOver);
+    //    }
+    //}
 
     /// <summary>
     /// Set the starting health for the enemy
@@ -211,7 +224,7 @@ public class Enemy : MonoBehaviour
     private void SetEnemyAnimationSpeed()
     {
         // Set animator speed to match movement speed
-        animator.speed = enemyAI.moveSpeed / Settings.baseSpeedForEnemyAnimations;
+        animator.speed = currentMoveSpeed / Settings.baseSpeedForEnemyAnimations;
     }
 
     IEnumerator MaterializeEnemy()
@@ -235,11 +248,22 @@ public class Enemy : MonoBehaviour
     {
         // Enable/Disable colliders
         polygonCollider2D.enabled = isEnabled;
+        enemyAI.enabled = isEnabled;
 
         // Enable/Disable movement AI
-        enemyAI.enabled = isEnabled;
+        if (enemyAI != null && !enemyDetails.isEnemyBoss)
+        {
+            aiLerp.enabled = isEnabled;
+        }
 
         // Enable / Disable Fire Weapon
         fireWeapon.enabled = isEnabled;
+    }
+
+    public Vector3 GetEnemyPosition(bool isBoss = false)
+    {
+        Vector3 rb2dPosition = new Vector3(rb2D.position.x, rb2D.position.y, 0f);
+
+        return isBoss ? rb2dPosition + new Vector3(0f, 1.4f, 0f) : rb2dPosition + new Vector3(0f, 0.7f, 0f);   
     }
 }

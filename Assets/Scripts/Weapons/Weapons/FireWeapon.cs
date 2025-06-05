@@ -1,7 +1,6 @@
 using Random = UnityEngine.Random;
 using UnityEngine;
 using System.Collections;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(ActiveWeapon))]
 [RequireComponent(typeof(FireWeaponEvent))]
@@ -591,10 +590,6 @@ public class FireWeapon : MonoBehaviour
         // Weapon fired sound effect
         WeaponSoundEffect(isActiveItem);
 
-        if (enemy != null)
-        {
-            enemy.isFiring = false;
-        }
     }
 
     /// <summary>

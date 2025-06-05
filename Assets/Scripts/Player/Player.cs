@@ -1070,6 +1070,8 @@ public class Player : MonoBehaviour
     /// </summary>
     public Vector3 GetPlayerPosition()
     {
-        return transform.position;
+        Vector3 rb2dPosition = new Vector3(rb2D.position.x, rb2D.position.y, 0f);
+
+        return rb2dPosition + new Vector3(0f, 0.7f, 0f);
     }
 }

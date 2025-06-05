@@ -103,24 +103,25 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         foreach (var collider in hitSpan)
         {
-            if (collider.CompareTag(Settings.playerTag) ||
-                collider.CompareTag(Settings.decoyTag) ||
-                collider.CompareTag(Settings.chestItemTag))
-                continue;
+            if (collider.CompareTag(Settings.playerTag) || collider.CompareTag(Settings.decoyTag) || collider.CompareTag(Settings.chestItemTag)) continue;
+
+            // Ignore capsule colliders used for blocking
+            if (collider is CapsuleCollider2D && (collider.GetComponent<Enemy>() != null || collider.GetComponent<Player>() != null)) continue;
+
+            if(collider is CircleCollider2D && (collider.GetComponent<Enemy>() != null || collider.GetComponent<Player>() != null)) continue;
 
             // Handle destructibles / environment
             if (collider.TryGetComponent(out Environment environment) &&
                 collider.TryGetComponent(out Health envHealth))
             {
-                envHealth.TakeDamage(100, transform.position, collider.transform.position, false, hand);
-                continue;
+                envHealth.TakeDamage(100, transform.position, collider.transform.position, false, hand); continue;
             }
 
             if (!collider.TryGetComponent(out Health enemyHealth)) continue;
 
             if (collider.CompareTag("PracticeDummy"))
             {
-                DummyCheck(collider, hand);
+                DummyCheck(collider, hand); 
                 continue;
             }
 

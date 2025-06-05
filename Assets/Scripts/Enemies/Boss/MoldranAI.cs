@@ -30,6 +30,10 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
         currentMoldranPhase = MoldranPhase.Wait;
     }
 
+    protected override void OnEnable() { }
+
+    protected override void OnDisable() { }
+
     protected override void FixedUpdate() { }
 
     protected override void Update()

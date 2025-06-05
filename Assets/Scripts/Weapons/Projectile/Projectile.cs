@@ -56,6 +56,8 @@ public class Projectile : MonoBehaviour, IFireable
 
     // Lifetime countdown
     float lifeTimeCountdownTimer = 0f;
+    Transform target;
+    float updateGuidedMissleTimer = 0f;
 
     private void Awake()
     {
@@ -103,6 +105,22 @@ public class Projectile : MonoBehaviour, IFireable
         if (projectileDetails != null)
         {
             damageDone = Random.Range(projectileDetails.projectileDamageMin, projectileDetails.projectileDamageMax);
+
+            if (projectileDetails.isPlayerProjectile)
+            {
+                if (projectileDetails.isGuided && updateGuidedMissleTimer <= 0f)
+                {
+                    updateGuidedMissleTimer = 1f;
+                    target = FindClosestEnemy(); // Your own method to get a target enemy
+                }
+            }
+            else
+            {
+                if (projectileDetails.isGuided)
+                {
+                    target = GameManager.Instance.GetPlayer().transform;
+                }
+            }
         }
 
         if (isLaserBeam)
@@ -163,7 +181,14 @@ public class Projectile : MonoBehaviour, IFireable
         }
         else
         {
-            MoveStandardProjectile();
+            if (projectileDetails != null && projectileDetails.isGuided && target != null)
+            {
+                MoveGuidedProjectile();
+            }
+            else
+            {
+                MoveStandardProjectile();
+            }
         }     
     }
 
@@ -193,8 +218,8 @@ public class Projectile : MonoBehaviour, IFireable
                             DisableProjectile();
                         }
                     }
-                    else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb && activeItemDetails.activeItemType != ActiveItemType.Incendiary
-                        && activeItemDetails.activeItemType != ActiveItemType.Dummy)
+                    else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb && 
+                        activeItemDetails.activeItemType != ActiveItemType.Incendiary && activeItemDetails.activeItemType != ActiveItemType.Dummy)
                     {
                         DisableProjectile();
                     }
@@ -215,6 +240,32 @@ public class Projectile : MonoBehaviour, IFireable
             if (isStopped)
             {
                 transform.position = stoppedPosition;
+            }
+        }
+    }
+
+    private void MoveGuidedProjectile()
+    {
+        if (!overrideProjectileMovement)
+        {
+            projectileRange -= velocity.magnitude * Time.deltaTime;
+
+            Vector2 directionToTarget = (target.position - transform.position).normalized;
+
+            float targetAngle = HelperUtilities.GetAngleFromVector(directionToTarget);
+            //float angle = Mathf.MoveTowardsAngle(transform.eulerAngles.z, targetAngle, guidedRotationSpeed * Time.deltaTime);
+
+            transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
+
+            // Update velocity in the new direction
+            fireDirectionVector = HelperUtilities.GetDirectionVectorFromAngle(targetAngle);
+            velocity = fireDirectionVector.normalized * projectileSpeed;
+
+            transform.position += velocity * Time.deltaTime;
+
+            if (projectileRange < 0f)
+            {
+                DisableProjectile();
             }
         }
     }
@@ -535,6 +586,25 @@ public class Projectile : MonoBehaviour, IFireable
             DisableProjectile();
         }
     }
+
+    // This is for bouncing projectiles
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (projectileDetails != null && projectileDetails.isBouncing)
+        {
+            // Reflect off wall/prop
+            Vector2 normal = collision.contacts[0].normal;
+            velocity = Vector2.Reflect(velocity, normal);
+
+            float angle = HelperUtilities.GetAngleFromVector(velocity);
+            transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+            return;
+        }
+
+        DisableProjectile();
+    }
+
 
     IEnumerator PlayerBlockAnimRoutine(Collider2D collision)
     {
@@ -1997,6 +2067,27 @@ public class Projectile : MonoBehaviour, IFireable
         }
 
         return inflictedDamage;
+    }
+
+    private Transform FindClosestEnemy()
+    {
+        float closestDistance = Mathf.Infinity;
+        Transform closestEnemy = null;
+
+        Enemy[] enemyArrayInRoom = EnemySpawner.Instance.GetComponentsInChildren<Enemy>();
+
+        for (int i = 0; i < enemyArrayInRoom.Length; i++)
+        {
+            float distance = Vector3.Distance(transform.position, enemyArrayInRoom[i].GetEnemyPosition());
+
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestEnemy = enemyArrayInRoom[i].transform;
+            }
+        }
+
+        return closestEnemy;
     }
 
     public void SetProjectileMaterial(Material material)

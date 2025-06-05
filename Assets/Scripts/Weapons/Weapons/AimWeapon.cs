@@ -24,7 +24,8 @@ public class AimWeapon : MonoBehaviour
 
         if (tag == Settings.enemyTag)
         {
-            mainHandShootPosition = enemy.enemyAI.weaponShootPosition;
+
+            mainHandShootPosition = enemy.enemyAI?.weaponShootPosition;
         }
     }
 

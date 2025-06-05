@@ -27,6 +27,8 @@ MonoBehaviour:
   projectileSpeedMax: 16
   projectileRange: 16
   projectileRotationSpeed: 1
+  isGuided: 0
+  isBouncing: 1
   isBomb: 0
   isTrap: 0
   hasLifeTime: 0
@@ -35,20 +37,20 @@ MonoBehaviour:
   countDown: 3
   burstDamageMin: 15
   burstDamageMax: 25
-  hasAcid: 0
-  acidEfficiency: 0
+  hasBurnDamage: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
-  hasBurnDamage: 0
-  burnChance: 0
-  hasBlindDamage: 0
-  blindChance: 0
   hasCurseDamage: 0
   curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   projectileSpreadMin: 0.5
   projectileSpreadMax: 3
   projectileSpawnAmountMin: 1

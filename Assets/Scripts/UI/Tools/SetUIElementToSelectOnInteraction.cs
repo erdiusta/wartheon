@@ -24,7 +24,9 @@ public class SetUIElementToSelectOnInteraction : MonoBehaviour
 
     private void Reset()
     {
-        eventSystem = FindObjectOfType<EventSystem>();
+        eventSystem = FindAnyObjectByType<EventSystem>();
+
+        //eventSystem = FindObjectOfType<EventSystem>();
 
         if (eventSystem == null)
             Debug.Log("Did not find an Event system in your Scene.", this);

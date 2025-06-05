@@ -23,9 +23,9 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 11400000, guid: f3e839fdd5b82b6439febb9cddb0aa3d, type: 2}
   projectileDamageMin: 7
   projectileDamageMax: 12
-  projectileSpeedMin: 5
-  projectileSpeedMax: 7
-  projectileRange: 8
+  projectileSpeedMin: 10
+  projectileSpeedMax: 10
+  projectileRange: 14
   projectileRotationSpeed: 120
   isBomb: 0
   isTrap: 0
@@ -53,8 +53,8 @@ MonoBehaviour:
   projectileSpreadMax: 3
   projectileSpawnAmountMin: 1
   projectileSpawnAmountMax: 1
-  projectileSpawnIntervalMin: 2.5
-  projectileSpawnIntervalMax: 3.5
+  projectileSpawnIntervalMin: 0
+  projectileSpawnIntervalMax: 0
   projectileImpactSoundEffect: {fileID: 0}
   isProjectileTrail: 0
   projectileTrailTime: 0

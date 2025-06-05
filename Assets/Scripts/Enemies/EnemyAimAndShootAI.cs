@@ -12,32 +12,20 @@ public class EnemyAimAndShootAI : EnemyAI
         base.Awake();
     }
 
-    protected override void FixedUpdate() { }
+    protected override void Start()
+    {
+        base.Start();
+    }
 
-    protected override void Update()
+    protected override void FixedUpdate() 
     {
         // Update timers - Fire Projectile
-        firingIntervalTimer -= Time.deltaTime;
+        firingIntervalTimer -= Time.fixedDeltaTime;
 
-        // Movement cooldown timer
-        currentEnemyChasePathRebuildCooldown -= Time.deltaTime;
-        currentEnemyPatrolPathRebuildCooldown -= Time.deltaTime;
+        // AIM
+        Vector3 unitVector = Vector3.zero; Vector3 weaponDirection; float weaponAngleDegrees; float enemyAngleDegrees;
+        AimDirection enemyAimDirection; AttackDirection enemyAttackDirection;
 
-        // If enemy hits wall, stop all coroutines
-        Vector3Int enemyCellPosition = new Vector3Int(currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).x,
-            currentRoom.instantiatedRoom.grid.WorldToCell(transform.position).y);
-        Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
-            enemyCellPosition.y - currentRoom.templateLowerBounds.y);
-
-        // If enemy is in wall or pool tile, make enemy go away from there
-        if (currentRoom.instantiatedRoom?.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) == 0 || currentRoom.instantiatedRoom?.
-            GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) > 1)
-        {
-            ClearPatrolPath();
-            ClearChasePath();
-        }
-
-        // Second check if enemy is on frozen status
         if (moveStatus == MoveStatus.Frozen)
         {
             enemy.idle.StopVelocity();
@@ -71,87 +59,93 @@ public class EnemyAimAndShootAI : EnemyAI
         // If enemy is at the time of other animations, don't move
         if (enemy.health.getHitCoroutine != null)
         {
-            ClearPatrolPath();
-            ClearChasePath();
+            /// STOP CODE
         }
         else
         {
             if (moveStatus == MoveStatus.Idle)
             {
-                Perform();
+                if (GameManager.Instance.GetPlayer() == null || GameManager.Instance.GetPlayer().isDead) return;
+
+                if (updatePhaseRoutine == null)
+                {
+                    updatePhaseRoutine = StartCoroutine(UpdatePhaseStatus(true));
+                }
 
                 switch (enemyPhase)
                 {
                     case EnemyPhase.Patrol:
 
-                        //debugText.text = "PATROL";
+                        Aim(out unitVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection, out enemyAttackDirection);
+
+                        // Disable aiDestinationSetter and enable patrol
+                        enemy.aiDestinationSetter.enabled = false;
+                        enemy.patrol.enabled = true;
 
                         // Reset animation and dashing flag
+                        ResetEnemySpeed();
+
                         enemy.animateEnemy.ResetAnimatonParameters();
+                        enemy.animateEnemy.SetMovementAnimationParameters();
 
-                        if (currentEnemyPatrolPathRebuildCooldown <= 0)
-                        {
-                            ClearChasePath();
-                            Patrol();
-                            currentEnemyPatrolPathRebuildCooldown = Settings.enemyPatrolPathRebuildCooldown; // Reset cooldown
-                        }
-
+                        //ApplySeparation();
                         break;
 
                     case EnemyPhase.Chase:
 
+                        Aim(out unitVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection, out enemyAttackDirection);
+
+                        // Disable patrol during chase and enable aiDestinationSetter
+                        enemy.patrol.enabled = false;
+                        enemy.aiDestinationSetter.enabled = true;
+
                         // Reset animation and dashing flag
+                        ResetEnemySpeed();
                         enemy.animator.SetBool(Settings.isAttack, false);
 
-                        //debugText.text = "CHASE";
+                        enemy.animateEnemy.ResetAnimatonParameters();
+                        enemy.animateEnemy.SetMovementAnimationParameters();
 
-                        ClearPatrolPath();
-                        Chase();
-
+                        //ApplySeparation();
                         break;
 
                     case EnemyPhase.GetHit:
+                        // Disable patrol during get hit and enable aiDestinationSetter
+                        enemy.isFiring = false;
 
+                        enemy.patrol.enabled = false;
+                        enemy.aiDestinationSetter.enabled = true;
+
+                        enemy.idle.StopVelocity();
                         break;
 
                     case EnemyPhase.Attack:
-
                         if (enemy.isDead) return;
 
-                        //debugText.text = "ATTACK";
+                        // Disable patrol bot aiDestination setter for attack phase
+                        enemy.patrol.enabled = false;
+                        enemy.aiDestinationSetter.enabled = false;
+                        enemy.aiLerp.canMove = false; // Disable normal attack behaviour during dash or firing
 
-                        // Interval Timer
+                        enemy.animateEnemy.ResetAnimatonParameters();
+
+                        // Interval timer
                         if (firingIntervalTimer < 0f)
                         {
                             if (firingDurationTimer >= 0)
                             {
                                 firingDurationTimer -= Time.deltaTime;
-                                enemy.idle.StopVelocity();
-                                ClearChasePath();
-                                ClearPatrolPath();
-                                enemy.animateEnemy.ResetAnimatonParameters();
-                                enemy.animateEnemy.SetAttackAnimationParameters();
 
-                                if (!GameManager.Instance.GetPlayer().onStealth && !isFired)
-                                {
-                                    FireWeapon();
-                                    isFired = true; // Make sure it doesn't fire consecutive projectiles
-                                }
-
-                                if (waitAfterFiringRoutine == null)
-                                {
-                                    waitAfterFiringRoutine = StartCoroutine(WaitAfterFiringRoutine());
-                                }
+                                FireWeapon();
                             }
                             else
                             {
                                 // Reset timers
                                 firingIntervalTimer = WeaponShootInterval();
                                 firingDurationTimer = WeaponShootDuration();
-                                isFired = false;
+                                enemy.isFiring = false;
                             }
                         }
-
                         break;
 
                     default:

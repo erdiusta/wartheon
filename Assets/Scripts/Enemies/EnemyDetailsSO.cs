@@ -7,6 +7,7 @@ public class EnemyDetailsSO : ScriptableObject
     #region Header BASE ENEMY DETAILS
     [Space(10)]
     [Header("BASE ENEMY DETAILS")]
+    [Space(10)]
     #endregion
     #region Tooltip
     [Tooltip("The name of the enemy")]
@@ -41,12 +42,11 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public float chaseDistance = 50f;
 
+    #region ATTACK MOVE DETAILS
     [Space(10)]
     [Header("ATTACK MOVE DETAILS")]
-    #region Tooltip
-    [Tooltip("Check if enemy has an attack move in a certain distance")]
+    [Space(10)]
     #endregion
-    public bool hasAttackMove;
     #region Tooltip
     [Tooltip("Distance to the player for attack triggering")]
     #endregion
@@ -106,10 +106,10 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public EnemyDetailsSO enemyMinionDetails;
 
-
     #region Header PASSIVE
     [Space(10)]
     [Header("PASSIVE")]
+    [Space(10)]
     #endregion
     #region Tooltip
     [Tooltip("Enemy starting armor amount")]
@@ -151,6 +151,7 @@ public class EnemyDetailsSO : ScriptableObject
     #region Header ATTACK
     [Space(10)]
     [Header("ATTACK DETAILS")]
+    [Space(10)]
     #endregion
     #region Tooltip
     [Tooltip("Enemy dealt damage by melee min")]
@@ -217,6 +218,7 @@ public class EnemyDetailsSO : ScriptableObject
     #region Header ENEMY MATERIAL
     [Space(10)]
     [Header("ENEMY MATERIAL")]
+    [Space(10)]
     #endregion
     #region Tooltip
     [Tooltip("This is the standard lit shader material for the enemy (used after the enemy materializes")]
@@ -226,6 +228,7 @@ public class EnemyDetailsSO : ScriptableObject
     #region Header ENEMY MATERIALIZE SETTINGS
     [Space(10)]
     [Header("ENEMY MATERIALIZE SETTINGS")]
+    [Space(10)]
     #endregion
     #region Tooltip
     [Tooltip("The time in seconds that it takes the enemy to materialize")]
@@ -244,6 +247,7 @@ public class EnemyDetailsSO : ScriptableObject
     #region Header ENEMY SOUND SETTINGS
     [Space(10)]
     [Header("ENEMY SOUND SETTINGS")]
+    [Space(10)]
     #endregion
     #region Tooltip
     [Tooltip("The sound effect for this enemy to be sudden dead")]
@@ -290,6 +294,7 @@ public class EnemyDetailsSO : ScriptableObject
     #region Header ENEMY WEAPON SETTINGS
     [Space(10)]
     [Header("ENEMY WEAPON SETTINGS")]
+    [Space(10)]
     #endregion
     #region Tooltip
     [Tooltip("The weapon for the enemy - none if the enemy doesn't have a weapon")]
@@ -324,6 +329,7 @@ public class EnemyDetailsSO : ScriptableObject
     #region Header ENEMY HEALTH
     [Space(10)]
     [Header("ENEMY HEALTH")]
+    [Space(10)]
     #endregion
     #region Tooltip
     [Tooltip("The health of the enemy for each level")]
@@ -349,6 +355,7 @@ public class EnemyDetailsSO : ScriptableObject
     #region Header ENEMY DROP SETTINGS
     [Space(10)]
     [Header("ENEMY DROP SETTINGS")]
+    [Space(10)]
     #endregion
     #region Tooltip
     [Tooltip("The enemy primary passive drops list")]
@@ -370,6 +377,7 @@ public class EnemyDetailsSO : ScriptableObject
     #region Header DROP SPAWN CHANCE
     [Space(10)]
     [Header("DROP SPAWN CHANCE")]
+    [Space(10)]
     #endregion
     #region Tooltip
     [Tooltip("The minimum probability for spawning a drop")]

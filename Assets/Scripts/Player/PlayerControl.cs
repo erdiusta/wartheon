@@ -692,7 +692,6 @@ public class PlayerControl : MonoBehaviour
     {
         // Trigger reset prechager mechanism in case a hit taken during the precharge
         player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
-        player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, false, AimDirection.Right, 0f, 0f, Vector3.zero, false);
     }
 
     public bool IsClickingSpecificUILayer()
@@ -1548,8 +1547,10 @@ public class PlayerControl : MonoBehaviour
 
             if (InputManager.Instance.interaction.action.WasPerformedThisFrame())
             {
+                if (collider2D.GetComponent<Environment>() != null) return;
+
                 // Only interactable objects have capsule colliders. So if it's nut null, it means collider is an interactable (like NPC)
-                if (collider2D.GetComponent<CapsuleCollider2D>() != null)
+                if (collider2D.GetComponent<CapsuleCollider2D>() != null && collider2D.tag != Settings.playerTag && collider2D.tag != Settings.enemyTag)
                 {
                     Interaction interaction = collider2D.GetComponent<Interaction>();
                     NPC npc = interaction.GetComponent<NPC>();

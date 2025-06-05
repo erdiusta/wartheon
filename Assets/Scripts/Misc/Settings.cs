@@ -175,6 +175,6 @@ public static class Settings
     #endregion
 
     #region CONTACT DAMAGE PARAMETERS
-    public const float contactDamageCollisionResetDelay = 0.5f;
+    public const float contactDamageCollisionResetDelay = 2f;
     #endregion
 }

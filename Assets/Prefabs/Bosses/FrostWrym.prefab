@@ -393,11 +393,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1344477452585567910, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Mass
-      value: 2000
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: -1344477452585567910, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_BodyType
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_FlipX
@@ -415,10 +415,6 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 1394517893, guid: 549156b07e1973f48b03906bb8290df9, type: 3}
-    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
-      propertyPath: m_MaskInteraction
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -591,6 +587,10 @@ PrefabInstance:
     - {fileID: 0}
     - {fileID: 480008352441278276, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: -5970059223594176715, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 7400821728870662684, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 702330259438598581, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 1280140502967062622, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4239920569477357429, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
@@ -633,13 +633,11 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 1067008
-  debugText: {fileID: 0}
   moveStatus: 0
-  moveSpeed: 0
   updateFrameNumber: 1
-  enemyStartingSpeed: 0
   enemyPhase: 0
   isAttacking: 0
   isDashing: 0
+  patrolPointsParentContainer: {fileID: 0}
   swordHoldingTransform: {fileID: 2598544421764557147}
   smearCircleRadius: 0.5

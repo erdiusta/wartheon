@@ -50,6 +50,15 @@ public class GameResources : MonoBehaviour
     #endregion Tooltip
     public CurrentPlayerSO currentPlayer;
 
+    #region Header ENEMY
+    [Space(10)]
+    [Header("ENEMY")]
+    #endregion Heade
+    #region Tooltip
+    [Tooltip("The parent transform holding all spawnpoints for enemies")]
+    #endregion Tooltip
+    public Transform enemyPatrolPointsParent;
+
     #region Header MUSIC
     [Space(10)]
     [Header("MUSIC")]

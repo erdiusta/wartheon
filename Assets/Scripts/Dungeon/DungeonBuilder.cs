@@ -66,8 +66,16 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             // Loop until dungeon successfully built or more than max attempts for node graph
             while (!dungeonBuildSuccessful && dungeonRebuildAttemptsForNodeGraph <= Settings.maxDungeonRebuildAttemptsForRoomGraph)
             {
+                // Clear previous room items before completely clearing the room
+                while (GameManager.Instance.lastThreeRooms.Count != 0)
+                {
+                    InstantiatedRoom roomToClear = GameManager.Instance.lastThreeRooms.Dequeue();
+                    roomToClear.DestroyAllDroppedItems();
+                }
+
                 // Clear dungeon room gameobjects and dungeon room dictionary
                 ClearDungeon();
+
                 dungeonRebuildAttemptsForNodeGraph++;
 
                 // Attempt To Build A Random Dungeon For The Selected room node graph
@@ -76,6 +84,8 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
 
             if (dungeonBuildSuccessful)
             {
+
+
                 // Instantiate Room Gameobjects
                 InstantiateRoomGameObjects();
 

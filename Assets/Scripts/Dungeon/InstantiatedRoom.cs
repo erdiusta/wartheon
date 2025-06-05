@@ -474,12 +474,15 @@ public class InstantiatedRoom : MonoBehaviour
     {
         DropItem[] dropItems = GetComponentsInChildren<DropItem>(true);
 
-        foreach (DropItem item in dropItems)
+        if (dropItems != null)
         {
-            if (item.GetComponentInParent<Player>() != null) continue;
-            if (item.GetComponentInParent<Counter>() != null) continue;
+            foreach (DropItem item in dropItems)
+            {
+                if (item.GetComponentInParent<Player>() != null) continue;
+                if (item.GetComponentInParent<Counter>() != null) continue;
 
-            Destroy(item.gameObject);
+                Destroy(item.gameObject);
+            }
         }
     }
 

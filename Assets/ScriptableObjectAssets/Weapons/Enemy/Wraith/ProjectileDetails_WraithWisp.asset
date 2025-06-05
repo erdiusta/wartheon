@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: Wailing Wisp
   isPlayerProjectile: 0
-  projectileSprite: {fileID: 21300000, guid: 1dcb15e5e19fefd40956f26ae70322bb, type: 3}
   projectilePrefabArray:
   - {fileID: 2585463276777236944, guid: 25b0df9a5d0f5824daa2a14040d0a116, type: 3}
   projectileMaterial: {fileID: 2100000, guid: 5b1210c7205efe84b9d8aaf7e6da652d, type: 2}
@@ -24,29 +23,45 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 11400000, guid: c548db3331c8a1e48828670478265ad4, type: 2}
   projectileDamageMin: 8
   projectileDamageMax: 15
-  projectileSpeedMin: 4
-  projectileSpeedMax: 6
+  projectileSpeedMin: 5
+  projectileSpeedMax: 5.5
   projectileRange: 12
   projectileRotationSpeed: 1
-  hasAcid: 0
-  acidEfficiency: 0
+  isGuided: 1
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 0
+  hasLifeTime: 0
+  lifeDuration: 15
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
+  hasBurnDamage: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
   hasCurseDamage: 1
-  curseChance: 0.3
-  projectileSpreadMin: 6
-  projectileSpreadMax: 12
-  projectileSpawnAmountMin: 2
-  projectileSpawnAmountMax: 5
-  projectileSpawnIntervalMin: 3
-  projectileSpawnIntervalMax: 5
+  curseChance: 0.25
+  hasBlindDamage: 0
+  blindChance: 0
+  projectileSpreadMin: 2
+  projectileSpreadMax: 6
+  projectileSpawnAmountMin: 1
+  projectileSpawnAmountMax: 1
+  projectileSpawnIntervalMin: 0
+  projectileSpawnIntervalMax: 0
   projectileImpactSoundEffect: {fileID: 0}
   isProjectileTrail: 1
   projectileTrailTime: 0.5
   projectileTrailMaterial: {fileID: 2100000, guid: 5b1210c7205efe84b9d8aaf7e6da652d, type: 2}
   projectileTrailStartWidth: 0.4
   projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

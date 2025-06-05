@@ -36,5 +36,5 @@ public class Decoy : MonoBehaviour
         return activeItem;
     }
 
-    public Vector3 GetDecoyPosition() => transform.position;
+    public Vector3 GetDecoyPosition() => transform.position + new Vector3(0f, 0.7f, 0f);
 }

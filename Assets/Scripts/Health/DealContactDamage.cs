@@ -72,73 +72,69 @@ public class DealContactDamage : MonoBehaviour
 
                 Player player = collision.GetComponent<Player>();
 
-                if (enemy.enemyAI.isAttacking)
+                if (player.playerControl.IsParrying)
                 {
-                    if (player.playerControl.IsParrying)
+                    player.healthEvent.CallParryEvent();
+                    player.health.PostHitImmunity(true);
+                    return;
+                }
+
+                float blindPenalty = enemy.isBlind ? 0.5f : 0f;
+
+                // Evasiveness - dodge check
+                if (100 - (player.currentEvasivenessValue + blindPenalty) * 100 > Random.Range(1, 101))
+                {
+                    contactDamageAmountMin = enemy.enemyDetails.dealtMeleeDamageMin;
+                    contactDamageAmountMax = enemy.enemyDetails.dealtMeleeDamageMax;
+
+                    // Damage produced by enemy
+                    int damageDone = enemy.isCursed ? contactDamageAmountMin : Random.Range(contactDamageAmountMin, contactDamageAmountMax);
+
+                    if (player.health.isDamageable)
                     {
-                        player.healthEvent.CallParryEvent();
-                        player.health.PostHitImmunity(true);
-                        return;
-                    }
-
-                    float blindPenalty = enemy.isBlind ? 0.5f : 0f;
-
-                    // Evasiveness - dodge check
-                    if (100 - (player.currentEvasivenessValue + blindPenalty) * 100 > Random.Range(1, 101))
-                    {
-                        contactDamageAmountMin = enemy.enemyDetails.dealtMeleeDamageMin;
-                        contactDamageAmountMax = enemy.enemyDetails.dealtMeleeDamageMax;
-
-                        // Damage produced by enemy
-                        int damageDone = enemy.isCursed ? contactDamageAmountMin : Random.Range(contactDamageAmountMin, contactDamageAmountMax);
-
-                        if (player.health.isDamageable)
+                        if (enemy != null)
                         {
-                            if (enemy != null)
+                            if (player.isBlockingActive)
                             {
-                                if (player.isBlockingActive)
-                                {
-                                    SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
-                                    player.health.PostHitImmunity(true);
-                                    player.isBlockingActive = false;
-                                    player.healthEvent.CallArmorWoreOffEvent();
-                                }
-                                else
-                                {
-                                    // Check if collider is a decoy
-                                    if (collision.GetComponent<Decoy>() != null)
-                                    {
-                                        receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
-                                        return;
-                                    }
-
-                                    if (player.onStealth) return;
-
-                                    CheckBurnStatus(player);
-                                    CheckPoisonStatus(player);
-                                    CheckAcidStatus(player);
-                                    CheckStunStatus(player);
-                                    CheckFrostStatus(player);
-                                    CheckCurseStatus(player);
-                                    CheckBlindStatus(player);
-
-                                    int inflictedDamage = CalculateDamageAmount(player, damageDone);
-
-                                    receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
-                                }
-
-                                // Apply knockback
-                                player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
+                                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
+                                player.health.PostHitImmunity(true);
+                                player.isBlockingActive = false;
+                                player.healthEvent.CallArmorWoreOffEvent();
                             }
+                            else
+                            {
+                                // Check if collider is a decoy
+                                if (collision.GetComponent<Decoy>() != null)
+                                {
+                                    receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
+                                    return;
+                                }
+
+                                if (player.onStealth) return;
+
+                                CheckBurnStatus(player);
+                                CheckPoisonStatus(player);
+                                CheckAcidStatus(player);
+                                CheckStunStatus(player);
+                                CheckFrostStatus(player);
+                                CheckCurseStatus(player);
+                                CheckBlindStatus(player);
+
+                                int inflictedDamage = CalculateDamageAmount(player, damageDone);
+
+                                receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
+                            }
+
+                            // Apply knockback
+                            player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
                         }
                     }
-                    else
-                    {
-                        player.health.isDodging = true;
-                        player.healthEvent.CallDodgeEvent();
-                        player.health.PostHitImmunity(true);
-                        //player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
-                    }
+                }
+                else
+                {
+                    player.health.isDodging = true;
+                    player.healthEvent.CallDodgeEvent();
+                    player.health.PostHitImmunity(true);
                 }
             }
             else if (collision.tag == Settings.summonedEnemyTag)

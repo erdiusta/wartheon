@@ -14,7 +14,6 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     int enemyMaxConcurrentSpawnNumber;
     Room currentRoom;
     RoomEnemySpawnParameters roomEnemySpawnParameters;
-    MusicTrackSO musicTrack;
 
     private void OnEnable()
     {

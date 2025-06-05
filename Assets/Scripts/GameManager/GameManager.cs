@@ -10,6 +10,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.Controls;
+using Pathfinding;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
@@ -807,7 +808,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             if (bookView.activeSelf)
             {
-                gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 1f, 0.6f); // Opaque
+                Time.timeScale = 1f;
+
+                gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 1f, 0.2f); // Opaque
 
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
 
@@ -816,8 +819,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 player.meleeAttackMainHand.IsAttacking = false; // To be safe-side
                 player.playerControl.IsParrying = false;
                 player.playerControl.isPlayerRolling = false;
-
-                Time.timeScale = 1f;
             }
             else
             {
@@ -833,7 +834,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 Time.timeScale = 0f;
 
                 // Finally, hide gameplay UI
-                gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 0f, 0.6f); // Transparent
+                gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 0f, 0.2f); // Transparent
             }
         }
     }
@@ -1589,6 +1590,14 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             Debug.LogError("Couldn't build dungeon from specified rooms and node graphs");
         }
+
+        // Bake nav meshes when dungeon build is successful
+        if (AstarPath.active != null)
+        {
+            AstarPath.active.Scan();
+        }
+
+        //AstarPathEditor.MenuScan();
 
         // Call static event that room has changed
         StaticEventHandler.CallRoomChangedEvent(currentRoom);

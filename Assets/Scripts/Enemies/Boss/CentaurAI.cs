@@ -5,6 +5,10 @@ using Random = UnityEngine.Random;
 
 public class CentaurAI : EnemyAI, IMutualBossBehaviour
 {
+    // Define the cell boundaries in grid coordinates
+    readonly Vector2Int cellMin = new Vector2Int(-8, 2);
+    readonly Vector2Int cellMax = new Vector2Int(12, 18);
+
     // BOSSES
     CentaurPhase currentCentaurPhase;
     private float phaseTimer;  // Timer to control phase duration
@@ -24,6 +28,10 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
     {
         currentCentaurPhase = CentaurPhase.Wait;
     }
+
+    protected override void OnEnable() { }
+
+    protected override void OnDisable() { }
 
     protected override void FixedUpdate() { }
 
@@ -172,9 +180,14 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
         if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 4f)
         {
-            // If player is too close to centaur, automatically next phase will be chargeAndRetreat
-            currentCentaurPhase = CentaurPhase.ChargeAndRetreat;
-            return;
+            int rng = Random.Range(0, 101);
+
+            if (rng > 65)
+            {
+                // If player is too close to centaur, automatically next phase will be chargeAndRetreat
+                currentCentaurPhase = CentaurPhase.ChargeAndRetreat;
+                return;
+            }
         }
 
         if (currentCentaurPhase == CentaurPhase.StraightArrowShot || currentCentaurPhase == CentaurPhase.ChargeAndRetreat || 
@@ -271,13 +284,22 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
             enemy.animateEnemy.ResetAnimatonParameters();
             enemy.animateEnemy.SetMovementAnimationParameters();
 
-            Vector3 direction = (lockedPosition - transform.position).normalized;
+            // Clamp lockedPosition
+            Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
+
+            Vector3Int cell = grid.WorldToCell(lockedPosition);
+            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
+            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
+            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
+
+            Vector3 direction = (clampedPosition - transform.position).normalized;
             float chargeSpeed = 20f;
 
             while (chargeTimer < chargeDuration)
             {
                 chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, lockedPosition, chargeSpeed * Time.deltaTime);
+
+                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
 
                 // Check if boss has reached the destination before the desired duration
                 if (Vector3.Distance(transform.position, lockedPosition) < 0.02f)  // Small threshold for accuracy

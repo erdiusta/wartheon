@@ -62,4 +62,26 @@ public class Room
 
         return null;
     }
+
+    /// <summary>
+    /// Crated patrol targets in transfrom to be populated by Patrol script
+    /// </summary>
+    public Transform[] GetPatrolTargets(Vector2Int[] spawnPositions, Grid grid, Transform parent = null)
+    {
+        Transform[] patrolTargets = new Transform[spawnPositions.Length];
+
+        for (int i = 0; i < spawnPositions.Length; i++)
+        {
+            // Detect world pos of spawn array
+            Vector3Int spawnPosVector3 = new Vector3Int(spawnPositions[i].x, spawnPositions[i].y, 0);
+            Vector3 worldPos = grid.CellToWorld(spawnPosVector3) + grid.cellSize / 2f;
+
+            // Create game objects where spawn arroy points exist
+            PatrolPoint pointObj = (PatrolPoint)PoolManager.Instance.ReuseComponent(GameResources.Instance.enemyPatrolPointsParent.gameObject, worldPos, Quaternion.identity);
+
+            patrolTargets[i] = pointObj.transform;
+        }
+
+        return patrolTargets;
+    }
 }

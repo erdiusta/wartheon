@@ -10,19 +10,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1920293492741740049, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: m_Size.x
-      value: 1.4879925
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 1920293492741740049, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: m_Size.y
-      value: 0.72332937
+      value: 1.3
       objectReference: {fileID: 0}
     - target: {fileID: 1920293492741740049, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: m_Offset.x
-      value: -0.026764631
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1920293492741740049, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: m_Offset.y
-      value: 0.33854315
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 1920293492741740049, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1920293492741740049, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
@@ -30,7 +34,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1920293492741740049, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.y
-      value: 0.22
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 1920293492741740049, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
@@ -46,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1920293492741740049, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 2
+      value: 1.5416666
       objectReference: {fileID: 0}
     - target: {fileID: 1920293492741740049, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: m_SpriteTilingProperty.adaptiveTilingThreshold

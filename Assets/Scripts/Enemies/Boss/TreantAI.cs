@@ -26,10 +26,11 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
         currentTreantPhase = TreantPhase.Wait;
     }
 
-    protected override void FixedUpdate() 
-    {
-        base.FixedUpdate();
-    }
+    protected override void OnEnable() { }
+
+    protected override void OnDisable() { }
+
+    protected override void FixedUpdate() { }
 
     protected override void Update()
     {
@@ -254,7 +255,7 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
                 if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) != 1)
                 {
                     enemyPhase = EnemyPhase.Patrol;
-                    currentEnemyPatrolPathRebuildCooldown = -0.1f;
+
                     isDashing = false;
                     isAttacking = false;
                     break;
@@ -275,7 +276,7 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
             // Reset flags after the dash is complete
             IdleProcess();
             enemyPhase = EnemyPhase.Patrol;
-            currentEnemyPatrolPathRebuildCooldown = -0.1f;
+
 
             yield return null;
         }

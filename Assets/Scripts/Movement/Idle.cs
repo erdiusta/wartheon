@@ -16,6 +16,14 @@ public class Idle : MonoBehaviour
     /// </summary>
     public void StopVelocity()
     {
+        if (TryGetComponent<Enemy>(out Enemy enemy))
+        {
+            if (!enemy.enemyDetails.isEnemyBoss)
+            {
+                enemy.aiLerp.canMove = false;
+            }
+        }
+
         // Ensure the rb collision detection is set to continuous
         rb2D.linearVelocity = Vector2.zero;
     }

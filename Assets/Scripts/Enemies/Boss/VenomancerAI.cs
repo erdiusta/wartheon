@@ -38,6 +38,10 @@ public class VenomancerAI : EnemyAI, IMutualBossBehaviour
         currentVenomancerPhase = VenomancerPhase.Wait;
     }
 
+    protected override void OnEnable() { }
+
+    protected override void OnDisable() { }
+
     protected override void FixedUpdate() { }
 
     protected override void Update()

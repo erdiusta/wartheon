@@ -21,14 +21,13 @@ MonoBehaviour:
   movementDetails: {fileID: 11400000, guid: fd748e26b50acb7429ee469d93b95acb, type: 2}
   experiencePoint: 50
   chaseDistance: 15
-  hasAttackMove: 1
   attackMoveTriggerDistance: 4
   attackMoveEfficentDistance: 9
   countdownDurationBeforeDashAttack: 0.4
   attackMoveDashDuration: 0.3
   attackMoveBaseCooldown: 0.4
   deflectionValue: 0.2
-  enemyBehaviour: 0
+  enemyBehaviour: 11
   isEnemyBoss: 0
   isSummonedMinion: 0
   isDummy: 0

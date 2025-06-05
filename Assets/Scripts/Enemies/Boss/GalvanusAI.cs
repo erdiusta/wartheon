@@ -25,6 +25,10 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
         currentGalvanusPhase = GalvanusPhase.Wait;
     }
 
+    protected override void OnEnable() { }
+
+    protected override void OnDisable() { }
+
     protected override void FixedUpdate() { }
 
     protected override void Update()

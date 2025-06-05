@@ -20,7 +20,7 @@ MonoBehaviour:
   enemyType: 0
   movementDetails: {fileID: 11400000, guid: af769142fb51dec4f9f1e64bfd995a50, type: 2}
   experiencePoint: 65
-  chaseDistance: 6
+  chaseDistance: 8
   hasAttackMove: 0
   attackMoveTriggerDistance: 0
   attackMoveEfficentDistance: 0

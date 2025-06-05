@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: Snake Spit
   isPlayerProjectile: 0
-  projectileSprite: {fileID: 21300000, guid: 1dcb15e5e19fefd40956f26ae70322bb, type: 3}
   projectilePrefabArray:
   - {fileID: 2585463276777236944, guid: 6a5368c795ec3214a9c5205ac2869442, type: 3}
   projectileMaterial: {fileID: 2100000, guid: cff3e465470366d4faf7303728a84544, type: 2}
@@ -26,8 +25,10 @@ MonoBehaviour:
   projectileDamageMax: 12
   projectileSpeedMin: 5
   projectileSpeedMax: 8
-  projectileRange: 10
+  projectileRange: 18
   projectileRotationSpeed: 1
+  isGuided: 0
+  isBouncing: 0
   isBomb: 0
   isTrap: 0
   hasLifeTime: 0
@@ -36,24 +37,26 @@ MonoBehaviour:
   countDown: 3
   burstDamageMin: 15
   burstDamageMax: 25
-  hasAcid: 0
-  acidEfficiency: 0
+  hasBurnDamage: 0
+  burnChance: 0
   isPoisonous: 1
   poisonChance: 0.2
+  hasAcid: 0
+  acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
-  hasBlindDamage: 0
-  blindChance: 0
   hasCurseDamage: 0
   curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   projectileSpreadMin: 4
   projectileSpreadMax: 10
   projectileSpawnAmountMin: 1
   projectileSpawnAmountMax: 1
-  projectileSpawnIntervalMin: 1
-  projectileSpawnIntervalMax: 3
+  projectileSpawnIntervalMin: 0
+  projectileSpawnIntervalMax: 0
   projectileImpactSoundEffect: {fileID: 0}
   isProjectileTrail: 0
   projectileTrailTime: 0

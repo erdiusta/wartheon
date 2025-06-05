@@ -2,42 +2,37 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace ChristinaCreatesGames.UI
+public class RememberCurrentlySelectedGameObject : MonoBehaviour
 {
-    public class RememberCurrentlySelectedGameObject : MonoBehaviour
+    [SerializeField] private EventSystem eventSystem;
+    [SerializeField] private GameObject lastSelectedElement;
+
+    private void Reset()
     {
-        [SerializeField] private EventSystem eventSystem;
-        [SerializeField] private GameObject lastSelectedElement;
+        eventSystem = FindAnyObjectByType<EventSystem>();
 
-        private void Reset()
+        if (!eventSystem)
         {
-            eventSystem = FindObjectOfType<EventSystem>();
-
-            if (!eventSystem)
-            {
-                Debug.Log("Did not find an Event System in this scene.", this);
-                return;
-            }
-
-            lastSelectedElement = eventSystem.firstSelectedGameObject;
+            Debug.Log("Did not find an Event System in this scene.", this);
+            return;
         }
 
-        private void Update()
-        {
-            if (!eventSystem)
-                return;
+        lastSelectedElement = eventSystem.firstSelectedGameObject;
+    }
 
-            if (eventSystem.currentSelectedGameObject &&
-                lastSelectedElement != eventSystem.currentSelectedGameObject)
-                lastSelectedElement = eventSystem.currentSelectedGameObject;
+    private void Update()
+    {
+        if (!eventSystem)
+            return;
 
-            if (!eventSystem.currentSelectedGameObject && lastSelectedElement)
-                eventSystem.SetSelectedGameObject(lastSelectedElement);
-        }
+        if (eventSystem.currentSelectedGameObject &&
+            lastSelectedElement != eventSystem.currentSelectedGameObject)
+            lastSelectedElement = eventSystem.currentSelectedGameObject;
+
+        if (!eventSystem.currentSelectedGameObject && lastSelectedElement)
+            eventSystem.SetSelectedGameObject(lastSelectedElement);
     }
 }
-
-
 
 
 public class EventSystemAccess : MonoBehaviour

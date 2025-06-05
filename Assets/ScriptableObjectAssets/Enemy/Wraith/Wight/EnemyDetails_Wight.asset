@@ -19,7 +19,7 @@ MonoBehaviour:
   enemyType: 0
   movementDetails: {fileID: 11400000, guid: 3ab5a77377bff344f81502279549e2f5, type: 2}
   experiencePoint: 55
-  chaseDistance: 6
+  chaseDistance: 10
   hasAttackMove: 0
   attackMoveTriggerDistance: 0
   attackMoveEfficentDistance: 0
@@ -75,10 +75,10 @@ MonoBehaviour:
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
   poisonSoundEffect: {fileID: 0}
   enemyWeapon: {fileID: 11400000, guid: b02179fd59e599e4cbc9837e47405153, type: 2}
-  firingIntervalMin: 3
-  firingIntervalMax: 5
-  firingDurationMin: 1
-  firingDurationMax: 2
+  firingIntervalMin: -1
+  firingIntervalMax: -1
+  firingDurationMin: 1.5
+  firingDurationMax: 1.5
   firingLineOfSightRequired: 1
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}

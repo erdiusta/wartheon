@@ -209,6 +209,14 @@ public class Destroyed : MonoBehaviour
             enemy.health.enabled = false;
             enemy.rb2D.mass = 5000;
             enemy.rb2D.linearVelocity = Vector2.zero;
+
+            if (!enemy.enemyDetails.isEnemyBoss)
+            {
+                enemy.patrol.enabled = false;
+                enemy.aiDestinationSetter.enabled = false;
+                enemy.aiLerp.canMove = false;
+            }
+
             enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
             enemy.animateEnemy.SetDeathAnimationParameters();
             enemy.fireWeapon.enabled = false;

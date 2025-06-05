@@ -403,7 +403,8 @@ public enum EnemyBehaviour
     FrostWrym,
     Venomancer,
     FireWrym,
-    Moldran
+    Moldran,
+    Roaming
 }
 
 public enum EnemyType
