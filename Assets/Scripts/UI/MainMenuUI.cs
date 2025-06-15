@@ -16,7 +16,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     [SerializeField] Button controlsButton;
     [SerializeField] Button quitButton;
     [SerializeField] GameObject cheatCodeObject;
-    [SerializeField] SoundEffectSO buttonClickSound;
 
     [Space(10)]
     [Header("SETTINGS")]
@@ -47,7 +46,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     [SerializeField] Button keyboardMouseButton;
     [SerializeField] Button gamepadButton;
     [SerializeField] Button controlsBackButton;
-
+     
     [Header("Keyboard&Mouse Rebindings Menu")]
     [SerializeField] GameObject keyboardRebindingsMenuUI;
     [SerializeField] Button keyboardRebindingsBackButton;
@@ -81,8 +80,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     private void StaticEventHandler_OnAdditiveSceneRemoved()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         CanvasGroup canvasGroup = playButton.GetComponentInParent<CanvasGroup>();
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
@@ -203,8 +200,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         soundVolumeSlider.onValueChanged.AddListener(OnSoundVolumeSliderChanged);
         dynamicCameraToggle.onValueChanged.AddListener(OnDynamicCameraFollowToggleChanged);
     }
-
-    
+  
     private void Update()
     {
         if (InputManager.Instance.escapeButton.action.WasPressedThisFrame())
@@ -241,8 +237,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     /// </summary>
     public void PlayGame()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         CanvasGroup canvasGroup = playButton.GetComponentInParent<CanvasGroup>();
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
@@ -269,8 +263,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     /// </summary>
     public void OpenControls()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         controlsMenuUI.SetActive(true);
 
         playButton.interactable = false;
@@ -289,8 +281,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     /// </summary>
     public void OpenSettings()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         settingsMenuUI.SetActive(true);
 
         playButton.interactable = false;
@@ -309,8 +299,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     /// </summary>
     public void OpenKeyboardMouseRebindingsMenu()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         keyboardRebindingsMenuUI.SetActive(true);
 
         keyboardMouseButton.interactable = false;
@@ -327,8 +315,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     /// </summary>
     public void OpenGamepadRebindingsMenu()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         gamepadRebindingsMenuUI.SetActive(true);
 
         keyboardMouseButton.interactable = false;
@@ -342,8 +328,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     private void OnPostProcessingToggleChanged(bool isOn)
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         PostProcessingEnabler.Instance.isOn = isOn;
         UpdatePostProcessingCheckmarkVisibility(isOn);
     }
@@ -410,8 +394,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         };
 
         Screen.SetResolution(width, height, Screen.fullScreenMode, refreshRate);
-
-        if (!onStart) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
     }
 
     private void SetScreenMode(int modeIndex)
@@ -439,10 +421,10 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     private void OnVsyncToggleChanged(bool isOn)
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         QualitySettings.vSyncCount = isOn ? 1 : 0;
         UpdateVysncCheckmarkVisibility(isOn);
+
+
     }
 
     private void UpdateVysncCheckmarkVisibility(bool show)
@@ -452,8 +434,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     private void OnDynamicCameraFollowToggleChanged(bool isOn)
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         InterScenesSingleton.dynamicCameraFollowEnabled = isOn ? true : false;
         UpdateDynamicCameraFollowCheckmarkVisibility(isOn);
     }
@@ -475,16 +455,12 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     public void OpenKeyboardControls()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         // Save player prefs
         SavePlayerPrefs();
     }
 
     public void ExitControlsMenu()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         // Save player prefs
         SavePlayerPrefs();
 
@@ -504,8 +480,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     public void ReturnToControlsMenu()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         // Save player prefs
         SavePlayerPrefs();
 
@@ -523,8 +497,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     public void ExitSettingMenu()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
-
         // Save player prefs
         SavePlayerPrefs();
 
@@ -576,7 +548,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         if (PlayerPrefs.HasKey("PostProcessing"))
         {
             bool pp = PlayerPrefs.GetInt("PostProcessing") == 1;
-            postProcessingToggle.isOn = pp;
+            postProcessingToggle.SetIsOnWithoutNotify(pp);
             PostProcessingEnabler.Instance.isOn = pp;
             UpdatePostProcessingCheckmarkVisibility(pp);
         }
@@ -585,7 +557,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         if (PlayerPrefs.HasKey("Vsync"))
         {
             bool vsync = PlayerPrefs.GetInt("Vsync") == 1;
-            vsyncToggle.isOn = vsync;
+            vsyncToggle.SetIsOnWithoutNotify(vsync);
             QualitySettings.vSyncCount = vsync ? 1 : 0;
             UpdateVysncCheckmarkVisibility(vsync);
         }
@@ -640,7 +612,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         if (PlayerPrefs.HasKey("DynamicCamera"))
         {
             bool dynamicCamera = PlayerPrefs.GetInt("DynamicCamera") == 1;
-            dynamicCameraToggle.isOn = dynamicCamera;
+            dynamicCameraToggle.SetIsOnWithoutNotify(dynamicCamera);
             InterScenesSingleton.dynamicCameraFollowEnabled = dynamicCamera;
             UpdateDynamicCameraFollowCheckmarkVisibility(dynamicCamera);
         }

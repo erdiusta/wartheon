@@ -1,10 +1,17 @@
-using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public static class StaticEventHandler
 {
+    // Main menu scene loaded for transition from tutorial
+    public static event Action OnMainMenuLoaded;
+
+    public static void CallLoadMainMenuScene()
+    {
+        OnMainMenuLoaded?.Invoke();
+    }
+
     // Additive scene removed
     public static event Action OnAdditiveSceneRemoved;
 
@@ -419,6 +426,14 @@ public static class StaticEventHandler
     {
         OnActiveUnlocked?.Invoke(new ActiveUnlockArgs { activeItemType = activeItemType });
     }
+
+    // Enemy killed
+    public static event Action<EnemyKilledArgs> OnEnemyKilled;
+
+    public static void CallEnemyKilledEvent(Enemy enemy)
+    {
+        OnEnemyKilled?.Invoke(new EnemyKilledArgs { enemy = enemy });
+    }
 }
 
 public class GameplayUToggledEventArgs : EventArgs
@@ -549,4 +564,9 @@ public class ActiveHoverArgs : EventArgs
 public class ActiveUnlockArgs : EventArgs
 {
     public ActiveItemType activeItemType;
+}
+
+public class EnemyKilledArgs : EventArgs
+{
+    public Enemy enemy;
 }

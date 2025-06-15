@@ -5,8 +5,13 @@ using Random = UnityEngine.Random;
 
 public class TreantAI : EnemyAI, IMutualBossBehaviour
 {
+    // Define the cell boundaries in grid coordinates
+    readonly Vector2Int cellMin = new Vector2Int(-4, 6);
+    readonly Vector2Int cellMax = new Vector2Int(8, 14);
+
     // BOSS
     TreantPhase currentTreantPhase;
+    TreantPhase previousTreantPhase;
     private float phaseTimer;  // Timer to control phase duration
     private float waitPhase = 0.5f;  // Adjust this to control how long each phase lasts
 
@@ -16,6 +21,21 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
 
     Coroutine treantAttackMoveRoutine;
 
+    bool passedToWait;
+
+    public bool PassedToWait
+    {
+        get => passedToWait;
+        set
+        {
+            if (!passedToWait && value)
+            {
+                passedToWait = true;
+                HandleWaitPhase();
+            }
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -24,9 +44,14 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
     protected override void Start() 
     {
         currentTreantPhase = TreantPhase.Wait;
+        previousTreantPhase = TreantPhase.Wait;
     }
 
-    protected override void OnEnable() { }
+    protected override void OnEnable() 
+    {
+        player = GameManager.Instance.GetPlayer();
+        currentRoom = GameManager.Instance.GetCurrentRoom();
+    }
 
     protected override void OnDisable() { }
 
@@ -34,12 +59,38 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Update()
     {
-        Vector3 direction;
+        if (enemy.enemyAI.enemyPhase == EnemyPhase.Death)
+        {
+            if (attackAnimationRoutine != null)
+            {
+                StopCoroutine(attackAnimationRoutine);
+            }
 
-        if (GameManager.Instance.GetPlayer() != null)
+            return;
+        }
+
+        if (enemy.enemyAI.enemyPhase == EnemyPhase.Death)
+        {
+            if (attackAnimationRoutine != null)
+            {
+                StopAllCoroutines();
+            }
+
+            enemy.patrol.enabled = false;
+            enemy.aiDestinationSetter.enabled = false;
+            enemy.aiRigidbody2D.canMove = false;
+
+            enemy.animateEnemy.ResetAnimatonParameters();
+            enemy.animateEnemy.SetDeathAnimationParameters();
+            return;
+        }
+
+        Vector3 direction = Vector3.zero;
+
+        if (player != null)
         {
             direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-                (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
+                (player.GetPlayerPosition() - transform.position).normalized;
             lockedVector = direction;
         }
 
@@ -94,7 +145,7 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
                 switch (currentTreantPhase)
                 {
                     case TreantPhase.Wait:
-                        HandleWaitPhase();
+                        PassedToWait = true;
 
                         // Reset timers
                         firingIntervalTimer = WeaponShootInterval();
@@ -132,9 +183,9 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
         }
     }
 
-    private void HandleWaitPhase()
+    public void HandleWaitPhase()
     {
-        // Logic for waiting phase (maybe the Treant just moves or idles here)
+        // Logic for waiting phase (maybe the Centaur just moves or idles here)
         enemy.animateEnemy.SetIdleAnimationParameters();
     }
 
@@ -187,9 +238,9 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
             return;
         }
 
-        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 4f)
+        if (player != null && Vector3.Distance(transform.position, player.GetPlayerPosition()) < 4f)
         {
-            // If player is too close to treant, automatically next phase will be chargeAndRetreat
+            // If player is too close to treant, automatically next phase will be chargeAndRetreat or razorLeaf
             currentTreantPhase = (TreantPhase)Random.Range(2, 4);
             return;
         }
@@ -206,7 +257,7 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
             currentTreantPhase = (TreantPhase)Random.Range(2, Enum.GetValues(typeof(TreantPhase)).Length);
 
             // If health is not low enough, switch heal phase
-            if (currentTreantPhase == TreantPhase.Heal && enemy.health.GetCurrentHealth() > (int)(enemy.health.GetMaximumHealth() * 0.5f))
+            if (currentTreantPhase == TreantPhase.Heal && enemy.health.GetCurrentHealth() > (int)(enemy.health.GetMaximumHealth() * 0.65f))
             {
                 currentTreantPhase = (TreantPhase)Random.Range(2, Enum.GetValues(typeof(TreantPhase)).Length - 1);
             }
@@ -217,71 +268,93 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
     {
         if (treantPhase == TreantPhase.StraightAttack)
         {
+            if (enemy.health.hasDied) yield break;
+
+            enemyPhase = EnemyPhase.Attack;
             isAttacking = true;
-            // Initialize vectors, angles, directions and aim
-            float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
-            AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-            AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
-            enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle);
-            enemy.animateEnemy.ResetAimAnimationParameters();
-            enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
-            enemy.animateEnemy.SetAttackAnimationParameters();
-            enemy.idle.StopVelocity();
 
-            // Wait until dash starts
-            yield return new WaitForSeconds(0.6f);
-
-            isDashing = true;
-            dashTimer = 0f;
-
-            // Calculate the locked target position if not already locked
-            if (!isTargetLocked)
+            // PREPARE PRECHARGE PHASE
+            // Lock-on player position during the start of precharge
+            if (!chargeProcessStarted)
             {
-                lockedTargetPosition = (Vector3)enemy.rb2D.position + lockedVector * enemyDetails.attackMoveEfficentDistance;
-                isTargetLocked = true;
+                if (GameManager.Instance.GetPlayer() != null)
+                {
+                    lockedPosition = GameManager.Instance.GetPlayer().transform.position + new Vector3(0f, 0.5f, 0f);
+                }
             }
 
-            yield return waitForFixedUpdate;
+            chargeProcessStarted = true;
 
-            // Let FixedUpdate() handle movement during dashing, just wait for the dash duration to complete
-            while (dashTimer <= 0.6f)
+            float prehargeDuration = 1.5f;
+            float chargeTimer = 0f;
+            enemy.animator.SetFloat(Settings.motionType, 3f); // charge trigger to blend tree
+            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
+
+            while (chargeTimer < prehargeDuration)
             {
-                // Check for obstacles or invalid tiles, exit dash if needed
-                Vector3Int enemyCellPosition = new Vector3Int(currentRoom.instantiatedRoom.grid.WorldToCell(enemy.rb2D.position).x,
-                    currentRoom.instantiatedRoom.grid.WorldToCell(enemy.rb2D.position).y);
-                Vector3Int enemyZeroBasedCellPosition = new Vector3Int(enemyCellPosition.x - currentRoom.templateLowerBounds.x,
-                    enemyCellPosition.y - currentRoom.templateLowerBounds.y);
+                if (enemy.health.hasDied) yield break;
 
-                if (currentRoom.instantiatedRoom.GetRoomTilePenaltyValue(enemyZeroBasedCellPosition) != 1)
+                chargeTimer += Time.deltaTime;
+
+                yield return null;
+            }
+
+            chargeTimer = 0f;
+            float chargeDuration = 1.4f;
+
+            yield return null;  // Wait for the animation to start
+
+            // START CHARGE PHASE
+            enemy.animateEnemy.ResetAnimatonParameters();
+            enemy.animateEnemy.SetMovementAnimationParameters();
+
+            // Clamp lockedPosition
+            Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
+
+            Vector3Int cell = grid.WorldToCell(lockedPosition);
+            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
+            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
+            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
+
+            Vector3 direction = (clampedPosition - transform.position).normalized;
+            float chargeSpeed = 14f;
+
+            while (chargeTimer < chargeDuration)
+            {
+                if (enemy.health.hasDied) yield break;
+
+                chargeTimer += Time.deltaTime;
+
+                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
+
+                // Check if boss has reached the destination before the desired duration
+                if (Vector3.Distance(transform.position, clampedPosition) < 0.02f)  // Small threshold for accuracy
                 {
-                    enemyPhase = EnemyPhase.Patrol;
+                    if (enemy.health.hasDied) yield break;
 
-                    isDashing = false;
-                    isAttacking = false;
+                    // Exit the loop early if boss has reached the destination
                     break;
                 }
 
-                yield return waitForFixedUpdate;
+                yield return null;
             }
 
-            // Set cooldown timer
-            attackMoveTimer = enemy.enemyDetails.attackMoveBaseCooldown;
-
-            // Always reset the attacking state
-            isAttacking = false;
-
-            isDashing = false;
-            isTargetLocked = false;
-
-            // Reset flags after the dash is complete
-            IdleProcess();
-            enemyPhase = EnemyPhase.Patrol;
-
+            // Revert to the idle state after charge completed
+            enemy.animateEnemy.SetIdleAnimationParameters();
+            chargeTimer = 0f;
 
             yield return null;
+
+            isAttacking = false;
+
+            yield return null;
+
+            previousTreantPhase = TreantPhase.StraightAttack;
         }
         else if (treantPhase == TreantPhase.RazorLeaf)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemyPhase = EnemyPhase.Chase;
 
             // PREPARE PRECHARGE PHASE
@@ -296,6 +369,8 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < prechargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -314,6 +389,8 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
 
             while (fireTimer < fireProjectileDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 fireTimer += Time.deltaTime;
 
                 // Interval Timer
@@ -337,9 +414,13 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
             }
 
             yield return null;
+
+            previousTreantPhase = TreantPhase.RazorLeaf;
         }
         else if (treantPhase == TreantPhase.Summon)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemy.animator.SetFloat(Settings.motionType, 3f);
 
             Grid grid = currentRoom.instantiatedRoom.grid;
@@ -363,9 +444,13 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
             }
 
             yield return new WaitForSeconds(2f);
+
+            previousTreantPhase = TreantPhase.Summon;
         }
         else if (treantPhase == TreantPhase.Heal)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemy.animator.SetFloat(Settings.motionType, 4f);
 
             enemy.health.AddHealth(20);
@@ -379,6 +464,8 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
         treantAttackMoveRoutine = null;
 
         TransitionToNextPhase();
+
+        previousTreantPhase = TreantPhase.Heal;
     }
 
     public void PlayerStealthCheck()

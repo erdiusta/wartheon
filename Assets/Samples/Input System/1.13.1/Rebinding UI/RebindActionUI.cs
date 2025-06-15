@@ -282,7 +282,7 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
             {
                 m_RebindOperation?.Dispose();
                 m_RebindOperation = null;
-                overridenByPlayer = false;
+                overriddenByBplayer = false;
             }
 
             // Disable navigation during rebind
@@ -295,11 +295,6 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
 
             // Configure the rebind.
             m_RebindOperation = action.PerformInteractiveRebinding(bindingIndex)
-                .WithControlsExcluding("<Mouse>")
-                .WithControlsExcluding("<Mouse>/leftButton")
-                .WithControlsExcluding("<Mouse>/rightButton")
-                .WithControlsExcluding("<Mouse>/press")
-                .WithControlsExcluding("<Mouse>/position")
                 .WithCancelingThrough("<Keyboard>/escape")
                 .WithCancelingThrough("<Gamepad>/start") 
                 .OnCancel(
@@ -329,7 +324,7 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
 
                         CheckOverriddenBindingsPerformedByPlayer(action, bindingIndex, allCompositeParts); // I wrote this
 
-                        if (!overridenByPlayer && CheckDuplicateBindings(action, bindingIndex, allCompositeParts)) // added this
+                        if (!overriddenByBplayer && CheckDuplicateBindings(action, bindingIndex, allCompositeParts)) // added this
                         {
                             action.RemoveBindingOverride(bindingIndex);
                             CleanUp();
@@ -404,7 +399,7 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
                         if (indexToRemove != -1) // If it is not zero it means matchings is succesfful
                         {
                             overriddenAction.ApplyBindingOverride(indexToRemove, string.Empty);
-                            overridenByPlayer = true;
+                            overriddenByBplayer = true;
                             Debug.Log($"Removed conflicting binding from '{overriddenAction.name}' at index {indexToRemove}");
                         }
                     }
@@ -496,7 +491,7 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
 
         public InputActionReference uiNavigation;
 
-        bool overridenByPlayer;
+        bool overriddenByBplayer;
 
         [Tooltip("Reference to action that is to be rebound from the UI.")]
         [SerializeField]

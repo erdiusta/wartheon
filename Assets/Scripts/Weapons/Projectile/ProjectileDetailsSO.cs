@@ -61,17 +61,21 @@ public class ProjectileDetailsSO : ScriptableObject
     #endregion
     public int projectileDamageMax = 1;
     #region Tooltip
-    [Tooltip("The minimum speed of the projectile - the speed will be a random value between the min and max")]
+    [Tooltip("The speed of the projectile")]
     #endregion
-    public float projectileSpeedMin = 20f;
-    #region Tooltip
-    [Tooltip("The maximum speed of the projectile - the speed will be a random value between the min and max")]
-    #endregion
-    public float projectileSpeedMax = 20f;
+    public float projectileSpeed = 20f;
     #region Tooltip
     [Tooltip("The range of the projectile (or projectile pattern) in unity units")]
     #endregion
     public float projectileRange = 20f;
+    #region Tooltip
+    [Tooltip("Check if has a lifetime")]
+    #endregion
+    public bool hasLifeTime = false;
+    #region Tooltip
+    [Tooltip("The blast radius of the item")]
+    #endregion
+    public float lifeDuration = 1;
     #region Tooltip
     [Tooltip("The rotation speed in degrees per second of the projectile pattern")]
     #endregion
@@ -97,14 +101,6 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip("The trap check")]
     #endregion
     public bool isTrap = false;
-    #region Tooltip
-    [Tooltip("Check if has a lifetime")]
-    #endregion
-    public bool hasLifeTime = false;
-    #region Tooltip
-    [Tooltip("The blast radius of the item")]
-    #endregion
-    public float lifeDuration = 15;
     #region Tooltip
     [Tooltip("The blast radius of the item")]
     #endregion
@@ -274,7 +270,6 @@ public class ProjectileDetailsSO : ScriptableObject
             HelperUtilities.ValidateCheckNullValue(this, nameof(projectileChargeMaterial), projectileChargeMaterial);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamageMin), projectileDamageMin, false);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamageMax), projectileDamageMax, false);
-        HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpeedMin), projectileSpeedMin, nameof(projectileSpeedMax), projectileSpeedMax, false);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileRange), projectileRange, false);
         HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpreadMin), projectileSpreadMin, nameof(projectileSpreadMax), projectileSpreadMax, true);
         HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpawnAmountMin), projectileSpawnAmountMin, nameof(projectileSpawnAmountMax), projectileSpawnAmountMax, false);

@@ -5,6 +5,10 @@ using Random = UnityEngine.Random;
 
 public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 {
+    // Define the cell boundaries in grid coordinates
+    readonly Vector2Int cellMin = new Vector2Int(-8, 2);
+    readonly Vector2Int cellMax = new Vector2Int(12, 18);
+
     // BOSSES
     GalvanusPhase currentGalvanusPhase;
     private float phaseTimer;  // Timer to control phase duration
@@ -15,6 +19,21 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
     Coroutine galvanusAttackMoveRoutine;
 
+    bool passedToWait;
+
+    public bool PassedToWait
+    {
+        get => passedToWait;
+        set
+        {
+            if (!passedToWait && value)
+            {
+                passedToWait = true;
+                HandleWaitPhase();
+            }
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -22,6 +41,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Start() 
     {
+        player = GameManager.Instance.GetPlayer();
         currentGalvanusPhase = GalvanusPhase.Wait;
     }
 
@@ -33,7 +53,17 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Update()
     {
-        if (GameManager.Instance.GetPlayer() != null)
+        if (enemy.enemyAI.enemyPhase == EnemyPhase.Death)
+        {
+            if (attackAnimationRoutine != null)
+            {
+                StopCoroutine(attackAnimationRoutine);
+            }
+
+            return;
+        }
+
+        if (player != null)
         {
             Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
                 (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
@@ -78,10 +108,13 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
         }
         else if (moveStatus == MoveStatus.Idle)
         {
-            // Check if the player is on stealth
-            if (GameManager.Instance.GetPlayer().onStealth)
+            if (player != null)
             {
-                PlayerStealthCheck();
+                // Check if the player is on stealth
+                if (player.onStealth)
+                {
+                    PlayerStealthCheck();
+                }
             }
 
             // Check if the enemy is a Galvanus boss
@@ -91,7 +124,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
                 switch (currentGalvanusPhase)
                 {
                     case GalvanusPhase.Wait:
-                        HandleWaitPhase();
+                        PassedToWait = true;
 
                         // Reset timers
                         firingIntervalTimer = WeaponShootInterval();
@@ -125,7 +158,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
         }
     }
 
-    private void HandleWaitPhase()
+    public void HandleWaitPhase()
     {
         // Logic for waiting phase (maybe the Centaur just moves or idles here)
         enemy.animateEnemy.SetIdleAnimationParameters();
@@ -163,30 +196,29 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
     private void TransitionToNextPhase()
     {
-        // Check if the player is on stealth
-        if (GameManager.Instance.GetPlayer().onStealth)
+        if (player == null) return;
+        if (player.onStealth)
         {
             PlayerStealthCheck();
             return;
         }
 
-        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 4f)
-        {
-            // If player is too close to centaur, automatically next phase will be chargeAndRetreat
-            currentGalvanusPhase = GalvanusPhase.DashAttack;
-            return;
-        }
+        float distance = Vector3.Distance(transform.position + new Vector3(0f, 0.8f, 0f), player.GetPlayerPosition());
 
-        if (currentGalvanusPhase == GalvanusPhase.DashAttack || currentGalvanusPhase == GalvanusPhase.Lightning ||
-            currentGalvanusPhase == GalvanusPhase.LightningBolt)
+        if (distance < 4f)
         {
-            // If centaur made a move then next phase will be wait
-            currentGalvanusPhase = GalvanusPhase.Wait;
+            currentGalvanusPhase = (GalvanusPhase)Random.Range(2, 4); // Dash or Bolt
+        }
+        else if (distance <= 12f)
+        {
+            float rng = Random.value;
+            if (rng < 0.33f) currentGalvanusPhase = GalvanusPhase.LightningBolt;
+            else if (rng < 0.66f) currentGalvanusPhase = GalvanusPhase.DashAttack;
+            else currentGalvanusPhase = GalvanusPhase.Lightning;
         }
         else
         {
-            // Example of conditional or random phase transitions
-            currentGalvanusPhase = (GalvanusPhase)Random.Range(2, Enum.GetValues(typeof(CentaurPhase)).Length);
+            currentGalvanusPhase = GalvanusPhase.Lightning;
         }
     }
 
@@ -194,7 +226,11 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
     {
         if (galvanusPhase == GalvanusPhase.LightningBolt)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemyPhase = EnemyPhase.Chase;
+
+            enemy.animator.SetBool(Settings.cast, false);
 
             float fireTimer = 0f;
             float fireProjectileDuration = 5f;
@@ -203,6 +239,8 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
             while (fireTimer < fireProjectileDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 fireTimer += Time.deltaTime;
 
                 // Interval Timer
@@ -212,7 +250,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
                     {
                         firingDurationTimer -= Time.deltaTime;
                         enemy.animateEnemy.SetAttackAnimationParameters();
-                        FireWeapon();
+                        FireWeapon(false, 0, 0, GalvanusPhase.LightningBolt);
                     }
                     else
                     {
@@ -231,9 +269,14 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
             yield return null;
 
+            currentGalvanusPhase = GalvanusPhase.Wait;
+            phaseTimer = 0f;
+            passedToWait = false; // Ensure wait phase triggers again
         }
         else if (galvanusPhase == GalvanusPhase.DashAttack)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemyPhase = EnemyPhase.Attack;
             isAttacking = true;
 
@@ -241,18 +284,23 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
             // Lock-on player position during the start of precharge
             if (!chargeProcessStarted)
             {
-                lockedPosition = GameManager.Instance.GetPlayer().transform.position + new Vector3(0f, 0.5f, 0f);
+                if (GameManager.Instance.GetPlayer() != null)
+                {
+                    lockedPosition = GameManager.Instance.GetPlayer().transform.position + new Vector3(0f, 0.5f, 0f);
+                }
+
             }
 
             chargeProcessStarted = true;
 
             float prehargeDuration = 1.5f;
             float chargeTimer = 0f;
-
-            enemy.animator.SetFloat(Settings.motionType, 1f); // charge trigger to blend tree
+            enemy.animator.SetFloat(Settings.motionType, 3f); // charge trigger to blend tree
 
             while (chargeTimer < prehargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -266,18 +314,29 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
             // START CHARGE PHASE
             enemy.animateEnemy.ResetAnimatonParameters();
             enemy.animateEnemy.SetMovementAnimationParameters();
-            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.attackSoundEffect);
 
-            Vector3 direction = (lockedPosition - transform.position).normalized;
+            // Clamp lockedPosition
+            Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
+
+            Vector3Int cell = grid.WorldToCell(lockedPosition);
+            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
+            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
+            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
+
+            Vector3 direction = (clampedPosition - transform.position).normalized;
             float chargeSpeed = 20f;
+            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.attackSoundEffect);
 
             while (chargeTimer < chargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, lockedPosition, chargeSpeed * Time.deltaTime);
+
+                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
 
                 // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, lockedPosition) < 0.1f)  // Small threshold for accuracy
+                if (Vector3.Distance(transform.position, clampedPosition) < 0.02f)  // Small threshold for accuracy
                 {
                     // Exit the loop early if boss has reached the destination
                     break;
@@ -293,9 +352,15 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
             yield return null;
 
             isAttacking = false;
+
+            currentGalvanusPhase = GalvanusPhase.Wait;
+            phaseTimer = 0f;
+            passedToWait = false; // Ensure wait phase triggers again
         }
         else if (galvanusPhase == GalvanusPhase.Lightning)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemyPhase = EnemyPhase.Chase;
 
             // PREPARE PRECHARGE PHASE
@@ -311,6 +376,8 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < prechargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -329,6 +396,8 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
             while (fireTimer < fireProjectileDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 fireTimer += Time.deltaTime;
 
                 // Interval Timer
@@ -357,11 +426,18 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
         chargeProcessStarted = false;
         galvanusAttackMoveRoutine = null;
 
-        TransitionToNextPhase();
+        currentGalvanusPhase = GalvanusPhase.Wait;
+        phaseTimer = 0f;
+        passedToWait = false; // Ensure wait phase triggers again
     }
 
     public void PlayerStealthCheck()
     {
         currentGalvanusPhase = GalvanusPhase.Wait;
+    }
+
+    void IMutualBossBehaviour.HandleWaitPhase()
+    {
+        HandleWaitPhase();
     }
 }

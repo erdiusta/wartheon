@@ -19,7 +19,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [HideInInspector] public Animator animator;
     [HideInInspector] public BoxCollider2D boxCollider2D;
     [HideInInspector] public int remainingItemCharge;
-    [HideInInspector] public bool droppedByPlayer = false;
+    [HideInInspector] public bool droppedByPlayer = false; // Used for actives to cache charge count
     [HideInInspector] public ActiveItem toBeDroppedActiveItem;
     [HideInInspector] public PassiveItem toBeDroppedPassiveItem;
     [HideInInspector] public bool isColliding;
@@ -123,13 +123,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             {
                 transform.position = SnapPosition(targetPos);
             }
-
-            // Trigger pickup if close enough
-            if (Vector2.Distance(transform.position, targetPos) < SNAP_UNIT * 1.5f)
-            {
-                isPickedUp = true;
-                CollectPassiveItem(player);
-            }
         }
     }
 
@@ -170,20 +163,23 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (!hasWeaponDrop && !hasActiveDrop && !hasSecondaryPassiveDrop) return;
 
         animator.SetBool(Settings.hovered, true);
-        GameManager.Instance.UpdateTooltipPanelInfo(genericItem, hasWeaponDrop, hasActiveDrop, hasSecondaryPassiveDrop, tooltipSource);
+
+        MainUI.Instance.UpdateTooltipPanelInfo(genericItem, hasWeaponDrop, hasActiveDrop, hasSecondaryPassiveDrop, tooltipSource);
         isPointerOver = true;
     }
 
     private void CloseTooltip()
     {
         animator.SetBool(Settings.hovered, false);
-        GameManager.Instance.CloseTooltipPanel();
-        GameManager.Instance.CloseTooltipEquippedPanel();
+        MainUI.Instance.CloseTooltipPanel();
+        MainUI.Instance.CloseTooltipEquippedPanel();
         isPointerOver = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (GetComponentInParent<Player>() != null) return;
+
         if (collision.CompareTag(Settings.playerTag) || collision.CompareTag(Settings.playerWeapon))
         {
             if (!droptItemsInRange.Contains(this)) droptItemsInRange.Add(this);
@@ -194,6 +190,8 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.meteor ||
             collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile) return;
+
+        if (GetComponentInParent<Player>() != null) return;
 
         if (collision.tag == Settings.playerTag || collision.tag == Settings.playerWeapon)
         {
@@ -226,7 +224,10 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                         {
                             NpcType npcType = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<NPC>().npcType;
 
-                            StaticEventHandler.CallNPCInteractionStartedEvent(npcType);
+                            if (npcType == NpcType.Gambler)
+                            {
+                                StaticEventHandler.CallNPCInteractionStartedEvent(npcType); // Cloese-up camera for gambler
+                            }
                         }
 
                         if (!tooltipVisibleFromProximity)
@@ -236,7 +237,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                             // Show tooltip from proximity
                             if (!hasPrimaryPassiveDrop && !isGambleDropItem)
                             {
-                                GameManager.Instance.UpdateTooltipPanelInfo(genericItem, hasWeaponDrop, hasActiveDrop, hasSecondaryPassiveDrop, TooltipSource.Proximity);
+                                MainUI.Instance.UpdateTooltipPanelInfo(genericItem, hasWeaponDrop, hasActiveDrop, hasSecondaryPassiveDrop, TooltipSource.Proximity);
                             }
                         }
 
@@ -288,13 +289,12 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                         }
                         else if (hasWeaponDrop)
                         {
-                            if (InputManager.Instance.interaction.action.IsPressed())
+                            if (InputManager.Instance.interaction.action.IsPressed() && !InputManager.interactionDisabled)
                             {
                                 if (counter != null)
                                 {
-                                    NpcType npcType = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<NPC>().npcType;
-
-                                    StaticEventHandler.CallNPCInteractionStartedEvent(npcType);
+                                    //NpcType npcType = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<NPC>().npcType;
+                                    //StaticEventHandler.CallNPCInteractionStartedEvent(npcType);
 
                                     if (weaponDetails != null)
                                     {
@@ -312,7 +312,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                                             {
                                                 isPurchasing = true;
                                                 StaticDialogueHandler.CallTradeCompletedEvent();
-                                                ChestItemWeaponDropPickUpProcess(player);
+                                                DropWeaponPickUpProcess(player, weaponDetails);
                                             }
                                             else
                                             {
@@ -323,7 +323,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                                 }
                                 else
                                 {
-                                    ChestItemWeaponDropPickUpProcess(player);
+                                    DropWeaponPickUpProcess(player, weaponDetails);
                                 }
                             }
                             else
@@ -333,10 +333,12 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                         }
                         else if (hasActiveDrop)
                         {
-                            if (InputManager.Instance.interaction.action.IsPressed())
+                            if (InputManager.Instance.interaction.action.IsPressed() && !InputManager.interactionDisabled)
                             {
                                 if (!InputManager.Instance.isPressedPreviousFrame)
                                 {
+                                    if (nearestDropItem != this) return;
+
                                     // Drop process
                                     if (player.selectedActiveItem.GetCurrentActiveItem() != null && !isPickedUp)
                                     {
@@ -363,7 +365,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                         }
                         else if (hasSecondaryPassiveDrop)
                         {
-                            if (InputManager.Instance.interaction.action.IsPressed())
+                            if (InputManager.Instance.interaction.action.IsPressed() && !InputManager.interactionDisabled)
                             {
                                 if (counter != null)
                                 {
@@ -375,7 +377,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                                         {
                                             isPurchasing = true;
                                             StaticDialogueHandler.CallTradeCompletedEvent();
-                                            ChestItemPassiveItemDropPickUpProcess(player);
+                                            DropPassiveItemPickUpProcess(player);
                                         }
                                         else
                                         {
@@ -385,7 +387,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                                 }
                                 else
                                 {
-                                    ChestItemPassiveItemDropPickUpProcess(player);
+                                    DropPassiveItemPickUpProcess(player);
                                 }
 
                                 if (isPickedUp)
@@ -436,9 +438,9 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
                         if (hasWeaponDrop)
                         {
-                            if (InputManager.Instance.interaction.action.IsPressed())
+                            if (InputManager.Instance.interaction.action.IsPressed() && !InputManager.interactionDisabled)
                             {
-                                ChestItemWeaponDropPickUpProcess(player);
+                                DropWeaponPickUpProcess(player, weaponDetails);
                             }
                             else
                             {
@@ -464,83 +466,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                         else if (hasSecondaryPassiveDrop)
                         {
                             // Drop process
-                            switch (passiveItemDetails.passiveItemSlotName)
-                            {
-                                case PassiveItemSlotName.Head:
-                                    if (player.selectedPassiveItem.GetCurrentHeadPassiveItem() != null)
-                                    {
-                                        if (InventoryManager.Instance.IsInventoryFull())
-                                        {
-                                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentHeadPassiveItem());
-                                        }
-                                    }
-                                    break;
-                                case PassiveItemSlotName.Chest:
-                                    if (player.selectedPassiveItem.GetCurrentChestPassiveItem() != null)
-                                    {
-                                        if (InventoryManager.Instance.IsInventoryFull())
-                                        {
-                                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentChestPassiveItem());
-                                        }
-                                    }
-                                    break;
-                                case PassiveItemSlotName.Neck:
-                                    if (player.selectedPassiveItem.GetCurrentNeckPassiveItem() != null)
-                                    {
-                                        if (InventoryManager.Instance.IsInventoryFull())
-                                        {
-                                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentNeckPassiveItem());
-                                        }
-                                    }
-                                    break;
-                                case PassiveItemSlotName.Finger:
-                                    if (player.selectedPassiveItem.GetCurrentFingerPassiveItem() != null)
-                                    {
-                                        if (InventoryManager.Instance.IsInventoryFull())
-                                        {
-                                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentFingerPassiveItem());
-                                        }
-                                    }
-                                    break;
-                                case PassiveItemSlotName.Back:
-                                    if (player.selectedPassiveItem.GetCurrentBackPassiveItem() != null)
-                                    {
-                                        if (InventoryManager.Instance.IsInventoryFull())
-                                        {
-                                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentBackPassiveItem());
-                                        }
-                                    }
-                                    break;
-                                case PassiveItemSlotName.Waist:
-                                    if (player.selectedPassiveItem.GetCurrentWaistPassiveItem() != null)
-                                    {
-                                        if (InventoryManager.Instance.IsInventoryFull())
-                                        {
-                                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentWaistPassiveItem());
-                                        }
-                                    }
-                                    break;
-                                case PassiveItemSlotName.Arm:
-                                    if (player.selectedPassiveItem.GetCurrentArmPassiveItem() != null)
-                                    {
-                                        if (InventoryManager.Instance.IsInventoryFull())
-                                        {
-                                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentArmPassiveItem());
-                                        }
-                                    }
-                                    break;
-                                case PassiveItemSlotName.Leg:
-                                    if (player.selectedPassiveItem.GetCurrentLegPassiveItem() != null)
-                                    {
-                                        if (InventoryManager.Instance.IsInventoryFull())
-                                        {
-                                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentLegPassiveItem());
-                                        }
-                                    }
-                                    break;
-                                default:
-                                    break;
-                            }
+                            player.playerControl.DropProcess(DropType.PassiveItem, player.equippedPassiveItems[passiveItemDetails.passiveItemSlotName]);
 
                             // Pick up process
                             isColliding = false;
@@ -561,65 +487,21 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
-    private void ChestItemPassiveItemDropPickUpProcess(Player player)
+    private void DropPassiveItemPickUpProcess(Player player)
     {
         if (!InputManager.Instance.isPressedPreviousFrame)
         {
+            if (nearestDropItem != this) return;
+
             if (!isPickedUp)
             {
+                Debug.Log("Drop interaction happened. Drop is " + gameObject.GetComponent<DropItem>().passiveItemDetails.passiveItemName);
+                Debug.Log("Frame count " + Time.frameCount);
+
                 // Drop process
-                switch (passiveItemDetails.passiveItemSlotName)
+                if (player.equippedPassiveItems[passiveItemDetails.passiveItemSlotName] != null)
                 {
-                    case PassiveItemSlotName.Head:
-                        if (player.selectedPassiveItem.GetCurrentHeadPassiveItem() != null)
-                        {                        
-                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentHeadPassiveItem());
-                        }
-                        break;
-                    case PassiveItemSlotName.Chest:
-                        if (player.selectedPassiveItem.GetCurrentChestPassiveItem() != null)
-                        {
-                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentChestPassiveItem());
-                        }
-                        break;
-                    case PassiveItemSlotName.Neck:
-                        if (player.selectedPassiveItem.GetCurrentNeckPassiveItem() != null)
-                        {
-                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentNeckPassiveItem());
-                        }
-                        break;
-                    case PassiveItemSlotName.Finger:
-                        if (player.selectedPassiveItem.GetCurrentFingerPassiveItem() != null)
-                        {
-                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentFingerPassiveItem());
-                        }
-                        break;
-                    case PassiveItemSlotName.Back:
-                        if (player.selectedPassiveItem.GetCurrentBackPassiveItem() != null)
-                        {
-                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentBackPassiveItem());
-                        }
-                        break;
-                    case PassiveItemSlotName.Waist:
-                        if (player.selectedPassiveItem.GetCurrentWaistPassiveItem() != null)
-                        {
-                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentWaistPassiveItem());
-                        }
-                        break;
-                    case PassiveItemSlotName.Arm:
-                        if (player.selectedPassiveItem.GetCurrentArmPassiveItem() != null)
-                        {
-                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentArmPassiveItem());
-                        }
-                        break;
-                    case PassiveItemSlotName.Leg:
-                        if (player.selectedPassiveItem.GetCurrentLegPassiveItem() != null)
-                        {
-                            player.playerControl.DropProcess(DropType.PassiveItem, player.selectedPassiveItem.GetCurrentLegPassiveItem());
-                        }
-                        break;
-                    default:
-                        break;
+                    player.playerControl.DropProcess(DropType.PassiveItem, player.equippedPassiveItems[passiveItemDetails.passiveItemSlotName]);
                 }
 
                 // Pick up process
@@ -629,57 +511,55 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
-    private void ChestItemWeaponDropPickUpProcess(Player player)
+    private void DropWeaponPickUpProcess(Player player, WeaponDetailsSO toBeSwappedWeaponDetails,bool dropToInventory = false)
     {
         if (!InputManager.Instance.isPressedPreviousFrame)
         {
+            if (nearestDropItem != this) return;
+
             if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player))
             {
                 GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
                 return;
             }
 
-            // Drop process if inventory is full
-            if (InventoryManager.Instance.IsInventoryFull() && player.activeWeapon.GetCurrentMainHandWeapon() != null && !isPickedUp)
+            if (weaponDetails.weaponClass == WeaponClass.Shield)
             {
-                if (weaponDetails.weaponClass == WeaponClass.Shield)
-                {
-                    goto shieldContinue; // Skip drop process because you equip one-handed weapon and chest contains a shield
-                }
+                goto shieldContinue; // Skip drop process because you equip one-handed weapon and chest contains a shield
+            }
 
-                // Drop off-hand weapon if pick-up item is two-handed
-                if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
+            // Drop off-hand weapon if pick-up item is two-handed
+            if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
+            {
+                if (weaponDetails.wieldType == WieldType.TwoHanded)
                 {
-                    if (weaponDetails.wieldType == WieldType.TwoHanded)
-                    {
-                        player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon());
-                    }
+                    player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon(), weaponDetails, true);
                 }
+            }
 
-                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+            if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+            {
+                // If pick-up weapon is two-handed, off-hand weapon is dropped and off-hand active weapon is null
+                if (weaponDetails.wieldType == WieldType.TwoHanded)
                 {
-                    // If pick-up weapon is two-handed, off-hand weapon is dropped and off-hand active weapon is null
-                    if (weaponDetails.wieldType == WieldType.TwoHanded)
+                    player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentMainHandWeapon(), weaponDetails, false);
+                }
+                else
+                {
+                    if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
                     {
-                        player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentMainHandWeapon(), true);
+                        // CURRENT ACTIVE MAIN HAND WEAPON BECOMES NULL HERE AND DROP HAPPENS
+                        player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentMainHandWeapon(), weaponDetails, false);
                     }
                     else
                     {
-                        if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
+                        if (weaponDetails.weaponClass == WeaponClass.Shield)
                         {
-                            // CURRENT ACTIVE MAIN HAND WEAPON BECOMES NULL HERE AND DROP HAPPENS
-                            player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentMainHandWeapon(), true);
+                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
                         }
                         else
                         {
-                            if (weaponDetails.weaponClass == WeaponClass.Shield)
-                            {
-                                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.ShieldCantBePutOnMainHand);
-                            }
-                            else
-                            {
-                                player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentMainHandWeapon(), true);
-                            }
+                            player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentMainHandWeapon(), weaponDetails, true);
                         }
                     }
                 }
@@ -759,8 +639,8 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (tooltipVisibleFromProximity)
             {
                 tooltipVisibleFromProximity = false;
-                GameManager.Instance.CloseTooltipPanel();
-                GameManager.Instance.CloseTooltipEquippedPanel();
+                MainUI.Instance.CloseTooltipPanel();
+                MainUI.Instance.CloseTooltipEquippedPanel();
                 animator.SetBool(Settings.hovered, false);
             }
 
@@ -775,11 +655,17 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     /// <summary>
     /// Initialize for enemy drops
     /// </summary>
-    public void Initialize(ItemGeneric itemGeneric, Sprite sprite, Vector3 spawnPosition)
+    public void Initialize(ItemGeneric itemGeneric, Sprite sprite, Vector3 spawnPosition, bool isTutorial = false)
     {
         spriteRenderer.sprite = sprite;
         transform.position = spawnPosition;
         this.genericItem = itemGeneric;
+
+        if (isTutorial)
+        {
+            Transform tutorialArrowContainer = transform.GetChild(4);
+            tutorialArrowContainer.gameObject.SetActive(true);
+        }
 
         // Check for animation - Active Item
         if (hasActiveDrop)
@@ -794,7 +680,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         // Check for animation - Passive Items
         else if (hasPrimaryPassiveDrop || hasSecondaryPassiveDrop)
         {
-
             PassiveItem passiveItem = (PassiveItem)itemGeneric;
             passiveItemDetails = passiveItem.passiveItemDetails;
             animator.runtimeAnimatorController = passiveItemDetails?.passiveItemAnimatorController ?? animator.runtimeAnimatorController;
@@ -823,7 +708,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (!hasWeaponDrop) return;
 
-        if (isColliding) return;
+        if (isPickedUp || isColliding) return;
 
         Weapon weapon = new Weapon();
         weapon.weaponDetails = weaponDetails;
@@ -899,7 +784,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (!hasPrimaryPassiveDrop && !hasSecondaryPassiveDrop) return;
 
-        if (isColliding) return;
+        if (isPickedUp || isColliding) return;
 
         PassiveItem passiveItem = new PassiveItem();
         passiveItem.passiveItemDetails = passiveItemDetails;
@@ -920,6 +805,11 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
                 player.GetComponent<Coins>().Add(coinAmount);
 
+                if (InputManager.TutorialEnabled && TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.PickUpPrimaryPassiveCoin)
+                {
+                    TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
+                }
+
                 player.additionalCoinIncreaseActivated = true;
 
                 // Play pickup sound effect
@@ -937,6 +827,11 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (passiveItem.passiveItemDetails.primaryPassiveItemName == PrimaryPassiveItemName.Health)
             {
                 player.UpdatePlayerHealth(20, false, false);
+
+                if (InputManager.TutorialEnabled && TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.PickUpPrimaryPassiveHealth)
+                {
+                    TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
+                }
 
                 // Play pickup sound effect
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
@@ -999,9 +894,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
         }
 
-        //// Introduction pop-up
-        //StaticEventHandler.CallIntroductionPopUpEvent(DropType.PassiveItem, passiveItem);
-
         StaticEventHandler.CallPrimaryStatsChangedEvent();
         isColliding = true;
         pickUpAnimator.SetTrigger("pickUp");
@@ -1018,7 +910,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (!hasActiveDrop) return;
 
-        if (isColliding) return;
+        if (isPickedUp || isColliding) return;
 
         ActiveItem activeItem = new ActiveItem();
         activeItem.activeItemDetails = activeItemDetails;
@@ -1042,6 +934,8 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         isColliding = true;
         isPickedUp = true;
 
-        transform.SetParent(player.transform);
+        //transform.SetParent(player.transform);
+
+        Destroy(gameObject, 1f);
     }
 }

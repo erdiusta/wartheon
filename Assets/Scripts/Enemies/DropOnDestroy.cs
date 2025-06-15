@@ -36,12 +36,14 @@ public class DropOnDestroy : MonoBehaviour
     {
         // PRIMARY PASSIVE DROP PHASE
         // Get primary passive items
+        if (enemy.enemyDetails.enemyType == EnemyType.Minion) return; // If it is minion do drop happens
+
         int primaryPassiveItemNum = Random.Range(0, enemy.enemyDetails.primaryPassiveDropChanceMax + 1);
 
         for (int i = 0; i < primaryPassiveItemNum; i++)
         {
             // Instantiate item container
-            InstantiateChestItem();
+            InstantiateDropItem();
 
             // Retrieve item details
             primaryPassiveItemDetails = GetPrimaryPassiveItemDetailsToSpawn(primaryPassiveItemNum);
@@ -64,7 +66,7 @@ public class DropOnDestroy : MonoBehaviour
         }
 
         // Instantiate container
-        InstantiateChestItem();
+        InstantiateDropItem();
         
         // Get number of Active & Passive & Weapon Items To Spawn (max 2 of each)
         GetItemsToSpawn(out int activeItemNum, out int secondaryPassiveItemNum, out int weaponNum);
@@ -147,9 +149,9 @@ public class DropOnDestroy : MonoBehaviour
     }
 
     /// <summary>
-    /// Instantiate a chest item
+    /// Instantiate a drop item
     /// </summary>
-    private void InstantiateChestItem()
+    private void InstantiateDropItem()
     {
         dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
         dropItem = dropItemGameObject.GetComponent<DropItem>();
@@ -234,8 +236,6 @@ public class DropOnDestroy : MonoBehaviour
 
     private bool IsWeaponAvailableForTheCharacter(WeaponDetailsSO weaponDetails)
     {
-        // If enemy is a minion, ignore all drop issue then return
-        if (enemy.enemyDetails.enemyType == EnemyType.Minion) return false;
 
         //for (int i = 0; i < player.playerDetails.collectibleWeaponsArray.Length; i++)
         //{

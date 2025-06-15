@@ -9,11 +9,15 @@ public class Destroyed : MonoBehaviour
 
     DestroyedEvent destroyedEvent;
     Enemy enemy;
+    Player player;
+    Decoy decoy;
 
     private void Awake()
     {
         destroyedEvent = GetComponent<DestroyedEvent>();
         enemy = GetComponent<Enemy>();
+        player = GetComponent<Player>();
+        decoy = GetComponent<Decoy>();
     }
 
     private void OnEnable()
@@ -47,21 +51,29 @@ public class Destroyed : MonoBehaviour
         {
             if (destroyedEventArgs.isClone)
             {
-                Destroy(GameManager.Instance.GetPlayer().playerCloneObject);
+                SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemImpactSoundEffect);
+                Destroy(player.playerCloneObject);
             }
             else
             {
-                GameManager.Instance.GetPlayer().isDead = true;
-                GetComponent<PolygonCollider2D>().enabled = false;
-                GameManager.Instance.GetPlayer().animatePlayer.ResetAnimatonParameters();
-                GameManager.Instance.GetPlayer().animator.SetBool(Settings.death, true);
+                player.polygonCollider2D.enabled = false;
+                player.animatePlayer.ResetAnimatonParameters();
+                player.animator.SetBool(Settings.death, true);
+                player.idle.StopVelocity();
 
-                SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.deathSoundEffect);
+                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.deathSoundEffect);
                 Destroy(gameObject, 1f);
             }
         }
         else
         {
+            if (decoy != null)
+            {
+                SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemImpactSoundEffect);
+                Destroy(gameObject, 0.4f);
+                return;
+            }
+
             if (gameObject.GetComponent<Enemy>().enemyDetails?.deathSoundEffect != null)
             {
                 SoundEffectManager.Instance.PlaySoundEffect(gameObject.GetComponent<Enemy>().enemyDetails.deathSoundEffect);
@@ -159,8 +171,6 @@ public class Destroyed : MonoBehaviour
                     break;
             }
 
-            enemy.isDead = true;
-
             // Gain Experience Upon Killing An Enemy
             int gainedExpFromEnemy = (int)(enemy.enemyDetails.experiencePoint * player.expGainModifier);
             player.currentGainedTotalExperiencePoints += gainedExpFromEnemy;
@@ -174,11 +184,50 @@ public class Destroyed : MonoBehaviour
             {
                 EnemySpawner.Instance.isBossInstantiated = false;
 
-                if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Treant || enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Galvanus ||
-                    enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Centaur)
+                switch (enemy.enemyDetails.enemyBehaviour)
                 {
-                    enemy.animator.SetBool(Settings.cast, false);
+                    case EnemyBehaviour.Pursuit:
+                        enemy.enemyAI.StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.AimAndShoot:
+                        enemy.GetComponent<EnemyAimAndShootAI>().StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.PrepareAndDash:
+                        enemy.enemyAI.StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.Centaur:
+                        enemy.GetComponent<CentaurAI>().StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.Treant:
+                        enemy.GetComponent<TreantAI>().StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.Galvanus:
+                        enemy.GetComponent<GalvanusAI>().StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.Sepharoth:
+                        enemy.GetComponent<SepharothAI>().StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.FrostWrym:
+                        enemy.GetComponent<FrostWrymAI>().StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.Venomancer:
+                        enemy.GetComponent<VenomancerAI>().StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.FireWrym:
+                        enemy.GetComponent<FireWrymAI>().StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.Moldran:
+                        enemy.GetComponent<MoldranAI>().StopAllCoroutines();
+                        break;
+                    case EnemyBehaviour.Roaming:
+                        enemy.enemyAI.StopAllCoroutines();
+                        break;
+                    default:
+                        break;
                 }
+
+                enemy.animateEnemy.ResetAnimatonParameters();
+
 
                 if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Treant)
                 {
@@ -191,22 +240,40 @@ public class Destroyed : MonoBehaviour
                 }
             }
 
-            if (enemy.enemyDetails.enemyCategory == EnemyCategory.Skeleton)
+            if (InputManager.TutorialEnabled)
             {
-                enemy.animator.SetBool(Settings.block, false);
+                if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Combat)
+                {
+                    player.health.isDamageable = true;
+                    player.health.TakeDamage(20, Vector2.zero, player.transform.position, false, null, MeleeHand.None);
+                    TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
+                }
+                else if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Parry)
+                {
+                    TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
+                }
+                else if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.DodgeRoll)
+                {
+                    TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
+                }
+                else if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.SpecialSkill)
+                {
+                    TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
+                }
+            }
+
+            if (enemy.enemyDetails.enemyCategory == EnemyCategory.MainSlime && !enemy.minionsSpawned)
+            {
+                enemy.minionsSpawned = true;
+                StaticEventHandler.CallEnemyKilledEvent(enemy);
             }
 
             enemy.health.hitFXAnimator.SetTrigger(Settings.death);
             enemy.health.fxAnimatorPlayed = true;
-            enemy.animateEnemy.ResetAnimatonParameters();
             enemy.enemyAI.isDashing = false;
-            enemy.isDead = true;
             enemy.enemyAI.isAttacking = false;
-            enemy.enemyAI.StopAllCoroutines();
-            enemy.enemyAI.enabled = false;
-            enemy.health.StopAllCoroutines();
+            enemy.enemyAI.enemyPhase = EnemyPhase.Death;
             enemy.health.ResetStatusInCaseOfDeath();
-            enemy.health.enabled = false;
             enemy.rb2D.mass = 5000;
             enemy.rb2D.linearVelocity = Vector2.zero;
 
@@ -214,7 +281,7 @@ public class Destroyed : MonoBehaviour
             {
                 enemy.patrol.enabled = false;
                 enemy.aiDestinationSetter.enabled = false;
-                enemy.aiLerp.canMove = false;
+                enemy.aiRigidbody2D.canMove = false;
             }
 
             enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
@@ -245,14 +312,14 @@ public class Destroyed : MonoBehaviour
         #endregion
 
         // If current level is more than level before killing enemy, it means char leveled up!
-        if (player.currentLevel > levelBeforeKillingEnemy)
+        if (player.currentLevel > levelBeforeKillingEnemy && !player.health.hasDied)
         {
             player.levelUpAnimator.SetTrigger(Settings.levelUp);
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.levelUpSoundEffect);
             player.currentBuildPoints++;
             StaticEventHandler.CallLevelUp();
-            player.health.SetMaximumHealth(player.health.GetMaximumHealth());
-            player.UpdatePlayerHealth(1, true, true);
+            player.health.SetMaximumHealth(player.health.maximumHealth, true);
+            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
         }
     }
 

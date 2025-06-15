@@ -35,12 +35,16 @@ MonoBehaviour:
   suddenKillChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  canBurn: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
   hasStunDamage: 0
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   canDrainHealth: 0
   healthDrainChance: 0
   weaponRightShootPosition: {x: 1.8125, y: 2.1875, z: 0}
@@ -48,6 +52,7 @@ MonoBehaviour:
   weaponUpShootPosition: {x: 1.8125, y: 2.1875, z: 0}
   weaponDownShootPosition: {x: 1.8125, y: 2.1875, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 791829483eb9c8b4d84e9954ad31a02b, type: 2}
+  weaponSecondaryProjectile: {fileID: 11400000, guid: 3f5947fd585261348ac5391c67704d2b, type: 2}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 9b1554b0196a6b949bbb0191092c50a8, type: 2}
   weaponImpactSoundEffect: {fileID: 0}
@@ -55,15 +60,20 @@ MonoBehaviour:
   isShield: 0
   projectileDeflectRatio: 0
   circleRadius: 0
+  boxLength: 1.2
+  boxHeight: 2.6
   hasPhysicalDamage: 0
   meleeDamageMin: 0
   meleeDamageMax: 0
+  meleeDamageElementalBias: 0
+  secondMeleeDamageMin: 4
+  secondMeleeDamageMax: 7
+  secondMeleeDamageElementalBias: 0
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 2
   weaponCooldownDuration: 0.45
   weaponBaseHandling: 0.8
   hasSwing: 0
-  hasSweep: 0
   hasThrust: 0
   hasInfiniteProjectile: 1
   weaponProjectileCapacity: 0

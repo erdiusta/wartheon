@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
     public Animator levelUpAnimator;
     public LevelUpDetailsSO levelUpDetails;
 
+    [HideInInspector] public bool isInitialized = false;
     [HideInInspector] public PlayerDetailsSO playerDetails;
     [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public Health health;
@@ -83,7 +84,6 @@ public class Player : MonoBehaviour
     [HideInInspector] public Idle idle;
     [HideInInspector] public MovementByVelocity movementByVelocity;
     [HideInInspector] public MovementToPositionEvent movementToPositionEvent;
-    [HideInInspector] public bool isDead;
     [HideInInspector] public StatusManager statusManager;
     [HideInInspector] public SpecialMoveEvent specialMoveEvent;
     [HideInInspector] public bool specialMoveOneOnCooldown = false;
@@ -99,7 +99,9 @@ public class Player : MonoBehaviour
     [HideInInspector] public int previousSetIndex = 1;
     [HideInInspector] public BranchMastery branchMastery;
     [HideInInspector] public WeaponMastery weaponMastery;
-    [HideInInspector] public DropItem activeItemChestItem;
+    [HideInInspector] public DropItem activeDropItem;
+
+    [HideInInspector] public Dictionary<PassiveItemSlotName, PassiveItem> equippedPassiveItems = new();
 
     // PLAYER PRIMARY STATS
     public int CurrentStrengthValue { get => currentStrengthValue; set { currentStrengthValue = value; RecalculateSecondaryStats(); } }
@@ -265,6 +267,9 @@ public class Player : MonoBehaviour
 
         // Set player starting primary stats
         SetPlayerPrimaryStats();
+
+        isInitialized = true;
+        healthEvent.CallHealthChangedEvent(health.currentHealth, 0, MeleeHand.None);
     }
 
     private void OnEnable()
@@ -315,6 +320,8 @@ public class Player : MonoBehaviour
     /// </summary>
     private void CreatePlayerStartingWeapons()
     {
+        if (InputManager.TutorialEnabled) return;
+
         // Populate weapon list from starting weapons for right hand and shield for left hand if have any
         for (int i = 0; i < playerDetails.startingWeaponList.Count; i++)
         {
@@ -335,11 +342,13 @@ public class Player : MonoBehaviour
     /// </summary>
     private void CreatePlayerStartingActiveItem()
     {
-        GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        activeItemChestItem = chestItemObject.GetComponent<DropItem>();
+        if (InputManager.TutorialEnabled) return;
 
-        activeItemChestItem.remainingItemCharge = playerDetails.selectedActiveItem.activeItemMaxCharge;
-        AddActiveItemToPlayer(playerDetails.selectedActiveItem, activeItemChestItem, activeItemChestItem.remainingItemCharge);
+        GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+        activeDropItem = chestItemObject.GetComponent<DropItem>();
+
+        activeDropItem.remainingItemCharge = playerDetails.selectedActiveItem.activeItemMaxCharge;
+        AddActiveItemToPlayer(playerDetails.selectedActiveItem, activeDropItem, activeDropItem.remainingItemCharge);
     }
 
     /// <summary>
@@ -347,11 +356,11 @@ public class Player : MonoBehaviour
     /// </summary>
     private void CreatePlayerStartingPassiveItem()
     {
-        for (int i = 0; i < playerDetails.passiveItemsList.Count; i++)
+        foreach (PassiveItemSlotName slot in Enum.GetValues(typeof(PassiveItemSlotName)))
         {
-            PassiveItem passiveItem = new PassiveItem();
-            passiveItem.passiveItemDetails = playerDetails.passiveItemsList[i];
-            AddPassiveItemToPlayer(passiveItem.passiveItemDetails);
+            if (slot == PassiveItemSlotName.None) continue;
+
+            equippedPassiveItems[slot] = null;
         }
     }
 
@@ -361,7 +370,20 @@ public class Player : MonoBehaviour
     public void UpdateWieldedWeapons(WeaponDetailsSO weaponDetails, bool pickingUp, bool onStart)
     {
         // If inventory is full replace weapon
-        if (InventoryManager.Instance.IsInventoryFull())
+        if (activeWeapon.GetCurrentMainHandWeapon() == null)
+        {
+            AddNextWeaponToPlayer(weaponDetails, pickingUp, onStart, false);
+
+            // Set player starting health
+            UpdatePlayerHealth(0, false, false);
+            UpdateDamageValues();
+            UpdateWeaponHandlingAndCriticalValues();
+            UpdateBlockAndEvasivenessValues();
+            UpdateSpeedValue();
+
+            StaticEventHandler.CallPrimaryStatsChangedEvent();
+        }
+        else if (InventoryManager.Instance.IsInventoryFull())
         {
             AddNextWeaponToPlayer(weaponDetails, pickingUp, onStart, false);
 
@@ -411,7 +433,7 @@ public class Player : MonoBehaviour
         currentDarkResistanceValue = playerDetails.darkResistance;
 
         // Set player starting health
-        UpdatePlayerHealth(0, true, true);
+        UpdatePlayerHealth(0, true, true, true);
         UpdateDamageValues();
         UpdateWeaponHandlingAndCriticalValues();
         UpdateBlockAndEvasivenessValues();
@@ -581,7 +603,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Add an active item to the player
     /// </summary>
-    public ActiveItem AddActiveItemToPlayer(ActiveItemDetailsSO activeItemDetails, DropItem chestItem, int remainingItemCharge)
+    public ActiveItem AddActiveItemToPlayer(ActiveItemDetailsSO activeItemDetails, DropItem dropItem, int remainingItemCharge)
     {
         ActiveItem activeItem = new ActiveItem();
 
@@ -592,45 +614,46 @@ public class Player : MonoBehaviour
             activeItemRemainingCharge = remainingItemCharge,
         };
 
-        chestItem.boxCollider2D.enabled = false;
+        dropItem.boxCollider2D.enabled = false;
 
         // Set the added active item as active
         setActiveItemEvent.CallSelectedActiveItem(activeItem);
 
         // Set hasActiveDrop flag to true
-        chestItem.hasActiveDrop = true; 
+        dropItem.hasActiveDrop = true; 
 
         // Initialize chest item
-        chestItem.Initialize(activeItem, activeItemDetails.activeItemSprite, transform.position);
+        dropItem.Initialize(activeItem, activeItemDetails.activeItemSprite, transform.position);
 
         // Disable some components during equipped
-        chestItem.spriteRenderer.enabled = false;
-        chestItem.animator.enabled = false;
+        dropItem.spriteRenderer.enabled = false;
+        dropItem.animator.enabled = false;
 
         // Declare this chest item as to-be-dropped chest item
-        DropItem.toBeDroppedDropItem = chestItem;
+        DropItem.toBeDroppedDropItem = dropItem;
         DropItem.toBeDroppedDropItem.toBeDroppedActiveItem = activeItem;
 
         return activeItem;
     }
 
-    public PassiveItem AddPassiveItemToPlayer(PassiveItemDetailsSO passiveItemDetails, DropItem chestItem = null)
+    public PassiveItem AddPassiveItemToPlayer(PassiveItemDetailsSO passiveItemDetails, DropItem dropItem = null)
     {
         PassiveItem passiveItem = new PassiveItem
         {
             passiveItemDetails = passiveItemDetails
         };
 
-        EquipResult result = new EquipResult();
-        setPassiveItemEvent.CallEquipPassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName, result);
+        setPassiveItemEvent.CallEquipPassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
 
-        if (result.placedIntoInventory)
+        if (equippedPassiveItems[passiveItem.passiveItemDetails.passiveItemSlotName].itemSlotStatus == ItemSlotStatus.Inventory)
         {
-            int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(passiveItem);
+            // Place it inventory
+            int inventoryItemIndex = InventoryManager.Instance.FindIndexOfItem(passiveItem);
             StaticEventHandler.CallPassiveItemAddedToInventorySlot(passiveItem, inventoryItemIndex);
         }
         else
         {
+            // Equip to inventory
             StaticEventHandler.CallItemAddedToPassiveItemSlot(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
         }
 
@@ -966,19 +989,22 @@ public class Player : MonoBehaviour
         {
             if (activeWeapon.GetCurrentMainHandWeapon() != null && activeWeapon.GetCurrentOffHandWeapon() != null)
             {
-                if (selectedPassiveItem?.GetCurrentBackPassiveItem().passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
+                if (equippedPassiveItems.TryGetValue(PassiveItemSlotName.Back, out PassiveItem item) && item != null)
                 {
-                    if ((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger && activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass
-                        == WeaponClass.Dagger) || (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Claw && activeWeapon.GetCurrentOffHandWeapon().
-                        weaponDetails.weaponClass == WeaponClass.Claw)) // Grant extra cr. chance if dual-wield
+                    if (item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                     {
-                        currentMainHandCriticalHitChance += 0.05f;
-                        currentOffHandCriticalHitChance += 0.05f;
-                    }
-                    else // If cloak equipped but then dual set is broken, then cr.chance is reduced a bit
-                    {
-                        currentMainHandCriticalHitChance -= 0.05f;
-                        currentOffHandCriticalHitChance -= 0.05f;
+                        if ((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger && activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass
+                            == WeaponClass.Dagger) || (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Claw && activeWeapon.GetCurrentOffHandWeapon().
+                            weaponDetails.weaponClass == WeaponClass.Claw)) // Grant extra cr. chance if dual-wield
+                        {
+                            currentMainHandCriticalHitChance += 0.05f;
+                            currentOffHandCriticalHitChance += 0.05f;
+                        }
+                        else // If cloak equipped but then dual set is broken, then cr.chance is reduced a bit
+                        {
+                            currentMainHandCriticalHitChance -= 0.05f;
+                            currentOffHandCriticalHitChance -= 0.05f;
+                        }
                     }
                 }
 
@@ -1046,11 +1072,11 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Set player health from playerDetails SO
     /// </summary>
-    public void UpdatePlayerHealth(int healthIncrease, bool shouldHealthFilled, bool isMaxHealthChanged)
+    public void UpdatePlayerHealth(int healthIncrease, bool shouldHealthFilled, bool isMaxHealthChanged, bool onStart = false)
     {
         if (isMaxHealthChanged)
         {
-            health.SetMaximumHealth(20 + currentConstitutionValue * 10, shouldHealthFilled);
+            health.SetMaximumHealth(20 + currentConstitutionValue * 10, shouldHealthFilled, onStart);
         }
 
         health.AddHealth(healthIncrease);

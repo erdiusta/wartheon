@@ -56,25 +56,27 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] Transform patrolPointsParentContainer;
     protected Coroutine updatePhaseRoutine;
 
+    protected Player player;
+    protected bool deathAnimationStarted;
+
     protected virtual void Awake()
     {
         enemy = GetComponent<Enemy>();
+        currentRoom = GameManager.Instance.GetCurrentRoom();
+
+        // Cache player target reference
+        player = GameManager.Instance.GetPlayer();
         enemy.currentMoveSpeed = enemyDetails.movementDetails.GetBaseMoveSpeed();
 
         // Set enemy aiLerp speed dynamically based on related enemy's moveSpeed
         if (!enemyDetails.isEnemyBoss)
         {
-            enemy.aiLerp.speed = enemy.currentMoveSpeed;
+            enemy.aiRigidbody2D.speed = enemy.currentMoveSpeed;
         }
     }
 
     protected virtual void OnEnable()
     {
-        currentRoom = GameManager.Instance.GetCurrentRoom();
-
-        // Cache player target reference
-        enemy.aiDestinationSetter.target = GameManager.Instance.GetPlayer().transform;
-
         // Patrol points array cache
         enemy.patrol.targets = currentRoom.GetPatrolTargets(currentRoom.spawnPositionArray, currentRoom.instantiatedRoom.grid, patrolPointsParentContainer);
 
@@ -86,10 +88,12 @@ public class EnemyAI : MonoBehaviour
         Patrol.OnRequestSpawnPositions -= Patrol_OnRequestSpawnPositions;
     }
 
-    private Vector2Int[] Patrol_OnRequestSpawnPositions() => GameManager.Instance.GetCurrentRoom().spawnPositionArray;
+    private Vector2Int[] Patrol_OnRequestSpawnPositions() => currentRoom.spawnPositionArray;
 
     protected virtual void Start()
     {
+        if (player != null) enemy.aiDestinationSetter.target = player.transform;
+
         // Create waitforfixed update for use in coroutine
         waitForFixedUpdate = new WaitForFixedUpdate();
 
@@ -168,7 +172,7 @@ public class EnemyAI : MonoBehaviour
         {
             if (moveStatus == MoveStatus.Idle)
             {
-                if (GameManager.Instance.GetPlayer() == null || GameManager.Instance.GetPlayer().isDead) return;
+                if (player == null || player.health.hasDied) return;
 
                 // If enemy is attacking process and in attack phase, don't get involved in AStar calculations
                 if (enemyPhase == EnemyPhase.Attack && isAttacking) return;
@@ -212,7 +216,8 @@ public class EnemyAI : MonoBehaviour
                     case EnemyPhase.GetHit:
                         // Disable patrol during get hit and enable aiDestinationSetter
                         enemy.patrol.enabled = false;
-                        enemy.aiDestinationSetter.enabled = true;
+                        enemy.aiDestinationSetter.enabled = false;
+                        enemy.aiRigidbody2D.canMove = false; // Disable normal attack behaviour during dash or firing
 
                         enemy.idle.StopVelocity();
 
@@ -222,7 +227,7 @@ public class EnemyAI : MonoBehaviour
                         // Disable patrol bot aiDestination setter for attack phase
                         enemy.patrol.enabled = false;
                         enemy.aiDestinationSetter.enabled = false;
-                        enemy.aiLerp.canMove = false; // Disable normal attack behaviour during dash or firing
+                        enemy.aiRigidbody2D.canMove = false; // Disable normal attack behaviour during dash or firing
 
                         if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.PrepareAndDash)
                         {
@@ -250,6 +255,14 @@ public class EnemyAI : MonoBehaviour
                                 enemyPhaseAtPreviousFrame = enemyPhase;
                                 enemyPhase = EnemyPhase.Chase;
                             }
+                        }
+
+                        break;
+
+                    case EnemyPhase.Death:
+                        if (attackAnimationRoutine != null)
+                        {
+                            StopCoroutine(attackAnimationRoutine);
                         }
 
                         break;
@@ -295,8 +308,8 @@ public class EnemyAI : MonoBehaviour
         isDashing = true;
         dashTimer = 0f;
 
-        enemy.aiLerp.canMove = true;
-        enemy.aiLerp.speed = enemy.currentMoveSpeed * 2;
+        enemy.aiRigidbody2D.canMove = true;
+        enemy.aiRigidbody2D.speed = enemy.currentMoveSpeed * 2;
 
         yield return waitForFixedUpdate;
 
@@ -418,29 +431,38 @@ public class EnemyAI : MonoBehaviour
                 }
                 else
                 {
-                    // Switch to attack if chase distance is lower than trigger distance
-                    if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) <
-                        enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileRange)
+                    if (!player.onStealth)
                     {
-                        enemyPhase = EnemyPhase.Attack;
-
-                        enemy.animateEnemy.ResetAnimatonParameters();
-                        enemy.animateEnemy.SetAttackAnimationParameters();
-                        enemy.idle.StopVelocity(); // Stop velocity during attack
-                    }
-                    else
-                    {
-                        // Switch to change if it in chase distance but not in trigger distance
-                        if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
+                        // Switch to attack if chase distance is lower than trigger distance
+                        if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) <
+                            enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileSpeed *
+                            enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.lifeDuration)
                         {
-                            enemyPhaseAtPreviousFrame = enemyPhase;
-                            enemyPhase = EnemyPhase.Chase;
+                            enemyPhase = EnemyPhase.Attack;
+
+                            enemy.animateEnemy.ResetAnimatonParameters();
+                            enemy.animateEnemy.SetAttackAnimationParameters();
+                            enemy.idle.StopVelocity(); // Stop velocity during attack
                         }
                         else
                         {
-                            enemyPhaseAtPreviousFrame = enemyPhase;
-                            enemyPhase = EnemyPhase.Patrol;
+                            // Switch to change if it in chase distance but not in trigger distance
+                            if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
+                            {
+                                enemyPhaseAtPreviousFrame = enemyPhase;
+                                enemyPhase = EnemyPhase.Chase;
+                            }
+                            else
+                            {
+                                enemyPhaseAtPreviousFrame = enemyPhase;
+                                enemyPhase = EnemyPhase.Patrol;
+                            }
                         }
+                    }
+                    else
+                    {
+                        enemyPhaseAtPreviousFrame = enemyPhase;
+                        enemyPhase = EnemyPhase.Patrol;
                     }
                 }
             }
@@ -471,7 +493,7 @@ public class EnemyAI : MonoBehaviour
                         if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetDecoy().GetDecoyPosition()) <
                             enemy.enemyDetails.attackMoveTriggerDistance)
                         {
-                            if (attackMoveTimer <= 0f && !GameManager.Instance.GetPlayer().onStealth)
+                            if (attackMoveTimer <= 0f && !player.onStealth)
                             {
                                 enemyPhaseAtPreviousFrame = enemyPhase;
                                 enemyPhase = EnemyPhase.Attack;
@@ -493,7 +515,7 @@ public class EnemyAI : MonoBehaviour
                         // Switch to attack if chase distance is lower than trigger distance
                         if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.attackMoveTriggerDistance)
                         {
-                            if (attackMoveTimer <= 0f && !GameManager.Instance.GetPlayer().onStealth)
+                            if (attackMoveTimer <= 0f && !player.onStealth)
                             {
                                 enemyPhaseAtPreviousFrame = enemyPhase;
                                 enemyPhase = EnemyPhase.Attack;
@@ -505,7 +527,7 @@ public class EnemyAI : MonoBehaviour
                             // Switch to change if it in chase distance but not in trigger distance
                             if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
                             {
-                                if (!GameManager.Instance.GetPlayer().onStealth)
+                                if (!player.onStealth)
                                 {
                                     enemyPhaseAtPreviousFrame = enemyPhase;
                                     enemyPhase = EnemyPhase.Chase;
@@ -548,50 +570,26 @@ public class EnemyAI : MonoBehaviour
         AimDirection enemyAimDirection;
         AttackDirection enemyAttackDirection;
 
-        if (!enemy.isFiring && !enemy.enemyDetails.isEnemyBoss)
+        Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection, out enemyAttackDirection);
+
+        // Only fire if enemy has a weapon
+        if (enemyDetails.enemyWeapon != null)
         {
-            Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection, out enemyAttackDirection);
+            // Get projectile range
+            float enemyProjectileRange = enemyDetails.enemyWeapon.weaponCurrentProjectile.projectileRange;
 
-            // Only fire if enemy has a weapon
-            if (enemyDetails.enemyWeapon != null)
+            // Is the player in range
+            if (playerDirectionVector.magnitude <= enemyProjectileRange)
             {
-                // Get projectile range
-                float enemyProjectileRange = enemyDetails.enemyWeapon.weaponCurrentProjectile.projectileRange;
-
-                // Is the player in range
-                if (playerDirectionVector.magnitude <= enemyProjectileRange)
+                // Does this enemy require line of sight to the player before firing?
+                if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange))
                 {
-                    // Does this enemy require line of sight to the player before firing?
-                    if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange))
-                    {
-                        enemy.enemyAI.enemyPhase = EnemyPhase.Chase;
-                        return;
-                    }
-   
-                    enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, 
-                        false, false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
+                    enemy.enemyAI.enemyPhase = EnemyPhase.Chase;
+                    return;
                 }
-            }
-        }
-        if (enemy.enemyDetails.isEnemyBoss)
-        {
-            Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection, out enemyAttackDirection);
 
-            // Only fire if enemy has a weapon
-            if (enemyDetails.enemyWeapon != null)
-            {
-                // Get projectile range
-                float enemyProjectileRange = enemyDetails.enemyWeapon.weaponCurrentProjectile.projectileRange;
-
-                // Is the player in range
-                if (playerDirectionVector.magnitude <= enemyProjectileRange)
-                {
-                    // Does this enemy require line of sight to the player before firing?
-                    if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
-
-                    enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false,
-                        false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
-                }
+                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection,
+                    false, false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
             }
         }
     }
@@ -599,8 +597,9 @@ public class EnemyAI : MonoBehaviour
     public void Aim(out Vector3 playerDirectionVector, out Vector3 weaponDirection, out float weaponAngleDegrees, out float enemyAngleDegrees,
         out AimDirection enemyAimDirection, out AttackDirection enemyAttackDirection)
     {
-        if (GameManager.Instance.GetPlayer().isDead || GameManager.Instance.GetPlayer() == null)
+        if (player == null || player.health.hasDied)
         {
+            enemy.enemyAI.enemyPhase = EnemyPhase.Patrol;
             playerDirectionVector = Vector3.zero;
             weaponDirection = Vector3.zero;
             weaponAngleDegrees = 0f;
@@ -841,8 +840,8 @@ public class EnemyAI : MonoBehaviour
     public void ResetEnemySpeed()
     {
         enemy.currentMoveSpeed = enemyDetails.movementDetails.GetBaseMoveSpeed() + enemy.addionalSpeedModifier;
-        enemy.aiLerp.canMove = true;
-        enemy.aiLerp.speed = enemy.currentMoveSpeed;
+        enemy.aiRigidbody2D.canMove = true;
+        enemy.aiRigidbody2D.speed = enemy.currentMoveSpeed;
     }
 
 

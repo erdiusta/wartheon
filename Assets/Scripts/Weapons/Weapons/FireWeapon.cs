@@ -19,8 +19,7 @@ public class FireWeapon : MonoBehaviour
     SelectedActiveItem selectedActiveItem;
     FireWeaponEvent fireWeaponEvent;
     WeaponFiredEvent weaponFiredEvent;
-    int normalShotCounter = 0;
-    int laserFrameGauge;
+    bool isFiringCoroutineRunning = false;
 
     private void Awake()
     {
@@ -256,8 +255,8 @@ public class FireWeapon : MonoBehaviour
         {
             ProjectileDetailsSO currentProjectile;
 
-            if (sepharothPhase == SepharothPhase.InvisibleAndMine || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain ||
-                fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
+            if (galvanusPhase == GalvanusPhase.LightningBolt || sepharothPhase == SepharothPhase.InvisibleAndMine || frostWrymPhase == FrostWrymPhase.Icicle ||
+                venomancerPhase == VenomancerPhase.StoneRain || fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
             {
                 currentProjectile = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSecondaryProjectile;
             }
@@ -266,7 +265,7 @@ public class FireWeapon : MonoBehaviour
                 currentProjectile = activeWeapon.GetCurrentProjectile();
             }
 
-            if (currentProjectile != null)
+            if (currentProjectile != null && !isFiringCoroutineRunning)
             {
                 // Fire projectile routine
                 StartCoroutine(FireProjectileRoutine(belongingEnemy, currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, headShotHappened, 
@@ -279,7 +278,7 @@ public class FireWeapon : MonoBehaviour
 
             if (currentActiveItem != null)
             {
-                if (selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
+                if (selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0 && !isFiringCoroutineRunning)
                 {
                     if (currentActiveItem.activeItemSwingSoundEffect != null)
                     {
@@ -307,8 +306,7 @@ public class FireWeapon : MonoBehaviour
         int projectilePerShot = 1;
 
         // CENTAUR - SPREAD ARROW SHOT OR FROST WRYM - PROJECTILE
-        if (centaurPhase == CentaurPhase.SpreadArrowShot || frostWrymPhase == FrostWrymPhase.IceProjectile || venomancerPhase == VenomancerPhase.SludgeThrow ||
-            fireWrymPhase == FireWrymPhase.FireProjectile)
+        if (centaurPhase == CentaurPhase.SpreadArrowShot || frostWrymPhase == FrostWrymPhase.IceProjectile  || fireWrymPhase == FireWrymPhase.FireProjectile)
         {
             projectilePerShot = 10;
         }
@@ -317,9 +315,9 @@ public class FireWeapon : MonoBehaviour
             projectilePerShot = 15;
         }
         // TREANT - RAZOR LEAF
-        else if (treantPhase == TreantPhase.RazorLeaf)
+        else if (treantPhase == TreantPhase.RazorLeaf || venomancerPhase == VenomancerPhase.SludgeThrow)
         {
-            projectilePerShot = 12;
+            projectilePerShot = 30;
         }
         // GALVANUS - LIGHTNING
         else if (galvanusPhase == GalvanusPhase.Lightning)
@@ -395,7 +393,7 @@ public class FireWeapon : MonoBehaviour
         // Default position
         Vector3 projectileSpawnPoint = activeWeapon.GetMainHandShootPosition();
 
-        
+      
         // Loop for number of projectile per shot
         while (projectileCounter < projectilePerShot)
         {
@@ -405,7 +403,7 @@ public class FireWeapon : MonoBehaviour
 
             GameObject projectilePrefab;
             // Get projectile prefab from array
-            if (centaurPhase == CentaurPhase.SpreadArrowShot || galvanusPhase == GalvanusPhase.Lightning || venomancerPhase == VenomancerPhase.ToxicPool)
+            if (centaurPhase == CentaurPhase.SpreadArrowShot || venomancerPhase == VenomancerPhase.ToxicPool)
             {
                 projectilePrefab = currentProjectile.projectilePrefabArray[1];
             }
@@ -466,19 +464,15 @@ public class FireWeapon : MonoBehaviour
                     break;
             }
 
-            float projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin, currentProjectile.projectileSpeedMax);
+            float projectileSpeed = currentProjectile.projectileSpeed;
 
             // Get random speed value
             if (centaurPhase == CentaurPhase.SpreadArrowShot)
             {
-                projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin / 2, currentProjectile.projectileSpeedMax / 2);
-            }
-            else if (venomancerPhase == VenomancerPhase.ToxicPool)
-            {
-                projectileSpeed = 1.8f;
+                projectileSpeed = currentProjectile.projectileSpeed / 2;
             }
             else if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain ||
-                fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
+                fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike || venomancerPhase == VenomancerPhase.ToxicPool)
             {
                 projectileSpeed = 0;
             }
@@ -590,6 +584,12 @@ public class FireWeapon : MonoBehaviour
         // Weapon fired sound effect
         WeaponSoundEffect(isActiveItem);
 
+        if (enemy != null)
+        {
+            enemy.isFiring = false;
+        }
+
+        isFiringCoroutineRunning = false;
     }
 
     /// <summary>
@@ -653,13 +653,10 @@ public class FireWeapon : MonoBehaviour
 
         if (enemy != null)
         {
-            if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Centaur)
-            {
-                normalShotCounter = 0;
-            }
-
             enemy.isFiring = false;
         }
+
+        isFiringCoroutineRunning = false;
     }
 
     /// <summary>
@@ -689,8 +686,6 @@ public class FireWeapon : MonoBehaviour
             {
                 fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration * coolDownTimerModifier;
             }
-
-
         }
         else
         {

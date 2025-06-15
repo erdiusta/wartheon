@@ -14,6 +14,8 @@ public class Projectile : MonoBehaviour, IFireable
 
     [HideInInspector] public Coroutine playerBlockCoroutine;
 
+    public ProjectileDetailsSO projectileDetails;
+
     Player player;
     Enemy belongingEnemy;
     float projectileRange = 0f;
@@ -23,7 +25,6 @@ public class Projectile : MonoBehaviour, IFireable
     bool isStopped;
     float fireDirectionAngle;
     SpriteRenderer spriteRenderer;
-    ProjectileDetailsSO projectileDetails;
     ActiveItemDetailsSO activeItemDetails;
     float projectileChargeTimer;
     bool isProjectileMaterialSet;
@@ -58,6 +59,10 @@ public class Projectile : MonoBehaviour, IFireable
     float lifeTimeCountdownTimer = 0f;
     Transform target;
     float updateGuidedMissleTimer = 0f;
+
+    // Guided missle features
+    Vector2 straightDirection; // Cache this once
+    bool directionInitialized = false;
 
     private void Awake()
     {
@@ -197,42 +202,35 @@ public class Projectile : MonoBehaviour, IFireable
         // Don't move projectile if movement has been overriden - e.g. this projectile is part of an projectile pattern
         if (!overrideProjectileMovement)
         {
+            // Move the projectile based on its velocity
+            transform.position += velocity * Time.deltaTime;
+
             // Disable after max range reached
             projectileRange -= velocity.magnitude * Time.deltaTime;
 
-            // Don't move projectile if movement has been overriden - e.g. this projectile is part of an projectile pattern
-            if (!overrideProjectileMovement)
+            if (projectileRange < 0f)
             {
-                // Move the projectile based on its velocity
-                transform.position += velocity * Time.deltaTime;
-
-                // Disable after max range reached
-                projectileRange -= velocity.magnitude * Time.deltaTime;
-
-                if (projectileRange < 0f)
+                if (activeItemDetails == null)
                 {
-                    if (activeItemDetails == null)
-                    {
-                        if (!projectileDetails.isTrap && venomancerPhase != VenomancerPhase.ToxicPool)
-                        {
-                            DisableProjectile();
-                        }
-                    }
-                    else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb && 
-                        activeItemDetails.activeItemType != ActiveItemType.Incendiary && activeItemDetails.activeItemType != ActiveItemType.Dummy)
+                    if (!projectileDetails.isTrap && venomancerPhase != VenomancerPhase.ToxicPool)
                     {
                         DisableProjectile();
                     }
-                    else
-                    {
-                        velocity = Vector3.zero;
-                    }
                 }
-                if (lightningStroke)
+                else if (activeItemDetails != null && activeItemDetails.activeItemType != ActiveItemType.Bomb &&
+                    activeItemDetails.activeItemType != ActiveItemType.Incendiary && activeItemDetails.activeItemType != ActiveItemType.Decoy)
                 {
-                    lightningStroke = false;
-                    StartCoroutine(DisableProcess(3.5f));
+                    DisableProjectile();
                 }
+                else
+                {
+                    velocity = Vector3.zero;
+                }
+            }
+            if (lightningStroke)
+            {
+                lightningStroke = false;
+                StartCoroutine(DisableProcess(3.5f));
             }
         }
         else
@@ -250,10 +248,25 @@ public class Projectile : MonoBehaviour, IFireable
         {
             projectileRange -= velocity.magnitude * Time.deltaTime;
 
-            Vector2 directionToTarget = (target.position - transform.position).normalized;
+            Vector2 directionToTarget;
+
+            if (player.onStealth)
+            {
+                if (!directionInitialized)
+                {
+                    straightDirection = (target.position + new Vector3(0f, 0.5f, 0f) - transform.position).normalized;
+                    directionInitialized = true;
+                }
+
+                directionToTarget = straightDirection; // Keep going straight
+            }
+            else
+            {
+                directionToTarget = (target.position + new Vector3(0f, 0.5f, 0f) - transform.position).normalized;
+                directionInitialized = false; // Reset to re-guide next time
+            }
 
             float targetAngle = HelperUtilities.GetAngleFromVector(directionToTarget);
-            //float angle = Mathf.MoveTowardsAngle(transform.eulerAngles.z, targetAngle, guidedRotationSpeed * Time.deltaTime);
 
             transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
 
@@ -303,7 +316,7 @@ public class Projectile : MonoBehaviour, IFireable
             bool isProjectileDodged = 100 - player.currentEvasivenessValue * 100 < diceRoll ? true : false;
 
             // Dodge check
-            if (isProjectileDodged)
+            if (isProjectileDodged || player.playerControl.isPlayerRolling)
             {
                 player.health.isDodging = true;
                 player.healthEvent.CallDodgeEvent();
@@ -427,7 +440,7 @@ public class Projectile : MonoBehaviour, IFireable
                     {
                         enemy.health.isBlocking = true;
                         enemy.healthEvent.CallDodgeEvent();
-                        enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, collision, false);
+                        enemy.health.TakeDamage(0, transform.position, enemy.health.transform.position, false, collision, MeleeHand.None);
                     }
                     else
                     {
@@ -824,7 +837,7 @@ public class Projectile : MonoBehaviour, IFireable
                 inflictedDamage = Mathf.Max(1, inflictedDamage); // Ensure at least 1 damage per frame
             }
 
-            health.TakeDamage(inflictedDamage, transform.position, health.transform.position, polygonCollider2D, headShotHappened);
+            health.TakeDamage(inflictedDamage, transform.position, health.transform.position, headShotHappened, collision, MeleeHand.None);
         }
     }
 
@@ -855,7 +868,7 @@ public class Projectile : MonoBehaviour, IFireable
         }
 
         health.PostHitImmunity();
-        health.TakeDamage(damageDone, transform.position, health.transform.position, collider, false);
+        health.TakeDamage(damageDone, transform.position, health.transform.position, false, collider, MeleeHand.None);
         collider.GetComponent<HealthEvent>().CallHealthChangedEvent(1000000000, damageDone, MeleeHand.None);
     }
 
@@ -1086,35 +1099,49 @@ public class Projectile : MonoBehaviour, IFireable
         }
         else if (venomancerPhase == VenomancerPhase.SludgeThrow)
         {
-            // Define the total angle spread (e.g., 45 degrees spread)
-            float totalSpreadAngle = 40f;
-
-            // Calculate the angle increment between projectiles
-            float angleIncrement = (totalProjectiles > 1) ? totalSpreadAngle / (totalProjectiles - 1) : 0f;
-
-            // Adjust the starting angle to center the spread
-            float startAngle = aimAngle - (totalSpreadAngle / 2);
-
-            // Set the fire direction angle based on the projectile index
-            fireDirectionAngle = startAngle + (angleIncrement * projectileCounter);
-        }
-        else if (treantPhase == TreantPhase.RazorLeaf)
-        {
             // Define the total angle spread (e.g., 60 degrees spread)
-            float totalSpreadAngle = 90f;
+            float totalSpreadAngle = 360f;
 
             // Calculate the total weight for the decreasing intervals
             float weightSum = 0f;
             for (int i = 0; i < totalProjectiles; i++)
             {
-                weightSum += (float)Math.Pow(2, -i); // Exponential decrease
+                weightSum += (float)Math.Pow(1f, -i); // Exponential decrease
             }
 
             // Determine the incremental angle for each projectile
             float cumulativeAngle = 0f;
             for (int i = 0; i < totalProjectiles; i++)
             {
-                float weight = (float)Math.Pow(2, -i) / weightSum; // Normalize weight
+                float weight = (float)Math.Pow(1f, -i) / weightSum; // Normalize weight
+                float angle = totalSpreadAngle * weight;
+
+                if (i == projectileCounter)
+                {
+                    fireDirectionAngle = aimAngle - (totalSpreadAngle / 2) + cumulativeAngle + (angle / 2);
+                    break;
+                }
+
+                cumulativeAngle += angle;
+            }
+        }
+        else if (treantPhase == TreantPhase.RazorLeaf)
+        {
+            // Define the total angle spread (e.g., 60 degrees spread)
+            float totalSpreadAngle = 145f;
+
+            // Calculate the total weight for the decreasing intervals
+            float weightSum = 0f;
+            for (int i = 0; i < totalProjectiles; i++)
+            {
+                weightSum += (float)Math.Pow(1.2f, -i); // Exponential decrease
+            }
+
+            // Determine the incremental angle for each projectile
+            float cumulativeAngle = 0f;
+            for (int i = 0; i < totalProjectiles; i++)
+            {
+                float weight = (float)Math.Pow(1.2f, -i) / weightSum; // Normalize weight
                 float angle = totalSpreadAngle * weight;
 
                 if (i == projectileCounter)
@@ -1162,7 +1189,7 @@ public class Projectile : MonoBehaviour, IFireable
 
         // Set projectile rotation
         if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain ||
-            fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
+            fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike || venomancerPhase == VenomancerPhase.ToxicPool)
         {
             transform.eulerAngles = new Vector3(0f, 0f, 0f);
         }
@@ -1216,7 +1243,7 @@ public class Projectile : MonoBehaviour, IFireable
             {
                 case ActiveItemType.Boomerang:
                 case ActiveItemType.Bomb:
-                case ActiveItemType.Dummy:
+                case ActiveItemType.Decoy:
                     return;
                 case ActiveItemType.Generic:
                 case ActiveItemType.Shiruken:
@@ -1990,7 +2017,7 @@ public class Projectile : MonoBehaviour, IFireable
                         Player player = collider.GetComponent<Player>();
 
                         int inflictedDamage = CalculateDamageAmount(null, true);
-                        player.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, player.transform.position, collider, false);
+                        player.health.TakeDamage(inflictedDamage, transform.position, player.transform.position, false, collider, MeleeHand.None);
 
                         CheckAcidStatus(player);
                         CheckStunStatus(player);
@@ -2009,7 +2036,7 @@ public class Projectile : MonoBehaviour, IFireable
                         Enemy enemy = collider.GetComponent<Enemy>();
 
                         int inflictedDamage = CalculateDamageAmount(enemy);
-                        enemy.GetComponent<Health>().TakeDamage(inflictedDamage, transform.position, enemy.transform.position, collider, false);
+                        enemy.health.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false, collider, MeleeHand.None);
 
                         CheckAcidStatus(enemy, true);
                         CheckStunStatus(enemy, true);
@@ -2026,12 +2053,12 @@ public class Projectile : MonoBehaviour, IFireable
                 if (isEnemy)
                 {
                     collider.GetComponent<Health>().TakeDamage(Random.Range(projectileDetails.burstDamageMin, projectileDetails.burstDamageMax),
-                        transform.position, collider.transform.position, collider, false);
+                        transform.position, collider.transform.position, false, collider, MeleeHand.None);
                 }
                 else
                 {
                     collider.GetComponent<Health>().TakeDamage(Random.Range(activeItemDetails.burstDamageMin, activeItemDetails.burstDamageMax),
-                        transform.position, collider.transform.position, collider, false);
+                        transform.position, collider.transform.position, false, collider, MeleeHand.None);
                 }
             }
         }
@@ -2088,6 +2115,26 @@ public class Projectile : MonoBehaviour, IFireable
         }
 
         return closestEnemy;
+    }
+
+    public void ResetProjectileState()
+    {
+        isStopped = false;
+        isColliding = false;
+        isProjectileMaterialSet = false;
+        directionInitialized = false;
+        isHittingWall = false;
+        lightningStroke = false;
+
+        velocity = Vector3.zero;
+        projectileRange = 0f;
+        projectileSpeed = 0f;
+
+        if (trailRenderer != null)
+        {
+            trailRenderer.Clear();
+            trailRenderer.emitting = false;
+        }
     }
 
     public void SetProjectileMaterial(Material material)

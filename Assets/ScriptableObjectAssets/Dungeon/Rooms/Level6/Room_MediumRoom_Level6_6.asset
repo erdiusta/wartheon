@@ -57,10 +57,9 @@ MonoBehaviour:
   - {x: 22, y: 40}
   - {x: 36, y: 41}
   - {x: 23, y: 29}
-  - {x: 36, y: 30}
+  - {x: 36, y: 27}
   - {x: 23, y: 22}
   - {x: 36, y: 23}
-  - {x: 30, y: 36}
   - {x: 30, y: 25}
   enemiesByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 99c1ae446f4b95c4c9302a8443678c1d, type: 2}

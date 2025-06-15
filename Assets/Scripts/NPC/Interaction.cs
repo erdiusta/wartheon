@@ -155,8 +155,6 @@ public class Interaction : MonoBehaviour
                 yield return new WaitForSeconds(0.05f); // typing speed
             }
 
-            Debug.Log(dialogueText.text);
-
             yield return new WaitForSeconds(2f); // wait after sentence
         }
 

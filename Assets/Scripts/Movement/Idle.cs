@@ -20,7 +20,7 @@ public class Idle : MonoBehaviour
         {
             if (!enemy.enemyDetails.isEnemyBoss)
             {
-                enemy.aiLerp.canMove = false;
+                enemy.aiRigidbody2D.canMove = false;
             }
         }
 

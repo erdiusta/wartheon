@@ -27,6 +27,10 @@ public class GameResources : MonoBehaviour
     [Tooltip("Populate with the dungeon RoomNodeTypeListSO")]
     #endregion
     public RoomNodeTypeListSO roomNodeTypeList;
+    #region Tooltip
+    [Tooltip("Loading manager prefab")]
+    #endregion
+    public GameObject loadingManager;
 
     #region Header PLAYER SELECTION
     [Space(10)]
@@ -76,6 +80,14 @@ public class GameResources : MonoBehaviour
     #endregion
     public MusicTrackSO cutsceneMusic;
     #region Tooltip
+    [Tooltip("Ambient music used for tutorial")]
+    #endregion
+    public MusicTrackSO ambientMusic;
+    #region Tooltip
+    [Tooltip("Combat music used for tutorial")]
+    #endregion
+    public MusicTrackSO combatMusic;
+    #region Tooltip
     [Tooltip("Music on full snapshot")]
     #endregion
     public AudioMixerSnapshot musicOnFullSnaphot;
@@ -96,6 +108,10 @@ public class GameResources : MonoBehaviour
     [Tooltip("Populate with the sounds master mixer group")]
     #endregion
     public AudioMixerGroup soundMasterMixerGroup;
+    #region Tooltip
+    [Tooltip("Tutorial phase pass soundEffect")]
+    #endregion
+    public SoundEffectSO tutorialPhasePassSoundEffect;
     #region Tooltip
     [Tooltip("CNext level musics")]
     #endregion
@@ -141,6 +157,27 @@ public class GameResources : MonoBehaviour
     #endregion
     public SoundEffectSO weaponPickup;
 
+    #region Header PRIMARY PASSIVE ITEMS
+    [Space(10)]
+    [Header("PRIMARY PASSIVES")]
+    #endregion Header
+    #region Tooltip
+    [Tooltip("Populate with the health passive item")]
+    #endregion
+    public PassiveItemDetailsSO healthPassiveItem;
+    #region Tooltip
+    [Tooltip("Populate with the coin passive item")]
+    #endregion
+    public PassiveItemDetailsSO coinPassiveItem;
+
+    #region Header PRIMARY SECONDARY ITEMS
+    [Space(10)]
+    [Header("SECONDARY PASSIVES")]
+    #endregion Header
+    #region Tooltip
+    [Tooltip("Populate with the secondary passive item - For Tutorial")]
+    #endregion
+    public PassiveItemDetailsSO secondaryPassiveItem;
 
     #region Header MATERIALS
     [Space(10)]
@@ -236,6 +273,28 @@ public class GameResources : MonoBehaviour
     [Tooltip("Minimap boss prefab")]
     #endregion
     public GameObject minimapBossPrefab;
+
+
+    public void SavePlayerData()
+    {
+        if (currentPlayer.playerDetails != null)
+        {
+            PlayerPrefs.SetString("CurrentPlayerDetails", JsonUtility.ToJson(currentPlayer.playerDetails));
+            PlayerPrefs.Save();
+        }
+    }
+
+    public void LoadPlayerData()
+    {
+        if (PlayerPrefs.HasKey("CurrentPlayerDetails"))
+        {
+            currentPlayer.playerDetails = JsonUtility.FromJson<PlayerDetailsSO>(PlayerPrefs.GetString("CurrentPlayerDetails"));
+        }
+        else if (playerDetailsArray.Length > 0)
+        {
+            currentPlayer.playerDetails = playerDetailsArray[0]; // Default character
+        }
+    }
 
     #region Validation
 #if UNITY_EDITOR

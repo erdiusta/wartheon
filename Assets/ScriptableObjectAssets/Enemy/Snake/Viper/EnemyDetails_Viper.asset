@@ -19,7 +19,7 @@ MonoBehaviour:
   enemyType: 0
   movementDetails: {fileID: 11400000, guid: c1cd655cbba76594ca00f689668e9744, type: 2}
   experiencePoint: 40
-  chaseDistance: 4
+  chaseDistance: 10
   attackMoveTriggerDistance: 0
   attackMoveEfficentDistance: 0
   countdownDurationBeforeDashAttack: 1.5
@@ -76,8 +76,8 @@ MonoBehaviour:
   enemyWeapon: {fileID: 11400000, guid: a164b16c09631d245afc9d8c4d571b3f, type: 2}
   firingIntervalMin: -1
   firingIntervalMax: -1
-  firingDurationMin: 4.5
-  firingDurationMax: 5.5
+  firingDurationMin: 3.5
+  firingDurationMax: 4
   firingLineOfSightRequired: 1
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}

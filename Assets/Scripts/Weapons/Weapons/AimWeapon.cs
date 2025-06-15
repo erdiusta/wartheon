@@ -13,7 +13,6 @@ public class AimWeapon : MonoBehaviour
     Enemy enemy;
 
     Transform mainHandShootPosition;
-    Transform offHandShootPosition;
 
     private void Start()
     {

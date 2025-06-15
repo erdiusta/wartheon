@@ -21,6 +21,12 @@ public class HealthUI : MonoBehaviour
     #endregion Tooltip
     [SerializeField] TextMeshProUGUI healthText;
 
+    [Space(10)]
+    [SerializeField] Sprite standardSprite;
+    [SerializeField] Sprite flashSprite;
+
+    Coroutine playerHealthBarCoroutine;
+
     private void Awake()
     {
         player = GameManager.Instance.GetPlayer();
@@ -65,13 +71,19 @@ public class HealthUI : MonoBehaviour
 
     private void UpdateHealthText()
     {
-        int health = player.health.GetCurrentHealth() < 0 ? 0 : player.health.GetCurrentHealth();
+        int health = Mathf.Clamp(player.health.GetCurrentHealth(), 0, player.health.GetMaximumHealth());
+
         healthText.text = $"{health}/{player.health.GetMaximumHealth()}";
     }
 
     private void UpdateHealthBar()
     {
-        if (gameObject.activeInHierarchy) StartCoroutine(UpdateHealthBarRoutine());
+        if (gameObject.activeInHierarchy)
+        {
+            if (playerHealthBarCoroutine != null) StopCoroutine(playerHealthBarCoroutine);
+
+            StartCoroutine(UpdateHealthBarRoutine());
+        }
     }
 
     /// <summary>
@@ -79,13 +91,29 @@ public class HealthUI : MonoBehaviour
     /// </summary>
     private IEnumerator UpdateHealthBarRoutine()
     {
+        float duration = 0.6f; // Adjust duration as needed
+        float elapsed = 0f;
+        float startValue = healthImage.transform.localScale.x;
+
         // Update availability bar
         float barFill =  Mathf.Clamp((float)player.health.GetCurrentHealth() / (float)player.health.GetMaximumHealth(), 0, 1);
 
-        // Update bar fill
+        // Apply sprite change
+        Image barImage = transform.GetChild(0).GetChild(0).GetComponent<Image>();
+        barImage.sprite = flashSprite;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float newValue = Mathf.Lerp(startValue, barFill, elapsed / duration);
+            healthImage.transform.localScale = new Vector3(newValue, 1f, 1f);
+
+            yield return null;
+        }
+
+        // Reset sprite
+        barImage.sprite = standardSprite;
         healthImage.transform.localScale = new Vector3(barFill, 1f, 1f);
-
-        yield return null;
-
+        playerHealthBarCoroutine = null;
     }
 }

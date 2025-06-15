@@ -6,6 +6,55 @@ using UnityEngine.InputSystem.Controls;
 public class InputManager : SingletonMonobehaviour<InputManager>
 {
     public static int cachedLevelIndex = 1;
+    public static bool TutorialEnabled
+    {
+        get { return tutorialEnabled; }
+        set
+        {
+            tutorialEnabled = value; 
+            if (tutorialEnabled)
+            {
+                overviewMapDisabled = true;
+                interactionDisabled = true;
+                firingDisabled = true;
+                glossaryDisabled = true;
+                parryDisabled = true;
+                dodgeRollDisabled = true;
+                specialSkillOneDisabled = true;
+                specialSkillTwoDisabled = true;
+                specialSkillThreeDisabled = true;
+                switchDisabled = true;
+            }
+            else
+            {
+                overviewMapDisabled = false;
+                interactionDisabled = false;
+                firingDisabled = false;
+                glossaryDisabled = false;
+                parryDisabled = false;
+                dodgeRollDisabled = false;
+                specialSkillOneDisabled = false;
+                specialSkillTwoDisabled = false;
+                specialSkillThreeDisabled = false;
+                switchDisabled = false;
+            }
+        }
+    }
+
+    // Tutorial flag
+    private static bool tutorialEnabled = true;
+
+    // Inputs
+    public static bool overviewMapDisabled;
+    public static bool interactionDisabled;
+    public static bool firingDisabled;
+    public static bool glossaryDisabled;
+    public static bool parryDisabled;
+    public static bool dodgeRollDisabled;
+    public static bool specialSkillOneDisabled;
+    public static bool specialSkillTwoDisabled;
+    public static bool specialSkillThreeDisabled;
+    public static bool switchDisabled;
 
     static InputDevice currentDevice;
     public InputActionAsset actions;

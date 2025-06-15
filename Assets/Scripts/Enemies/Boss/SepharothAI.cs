@@ -6,6 +6,10 @@ using Random = UnityEngine.Random;
 
 public class SepharothAI : EnemyAI, IMutualBossBehaviour
 {
+    // Define the cell boundaries in grid coordinates
+    readonly Vector2Int cellMin = new Vector2Int(-8, 2);
+    readonly Vector2Int cellMax = new Vector2Int(12, 18);
+
     // BOSSES
     [SerializeField] Transform swordHoldingTransform;
     [SerializeField] float smearCircleRadius = 0.5f;
@@ -22,6 +26,21 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
 
     Coroutine sepharothAttackMoveRoutine;
 
+    bool passedToWait;
+
+    public bool PassedToWait
+    {
+        get => passedToWait;
+        set
+        {
+            if (!passedToWait && value)
+            {
+                passedToWait = true;
+                HandleWaitPhase();
+            }
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -35,7 +54,11 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    protected override void OnEnable() { }
+    protected override void OnEnable()
+    {
+        player = GameManager.Instance.GetPlayer();
+        currentRoom = GameManager.Instance.GetCurrentRoom();
+    }
 
     protected override void OnDisable() { }
 
@@ -43,12 +66,22 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Update()
     {
+        if (enemy.enemyAI.enemyPhase == EnemyPhase.Death)
+        {
+            if (attackAnimationRoutine != null)
+            {
+                StopCoroutine(attackAnimationRoutine);
+            }
+
+            return;
+        }
+
         Vector3 direction = new Vector3();
 
-        if (GameManager.Instance.GetPlayer() != null)
+        if (player != null)
         {
             direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-            (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
+            (player.GetPlayerPosition() - transform.position).normalized;
         }
 
         lockedVector = direction;
@@ -104,7 +137,7 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
                 switch (currentSepharothPhase)
                 {
                     case SepharothPhase.Wait:
-                        HandleWaitPhase();
+                        PassedToWait = true;
 
                         // Reset timers
                         firingIntervalTimer = WeaponShootInterval();
@@ -138,7 +171,7 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
         }
     }
 
-    private void HandleWaitPhase()
+    public void HandleWaitPhase()
     {
         // Logic for waiting phase (maybe the Centaur just moves or idles here)
         enemy.animateEnemy.SetIdleAnimationParameters();
@@ -185,20 +218,30 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
 
         if (GameManager.Instance.GetPlayer() != null)
         {
-            if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 4f)
+            if (Vector3.Distance(transform.position, player.transform.position) < 4f)
             {
                 // If player is too close to boss, automatically next phase will be smear attack most probably
                 int randomNum = Random.Range(0, 101);
 
-                if (randomNum < 70)
+                if (randomNum < 40)
                 {
                     currentSepharothPhase = SepharothPhase.SmearAttack;
+                    return;
+                }
+                else if (randomNum < 70)
+                {
+                    currentSepharothPhase = SepharothPhase.LaserBeam;
                     return;
                 }
                 else
                 {
                     currentSepharothPhase = (SepharothPhase)Random.Range(2, Enum.GetValues(typeof(SepharothPhase)).Length);
                 }
+            }
+            else if (Vector3.Distance(transform.position, player.transform.position) > 12f)
+            {
+                currentSepharothPhase = SepharothPhase.LaserBeam;
+                return;
             }
         }
 
@@ -226,6 +269,8 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
     {
         if (sepharothPhase == SepharothPhase.InvisibleAndMine)
         {
+            if (enemy.health.hasDied) yield break;
+
             #region Invisibility
             // BEING INVISIBLE
             enemyPhase = EnemyPhase.Chase;
@@ -238,6 +283,8 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
             // Become invisible
             while (invisibleTimer < completeInvisibleDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 invisibleTimer += Time.deltaTime;
 
                 float newAlpha = 0.8f; // Default to start value
@@ -279,6 +326,8 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
             // MINE PLANTING
             while (mineTimer < minePlantDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 mineTimer += Time.deltaTime;
 
                 // Interval Timer
@@ -317,6 +366,8 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
             // Apply alpha change
             while (invisibleTimer < completeInvisibleDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 invisibleTimer += Time.deltaTime;
 
                 float newAlpha = 0.2f; // Default to start value
@@ -367,6 +418,8 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < prehargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -381,13 +434,23 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
             enemy.animateEnemy.ResetAnimatonParameters();
             enemy.animateEnemy.SetMovementAnimationParameters();
 
+            // Clamp lockedPosition
+            Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
+
+            Vector3Int cell = grid.WorldToCell(lockedPosition);
+            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
+            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
+            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
+
             Vector3 direction = (lockedPosition - transform.position).normalized;
             float chargeSpeed = 20f;
 
             while (chargeTimer < chargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, lockedPosition, chargeSpeed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
 
                 // Check if boss has reached the destination before the desired duration
                 if (Vector3.Distance(transform.position, lockedPosition) < 1.5f)  // Small threshold for accuracy
@@ -423,6 +486,8 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < smearDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 enemy.animator.SetBool(Settings.isAttack, true);
@@ -477,6 +542,8 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
         }
         else if (sepharothPhase == SepharothPhase.LaserBeam)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemyPhase = EnemyPhase.Chase;
 
             // PREPARE PRECHARGE PHASE
@@ -509,6 +576,8 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < prechargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -529,6 +598,8 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
 
             while (fireTimer < fireProjectileDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 fireTimer += Time.deltaTime;
 
                 yield return null; // Keep laser active

@@ -3,6 +3,7 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
@@ -26,6 +27,13 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
     [SerializeField] GameObject lyrisaDetailsPopUp;
     [SerializeField] GameObject orionDetailsPopUp;
 
+    [Space(10)]
+    [Header("TUTORIAL TOGGLE")]
+    [Space(10)]
+    [SerializeField] Toggle tutorialToggle;
+    [SerializeField] Image tutorialToggleCheckmarkImage;
+    [SerializeField] SoundEffectSO buttonClickSound;
+
     PlayerDetailsSO[] playerDetailsList;
     CurrentPlayerSO currentPlayer;
     int selectedPlayerIndex = 1;
@@ -40,14 +48,28 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         // Delay selection until the next frame to ensure UI is ready
         StartCoroutine(SetFirstSelected());
 
+        // Load Tutorial toggle
+        if (PlayerPrefs.HasKey("Tutorial"))
+        {
+            bool tutorialIsOn = PlayerPrefs.GetInt("Tutorial") == 1;
+            tutorialToggle.SetIsOnWithoutNotify(tutorialIsOn);
+            InputManager.TutorialEnabled = tutorialIsOn;
+        }
+
         StaticEventHandler.OnCharacterButtonSelected += StaticEventHandler_OnCharacterButtonSelected;
         StaticEventHandler.OnCharacterButtonDeselected += StaticEventHandler_OnCharacterButtonDeselected;
+
+        // UI Element listeners
+        tutorialToggle.onValueChanged.AddListener(OnTutorialToggleChanged);
     }
 
     private void OnDisable()
     {
         StaticEventHandler.OnCharacterButtonSelected -= StaticEventHandler_OnCharacterButtonSelected;
         StaticEventHandler.OnCharacterButtonDeselected -= StaticEventHandler_OnCharacterButtonDeselected;
+
+        // UI Element listeners
+        tutorialToggle.onValueChanged.RemoveListener(OnTutorialToggleChanged);
     }
 
     private void StaticEventHandler_OnCharacterButtonDeselected()
@@ -81,6 +103,8 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         // Initialize the current player
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
         astraeusSpotlight.gameObject.SetActive(true);
+
+        OnTutorialToggleChanged(InputManager.TutorialEnabled);
     }
 
     private void Update()
@@ -117,40 +141,25 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         DisableDetailsPopup(ref orionDetailsPopUp);
     }
 
-    public void HoverLyrisa()
-    {
-        DisableAllSpotlights();
-        selectedPlayerIndex = 0;
-        currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
-        lyrisaSpotlight.gameObject.SetActive(true);
-        lyrisaDetailsPopUp.SetActive(true);
-    }
-
     public void HoverAstraeus()
     {
-        DisableAllSpotlights();
-        selectedPlayerIndex = 1;
-        currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
-        astraeusSpotlight.gameObject.SetActive(true);
-        astraeusDetailsPopUp.SetActive(true);
-    }
-
-    public void HoverOrion()
-    {
-        DisableAllSpotlights();
-        selectedPlayerIndex = 2;
-        currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
-        orionSpotlight.gameObject.SetActive(true);
-        orionDetailsPopUp.SetActive(true);
+        StartCoroutine(SelectionRoutine(0, astraeusSpotlight, astraeusDetailsPopUp));
     }
 
     public void HoverErebus()
     {
-        DisableAllSpotlights();
-        selectedPlayerIndex = 3;
-        currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
-        erebusSpotlight.gameObject.SetActive(true);
-        erebusDetailsPopUp.SetActive(true);
+        StartCoroutine(SelectionRoutine(1, erebusSpotlight, erebusDetailsPopUp));
+    }
+
+    public void HoverOrion()
+    {
+        StartCoroutine(SelectionRoutine(2, orionSpotlight, orionDetailsPopUp));
+    }
+
+
+    public void HoverLyrisa()
+    {
+        StartCoroutine(SelectionRoutine(3, lyrisaSpotlight, lyrisaDetailsPopUp));
     }
 
     private void DisableDetailsPopup(ref GameObject popupObject)
@@ -169,16 +178,55 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         SceneManager.UnloadSceneAsync(gameObject.scene);
     }
 
-    public void StartGame()
+    public void OnTutorialToggleChanged(bool isOn)
     {
-        SceneManager.LoadScene("MainGameScene");
+        if (InputManager.TutorialEnabled != isOn)
+        {
+            InputManager.TutorialEnabled = isOn;
+            SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        }
+        else
+        {
+            InputManager.TutorialEnabled = isOn;
+        }
+
+        PlayerPrefs.SetInt("Tutorial", tutorialToggle.isOn ? 1 : 0);
+        PlayerPrefs.Save();
     }
 
-    private void DisableAllSpotlights()
+    public void StartGame()
+    {
+        // Save the selected character immediately before any scene transition
+        GameResources.Instance.currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
+        PlayerPrefs.SetInt("SelectedCharacterIndex", selectedPlayerIndex);
+        PlayerPrefs.Save();
+
+        // Safe loading call
+        if (LoadingManager.SafeInstance != null)
+        {
+            LoadingManager.SafeInstance.StartCoroutine(LoadingManager.SafeInstance.LoadGameScene(3));
+        }
+        else
+        {
+            Debug.LogError("LoadingManager instance missing! Loading directly...");
+            SceneManager.LoadScene(3);
+        }
+    }
+
+    IEnumerator SelectionRoutine(int index, Light2D selectedCharSpotlight, GameObject selectedCharPopUp)
     {
         lyrisaSpotlight.gameObject.SetActive(false);
         astraeusSpotlight.gameObject.SetActive(false);
         orionSpotlight.gameObject.SetActive(false);
         erebusSpotlight.gameObject.SetActive(false);
+
+        yield return null;
+
+        selectedPlayerIndex = index;
+        currentPlayer.playerDetails = playerDetailsList[index];
+        selectedCharSpotlight.gameObject.SetActive(true);
+        selectedCharPopUp.SetActive(true);
+
+        yield return null;
     }
 }

@@ -21,7 +21,6 @@ MonoBehaviour:
   movementDetails: {fileID: 11400000, guid: c0e63bc526198ec418f586718bf1b370, type: 2}
   experiencePoint: 600
   chaseDistance: 70
-  hasAttackMove: 1
   attackMoveTriggerDistance: 3
   attackMoveEfficentDistance: 8
   countdownDurationBeforeDashAttack: 0.4
@@ -31,7 +30,7 @@ MonoBehaviour:
   enemyBehaviour: 9
   isEnemyBoss: 1
   isSummonedMinion: 0
-  isDummy: 0
+  isDecoy: 0
   hasAnimator: 0
   elementalBias: 1
   elementalForgeRate: 0.5
@@ -64,7 +63,7 @@ MonoBehaviour:
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 5
   enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
-  enemyMaterializeColor: {r: 3.8545332, g: 1.3835757, b: 1.1454508, a: 0}
+  enemyMaterializeColor: {r: 3.980949, g: 0.2816709, b: 0.31680882, a: 0}
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
   criticalHitSoundEffect: {fileID: 11400000, guid: e732fd49784fb454fbb4a2604012d31f, type: 2}

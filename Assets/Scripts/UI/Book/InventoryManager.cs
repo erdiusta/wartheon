@@ -12,7 +12,7 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>
     public int originalSlotIndex = 1;
     public bool mainHandDropped;
 
-    public ItemGeneric[] inventoryArray = new ItemGeneric[5];
+    public ItemGeneric[] inventoryArray = new ItemGeneric[12];
 
     public int CurrentWeaponSlotSetIndex { get { return currentWeaponSlotSetIndex; } set { currentWeaponSlotSetIndex = value; } }
 
@@ -37,6 +37,8 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>
         {
             if (inventoryArray[i] == null)
             {
+                receivable.itemSlotStatus = ItemSlotStatus.Inventory;
+
                 inventoryArray[i] = receivable;
                 return i;
             }
@@ -59,6 +61,10 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>
     {
         inventoryArray[index] = null;
     }
+
+    public int GetFlatInventoryIndex(int x, int y) => y * 6 + x; 
+
+    public Vector2Int GetXYFromInventoryIndex(int index) => new Vector2Int(index % 6, index / 6);
 
     public ItemGeneric GetInventoryItem(int indexNumber) => inventoryArray[indexNumber];
 

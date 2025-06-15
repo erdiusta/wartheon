@@ -33,6 +33,9 @@ public class GameplayUI : MonoBehaviour
         }
 
         canvasGroup.alpha = targetAlpha; // Ensure it reaches the final value precisely
+
+        canvasGroup.blocksRaycasts = canvasGroup.alpha <= 0 + Mathf.Epsilon ? false : true;
+
         gameplayUIRoutine = null;
     }
 }

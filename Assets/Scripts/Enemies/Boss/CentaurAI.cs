@@ -19,6 +19,22 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
     Coroutine centaurAttackMoveRoutine;
 
+    bool passedToWait;
+    
+
+    public bool PassedToWait
+    {
+        get => passedToWait;
+        set
+        {
+            if (!passedToWait && value)
+            {
+                passedToWait = true;
+                HandleWaitPhase();
+            }
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -26,6 +42,7 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Start() 
     {
+        player = GameManager.Instance.GetPlayer();
         currentCentaurPhase = CentaurPhase.Wait;
     }
 
@@ -37,12 +54,22 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Update()
     {
+        if (enemy.enemyAI.enemyPhase == EnemyPhase.Death)
+        {
+            if (attackAnimationRoutine != null)
+            {
+                StopCoroutine(attackAnimationRoutine);
+            }
+
+            return;
+        }
+
         Vector3 direction = Vector3.zero;
 
-        if (GameManager.Instance.GetPlayer() != null)
+        if (player != null)
         {
             direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-                (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
+                (player.GetPlayerPosition() - transform.position).normalized;
             lockedVector = direction;
         }
 
@@ -85,7 +112,7 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
         else if (moveStatus == MoveStatus.Idle)
         {
             // Check if the player is on stealth
-            if (GameManager.Instance.GetPlayer().onStealth)
+            if (player.onStealth)
             {
                 PlayerStealthCheck();
             }
@@ -97,7 +124,7 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
                 switch (currentCentaurPhase)
                 {
                     case CentaurPhase.Wait:
-                        HandleWaitPhase();
+                        PassedToWait = true;
 
                         // Reset timers
                         firingIntervalTimer = WeaponShootInterval();
@@ -131,9 +158,10 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
         }
     }
 
-    private void HandleWaitPhase()
+    public void HandleWaitPhase()
     {
         // Logic for waiting phase (maybe the Centaur just moves or idles here)
+        enemy.animateEnemy.ResetAnimatonParameters();
         enemy.animateEnemy.SetIdleAnimationParameters();
     }
 
@@ -169,16 +197,16 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
     private void TransitionToNextPhase()
     {
-        if (GameManager.Instance.GetPlayer() == null) return;
+        if (player == null) return;
 
         // Check if the player is on stealth
-        if (GameManager.Instance.GetPlayer().onStealth)
+        if (player.onStealth)
         {
             PlayerStealthCheck();
             return;
         }
 
-        if (Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 4f)
+        if (Vector3.Distance(transform.position, player.GetPlayerPosition()) < 4f)
         {
             int rng = Random.Range(0, 101);
 
@@ -207,6 +235,8 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
     {
         if (centaurPhase == CentaurPhase.StraightArrowShot)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemyPhase = EnemyPhase.Chase;
 
             float fireTimer = 0f;
@@ -216,6 +246,8 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
             while (fireTimer < fireProjectileDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 fireTimer += Time.deltaTime;
 
                 // Interval Timer
@@ -236,17 +268,16 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
                     }
                 }
 
+
+                enemy.animator.SetBool(Settings.isAttack, false);
+
                 yield return null;
-
             }
-
-            enemy.animator.SetBool(Settings.isAttack, false);
-
-            yield return null;
-
         }
         else if (centaurPhase == CentaurPhase.ChargeAndRetreat)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemyPhase = EnemyPhase.Attack;
             isAttacking = true;
 
@@ -270,6 +301,8 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < prehargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -279,6 +312,8 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
             float chargeDuration = 2f;
 
             yield return null;  // Wait for the animation to start
+
+            if (enemy.health.hasDied) yield break;
 
             // START CHARGE PHASE
             enemy.animateEnemy.ResetAnimatonParameters();
@@ -297,12 +332,14 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < chargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
 
                 // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, lockedPosition) < 0.02f)  // Small threshold for accuracy
+                if (Vector3.Distance(transform.position, clampedPosition) < 0.02f)  // Small threshold for accuracy
                 {
                     // Exit the loop early if boss has reached the destination
                     break;
@@ -321,6 +358,8 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
         }
         else if (centaurPhase == CentaurPhase.SpreadArrowShot)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemyPhase = EnemyPhase.Chase;
 
             // PREPARE PRECHARGE PHASE
@@ -353,6 +392,8 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
 
             while (fireTimer < fireProjectileDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 fireTimer += Time.deltaTime;
 
                 // Interval Timer

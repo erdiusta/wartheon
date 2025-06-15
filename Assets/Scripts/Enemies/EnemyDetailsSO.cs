@@ -86,9 +86,9 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public bool isSummonedMinion = false;
     #region Tooltip
-    [Tooltip("Check if enemy is a dummy")]
+    [Tooltip("Check if enemy is a decoy")]
     #endregion
-    public bool isDummy = false;
+    public bool isDecoy = false;
     #region Tooltip
     [Tooltip("Check if weapon animator exists")]
     #endregion

@@ -84,16 +84,8 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
 
             if (dungeonBuildSuccessful)
             {
-
-
                 // Instantiate Room Gameobjects
                 InstantiateRoomGameObjects();
-
-                // Reset lighting state for all instantiated rooms
-                foreach (KeyValuePair<string, Room> kvp in dungeonBuilderRoomDictionary)
-                {
-                    kvp.Value.isLit = false;
-                }
             }
         }
 
@@ -692,6 +684,28 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             }
 
             dungeonBuilderRoomDictionary.Clear();
+        }
+
+        // Destroy remaining projectile type items such as mines which didn't explode
+        Projectile[] existingProjectiles = FindObjectsByType<Projectile>(FindObjectsSortMode.None);
+
+        if (existingProjectiles != null && existingProjectiles.Length > 0)
+        {
+            for (int i = 0; i < existingProjectiles.Length; i++)
+            {
+                Destroy(existingProjectiles[i].gameObject);
+            }
+        }
+
+        // Destroy stuck enemies which death animation couldn't complete
+        Enemy[] stuckEnemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+
+        if (stuckEnemies != null && stuckEnemies.Length > 0)
+        {
+            for (int i = 0; i < stuckEnemies.Length; i++)
+            {
+                Destroy(stuckEnemies[i].gameObject);
+            }
         }
     }
 }

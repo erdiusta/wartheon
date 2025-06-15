@@ -8,6 +8,10 @@ public class ProjectilePattern : MonoBehaviour, IFireable
     #endregion
     [SerializeField] Projectile[] projectileArray;
 
+    Vector3[] cachedLocalPositions;
+    Vector3[] cachedLocalRotations;
+    Vector3[] cachedLocalScales;
+
     [HideInInspector] public BoomerangPhase boomerangPhase = BoomerangPhase.Aim;
     [HideInInspector] public ShirukenPhase shirukenPhase = ShirukenPhase.Fire;
 
@@ -22,6 +26,21 @@ public class ProjectilePattern : MonoBehaviour, IFireable
     public GameObject GetGameObject()
     {
         return gameObject;
+    }
+
+    private void Awake()
+    {
+        // Cache initial local transforms of all projectiles
+        cachedLocalPositions = new Vector3[projectileArray.Length];
+        cachedLocalRotations = new Vector3[projectileArray.Length];
+        cachedLocalScales = new Vector3[projectileArray.Length];
+
+        for (int i = 0; i < projectileArray.Length; i++)
+        {
+            cachedLocalPositions[i] = projectileArray[i].transform.localPosition;
+            cachedLocalRotations[i] = projectileArray[i].transform.localEulerAngles;
+            cachedLocalScales[i] = projectileArray[i].transform.localScale;
+        }
     }
 
     // FOR PROJECTILE
@@ -43,10 +62,17 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         // Activate ammo pattern gameobject
         gameObject.SetActive(true);
 
-        // Loop through all child ammo and initialise it
-        foreach (Projectile projectile in projectileArray)
+        // Loop through all child ammo and initialize it
+        for (int i = 0; i < projectileArray.Length; i++)
         {
-            projectile.InitializeProjectile(belongingEnemy, false, projectileDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true);
+            // Reset transform
+            projectileArray[i].transform.localPosition = cachedLocalPositions[i];
+            projectileArray[i].transform.localEulerAngles = cachedLocalRotations[i];
+            projectileArray[i].transform.localScale = cachedLocalScales[i];
+
+            projectileArray[i].ResetProjectileState();
+
+            projectileArray[i].InitializeProjectile(belongingEnemy, false, projectileDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true);
         }
 
         // Set ammo charge timer - this will hold the ammo briefly
@@ -76,10 +102,17 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         // Activate ammo pattern gameobject
         gameObject.SetActive(true);
 
-        // Loop through all child ammo and initialise it
-        foreach (Projectile projectile in projectileArray)
+        // Loop through all child ammo and initialize it
+        for (int i = 0; i < projectileArray.Length; i++)
         {
-            projectile.InitializeProjectile(false, activeItemDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true);
+            // Reset transform
+            projectileArray[i].transform.localPosition = cachedLocalPositions[i];
+            projectileArray[i].transform.localEulerAngles = cachedLocalRotations[i];
+            projectileArray[i].transform.localScale = cachedLocalScales[i];
+
+            projectileArray[i].ResetProjectileState();
+
+            projectileArray[i].InitializeProjectile(false, activeItemDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true);
         }
 
         // Set ammo charge timer - this will hold the ammo briefly

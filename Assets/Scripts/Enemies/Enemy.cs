@@ -35,7 +35,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public EnemyDetailsSO enemyDetails;
     [HideInInspector] public AIDestinationSetter aiDestinationSetter;
     [HideInInspector] public Patrol patrol;
-    [HideInInspector] public AILerp aiLerp;
+    [HideInInspector] public AIRigidbody2D aiRigidbody2D;
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
     [HideInInspector] public FireWeapon fireWeapon;
     [HideInInspector] public EnemyAIEvent enemyAIEvent;
@@ -52,7 +52,6 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public EnemyAI enemyAI;
     [HideInInspector] public DealContactDamage dealContactDamage;
     [HideInInspector] public Knockback knockback;
-    [HideInInspector] public bool isDead;
     [HideInInspector] public bool isFiring;
     [HideInInspector] public Health health;
     [HideInInspector] public HealthEvent healthEvent;
@@ -69,6 +68,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool isMaterializing;
     [HideInInspector] public float currentMoveSpeed;
     [HideInInspector] public float addionalSpeedModifier = 0f;
+    [HideInInspector] public bool minionsSpawned = false;
 
     float blindTimer;
     SetActiveWeaponEvent setActiveWeaponEvent;
@@ -103,7 +103,8 @@ public class Enemy : MonoBehaviour
         damageDisplay = GetComponent<DamageDisplay>();
         aiDestinationSetter = GetComponent<AIDestinationSetter>();
         patrol = GetComponent<Patrol>();
-        aiLerp = GetComponent<AILerp>();
+        //aiLerp = GetComponent<AILerp>();
+        aiRigidbody2D = GetComponent<AIRigidbody2D>();
     }
 
     private void OnEnable()
@@ -148,6 +149,19 @@ public class Enemy : MonoBehaviour
         {
             isBlind = false;
             healthEvent.CallBlindCuredEvent();
+        }
+
+        if (InputManager.TutorialEnabled)
+        {
+            if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Parry || TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.DodgeRoll 
+                || TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.SpecialSkill)
+            {
+                health.isDamageable = false;
+            }
+            else
+            {
+                health.isDamageable = true;
+            }
         }
     }
 
@@ -253,7 +267,7 @@ public class Enemy : MonoBehaviour
         // Enable/Disable movement AI
         if (enemyAI != null && !enemyDetails.isEnemyBoss)
         {
-            aiLerp.enabled = isEnabled;
+            aiRigidbody2D.enabled = isEnabled;
         }
 
         // Enable / Disable Fire Weapon

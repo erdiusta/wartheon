@@ -1,3 +1,4 @@
+using NUnit.Framework.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -48,6 +49,18 @@ public class RandomSpawnableObject<T>
             return default(T);
 
         int lookUpValue = Random.Range(0, ratioValueTotal);
+
+        if (InputManager.TutorialEnabled)
+        {
+            if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Combat || TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Parry)
+            {
+                lookUpValue = 0;
+            }
+            else if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.DodgeRoll)
+            {
+                lookUpValue = 1;
+            }
+        }
 
         // Loop through list to get seleted random spawnable object details
         foreach (ChanceBoundaries spawnChance in chanceBoundariesList)

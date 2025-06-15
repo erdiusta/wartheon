@@ -12,17 +12,33 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     int currentEnemyCount;
     int enemiesSpawnedSoFar;
     int enemyMaxConcurrentSpawnNumber;
+    int spawnPositionIndex = 0;
     Room currentRoom;
     RoomEnemySpawnParameters roomEnemySpawnParameters;
 
     private void OnEnable()
     {
         StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
+        StaticEventHandler.OnEnemyKilled += StaticEventHandler_OnEnemyKilled;
     }
 
     private void OnDisable()
     {
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
+        StaticEventHandler.OnEnemyKilled -= StaticEventHandler_OnEnemyKilled;
+    }
+
+    private void StaticEventHandler_OnEnemyKilled(EnemyKilledArgs enemyKilledArgs)
+    {
+        if (enemyKilledArgs.enemy.enemyDetails.enemyCategory == EnemyCategory.MainSlime)
+        {
+            Grid grid = currentRoom.instantiatedRoom.grid;
+
+            // Create three minions from the dead main slime
+            CreateEnemy(enemyKilledArgs.enemy.enemyDetails.enemyMinionDetails, enemyKilledArgs.enemy.transform.position + new Vector3(1f, 0f, 0f));
+            CreateEnemy(enemyKilledArgs.enemy.enemyDetails.enemyMinionDetails, enemyKilledArgs.enemy.transform.position + new Vector3(-1, 0f, 0f));
+            CreateEnemy(enemyKilledArgs.enemy.enemyDetails.enemyMinionDetails, enemyKilledArgs.enemy.transform.position);
+        }
     }
 
     /// <summary>
@@ -32,11 +48,15 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     {
         enemiesSpawnedSoFar = 0;
         currentEnemyCount = 0;
+        spawnPositionIndex = 0;
 
         currentRoom = roomChangedEventArgs.room;
 
         // Update music for room
         MusicManager.Instance.PlayMusic(currentRoom.ambientMusic, 0.2f, 2f);
+
+        // Tutorial check - Lock door for a while
+        if (InputManager.TutorialEnabled && currentRoom.roomNodeType.isEntrance) goto tutorialEntranceRoomCheck;
 
         // If the room is a corridor or the entrance then return
         if (currentRoom.roomNodeType.isCorridorEW || currentRoom.roomNodeType.isCorridorNS || currentRoom.roomNodeType.isEntrance) return;
@@ -63,6 +83,8 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
 
         // Update music for room
         MusicManager.Instance.PlayMusic(currentRoom.battleMusic, 0.2f, 0.5f);
+
+    tutorialEntranceRoomCheck:
 
         // Lock doors
         currentRoom.instantiatedRoom.LockDoors();
@@ -107,6 +129,31 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         // Check we have somewhere to spawn the enemies
         if (currentRoom.spawnPositionArray.Length > 0)
         {
+            // Create Enemy - Get next enemy type to spawn 
+            if (InputManager.TutorialEnabled)
+            {
+                Vector3Int cellPosition = (Vector3Int)currentRoom.spawnPositionArray[spawnPositionIndex++];
+                spawnPositionIndex %= currentRoom.spawnPositionArray.Length;
+
+                if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Combat)
+                {
+                    CreateEnemy(randomEnemyHelperClass.GetItem(), grid.CellToWorld(cellPosition));
+                    yield break;
+                }
+
+                if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Parry)
+                {
+                    CreateEnemy(randomEnemyHelperClass.GetItem(), grid.CellToWorld(cellPosition));
+                    yield break;
+                }
+
+                if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.DodgeRoll)
+                {
+                    CreateEnemy(randomEnemyHelperClass.GetItem(), grid.CellToWorld(cellPosition - new Vector3Int(4, 4, 0)));
+                    yield break;
+                }
+            }
+
             // Loop through to create all the enemeies
             for (int i = 0; i < enemiesToSpawn; i++)
             {
@@ -124,10 +171,10 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
                 }
                 else
                 {
-                    cellPosition = (Vector3Int)currentRoom.spawnPositionArray[Random.Range(0, currentRoom.spawnPositionArray.Length)];
+                    cellPosition = (Vector3Int)currentRoom.spawnPositionArray[spawnPositionIndex++];
+                    spawnPositionIndex %= currentRoom.spawnPositionArray.Length;
                 }
 
-                // Create Enemy - Get next enemy type to spawn 
                 CreateEnemy(randomEnemyHelperClass.GetItem(), grid.CellToWorld(cellPosition));
 
                 yield return new WaitForSeconds(GetEnemySpawnInterval());
@@ -238,7 +285,10 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
             }
 
             // Unlock doors
-            currentRoom.instantiatedRoom.UnlockDoors(Settings.doorUnlockDelay);
+            if (!InputManager.TutorialEnabled)
+            {
+                currentRoom.instantiatedRoom.UnlockDoors(Settings.doorUnlockDelay);
+            }
 
             // Update music for room
             MusicManager.Instance.PlayMusic(currentRoom.ambientMusic, 0.2f, 2f);

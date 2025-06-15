@@ -49,10 +49,32 @@ public static class StaticDialogueHandler
     {
         OnMoldranFinished?.Invoke();
     }
+
+    // Tutorial start text
+    public static event Action<TutorialDialogueEventArgs> OnTutorialTextStarted;
+
+    public static void CallTutorialTextStartedEvent(TutorialPhase tutorialPhase)
+    {
+        OnTutorialTextStarted?.Invoke(new TutorialDialogueEventArgs { tutorialPhase = tutorialPhase });
+    }
+
+
+    // Tutorial end text
+    public static event Action<TutorialDialogueEventArgs> OnTutorialTextEnded;
+
+    public static void CallTutorialTextEndedEvent(TutorialPhase tutorialPhase)
+    {
+        OnTutorialTextEnded?.Invoke(new TutorialDialogueEventArgs { tutorialPhase = tutorialPhase });
+    }
 }
 
 public class MoldranDialogueEventArgs: EventArgs
 {
     public int dialogueNumber;
     public MoldranSpeechOrder moldranSpeechOrder;
+}
+
+public class TutorialDialogueEventArgs: EventArgs
+{
+    public TutorialPhase tutorialPhase;
 }

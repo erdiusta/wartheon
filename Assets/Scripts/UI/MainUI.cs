@@ -356,7 +356,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 headerText.text = activeItemDetails.activeItemName;
                 levelText.text = $"(Active Item)";
 
-                if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Dummy)
+                if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Decoy)
                 {
                     weaponClassText.text = "Distracts Enemies Until Being";
                     hitSpeedText.text = "Destroyed";
@@ -383,11 +383,12 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Hourglass)
                 {
                     weaponClassText.text = "Slows the Time Flow By";
-                    hitSpeedText.text = "Half to Act More Precisely";
+
                 }
                 else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Shiruken)
                 {
-                    weaponClassText.text = "Several Quick Throwable Star Projectiles";
+                    weaponClassText.text = "Several Quick Throwable Star";
+                    hitSpeedText.text = "Projectiles";
                 }
                 else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Pentagram)
                 {

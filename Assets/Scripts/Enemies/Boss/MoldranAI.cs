@@ -5,6 +5,10 @@ using Random = UnityEngine.Random;
 
 public class MoldranAI : EnemyAI, IMutualBossBehaviour
 {
+    // Define the cell boundaries in grid coordinates
+    readonly Vector2Int cellMin = new Vector2Int(-8, 2);
+    readonly Vector2Int cellMax = new Vector2Int(12, 18);
+
     // BOSSES
     [SerializeField] Transform swordHoldingTransform;
     [SerializeField] float smearCircleRadius = 0.5f;
@@ -20,6 +24,21 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
 
     Coroutine moldranAttackMoveRoutine;
 
+    bool passedToWait;
+
+    public bool PassedToWait
+    {
+        get => passedToWait;
+        set
+        {
+            if (!passedToWait && value)
+            {
+                passedToWait = true;
+                HandleWaitPhase();
+            }
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -30,7 +49,10 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
         currentMoldranPhase = MoldranPhase.Wait;
     }
 
-    protected override void OnEnable() { }
+    protected override void OnEnable() 
+    {
+        player = GameManager.Instance.GetPlayer();
+    }
 
     protected override void OnDisable() { }
 
@@ -38,10 +60,20 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Update()
     {
-        if (GameManager.Instance.GetPlayer() != null)
+        if (enemy.enemyAI.enemyPhase == EnemyPhase.Death)
+        {
+            if (attackAnimationRoutine != null)
+            {
+                StopCoroutine(attackAnimationRoutine);
+            }
+
+            return;
+        }
+
+        if (player != null)
         {
             Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-                (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
+                (player.GetPlayerPosition() - transform.position).normalized;
             lockedVector = direction;
         }
 
@@ -96,7 +128,7 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
                 switch (currentMoldranPhase)
                 {
                     case MoldranPhase.Wait:
-                        HandleWaitPhase();
+                        PassedToWait = true;
 
                         // Reset timers
                         firingIntervalTimer = WeaponShootInterval();
@@ -134,7 +166,7 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
         }
     }
 
-    private void HandleWaitPhase()
+    public void HandleWaitPhase()
     {
         // Logic for waiting phase (maybe the Centaur just moves or idles here)
         enemy.animateEnemy.SetIdleAnimationParameters();
@@ -189,12 +221,24 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
             return;
         }
 
-        if (GameManager.Instance.GetPlayer() != null && Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 2f)
+        if (player != null)
         {
-            // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
-            currentMoldranPhase = (MoldranPhase)Random.Range(4, Enum.GetValues(typeof(MoldranPhase)).Length);
-            return;
+            if (Vector3.Distance(transform.position, player.GetPlayerPosition()) < 2f)
+            {
+                // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
+                currentMoldranPhase = (MoldranPhase)Random.Range(4, Enum.GetValues(typeof(MoldranPhase)).Length);
+                return;
+            }
+            else if (Vector3.Distance(transform.position, player.GetPlayerPosition()) > 10f)
+            {
+                // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
+                int rng = Random.Range(0, 2);
+                currentMoldranPhase = rng == 0 ? MoldranPhase.Projectile : MoldranPhase.Spike;
+                return;
+            }
         }
+
+
 
         if (currentMoldranPhase == MoldranPhase.SwingAttack || currentMoldranPhase == MoldranPhase.Spike ||
             currentMoldranPhase == MoldranPhase.Projectile || currentMoldranPhase == MoldranPhase.Heal)
@@ -220,6 +264,8 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
     {
         if (moldranPhase == MoldranPhase.Projectile)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemy.animator.SetFloat(Settings.motionType, -1f);
             enemy.animator.SetInteger(Settings.attackType, 2);
 
@@ -253,6 +299,8 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
 
             while (fireTimer < fireProjectileDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 fireTimer += Time.deltaTime;
 
                 // Interval Timer
@@ -282,6 +330,8 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
         }
         else if (moldranPhase == MoldranPhase.SwingAttack)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemy.animator.SetFloat(Settings.motionType, -1f);
             enemy.animator.SetInteger(Settings.attackType, 0);
 
@@ -325,13 +375,24 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
             enemy.animateEnemy.ResetAnimatonParameters();
             enemy.animateEnemy.SetMovementAnimationParameters();
 
+            // Clamp lockedPosition
+            Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
+
+            Vector3Int cell = grid.WorldToCell(lockedPosition);
+            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
+            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
+            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
+
+
             Vector3 direction = (lockedPosition - transform.position).normalized;
             float chargeSpeed = 20f;
 
             while (chargeTimer < chargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, lockedPosition, chargeSpeed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
 
                 // Check if boss has reached the destination before the desired duration
                 if (Vector3.Distance(transform.position, lockedPosition) < 1.5f)  // Small threshold for accuracy
@@ -367,6 +428,8 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < smearDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 enemy.animator.SetBool(Settings.isAttack, true);
@@ -421,6 +484,8 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
         }
         else if (moldranPhase == MoldranPhase.Spike)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemy.animator.SetFloat(Settings.motionType, -1f);
             enemy.animator.SetInteger(Settings.attackType, 1);
             enemyPhase = EnemyPhase.Attack;
@@ -439,6 +504,8 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < prechargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -457,6 +524,8 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
 
             while (fireTimer < fireProjectileDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 fireTimer += Time.deltaTime;
 
                 // Interval Timer
@@ -485,6 +554,8 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
         }
         else if (moldranPhase == MoldranPhase.Heal)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemy.animator.SetBool(Settings.cast, true);
             enemy.animator.SetInteger(Settings.attackType, 0);
 

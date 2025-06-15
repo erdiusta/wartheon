@@ -13,6 +13,10 @@ public class ActiveItemUI : MonoBehaviour
     #endregion Tooltip
     [SerializeField] Image activeItemImage;
     #region Tooltip
+    [Tooltip("No active item")]
+    #endregion Tooltip
+    [SerializeField] Sprite noActiveItemSpite;
+    #region Tooltip
     [Tooltip("Populate with the RectTransform of the child gameobject AvailabilityBar")]
     #endregion Tooltip
     [SerializeField] Transform availabilityBar;
@@ -44,7 +48,10 @@ public class ActiveItemUI : MonoBehaviour
 
     private void SetActiveItemEvent_OnSelectedActiveItem(SetActiveItemEvent setActiveItemEvent, SetSelectedActiveItemArgs setSelectedActiveItemArgs)
     {
-        SetSelectedActiveItem(setSelectedActiveItemArgs.activeItem);
+        if (setSelectedActiveItemArgs.activeItem != null)
+        {
+            SetSelectedActiveItem(setSelectedActiveItemArgs.activeItem);
+        }
     }
 
     private void SetActiveItemEvent_OnRemovedActiveItem(SetActiveItemEvent setActiveItemEvent)
@@ -54,10 +61,12 @@ public class ActiveItemUI : MonoBehaviour
 
     private void Start()
     {
-        // Update active weapon status on the UI
-        SetSelectedActiveItem(player.selectedActiveItem.GetCurrentActiveItem());
+        if (!InputManager.TutorialEnabled)
+        {
+            // Update active weapon status on the UI
+            SetSelectedActiveItem(player.selectedActiveItem.GetCurrentActiveItem());
+        }
     }
-
 
     private void WeaponFiredEvent_OnActiveItemFired(WeaponFiredEvent weaponFiredEvent, ActiveItemFiredEventArgs activeItemFiredEventArgs)
     {
@@ -73,13 +82,12 @@ public class ActiveItemUI : MonoBehaviour
 
     private void RemoveSelectedActiveItem()
     {
-        activeItemImage.enabled = false;
+        activeItemImage.sprite = noActiveItemSpite;
         availabilityBar.gameObject.SetActive(false);
     }
 
     private void UpdateActiveItemImage(ActiveItemDetailsSO activeItemDetails)
     {
-        activeItemImage.enabled = true;
         activeItemImage.sprite = activeItemDetails.activeItemSprite;
     }
 

@@ -136,7 +136,10 @@ public class SpecialMoveUI : MonoBehaviour
                     case Character.Lyrisa:
                         if (player.specialMoveTwoDurationTimer >= specialMoveTwoDuration)
                         {
-                            player.forcefieldTransform.gameObject.SetActive(false);
+                            if (player != null)
+                            {
+                                player.forcefieldTransform.gameObject.SetActive(false);
+                            }
                         }
                         break;
                     default:

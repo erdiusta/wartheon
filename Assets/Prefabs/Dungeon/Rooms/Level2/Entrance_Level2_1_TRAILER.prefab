@@ -1025,7 +1025,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1448,7 +1448,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2080,7 +2080,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2659,7 +2659,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8201,7 +8201,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14422,7 +14422,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -19028,6 +19028,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WallStripe
       objectReference: {fileID: 0}
+    - target: {fileID: 8471996442918014301, guid: 8ab207e5cff690b48bf9c33a6556e50e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
     - target: {fileID: 8488949779595396650, guid: 8ab207e5cff690b48bf9c33a6556e50e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -19090,6 +19094,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stump
       objectReference: {fileID: 0}
+    - target: {fileID: 8471996442918014301, guid: bdd82a21b6b73a144974334ad0c70d57, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
     - target: {fileID: 8488949779595396650, guid: bdd82a21b6b73a144974334ad0c70d57, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3
@@ -19152,6 +19160,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tree_1
       objectReference: {fileID: 0}
+    - target: {fileID: 8471996442918014301, guid: d43f2ff3f8fb359429a9c02615245e51, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
     - target: {fileID: 8488949779595396650, guid: d43f2ff3f8fb359429a9c02615245e51, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6
@@ -19214,6 +19226,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WallStripe (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8471996442918014301, guid: 8ab207e5cff690b48bf9c33a6556e50e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
     - target: {fileID: 8488949779595396650, guid: 8ab207e5cff690b48bf9c33a6556e50e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5
@@ -19276,6 +19292,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tree
       objectReference: {fileID: 0}
+    - target: {fileID: 8471996442918014301, guid: d43f2ff3f8fb359429a9c02615245e51, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
     - target: {fileID: 8488949779595396650, guid: d43f2ff3f8fb359429a9c02615245e51, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2

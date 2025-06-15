@@ -113,14 +113,14 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         characterSeparatorImage = transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
 
         // Passive Item Slots
-        passiveItemHeadSlot = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(0);
-        passiveItemChestSlot = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(1);
-        passiveItemNeckSlot = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(2);
-        passiveItemArmSlot = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(3);
-        passiveItemFingerSlot = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(4);
-        passiveItemWaistSlot = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(5);
-        passiveItemBackSlot = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(6);
-        passiveItemLegSlot = transform.GetChild(1).GetChild(1).GetChild(5).GetChild(7);
+        passiveItemHeadSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(0);
+        passiveItemChestSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(1);
+        passiveItemNeckSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(2);
+        passiveItemArmSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(3);
+        passiveItemFingerSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(4);
+        passiveItemWaistSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(5);
+        passiveItemBackSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(6);
+        passiveItemLegSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(7);
 
         player = GameManager.Instance.GetPlayer();
         characterSeparatorImage.sprite = player.playerDetails.playerMiniMapIcon;
@@ -170,15 +170,18 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         }
 
         // ACTIVE ITEM EQUIP AT START
-        Transform activeBackground = activeItemSlot.GetChild(0);
-        Transform activeEquipped = activeItemSlot.GetChild(1);
-        activeBackground.gameObject.SetActive(false);
-        activeEquipped.gameObject.SetActive(true);
-        GameObject activeItem = Instantiate(GameResources.Instance.bookWeaponSlot, activeEquipped);
-        activeItem.GetComponent<Image>().sprite = player.playerDetails.activeItemsList[0].activeItemSprite;
+        if (!InputManager.TutorialEnabled)
+        {
+            Transform activeBackground = activeItemSlot.GetChild(0);
+            Transform activeEquipped = activeItemSlot.GetChild(1);
+            activeBackground.gameObject.SetActive(false);
+            activeEquipped.gameObject.SetActive(true);
+            GameObject activeItem = Instantiate(GameResources.Instance.bookWeaponSlot, activeEquipped);
+            activeItem.GetComponent<Image>().sprite = player.playerDetails.activeItemsList[0].activeItemSprite;
+        }
 
         // Inventory parent
-        inventoryParent = transform.GetChild(1).GetChild(1).GetChild(7).GetChild(0).transform;
+        inventoryParent = transform.GetChild(1).GetChild(1).GetChild(8).GetChild(0).transform;
     }
 
     private void OnEnable()
@@ -1227,6 +1230,11 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         foreach (Transform child in bossesPage)
         {
             child.gameObject.SetActive(true);
+
+            if (InputManager.TutorialEnabled && TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.OtherCollectionsPage)
+            {
+                TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
+            }
         }
     }
 

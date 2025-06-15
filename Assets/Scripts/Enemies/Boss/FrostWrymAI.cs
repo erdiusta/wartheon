@@ -5,6 +5,10 @@ using Random = UnityEngine.Random;
 
 public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 {
+    // Define the cell boundaries in grid coordinates
+    readonly Vector2Int cellMin = new Vector2Int(-8, 2);
+    readonly Vector2Int cellMax = new Vector2Int(12, 18);
+
     // BOSSES
     [SerializeField] Transform swordHoldingTransform;
     [SerializeField] float smearCircleRadius = 0.5f;
@@ -20,6 +24,21 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
     Coroutine frostWrymAttackMoveRoutine;
 
+    bool passedToWait;
+
+    public bool PassedToWait
+    {
+        get => passedToWait;
+        set
+        {
+            if (!passedToWait && value)
+            {
+                passedToWait = true;
+                HandleWaitPhase();
+            }
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -30,7 +49,10 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
         currentFrostWrymPhase = FrostWrymPhase.Wait;
     }
 
-    protected override void OnEnable() { }
+    protected override void OnEnable() 
+    {
+        player = GameManager.Instance.GetPlayer();
+    }
 
     protected override void OnDisable() { }
 
@@ -38,7 +60,17 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Update()
     {
-        if (GameManager.Instance.GetPlayer() != null)
+        if (enemy.enemyAI.enemyPhase == EnemyPhase.Death)
+        {
+            if (attackAnimationRoutine != null)
+            {
+                StopCoroutine(attackAnimationRoutine);
+            }
+
+            return;
+        }
+
+        if (player != null)
         {
             Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
                 (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
@@ -84,7 +116,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
         else if (moveStatus == MoveStatus.Idle)
         {
             // Check if the player is on stealth
-            if (GameManager.Instance.GetPlayer() != null && GameManager.Instance.GetPlayer().onStealth)
+            if (player != null && GameManager.Instance.GetPlayer().onStealth)
             {
                 PlayerStealthCheck();
             }
@@ -96,7 +128,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
                 switch (currentFrostWrymPhase)
                 {
                     case FrostWrymPhase.Wait:
-                        HandleWaitPhase();
+                        PassedToWait = true;
 
                         // Reset timers
                         firingIntervalTimer = WeaponShootInterval();
@@ -134,7 +166,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
         }
     }
 
-    private void HandleWaitPhase()
+    public void HandleWaitPhase()
     {
         // Logic for waiting phase (maybe the Centaur just moves or idles here)
         enemy.animateEnemy.SetIdleAnimationParameters();
@@ -183,17 +215,27 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
     private void TransitionToNextPhase()
     {
         // Check if the player is on stealth
-        if (GameManager.Instance.GetPlayer().onStealth)
+        if (player != null && player.onStealth)
         {
             PlayerStealthCheck();
             return;
         }
 
-        if (GameManager.Instance.GetPlayer() != null && Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) < 2f)
+
+        if (player != null)
         {
-            // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
-            currentFrostWrymPhase = (FrostWrymPhase)Random.Range(4, Enum.GetValues(typeof(FrostWrymPhase)).Length);
-            return;
+            if (Vector3.Distance(transform.position, player.GetPlayerPosition()) < 2f)
+            {
+                // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
+                currentFrostWrymPhase = (FrostWrymPhase)Random.Range(4, Enum.GetValues(typeof(FrostWrymPhase)).Length);
+                return;
+            }
+            else if (Vector3.Distance(transform.position, player.GetPlayerPosition()) > 10f)
+            {
+                // If player is too far to boss, automatically next phase will be Icicle,
+                currentFrostWrymPhase = FrostWrymPhase.Icicle;
+                return;
+            }
         }
 
         if (currentFrostWrymPhase == FrostWrymPhase.TailAttack || currentFrostWrymPhase == FrostWrymPhase.Icicle ||
@@ -213,6 +255,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
     {
         if (frostWrymPhase == FrostWrymPhase.IceProjectile)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemy.animator.SetFloat(Settings.motionType, -1f);
             enemy.animator.SetInteger(Settings.attackType, 2);
 
@@ -230,6 +274,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < prechargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -246,6 +292,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             while (fireTimer < fireProjectileDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 fireTimer += Time.deltaTime;
 
                 // Interval Timer
@@ -275,6 +323,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
         }
         else if (frostWrymPhase == FrostWrymPhase.TailAttack)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemy.animator.SetFloat(Settings.motionType, -1f);
             enemy.animator.SetInteger(Settings.attackType, 0);
 
@@ -304,6 +354,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < prehargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -318,16 +370,26 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
             enemy.animateEnemy.ResetAnimatonParameters();
             enemy.animateEnemy.SetMovementAnimationParameters();
 
+            // Clamp lockedPosition
+            Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
+
+            Vector3Int cell = grid.WorldToCell(lockedPosition);
+            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
+            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
+            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
+
             Vector3 direction = (lockedPosition - transform.position).normalized;
             float chargeSpeed = 20f;
 
             while (chargeTimer < chargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, lockedPosition, chargeSpeed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
 
                 // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, lockedPosition) < 1.5f)  // Small threshold for accuracy
+                if (Vector3.Distance(transform.position, clampedPosition) < 1.5f)  // Small threshold for accuracy
                 {
                     // Exit the loop early if boss has reached the destination
                     break;
@@ -360,6 +422,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < smearDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 enemy.animator.SetBool(Settings.isAttack, true);
@@ -414,6 +478,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
         }
         else if (frostWrymPhase == FrostWrymPhase.Icicle)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemy.animator.SetFloat(Settings.motionType, -1f);
             enemy.animator.SetInteger(Settings.attackType, 1);
             enemyPhase = EnemyPhase.Attack;
@@ -432,6 +498,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < prechargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -450,6 +518,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             while (fireTimer < fireProjectileDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 fireTimer += Time.deltaTime;
 
                 // Interval Timer
@@ -478,6 +548,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
         }
         else if (frostWrymPhase == FrostWrymPhase.FrostBreath)
         {
+            if (enemy.health.hasDied) yield break;
+
             enemy.animator.SetFloat(Settings.motionType, -1f);
             enemy.animator.SetInteger(Settings.attackType, 0);
 
@@ -505,6 +577,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < prechargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 yield return null;
@@ -524,6 +598,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < chargeDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
                 transform.position = Vector3.MoveTowards(transform.position, lockedPosition, chargeSpeed * Time.deltaTime);
 
@@ -560,12 +636,16 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             while (chargeTimer < iceBreathDuration)
             {
+                if (enemy.health.hasDied) yield break;
+
                 chargeTimer += Time.deltaTime;
 
                 enemy.animator.SetBool(Settings.cast, true);
 
                 foreach (Collider2D collider in Physics2D.OverlapCircleAll(swordHoldingTransform.position, smearCircleRadius))
                 {
+                    if (enemy.health.hasDied) yield break;
+
                     if (collider.GetType() == typeof(PolygonCollider2D))
                     {
                         // Don't hit yourself if player is also in the collider list

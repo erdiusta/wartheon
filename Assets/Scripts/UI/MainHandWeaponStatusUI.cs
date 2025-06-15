@@ -62,7 +62,10 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     private void Start()
     {
         // Update active weapon status on the UI
-        SetActiveWeapon(player.activeWeapon.GetCurrentMainHandWeapon());
+        if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+        {
+            SetActiveWeapon(player.activeWeapon.GetCurrentMainHandWeapon());
+        }
     }
 
     private void Update()
@@ -102,7 +105,10 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void SetActiveWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        SetActiveWeapon(setActiveWeaponEventArgs.weapon);
+        if (setActiveWeaponEventArgs.weapon != null)
+        {
+            SetActiveWeapon(setActiveWeaponEventArgs.weapon);
+        }
     }
 
     private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
@@ -176,30 +182,33 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void ResetWeaponCooldownBar(Weapon currentWeapon, bool stoppedPrematurely = false)
     {
-        if (currentWeapon.weaponDetails.isMeleeWeapon)
+        if (currentWeapon != null)
         {
-            cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
-        }
-        else if (currentWeapon.weaponDetails.weaponClass == WeaponClass.Bow || currentWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
-        {
-            cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalBowAttackCoolDownModifier));
-        }
-        else
-        {
-            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration;
-        }
+            if (currentWeapon.weaponDetails.isMeleeWeapon)
+            {
+                cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
+            }
+            else if (currentWeapon.weaponDetails.weaponClass == WeaponClass.Bow || currentWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
+            {
+                cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalBowAttackCoolDownModifier));
+            }
+            else
+            {
+                cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration;
+            }
 
 
-        // Set bar scale to 1
-        barImage.transform.localScale = new Vector3(1f, 1f, 1f);
+            // Set bar scale to 1
+            barImage.transform.localScale = new Vector3(1f, 1f, 1f);
 
-        if (!stoppedPrematurely)
-        {
-            barImage.color = new Color(1f, 1f, 1f, 0f);
-        }
-        else
-        {
-            player.activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged = false;
+            if (!stoppedPrematurely)
+            {
+                barImage.color = new Color(1f, 1f, 1f, 0f);
+            }
+            else
+            {
+                player.activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged = false;
+            }
         }
     }
 

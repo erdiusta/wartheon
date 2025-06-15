@@ -71,7 +71,7 @@ MonoBehaviour:
   secondMeleeDamageElementalBias: 0
   criticalHitChance: 0
   criticalHitDamageMultiplier: 0
-  weaponCooldownDuration: 0.9
+  weaponCooldownDuration: 1
   weaponBaseHandling: 0.8
   hasSwing: 0
   hasThrust: 0

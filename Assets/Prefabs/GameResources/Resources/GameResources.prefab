@@ -45,21 +45,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomNodeTypeList: {fileID: 11400000, guid: 9b6ce2f11d8d4d546a3fefba4b866ddd, type: 2}
+  loadingManager: {fileID: 962894195609091887, guid: 4c3a2a8106f8b7c4c8de340a615453f5, type: 3}
   playerSelectionPrefab: {fileID: 8110264131267041669, guid: a63acdfc3f394f54b973738f5fa8ea20, type: 3}
   playerDetailsArray:
-  - {fileID: 11400000, guid: 3c718eafb0e25534e830534a8fb1e2dc, type: 2}
   - {fileID: 11400000, guid: 9013cd574cdf7844a9daf890dad068b3, type: 2}
-  - {fileID: 11400000, guid: 8223c721c4f4e38479feb606a8ea4430, type: 2}
   - {fileID: 11400000, guid: e0d260d460832bd41bff086129ad1eb6, type: 2}
+  - {fileID: 11400000, guid: 8223c721c4f4e38479feb606a8ea4430, type: 2}
+  - {fileID: 11400000, guid: 3c718eafb0e25534e830534a8fb1e2dc, type: 2}
   currentPlayer: {fileID: 11400000, guid: bdc48d7a1898cca47b62df50366f8c9a, type: 2}
   enemyPatrolPointsParent: {fileID: 1575039236803244801, guid: 6bccd87a0fe5028438a3b243a3de091c, type: 3}
   musicMasterMixerGroup: {fileID: 1624570340859876765, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   mainMenuMusic: {fileID: 11400000, guid: 1bdaf3d9e77162142a7d389b5f99296e, type: 2}
   cutsceneMusic: {fileID: 11400000, guid: 3bf0801f92c57f146b50c912b0c6ed18, type: 2}
+  ambientMusic: {fileID: 11400000, guid: 61cc5cb1e41586045b964b7d8fbfb5aa, type: 2}
+  combatMusic: {fileID: 11400000, guid: 4825f7897e3fbff4ba5fce28e75616c4, type: 2}
   musicOnFullSnaphot: {fileID: 24500006, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   musicLowSnapshot: {fileID: -3696781970601211204, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   musicOffSnapshot: {fileID: -3379933783261973729, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
   soundMasterMixerGroup: {fileID: -1070493446473311056, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}
+  tutorialPhasePassSoundEffect: {fileID: 11400000, guid: 7c7384209a56e254982c0c28a2be5c40, type: 2}
   nextLevelSoundEffect: {fileID: 11400000, guid: 47b00a3f3bfad5c4cbefa098298290da, type: 2}
   openBookSoundEffect: {fileID: 11400000, guid: 410e9bb2402a01a48b3cabc627f11701, type: 2}
   closeBookSoundEffect: {fileID: 11400000, guid: ddebddc112a095147a3e5177f8ab94b1, type: 2}
@@ -71,6 +75,9 @@ MonoBehaviour:
   healthPickup: {fileID: 11400000, guid: 4638ce053d31bdd4595c3991e645fac9, type: 2}
   itemPickup: {fileID: 11400000, guid: 0c046751a4ee285408725ea69f299bed, type: 2}
   weaponPickup: {fileID: 11400000, guid: 89c2519ed7c7c0546a8b53183833b881, type: 2}
+  healthPassiveItem: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
+  coinPassiveItem: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
+  secondaryPassiveItem: {fileID: 11400000, guid: ce61e302d49e153479d6e82d40b1dbf8, type: 2}
   dimmedMaterial: {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
   litMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   materializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}

@@ -68,12 +68,17 @@ public class DealContactDamage : MonoBehaviour
 
             if (collision.tag == Settings.playerTag)
             {
-                if (enemy.isDead) return;
+                if (enemy.health.hasDied) return;
 
                 Player player = collision.GetComponent<Player>();
 
                 if (player.playerControl.IsParrying)
                 {
+                    if (InputManager.TutorialEnabled && TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Parry)
+                    {
+                        TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
+                    }
+
                     player.healthEvent.CallParryEvent();
                     player.health.PostHitImmunity(true);
                     return;
@@ -82,7 +87,7 @@ public class DealContactDamage : MonoBehaviour
                 float blindPenalty = enemy.isBlind ? 0.5f : 0f;
 
                 // Evasiveness - dodge check
-                if (100 - (player.currentEvasivenessValue + blindPenalty) * 100 > Random.Range(1, 101))
+                if (100 - (player.currentEvasivenessValue + blindPenalty) * 100 > Random.Range(1, 101) || player.playerControl.isPlayerRolling)
                 {
                     contactDamageAmountMin = enemy.enemyDetails.dealtMeleeDamageMin;
                     contactDamageAmountMax = enemy.enemyDetails.dealtMeleeDamageMax;
@@ -238,7 +243,7 @@ public class DealContactDamage : MonoBehaviour
 
             // Apply knockback and damage the enemy
             //enemy.enemyAI.TriggerKnockback(transform.position - collision.transform.position);
-            enemy.health.TakeDamage(damageDone, transform.position, collision.transform.position, false, MeleeHand.MainHand);
+            enemy.health.TakeDamage(damageDone, transform.position, collision.transform.position, false, null, MeleeHand.MainHand);
         }
     }
 

@@ -13,7 +13,7 @@ namespace Pathfinding {
 	/// See: <see cref="Pathfinding.AIPath"/>
 	/// See: <see cref="Pathfinding.RichAI"/>
 	/// See: <see cref="Pathfinding.IAstarAI"/> (all movement scripts implement this interface)
-	/// </summary>
+	/// </summary> 
 	[RequireComponent(typeof(Seeker))]
 	public abstract class AIBase : VersionedMonoBehaviour {
 		/// <summary>\copydoc Pathfinding::IAstarAI::radius</summary>
@@ -166,7 +166,7 @@ namespace Pathfinding {
 		/// See: <see cref="Teleport"/>
 		/// See: <see cref="Move"/>
 		/// </summary>
-		public Vector3 position { get { return updatePosition ? tr.position : simulatedPosition; } }
+		public Vector3 position { get { return updatePosition ? rigid2D.position : simulatedPosition; } }
 
 		/// <summary>
 		/// Rotation of the agent.
@@ -416,24 +416,24 @@ namespace Pathfinding {
 			lastDeltaTime = 0;
 		}
 
-		/// <summary>
-		/// Called every frame.
-		/// If no rigidbodies are used then all movement happens here.
-		/// </summary>
-		protected virtual void Update () {
-			if (shouldRecalculatePath) SearchPath();
+		///// <summary>
+		///// Called every frame.
+		///// If no rigidbodies are used then all movement happens here.
+		///// </summary>
+		//protected virtual void Update () {
+		//	if (shouldRecalculatePath) SearchPath();
 
-			// If gravity is used depends on a lot of things.
-			// For example when a non-kinematic rigidbody is used then the rigidbody will apply the gravity itself
-			// Note that the gravity can contain NaN's, which is why the comparison uses !(a==b) instead of just a!=b.
-			usingGravity = !(gravity == Vector3.zero) && (!updatePosition || ((rigid == null || rigid.isKinematic) && (rigid2D == null || rigid2D.isKinematic)));
-			if (rigid == null && rigid2D == null && canMove) {
-				Vector3 nextPosition;
-				Quaternion nextRotation;
-				MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
-				FinalizeMovement(nextPosition, nextRotation);
-			}
-		}
+		//	// If gravity is used depends on a lot of things.
+		//	// For example when a non-kinematic rigidbody is used then the rigidbody will apply the gravity itself
+		//	// Note that the gravity can contain NaN's, which is why the comparison uses !(a==b) instead of just a!=b.
+		//	usingGravity = !(gravity == Vector3.zero) && (!updatePosition || ((rigid == null || rigid.isKinematic) && (rigid2D == null || rigid2D.isKinematic)));
+		//	if (rigid == null && rigid2D == null && canMove) {
+		//		Vector3 nextPosition;
+		//		Quaternion nextRotation;
+		//		MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
+		//		FinalizeMovement(nextPosition, nextRotation);
+		//	}
+		//}
 
 		/// <summary>
 		/// Called every physics update.

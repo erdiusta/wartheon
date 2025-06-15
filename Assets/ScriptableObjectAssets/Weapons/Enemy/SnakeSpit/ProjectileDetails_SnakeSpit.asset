@@ -23,16 +23,15 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 11400000, guid: baa13bf3177b0da4ea29cfb6a8f9bced, type: 2}
   projectileDamageMin: 6
   projectileDamageMax: 12
-  projectileSpeedMin: 5
-  projectileSpeedMax: 8
-  projectileRange: 18
+  projectileSpeed: 7
+  projectileRange: 11
+  hasLifeTime: 0
+  lifeDuration: 0.8
   projectileRotationSpeed: 1
   isGuided: 0
   isBouncing: 0
   isBomb: 0
   isTrap: 0
-  hasLifeTime: 0
-  lifeDuration: 15
   blastRadius: 1
   countDown: 3
   burstDamageMin: 15

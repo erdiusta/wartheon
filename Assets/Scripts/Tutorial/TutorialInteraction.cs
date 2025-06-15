@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -59,9 +58,16 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
     private bool movedLeft;
     private bool movedRight;
 
+    PlayerDetailsSO[] playerDetailsList;
+    CurrentPlayerSO currentPlayer;
+    int selectedPlayerIndex = 1;
+
     protected override void Awake()
     {
         base.Awake();
+
+        playerDetailsList = GameResources.Instance.playerDetailsArray;
+        currentPlayer = GameResources.Instance.currentPlayer;
     }
 
     private void Start()
@@ -320,6 +326,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 break;
             case TutorialPhase.OverviewMapCheck:
                 isCheckPlayed = false;
+                InputManager.overviewMapDisabled = false;
 
                 keyboardBinding = InputManager.Instance.overviewMapFullView.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
                 gamepadBinding = InputManager.Instance.overviewMapFullView.action.GetBindingDisplayString(InputBinding.MaskByGroup("Gamepad"));
@@ -395,13 +402,14 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
             case TutorialPhase.Parry:
                 isCheckPlayed = false;
                 InputManager.parryDisabled = false;
+                player.health.isDamageable = true;
 
                 keyboardBinding = InputManager.Instance.parryButton.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
                 gamepadBinding = InputManager.Instance.parryButton.action.GetBindingDisplayString(InputBinding.MaskByGroup("Gamepad"));
 
                 SoundAndImageTrigger(questImage);
 
-                questText.text = "At this fight, you are not invincible so beware. Use parry key to deflect enemy attack while mob is contacting" +
+                questText.text = "At this fight, timing is the key so beware. Use parry key to deflect enemy attack while mob is contacting" +
                     " you. Parry only works at melee weapons. Timing is very important. Maybe needs a little practice to master it.\n\nUse" + keyboardBinding + " for keyboard.\n\nUse " +
                     gamepadBinding + " for gampepad.";
 
@@ -491,6 +499,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
 
             case TutorialPhase.WeaponSetSwitch:
                 isCheckPlayed = false;
+                InputManager.switchDisabled = false;
 
                 keyboardBinding = InputManager.Instance.switchWeaponBack.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
                 keyboardBindingTwo = InputManager.Instance.switchWeaponForward.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
@@ -643,7 +652,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 }
                 break;
             case TutorialPhase.PickUpSecondaryPassive:
-                if (player.selectedPassiveItem.GetCurrentFingerPassiveItem() != null)
+                if (player.equippedPassiveItems.TryGetValue(PassiveItemSlotName.Finger, out PassiveItem value) && value != null)
                 {
                     PassTutorialProcess();
                 }
@@ -722,12 +731,12 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
         yield return StartCoroutine(Fade(0f, 1f, 2f, Color.black));
 
         // Tutorial finished
-        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU COMPLETED TUTORIAL",
+        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName.ToUpper() + "! YOU COMPLETED TUTORIAL.",
             Color.green, 5f, true));
 
-        yield return StartCoroutine(DisplayMessageRoutine("NOW IT'S TIME TO BACK TO MAIN MENU", Color.green, 1.5f, true));
+        yield return StartCoroutine(DisplayMessageRoutine("NOW IT'S TIME TO BEGIN YOUR JOURNEY.", Color.green, 1.5f, true));
 
-        BackToMainMenu(); // It's time to return to the main menu
+        FinishTutorialStartGame(); // It's time to return to the main menu
     }
 
     private IEnumerator DisplayMessageRoutine(string text, Color textColor, float displaySeconds, bool timed = false)
@@ -767,9 +776,29 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
         messageTextTMP.SetText("");
     }
 
-    private void BackToMainMenu()
+    private void FinishTutorialStartGame()
     {
-        SceneManager.LoadScene("MainMenuScene");
+        // Get current character safely
+        Character currentCharacter = Character.Astraeus; // default
+
+        if (player != null && player.playerDetails != null)
+        {
+            currentCharacter = player.playerDetails.playerCharacterIndex;
+        }
+
+        PlayerPrefs.SetInt("SelectedCharacterIndex", (int)currentCharacter);
+        PlayerPrefs.Save();
+
+        // Safe loading call
+        if (LoadingManager.SafeInstance != null)
+        {
+            LoadingManager.SafeInstance.StartCoroutine(LoadingManager.SafeInstance.LoadGameScene(3));
+        }
+        else
+        {
+            Debug.LogError("LoadingManager instance missing! Loading directly...");
+            SceneManager.LoadScene(3);
+        }
     }
 
     /// <summary>

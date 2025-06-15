@@ -1,19 +1,47 @@
 public static class SlotPlacementRules
 {
-    public static bool IsPlacementAllowed(ItemGeneric item, Slot targetSlot, Weapon mainHandWeapon, int weaponSetIndexNumber)
+    public static bool IsPlacementAllowed(ItemGeneric item, SlotType targetSlotType, Weapon mainHandWeapon, int weaponSetIndexNumber)
     {
-        if (item is ActiveItem) return targetSlot.slotType == SlotType.Drop;
+        if (item is ActiveItem) return targetSlotType == SlotType.Drop;
 
-        if (item is Weapon && (targetSlot.slotType == SlotType.Active || targetSlot.slotType == SlotType.Passive)) return false;
+        if (item is Weapon && (targetSlotType == SlotType.Active || targetSlotType == SlotType.Passive)) return false;
 
-        if (item is PassiveItem && (targetSlot.slotType == SlotType.WeaponMainHand || targetSlot.slotType == SlotType.WeaponOffHand ||
-            targetSlot.slotType == SlotType.Active)) return false;
+        if (item is PassiveItem && (targetSlotType == SlotType.WeaponMainHand || targetSlotType == SlotType.WeaponOffHand ||
+            targetSlotType == SlotType.Active)) return false;
 
-        if (NotPossibleToPlaceToOffHand(item, mainHandWeapon) && targetSlot.slotType == SlotType.WeaponOffHand) return false; // Two-handed cant't be placed on off-hand
+        if (NotPossibleToPlaceToOffHand(item, mainHandWeapon) && targetSlotType == SlotType.WeaponOffHand) return false; // Two-handed cant't be placed on off-hand
 
-        if (NotPossibleToPlaceMainHandWeaponToInventoryOrDrop(item, weaponSetIndexNumber) && (targetSlot.slotType == SlotType.None || targetSlot.slotType == SlotType.Drop)) return false;
+        if (NotPossibleToPlaceMainHandWeaponToInventoryOrDrop(item, weaponSetIndexNumber) && (targetSlotType == SlotType.None || targetSlotType == SlotType.Drop)) return false;
 
         return true;
+    }
+
+    // Overload method for pick-up swap
+    public static bool IsSwapAllowed(Weapon toBePickedUpWeapon, Weapon toBeDroppedWeapon, Weapon mainHandWeapon,Weapon offHandWeapon, bool isDropOffHand) 
+    {
+        if (isDropOffHand)
+        {
+            if (toBePickedUpWeapon.weaponDetails.weaponClass == WeaponClass.Spear) return false; // Can swap spear to off-hand
+
+            if (toBePickedUpWeapon.weaponDetails.wieldType == WieldType.OneHanded) return true; // Can swap for one-hand at offhand - offhhand
+
+            if (toBePickedUpWeapon.weaponDetails.wieldType == WieldType.TwoHanded) return false; // Can't place two-hand to off-hand
+        }
+        else
+        {
+            if (toBePickedUpWeapon.weaponDetails.weaponClass == WeaponClass.Shield) return false; // Can't place shield to main hand
+
+            if (toBePickedUpWeapon.weaponDetails.wieldType == WieldType.TwoHanded)
+            {
+                if (offHandWeapon != null) return false; // Can't place two thanded when off-hand is full
+
+                else return true;
+            }
+
+            if (toBePickedUpWeapon.weaponDetails.wieldType == WieldType.OneHanded) return true;
+        }
+
+        return false;
     }
 
     public static bool IsSwapAllowed(DraggableItem draggedItem, DraggableItem targetDraggableItem, ItemGeneric draggingItem, ItemGeneric targetItem, Weapon mainHandWeapon, 
@@ -29,7 +57,7 @@ public static class SlotPlacementRules
 
         if (draggingItem.itemSlotStatus == ItemSlotStatus.Inventory && targetItem.itemSlotStatus == ItemSlotStatus.Inventory) return false; 
 
-            if (draggingItem is PassiveItem && targetItem is PassiveItem)
+        if (draggingItem is PassiveItem && targetItem is PassiveItem)
         {
             PassiveItem draggingPassiveItem = (PassiveItem)draggingItem;
             PassiveItem targetPassiveItem = (PassiveItem)targetItem;
@@ -52,7 +80,6 @@ public static class SlotPlacementRules
             // Can't place shield to main hand
             if (draggingWeapon.weaponDetails.weaponClass == WeaponClass.Shield && targetItem.itemSlotStatus == ItemSlotStatus.MainHand) return false;
             if (draggingItem.itemSlotStatus == ItemSlotStatus.MainHand && targetWeapon.weaponDetails.weaponClass == WeaponClass.Shield) return false;
-
 
             // Can't swap one-hand with two-hand if off-hand is full
             if (draggingWeapon.weaponDetails.wieldType == WieldType.OneHanded && offHandWeapon != null && targetWeapon.weaponDetails.wieldType == WieldType.TwoHanded) return false;

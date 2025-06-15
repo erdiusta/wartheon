@@ -260,15 +260,15 @@ namespace Pathfinding {
 			reachedEndOfPath = false;
 		}
 
-		/// <summary>
-		/// The end of the path has been reached.
-		/// If you want custom logic for when the AI has reached it's destination add it here. You can
-		/// also create a new script which inherits from this one and override the function in that script.
-		///
-		/// This method will be called again if a new path is calculated as the destination may have changed.
-		/// So when the agent is close to the destination this method will typically be called every <see cref="repathRate"/> seconds.
-		/// </summary>
-		public virtual void OnTargetReached () {
+        /// <summary>
+        /// The end of the path has been reached.
+        /// If you want custom logic for when the AI has reached it's destination add it here. You can
+        /// also create a new script which inherits from this one and override the function in that script.
+        ///
+        /// This method will be called again if a new path is calculated as the destination may have changed.
+        /// So when the agent is close to the destination this method will typically be called every <see cref="repathRate"/> seconds.
+        /// </summary>
+        public virtual void OnTargetReached () {
 		}
 
 		/// <summary>

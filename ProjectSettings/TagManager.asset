@@ -16,7 +16,6 @@ TagManager:
   - poolTilemap
   - playerProjectile
   - sideTilemap
-  - Dummy
   - roomBounds
   - summonedEnemy
   - Cursor
@@ -37,6 +36,7 @@ TagManager:
   - environment
   - trailerOnly
   - trailerBoss
+  - Decoy
   layers:
   - Default
   - TransparentFX

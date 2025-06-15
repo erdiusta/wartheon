@@ -22,7 +22,6 @@ MonoBehaviour:
   movementDetails: {fileID: 11400000, guid: 2fabb5762610b1046b4f8b55a0119fd7, type: 2}
   experiencePoint: 400
   chaseDistance: 50
-  hasAttackMove: 1
   attackMoveTriggerDistance: 3
   attackMoveEfficentDistance: 8
   countdownDurationBeforeDashAttack: 0.4
@@ -38,7 +37,7 @@ MonoBehaviour:
   elementalForgeRate: 0.5
   enemyMinionDetails: {fileID: 11400000, guid: 7066b3e1a3f08274c8b37c0e568599cb, type: 2}
   physicalResistance: 0
-  fireResistance: 0
+  fireResistance: -0.2
   waterResistance: 0
   airResistance: 0
   earthResistance: 0
@@ -50,12 +49,12 @@ MonoBehaviour:
   dealtMeleeDamageMax: 15
   canBurn: 0
   burnChance: 0
-  isPoisonous: 0
-  poisonChance: 0
+  isPoisonous: 1
+  poisonChance: 0.1
   hasAcid: 0
   acidEfficiency: 0
-  hasStunDamage: 0
-  stunChance: 0
+  hasStunDamage: 1
+  stunChance: 0.15
   hasFrostDamage: 0
   frostChance: 0
   hasCurseDamage: 0

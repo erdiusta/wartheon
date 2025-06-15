@@ -31,19 +31,29 @@ public class RoomLightingControl : MonoBehaviour
         // If this is the room entered and the room isn't already lit, then fade in the room lighting
         if (roomChangedEventArgs.room == instantiatedRoom.room && !instantiatedRoom.room.isLit)
         {
-            // Fade in room
-            FadeInRoomLighting();
+            if (!roomChangedEventArgs.room.roomNodeType.isEntrance)
+            {
+                // Fade in room
+                FadeInRoomLighting();
 
-            // Ensure room environment decoration game objects are activated
-            instantiatedRoom.ActivateEnvironmentGameObjects();
+                // Ensure room environment decoration game objects are activated
+                instantiatedRoom.ActivateEnvironmentGameObjects();
 
-            // Fade in the environment decoration gameobjects lighting
-            FadeInEnvironmentLighting();
+                // Fade in the environment decoration gameobjects lighting
+                FadeInEnvironmentLighting();
 
-            // Fade in the room doors lighting
-            FadeInDoors();
+                // Fade in the room doors lighting
+                FadeInDoors();
 
-            instantiatedRoom.room.isLit = true;
+                instantiatedRoom.room.isLit = true;
+            }
+            else
+            {
+                // Ensure room environment decoration game objects are activated
+                instantiatedRoom.ActivateEnvironmentGameObjects();
+
+                instantiatedRoom.room.isLit = true;
+            }
         }
     }
 

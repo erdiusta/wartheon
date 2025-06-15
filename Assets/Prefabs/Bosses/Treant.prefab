@@ -353,6 +353,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1282603778, guid: 893779de182ac5747bbb18a1d123d2d7, type: 3}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_MaskInteraction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
@@ -518,11 +522,10 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 4cfae2ff3b3aed647b0fcf81033f0149, type: 2}
     m_RemovedComponents:
     - {fileID: 0}
-    - {fileID: 480008352441278276, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
-    - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 0}
     - {fileID: -5970059223594176715, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     - {fileID: 7400821728870662684, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
-    - {fileID: 702330259438598581, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 0}
     - {fileID: 1280140502967062622, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

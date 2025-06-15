@@ -68,6 +68,12 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (!IsAttacking) return;
 
         Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+
+        if (mainHandWeapon.weaponDetails == null)
+        {
+            Debug.LogError("Main weapon's weapon details reference is null!");
+        }
+
         MeleeAttackType mainHandMeleeAttackType = mainHandWeapon.weaponDetails.hasSwing ? MeleeAttackType.Swing : MeleeAttackType.Thrust;
 
         DetectHandHit(mainHandWeapon, mainHandMeleeAttackType, MeleeHand.MainHand, isBloodDrain);
@@ -114,12 +120,12 @@ public class MeleeAttackMainHand : MonoBehaviour
             if (collider.TryGetComponent(out Environment environment) &&
                 collider.TryGetComponent(out Health envHealth))
             {
-                envHealth.TakeDamage(100, transform.position, collider.transform.position, false, hand); continue;
+                envHealth.TakeDamage(100, transform.position, collider.transform.position, false, null, hand); continue;
             }
 
             if (!collider.TryGetComponent(out Health enemyHealth)) continue;
 
-            if (collider.CompareTag("PracticeDummy"))
+            if (collider.CompareTag(Settings.practiceDummy))
             {
                 DummyCheck(collider, hand); 
                 continue;
@@ -140,7 +146,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
                 if (enemyHealth.suddenDeathHappened)
                 {
-                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false, hand);
+                    enemyHealth.TakeDamage(enemyHealth.GetCurrentHealth() + 10, transform.position, enemy.transform.position, false, null, hand);
                     continue;
                 }
 
@@ -149,7 +155,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                                 CalculateDamageAmount(enemy, weapon, hand)): CalculateDamageAmount(enemy, weapon, hand);
 
                 bool bypass = hand == MeleeHand.OffHand; // only bypass for off-hand hits
-                enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false, hand, bypass);
+                enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false, null, hand, bypass);
 
                 SoundEffectManager.Instance.PlaySoundEffect(weapon.weaponDetails.weaponImpactSoundEffect);
 
@@ -174,7 +180,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                 enemyHealth.isDodging = true;
                 enemy.healthEvent.CallDodgeEvent();
                 enemyHealth.PostHitImmunity(true);
-                enemyHealth.TakeDamage(0, transform.position, enemyHealth.transform.position, false, hand);
+                enemyHealth.TakeDamage(0, transform.position, enemyHealth.transform.position, false, null, hand);
             }
         }
     }
@@ -201,8 +207,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         float critMultiplier = weapon.weaponDetails.criticalHitDamageMultiplier + player.additionalCriticalMeleeDamageModifier;
 
-        if (player.onStealth)
-            critMultiplier += player.additionalCriticalDamageOnStealth;
+        if (player.onStealth) critMultiplier += player.additionalCriticalDamageOnStealth;
 
         damageDone = criticalHitHappened ? (int)(damageDone * critMultiplier) : damageDone;
 
@@ -299,7 +304,7 @@ public class MeleeAttackMainHand : MonoBehaviour
             if (randomDice < 0.25f)
             {
                 enemyHealth.suddenDeathHappened = true;
-                enemyHealth.TakeDamage(5000, transform.position, enemy.transform.position, false, MeleeHand.MainHand);
+                enemyHealth.TakeDamage(5000, transform.position, enemy.transform.position, false, null, MeleeHand.MainHand);
                 enemy.destroyedEvent.CallDestroyedEvent(false);
                 enemy.healthEvent.CallGetShatteredEvent();
                 SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
@@ -576,7 +581,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
 
         bool bypass = hand == MeleeHand.OffHand; // only bypass for off-hand hits
-        health.TakeDamage(damageDone, transform.position, health.transform.position, false, hand, bypass);
+        health.TakeDamage(damageDone, transform.position, health.transform.position, false, null, hand, bypass);
     }
 
     IEnumerator DelayAttackRightHand(Weapon weapon)

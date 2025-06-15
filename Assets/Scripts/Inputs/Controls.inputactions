@@ -602,7 +602,18 @@
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Parry",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "af4f2de8-71e7-4076-9147-7a5f464f5097",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
                     "action": "Parry",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -675,6 +686,15 @@
                     "name": "Tooltip",
                     "type": "Button",
                     "id": "117c2ea7-a1ad-4b28-95fc-10011c39d362",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "a2bea2db-7e9c-4576-b254-7721174e0883",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -811,6 +831,17 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Tooltip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "44b4f3d9-b6ab-44ac-8d07-18747a103dea",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

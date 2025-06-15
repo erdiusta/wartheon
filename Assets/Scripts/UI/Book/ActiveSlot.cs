@@ -13,7 +13,7 @@ public class ActiveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         switch (GameManager.Instance.GetPlayer().playerDetails.playerCharacterIndex)
         {
             case Character.Astraeus:
-                if (activeItemDetails.activeItemType == ActiveItemType.Dummy)
+                if (activeItemDetails.activeItemType == ActiveItemType.Decoy)
                 {
                     activeUnlocked = true;
                     transform.GetComponent<Image>().color = Color.white;

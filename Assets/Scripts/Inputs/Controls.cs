@@ -688,7 +688,18 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Parry"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""af4f2de8-71e7-4076-9147-7a5f464f5097"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Parry"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -761,6 +772,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""name"": ""Tooltip"",
                     ""type"": ""Button"",
                     ""id"": ""117c2ea7-a1ad-4b28-95fc-10011c39d362"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Click"",
+                    ""type"": ""Button"",
+                    ""id"": ""a2bea2db-7e9c-4576-b254-7721174e0883"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -899,6 +919,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Tooltip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""44b4f3d9-b6ab-44ac-8d07-18747a103dea"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -961,6 +992,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_UIActions_OK = m_UIActions.FindAction("OK", throwIfNotFound: true);
         m_UIActions_Esc = m_UIActions.FindAction("Esc", throwIfNotFound: true);
         m_UIActions_Tooltip = m_UIActions.FindAction("Tooltip", throwIfNotFound: true);
+        m_UIActions_Click = m_UIActions.FindAction("Click", throwIfNotFound: true);
     }
 
     ~@Controls()
@@ -1341,6 +1373,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_UIActions_OK;
     private readonly InputAction m_UIActions_Esc;
     private readonly InputAction m_UIActions_Tooltip;
+    private readonly InputAction m_UIActions_Click;
     /// <summary>
     /// Provides access to input actions defined in input action map "UIActions".
     /// </summary>
@@ -1372,6 +1405,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UIActions/Tooltip".
         /// </summary>
         public InputAction @Tooltip => m_Wrapper.m_UIActions_Tooltip;
+        /// <summary>
+        /// Provides access to the underlying input action "UIActions/Click".
+        /// </summary>
+        public InputAction @Click => m_Wrapper.m_UIActions_Click;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1413,6 +1450,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Tooltip.started += instance.OnTooltip;
             @Tooltip.performed += instance.OnTooltip;
             @Tooltip.canceled += instance.OnTooltip;
+            @Click.started += instance.OnClick;
+            @Click.performed += instance.OnClick;
+            @Click.canceled += instance.OnClick;
         }
 
         /// <summary>
@@ -1439,6 +1479,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Tooltip.started -= instance.OnTooltip;
             @Tooltip.performed -= instance.OnTooltip;
             @Tooltip.canceled -= instance.OnTooltip;
+            @Click.started -= instance.OnClick;
+            @Click.performed -= instance.OnClick;
+            @Click.canceled -= instance.OnClick;
         }
 
         /// <summary>
@@ -1681,5 +1724,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTooltip(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Click" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnClick(InputAction.CallbackContext context);
     }
 }

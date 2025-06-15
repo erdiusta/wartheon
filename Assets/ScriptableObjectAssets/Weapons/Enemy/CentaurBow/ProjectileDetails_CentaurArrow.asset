@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: Centaur Arrow
   isPlayerProjectile: 0
-  projectileSprite: {fileID: 21300000, guid: e733aece5594a7c41ad86253a8b22920, type: 3}
   projectilePrefabArray:
   - {fileID: 2585463276777236944, guid: 33414805508ae3942a13657ed0b87cd2, type: 3}
   - {fileID: 2585463276777236944, guid: 2af95e0b8d8395d48b8f1f33e4d524b9, type: 3}
@@ -25,20 +24,33 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 11400000, guid: 9e888f32de5d60a429c75fb52a068ded, type: 2}
   projectileDamageMin: 10
   projectileDamageMax: 15
-  projectileSpeedMin: 12
-  projectileSpeedMax: 16
+  projectileSpeed: 18
   projectileRange: 50
   projectileRotationSpeed: 1
-  hasAcid: 0
-  acidEfficiency: 0
+  isGuided: 0
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 0
+  hasLifeTime: 0
+  lifeDuration: 15
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
+  hasBurnDamage: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
   hasCurseDamage: 0
   curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   projectileSpreadMin: 0
   projectileSpreadMax: 0
   projectileSpawnAmountMin: 1
@@ -51,3 +63,5 @@ MonoBehaviour:
   projectileTrailMaterial: {fileID: 0}
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

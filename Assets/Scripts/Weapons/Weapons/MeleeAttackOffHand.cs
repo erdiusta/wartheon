@@ -296,36 +296,13 @@ public class MeleeAttackOffHand : MonoBehaviour
         {
             float randomCriticalDice = Random.Range(0f, 1f);
 
-            float criticalHitChanceModifier = 0f;
-
-            if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
-            {
-                if ((player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Dagger &&
-                    player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Dagger) ||
-                    (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Claw &&
-                    player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Claw) &&
-                    player.selectedPassiveItem.GetCurrentBackPassiveItem()?.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
-                {
-                    criticalHitChanceModifier = 0.1f;
-                }
-                else
-                {
-                    criticalHitChanceModifier = 0f;
-                }
-            }
-            else
-            {
-                criticalHitChanceModifier = 0f;
-            }
-
             if (player.isBlind)
             {
                 criticalHitHappened = false;
             }
             else
             {
-                criticalHitHappened = randomCriticalDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitChance + criticalHitChanceModifier ?
-                    true : false;
+                criticalHitHappened = randomCriticalDice < player.currentMainHandCriticalHitChance;
             }
         }
 

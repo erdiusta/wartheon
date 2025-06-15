@@ -4,40 +4,41 @@ using System.Collections.Generic;
 
 namespace Pathfinding {
 	using Pathfinding.Util;
+    using System;
 
-	/// <summary>
-	/// Linearly interpolating movement script.
-	/// This movement script will follow the path exactly, it uses linear interpolation to move between the waypoints in the path.
-	/// This is desirable for some types of games.
-	/// It also works in 2D.
-	///
-	/// See: You can see an example of this script in action in the example scene called Example15_2D.
-	///
-	/// \section rec Configuration
-	/// \subsection rec-snapped Recommended setup for movement along connections
-	///
-	/// This depends on what type of movement you are aiming for.
-	/// If you are aiming for movement where the unit follows the path exactly and move only along the graph connections on a grid/point graph.
-	/// I recommend that you adjust the StartEndModifier on the Seeker component: set the 'Start Point Snapping' field to 'NodeConnection' and the '
-	/// End Point Snapping' field to 'SnapToNode'.
-	/// [Open online documentation to see images]
-	/// [Open online documentation to see images]
-	///
-	/// \subsection rec-smooth Recommended setup for smooth movement
-	/// If you on the other hand want smoother movement I recommend setting 'Start Point Snapping' and 'End Point Snapping' to 'ClosestOnNode' 
-	/// and to add the Simple Smooth Modifier to the GameObject as well.
-	/// Alternatively you can use the <see cref="Pathfinding.FunnelModifier Funnel"/> which works better on navmesh/recast graphs 
-	/// or the <see cref="Pathfinding.RaycastModifier"/>.
-	///
-	/// You should not combine the Simple Smooth Modifier or the Funnel Modifier with the NodeConnection snapping mode. This may lead to very odd behavior.
-	///
-	/// [Open online documentation to see images]
-	/// [Open online documentation to see images]
-	/// You may also want to tweak the <see cref="rotationSpeed"/>.
-	///
-	/// \ingroup movementscripts
-	/// </summary>
-	[RequireComponent(typeof(Seeker))]
+    /// <summary>
+    /// Linearly interpolating movement script.
+    /// This movement script will follow the path exactly, it uses linear interpolation to move between the waypoints in the path.
+    /// This is desirable for some types of games.
+    /// It also works in 2D.
+    ///
+    /// See: You can see an example of this script in action in the example scene called Example15_2D.
+    ///
+    /// \section rec Configuration
+    /// \subsection rec-snapped Recommended setup for movement along connections
+    ///
+    /// This depends on what type of movement you are aiming for.
+    /// If you are aiming for movement where the unit follows the path exactly and move only along the graph connections on a grid/point graph.
+    /// I recommend that you adjust the StartEndModifier on the Seeker component: set the 'Start Point Snapping' field to 'NodeConnection' and the '
+    /// End Point Snapping' field to 'SnapToNode'.
+    /// [Open online documentation to see images]
+    /// [Open online documentation to see images]
+    ///
+    /// \subsection rec-smooth Recommended setup for smooth movement
+    /// If you on the other hand want smoother movement I recommend setting 'Start Point Snapping' and 'End Point Snapping' to 'ClosestOnNode' 
+    /// and to add the Simple Smooth Modifier to the GameObject as well.
+    /// Alternatively you can use the <see cref="Pathfinding.FunnelModifier Funnel"/> which works better on navmesh/recast graphs 
+    /// or the <see cref="Pathfinding.RaycastModifier"/>.
+    ///
+    /// You should not combine the Simple Smooth Modifier or the Funnel Modifier with the NodeConnection snapping mode. This may lead to very odd behavior.
+    ///
+    /// [Open online documentation to see images]
+    /// [Open online documentation to see images]
+    /// You may also want to tweak the <see cref="rotationSpeed"/>.
+    ///
+    /// \ingroup movementscripts
+    /// </summary>
+    [RequireComponent(typeof(Seeker))]
 	[AddComponentMenu("Pathfinding/AI/AILerp (2D,3D)")]
 	[HelpURL("http://arongranberg.com/astar/docs/class_pathfinding_1_1_a_i_lerp.php")]
 	public class AILerp : VersionedMonoBehaviour, IAstarAI {
@@ -632,6 +633,11 @@ namespace Pathfinding {
                 Vector3 nextPosition;
                 Quaternion nextRotation;
                 MovementUpdate(Time.fixedDeltaTime, out nextPosition, out nextRotation);
+
+                // Apply repulsion before movement
+                Vector2 separationOffset = CalculateSeparationOffset();
+                nextPosition += (Vector3)separationOffset;
+
                 FinalizeMovement(nextPosition, nextRotation, rb2D);
             }
         }
@@ -677,11 +683,40 @@ namespace Pathfinding {
                 }
             }
 
-            if (updateRotation)
-                tr.rotation = nextRotation;
+            //if (updateRotation)
+            //    tr.rotation = nextRotation;
+        }
+        private Vector2 CalculateSeparationOffset()
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f, LayerMask.GetMask("Enemy"));
+            Vector2 separation = Vector2.zero;
+            int count = 0;
+
+            foreach (var hit in hits)
+            {
+                if (hit.gameObject == gameObject) continue;
+                if (!hit.CompareTag("Enemy")) continue;
+                if (!(hit is CircleCollider2D)) continue;
+
+                Vector2 diff = rb2D.position - hit.GetComponent<Rigidbody2D>().position;
+                float distance = diff.magnitude;
+
+                if (distance > 0.01f)
+                {
+                    separation += diff.normalized / distance;
+                    count++;
+                }
+            }
+
+            if (count > 0)
+            {
+                return (separation / count) * 0.1f; // smaller weight to avoid jitter
+            }
+
+            return Vector2.zero;
         }
 
-		Quaternion SimulateRotationTowards (Vector3 direction, float deltaTime) {
+        Quaternion SimulateRotationTowards (Vector3 direction, float deltaTime) {
 			// Rotate unless we are really close to the target
 			if (direction != Vector3.zero) {
 				Quaternion targetRotation = Quaternion.LookRotation(direction, orientation == OrientationMode.YAxisForward ? Vector3.back : Vector3.up);

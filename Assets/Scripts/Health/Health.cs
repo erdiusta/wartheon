@@ -19,6 +19,8 @@ public class Health : MonoBehaviour
     [HideInInspector] public FlashManager flashManager;
     [HideInInspector] public const float spriteFlashInterval = 0.1f;
     [HideInInspector] public bool fxAnimatorPlayed;
+    [HideInInspector] public bool damageTaken;
+    [HideInInspector] public bool hasDied = false;
 
     HealthEvent healthEvent;
     Player player;
@@ -35,7 +37,6 @@ public class Health : MonoBehaviour
     bool isProjectileHit = false;
     Decoy decoy;
 
-
     private void Awake()
     {
         healthEvent = GetComponent<HealthEvent>();
@@ -45,15 +46,20 @@ public class Health : MonoBehaviour
     private void Start()
     {
         // Trigger a health event for UI update
+        if (player != null && !player.isInitialized) return;
+
         // Trigger health event
-        healthEvent.CallHealthChangedEvent(currentHealth, 0, MeleeHand.None);
+        if (player == null)
+        {
+            healthEvent.CallHealthChangedEvent(currentHealth, 0, MeleeHand.None);
+        }
 
         // Attempt to load enemy / player / decoy components
         player = GetComponent<Player>();
         enemy = GetComponent<Enemy>();
         decoy = GetComponent<Decoy>();
 
-        if (tag == "PracticeDummy")
+        if (tag == Settings.practiceDummy)
         {
             currentHealth = 999999999;
         }
@@ -89,25 +95,35 @@ public class Health : MonoBehaviour
 
     private void Update()
     {
-        // If player dies, clones should be destroyed immediately
         if (player != null)
         {
-            if (player.isDead)
+            if (!player.isInitialized) return;
+
+            if (InputManager.TutorialEnabled)
             {
-                Destroy(gameObject);
+                int indexValue = (int)TutorialInteraction.Instance.currentTutorialPhase;
+
+                if (indexValue >= (int)TutorialPhase.Parry)
+                {
+                    isDamageable = true;
+                }
+                else
+                {
+                    isDamageable = false;
+                }
             }
-        }
 
-
-        if (player != null)
-        {
-            // Passive item effect
-            PassiveItem chestItem = player.selectedPassiveItem?.GetCurrentChestPassiveItem();
-
-            if (chestItem != null && player.selectedPassiveItem.GetCurrentChestPassiveItem().passiveItemDetails.passiveItemType ==
-                PassiveItemType.ChestplateOfTheLastLight && currentHealth < maximumHealth * 0.5f)
+            // Passive item effect - ChestplateOfTheLastLight Specific
+            if (player.equippedPassiveItems.TryGetValue(PassiveItemSlotName.Chest, out PassiveItem passiveItem) && passiveItem != null)
             {
-                player.thirtyPercentDamageAbsorbIsActive = true;
+                if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight && currentHealth < maximumHealth * 0.5f)
+                {
+                    player.thirtyPercentDamageAbsorbIsActive = true;
+                }
+                else
+                {
+                    player.thirtyPercentDamageAbsorbIsActive = false;
+                }
             }
             else
             {
@@ -172,68 +188,70 @@ public class Health : MonoBehaviour
                 burnCoroutine = null;
             }
         }
-        else if (decoy != null)
+
+        DeathCheck();
+    }
+
+    private void DeathCheck()
+    {
+        // Death check
+        if (currentHealth <= 0 && !hasDied)
         {
-            if (currentHealth <= 0f)
+            hasDied = true;
+            fxAnimatorPlayed = true;
+
+            if (player != null)
             {
-                if (decoy.tag == "Dummy")
+                if (player.isClone)
                 {
-                    SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemImpactSoundEffect);
+                    Player.hasClone = false;
+                    enemy.destroyedEvent.CallDestroyedEvent(false, true); // Player clone death
                 }
 
-                Destroy(gameObject);
+                player.destroyedEvent.CallDestroyedEvent(true); // Player death
+            }
+            else if (enemy != null)
+            {
+                enemy.dropOnDestroy.DropProcess();
+                enemy.destroyedEvent.CallDestroyedEvent(false); // Enemy death
+            }
+            else if (decoy != null)
+            {
+                decoy.destroyedEvent.CallDestroyedEvent(false); // Decoy death
             }
         }
     }
 
-    /// <summary>
-    /// Public method called when damage is taken - Projectile
-    /// </summary>
-    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, Collider2D collider, bool headShotHappened)
+    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, bool headShotHappened, Collider2D collider = null,
+        MeleeHand hand = MeleeHand.None, bool bypassImmunity = false)
     {
-        bool isRolling = false;
-
-        if (player != null)
+        if (decoy != null)
         {
-            isRolling = player.playerControl.isPlayerRolling;
+            damageTaken = true;
         }
 
-        // Check if the collider is a projectile
-        bool isProjectile = collider.CompareTag("playerProjectile");
-
+        // Check if hit by projectile
+        bool isProjectile = collider != null && collider.CompareTag(Settings.playerProjectile);
         if (isProjectile)
         {
-            // If hit by a projectile, set the projectile hit flag
             isProjectileHit = true;
         }
 
-        if (isDamageable && !isRolling)
+        if (isDamageable || bypassImmunity)
         {
             currentHealth -= damageAmount;
+
+            // Book UI health update
             if (player != null && !player.isClone)
             {
                 StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
             }
 
-            if (player != null)
+            if (player != null && getHitCoroutine == null && currentHealth > 0)
             {
-                if (getHitCoroutine == null)
-                {
-                    if (currentHealth > 0)
-                    {
-                        //getHitCoroutine = StartCoroutine(PlayerGetHitRoutine());
-                        PostHitImmunity();
-                    }
-                    else
-                    {
-                        if (player.isClone)
-                        {
-                            Player.hasClone = false;
-                            Destroy(player.gameObject);
-                        }
-                    }
-                }
+                PostHitImmunity();
             }
+            // Decoy logic
             else if (decoy != null)
             {
                 if (getHitCoroutine == null)
@@ -242,75 +260,15 @@ public class Health : MonoBehaviour
                     PostHitImmunity();
                 }
             }
+            // Enemy logic
             else if (enemy != null)
             {
-                // Set health bar as the percentage of health remaining
+                // Update enemy health bar
                 if (GameManager.Instance.healthBarContainer.activeSelf)
                 {
                     GameManager.Instance.SetHealthBarValue(currentHealth, enemy);
                 }
 
-                if (getHitCoroutine == null)
-                {
-                    if (!isBlocking || !isDodging)
-                    {
-                        PostHitImmunity();
-                    }
-
-                    getHitCoroutine = StartCoroutine(EnemyGetHitRoutine(headShotHappened));
-                }
-
-                if (currentHealth <= 0)
-                {
-                    fxAnimatorPlayed = true; // Reset hit fx animation
-
-                    enemy.dropOnDestroy.DropProcess();
-                }
-            }
-
-            // Trigger health event
-            healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, MeleeHand.None);
-        }
-    }
-
-    /// <summary>
-    /// Public method called when damage is taken - Melee & Contact
-    /// </summary>
-    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, bool headShotHappened, MeleeHand hand = MeleeHand.None,
-        bool bypassImmunity = false)
-    {
-        bool isRolling = false;
-
-        if (player != null)
-        {
-            isRolling = player.playerControl.isPlayerRolling;
-        }
-
-        if ((isDamageable || bypassImmunity) && !isRolling)
-        {
-            currentHealth -= damageAmount;
-
-            if (player != null && !player.isClone)
-            {
-                StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
-
-                if (getHitCoroutine == null)
-                {
-                    if (currentHealth > 0)
-                    {
-                        PostHitImmunity();
-                    }
-                }
-            }
-            else if (decoy != null)
-            {
-                if (currentHealth > 0)
-                {
-                    PostHitImmunity();
-                }
-            }
-            else if (enemy != null)
-            {
                 if (tag == Settings.summonedEnemyTag)
                 {
                     if (getHitCoroutine == null)
@@ -325,12 +283,6 @@ public class Health : MonoBehaviour
                 }
                 else
                 {
-                    // Set health bar as the percentage of health remaining
-                    if (GameManager.Instance.healthBarContainer.activeSelf)
-                    {
-                        GameManager.Instance.SetHealthBarValue(currentHealth, enemy);
-                    }
-
                     if (getHitCoroutine != null)
                     {
                         StopCoroutine(getHitCoroutine);
@@ -342,13 +294,6 @@ public class Health : MonoBehaviour
                     }
 
                     getHitCoroutine = StartCoroutine(EnemyGetHitRoutine(headShotHappened));
-
-
-                    if (currentHealth <= 0)
-                    {
-                        fxAnimatorPlayed = true; // Reset hit fx animation
-                        enemy.dropOnDestroy.DropProcess();
-                    }
                 }
             }
 
@@ -359,7 +304,7 @@ public class Health : MonoBehaviour
 
     IEnumerator DecoyGetHitRoutine()
     {
-        if (decoy.tag == "Dummy")
+        if (decoy.tag == Settings.decoyTag)
         {
             SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemSwingSoundEffect);
         }
@@ -373,8 +318,6 @@ public class Health : MonoBehaviour
     {
         if (!isBlocking)
         {
-            //enemy.enemyAI.enemyPhase = EnemyPhase.GetHit;
-
             if (enemy.health.GetCurrentHealth() > 0f)
             {
                 enemy.animateEnemy.ResetAnimatonParameters();
@@ -415,7 +358,6 @@ public class Health : MonoBehaviour
         enemy.animator.SetBool(Settings.block, false);
         isBlocking = false;
         getHitCoroutine = null;
-        //enemy.enemyAI.enemyPhase = EnemyPhase.Patrol;
     }
 
     /// <summary>
@@ -547,14 +489,26 @@ public class Health : MonoBehaviour
     {
         burnPeriodCount++;
 
-        int damageAmount = 7;
+        int damageAmount = 0;
+
+        if (player != null)
+        {
+            damageAmount = (int)(7 - 7 * player.currentFireResistanceValue);
+        }
+        else if (enemy != null)
+        {
+            damageAmount = (int)(7 - 7 * enemy.enemyDetails.fireResistance);
+        }
+        else
+        {
+            damageAmount = 7;
+        }
+
         // Trigger health event
         healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, MeleeHand.None);
-        TakeDamage(damageAmount, Vector2.zero, transform.position, false, MeleeHand.None);
+        TakeDamage(damageAmount, Vector2.zero, transform.position, false, null, MeleeHand.None);
 
-        float rndNumber = Random.Range(0f, 1f);
-
-        if (rndNumber > 0.5f && burnPeriodCount > 2)
+        if (burnPeriodCount > 3)
         {
             if (player != null)
             {
@@ -570,7 +524,7 @@ public class Health : MonoBehaviour
             burnPeriodCount = 0;
         }
 
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(2f);
 
         burnCoroutine = null; // Reset the coroutine reference when it's finished
     }
@@ -582,14 +536,26 @@ public class Health : MonoBehaviour
     {
         poisonPeriodCount++;
 
-        int damageAmount = 7;
+        int damageAmount = 0;
+
+        if (player != null)
+        {
+            damageAmount = (int)(7 - 7 * player.currentEarthResistanceValue);
+        }
+        else if (enemy != null)
+        {
+            damageAmount = (int)(7 - 7 * enemy.enemyDetails.earthResistance);
+        }
+        else
+        {
+            damageAmount = 7;
+        }
+
         // Trigger health event
         healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, MeleeHand.None);
-        TakeDamage(damageAmount, Vector2.zero, transform.position, false, MeleeHand.None);
+        TakeDamage(damageAmount, Vector2.zero, transform.position, false, null, MeleeHand.None);
 
-        float rndNumber = Random.Range(0f, 1f);
-
-        if (rndNumber > 0.5f && poisonPeriodCount > 2)
+        if (poisonPeriodCount > 3)
         {
             if (player != null)
             {
@@ -605,21 +571,32 @@ public class Health : MonoBehaviour
             poisonPeriodCount = 0;
         }
 
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(2f);
 
         poisonCoroutine = null; // Reset the coroutine reference when it's finished
     }
 
-
     /// <summary>
-    /// Set starting health 
+    /// Set starting health - Enemy
     /// </summary>
-    public void SetMaximumHealth(int maximumHealth, bool shouldHealthFilled = true)
+    public void SetMaximumHealth(int maximumHealth)
     {
         this.maximumHealth = maximumHealth;
 
         // If current health maximized together with increasing max health or not
-        currentHealth = shouldHealthFilled ? maximumHealth : currentHealth;
+        currentHealth = maximumHealth;
+    }
+
+
+    /// <summary>
+    /// Set starting health - Player
+    /// </summary>
+    public void SetMaximumHealth(int maximumHealth, bool shouldHealthFilled = true, bool onStart = false)
+    {
+        this.maximumHealth = maximumHealth;
+
+        // If current health maximized together with increasing max health or not
+        currentHealth = onStart ? maximumHealth : shouldHealthFilled ? maximumHealth : currentHealth;
     }
 
     /// <summary>
@@ -643,17 +620,8 @@ public class Health : MonoBehaviour
     /// </summary>
     public void AddHealth(int healthIncrease)
     {
-        int totalHealth = currentHealth + healthIncrease;
-
-        if (totalHealth > maximumHealth)
-        {
-            currentHealth = maximumHealth;
-        }
-        else
-        {
-            currentHealth = totalHealth;
-        }
-
+        currentHealth = Mathf.Clamp(currentHealth + healthIncrease, 0, maximumHealth);
+            
         if (enemy != null)
         {
             // Set health bar as the percentage of health remaining

@@ -115,7 +115,7 @@ public static class Settings
     public const string playerTag = "Player";
     public const string playerWeapon = "playerWeapon";
     public const string enemyTag = "Enemy";
-    public const string decoyTag = "Dummy";
+    public const string decoyTag = "Decoy";
     public const string summonedEnemyTag = "summonedEnemy";
     public const string chestItemTag = "Chest Item";
     public const string mainHandSlot = "mainHandSlot";
@@ -126,6 +126,7 @@ public static class Settings
     public const string playerProjectile = "playerProjectile";
     public const string meteor = "meteor";
     public const string enemyProjectile = "enemyProjectile";
+    public const string practiceDummy = "PracticeDummy";
     public const string astraeusTag = "astraeusTag";
     public const string lyrisaTag = "lyrisaTag";
     public const string orionTag = "orionTag";

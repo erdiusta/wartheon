@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Player))]
 [DisallowMultipleComponent]
@@ -228,6 +230,8 @@ public class PlayerControl : MonoBehaviour
             // Else player roll if not cooling down
             else if(playerRollCooldownTimer <= 0f)
             {
+                if (InputManager.TutorialEnabled && InputManager.dodgeRollDisabled) return;
+
                 PlayerRoll((Vector3)direction);
             }
         }
@@ -406,6 +410,8 @@ public class PlayerControl : MonoBehaviour
 
         if (player.activeWeapon.GetCurrentMainHandWeapon() == null) return;
 
+        if (InputManager.firingDisabled) return; // For tutorial issues
+
         // Fire when left mouse button is clicked - melee
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
         {
@@ -508,7 +514,7 @@ public class PlayerControl : MonoBehaviour
             // Use active item when clicked if it is a static item like a dummy
             if (InputManager.Instance.activeItem.action.WasPressedThisFrame())
             {
-                if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Dummy)
+                if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Decoy)
                 {
                     if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0)
                     {
@@ -643,6 +649,8 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void ParryWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
+        if (InputManager.TutorialEnabled && InputManager.parryDisabled) return;
+
         if (player.activeWeapon.GetCurrentMainHandWeapon() != null && !player.meleeAttackMainHand.IsAttacking)
         {
             switch (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass)
@@ -708,8 +716,6 @@ public class PlayerControl : MonoBehaviour
         {
             if ((GameManager.Instance.specialUILayerMask.value & (1 << result.gameObject.layer)) != 0)
             {
-                Debug.Log("SHIT");
-
                 return true; // Clicked on a UI element within the target layer
             }
         }
@@ -720,6 +726,8 @@ public class PlayerControl : MonoBehaviour
     private void SwitchWeaponInput(bool onStart = false)
     {
         float scrollValue = (InputManager.Instance.switchWeaponByWheel.action.ReadValue<Vector2>().normalized).y;
+
+        if (InputManager.switchDisabled) return;
 
         bool switchForward = false;
         bool switchBack = false;
@@ -884,7 +892,7 @@ public class PlayerControl : MonoBehaviour
     private void HighlightWeaponSetButton()
     {       
         // Get the button container
-        Transform buttonContainer = GameManager.Instance.bookView.transform.GetChild(1).GetChild(3).GetChild(0);
+        Transform buttonContainer = GameManager.Instance.bookView.transform.GetChild(1).GetChild(4).GetChild(0);
 
         // Clamp the index within the valid range (assuming 3 weapon slots)
         player.currentWeaponSlotSetIndex = Mathf.Clamp(player.currentWeaponSlotSetIndex, 1, 3);
@@ -947,6 +955,11 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void SpecialMoveInput()
     {
+        if (InputManager.TutorialEnabled)
+        {
+            if (InputManager.specialSkillOneDisabled || InputManager.specialSkillTwoDisabled || InputManager.specialSkillThreeDisabled) return;
+        }
+
         if (InputManager.Instance.specialMoveOne.action.WasPressedThisFrame() && !player.specialMoveOneOnCooldown)
         {
             switch (player.playerDetails.playerCharacterIndex)
@@ -1176,7 +1189,7 @@ public class PlayerControl : MonoBehaviour
             GameObject projectilePrefab = currentProjectile.projectilePrefabArray[Random.Range(0, currentProjectile.projectilePrefabArray.Length)];
 
             // Get random speed value
-            float projectileSpeed = Random.Range(currentProjectile.projectileSpeedMin, currentProjectile.projectileSpeedMax);
+            float projectileSpeed = currentProjectile.projectileSpeed;
 
             // Get Gameobject with IFireable component
             IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, meteorStartsToFallPosition, Quaternion.identity);
@@ -1341,7 +1354,7 @@ public class PlayerControl : MonoBehaviour
 
                 if (enemy.health != null)
                 {
-                    enemy.health.TakeDamage(player.seismicSlamDamage, transform.position, enemy.health.transform.position, false, MeleeHand.None);
+                    enemy.health.TakeDamage(player.seismicSlamDamage, transform.position, enemy.health.transform.position, false, null, MeleeHand.None);
                 }
             }
         }
@@ -1555,7 +1568,7 @@ public class PlayerControl : MonoBehaviour
                     Interaction interaction = collider2D.GetComponent<Interaction>();
                     NPC npc = interaction.GetComponent<NPC>();
 
-                    if (npc != null && interaction.GetComponent<NPC>().npcType == NpcType.Gambler) return;
+                    if (npc != null && npc.npcType == NpcType.Gambler) return;
 
                     interaction.TriggerDialogue();
                 }
@@ -1563,8 +1576,8 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public void DropProcess(DropType dropType, ItemGeneric itemGeneric = null, bool isWeaponSwapping = false, bool dropOffHand = false, 
-        ItemSlotStatus itemSlotStatus = ItemSlotStatus.None, int inventoryIndex = -1)
+    public void DropProcess(DropType dropType, ItemGeneric itemGeneric = null, WeaponDetailsSO toBeSwappedWeaponDetails = null, bool dropOffHand = false, 
+        ItemSlotStatus itemSlotStatus = ItemSlotStatus.None, int inventoryIndex = -1, bool dropButton = false)
     {
         if (dropType == DropType.ActiveItem)
         {
@@ -1601,7 +1614,7 @@ public class PlayerControl : MonoBehaviour
                 player.UpdateWeaponHandlingAndCriticalValues();
                 player.UpdateBlockAndEvasivenessValues();
 
-                DropItem.toBeDroppedDropItem.transform.SetParent(null);
+                DropItem.toBeDroppedDropItem.transform.SetParent(GameManager.Instance.GetCurrentRoom().instantiatedRoom.transform);
                 DropItem.toBeDroppedDropItem.isPickedUp = false;
 
                 // Make sure drop completed
@@ -1613,184 +1626,94 @@ public class PlayerControl : MonoBehaviour
         {
             PassiveItem passiveItem = (PassiveItem)itemGeneric;
 
-            if (itemSlotStatus == ItemSlotStatus.Inventory)
+            if (itemSlotStatus == ItemSlotStatus.Inventory) // Just drop from inventory to the floor
             {
-                GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-                DropItem chestItem = chestItemObject.GetComponent<DropItem>();
-                DropItem.toBeDroppedDropItem = chestItem;
-
-                DropItem.toBeDroppedDropItem.hasSecondaryPassiveDrop = true;
-                DropItem.toBeDroppedDropItem.droppedByPlayer = true;
-                DropItem.toBeDroppedDropItem.isColliding = true;
-
-                DropItem.toBeDroppedDropItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, transform.position);
-
-                // Disable some components during equipped
-                DropItem.toBeDroppedDropItem.spriteRenderer.enabled = true;
-                DropItem.toBeDroppedDropItem.animator.enabled = true;
-                DropItem.toBeDroppedDropItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
-
-                // Empty inventory slot
+                SpawnDroppedPassiveItem(passiveItem);
                 InventoryManager.Instance.EmptyItemFromInventory(inventoryIndex);
-
-                DropItem.toBeDroppedDropItem.transform.SetParent(null);
-                DropItem.toBeDroppedDropItem.isPickedUp = false;
-
-                // Make sure drop completed
-                DropItem.toBeDroppedDropItem.boxCollider2D.enabled = true;
-                DropItem.toBeDroppedDropItem.isColliding = false;
+            }
+            else if (dropButton)
+            {
+                // Manual drop by clicking drop button
+                SpawnDroppedPassiveItem(passiveItem);
+                player.setPassiveItemEvent.CallRemovePassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName, isSwap: false, dropButton: true);
+            }
+            else if (InventoryManager.Instance.IsInventoryFull()) // Drop equipped item to the floor, pick-up new one if pick-up happened
+            {
+                // Forced drop due to full inventory during item pickup
+                SpawnDroppedPassiveItem(passiveItem);
+                player.setPassiveItemEvent.CallRemovePassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
             }
             else
             {
+                // Regular swap - previous item will be inserted into inventory
+                player.setPassiveItemEvent.CallRemovePassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
+                int index = InventoryManager.Instance.FindIndexOfItem(passiveItem);
 
-                GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-                DropItem chestItem = chestItemObject.GetComponent<DropItem>();
-                DropItem.toBeDroppedDropItem = chestItem;
-
-                DropItem.toBeDroppedDropItem.hasSecondaryPassiveDrop = true;
-                DropItem.toBeDroppedDropItem.droppedByPlayer = true;
-                DropItem.toBeDroppedDropItem.isColliding = true;
-
-                DropItem.toBeDroppedDropItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, transform.position);
-
-                // Disable some components during equipped
-                DropItem.toBeDroppedDropItem.spriteRenderer.enabled = true;
-                DropItem.toBeDroppedDropItem.animator.enabled = true;
-                DropItem.toBeDroppedDropItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
-
-                // Update stat values
-                player.setPassiveItemEvent.CallRemovePassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName, null);
-
-                player.UpdateDamageValues();
-                player.UpdateWeaponHandlingAndCriticalValues();
-                player.UpdateBlockAndEvasivenessValues();
-
-                DropItem.toBeDroppedDropItem.transform.SetParent(null);
-                DropItem.toBeDroppedDropItem.isPickedUp = false;
-
-                // Make sure drop completed
-                DropItem.toBeDroppedDropItem.boxCollider2D.enabled = true;
-                DropItem.toBeDroppedDropItem.isColliding = false;
+                passiveItem.itemSlotStatus = ItemSlotStatus.Inventory;
+                StaticEventHandler.CallPassiveItemAddedToInventorySlot(passiveItem, index); // Item added to inventory
             }
         }
         else if(dropType == DropType.Weapon)
         {
             Weapon weapon = (Weapon)itemGeneric;
 
-            if (itemSlotStatus == ItemSlotStatus.Inventory)
+            Weapon toBeSwappedWeapon = new Weapon();
+            toBeSwappedWeapon.weaponDetails = toBeSwappedWeaponDetails;
+
+            if (itemSlotStatus == ItemSlotStatus.Inventory) // Just drop from inventory to the floor
             {
-                GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-                DropItem chestItem = chestItemObject.GetComponent<DropItem>();
-                DropItem.toBeDroppedDropItem = chestItem;
-
-                DropItem.toBeDroppedDropItem.hasWeaponDrop = true;
-                DropItem.toBeDroppedDropItem.droppedByPlayer = true;
-                DropItem.toBeDroppedDropItem.isColliding = true;
-                DropItem.toBeDroppedDropItem.hasMainHandWeapon = true;
-
-                DropItem.toBeDroppedDropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
-
-                // Break free from the player object
-                DropItem.toBeDroppedDropItem.spriteRenderer.enabled = true;
-                DropItem.toBeDroppedDropItem.animator.enabled = true;
-                DropItem.toBeDroppedDropItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
+                SpawnDroppedWeapon(weapon);
 
                 // Empty inventory slot
                 InventoryManager.Instance.EmptyItemFromInventory(inventoryIndex);
 
                 // Book update
                 StaticEventHandler.CallInventoryWeaponDroppedEventForBook(inventoryIndex);
-
-                DropItem.toBeDroppedDropItem.transform.SetParent(null);
-                DropItem.toBeDroppedDropItem.isPickedUp = false;
-
-                // Make sure drop completed
-                DropItem.toBeDroppedDropItem.boxCollider2D.enabled = true;
-                DropItem.toBeDroppedDropItem.isColliding = false;
-
-                if (dropCoroutine == null)
-                {
-                    dropCoroutine = StartCoroutine(MoveItemDown(DropItem.toBeDroppedDropItem));
-                }
             }
             else if (weapon.itemSlotStatus == ItemSlotStatus.MainHand)
             {
-                switch (weapon.weaponBelongingToWhichMainHandSet)
+                if (dropButton) // Drop from main hand slot to the floor
                 {
-                    case 1:
-                        if (player.weaponSlotSetArray[0][1] == null) // Drop main hand if only off-hand slot is empty
-                        {
-                            if (isWeaponSwapping) break;
-
-                            player.weaponSlotSetArray[0][0] = null;
-                        }
-                        else
-                        {
-                            if (isWeaponSwapping) break;
-
-                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
-                        }
-                        break;
-                    case 2:
-                        if (player.weaponSlotSetArray[1][1] == null)
-                        {
-                            if (isWeaponSwapping) break;
-
-                            player.weaponSlotSetArray[1][0] = null;
-                        }
-                        else
-                        {
-                            if (isWeaponSwapping) break;
-
-                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
-                        }
-                        break;
-                    case 3:
-                        if (player.weaponSlotSetArray[2][1] == null)
-                        {
-                            if (isWeaponSwapping) break;
-
-                            player.weaponSlotSetArray[2][0] = null;
-                        }
-                        else
-                        {
-                            if (isWeaponSwapping) break;
-
-                            GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.OffHandFull);
-                        }
-                        break;
-                    default:
-                        break;
+                    if (!SlotPlacementRules.IsPlacementAllowed(weapon, SlotType.Drop, player.activeWeapon.GetCurrentMainHandWeapon(), player.currentWeaponSlotSetIndex))
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                        return;
+                    }
+                    else
+                    {
+                        SpawnDroppedWeapon(weapon);
+                        DeactivateMainHandWeapon();
+                    }
                 }
-
-                GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-                DropItem chestItem = chestItemObject.GetComponent<DropItem>();
-                DropItem.toBeDroppedDropItem = chestItem;
-
-                DropItem.toBeDroppedDropItem.hasWeaponDrop = true;
-                DropItem.toBeDroppedDropItem.droppedByPlayer = true;
-                DropItem.toBeDroppedDropItem.isColliding = true;
-                DropItem.toBeDroppedDropItem.hasMainHandWeapon = true;
-
-                DropItem.toBeDroppedDropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
-
-                // Break free from the player object
-                DropItem.toBeDroppedDropItem.spriteRenderer.enabled = true;
-                DropItem.toBeDroppedDropItem.animator.enabled = true;
-                DropItem.toBeDroppedDropItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
-
-                // De-active dropped main hand weapon
-                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]?.weaponDetails.wieldType == WieldType.OneHanded)
+                else if (InventoryManager.Instance.IsInventoryFull()) // Drop equipped item to the floor, pick-up new one if pick-up happened
                 {
-                    // Prevent off-hand ui weapon icon lost in case weapon swapping on drop while equipping a shield
-                    player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent(true);
+                    if (!SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon, player.activeWeapon.GetCurrentMainHandWeapon(), player.activeWeapon.GetCurrentOffHandWeapon(), false))
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                        return;
+                    }
+                    else
+                    {
+                        // Forced drop due to full inventory during item pickup
+                        SpawnDroppedWeapon(weapon);
+                        DeactivateMainHandWeapon();
+                    }
                 }
-                else
+                else  // Drop equipped item to the inventory, pick-up new one if pick-up happened
                 {
-                    player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+                    if (!SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon, player.activeWeapon.GetCurrentMainHandWeapon(), player.activeWeapon.GetCurrentOffHandWeapon(), false))
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                        return;
+                    }
+                    else
+                    {
+                        DeactivateMainHandWeapon();
+                        int index = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(weapon);
+                        weapon.itemSlotStatus = ItemSlotStatus.Inventory;
+                        StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, index);
+                    }
                 }
-
-                player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = null;
 
                 // Update stat values
                 player.UpdateDamageValues();
@@ -1799,42 +1722,53 @@ public class PlayerControl : MonoBehaviour
 
                 StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponMainHand);
 
-                DropItem.toBeDroppedDropItem.transform.SetParent(null);
-                DropItem.toBeDroppedDropItem.isPickedUp = false;
-
                 player.mainHandSlotFilled = false;
 
-                // Make sure drop completed
-                DropItem.toBeDroppedDropItem.boxCollider2D.enabled = true;
-                DropItem.toBeDroppedDropItem.isColliding = false;
-
-                if (dropCoroutine == null)
-                {
-                    dropCoroutine = StartCoroutine(MoveItemDown(DropItem.toBeDroppedDropItem));
-                }
             }
             else
             {
-                // Set dropped set's off hand null
-                player.weaponSlotSetArray[weapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
-
-                GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-                DropItem chestItem = chestItemObject.GetComponent<DropItem>();
-                DropItem.toBeDroppedDropItem = chestItem;
-
-                DropItem.toBeDroppedDropItem.hasWeaponDrop = true;
-                DropItem.toBeDroppedDropItem.droppedByPlayer = true;
-                DropItem.toBeDroppedDropItem.isColliding = true;
-                DropItem.toBeDroppedDropItem.hasOffHandWeapon = true;
-
-                DropItem.toBeDroppedDropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
-
-                // Break free from the player object
-                DropItem.toBeDroppedDropItem.spriteRenderer.enabled = true;
-                DropItem.toBeDroppedDropItem.animator.enabled = true;
-                DropItem.toBeDroppedDropItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
-
-                player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+                if (dropButton)
+                {
+                    if (!SlotPlacementRules.IsPlacementAllowed(weapon, SlotType.Drop, player.activeWeapon.GetCurrentMainHandWeapon(), player.currentWeaponSlotSetIndex))
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                        return;
+                    }
+                    else
+                    {
+                        SpawnDroppedOffhandWeapon(weapon);
+                        DeactivateOffhandWeapon();
+                    }
+                }
+                else if (InventoryManager.Instance.IsInventoryFull()) // Drop equipped item to the floor, pick-up new one if pick-up happened
+                {
+                    if (!SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon, player.activeWeapon.GetCurrentMainHandWeapon(), player.activeWeapon.GetCurrentOffHandWeapon(), true))
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                        return;
+                    }
+                    else
+                    {
+                        // Forced drop due to full inventory during item pickup
+                        SpawnDroppedOffhandWeapon(weapon);
+                        DeactivateOffhandWeapon();
+                    }
+                }
+                else  // Drop equipped item to the inventory, pick-up new one if pick-up happened
+                {
+                    if (!SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon, player.activeWeapon.GetCurrentMainHandWeapon(), player.activeWeapon.GetCurrentOffHandWeapon(), true))
+                    {
+                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                        return;
+                    }
+                    else
+                    {
+                        DeactivateOffhandWeapon();
+                        int index = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(weapon);
+                        weapon.itemSlotStatus = ItemSlotStatus.Inventory;
+                        StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, index);
+                    }
+                }
 
                 // Update stat values
                 player.UpdateDamageValues();
@@ -1843,21 +1777,105 @@ public class PlayerControl : MonoBehaviour
 
                 StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponOffHand);
 
-                DropItem.toBeDroppedDropItem.transform.SetParent(null);
-                DropItem.toBeDroppedDropItem.isPickedUp = false;
-
                 player.offHandSlotFilled = false;
-
-                // Make sure drop completed
-                DropItem.toBeDroppedDropItem.boxCollider2D.enabled = true;
-                DropItem.toBeDroppedDropItem.isColliding = false;
-
-                if (dropCoroutine == null)
-                {
-                    dropCoroutine = StartCoroutine(MoveItemDown(DropItem.toBeDroppedDropItem));
-                }
             }
         }
+    }
+
+    private void DeactivateMainHandWeapon()
+    {
+        // De-active dropped main hand weapon
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]?.weaponDetails.wieldType == WieldType.OneHanded)
+        {
+            // Prevent off-hand ui weapon icon lost in case weapon swapping on drop while equipping a shield
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent(true);
+        }
+        else
+        {
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+        }
+
+        player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = null;
+    }
+
+    private void DeactivateOffhandWeapon()
+    {
+        // Set dropped set's off hand null
+        player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = null;
+
+        player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+    }
+
+    private void SpawnDroppedWeapon(Weapon weapon)
+    {
+        GameObject dropItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+        DropItem dropItem = dropItemObject.GetComponent<DropItem>();
+        DropItem.toBeDroppedDropItem = dropItem;
+
+        DropItem.toBeDroppedDropItem.hasWeaponDrop = true;
+        DropItem.toBeDroppedDropItem.isColliding = true;
+        DropItem.toBeDroppedDropItem.hasMainHandWeapon = true;
+
+        DropItem.toBeDroppedDropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
+
+        // Break free from the player object
+        DropItem.toBeDroppedDropItem.spriteRenderer.enabled = true;
+        DropItem.toBeDroppedDropItem.animator.enabled = true;
+        DropItem.toBeDroppedDropItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
+
+        DropItem.toBeDroppedDropItem.transform.SetParent(GameManager.Instance.GetCurrentRoom().instantiatedRoom.transform);
+        DropItem.toBeDroppedDropItem.isPickedUp = false;
+
+        // Make sure drop completed
+        DropItem.toBeDroppedDropItem.boxCollider2D.enabled = true;
+        DropItem.toBeDroppedDropItem.isColliding = false;
+    }
+
+    private void SpawnDroppedOffhandWeapon(Weapon weapon)
+    {
+        GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+        DropItem chestItem = chestItemObject.GetComponent<DropItem>();
+        DropItem.toBeDroppedDropItem = chestItem;
+
+        DropItem.toBeDroppedDropItem.hasWeaponDrop = true;
+        DropItem.toBeDroppedDropItem.isColliding = true;
+        DropItem.toBeDroppedDropItem.hasOffHandWeapon = true;
+
+        DropItem.toBeDroppedDropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
+
+        // Break free from the player object
+        DropItem.toBeDroppedDropItem.spriteRenderer.enabled = true;
+        DropItem.toBeDroppedDropItem.animator.enabled = true;
+        DropItem.toBeDroppedDropItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
+
+        DropItem.toBeDroppedDropItem.transform.SetParent(null);
+        DropItem.toBeDroppedDropItem.isPickedUp = false;
+
+
+        // Make sure drop completed
+        DropItem.toBeDroppedDropItem.boxCollider2D.enabled = true;
+        DropItem.toBeDroppedDropItem.isColliding = false;
+    }
+
+
+    private void SpawnDroppedPassiveItem(PassiveItem passiveItem)
+    {
+        GameObject dropItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+        DropItem dropItem = dropItemObject.GetComponent<DropItem>();
+        DropItem.toBeDroppedDropItem = dropItem;
+
+        dropItem.hasSecondaryPassiveDrop = true;
+        dropItem.isColliding = true;
+
+        dropItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, transform.position);
+        dropItem.spriteRenderer.enabled = true;
+        dropItem.animator.enabled = true;
+        dropItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
+        dropItem.transform.SetParent(GameManager.Instance.GetCurrentRoom().instantiatedRoom.transform);
+
+        dropItem.isPickedUp = false;
+        dropItem.boxCollider2D.enabled = true;
+        dropItem.isColliding = false;
     }
 
     public bool IsMainHandDropPossible(bool isWeaponSwapping)
@@ -1889,10 +1907,10 @@ public class PlayerControl : MonoBehaviour
     /// <summary>
     /// Slow motion item
     /// </summary>
-    private IEnumerator MoveItemDown(DropItem chestItem)
+    private IEnumerator MoveItemDown(DropItem dropItem)
     {
         float elapsedTime = 0f;
-        Vector3 initialPosition = chestItem.transform.position + new Vector3(0f, 0.5f, 0f);
+        Vector3 initialPosition = dropItem.transform.position + new Vector3(0f, 0.5f, 0f);
         float xPos = 0f;
         float yPos = 0f;
 
@@ -1931,17 +1949,17 @@ public class PlayerControl : MonoBehaviour
         while (elapsedTime < dropDuration)
         {
             elapsedTime += Time.deltaTime; // Increment time based on frame rate
-            chestItem.transform.position = Vector3.Lerp(initialPosition, targetPosition, elapsedTime);
+            dropItem.transform.position = Vector3.Lerp(initialPosition, targetPosition, elapsedTime);
             yield return null; // Wait for the next frame
         }
 
         // Ensure the item reaches the target position
-        chestItem.transform.position = targetPosition;
+        dropItem.transform.position = targetPosition;
 
         // Make sure drop completed
         dropCoroutine = null;
-        chestItem.boxCollider2D.enabled = true;
-        chestItem.isColliding = false;
+        dropItem.boxCollider2D.enabled = true;
+        dropItem.isColliding = false;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

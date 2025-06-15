@@ -23,10 +23,11 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 11400000, guid: 377cf5264660de94a8a812675176c682, type: 2}
   projectileDamageMin: 8
   projectileDamageMax: 15
-  projectileSpeedMin: 13
-  projectileSpeedMax: 13
+  projectileSpeed: 12
   projectileRange: 14
   projectileRotationSpeed: 1
+  isGuided: 0
+  isBouncing: 0
   isBomb: 0
   isTrap: 0
   hasLifeTime: 0
@@ -35,20 +36,20 @@ MonoBehaviour:
   countDown: 3
   burstDamageMin: 15
   burstDamageMax: 25
-  hasAcid: 0
-  acidEfficiency: 0
+  hasBurnDamage: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
   hasStunDamage: 1
   stunChance: 0.2
   hasFrostDamage: 0
   frostChance: 0
-  hasBurnDamage: 0
-  burnChance: 0
-  hasBlindDamage: 0
-  blindChance: 0
   hasCurseDamage: 0
   curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   projectileSpreadMin: 0
   projectileSpreadMax: 1
   projectileSpawnAmountMin: 1

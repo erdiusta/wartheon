@@ -287,36 +287,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 switch (belongingSlot.slotType)
                 {
                     case SlotType.Passive:
-                        switch (belongingSlot.passiveItemSlotName)
-                        {
-                            case PassiveItemSlotName.Head:
-                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentHeadPassiveItem();
-                                break;
-                            case PassiveItemSlotName.Chest:
-                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentChestPassiveItem();
-                                break;
-                            case PassiveItemSlotName.Neck:
-                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentNeckPassiveItem();
-                                break;
-                            case PassiveItemSlotName.Finger:
-                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentFingerPassiveItem();
-                                break;
-                            case PassiveItemSlotName.Back:
-                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentBackPassiveItem();
-                                break;
-                            case PassiveItemSlotName.Waist:
-                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentWaistPassiveItem();
-                                break;
-                            case PassiveItemSlotName.Arm:
-                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentArmPassiveItem();
-                                break;
-                            case PassiveItemSlotName.Leg:
-                                itemGeneric = GameManager.Instance.GetPlayer().selectedPassiveItem.GetCurrentLegPassiveItem();
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
+                        itemGeneric = player.equippedPassiveItems[belongingSlot.passiveItemSlotName];
+                        break;  
                     case SlotType.Active:
                         itemGeneric = GameManager.Instance.GetPlayer().selectedActiveItem.GetCurrentActiveItem();
                         break;

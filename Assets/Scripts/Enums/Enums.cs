@@ -1,27 +1,35 @@
 
 public enum TutorialPhase
 {
-    Start,
+    TutorialIntro,
     Move,
     PickUpWeapon,
     AimAndFire,
     PickUpActiveItem,
     UseActiveItem,
-    PickUpPassive,
+    OpenGlossaryBook,
     MinimapCheck,
     OverviewMapCheck,
     SecondRoom,
-    MeleeCombat,
+    Combat,
+    PickUpPrimaryPassiveHealth,
+    PickUpPrimaryPassiveCoin,
     Parry,
     DodgeRoll,
     SpecialSkill,
-    LevelUp,
-    OpenBook,
+    KillEmAll,
+    PickUpSecondaryPassive,
     BuildsPage,
-    StatsPage,
     WeaponSetSwitch,
     OtherCollectionsPage,
     FinishTutorial
+}
+
+public enum TutorialProcess
+{
+    Starting,
+    QuestDisplayed,
+    QuestPassed
 }
 
 public enum TooltipSource
@@ -93,7 +101,7 @@ public enum ActiveItemType
     Bomb,
     Shiruken,
     Pentagram,
-    Dummy,
+    Decoy,
     Hourglass,
     Compass,
     Potion,
@@ -382,13 +390,14 @@ public enum EnemyCategory
     Venomancer,
     FireWrym,
     Moldran,
-    Slime,
+    MainSlime,
     Beholder,
     Blightpump,
     AirElemental,
     EarthElemental,
     WaterElemental,
-    IceNexarion
+    IceNexarion,
+    MinionSlime
 }
 
 public enum EnemyBehaviour
@@ -446,8 +455,8 @@ public enum GalvanusPhase
 {
     None,
     Wait,
-    LightningBolt,
     DashAttack,
+    LightningBolt,
     Lightning
 }
 

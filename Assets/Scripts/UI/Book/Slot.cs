@@ -148,11 +148,11 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
         if (slotType == SlotType.Passive) 
         {
-            headerText.colorGradient = new VertexGradient(GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor,
-                GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor);
+            headerText.colorGradient = new VertexGradient(MainUI.Instance.passiveItemColor, MainUI.Instance.passiveItemColor,
+                MainUI.Instance.passiveItemColor, MainUI.Instance.passiveItemColor);
             headerText.text = string.Empty;
-            levelText.colorGradient = new VertexGradient(GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor,
-                GameManager.Instance.passiveItemColor, GameManager.Instance.passiveItemColor);
+            levelText.colorGradient = new VertexGradient(MainUI.Instance.passiveItemColor, MainUI.Instance.passiveItemColor,
+                MainUI.Instance.passiveItemColor, MainUI.Instance.passiveItemColor);
             levelText.text = string.Empty;
             weaponClassText.text = string.Empty;
             hitSpeedText.text = string.Empty;
@@ -181,68 +181,9 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             }
             else
             {
-                switch (passiveItemSlotName)
+                if (player.equippedPassiveItems[passiveItemSlotName] == null)
                 {
-                    case PassiveItemSlotName.None:
-                        break;
-                    case PassiveItemSlotName.Head:
-                        if (player.selectedPassiveItem.headPassiveItem == null)
-                        {
-                            tooltipPanel.gameObject.SetActive(false);
-                            return;
-                        }
-                        break;
-                    case PassiveItemSlotName.Chest:
-                        if (player.selectedPassiveItem.chestPassiveItem == null)
-                        {
-                            tooltipPanel.gameObject.SetActive(false);
-                            return;
-                        }
-                        break;
-                    case PassiveItemSlotName.Neck:
-                        if (player.selectedPassiveItem.neckPassiveItem == null)
-                        {
-                            tooltipPanel.gameObject.SetActive(false);
-                            return;
-                        }
-                        break;
-                    case PassiveItemSlotName.Finger:
-                        if (player.selectedPassiveItem.fingerPassiveItem == null)
-                        {
-                            tooltipPanel.gameObject.SetActive(false);
-                            return;
-                        }
-                        break;
-                    case PassiveItemSlotName.Back:
-                        if (player.selectedPassiveItem.backPassiveItem == null)
-                        {
-                            tooltipPanel.gameObject.SetActive(false);
-                            return;
-                        }
-                        break;
-                    case PassiveItemSlotName.Waist:
-                        if (player.selectedPassiveItem.waistPassiveItem == null)
-                        {
-                            tooltipPanel.gameObject.SetActive(false);
-                            return;
-                        }
-                        break;
-                    case PassiveItemSlotName.Arm:
-                        if (player.selectedPassiveItem.armPassiveItem == null)
-                        {
-                            tooltipPanel.gameObject.SetActive(false);
-                            return;
-                        }
-                        break;
-                    case PassiveItemSlotName.Leg:
-                        if (player.selectedPassiveItem.legPassiveItem == null)
-                        {
-                            tooltipPanel.gameObject.SetActive(false);
-                            return;
-                        }
-                        break;
-                    default:
-                        break;
+                    tooltipPanel.gameObject.SetActive(false);
                 }
             }
 
@@ -486,7 +427,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     headerText.text = activeItem.activeItemDetails.activeItemName;
                     levelText.text = $"(Active Item)";
 
-                    if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Dummy)
+                    if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Decoy)
                     {
                         weaponClassText.text = "Distracts Enemies Until";
                         hitSpeedText.text = "Being Destroyed";
@@ -769,7 +710,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         else
         {
             // Validate placement rules
-            if (!SlotPlacementRules.IsPlacementAllowed(selectedSlot.selectedSlotDraggableItem.itemGeneric, this, player.activeWeapon.GetCurrentMainHandWeapon(), player.currentWeaponSlotSetIndex))
+            if (!SlotPlacementRules.IsPlacementAllowed(selectedSlot.selectedSlotDraggableItem.itemGeneric, slotType, player.activeWeapon.GetCurrentMainHandWeapon(), 
+                player.currentWeaponSlotSetIndex))
             {
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
                 return;
@@ -831,7 +773,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         if (draggableItem != null)
         {
             // Only now is selectedSlot guaranteed to be non-null
-            if (!SlotPlacementRules.IsPlacementAllowed(draggableItem.itemGeneric, this, player.activeWeapon.GetCurrentMainHandWeapon(), player.currentWeaponSlotSetIndex))
+            if (!SlotPlacementRules.IsPlacementAllowed(draggableItem.itemGeneric, slotType, player.activeWeapon.GetCurrentMainHandWeapon(), player.currentWeaponSlotSetIndex))
             {
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
                 return;
@@ -1109,7 +1051,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 PassiveItem draggableInventoryPassiveItem = (PassiveItem)draggableItemGeneric;
 
                 // Equip event and update stats
-                player.setPassiveItemEvent.CallEquipPassiveItem(draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName, null);
+                player.setPassiveItemEvent.CallEquipPassiveItem(draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
                 draggableInventoryPassiveItem.itemSlotStatus = ItemSlotStatus.None;
 
                 // Book update for passive slot addition and inventory slot drop
@@ -1254,18 +1196,14 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 // Passive item in the slot moves to inventory slot
                 PassiveItem draggableInventoryPassiveItem = (PassiveItem)draggableItemGeneric;
 
-                EquipResult equipResult = new EquipResult();
-                player.setPassiveItemEvent.CallRemovePassiveItem(draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName, equipResult);
+                player.setPassiveItemEvent.CallRemovePassiveItem(draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
                 draggableInventoryPassiveItem.itemSlotStatus = ItemSlotStatus.Inventory;
 
-                if (equipResult.placedIntoInventory)
-                {
-                    int inventoryItemIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(draggableInventoryPassiveItem);
+                int inventoryItemIndex = InventoryManager.Instance.FindIndexOfItem(draggableInventoryPassiveItem);
 
-                    // Book update for passive slot inventory addition and passive slot drop
-                    StaticEventHandler.CallItemRemovedFromPassiveItemSlot(draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
-                    StaticEventHandler.CallPassiveItemAddedToInventorySlot(draggableInventoryPassiveItem, inventoryItemIndex);
-                }
+                // Book update for passive slot inventory addition and passive slot drop
+                StaticEventHandler.CallItemRemovedFromPassiveItemSlot(draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
+                StaticEventHandler.CallPassiveItemAddedToInventorySlot(draggableInventoryPassiveItem, inventoryItemIndex);
             }
         }
     }
@@ -1289,13 +1227,13 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 break;
             case ItemSwapPos.DragPassiveInventorySlotPassive:
                 // Dragged item to equipped passive item slot - Stat Update
-                player.setPassiveItemEvent.CallRemovePassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, equipResult, true);
-                player.setPassiveItemEvent.CallEquipPassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, equipResult, true);
+                player.setPassiveItemEvent.CallRemovePassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallEquipPassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
                 draggableItem.itemGeneric.itemSlotStatus = ItemSlotStatus.None;
 
                 // Target item to inventory slot - Stat Update
-                player.setPassiveItemEvent.CallRemovePassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, equipResult, true);
-                player.setPassiveItemEvent.CallEquipPassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, equipResult, true);
+                player.setPassiveItemEvent.CallRemovePassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallEquipPassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
                 targetItem.itemGeneric.itemSlotStatus = ItemSlotStatus.Inventory;
 
                 // Inventory update
@@ -1316,13 +1254,13 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
             case ItemSwapPos.DragPassiveSlotPassiveInventory:
                 // Dragged item to inventory slot - Stat Update
-                player.setPassiveItemEvent.CallRemovePassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, equipResult, true);
-                player.setPassiveItemEvent.CallEquipPassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, equipResult, true);
+                player.setPassiveItemEvent.CallRemovePassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallEquipPassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
                 draggableItem.itemGeneric.itemSlotStatus = ItemSlotStatus.Inventory;
 
                 // Target item to equipped passive item slot - Stat Update
-                player.setPassiveItemEvent.CallRemovePassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, equipResult, true);
-                player.setPassiveItemEvent.CallEquipPassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, equipResult, true);
+                player.setPassiveItemEvent.CallRemovePassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallEquipPassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
                 targetItem.itemGeneric.itemSlotStatus = ItemSlotStatus.None;
 
                 // Inventory update
@@ -1576,7 +1514,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 bool dropOffhand = draggableItem.belongingSlot.slotType == SlotType.WeaponOffHand ? true : false;
 
-                player.playerControl.DropProcess(DropType.Weapon, weapon, false, dropOffhand, weapon.itemSlotStatus, draggableItem.belongingSlot.inventoryIndexNumber);
+                player.playerControl.DropProcess(DropType.Weapon, weapon, null, dropOffhand, weapon.itemSlotStatus, draggableItem.belongingSlot.inventoryIndexNumber, true);
             }
             else if (draggableItem.itemGeneric is ActiveItem)
             {
@@ -1589,7 +1527,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             {
                 PassiveItem passiveItem = (PassiveItem)draggableItem.itemGeneric;
 
-                player.playerControl.DropProcess(DropType.PassiveItem, passiveItem, false, false, passiveItem.itemSlotStatus, draggableItem.belongingSlot.inventoryIndexNumber);
+                player.playerControl.DropProcess(DropType.PassiveItem, passiveItem, null, false, passiveItem.itemSlotStatus, draggableItem.belongingSlot.inventoryIndexNumber, true);
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
 
                 // Book update

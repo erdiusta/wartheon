@@ -95,7 +95,7 @@ public class AnimatePlayer : MonoBehaviour
     /// </summary>
     public void SetMovementAnimationParameters()
     {
-        if ( !player.isDead)
+        if (!player.health.hasDied)
         {
             player.animator.SetBool(Settings.isMoving, true);
             player.animator.SetBool(Settings.isIdle, false);

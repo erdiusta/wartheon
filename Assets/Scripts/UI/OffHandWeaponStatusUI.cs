@@ -179,10 +179,13 @@ public class OffHandWeaponStatusUI : MonoBehaviour
         }
         else
         {
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+            if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
             {
-                MakeWeaponInactive();
-                DisplayLockImage();
+                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+                {
+                    MakeWeaponInactive();
+                    DisplayLockImage();
+                }
             }
         }
     }

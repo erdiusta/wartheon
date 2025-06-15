@@ -19,7 +19,7 @@ MonoBehaviour:
   collectibleWeaponsArray: []
   bodyRuntimeAnimatorController: {fileID: 9100000, guid: 836fd2be91cb18a48a7e9b5427b0fb5c, type: 2}
   primaryStats:
-    strength: 7
+    strength: 6
     dexterity: 5
     constitution: 8
     intelligence: 3
@@ -80,7 +80,6 @@ MonoBehaviour:
   selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
   activeItemsList:
   - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
-  - {fileID: 11400000, guid: d3a21c568d45e2a409dfa32695364854, type: 2}
   passiveItemsList: []
   startingWeapon: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
   mainHandAnimatorController: {fileID: 9100000, guid: 763046c15b6ac0a4db7e14a096c4ace1, type: 2}

@@ -5,8 +5,10 @@ public class Decoy : MonoBehaviour
     public ActiveItemDetailsSO activeItemDetails;
     public Health health;
     public HealthEvent healthEvent;
+    public Transform promptArrowContainer;
 
     [HideInInspector] public SpriteRenderer spriteRenderer;
+    [HideInInspector] public DestroyedEvent destroyedEvent;
 
     ActiveItem activeItem;
 
@@ -15,13 +17,34 @@ public class Decoy : MonoBehaviour
         health = GetComponent<Health>();
         healthEvent = GetComponent<HealthEvent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        destroyedEvent = GetComponent<DestroyedEvent>();
     }
 
     private void Start()
     {
-        if (tag == "Dummy" )
+        if (tag == Settings.decoyTag )
         {
             health.SetMaximumHealth(30);
+        }
+    }
+
+    private void Update()
+    {
+        if (InputManager.TutorialEnabled && tag == "PracticeDummy")
+        {
+            if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.AimAndFire)
+            {
+                promptArrowContainer.gameObject.SetActive(true);
+
+                if (health.damageTaken)
+                {
+                    TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed; // Tutorial passed
+                }
+            }
+            else
+            {
+                promptArrowContainer.gameObject.SetActive(false);
+            }
         }
     }
 
