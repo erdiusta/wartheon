@@ -632,6 +632,7 @@ namespace Pathfinding {
             {
                 Vector3 nextPosition;
                 Quaternion nextRotation;
+
                 MovementUpdate(Time.fixedDeltaTime, out nextPosition, out nextRotation);
 
                 // Apply repulsion before movement

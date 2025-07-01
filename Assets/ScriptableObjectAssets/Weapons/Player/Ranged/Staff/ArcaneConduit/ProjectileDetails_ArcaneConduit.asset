@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: Arcane Conduit Projectile
   isPlayerProjectile: 1
-  projectileSprite: {fileID: 21300000, guid: 913939d3305163b42af7ac7d37218381, type: 3}
   projectilePrefabArray:
   - {fileID: 2585463276777236944, guid: d22f60a616d93a04e99ab517374c2f82, type: 3}
   projectileMaterial: {fileID: 2100000, guid: ec62d7e313859404bb5c275b213f06ed, type: 2}
@@ -24,22 +23,33 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 11400000, guid: 7b19af3c538325e4286d3842e52cb78c, type: 2}
   projectileDamageMin: 8
   projectileDamageMax: 12
-  projectileSpeedMin: 15
-  projectileSpeedMax: 15
+  projectileSpeed: 18
   projectileRange: 22
+  hasLifeTime: 0
+  lifeDuration: 1
   projectileRotationSpeed: 1
-  hasAcid: 0
-  acidEfficiency: 0
+  isGuided: 0
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 0
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
+  hasBurnDamage: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
-  hasBlindDamage: 0
-  blindChance: 0
   hasCurseDamage: 0
   curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   projectileSpreadMin: 0.5
   projectileSpreadMax: 2.5
   projectileSpawnAmountMin: 1
@@ -53,3 +63,4 @@ MonoBehaviour:
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0
   isCataclysmProjectile: 0
+  isLaser: 0

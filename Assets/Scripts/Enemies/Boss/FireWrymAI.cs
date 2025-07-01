@@ -115,13 +115,13 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
         else if (moveStatus == MoveStatus.Idle)
         {
             // Check if the player is on stealth
-            if (GameManager.Instance.GetPlayer() != null && GameManager.Instance.GetPlayer().onStealth)
+            if (GameManager.Instance.GetPlayer() != null && GameManager.Instance.GetPlayer().isStealthActive)
             {
                 PlayerStealthCheck();
             }
 
             // Check if the enemy is a Galvanus boss
-            if (enemyDetails.enemyBehaviour == EnemyBehaviour.FireWrym)
+            if (enemyDetails.enemyBehaviour == EnemyBehaviour.Pyrothar)
             {
                 // Handle phases based on currentPhase
                 switch (currentFireWrymPhase)
@@ -218,7 +218,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
     private void TransitionToNextPhase()
     {
         // Check if the player is on stealth
-        if (GameManager.Instance.GetPlayer().onStealth)
+        if (GameManager.Instance.GetPlayer().isStealthActive)
         {
             PlayerStealthCheck();
             return;

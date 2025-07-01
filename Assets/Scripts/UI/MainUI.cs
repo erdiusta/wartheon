@@ -5,7 +5,6 @@ public class MainUI : SingletonMonobehaviour<MainUI>
 {
     Player player;
 
-    [Space(10)]
     [Header("TOOLTIP PANEL")]
     [Space(10)]
     // Tooltip panel
@@ -590,7 +589,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 if (weaponDetails.weaponClass == WeaponClass.Shield)
                 {
                     weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
-                    damageText.text = $"Deflect Rate: {weaponDetails.projectileDeflectRatio * 100}%";
+                    damageText.text = $"Deflect Rate: {weaponDetails.blockRate * 100}%";
                 }
                 else
                 {

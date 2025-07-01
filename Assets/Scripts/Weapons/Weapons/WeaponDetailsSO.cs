@@ -190,9 +190,13 @@ public class WeaponDetailsSO : ScriptableObject
     [Header("SHIELD OPERATING VALUES")]
     #endregion
     #region Tooltip
+    [Tooltip("Armor rate provided by the shield")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float shieldArmorRate = 0.1f;
+    #region Tooltip
     [Tooltip("Probability of deflecting projectiles")]
     #endregion Tooltip
-    [Range(0f, 1f)] public float projectileDeflectRatio = 0.4f;
+    [Range(0f, 1f)] public float blockRate = 0.4f;
 
     #region Header MELEE WEAPON OPERATING VALUES
     [Space(10)]
@@ -303,7 +307,7 @@ public class WeaponDetailsSO : ScriptableObject
         }
         else if (isShield)
         {
-            HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDeflectRatio), projectileDeflectRatio, true);
+            HelperUtilities.ValidateCheckPositiveValue(this, nameof(blockRate), blockRate, true);
         }
         else
         {
@@ -330,6 +334,9 @@ public class PrimaryStats
     public int constitution;
     public int intelligence;
     public int agility;
+    public int willpower;
+    public int ferocity;
+    public int resolve;
 
     /// <summary>
     /// Checks if the provided stats meet the required stats.
@@ -342,7 +349,10 @@ public class PrimaryStats
                player.CurrentDexterityValue >= dexterity &&
                player.CurrentConstitutionValue >= constitution &&
                player.CurrentIntelligenceValue >= intelligence &&
-               player.CurrentAgilityValue >= agility;
+               player.CurrentAgilityValue >= agility &&
+               player.CurrentWillpowerValue >= willpower &&
+               player.CurrentFerocityValue >= ferocity &&
+               player.CurrentResolveValue >= resolve;
     }
 }
 

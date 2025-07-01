@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -15,6 +16,7 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     int spawnPositionIndex = 0;
     Room currentRoom;
     RoomEnemySpawnParameters roomEnemySpawnParameters;
+    Player player;
 
     private void OnEnable()
     {
@@ -46,6 +48,13 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     /// </summary>
     private void StaticEventHandler_OnRoomChanged(RoomChangedEventArgs roomChangedEventArgs)
     {
+        // If player is null add it to dynamicGameObjectsInScene
+        if (player == null)
+        {
+            player = GameManager.Instance.GetPlayer();
+            SceneObjectsManager.Instance.dynamicGameObjectsInScene.Add(player.gameObject);
+        }
+
         enemiesSpawnedSoFar = 0;
         currentEnemyCount = 0;
         spawnPositionIndex = 0;
@@ -234,6 +243,9 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         {
             isBossInstantiated = false;
         }
+
+        // Add enemy to dynamic game objects in scene
+        SceneObjectsManager.Instance.dynamicGameObjectsInScene.Add(enemy.gameObject);
 
         // Call mob & boss unlock event
         StaticEventHandler.CallMobUnlockedEvent(enemy.GetComponent<Enemy>().enemyDetails.enemyCategory, isBossInstantiated);

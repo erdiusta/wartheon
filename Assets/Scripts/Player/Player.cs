@@ -6,6 +6,8 @@ using System;
 #region REQUIRE COMPONENTS
 [RequireComponent(typeof(HealthEvent))]
 [RequireComponent(typeof(Health))]
+[RequireComponent(typeof(ManaEvent))]
+[RequireComponent(typeof(Mana))]
 [RequireComponent(typeof(DealContactDamage))]
 [RequireComponent(typeof(ReceiveContactDamage))]
 [RequireComponent(typeof(DestroyedEvent))]
@@ -53,6 +55,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public PlayerDetailsSO playerDetails;
     [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public Health health;
+    [HideInInspector] public ManaEvent manaEvent;
+    [HideInInspector] public Mana mana;
     [HideInInspector] public MoveStatus moveStatus = MoveStatus.Idle;
     [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
     [HideInInspector] public ArmorStatus armorStatus = ArmorStatus.Normal;
@@ -85,21 +89,14 @@ public class Player : MonoBehaviour
     [HideInInspector] public MovementByVelocity movementByVelocity;
     [HideInInspector] public MovementToPositionEvent movementToPositionEvent;
     [HideInInspector] public StatusManager statusManager;
-    [HideInInspector] public SpecialMoveEvent specialMoveEvent;
-    [HideInInspector] public bool specialMoveOneOnCooldown = false;
-    [HideInInspector] public bool specialMoveTwoOnCooldown = false;
-    [HideInInspector] public bool specialMoveThreeOnCooldown = false;
-    [HideInInspector] public float specialMoveOneCooldownTimer;
-    [HideInInspector] public float specialMoveTwoCooldownTimer;
-    [HideInInspector] public float specialMoveThreeCooldownTimer;
-    [HideInInspector] public float specialMoveOneDurationTimer;
-    [HideInInspector] public float specialMoveTwoDurationTimer;
-    [HideInInspector] public float specialMoveThreeDurationTimer;
+
     [HideInInspector] public int keyCount = 0;
     [HideInInspector] public int previousSetIndex = 1;
     [HideInInspector] public BranchMastery branchMastery;
     [HideInInspector] public WeaponMastery weaponMastery;
     [HideInInspector] public DropItem activeDropItem;
+    [HideInInspector] public ActiveUniqueSkillDetailsSO[] playersAllActiveUniqueSkills;
+    [HideInInspector] public Dictionary<int, ActiveUniqueSkillDetailsSO> currentlyUsedActiveUniqueSkills = new Dictionary<int, ActiveUniqueSkillDetailsSO>();
 
     [HideInInspector] public Dictionary<PassiveItemSlotName, PassiveItem> equippedPassiveItems = new();
 
@@ -109,15 +106,21 @@ public class Player : MonoBehaviour
     public int CurrentDexterityValue { get => currentDexterityValue; set { currentDexterityValue = value; RecalculateSecondaryStats(); } }
     public int CurrentIntelligenceValue { get => currentIntelligenceValue; set { currentIntelligenceValue = value; RecalculateSecondaryStats(); } }
     public int CurrentAgilityValue { get => currentAgilityValue; set { currentAgilityValue = value; RecalculateSecondaryStats(); } }
+    public int CurrentWillpowerValue { get => currentWillpowerValue; set { currentWillpowerValue = value; RecalculateSecondaryStats(); } }
+    public int CurrentFerocityValue { get => currentFerocityValue; set { currentFerocityValue = value; RecalculateSecondaryStats(); } }
+    public int CurrentResolveValue { get => currentResolveValue; set { currentResolveValue = value; RecalculateSecondaryStats(); } }
 
     int currentStrengthValue;
     int currentConstitutionValue;
     int currentDexterityValue;
     int currentIntelligenceValue;
     int currentAgilityValue;
+    int currentWillpowerValue;
+    int currentFerocityValue;
+    int currentResolveValue;
 
     // RESISTANCES
-    [HideInInspector] public float currentPhysicalResistanceValue;
+    [HideInInspector] public float currentArmorValue;
     [HideInInspector] public float currentFireResistanceValue;
     [HideInInspector] public float currentWaterResistanceValue;
     [HideInInspector] public float currentAirResistanceValue;
@@ -139,6 +142,10 @@ public class Player : MonoBehaviour
     [HideInInspector] public float currentOffHandCriticalHitDamage;
     [HideInInspector] public float? currentWeaponHandlingValue;
 
+    // AUXILLARY MODIFIERS
+    [HideInInspector] public float buffDurationModifier = 0f;
+    [HideInInspector] public float cooldownDurationModifier = 0f;
+
     // CURRENT BLOCK AND EVASIVENESS VALUES
     [HideInInspector] public float? currentBlockValue;
     [HideInInspector] public float currentEvasivenessValue;
@@ -146,23 +153,25 @@ public class Player : MonoBehaviour
     // CURRENT TOTAL EXPERIENCE - LEVEL STATS
     [HideInInspector] public int currentLevel = 1;
     [HideInInspector] public int currentGainedTotalExperiencePoints = 0;
-    [HideInInspector] public int currentBuildPoints = 0;
+    [HideInInspector] public int currentSkillPoints = 0;
+    [HideInInspector] public int currentStatPoints = 0;
 
     // ADDITIONAL MODIFIERS
     [HideInInspector] public int seismicSlamDamage = 10;
     [HideInInspector] public float seismicSlamCircleRadius = 5f;
     [HideInInspector] public float expGainModifier = 1f;
     [HideInInspector] public float additionalSpeedModifier;
-    [HideInInspector] public float gemStoneSkillAdditionalModifier = 0f;
-    [HideInInspector] public float blockSkillAdditionalDurationModifier = 0f;
     [HideInInspector] public float bloodDrainSkillAdditionalDamagePercentageModifier = 0f;
     [HideInInspector] public float barrierSkillAdditionalDurationModifier = 0f;
     [HideInInspector] public bool tripleTeamEnabled = false;
-    [HideInInspector] public float additionalCriticalDamageOnStealth = 0f;
+    [HideInInspector] public float additionalMeleeDamageModifer = 0f;
+    [HideInInspector] public float additionalCriticalDamageOnCloakedPrecision = 0.5f;
     [HideInInspector] public float additionalCriticalMeleeDamageModifier = 0f;
     [HideInInspector] public float additionalMeleeCriticalHitChanceModifier = 0f;
     [HideInInspector] public float additionalEvasivenessModifier = 0f;
     [HideInInspector] public float additionalBlockModifier = 0f;
+    [HideInInspector] public float additionalShieldArmorModifier = 0f;
+    [HideInInspector] public float currentShieldArmor = 0f;
     [HideInInspector] public float additionalBowAccuracyModifier = 0f;
     [HideInInspector] public float additionalHeadShotDamageModifier = 0f;
     [HideInInspector] public bool threeSecInvincilibityAfterTeleportEnabled = false;
@@ -199,9 +208,28 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool offHandSlotFilled = false;
     [HideInInspector] public short specialSkillNumber = 0;
 
+    // SPECIAL SKILLS
+    [HideInInspector] public SpecialMoveEvent specialMoveEvent;
+    [HideInInspector] public bool[] specialMovesCooldownCheckArray = new bool[3]; // Check if related slot is on cooldown or not
+    [HideInInspector] public float[] specialMoveCooldownTimerArray = new float[3]; // Related slot's cooldown timer
+    [HideInInspector] public float[] specialMoveDurationTimerArray = new float[3]; // Related slot's duration timer
+
+    // CAELION SKILLS
+    [HideInInspector] public float lastDamageHappenedTime;
+    [HideInInspector] public bool passiveTriggered;
+    [HideInInspector] public bool isGraceOfTheUnscarredPassiveOn;
+    [HideInInspector] public bool isValorActive;
+    [HideInInspector] public bool isShieldBashing;
+    [HideInInspector] public bool isBreakTheLineActive;
+    [HideInInspector] public bool isGuardedOathActive;
+
+    // MORVEN SKILLS
+    [HideInInspector] public bool isUmbralMistActive;
+    [HideInInspector] public bool isStealthActive;
+    [HideInInspector] public bool isShadowStepActive;
+
     [HideInInspector] public bool shadowCloakEquipped;
-    [HideInInspector] public bool onStealth;
-    [HideInInspector] public bool isBlockingActive;
+
     [HideInInspector] public bool isGemSkinActive;
     [HideInInspector] public static bool hasClone;
     [HideInInspector] public GameObject playerCloneObject;
@@ -216,6 +244,8 @@ public class Player : MonoBehaviour
     {
         healthEvent = GetComponent<HealthEvent>();
         health = GetComponent<Health>();
+        manaEvent = GetComponent<ManaEvent>();
+        mana = GetComponent<Mana>();
         destroyedEvent = GetComponent<DestroyedEvent>();
         playerControl = GetComponent<PlayerControl>();
         fireWeaponEvent = GetComponent<FireWeaponEvent>();
@@ -268,19 +298,27 @@ public class Player : MonoBehaviour
         // Set player starting primary stats
         SetPlayerPrimaryStats();
 
-        isInitialized = true;
+        // Set player all active unique skills
+        SetPlayerActiveUniqueSkills();
+
         healthEvent.CallHealthChangedEvent(health.currentHealth, 0, MeleeHand.None);
+        manaEvent.CallManaChangedEvent(mana.currentMana);
+
+        isInitialized = true;
     }
 
     private void OnEnable()
     {
+        manaEvent.OnManaChanged += ManaEvent_OnManaChanged;
         healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
+
 
         rangedAttackEvent.OnAnimationRangedAttackAnimationTriggered.AddListener(ResetAttackForRangedAttack);
     }
 
     private void OnDisable()
     {
+        manaEvent.OnManaChanged -= ManaEvent_OnManaChanged;
         healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
 
         rangedAttackEvent.OnAnimationRangedAttackAnimationTriggered.RemoveListener(ResetAttackForRangedAttack);
@@ -288,7 +326,8 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        specialMoveOneCooldownTimer = 0;
+        // Add it to dynamicGameObjectsInScene
+        SceneObjectsManager.Instance.dynamicGameObjectsInScene.Add(gameObject);
     }
 
     /// <summary>
@@ -310,6 +349,11 @@ public class Player : MonoBehaviour
         }   
     }
 
+    private void ManaEvent_OnManaChanged(ManaEvent manaEvent, ManaEventArgs manaEventArgs)
+    {
+
+    }
+
     public void ResetAttackForRangedAttack()
     {
         meleeAttackMainHand.IsAttacking = false;
@@ -328,7 +372,7 @@ public class Player : MonoBehaviour
             // Add weapon to right hand list of player
             bool dualWieldOnStart = false;
 
-            if (i == 1 && playerDetails.playerCharacterIndex == Character.Erebus)
+            if (i == 1 && playerDetails.playerCharacterIndex == Character.Morven)
             {
                 dualWieldOnStart = true;
             }
@@ -376,12 +420,13 @@ public class Player : MonoBehaviour
 
             // Set player starting health
             UpdatePlayerHealth(0, false, false);
+            UpdateArmorValues();
             UpdateDamageValues();
             UpdateWeaponHandlingAndCriticalValues();
             UpdateBlockAndEvasivenessValues();
             UpdateSpeedValue();
 
-            StaticEventHandler.CallPrimaryStatsChangedEvent();
+            StaticEventHandler.CallStatsChangedOnTheBookEvent();
         }
         else if (InventoryManager.Instance.IsInventoryFull())
         {
@@ -389,12 +434,13 @@ public class Player : MonoBehaviour
 
             // Set player starting health
             UpdatePlayerHealth(0, false, false);
+            UpdateArmorValues();
             UpdateDamageValues();
             UpdateWeaponHandlingAndCriticalValues();
             UpdateBlockAndEvasivenessValues();
             UpdateSpeedValue();
 
-            StaticEventHandler.CallPrimaryStatsChangedEvent();
+            StaticEventHandler.CallStatsChangedOnTheBookEvent();
         }
         else
         {
@@ -423,8 +469,11 @@ public class Player : MonoBehaviour
         currentDexterityValue = playerDetails.primaryStats.dexterity;
         currentIntelligenceValue = playerDetails.primaryStats.intelligence;
         currentAgilityValue = playerDetails.primaryStats.agility;
+        currentWillpowerValue = playerDetails.primaryStats.willpower;
+        currentResolveValue = playerDetails.primaryStats.resolve;
+        currentFerocityValue = playerDetails.primaryStats.ferocity;
 
-        currentPhysicalResistanceValue = playerDetails.physicalResistance;
+        currentArmorValue = playerDetails.physicalResistance;
         currentFireResistanceValue = playerDetails.fireResistance;
         currentWaterResistanceValue = playerDetails.waterResistance;
         currentAirResistanceValue = playerDetails.airResistance;
@@ -434,10 +483,47 @@ public class Player : MonoBehaviour
 
         // Set player starting health
         UpdatePlayerHealth(0, true, true, true);
+        UpdatePlayerMana(0, true, true, true);
+        UpdateArmorValues();
         UpdateDamageValues();
         UpdateWeaponHandlingAndCriticalValues();
         UpdateBlockAndEvasivenessValues();
         UpdateSpeedValue();
+    }
+
+    /// <summary>
+    /// Set the player's all active unique skills
+    /// </summary>
+    private void SetPlayerActiveUniqueSkills()
+    {
+        playersAllActiveUniqueSkills = new ActiveUniqueSkillDetailsSO[]{playerDetails.firstActiveSkillDetails, playerDetails.secondActiveSkillDetails,
+            playerDetails.thirdActiveSkillDetails,playerDetails.fourthActiveSkillDetails, playerDetails.fifthActiveSkillDetails};
+
+        Invoke(nameof(PopulateSkillIconToGameHUD), 0.4f); // Wait a bit for invked event after subscription
+    }
+
+    private void PopulateSkillIconToGameHUD()
+    {
+        // Call event in order to update SkillUI in Gameplay HUD
+        for (int i = 1; i <= 3; i++)
+        {
+            // Populate dragged skill 
+            currentlyUsedActiveUniqueSkills.Add(i, playersAllActiveUniqueSkills[i - 1]);
+            StaticEventHandler.CallActiveUniqueSkillPlacedEvent(i, currentlyUsedActiveUniqueSkills[i]);
+        }
+    }
+
+    public void UpdateArmorValues()
+    {
+        if (activeWeapon.GetCurrentOffHandWeapon() != null && activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+        {
+            currentShieldArmor = activeWeapon.GetCurrentOffHandWeapon().weaponDetails.shieldArmorRate * (1 + additionalShieldArmorModifier);
+            currentArmorValue += currentShieldArmor;
+        }
+        else
+        {
+            currentArmorValue -= currentShieldArmor;
+        }
     }
 
     public void UpdateDamageValues()
@@ -452,8 +538,8 @@ public class Player : MonoBehaviour
                     // Melee and physical damage excluding dagger (such as swords, axes)
                     if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass != WeaponClass.Dagger)
                     {
-                        currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + currentStrengthValue * 2;
-                        currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + currentStrengthValue * 2;
+                        currentMainHandMinDamageValue = (int)((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + currentStrengthValue * 2) * (1 + additionalMeleeDamageModifer));
+                        currentMainHandMaxDamageValue = (int)((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + currentStrengthValue * 2) * (1 + additionalMeleeDamageModifer));
 
                         currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
                         currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
@@ -461,8 +547,8 @@ public class Player : MonoBehaviour
                     // Melee and physical for dagger
                     else
                     {
-                        currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + currentDexterityValue;
-                        currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + currentDexterityValue;
+                        currentMainHandMinDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + currentDexterityValue * (1 + additionalMeleeDamageModifer));
+                        currentMainHandMaxDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + currentDexterityValue * (1 + additionalMeleeDamageModifer));
 
                         currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
                         currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
@@ -470,9 +556,10 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
-                    currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 2;
-                    currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 2;
-
+                    currentMainHandMinDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 2
+                        * (1 + additionalMeleeDamageModifer));
+                    currentMainHandMaxDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 2
+                        *(1 + additionalMeleeDamageModifer));
                     currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
                     currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
                 }
@@ -515,8 +602,10 @@ public class Player : MonoBehaviour
                     // Melee and physical damage excluding dagger (such as swords, axes)
                     if (activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass != WeaponClass.Dagger)
                     {
-                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + currentStrengthValue * 2) * 0.6f, 2);
-                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + currentStrengthValue * 2) * 0.6f, 2);
+                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + currentStrengthValue * 2
+                            * (1 + additionalMeleeDamageModifer)) * 0.6f, 2);
+                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + currentStrengthValue * 2
+                            * (1 + additionalMeleeDamageModifer)) * 0.6f, 2);
 
                         currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
                         currentOffHandMaxDamageValue = (int)(currentOffHandMaxDamageValue * (1 + additionalElementalDamageModifier));
@@ -524,8 +613,10 @@ public class Player : MonoBehaviour
                     // Melee and physical for dagger
                     else
                     {
-                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + currentDexterityValue) * 0.6f, 2);
-                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + currentDexterityValue) * 0.6f, 2);
+                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + currentDexterityValue
+                            * (1 + additionalMeleeDamageModifer)) * 0.6f, 2);
+                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + currentDexterityValue
+                            * (1 + additionalMeleeDamageModifer)) * 0.6f, 2);
 
                         currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
                         currentOffHandMaxDamageValue = (int)(currentOffHandMaxDamageValue * (1 + additionalElementalDamageModifier));
@@ -533,8 +624,10 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
-                    currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 2) * 0.6f, 2);
-                    currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 2) * 0.6f, 2);
+                    currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 2
+                        * (1 + additionalMeleeDamageModifer)) * 0.6f, 2);
+                    currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 2
+                        * (1 + additionalMeleeDamageModifer)) * 0.6f, 2);
 
                     currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
                     currentOffHandMaxDamageValue = (int)(currentOffHandMaxDamageValue * (1 + additionalElementalDamageModifier));
@@ -1060,7 +1153,7 @@ public class Player : MonoBehaviour
     public void UpdateBlockValue()
     {
         float? blockValueIfHas = activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield ?
-            activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.projectileDeflectRatio + additionalBlockModifier : 0f;
+            activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.blockRate + additionalBlockModifier : 0f;
         currentBlockValue = (float)Math.Round((double)blockValueIfHas, 2);
     }
 
@@ -1070,16 +1163,29 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Set player health from playerDetails SO
+    /// Set player health
     /// </summary>
     public void UpdatePlayerHealth(int healthIncrease, bool shouldHealthFilled, bool isMaxHealthChanged, bool onStart = false)
     {
         if (isMaxHealthChanged)
         {
-            health.SetMaximumHealth(20 + currentConstitutionValue * 10, shouldHealthFilled, onStart);
+            health.SetMaximumHealth(120 + currentConstitutionValue * 25, shouldHealthFilled, onStart);
         }
 
         health.AddHealth(healthIncrease);
+    }
+
+    /// <summary>
+    /// Set player mana
+    /// </summary>
+    public void UpdatePlayerMana(int manaIncrease, bool shouldManaFilled, bool isMaxManaChanged, bool onStart = false)
+    {
+        if (isMaxManaChanged)
+        {
+            mana.SetMaximumMana(20 + currentWillpowerValue * 35, shouldManaFilled, onStart);
+        }
+
+        mana.AddMana(manaIncrease);
     }
 
     public void RecalculateSecondaryStats()

@@ -642,16 +642,16 @@ namespace Pathfinding
         }
 
         /// <summary>\copydoc Pathfinding::IAstarAI::MovementUpdate</summary>
-        public void MovementUpdate(float deltaTime, out Vector3 nextPosition, out Quaternion nextRotation)
+        public void MovementUpdate(float fixedDeltaTime, out Vector3 nextPosition, out Quaternion nextRotation)
         {
             if (updatePosition) simulatedPosition = rb2D.position;
             if (updateRotation) simulatedRotation = Quaternion.Euler(0f, 0f, rb2D.rotation);
 
             Vector3 direction;
 
-            nextPosition = CalculateNextPosition(out direction, isStopped ? 0f : deltaTime);
+            nextPosition = CalculateNextPosition(out direction, isStopped ? 0f : fixedDeltaTime);
 
-            if (enableRotation) nextRotation = SimulateRotationTowards(direction, deltaTime);
+            if (enableRotation) nextRotation = SimulateRotationTowards(direction, fixedDeltaTime);
             else nextRotation = simulatedRotation;
         }
 
@@ -685,7 +685,7 @@ namespace Pathfinding
 
         /// <summary>Calculate the AI's next position (one frame in the future).</summary>
         /// <param name="direction">The tangent of the segment the AI is currently traversing. Not normalized.</param>
-        protected virtual Vector3 CalculateNextPosition(out Vector3 direction, float deltaTime)
+        protected virtual Vector3 CalculateNextPosition(out Vector3 direction, float fixedDeltaTime)
         {
             if (!interpolator.valid)
             {
@@ -693,7 +693,7 @@ namespace Pathfinding
                 return simulatedPosition;
             }
 
-            interpolator.distance += deltaTime * speed;
+            interpolator.distance += fixedDeltaTime * speed;
 
             if (interpolator.remainingDistance < 0.0001f && !reachedEndOfPath)
             {
@@ -702,8 +702,10 @@ namespace Pathfinding
             }
 
             direction = interpolator.tangent;
-            pathSwitchInterpolationTime += deltaTime;
+            pathSwitchInterpolationTime += fixedDeltaTime;
             var alpha = switchPathInterpolationSpeed * pathSwitchInterpolationTime;
+
+
             if (interpolatePathSwitches && alpha < 1f)
             {
                 // Find the approximate position we would be at if we

@@ -41,6 +41,7 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Primary stats of the player")]
     #endregion
     public PrimaryStats primaryStats;
+    [Space(10)]
     #region Tooltip
     [Tooltip("Player physical resistance value")]
     #endregion
@@ -70,14 +71,12 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public float darkResistance = 0f;
 
+
     #region Header HEALTH
     [Space(10)]
     [Header("HEALTH")]
+
     #endregion
-    #region Tooltip
-    [Tooltip("Player starting health amount")]
-    #endregion
-    public int playerHealthAmount;
     #region Tooltip
     [Tooltip("Select if has immunity period immediately after being hit. If so specify the immunity time in seconds in the other field")]
     #endregion
@@ -107,65 +106,24 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public SoundEffectSO parrySoundEffect;
 
-    #region SPECIAL MOVE SETTINGS
-    [Header("SPECIAL MOVE SETTINGS")]
-    [Header("Special Move One Details")]
-    [Space(10)]
+    #region UNIQUE SKILL SETTINGS
+    [Header("UNIQUE SKILL SETTINGS")]
+    [Header("Passive Skill Details")]
     #endregion
-    #region Special Move One
-    [Tooltip("Special move image")]
+    #region Passive Skill
+    [Tooltip("Passive skill image")]
     #endregion
-    public Sprite specialMoveOneImage;
-    #region Tooltip
-    [Tooltip("Special move sound effect")]
-    #endregion
-    public SoundEffectSO specialMoveOneSoundEffect;
-    #region
-    [Tooltip("Spacial move cooldown duration")]
-    #endregion
-    public float specialMoveOneCooldownDuration = 20f;
-    #region
-    [Tooltip("Spacial move effective duration")]
-    #endregion
-    public float specialMoveOneEffectiveDuration = 0f;
+    public Sprite passiveSkillImage;
 
-    #region Special Move Two
-    [Header("Special Move Two Details")]
-    [Space(10)]
-    [Tooltip("Special move image")]
+    #region Active Skill One
+    [Header("Active Skill Details")]
     #endregion
-    public Sprite specialMoveTwoImage;
-    #region Tooltip
-    [Tooltip("Special move sound effect")]
-    #endregion
-    public SoundEffectSO specialMoveTwoSoundEffect;
-    #region
-    [Tooltip("Spacial move cooldown duration")]
-    #endregion
-    public float specialMoveTwoCooldownDuration = 20f;
-    #region
-    [Tooltip("Spacial move effective duration")]
-    #endregion
-    public float specialMoveTwoEffectiveDuration = 0f;
+    public ActiveUniqueSkillDetailsSO firstActiveSkillDetails;
+    public ActiveUniqueSkillDetailsSO secondActiveSkillDetails;
+    public ActiveUniqueSkillDetailsSO thirdActiveSkillDetails;
+    public ActiveUniqueSkillDetailsSO fourthActiveSkillDetails;
+    public ActiveUniqueSkillDetailsSO fifthActiveSkillDetails;
 
-    #region Special Move Three
-    [Header("Special Move Three Details")]
-    [Space(10)]
-    [Tooltip("Special move image")]
-    #endregion
-    public Sprite specialMoveThreeImage;
-    #region Tooltip
-    [Tooltip("Special move sound effect")]
-    #endregion
-    public SoundEffectSO specialMoveThreeSoundEffect;
-    #region
-    [Tooltip("Spacial move cooldown duration")]
-    #endregion
-    public float specialMoveThreeCooldownDuration = 20f;
-    #region
-    [Tooltip("Spacial move effective duration")]
-    #endregion
-    public float specialMoveThreeEffectiveDuration = 0f;
 
     #region Misc
     [Space(10)]
@@ -287,7 +245,6 @@ public class PlayerDetailsSO : ScriptableObject
         HelperUtilities.ValidateCheckEmptyString(this, nameof(playerCharacterName), playerCharacterName);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerPrefab), playerPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerClonePrefab), playerClonePrefab);
-        HelperUtilities.ValidateCheckPositiveValue(this, nameof(playerHealthAmount), playerHealthAmount, false);
         HelperUtilities.ValidateCheckNullValue(this, nameof(startingWeapon), startingWeapon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerMiniMapIcon), playerMiniMapIcon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerHandSprite), playerHandSprite);

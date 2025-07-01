@@ -11055,7 +11055,7 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1
+    width: 0.9995026
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -30815,17 +30815,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: LoadingManager
       objectReference: {fileID: 0}
+    - target: {fileID: 962894195609091887, guid: 4c3a2a8106f8b7c4c8de340a615453f5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1490805875788103359, guid: 4c3a2a8106f8b7c4c8de340a615453f5, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1490805875788103359, guid: 4c3a2a8106f8b7c4c8de340a615453f5, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1490805875788103359, guid: 4c3a2a8106f8b7c4c8de340a615453f5, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -0.23825073
       objectReference: {fileID: 0}
     - target: {fileID: 1490805875788103359, guid: 4c3a2a8106f8b7c4c8de340a615453f5, type: 3}
       propertyPath: m_SizeDelta.y

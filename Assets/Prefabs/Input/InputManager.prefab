@@ -64,6 +64,7 @@ MonoBehaviour:
   jumpButton: {fileID: 7022676829501651627, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   invisibleButton: {fileID: 543932677018655109, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   parryButton: {fileID: -8829189971212813033, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  hoverAltButton: {fileID: -3418308764913140458, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   OKButton: {fileID: -1104434806055026426, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   escapeButton: {fileID: 6101426676883284784, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   uiNavigate: {fileID: -1422576417689974817, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}

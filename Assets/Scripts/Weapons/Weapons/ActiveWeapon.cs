@@ -16,7 +16,19 @@ public class ActiveWeapon : MonoBehaviour
     #region Tooltip
     [Tooltip("Populate with the Transform on the WeaponShootPosition gameobject")]
     #endregion
-    [SerializeField] Transform weaponMainHandShootPositionTransform;
+    [SerializeField] Transform weaponMainHandShootPositionUpTransform;
+    #region Tooltip
+    [Tooltip("Populate with the Transform on the WeaponShootPosition gameobject")]
+    #endregion
+    [SerializeField] Transform weaponMainHandShootPositionRightTransform;
+    #region Tooltip
+    [Tooltip("Populate with the Transform on the WeaponShootPosition gameobject")]
+    #endregion
+    [SerializeField] Transform weaponMainHandShootPositionDownTransform;
+    #region Tooltip
+    [Tooltip("Populate with the Transform on the WeaponShootPosition gameobject")]
+    #endregion
+    [SerializeField] Transform weaponMainHandShootPositionLeftTransform;
     #region Tooltip
     [Tooltip("Populate with the Transform on the WeaponEffectPosition gameobject")]
     #endregion
@@ -94,6 +106,7 @@ public class ActiveWeapon : MonoBehaviour
 
         // Update new weapon values
         player?.UpdateDamageValues();
+        player?.UpdateArmorValues();
         player?.UpdateWeaponHandlingAndCriticalValues();
         player?.UpdateBlockAndEvasivenessValues();
     }
@@ -104,6 +117,7 @@ public class ActiveWeapon : MonoBehaviour
 
         // Update new weapon values
         player?.UpdateDamageValues();
+        player?.UpdateArmorValues();
         player?.UpdateWeaponHandlingAndCriticalValues();
         player?.UpdateBlockAndEvasivenessValues();
     }
@@ -115,6 +129,7 @@ public class ActiveWeapon : MonoBehaviour
 
         // Update new weapon values
         player.UpdateDamageValues();
+        player?.UpdateArmorValues();
         player.UpdateWeaponHandlingAndCriticalValues();
         player.UpdateBlockAndEvasivenessValues();
     }
@@ -125,6 +140,7 @@ public class ActiveWeapon : MonoBehaviour
 
         // Update new weapon values
         player?.UpdateDamageValues();
+        player?.UpdateArmorValues();
         player?.UpdateWeaponHandlingAndCriticalValues();
         player?.UpdateBlockAndEvasivenessValues();
     }
@@ -238,7 +254,7 @@ public class ActiveWeapon : MonoBehaviour
         // Set current weapon sprite
         weaponMainHandSpriteRenderer.sprite = currentMainHandWeapon.weaponDetails.weaponFrontSprite;
 
-        weaponMainHandShootPositionTransform.localPosition = currentMainHandWeapon.weaponDetails.weaponRightShootPosition;
+        weaponMainHandShootPositionUpTransform.localPosition = currentMainHandWeapon.weaponDetails.weaponRightShootPosition;
 
         isSwitching = false;
     }
@@ -251,6 +267,7 @@ public class ActiveWeapon : MonoBehaviour
 
             // Update new weapon values
             player?.UpdateDamageValues();
+            player?.UpdateArmorValues();
             player?.UpdateWeaponHandlingAndCriticalValues();
             player?.UpdateBlockAndEvasivenessValues();
         }
@@ -362,7 +379,13 @@ public class ActiveWeapon : MonoBehaviour
 
     public Weapon GetCurrentMainHandWeapon() => currentMainHandWeapon;
 
-    public Vector3 GetMainHandShootPosition() => weaponMainHandShootPositionTransform.position;
+    public Vector3 GetMainHandShootPositionUp() => weaponMainHandShootPositionUpTransform.position;
+
+    public Vector3 GetMainHandShootPositionRight() => weaponMainHandShootPositionRightTransform.position;
+
+    public Vector3 GetMainHandShootPositionDown() => weaponMainHandShootPositionDownTransform.position;
+
+    public Vector3 GetMainHandShootPositionLeft() => weaponMainHandShootPositionLeftTransform.position;
 
     public Vector3 GetRightHandShootEffectPosition() => weaponMainHandEffectPositionTransform.position;
 
@@ -386,7 +409,7 @@ public class ActiveWeapon : MonoBehaviour
     private void OnValidate()
     {
         HelperUtilities.ValidateCheckNullValue(this, nameof(weaponMainHandSpriteRenderer), weaponMainHandSpriteRenderer);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponMainHandShootPositionTransform), weaponMainHandShootPositionTransform);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponMainHandShootPositionUpTransform), weaponMainHandShootPositionUpTransform);
         HelperUtilities.ValidateCheckNullValue(this, nameof(weaponMainHandEffectPositionTransform), weaponMainHandEffectPositionTransform);
     }
 #endif

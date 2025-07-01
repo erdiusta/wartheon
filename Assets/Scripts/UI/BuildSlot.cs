@@ -38,11 +38,11 @@ public class BuildSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void ActivateBuild()
     {
-        if (GameManager.Instance.GetPlayer().currentBuildPoints > 0 && !isLocked && !isSelected)
+        if (GameManager.Instance.GetPlayer().currentSkillPoints > 0 && !isLocked && !isSelected)
         {
             isSelected = true;
             selectedBuildImageTransform.gameObject.SetActive(true);
-            GameManager.Instance.GetPlayer().currentBuildPoints--;
+            GameManager.Instance.GetPlayer().currentSkillPoints--;
             StaticEventHandler.CallBuildPointsUsed(indexNumber); // This is for activating build
                                                                  // ed image
         }

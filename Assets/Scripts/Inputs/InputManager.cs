@@ -42,7 +42,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     }
 
     // Tutorial flag
-    private static bool tutorialEnabled = true;
+    private static bool tutorialEnabled = false;
 
     // Inputs
     public static bool overviewMapDisabled;
@@ -84,6 +84,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference jumpButton;
     public InputActionReference invisibleButton;
     public InputActionReference parryButton;
+    public InputActionReference hoverAltButton;
 
     [Header("UI")]
     public InputActionReference OKButton;

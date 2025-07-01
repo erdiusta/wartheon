@@ -114,7 +114,7 @@ public class MeleeAttackOffHand : MonoBehaviour
                                     CheckBlindStatus(enemy);
                                 }
 
-                                if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
+                                if (player.playerDetails.playerCharacterIndex == Character.Morven && player.isStealthActive)
                                 {
                                     player.playerControl.Unstealth();
                                 }
@@ -180,7 +180,7 @@ public class MeleeAttackOffHand : MonoBehaviour
                                     CheckBlindStatus(enemy);
                                 }
 
-                                if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
+                                if (player.playerDetails.playerCharacterIndex == Character.Morven && player.isStealthActive)
                                 {
                                     player.playerControl.Unstealth();
                                 }
@@ -224,11 +224,11 @@ public class MeleeAttackOffHand : MonoBehaviour
         }
 
         // Calculate damage after critical hit check
-        if (player.onStealth)
+        if (player.isStealthActive)
         {
             // Add critical damage modifier if player is on stealth
             damageDone = criticalHitHappened ? (int)(damageDone * (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier +
-                player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnStealth)) : damageDone;
+                player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnCloakedPrecision)) : damageDone;
         }
         else
         {
@@ -244,7 +244,7 @@ public class MeleeAttackOffHand : MonoBehaviour
 
         int nonElementalDamage = damageDone - elementalDamage + additionalElementalDamage;
 
-        int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - enemy.currentPhysicalResistance));
+        int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - enemy.currentArmor));
 
         int inflictedElementalDamage = 0;
         // Calculate inflicted elemental damage
@@ -285,7 +285,7 @@ public class MeleeAttackOffHand : MonoBehaviour
     {
         bool criticalHitHappened = false;
 
-        if (player.onStealth)
+        if (player.isStealthActive)
         {
             if (!player.isBlind)
             {
@@ -362,7 +362,7 @@ public class MeleeAttackOffHand : MonoBehaviour
             if (randomDice < player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.acidEfficiency)
             {
                 enemy.armorStatus = ArmorStatus.Acid;
-                enemy.currentPhysicalResistance = (float)Math.Round(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.acidEfficiency * enemy.currentPhysicalResistance, 2);
+                enemy.currentArmor = (float)Math.Round(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.acidEfficiency * enemy.currentArmor, 2);
                 enemy.healthEvent.CallGetAcidEvent();
             }
         }

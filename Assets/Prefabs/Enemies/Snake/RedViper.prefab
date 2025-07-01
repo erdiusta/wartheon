@@ -478,13 +478,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyDetails: {fileID: 11400000, guid: 85685b28596d18f4fa896a6ba18c85ee, type: 2}
   weaponShootPosition: {fileID: 3455516063969396250}
-  layerMask:
+  shootLayerMask:
     serializedVersion: 2
     m_Bits: 18432
-  debugText: {fileID: 0}
+  avoidLayerMask:
+    serializedVersion: 2
+    m_Bits: 16448
   moveStatus: 0
   updateFrameNumber: 1
-  enemyStartingSpeed: 0
   enemyPhase: 0
   isAttacking: 0
   isDashing: 0

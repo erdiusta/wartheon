@@ -470,25 +470,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyDetails: {fileID: 11400000, guid: 3e7e3db75a901a445a2a877d3f030404, type: 2}
   weaponShootPosition: {fileID: 3455516063969396250}
-  layerMask:
+  shootLayerMask:
     serializedVersion: 2
     m_Bits: 18432
-  debugText: {fileID: 7910599782929872873}
+  avoidLayerMask:
+    serializedVersion: 2
+    m_Bits: 16448
   moveStatus: 0
   updateFrameNumber: 1
-  enemyStartingSpeed: 0
   enemyPhase: 0
   isAttacking: 0
   isDashing: 0
   patrolPointsParentContainer: {fileID: 0}
---- !u!114 &7910599782929872873 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7294595444096721567, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
-  m_PrefabInstance: {fileID: 645003754541700470}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

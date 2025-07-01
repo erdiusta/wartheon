@@ -116,13 +116,13 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
         else if (moveStatus == MoveStatus.Idle)
         {
             // Check if the player is on stealth
-            if (player != null && GameManager.Instance.GetPlayer().onStealth)
+            if (player != null && GameManager.Instance.GetPlayer().isStealthActive)
             {
                 PlayerStealthCheck();
             }
 
             // Check if the enemy is a Frost Wrym boss
-            if (enemyDetails.enemyBehaviour == EnemyBehaviour.FrostWrym)
+            if (enemyDetails.enemyBehaviour == EnemyBehaviour.Cryothar)
             {
                 // Handle phases based on currentPhase
                 switch (currentFrostWrymPhase)
@@ -215,7 +215,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
     private void TransitionToNextPhase()
     {
         // Check if the player is on stealth
-        if (player != null && player.onStealth)
+        if (player != null && player.isStealthActive)
         {
             PlayerStealthCheck();
             return;

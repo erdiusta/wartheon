@@ -82,10 +82,10 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void StaticEventHandler_OnCharacterButtonSelected(CharacterButtonArgs characterButtonArgs)
     {
-        if (characterButtonArgs.charName == Settings.astraeus) HoverAstraeus();
-        else if (characterButtonArgs.charName == Settings.erebus) HoverErebus();
+        if (characterButtonArgs.charName == Settings.astraeus) HoverCaelion();
+        else if (characterButtonArgs.charName == Settings.erebus) HoverMorven();
         else if (characterButtonArgs.charName == Settings.lyrisa) HoverLyrisa();
-        else if (characterButtonArgs.charName == Settings.orion) HoverOrion();
+        else if (characterButtonArgs.charName == Settings.orion) HoverNyveran();
     }
 
     private IEnumerator SetFirstSelected()
@@ -127,10 +127,10 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void OpenCharacterTooltip(PointerEventData eventData)
     {
-        if (eventData.pointerEnter.CompareTag(Settings.astraeusTag)) HoverAstraeus();
+        if (eventData.pointerEnter.CompareTag(Settings.astraeusTag)) HoverCaelion();
         else if (eventData.pointerEnter.CompareTag(Settings.lyrisaTag)) HoverLyrisa();
-        else if (eventData.pointerEnter.CompareTag(Settings.erebusTag)) HoverErebus();
-        else if (eventData.pointerEnter.CompareTag(Settings.orionTag)) HoverOrion();
+        else if (eventData.pointerEnter.CompareTag(Settings.erebusTag)) HoverMorven();
+        else if (eventData.pointerEnter.CompareTag(Settings.orionTag)) HoverNyveran();
     }
 
     private void CloseCharacterTooltip(PointerEventData eventData)
@@ -141,17 +141,17 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         DisableDetailsPopup(ref orionDetailsPopUp);
     }
 
-    public void HoverAstraeus()
+    public void HoverCaelion()
     {
         StartCoroutine(SelectionRoutine(0, astraeusSpotlight, astraeusDetailsPopUp));
     }
 
-    public void HoverErebus()
+    public void HoverMorven()
     {
         StartCoroutine(SelectionRoutine(1, erebusSpotlight, erebusDetailsPopUp));
     }
 
-    public void HoverOrion()
+    public void HoverNyveran()
     {
         StartCoroutine(SelectionRoutine(2, orionSpotlight, orionDetailsPopUp));
     }
@@ -220,7 +220,7 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         orionSpotlight.gameObject.SetActive(false);
         erebusSpotlight.gameObject.SetActive(false);
 
-        yield return null;
+        //yield return null;
 
         selectedPlayerIndex = index;
         currentPlayer.playerDetails = playerDetailsList[index];

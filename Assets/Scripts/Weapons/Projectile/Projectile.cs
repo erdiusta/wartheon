@@ -250,7 +250,7 @@ public class Projectile : MonoBehaviour, IFireable
 
             Vector2 directionToTarget;
 
-            if (player.onStealth)
+            if (player.isStealthActive)
             {
                 if (!directionInitialized)
                 {
@@ -303,63 +303,53 @@ public class Projectile : MonoBehaviour, IFireable
         {
             Player player = collision.GetComponent<Player>();
 
-            if (projectileDetails.isTrap)
+            if (player.isValorActive)
             {
-                if (explosionRoutine == null)
-                {
-                    explosionRoutine = StartCoroutine(ExplosionRoutine(true));
-                    return;
-                }
-            }
-
-            int diceRoll = Random.Range(1, 101);
-            bool isProjectileDodged = 100 - player.currentEvasivenessValue * 100 < diceRoll ? true : false;
-
-            // Dodge check
-            if (isProjectileDodged || player.playerControl.isPlayerRolling)
-            {
-                player.health.isDodging = true;
-                player.healthEvent.CallDodgeEvent();
+                //SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.activeSkillTwoSoundEffect);
                 player.health.PostHitImmunity(true);
-                //player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
             }
             else
             {
-                if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+                if (projectileDetails.isTrap)
                 {
-                    // Get enemy projectile direction
-                    Vector2 enemyProjectileDirection = (player.transform.position - transform.position).normalized;
-
-                    // Get weapon pointer direction
-                    Vector2 cursorPosition = InputManager.Instance.pointerPosition.action.ReadValue<Vector2>();
-                    Vector2 cursorWorldPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-
-                    Vector2 pointerDirection = (cursorWorldPosition - new Vector2(player.transform.position.x, player.transform.position.y)).normalized;
-
-                    // Calculate the dot product between the shield's forward direction and the projectile direction
-                    float dotProduct = Vector2.Dot(pointerDirection, enemyProjectileDirection);
-
-                    float blockingThreshold = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.projectileDeflectRatio;
-
-                    // Check if the dot product is greater than the threshold, block fails
-                    if (dotProduct > blockingThreshold - 1f)
+                    if (explosionRoutine == null)
                     {
-                        // Status checks
-                        CheckBurnStatus(player);
-                        CheckPoisonStatus(player);
-                        CheckAcidStatus(player);
-                        CheckFrostStatus(player);
-                        CheckStunStatus(player);
-                        CheckCurseStatus(player);
-                        CheckBlindStatus(player);
-
-                        // Deal Damage To Collision Object
-                        DealDamage(collision);
+                        explosionRoutine = StartCoroutine(ExplosionRoutine(true));
+                        return;
                     }
-                    else
+                }
+
+                int diceRoll = Random.Range(1, 101);
+                bool isProjectileDodged = 100 - player.currentEvasivenessValue * 100 < diceRoll ? true : false;
+
+                // Dodge check
+                if (isProjectileDodged || player.playerControl.isPlayerRolling)
+                {
+                    player.health.isDodging = true;
+                    player.healthEvent.CallDodgeEvent();
+                    player.health.PostHitImmunity(true);
+                    //player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
+                }
+                else
+                {
+                    if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
                     {
-                        // If the player is attacking, guard is down so block is disabled
-                        if (player.meleeAttackMainHand.IsAttacking)
+                        // Get enemy projectile direction
+                        Vector2 enemyProjectileDirection = (player.transform.position - transform.position).normalized;
+
+                        // Get weapon pointer direction
+                        Vector2 cursorPosition = InputManager.Instance.pointerPosition.action.ReadValue<Vector2>();
+                        Vector2 cursorWorldPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
+
+                        Vector2 pointerDirection = (cursorWorldPosition - new Vector2(player.transform.position.x, player.transform.position.y)).normalized;
+
+                        // Calculate the dot product between the shield's forward direction and the projectile direction
+                        float dotProduct = Vector2.Dot(pointerDirection, enemyProjectileDirection);
+
+                        float blockingThreshold = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.blockRate;
+
+                        // Check if the dot product is greater than the threshold, block fails
+                        if (dotProduct > blockingThreshold - 1f)
                         {
                             // Status checks
                             CheckBurnStatus(player);
@@ -375,27 +365,45 @@ public class Projectile : MonoBehaviour, IFireable
                         }
                         else
                         {
-                            if (playerBlockCoroutine == null)
+                            // If the player is attacking, guard is down so block is disabled
+                            if (player.meleeAttackMainHand.IsAttacking)
                             {
-                                // The projectile is within the blocking angle
-                                playerBlockCoroutine = StartCoroutine(PlayerBlockAnimRoutine(collision));
+                                // Status checks
+                                CheckBurnStatus(player);
+                                CheckPoisonStatus(player);
+                                CheckAcidStatus(player);
+                                CheckFrostStatus(player);
+                                CheckStunStatus(player);
+                                CheckCurseStatus(player);
+                                CheckBlindStatus(player);
+
+                                // Deal Damage To Collision Object
+                                DealDamage(collision);
+                            }
+                            else
+                            {
+                                if (playerBlockCoroutine == null)
+                                {
+                                    // The projectile is within the blocking angle
+                                    playerBlockCoroutine = StartCoroutine(PlayerBlockAnimRoutine(collision));
+                                }
                             }
                         }
                     }
-                }
-                else
-                {
-                    // Status checks
-                    CheckBurnStatus(player);
-                    CheckPoisonStatus(player);
-                    CheckAcidStatus(player);
-                    CheckFrostStatus(player);
-                    CheckStunStatus(player);
-                    CheckCurseStatus(player);
-                    CheckBlindStatus(player);
+                    else
+                    {
+                        // Status checks
+                        CheckBurnStatus(player);
+                        CheckPoisonStatus(player);
+                        CheckAcidStatus(player);
+                        CheckFrostStatus(player);
+                        CheckStunStatus(player);
+                        CheckCurseStatus(player);
+                        CheckBlindStatus(player);
 
-                    // Deal Damage To Collision Object
-                    DealDamage(collision);
+                        // Deal Damage To Collision Object
+                        DealDamage(collision);
+                    }
                 }
             }
 
@@ -736,11 +744,11 @@ public class Projectile : MonoBehaviour, IFireable
                         nonElementalDamage = damageDone - elementalDamage + additionalElementalDamage;
                     }
 
-                    inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - enemy.currentPhysicalResistance));
+                    inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - enemy.currentArmor));
                 }
                 else
                 {
-                    inflictedDamage = (int)(damageDone * (1 - enemy.currentPhysicalResistance));
+                    inflictedDamage = (int)(damageDone * (1 - enemy.currentArmor));
                 }
 
                 int inflictedElementalDamage = 0;
@@ -792,7 +800,7 @@ public class Projectile : MonoBehaviour, IFireable
                 int elementalDamage = (int)(projectileDetails.belongingWeaponDetails.elementalForgeRate * damageDone);
                 int nonElementalDamage = damageDone - elementalDamage;
 
-                int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentPhysicalResistanceValue));
+                int inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentArmorValue));
 
                 int inflictedElementalDamage = 0;
                 // Calculate inflicted elemental damage
@@ -856,10 +864,10 @@ public class Projectile : MonoBehaviour, IFireable
         bool criticalHitHappened = false;
 
         // Calculate damage after critical hit check
-        if (player.onStealth)
+        if (player.isStealthActive)
         {
             damageDone = criticalHitHappened ? (int)(damageDone * (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
-                player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnStealth)) : damageDone;
+                player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnCloakedPrecision)) : damageDone;
         }
         else
         {
@@ -885,7 +893,7 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     public void InitializeProjectile(Enemy belongingEnemy, bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
         float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement = false, bool fallingFromSkies = false,
-        bool isPenetrationArrow = false, int projectileCounter = 0, int projectilesPerShot = 0,CentaurPhase centaurPhase = CentaurPhase.None,
+        bool isPenetrationArrow = false, int projectileCounter = 0, int projectilesPerShot = 0, MoravellePhase moravellePhase = MoravellePhase.None,
         TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
         FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None,
         MoldranPhase moldranPhase = MoldranPhase.None)
@@ -910,8 +918,8 @@ public class Projectile : MonoBehaviour, IFireable
         this.belongingEnemy = belongingEnemy;
 
         // Set fire direction
-        SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, projectilesPerShot, centaurPhase, treantPhase, galvanusPhase,
-            sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
+        SetFireDirection(projectileDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileCounter, projectilesPerShot, moravellePhase, 
+            treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
 
         //// Set projectile sprite
         //spriteRenderer.sprite = projectileDetails.projectileSprite;
@@ -1065,11 +1073,11 @@ public class Projectile : MonoBehaviour, IFireable
     /// Set projectile fire direction and angle based on the input angle and direction adjusted by the
     /// random spread - PROJECTILE
     private void SetFireDirection(ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
-        int projectileCounter = 0, int totalProjectiles = 0, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, 
+        int projectileCounter = 0, int totalProjectiles = 0, MoravellePhase moravellePhase = MoravellePhase.None, TreantPhase treantPhase = TreantPhase.None, 
         GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None,
         VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
     {
-        if (centaurPhase == CentaurPhase.SpreadArrowShot)
+        if (moravellePhase == MoravellePhase.SpreadArrowShot)
         {
             // Define the total angle spread (e.g., 45 degrees spread)
             float totalSpreadAngle = 45f;
@@ -1274,7 +1282,7 @@ public class Projectile : MonoBehaviour, IFireable
         {
             GetComponentInChildren<Animator>().SetTrigger("impact");
             StaticEventHandler.CallCameraShakeEvent(GameManager.Instance.GetPlayer().playerDetails.shakeIntensity, GameManager.Instance.GetPlayer().playerDetails.shakeDuration);
-            SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.specialMoveThreeSoundEffect);
+            //SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.activeSkillThreeSoundEffect);
             StartCoroutine(DisableProcess(0.2f));
         }
         else
@@ -1600,13 +1608,8 @@ public class Projectile : MonoBehaviour, IFireable
                 float randomDice = Random.Range(0f, 1f);
                 if (randomDice < projectileDetails.acidEfficiency - player.additionalNegativeStatusEffectNegatorModifier)
                 {
-                    if (player.armorStatus == ArmorStatus.SilverArmor)
-                    {
-                        player.healthEvent.CallArmorWoreOffEvent();
-                    }
-
                     player.armorStatus = ArmorStatus.Acid;
-                    player.currentPhysicalResistanceValue = (float)Math.Round(projectileDetails.acidEfficiency * player.currentPhysicalResistanceValue, 2);
+                    player.currentArmorValue = (float)Math.Round(projectileDetails.acidEfficiency * player.currentArmorValue, 2);
                     player.healthEvent.CallGetAcidEvent();
                 }
             }
@@ -1619,13 +1622,8 @@ public class Projectile : MonoBehaviour, IFireable
                 float randomDice = Random.Range(0f, 1f - player.additionalNegativeStatusEffectNegatorModifier);
                 if (randomDice < activeItemDetails.acidEfficiency)
                 {
-                    if (player.armorStatus == ArmorStatus.SilverArmor)
-                    {
-                        player.healthEvent.CallArmorWoreOffEvent();
-                    }
-
                     player.armorStatus = ArmorStatus.Acid;
-                    player.currentPhysicalResistanceValue = (float)Math.Round(activeItemDetails.acidEfficiency * player.currentPhysicalResistanceValue, 2);
+                    player.currentArmorValue = (float)Math.Round(activeItemDetails.acidEfficiency * player.currentArmorValue, 2);
                     player.healthEvent.CallGetAcidEvent();
                 }
             }
@@ -1645,7 +1643,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomAcidNum < projectileDetails.acidEfficiency)
                 {
                     enemy.armorStatus = ArmorStatus.Acid;
-                    enemy.currentPhysicalResistance = (float)Math.Round(projectileDetails.acidEfficiency * enemy.currentPhysicalResistance, 2);
+                    enemy.currentArmor = (float)Math.Round(projectileDetails.acidEfficiency * enemy.currentArmor, 2);
                     enemy.healthEvent.CallGetAcidEvent();
                 }
             }
@@ -1658,7 +1656,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if (randomAcidNum < activeItemDetails.acidEfficiency)
                 {
                     enemy.armorStatus = ArmorStatus.Acid;
-                    enemy.currentPhysicalResistance = (float)Math.Round(activeItemDetails.acidEfficiency * enemy.currentPhysicalResistance, 2);
+                    enemy.currentArmor = (float)Math.Round(activeItemDetails.acidEfficiency * enemy.currentArmor, 2);
                     enemy.healthEvent.CallGetAcidEvent();
                 }
             }
@@ -2080,7 +2078,7 @@ public class Projectile : MonoBehaviour, IFireable
 
             // Damage inflicted to player after deducting player armor
             health = player.GetComponent<Health>();
-            inflictedDamage = (int)(damageDone * (1 - player.currentPhysicalResistanceValue));
+            inflictedDamage = (int)(damageDone * (1 - player.currentArmorValue));
         }
         else
         {
@@ -2090,7 +2088,7 @@ public class Projectile : MonoBehaviour, IFireable
             // Damage inflicted to enemy after deducting enemy armor
             health = enemy.GetComponent<Health>();
 
-            inflictedDamage = (int)(damageDone * (1 - enemy.currentPhysicalResistance));
+            inflictedDamage = (int)(damageDone * (1 - enemy.currentArmor));
         }
 
         return inflictedDamage;

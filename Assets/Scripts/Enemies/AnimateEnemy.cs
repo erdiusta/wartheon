@@ -34,8 +34,8 @@ public class AnimateEnemy : MonoBehaviour
     /// </summary>
     public void ResetAimAnimationParameters()
     {
-        enemy.animator.SetFloat(Settings.axisX, -1f);
-        enemy.animator.SetFloat(Settings.axisY, -1f);
+        //enemy.animator.SetFloat(Settings.axisX, -1f);
+        //enemy.animator.SetFloat(Settings.axisY, -1f);
 
         enemy.animator.SetBool(Settings.aimUp, false);
         enemy.animator.SetBool(Settings.aimUpRight, false);

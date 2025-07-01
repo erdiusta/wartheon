@@ -20,11 +20,6 @@ public class ExpUI : MonoBehaviour
     [Tooltip("Populate with the level text")]
     #endregion Tooltip
     [SerializeField] TextMeshProUGUI levelText;
-    #region Tooltip
-    [Tooltip("Populate with the demo text")]
-    #endregion Tooltip
-    [SerializeField] TextMeshProUGUI demoText;
-
     private void Awake()
     {
         player = GameManager.Instance.GetPlayer();
@@ -69,7 +64,6 @@ public class ExpUI : MonoBehaviour
         if (GameManager.isDemo && player.currentLevel >= 4)
         {
             barFill = 1f; // EXCEED DEMO LIMIT
-            demoText.gameObject.SetActive(true);
         }
         else
         {
@@ -86,6 +80,16 @@ public class ExpUI : MonoBehaviour
 
     private void UpdateLevelText()
     {
-        levelText.text = "Lvl: " + player.currentLevel;
+        // Update text
+        if (GameManager.isDemo && player.currentLevel >= 4)
+        {
+            Color hudColor = new Color(1f, 0.8078f, 0.1568f);
+            levelText.color = hudColor;
+            levelText.text = "MAX LEVEL REACHED FOR DEMO";
+        }
+        else
+        {
+            levelText.text = "Level: " + player.currentLevel;
+        }
     }
 }

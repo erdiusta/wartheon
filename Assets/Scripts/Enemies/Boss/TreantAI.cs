@@ -133,10 +133,10 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
         else if (moveStatus == MoveStatus.Idle)
         {
             // Check if the enemy is Treant boss
-            if (enemyDetails.enemyBehaviour == EnemyBehaviour.Treant)
+            if (enemyDetails.enemyBehaviour == EnemyBehaviour.Sylvarok)
             {
                 // Check if the player is on stealth
-                if (GameManager.Instance.GetPlayer().onStealth)
+                if (GameManager.Instance.GetPlayer().isStealthActive)
                 {
                     PlayerStealthCheck();
                 }
@@ -232,7 +232,7 @@ public class TreantAI : EnemyAI, IMutualBossBehaviour
     private void TransitionToNextPhase()
     {
         // Check if the player is on stealth
-        if (GameManager.Instance.GetPlayer().onStealth)
+        if (GameManager.Instance.GetPlayer().isStealthActive)
         {
             PlayerStealthCheck();
             return;

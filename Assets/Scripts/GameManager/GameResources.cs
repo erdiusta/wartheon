@@ -265,6 +265,15 @@ public class GameResources : MonoBehaviour
     #endregion
     public Sprite lockIcon;
 
+    #region Header STATUS EFFECT
+    [Space(10)]
+    [Header("STATUS EFFECT")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Status effect prefab")]
+    #endregion
+    public GameObject statusEffectPrefab;
+
     #region Header MINIMAP
     [Space(10)]
     [Header("MINIMAP")]
@@ -273,7 +282,6 @@ public class GameResources : MonoBehaviour
     [Tooltip("Minimap boss prefab")]
     #endregion
     public GameObject minimapBossPrefab;
-
 
     public void SavePlayerData()
     {

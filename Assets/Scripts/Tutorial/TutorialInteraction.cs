@@ -624,7 +624,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 // This is handled by Drop Item script.
                 break;
             case TutorialPhase.Parry:
-                if (player.playerDetails.playerCharacterIndex == Character.Orion || player.playerDetails.playerCharacterIndex == Character.Lyrisa)
+                if (player.playerDetails.playerCharacterIndex == Character.Nyveran || player.playerDetails.playerCharacterIndex == Character.Lyrisa)
                 {
                     Invoke(nameof(PassTutorialProcess), 2f); // Directly pass for these characters
                 }
@@ -658,7 +658,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 }
                 break;
             case TutorialPhase.BuildsPage:
-                if (player.currentBuildPoints == 0)
+                if (player.currentSkillPoints == 0)
                 {
                     PassTutorialProcess();
                 }
@@ -779,7 +779,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
     private void FinishTutorialStartGame()
     {
         // Get current character safely
-        Character currentCharacter = Character.Astraeus; // default
+        Character currentCharacter = Character.Caelion; // default
 
         if (player != null && player.playerDetails != null)
         {

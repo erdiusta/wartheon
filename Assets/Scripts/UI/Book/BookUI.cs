@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -26,11 +25,46 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] Image characterImage;
     Image characterSeparatorImage;
 
-    [SerializeField] TextMeshProUGUI strengthText;
-    [SerializeField] TextMeshProUGUI constitutionText;
-    [SerializeField] TextMeshProUGUI dexterityText;
-    [SerializeField] TextMeshProUGUI intelligenceText;
-    [SerializeField] TextMeshProUGUI agilityText;
+    [Space(10)]
+    [Header("PRIMARY STATS")]
+    [SerializeField] TextMeshProUGUI strengthValue;
+    [SerializeField] TextMeshProUGUI constitutionValue;
+    [SerializeField] TextMeshProUGUI dexterityValue;
+    [SerializeField] TextMeshProUGUI intelligenceValue;
+    [SerializeField] TextMeshProUGUI willpowerValue;
+    [SerializeField] TextMeshProUGUI agilityValue;
+    [SerializeField] TextMeshProUGUI resolveValue;
+    [SerializeField] TextMeshProUGUI ferocityValue;
+
+    [Space(10)]
+    [Header("PRIMARY STATS BUTTONS")]
+    public Transform primaryStatsButtonContainer;
+    [SerializeField] TextMeshProUGUI currentAvailableStatPoints;
+
+    [Space(10)]
+    [Header("SECONDARY STATS")]
+    [SerializeField] TextMeshProUGUI damageValue;
+    [SerializeField] TextMeshProUGUI healthValue;
+    [SerializeField] TextMeshProUGUI criticalHitChanceDamageValue;
+    [SerializeField] TextMeshProUGUI elementalDamageModifierValue;
+    [SerializeField] TextMeshProUGUI manaValue;
+    [SerializeField] TextMeshProUGUI speedValue;
+    [SerializeField] TextMeshProUGUI globalResistanceValue;
+    [SerializeField] TextMeshProUGUI criticalHitDamageAmountValue;
+
+    [Space(10)]
+    [Header("AUXILLARY STATS")]
+    [SerializeField] TextMeshProUGUI attackCooldownValue;
+    [SerializeField] TextMeshProUGUI chanceToHitValue;
+    [SerializeField] TextMeshProUGUI blockRateValue;
+    [SerializeField] TextMeshProUGUI debuffDurationModifierValue;
+    [SerializeField] TextMeshProUGUI buffDurationModifierValue;
+    [SerializeField] TextMeshProUGUI manaRegenerationValue;
+    [SerializeField] TextMeshProUGUI eveasivenessRateValue;
+    [SerializeField] TextMeshProUGUI dotEffectsValue;
+
+    [Space(10)]
+    [Header("RESISTANCE STATS")]
     [SerializeField] TextMeshProUGUI resistanceText;
     [SerializeField] TextMeshProUGUI physicalResistanceText;
     [SerializeField] TextMeshProUGUI fireResistanceText;
@@ -39,14 +73,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] TextMeshProUGUI earthResistanceText;
     [SerializeField] TextMeshProUGUI lightResistanceText;
     [SerializeField] TextMeshProUGUI darkResistanceText;
-    [SerializeField] TextMeshProUGUI healthText;
-    [SerializeField] TextMeshProUGUI damageText;
-    [SerializeField] TextMeshProUGUI handlingText;
-    [SerializeField] TextMeshProUGUI criticalHitChanceDamageText;
-    [SerializeField] TextMeshProUGUI blockRateText;
-    [SerializeField] TextMeshProUGUI eveasivenessRateText;
-    [SerializeField] TextMeshProUGUI speedText;
 
+    [Space(10)]
     [SerializeField] Animator bookAnimator;
     [SerializeField] Transform mainHandWeaponSlot;
     [SerializeField] Transform offHandWeaponSlot;
@@ -73,7 +101,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     Transform offHandWeaponBackground;
     Transform offHandWeaponEquipped;
 
-    Transform buildTreeFrame;
+    Transform activeUniqueSkillsContainer;
+    Transform innerPathContainer;
     Transform buildDescriptonInnerPanel;
     Transform buildPointsTransform;
     Transform buildTextContainer;
@@ -133,10 +162,10 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
         offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
 
-        switch (player.playerDetails.playerCharacterName)
+        switch (player.playerDetails.playerCharacterIndex)
         {
-            case Settings.astraeus:
-            case Settings.erebus:
+            case Character.Caelion:
+            case Character.Morven:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 // MAIN HAND WEAPON EQUIP AT START - SLOT
@@ -150,8 +179,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 offHandWeaponAtSlot.GetComponent<Image>().sprite = player.playerDetails.startingWeaponList[1].weaponFrontSprite;
                 break;
 
-            case Settings.orion:
-            case Settings.lyrisa:
+            case Character.Nyveran:
+            case Character.Lyrisa:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 // WEAPON EQUIP AT START - SLOT
@@ -187,6 +216,9 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     private void OnEnable()
     {
         StaticEventHandler.OnBuildPageOpened += StaticEventHandler_OnBuildPageOpened;
+
+        // BOOK STAT POINTS
+        StaticEventHandler.OnStatPointChanged += StaticEventHandler_OnStatPointChanged;
 
         // BOOK WEAPON EVENTS
         StaticEventHandler.OnWeaponPickedUp += StaticEventHandler_OnWeaponPickedUp;
@@ -226,6 +258,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnActiveUnhovered += StaticEventHandler_OnActiveUnhovered;
 
         StaticEventHandler.OnBookHealthChanged += StaticEventHandler_OnBookHealthChanged;
+        StaticEventHandler.OnBookManaChanged += StaticEventHandler_OnBookManaChanged;
         StaticEventHandler.OnItemAddedToActiveItemSlot += StaticEventHandler_OnItemAddedToActiveItemSlot;
         StaticEventHandler.OnItemRemovedFromActiveItemSlot += StaticEventHandler_OnItemRemovedFromActiveItemSlot;
         StaticEventHandler.OnItemAddedToPassiveItemSlot += StaticEventHandler_OnItemAddedToPassiveItemSlot;
@@ -238,6 +271,9 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     private void OnDisable()
     {
         StaticEventHandler.OnBuildPageOpened -= StaticEventHandler_OnBuildPageOpened;
+
+        // BOOK STAT POINTS
+        StaticEventHandler.OnStatPointChanged -= StaticEventHandler_OnStatPointChanged;
 
         // BOOK WEAPON EVENTS
         StaticEventHandler.OnWeaponPickedUp -= StaticEventHandler_OnWeaponPickedUp;
@@ -273,6 +309,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnActiveUnhovered -= StaticEventHandler_OnActiveUnhovered;
 
         StaticEventHandler.OnBookHealthChanged -= StaticEventHandler_OnBookHealthChanged;
+        StaticEventHandler.OnBookManaChanged -= StaticEventHandler_OnBookManaChanged;
         StaticEventHandler.OnItemAddedToActiveItemSlot -= StaticEventHandler_OnItemAddedToActiveItemSlot;
         StaticEventHandler.OnItemRemovedFromActiveItemSlot -= StaticEventHandler_OnItemRemovedFromActiveItemSlot;
         StaticEventHandler.OnItemAddedToPassiveItemSlot -= StaticEventHandler_OnItemAddedToPassiveItemSlot;
@@ -284,17 +321,26 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void Start()
     {
-        buildTreeFrame = buildPage.GetChild(0).GetChild(1);
+        activeUniqueSkillsContainer = buildPage.GetChild(0).GetChild(4);
+        innerPathContainer = buildPage.GetChild(0).GetChild(5);
         buildDescriptonInnerPanel = buildPage.GetChild(0).GetChild(2);
-        buildTextContainer = buildPage.GetChild(0).GetChild(3);
-        buildPointsTransform = buildPage.GetChild(0).GetChild(4);
+        buildTextContainer = buildPage.GetChild(0).GetChild(9);
+        buildPointsTransform = buildPage.GetChild(0).GetChild(10);
         buildTitleText = buildTextContainer.GetChild(0).GetComponent<TextMeshProUGUI>();
         buildDetailsText = buildTextContainer.GetChild(1).GetComponent<TextMeshProUGUI>();
 
         buildTitleText.text = string.Empty;
         buildDetailsText.text = string.Empty;
 
+        currentAvailableStatPoints.text = player.currentStatPoints.ToString();
+
         PopulateCharactersBuildDetails();
+    }
+
+    private void Update()
+    {
+        if (player.currentStatPoints > 0) primaryStatsButtonContainer.gameObject.SetActive(true);
+        else primaryStatsButtonContainer.gameObject.SetActive(false);
     }
 
     public void OnSelect(BaseEventData eventData)
@@ -739,7 +785,13 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     private void StaticEventHandler_OnBookHealthChanged(HealthChangedArgs healthChangedArgs)
     {
         Player player = GameManager.Instance.GetPlayer();
-        healthText.text = $"Health : {player.health.GetCurrentHealth()} / {player.health.GetMaximumHealth()}";
+        healthValue.text = $"{player.health.GetCurrentHealth()} / {player.health.GetMaximumHealth()}";
+    }
+
+    private void StaticEventHandler_OnBookManaChanged(ManaChangedArgs manaChangedArgs)
+    {
+        Player player = GameManager.Instance.GetPlayer();
+        manaValue.text = $"{player.mana.GetCurrentMana()} / {player.mana.GetMaximumMana()}";
     }
 
     private void StaticEventHandler_OnItemAddedToActiveItemSlot(SetSelectedActiveItemArgs itemAddedToBookArgs)
@@ -879,32 +931,39 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     {
         float handling = player.currentWeaponHandlingValue ?? 0f;
 
+        // PRIMARY STATS
         characterName.text = player.playerDetails.playerCharacterName;
-        strengthText.text = $"Strength : {player.CurrentStrengthValue}";
-        constitutionText.text = $"Constitution : {player.CurrentConstitutionValue}";
-        dexterityText.text = $"Dexterity : {player.CurrentDexterityValue}";
-        intelligenceText.text = $"Intelligence : {player.CurrentIntelligenceValue}";
-        agilityText.text = $"Agility : {player.CurrentAgilityValue}";
-        physicalResistanceText.text = $"Physical : {player.currentPhysicalResistanceValue * 100} %";
+        strengthValue.text = player.CurrentStrengthValue.ToString();
+        constitutionValue.text = player.CurrentConstitutionValue.ToString();
+        dexterityValue.text = player.CurrentDexterityValue.ToString();
+        intelligenceValue.text = player.CurrentIntelligenceValue.ToString();
+        agilityValue.text = player.CurrentAgilityValue.ToString();
+        willpowerValue.text = player.CurrentWillpowerValue.ToString();
+        resolveValue.text = player.CurrentResolveValue.ToString();
+        ferocityValue.text = player.CurrentFerocityValue.ToString();
+
+        // SECONDARY STATS
+        healthValue.text = $"{player.health.GetCurrentHealth()} / {player.health.GetMaximumHealth()}";
+        manaValue.text = $"{player.mana.GetCurrentMana()} / {player.mana.GetMaximumMana()}";
+        damageValue.text = $"{player.currentMainHandMinDamageValue}-{player.currentMainHandMaxDamageValue}({player.currentOffHandMinDamageValue}-" +
+            $"{player.currentOffHandMaxDamageValue})";
+        criticalHitChanceDamageValue.text = $"{player.currentMainHandCriticalHitChance * 100}%({player.currentOffHandCriticalHitChance * 100}%)";
+        speedValue.text = $"{player.movementByVelocity.moveSpeed}";
+        criticalHitDamageAmountValue.text = $"{player.currentMainHandCriticalHitDamage * 100}%({player.currentOffHandCriticalHitDamage * 100}%)";
+
+        // AUXILLARY STATS
+        chanceToHitValue.text = $"{handling * 100}%";
+        blockRateValue.text = $"{player.currentBlockValue * 100}%";
+        eveasivenessRateValue.text = $"{player.currentEvasivenessValue * 100}%";
+
+        // RESISTANCE STATS
+        physicalResistanceText.text = $"Armor : {player.currentArmorValue * 100} %";
         fireResistanceText.text = $"Fire : {player.currentFireResistanceValue * 100} %";
         waterResistanceText.text = $"Water : {player.currentWaterResistanceValue * 100} %";
         airResistanceText.text = $"Air : {player.currentAirResistanceValue * 100} %";
         earthResistanceText.text = $"Earth : {player.currentEarthResistanceValue * 100} %";
         lightResistanceText.text = $"Light : {player.currentLightResistanceValue * 100} %";
         darkResistanceText.text = $"Dark : {player.currentDarkResistanceValue * 100} %";
-
-        healthText.text = $"Health: {player.health.GetCurrentHealth()} / {player.health.GetMaximumHealth()}";
-        damageText.text = $"Damage : {player.currentMainHandMinDamageValue}-{player.currentMainHandMaxDamageValue}({player.currentOffHandMinDamageValue}-" +
-            $"{player.currentOffHandMaxDamageValue})";
-        handlingText.text = $"Handling: {handling * 100}% (Chance to hit)";
-
-        criticalHitChanceDamageText.text = $"Cr.Hit Chance/Damage: {player.currentMainHandCriticalHitChance * 100}%({player.currentOffHandCriticalHitChance * 100}%) - " +
-            $"{player.currentMainHandCriticalHitDamage * 100}%({player.currentOffHandCriticalHitDamage * 100})";
-
-        speedText.text = $"Speed: {player.movementByVelocity.moveSpeed}";
-
-        blockRateText.text = $"Block Rate: {player.currentBlockValue * 100}%";
-        eveasivenessRateText.text = $"Evasiveness Rate: {player.currentEvasivenessValue * 100}%";
     }
 
     public void OpenBuildPage()
@@ -1049,7 +1108,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void PopulateCharactersBuildDetails()
     {
-        for (int i = 0; i < buildTreeFrame.childCount; i++)
+        for (int i = 0; i < innerPathContainer.childCount; i++)
         {
             //// Manipulate build title 
             //buildTreeFrame.GetChild(i).GetChild(buildTreeFrame.GetChild(i).childCount - 1).GetChild(0).GetComponent<TextMeshProUGUI>().text =
@@ -1058,7 +1117,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             //buildTreeFrame.GetChild(i).GetChild(buildTreeFrame.GetChild(i).childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().text =
             //    player.playerDetails.charBuildDetails[i].characterBuildDetails;
             // Manipulate build icon
-            buildTreeFrame.GetChild(i).GetComponent<Image>().sprite = player.playerDetails.charBuildDetails[i].characterBuildImage;
+            //innerPathContainer.GetChild(i).GetComponent<Image>().sprite = player.playerDetails.charBuildDetails[i].characterBuildImage;
         }
     }
 
@@ -1453,7 +1512,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void StaticEventHandler_OnBuildPointUsed(BuildPointsArgs buildPointsArgs)
     {
-        buildPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentBuildPoints.ToString();
+        buildPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentSkillPoints.ToString();
         UnlockBelowBuildIcon(buildPointsArgs.buildIndex);
         SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.buildActivationSoundEffect);
         ActivateBuild(buildPointsArgs);
@@ -1461,7 +1520,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void ActivateBuild(BuildPointsArgs buildPointsArgs)
     {
-        for (int i = 0; i < buildTreeFrame.childCount; i++)
+        for (int i = 0; i < innerPathContainer.childCount; i++)
         {
             if (i == buildPointsArgs.buildIndex)
             {
@@ -1469,23 +1528,23 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Ironheart Endurance
                             player.CurrentConstitutionValue++;
                             player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Shadow Endurance
                             player.CurrentConstitutionValue++;
                             player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Windrunner's Agility
                             player.CurrentAgilityValue++;
                             break;
                         case Character.Lyrisa:
                             // Granite Resolve
-                            player.currentPhysicalResistanceValue += 0.1f;
+                            player.currentArmorValue += 0.1f;
                             break;
                     }
                 }
@@ -1493,15 +1552,15 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Colossal Might
                             player.CurrentStrengthValue++; 
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Phantom Reflexes
                             player.CurrentDexterityValue++;
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Sharpshooter's Reflexes
                             player.CurrentDexterityValue++;
                             break;
@@ -1520,15 +1579,15 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Adamant Bulwark
-                            player.currentPhysicalResistanceValue += 0.1f;
+                            player.currentArmorValue += 0.1f;
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Blood Reaper
                             player.bloodDrainSkillAdditionalDamagePercentageModifier += 0.1f;
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Ranger Stride
                             player.additionalLightfeetSkillDurationModifier += 0.5f;
                             break;
@@ -1542,15 +1601,15 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Earthshatter Slam
                             player.seismicSlamDamage = (int)(player.seismicSlamDamage * 1.5f);
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Assassin's Precision
-                            player.additionalCriticalDamageOnStealth++;
+                            player.additionalCriticalDamageOnCloakedPrecision++;
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Dead-eye Precision
                             player.additionalHeadShotDamageModifier += 0.5f;
                             break;
@@ -1569,16 +1628,16 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Gemstone Skin
                             player.gemSkinBoostGainedDuringGemSkinActive = player.isGemSkinActive ? true : false;
-                            player.gemStoneSkillAdditionalModifier += 0.1f;
+                            //player.gemStoneSkillAdditionalModifier += 0.1f;
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Phantom Strength
                             player.CurrentStrengthValue++;
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Steady Resolve
                             player.CurrentConstitutionValue++;
                             player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
@@ -1594,15 +1653,15 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Titan's Strength
                             player.CurrentStrengthValue++;
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Shadow Step
                             player.CurrentAgilityValue++;
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Rapid Execution
                             player.additionalBowAttackCoolDownModifier -= 0.1f;
                             break;
@@ -1623,15 +1682,15 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Defensive Stance
-                            player.blockSkillAdditionalDurationModifier += 0.5f;
+                            //player.blockSkillAdditionalDurationModifier += 0.5f;
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Lockpicking
                             player.additionalLockpickingModifier += 0.15f;
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Gale Dancer
                             player.additionalEvasivenessModifier += 0.1f;
                             player.UpdateBlockAndEvasivenessValues();
@@ -1646,16 +1705,16 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Berserker's Wrath
                             player.additionalCriticalMeleeDamageModifier += 0.3f;
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Deathmark Edge
                             player.additionalMeleeCriticalHitChanceModifier += 0.1f;
                             player.UpdateWeaponHandlingAndCriticalValues();
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Piercing Shot
                             player.additionalPenetrationSkillDamageModifier += 0.5f;
                             break;
@@ -1675,19 +1734,19 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Unyielding Will
                             player.CurrentConstitutionValue++;
                             player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Shadow Clone Mastery
                             player.tripleTeamEnabled = true;
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Enduring Marksman
                             player.CurrentStrengthValue++;
-                            player.currentPhysicalResistanceValue += 0.05f;
+                            player.currentArmorValue += 0.05f;
                             player.currentAirResistanceValue += 0.05f;
                             player.currentEarthResistanceValue += 0.05f;
                             player.currentFireResistanceValue += 0.05f;
@@ -1705,15 +1764,15 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Relentless Fury
                             player.additionalMeleeAttackCoolDownModifier -= 0.1f;
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Spectral Dexterity
                             player.CurrentDexterityValue++;
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Falcon's Grace
                             player.CurrentDexterityValue++;
                             break;
@@ -1733,9 +1792,9 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Granite Resolve
-                            player.currentPhysicalResistanceValue += 0.05f;
+                            player.currentArmorValue += 0.05f;
                             player.currentAirResistanceValue += 0.05f;
                             player.currentEarthResistanceValue += 0.05f;
                             player.currentFireResistanceValue += 0.05f;
@@ -1743,12 +1802,12 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                             player.currentDarkResistanceValue += 0.05f;
                             player.currentLightResistanceValue += 0.05f;
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Elusive Phantom
                             player.additionalEvasivenessModifier += 0.1f;
                             player.UpdateBlockAndEvasivenessValues();
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Survival Instinct
                             player.additionalEvasivenessModifier += 0.1f;
                             player.UpdateBlockAndEvasivenessValues();
@@ -1763,15 +1822,15 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 {
                     switch (player.playerDetails.playerCharacterIndex)
                     {
-                        case Character.Astraeus:
+                        case Character.Caelion:
                             // Seismic Impact
                             player.seismicSlamCircleRadius *= 1.25f;
                             break;
-                        case Character.Erebus:
+                        case Character.Morven:
                             // Assassin's Wrath
                             player.additionalCriticalMeleeDamageModifier += 0.3f;
                             break;
-                        case Character.Orion:
+                        case Character.Nyveran:
                             // Hawk's Focus
                             player.additionalBowAccuracyModifier += 0.4f;
                             break;
@@ -1798,21 +1857,35 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         UpdatePlayerStatInfo(player);
     }
 
+    private void StaticEventHandler_OnStatPointChanged(StatChangedArgs statChangedArgs)
+    {
+        strengthValue.text = player.CurrentStrengthValue.ToString();
+        constitutionValue.text = player.CurrentConstitutionValue.ToString();
+        dexterityValue.text = player.CurrentDexterityValue.ToString();
+        intelligenceValue.text = player.CurrentIntelligenceValue.ToString();
+        agilityValue.text = player.CurrentAgilityValue.ToString();
+        willpowerValue.text = player.CurrentWillpowerValue.ToString();
+        resolveValue.text = player.CurrentResolveValue.ToString();
+        ferocityValue.text = player.CurrentFerocityValue.ToString();
+
+        currentAvailableStatPoints.text = player.currentStatPoints.ToString();
+    }
+
     private void StaticEventHandler_OnLevelUp()
     {
-        buildPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentBuildPoints.ToString();
+        buildPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentSkillPoints.ToString();
     }
 
     private void UnlockBelowBuildIcon(int indexNumber)
     {
-        if (indexNumber < buildTreeFrame.childCount - 3)
+        if (indexNumber < innerPathContainer.childCount - 3)
         {
-            Image buildImage = buildTreeFrame.GetChild(indexNumber + 3).GetComponent<Image>();
+            Image buildImage = innerPathContainer.GetChild(indexNumber + 3).GetComponent<Image>();
             buildImage.color = new Color(1f, 1f, 1f, 1f);
 
             //buildTreeFrame.GetChild(indexNumber + 3).GetChild(1).gameObject.SetActive(false);
 
-            buildTreeFrame.GetChild(indexNumber + 3).GetComponent<BuildSlot>().isLocked = false;
+            innerPathContainer.GetChild(indexNumber + 3).GetComponent<BuildSlot>().isLocked = false;
         }
     }
 

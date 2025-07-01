@@ -2160,6 +2160,7 @@ MonoBehaviour:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   environmentGameObject: {fileID: 539270169103656000}
+  roomObstaclesList: []
   northMask: {fileID: 3851323498226700502}
   southMask: {fileID: 3849259736146469558}
   eastMask: {fileID: 456212665740532742}

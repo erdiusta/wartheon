@@ -111,7 +111,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
             if (player != null)
             {
                 // Check if the player is on stealth
-                if (player.onStealth)
+                if (player.isStealthActive)
                 {
                     PlayerStealthCheck();
                 }
@@ -197,7 +197,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
     private void TransitionToNextPhase()
     {
         if (player == null) return;
-        if (player.onStealth)
+        if (player.isStealthActive)
         {
             PlayerStealthCheck();
             return;

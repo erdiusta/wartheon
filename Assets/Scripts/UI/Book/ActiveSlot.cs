@@ -12,21 +12,21 @@ public class ActiveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         switch (GameManager.Instance.GetPlayer().playerDetails.playerCharacterIndex)
         {
-            case Character.Astraeus:
+            case Character.Caelion:
                 if (activeItemDetails.activeItemType == ActiveItemType.Decoy)
                 {
                     activeUnlocked = true;
                     transform.GetComponent<Image>().color = Color.white;
                 }
                 break;
-            case Character.Erebus:
+            case Character.Morven:
                 if (activeItemDetails.activeItemType == ActiveItemType.BobbyPin)
                 {
                     activeUnlocked = true;
                     transform.GetComponent<Image>().color = Color.white;
                 }
                 break;
-            case Character.Orion:
+            case Character.Nyveran:
                 if (activeItemDetails.activeItemType == ActiveItemType.Boomerang)
                 {
                     activeUnlocked = true;

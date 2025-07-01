@@ -12,7 +12,7 @@ public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         switch (GameManager.Instance.GetPlayer().playerDetails.playerCharacterIndex)
         {
-            case Character.Astraeus:
+            case Character.Caelion:
                 if (weaponDetails.weaponTitle == WeaponTitle.Hatchet || weaponDetails.weaponTitle == WeaponTitle.Shield)
                 {
                     weaponUnlocked = true;
@@ -20,7 +20,7 @@ public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     transform.GetComponent<Button>().interactable = true;
                 }
                 break;
-            case Character.Erebus:
+            case Character.Morven:
                 if (weaponDetails.weaponTitle == WeaponTitle.Dirk)
                 {
                     weaponUnlocked = true;
@@ -29,7 +29,7 @@ public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     transform.GetComponent<Button>().interactable = true;
                 }
                 break;
-            case Character.Orion:
+            case Character.Nyveran:
                 if (weaponDetails.weaponTitle == WeaponTitle.CrudeBow || weaponDetails.weaponTitle == WeaponTitle.Dirk)
                 {
                     weaponUnlocked = true;

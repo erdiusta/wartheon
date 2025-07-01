@@ -63,7 +63,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public DamageDisplay damageDisplay;
     [HideInInspector] public bool rightHandWeaponDamageHappened;
     [HideInInspector] public bool leftHandWeaponDamageHappened;
-    [HideInInspector] public float currentPhysicalResistance;
+    [HideInInspector] public float currentArmor;
     [HideInInspector] public bool isBlind;
     [HideInInspector] public bool isMaterializing;
     [HideInInspector] public float currentMoveSpeed;
@@ -138,7 +138,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-        currentPhysicalResistance = enemyDetails.physicalResistance;
+        currentArmor = enemyDetails.physicalResistance;
     }
 
     private void Update()

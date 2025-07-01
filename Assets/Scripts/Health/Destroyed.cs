@@ -47,11 +47,13 @@ public class Destroyed : MonoBehaviour
 
     private void DestroyedEvent_OnDestroyed(DestroyedEvent destroyedEvent, DestroyedEventArgs destroyedEventArgs)
     {
+        // Remove any object from dynamic game objects in scene
+        SceneObjectsManager.Instance.dynamicGameObjectsInScene.Remove(gameObject);
+
         if (destroyedEventArgs.playerDied)
         {
             if (destroyedEventArgs.isClone)
             {
-                SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemImpactSoundEffect);
                 Destroy(player.playerCloneObject);
             }
             else
@@ -59,10 +61,11 @@ public class Destroyed : MonoBehaviour
                 player.polygonCollider2D.enabled = false;
                 player.animatePlayer.ResetAnimatonParameters();
                 player.animator.SetBool(Settings.death, true);
+                player.animator.Play("Death", 0, 0);
                 player.idle.StopVelocity();
+                InputManager.glossaryDisabled = true; // Disable glossary
 
                 SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.deathSoundEffect);
-                Destroy(gameObject, 1f);
             }
         }
         else
@@ -196,9 +199,9 @@ public class Destroyed : MonoBehaviour
                         enemy.enemyAI.StopAllCoroutines();
                         break;
                     case EnemyBehaviour.Centaur:
-                        enemy.GetComponent<CentaurAI>().StopAllCoroutines();
+                        enemy.GetComponent<MoravelleAI>().StopAllCoroutines();
                         break;
-                    case EnemyBehaviour.Treant:
+                    case EnemyBehaviour.Sylvarok:
                         enemy.GetComponent<TreantAI>().StopAllCoroutines();
                         break;
                     case EnemyBehaviour.Galvanus:
@@ -207,13 +210,13 @@ public class Destroyed : MonoBehaviour
                     case EnemyBehaviour.Sepharoth:
                         enemy.GetComponent<SepharothAI>().StopAllCoroutines();
                         break;
-                    case EnemyBehaviour.FrostWrym:
+                    case EnemyBehaviour.Cryothar:
                         enemy.GetComponent<FrostWrymAI>().StopAllCoroutines();
                         break;
                     case EnemyBehaviour.Venomancer:
                         enemy.GetComponent<VenomancerAI>().StopAllCoroutines();
                         break;
-                    case EnemyBehaviour.FireWrym:
+                    case EnemyBehaviour.Pyrothar:
                         enemy.GetComponent<FireWrymAI>().StopAllCoroutines();
                         break;
                     case EnemyBehaviour.Moldran:
@@ -229,11 +232,11 @@ public class Destroyed : MonoBehaviour
                 enemy.animateEnemy.ResetAnimatonParameters();
 
 
-                if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Treant)
+                if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Sylvarok)
                 {
                     foreach (Transform minion in EnemySpawner.Instance.transform)
                     {
-                        if (minion.GetComponent<Enemy>().enemyDetails.enemyBehaviour == EnemyBehaviour.Treant) continue;
+                        if (minion.GetComponent<Enemy>().enemyDetails.enemyBehaviour == EnemyBehaviour.Sylvarok) continue;
   
                         minion.GetComponent<DestroyedEvent>().CallDestroyedEvent(false);
                     }
@@ -286,6 +289,7 @@ public class Destroyed : MonoBehaviour
 
             enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
             enemy.animateEnemy.SetDeathAnimationParameters();
+            enemy.animator.Play("Death", 0, 0);
             enemy.fireWeapon.enabled = false;
             GetComponent<PolygonCollider2D>().enabled = false;
         }
@@ -316,7 +320,8 @@ public class Destroyed : MonoBehaviour
         {
             player.levelUpAnimator.SetTrigger(Settings.levelUp);
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.levelUpSoundEffect);
-            player.currentBuildPoints++;
+            player.currentSkillPoints++;
+            player.currentStatPoints += 3;
             StaticEventHandler.CallLevelUp();
             player.health.SetMaximumHealth(player.health.maximumHealth, true);
             player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);

@@ -578,7 +578,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
                     {
                         weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
-                        damageText.text = $"Deflect Rate: {weapon.weaponDetails.projectileDeflectRatio * 100}%";
+                        damageText.text = $"Deflect Rate: {weapon.weaponDetails.blockRate * 100}%";
                     }
                     else
                     {

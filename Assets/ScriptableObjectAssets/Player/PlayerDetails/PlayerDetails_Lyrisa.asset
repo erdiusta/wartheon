@@ -24,14 +24,16 @@ MonoBehaviour:
     constitution: 4
     intelligence: 8
     agility: 4
+    willpower: 0
+    ferocity: 0
+    resolve: 0
   physicalResistance: 0
-  fireResistance: 0.05
-  waterResistance: 0.05
-  airResistance: 0.05
-  earthResistance: 0.05
-  lightResistance: 0.05
-  darkResistance: 0.05
-  playerHealthAmount: 60
+  fireResistance: 0
+  waterResistance: 0
+  airResistance: 0
+  earthResistance: 0
+  lightResistance: 0
+  darkResistance: 0
   isImmuneAfterHit: 1
   hitImmunityTime: 1
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
@@ -39,18 +41,12 @@ MonoBehaviour:
   blockSoundEffect: {fileID: 11400000, guid: 5a66c8bf2077f0a4caf767997e7b7749, type: 2}
   dodgeSoundEffect: {fileID: 11400000, guid: 47e336b005c25684099a3b05096549a8, type: 2}
   parrySoundEffect: {fileID: 11400000, guid: 1f535785069b176429525f2fb0e96cc7, type: 2}
-  specialMoveOneImage: {fileID: 21300000, guid: 834d73f6332db84498a63a2fc2a4395e, type: 3}
-  specialMoveOneSoundEffect: {fileID: 11400000, guid: 34f8e2cdca30ac34ba736472fa3c0311, type: 2}
-  specialMoveOneCooldownDuration: 20
-  specialMoveOneEffectiveDuration: 0
-  specialMoveTwoImage: {fileID: 21300000, guid: 966a60ae22fe83943bcb2dd5c921e560, type: 3}
-  specialMoveTwoSoundEffect: {fileID: 11400000, guid: f3afba237547a1a4082897c3ef044ee7, type: 2}
-  specialMoveTwoCooldownDuration: 30
-  specialMoveTwoEffectiveDuration: 10
-  specialMoveThreeImage: {fileID: 21300000, guid: b5067951bb19bcb42b7eed33950ad3c1, type: 3}
-  specialMoveThreeSoundEffect: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
-  specialMoveThreeCooldownDuration: 15
-  specialMoveThreeEffectiveDuration: 0
+  passiveSkillImage: {fileID: 0}
+  firstActiveSkillDetails: {fileID: 0}
+  secondActiveSkillDetails: {fileID: 0}
+  thirdActiveSkillDetails: {fileID: 0}
+  fourthActiveSkillDetails: {fileID: 0}
+  fifthActiveSkillDetails: {fileID: 0}
   cataclysmMeteor: {fileID: 11400000, guid: 8e8582df663c5634b8c767ca670c0382, type: 2}
   standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   headShotMaterial: {fileID: 0}

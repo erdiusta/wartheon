@@ -150,7 +150,6 @@ public class MainHandWeaponStatusUI : MonoBehaviour
             if (ReferenceEquals(player.activeWeapon.GetCurrentOffHandWeapon(), weapon)) return;
         }
     
-        UpdateProjectileText(weapon);
         UpdateCooldownBar(weapon);
     }
 
@@ -166,7 +165,6 @@ public class MainHandWeaponStatusUI : MonoBehaviour
 
         ResetWeaponCooldownBar(weapon);
         UpdateActiveWeaponImage(weapon.weaponDetails);
-        UpdateProjectileText(weapon);
     }
 
     /// <summary>
@@ -212,27 +210,6 @@ public class MainHandWeaponStatusUI : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Update the ammo remaining text on the UI
-    /// </summary>
-    private void UpdateProjectileText(Weapon weapon)
-    {
-        if (!weapon.weaponDetails.isMeleeWeapon)
-        {
-            if (weapon.weaponDetails.hasInfiniteProjectile)
-            {
-                projectileRemainingText.text = "";
-            }
-            else
-            {
-                projectileRemainingText.text = weapon.weaponRemainingProjectile.ToString() + " / " + weapon.weaponDetails.weaponProjectileCapacity.ToString();
-            }
-        }
-        else
-        {
-            projectileRemainingText.text = "";
-        }
-    }
 
     /// <summary>
     /// Update cooldown bar

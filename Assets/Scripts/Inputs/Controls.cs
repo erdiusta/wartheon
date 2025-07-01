@@ -261,6 +261,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HoverAltButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""d75bc24a-8f9c-48a9-ae49-4481cf35ad65"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -725,6 +734,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Switch Weapon Back"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3cb0d1c1-d248-4c53-9e84-468f0b71cd19"",
+                    ""path"": ""<Keyboard>/alt"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""HoverAltButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -985,6 +1005,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_Roll = m_PlayerInput.FindAction("Roll", throwIfNotFound: true);
         m_PlayerInput_Invisibility = m_PlayerInput.FindAction("Invisibility", throwIfNotFound: true);
         m_PlayerInput_Parry = m_PlayerInput.FindAction("Parry", throwIfNotFound: true);
+        m_PlayerInput_HoverAltButton = m_PlayerInput.FindAction("HoverAltButton", throwIfNotFound: true);
         // UIActions
         m_UIActions = asset.FindActionMap("UIActions", throwIfNotFound: true);
         m_UIActions_UINavigate = m_UIActions.FindAction("UINavigate", throwIfNotFound: true);
@@ -1093,6 +1114,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_Roll;
     private readonly InputAction m_PlayerInput_Invisibility;
     private readonly InputAction m_PlayerInput_Parry;
+    private readonly InputAction m_PlayerInput_HoverAltButton;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerInput".
     /// </summary>
@@ -1181,6 +1203,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Parry => m_Wrapper.m_PlayerInput_Parry;
         /// <summary>
+        /// Provides access to the underlying input action "PlayerInput/HoverAltButton".
+        /// </summary>
+        public InputAction @HoverAltButton => m_Wrapper.m_PlayerInput_HoverAltButton;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
@@ -1263,6 +1289,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Parry.started += instance.OnParry;
             @Parry.performed += instance.OnParry;
             @Parry.canceled += instance.OnParry;
+            @HoverAltButton.started += instance.OnHoverAltButton;
+            @HoverAltButton.performed += instance.OnHoverAltButton;
+            @HoverAltButton.canceled += instance.OnHoverAltButton;
         }
 
         /// <summary>
@@ -1331,6 +1360,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Parry.started -= instance.OnParry;
             @Parry.performed -= instance.OnParry;
             @Parry.canceled -= instance.OnParry;
+            @HoverAltButton.started -= instance.OnHoverAltButton;
+            @HoverAltButton.performed -= instance.OnHoverAltButton;
+            @HoverAltButton.canceled -= instance.OnHoverAltButton;
         }
 
         /// <summary>
@@ -1681,6 +1713,13 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnParry(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "HoverAltButton" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHoverAltButton(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UIActions" which allows adding and removing callbacks.

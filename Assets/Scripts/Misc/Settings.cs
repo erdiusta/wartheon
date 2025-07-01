@@ -66,7 +66,9 @@ public static class Settings
     public static int axisX = Animator.StringToHash("axisX");
     public static int axisY = Animator.StringToHash("axisY");
     public static int cast = Animator.StringToHash("cast");
+    public static int charge = Animator.StringToHash("charge");
     public static int dash = Animator.StringToHash("dash");
+    public static int focused = Animator.StringToHash("focused");
     public static int attackType = Animator.StringToHash("attackType");
     public const float baseSpeedForPlayerAnimations = 6f;
 
@@ -176,6 +178,6 @@ public static class Settings
     #endregion
 
     #region CONTACT DAMAGE PARAMETERS
-    public const float contactDamageCollisionResetDelay = 2f;
+    public const float contactDamageCollisionResetDelay = 0.4f;
     #endregion
 }

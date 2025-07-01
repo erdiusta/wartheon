@@ -259,7 +259,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         player.isBlind = true;
         player.blindModifier = 0.5f;
         player.UpdateCurrentHandlingValues();
-        StaticEventHandler.CallPrimaryStatsChangedEvent();
+        StaticEventHandler.CallStatsChangedOnTheBookEvent();
     }
 
     /// <summary>
@@ -528,6 +528,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     private void Player_OnDestroyed(DestroyedEvent destroyedEvent, DestroyedEventArgs destroyedEventArgs)
     {
+        StartCoroutine(WaitAWhileForDeathProcessCompletedAtDestroyed());
+    }
+
+    IEnumerator WaitAWhileForDeathProcessCompletedAtDestroyed()
+    {
+        yield return new WaitForSeconds(0.6f);
+
         previousGameState = gameState;
         gameState = GameState.gameLost;
     }
@@ -642,7 +649,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // GAME STATE
         HandleGameState();
 
-        if (player.currentBuildPoints == 0)
+        if (player.currentSkillPoints == 0)
         {
             buttonBuildButton.SetActive(false);
         }
@@ -674,7 +681,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             player.blindModifier = 0f;
             player.healthEvent.CallBlindCuredEvent();
             player.UpdateCurrentHandlingValues();
-            StaticEventHandler.CallPrimaryStatsChangedEvent();
+            StaticEventHandler.CallStatsChangedOnTheBookEvent();
         }
     }
 
@@ -1709,9 +1716,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
         else
         {
+            string upperName = player.playerDetails.playerCharacterName.ToUpper(CultureInfo.InvariantCulture);
+
             // Display level completed
-            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU'VE SURVIVED\n\nTHIS DUNGEON " +
-                "LEVEL! PRESS ANY KEY FOR NEXT LEVEL!", Color.yellow, 5f));
+            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + upperName + "! YOU'VE SURVIVED\n\nTHIS DUNGEON " +
+                "LEVEL! PRESS OK FOR NEXT LEVEL!", Color.yellow, 5f));
 
             // Fade out canvas
             yield return StartCoroutine(Fade(1f, 0f, 2f, new Color(0f, 0f, 0f, 0.4f)));
@@ -1755,19 +1764,21 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Disable player
         GetPlayer().playerControl.DisablePlayer();
 
+        string upperName = player.playerDetails.playerCharacterName.ToUpper(CultureInfo.InvariantCulture);
+
         // Fade Out
         yield return StartCoroutine(Fade(0f, 1f, 2f, Color.black));
 
         // Display game won - DEMO
         if (isDemo)
         {
-            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE COMPLETED DEMO!",
+            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + upperName + "! YOU HAVE COMPLETED DEMO!",
                 Color.green, 7f));
         }
         else
         {
             // Display game won
-            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName + "! YOU HAVE SECURED THE WARTHEON",
+            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + upperName + "! YOU HAVE SECURED THE WARTHEON",
                 Color.green, 7f));
         }
 

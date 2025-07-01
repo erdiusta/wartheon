@@ -9,32 +9,34 @@ public class SpecialMoveUI : MonoBehaviour
     [Header("OBJECT REFERENCES")]
     #endregion Header OBJECT REFERENCES
     #region Tooltip
-    [Tooltip("Populate with the First Special Move object")]
+    [Tooltip("Populate with the Passive Skill object")]
     #endregion Tooltip
-    [SerializeField] Transform firstSpecialMoveContainer;
+    [SerializeField] Transform passiveSkillContainer;
     #region Tooltip
-    [Tooltip("Populate with the Second Special Move object")]
+    [Tooltip("Populate with the Active Skill One object")]
     #endregion Tooltip
-    [SerializeField] Transform secondSpecialMoveContainer;
+    [SerializeField] Transform activeSkillOneContainer;
     #region Tooltip
-    [Tooltip("Populate with the Third Special Move object")]
+    [Tooltip("Populate with the Active Skill Two object")]
     #endregion Tooltip
-    [SerializeField] Transform thirdSpecialMoveContainer;
+    [SerializeField] Transform activeSkillTwoContainer;
+    #region Tooltip
+    [Tooltip("Populate with the Active Skill Three object")]
+    #endregion Tooltip
+    [SerializeField] Transform activeSkillThreeContainer;
+
+    Transform[] activeSkillSlotContainers;
+
+    [Space(10)]
+    [SerializeField] Sprite noSkillSprite;
+    [Space(10)]
 
     Player player;
     Coroutine specialMoveOneCooldownCoroutine;
     Coroutine specialMoveTwoCooldownCoroutine;
     Coroutine specialMoveThreeCooldownCoroutine;
 
-    float specialMoveOneDuration;
-    float specialMoveTwoDuration;
-    float specialMoveThreeDuration;
-
-    bool specialMoveOneIsReset;
-    bool specialMoveTwoIsReset;
-    bool specialMoveThreeIsReset;
-    bool skillDurationExpired;
-    bool isSkillActive;
+    bool[] specialMoveResetArray = new bool[3];
 
     private void Awake()
     {
@@ -44,188 +46,63 @@ public class SpecialMoveUI : MonoBehaviour
     private void OnEnable()
     {
         player.specialMoveEvent.OnSpecialMoveUsed += SpecialMoveEvent_OnSpecialMoveUsed;
+
+        StaticEventHandler.OnActiveUniqueSkillPlaced += StaticEventHandler_OnActiveUniqueSkillPlaced;
     }
 
     private void OnDisable()
     {
         player.specialMoveEvent.OnSpecialMoveUsed -= SpecialMoveEvent_OnSpecialMoveUsed;
+
+        StaticEventHandler.OnActiveUniqueSkillPlaced += StaticEventHandler_OnActiveUniqueSkillPlaced;
     }
 
     private void Start()
     {
         // Populate special move imagaes based on selected character
-        firstSpecialMoveContainer.GetChild(1).GetComponent<Image>().sprite = player.playerDetails.specialMoveOneImage;
-        secondSpecialMoveContainer.GetChild(1).GetComponent<Image>().sprite = player.playerDetails.specialMoveTwoImage;
-        thirdSpecialMoveContainer.GetChild(1).GetComponent<Image>().sprite = player.playerDetails.specialMoveThreeImage;
+        passiveSkillContainer.GetChild(0).GetComponent<Image>().sprite = player.playerDetails.passiveSkillImage;
+        activeSkillOneContainer.GetChild(0).GetComponent<Image>().sprite = noSkillSprite;
+        activeSkillTwoContainer.GetChild(0).GetComponent<Image>().sprite = noSkillSprite;
+        activeSkillThreeContainer.GetChild(0).GetComponent<Image>().sprite = noSkillSprite;
+
+        activeSkillSlotContainers = new Transform[3] { activeSkillOneContainer, activeSkillTwoContainer, activeSkillThreeContainer };
+    }
+
+    private void StaticEventHandler_OnActiveUniqueSkillPlaced(ActiveUniqueSkillPlacedArgs activeUniqueSkillPlacedArgs)
+    {
+        activeSkillSlotContainers[activeUniqueSkillPlacedArgs.placedSlotIndex - 1].GetChild(0).GetComponent<Image>().sprite =
+            activeUniqueSkillPlacedArgs.activeUniqueSkillDetails.activeUniqueSkillSprite;
     }
 
     private void Update()
     {
-        if (player.specialMoveOneOnCooldown)
+        SlotSkillUpdate(1);
+        SlotSkillUpdate(2);
+        SlotSkillUpdate(3);
+    }
+
+    private void SlotSkillUpdate(int slotIndex)
+    {
+        if (player.specialMovesCooldownCheckArray[slotIndex - 1])
         {
-            specialMoveOneIsReset = false;
+            specialMoveResetArray[slotIndex - 1] = false;
 
-            player.specialMoveOneCooldownTimer += Time.deltaTime;
+            player.specialMoveCooldownTimerArray[slotIndex - 1] += Time.deltaTime;
 
-            specialMoveOneDuration = player.playerDetails.specialMoveOneEffectiveDuration;
+            float duration = player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+                * (1 + player.buffDurationModifier);
 
-            if (specialMoveOneDuration > 0)
+            if (duration > 0) player.specialMoveDurationTimerArray[slotIndex - 1] += Time.deltaTime;
+
+            float cooldown = player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillCooldownDuration
+                * (1 + player.cooldownDurationModifier);
+
+            if (player.specialMoveCooldownTimerArray[slotIndex - 1] > cooldown)
             {
-                player.specialMoveOneDurationTimer += Time.deltaTime;
-            }
-
-            if (player.specialMoveOneCooldownTimer > player.playerDetails.specialMoveOneCooldownDuration)
-            {
-                // Ensure that the timer is not exceeding the duration
-                player.specialMoveOneOnCooldown = false;
-                player.specialMoveOneCooldownTimer = 0f;
-                player.specialMoveOneDurationTimer = 0f;
-                ResetSpecialMoveCooldownSlot(1);
-            }
-        }
-
-        if (player.specialMoveTwoOnCooldown)
-        {
-            specialMoveTwoIsReset = false;
-
-            player.specialMoveTwoCooldownTimer += Time.deltaTime;
-
-            switch (player.playerDetails.playerCharacterIndex)
-            {
-                case Character.Astraeus:
-                    // Block Skill
-                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoEffectiveDuration * (1 + player.blockSkillAdditionalDurationModifier);
-                    break;
-                case Character.Erebus:
-                    break;
-                case Character.Orion:
-                    // Lightfeet Skill
-                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoEffectiveDuration * (1 + player.additionalLightfeetSkillDurationModifier);
-                    break;
-                case Character.Lyrisa:
-                    // Barrier Skill
-                    specialMoveTwoDuration = player.playerDetails.specialMoveTwoEffectiveDuration * (1 + player.barrierSkillAdditionalDurationModifier);
-                    break;
-            }
-
-            if (specialMoveTwoDuration > 0)
-            {
-                player.specialMoveTwoDurationTimer += Time.deltaTime;
-
-                switch (player.playerDetails.playerCharacterIndex)
-                {
-                    case Character.Astraeus:
-                        if (player.specialMoveTwoDurationTimer >= specialMoveTwoDuration)
-                        {
-                            player.isBlockingActive = false;
-                            player.healthEvent.CallArmorWoreOffEvent();
-                        }
-                        break;
-                    case Character.Erebus:
-                        break;
-                    case Character.Orion:
-                        if (player.specialMoveTwoDurationTimer >= specialMoveTwoDuration && !isSkillActive)
-                        {
-                            player.additionalSpeedModifier -= 1f;
-                            player.UpdateSpeedValue();
-                            StaticEventHandler.CallPrimaryStatsChangedEvent();
-                            player.healthEvent.CallLightFeetWoreOffEvent();
-                            isSkillActive = true;
-                        }
-                        break;
-                    case Character.Lyrisa:
-                        if (player.specialMoveTwoDurationTimer >= specialMoveTwoDuration)
-                        {
-                            if (player != null)
-                            {
-                                player.forcefieldTransform.gameObject.SetActive(false);
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            if (player.specialMoveTwoCooldownTimer > player.playerDetails.specialMoveTwoCooldownDuration)
-            {
-                // Ensure that the timer is not exceeding the duration
-                player.specialMoveTwoOnCooldown = false;
-                player.specialMoveTwoCooldownTimer = 0f;
-                isSkillActive = false;
-                player.specialMoveTwoDurationTimer = 0f;
-                ResetSpecialMoveCooldownSlot(2);
-            }
-        }
-
-        if (player.specialMoveThreeOnCooldown)
-        {
-            specialMoveThreeIsReset = false;
-
-            player.specialMoveThreeCooldownTimer += Time.deltaTime;
-
-            specialMoveThreeDuration = player.playerDetails.specialMoveThreeEffectiveDuration;
-
-            if (specialMoveThreeDuration > 0)
-            {
-                player.specialMoveThreeDurationTimer += Time.deltaTime;
-
-                if (player.specialMoveThreeDurationTimer >= specialMoveThreeDuration && !skillDurationExpired)
-                {
-                    skillDurationExpired = true;
-
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Astraeus:
-                            // Disable status icon on player object
-                            player.healthEvent.CallGemSkinSpecialMoveEndEvent();
-
-                            // Reset resistance values
-                            if (player.gemSkinBoostGainedDuringGemSkinActive)
-                            {
-                                player.currentPhysicalResistanceValue -= 0.1f;
-                                player.currentFireResistanceValue -= 0.1f;
-                                player.currentWaterResistanceValue -= 0.1f;
-                                player.currentAirResistanceValue -= 0.1f;
-                                player.currentEarthResistanceValue -= 0.1f;
-                                player.currentLightResistanceValue -= 0.1f;
-                                player.currentDarkResistanceValue -= 0.1f;
-
-                                player.gemSkinBoostGainedDuringGemSkinActive = false;
-                            }
-                            else
-                            {
-                                player.currentPhysicalResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                                player.currentFireResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                                player.currentWaterResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                                player.currentAirResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                                player.currentEarthResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                                player.currentLightResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                                player.currentDarkResistanceValue -= (0.1f + player.gemStoneSkillAdditionalModifier);
-                            }
-
-                            StaticEventHandler.CallPrimaryStatsChangedEvent();
-                            break;
-                        case Character.Erebus:
-                            break;
-                        case Character.Orion:
-                            break;
-                        case Character.Lyrisa:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            if (player.specialMoveThreeCooldownTimer > player.playerDetails.specialMoveThreeCooldownDuration)
-            {
-                // Ensure that the timer is not exceeding the duration
-                player.specialMoveThreeOnCooldown = false;
-                player.specialMoveThreeCooldownTimer = 0f;
-                player.specialMoveThreeDurationTimer = 0f;
-                skillDurationExpired = false;
-                ResetSpecialMoveCooldownSlot(3);
+                player.specialMovesCooldownCheckArray[slotIndex - 1] = false;
+                player.specialMoveCooldownTimerArray[slotIndex - 1] = 0f;
+                player.specialMoveDurationTimerArray[slotIndex - 1] = 0f;
+                ResetSpecialMoveCooldownSlot(slotIndex);
             }
         }
     }
@@ -234,12 +111,11 @@ public class SpecialMoveUI : MonoBehaviour
     {
         if (specialMoveEventArgs.onlyChangeAlpha)
         {
-            Image specialMoveCooldownBackground = firstSpecialMoveContainer.GetChild(0).GetComponent<Image>(); ;
-            Image specialMoveCooldownImage = firstSpecialMoveContainer.GetChild(1).GetComponent<Image>();
+            Image specialMoveCooldownImage = activeSkillOneContainer.GetChild(1).GetComponent<Image>();
+            Image specialMoveImage = activeSkillOneContainer.GetChild(0).GetComponent<Image>();
 
             // update cooldownCircle
-            specialMoveCooldownBackground.fillAmount = 0;
-            specialMoveCooldownImage.color = new Color(1f, 1f, 1f, 0.3f);
+            specialMoveCooldownImage.fillAmount = 1;
         }
         else
         {
@@ -280,52 +156,23 @@ public class SpecialMoveUI : MonoBehaviour
     /// </summary>
     private IEnumerator UpdateCooldownSlotRoutine(int specialMoveNumber)
     {
+        Image specialMoveCooldownImage;
+        Image specialMoveImage;
+
         // Animate the weapon reload bar
-        while (player.specialMoveOneCooldownTimer < player.playerDetails.specialMoveOneCooldownDuration)
+        while (player.specialMoveCooldownTimerArray[specialMoveNumber - 1] < player.currentlyUsedActiveUniqueSkills[specialMoveNumber].activeUniqueSkillCooldownDuration
+                * (1 + player.cooldownDurationModifier))
         {
-            Image specialMoveCooldownBackground;
-            Image specialMoveCooldownImage;
-
-            switch (specialMoveNumber)
+            if (!specialMoveResetArray[specialMoveNumber - 1])
             {
-                case 1:
-                    if (!specialMoveOneIsReset)
-                    {
-                        specialMoveCooldownBackground = firstSpecialMoveContainer.GetChild(0).GetComponent<Image>();
-                        specialMoveCooldownImage = firstSpecialMoveContainer.GetChild(1).GetComponent<Image>();
+                specialMoveCooldownImage = activeSkillSlotContainers[specialMoveNumber - 1].GetChild(1).GetComponent<Image>();
+                specialMoveImage = activeSkillSlotContainers[specialMoveNumber - 1].GetChild(0).GetComponent<Image>();
+                specialMoveCooldownImage.gameObject.SetActive(true);
 
-                        // update cooldownCircle
-                        float circleFill = Mathf.Clamp(player.specialMoveOneCooldownTimer / player.playerDetails.specialMoveOneCooldownDuration, 0, 1);
-                        specialMoveCooldownBackground.fillAmount = circleFill;
-                        specialMoveCooldownImage.color = new Color(1f, 1f, 1f, 0.3f);
-                    }
-                    break;
-                case 2:
-                    if (!specialMoveTwoIsReset)
-                    {
-                        specialMoveCooldownBackground = secondSpecialMoveContainer.GetChild(0).GetComponent<Image>();
-                        specialMoveCooldownImage = secondSpecialMoveContainer.GetChild(1).GetComponent<Image>();
-
-                        // update cooldownCircle
-                        float circleFill = Mathf.Clamp(player.specialMoveTwoCooldownTimer / player.playerDetails.specialMoveTwoCooldownDuration, 0, 1);
-                        specialMoveCooldownBackground.fillAmount = circleFill;
-                        specialMoveCooldownImage.color = new Color(1f, 1f, 1f, 0.3f);
-                    }
-                    break;
-                case 3:
-                    if (!specialMoveThreeIsReset)
-                    {
-                        specialMoveCooldownBackground = thirdSpecialMoveContainer.GetChild(0).GetComponent<Image>();
-                        specialMoveCooldownImage = thirdSpecialMoveContainer.GetChild(1).GetComponent<Image>();
-
-                        // update cooldownCircle
-                        float circleFill = Mathf.Clamp(player.specialMoveThreeCooldownTimer / player.playerDetails.specialMoveThreeCooldownDuration, 0, 1);
-                        specialMoveCooldownBackground.fillAmount = circleFill;
-                        specialMoveCooldownImage.color = new Color(1f, 1f, 1f, 0.3f);
-                    }
-                    break;
-                default:
-                    break;
+                // update cooldownCircle
+                float circleFill = Mathf.Clamp(player.specialMoveCooldownTimerArray[specialMoveNumber - 1] / 
+                    player.currentlyUsedActiveUniqueSkills[specialMoveNumber].activeUniqueSkillCooldownDuration, 0, 1);
+                specialMoveCooldownImage.fillAmount = 1 - circleFill;
             }
 
             yield return null;
@@ -336,34 +183,13 @@ public class SpecialMoveUI : MonoBehaviour
     /// Reset special move bar coroutine
     private void ResetSpecialMoveCooldownSlot(int specialMoveNum)
     {
-        Image specialMoveCooldownBackground;
         Image specialMoveCooldownImage;
+        Image specialMoveImage;
 
-        switch (specialMoveNum)
-        {
-            case 1:
-                specialMoveCooldownBackground = firstSpecialMoveContainer.GetChild(0).GetComponent<Image>();
-                specialMoveCooldownImage = firstSpecialMoveContainer.GetChild(1).GetComponent<Image>();
-                specialMoveCooldownBackground.fillAmount = 1;
-                specialMoveCooldownImage.color = new Color(1, 1, 1, 1);
-                specialMoveOneIsReset = true;
-                break;
-            case 2:
-                specialMoveCooldownBackground = secondSpecialMoveContainer.GetChild(0).GetComponent<Image>();
-                specialMoveCooldownImage = secondSpecialMoveContainer.GetChild(1).GetComponent<Image>();
-                specialMoveCooldownBackground.fillAmount = 1;
-                specialMoveCooldownImage.color = new Color(1, 1, 1, 1);
-                specialMoveTwoIsReset = true;
-                break;
-            case 3:
-                specialMoveCooldownBackground = thirdSpecialMoveContainer.GetChild(0).GetComponent<Image>();
-                specialMoveCooldownImage = thirdSpecialMoveContainer.GetChild(1).GetComponent<Image>();
-                specialMoveCooldownBackground.fillAmount = 1;
-                specialMoveCooldownImage.color = new Color(1, 1, 1, 1);
-                specialMoveThreeIsReset = true;
-                break;
-            default:
-                break;
-        }
+        specialMoveCooldownImage = activeSkillSlotContainers[specialMoveNum - 1].GetChild(1).GetComponent<Image>();
+        specialMoveImage = activeSkillSlotContainers[specialMoveNum - 1].GetChild(0).GetComponent<Image>();
+        specialMoveCooldownImage.fillAmount = 1;
+        specialMoveCooldownImage.gameObject.SetActive(false);
+        specialMoveResetArray[specialMoveNum - 1] = true;
     }
 }

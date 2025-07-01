@@ -59,7 +59,7 @@ namespace Pathfinding {
 	/// It may take one or sometimes multiple frames for the path to be calculated, but finally the <see cref="OnPathComplete"/> method will be called and the current path that the AI is following will be replaced.
 	/// </summary>
 	[AddComponentMenu("Pathfinding/AI/AIPath (2D,3D)")]
-	public partial class AIPath : AIBase, IAstarAI {
+	public partial class AIPath : AIBase{
 		/// <summary>
 		/// How quickly the agent accelerates.
 		/// Positive values represent an acceleration in world units per second squared.
@@ -221,19 +221,19 @@ namespace Pathfinding {
 		}
 
 		/// <summary>\copydoc Pathfinding::IAstarAI::radius</summary>
-		float IAstarAI.radius { get { return radius; } set { radius = value; } }
+		//float IAstarAI.radius { get { return radius; } set { radius = value; } }
 
-		/// <summary>\copydoc Pathfinding::IAstarAI::height</summary>
-		float IAstarAI.height { get { return height; } set { height = value; } }
+		///// <summary>\copydoc Pathfinding::IAstarAI::height</summary>
+		//float IAstarAI.height { get { return height; } set { height = value; } }
 
-		/// <summary>\copydoc Pathfinding::IAstarAI::maxSpeed</summary>
-		float IAstarAI.maxSpeed { get { return maxSpeed; } set { maxSpeed = value; } }
+		///// <summary>\copydoc Pathfinding::IAstarAI::maxSpeed</summary>
+		//float IAstarAI.maxSpeed { get { return maxSpeed; } set { maxSpeed = value; } }
 
-		/// <summary>\copydoc Pathfinding::IAstarAI::canSearch</summary>
-		bool IAstarAI.canSearch { get { return canSearch; } set { canSearch = value; } }
+		///// <summary>\copydoc Pathfinding::IAstarAI::canSearch</summary>
+		//bool IAstarAI.canSearch { get { return canSearch; } set { canSearch = value; } }
 
-		/// <summary>\copydoc Pathfinding::IAstarAI::canMove</summary>
-		bool IAstarAI.canMove { get { return canMove; } set { canMove = value; } }
+		///// <summary>\copydoc Pathfinding::IAstarAI::canMove</summary>
+		//bool IAstarAI.canMove { get { return canMove; } set { canMove = value; } }
 
 		#endregion
 
@@ -487,5 +487,5 @@ namespace Pathfinding {
 			if (version < 1) rotationSpeed *= 90;
 			return base.OnUpgradeSerializedData(version, unityThread);
 		}
-	}
+    }
 }

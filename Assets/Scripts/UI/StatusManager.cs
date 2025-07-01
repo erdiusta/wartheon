@@ -1,19 +1,22 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class StatusManager : MonoBehaviour
 {
+    [Header("SPECIAL MOVES")]
+    [Header("Caelion")]
+    public GameObject valorSpecialMoveImage;
+    public GameObject guardedOathSpecialMoveImage;
+    [Space(10)]
+
+    [Header("Debuff")]
     public GameObject poisonImage;
     public GameObject acidImage;
     public GameObject stunImage;
     public GameObject frostImage;
     public GameObject curseImage;
     public GameObject burnImage;
-    public GameObject blockSpecialMoveImage;
-    public GameObject gemSkinSpecialMoveImage;
     public GameObject deathImage;
     public GameObject blindImage;
     public GameObject lightfeetImage;
@@ -40,9 +43,6 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetStun += EnableStunImage;
             player.healthEvent.GetCursed += EnableCurseImage;
             player.healthEvent.GetBlind += EnableBlindImage;
-            player.healthEvent.GetBlockSpecialMove += EnableBlockSkillImage;
-            player.healthEvent.GetGemSkinSpecialMove += EnableGemSkinSkillImage;
-            player.healthEvent.OnLightFeetActive += HealthEvent_OnLightFeetActive;
 
             player.healthEvent.GetDeath += EnableDeathImage;
             player.healthEvent.OnDodged += HealthEvent_OnDodged;    
@@ -56,9 +56,6 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.StunCured += DisableStunImage;
             player.healthEvent.CurseCured += DisableCurseImage;
             player.healthEvent.BlindCured += DisableBlindImage;
-            player.healthEvent.BlockSpecialMoveDurationEnded += DisableBlockSkillImage;
-            player.healthEvent.OnGemSkinSpecialMoveEnded += DisableGemSkinSkillImage;
-            player.healthEvent.OnLightFeetWoreOff += HealthEvent_OnLightFeetWoreOff;
         }
 
         if (enemy != null)
@@ -70,8 +67,6 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetStun += EnableStunImage;
             enemy.healthEvent.GetCursed += EnableCurseImage;
             enemy.healthEvent.GetBlind += EnableBlindImage;
-            enemy.healthEvent.GetBlockSpecialMove += EnableBlockSkillImage;
-            enemy.healthEvent.GetGemSkinSpecialMove += EnableGemSkinSkillImage;
             enemy.healthEvent.GetDeath += EnableDeathImage;
             enemy.healthEvent.GetShattered += EnableShatterLog;
             enemy.healthEvent.OnDodged += HealthEvent_OnDodged;
@@ -84,8 +79,6 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.StunCured += DisableStunImage;
             enemy.healthEvent.CurseCured += DisableCurseImage;
             enemy.healthEvent.BlindCured += DisableBlindImage;
-            enemy.healthEvent.BlockSpecialMoveDurationEnded += DisableBlockSkillImage;
-            enemy.healthEvent.OnGemSkinSpecialMoveEnded += DisableGemSkinSkillImage;
         }
     }
 
@@ -100,13 +93,10 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.GetStun -= EnableStunImage;
             player.healthEvent.GetCursed -= EnableCurseImage;
             player.healthEvent.GetBlind -= EnableBlindImage;
-            player.healthEvent.GetBlockSpecialMove -= EnableBlockSkillImage;
-            player.healthEvent.GetGemSkinSpecialMove -= EnableGemSkinSkillImage;
             player.healthEvent.GetDeath -= EnableDeathImage;
             player.healthEvent.OnDodged -= HealthEvent_OnDodged;
             player.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
             player.healthEvent.OnParried -= HealthEvent_OnParried;
-            player.healthEvent.OnLightFeetActive -= HealthEvent_OnLightFeetActive;
 
             player.healthEvent.BurnCured -= DisableBurnImage;
             player.healthEvent.PoisonCured -= DisablePoisonImage;
@@ -115,9 +105,6 @@ public class StatusManager : MonoBehaviour
             player.healthEvent.StunCured -= DisableStunImage;
             player.healthEvent.BlindCured -= DisableBlindImage;
             player.healthEvent.CurseCured -= DisableCurseImage;
-            player.healthEvent.BlockSpecialMoveDurationEnded -= DisableBlockSkillImage;
-            player.healthEvent.OnGemSkinSpecialMoveEnded -= DisableGemSkinSkillImage;
-            player.healthEvent.OnLightFeetWoreOff -= HealthEvent_OnLightFeetWoreOff;
         }
 
         if (enemy != null)
@@ -129,8 +116,6 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetStun -= EnableStunImage;
             enemy.healthEvent.GetCursed -= EnableCurseImage;
             enemy.healthEvent.GetBlind -= EnableBlindImage;
-            enemy.healthEvent.GetBlockSpecialMove -= EnableBlockSkillImage;
-            enemy.healthEvent.GetGemSkinSpecialMove -= EnableGemSkinSkillImage;
             enemy.healthEvent.GetDeath -= EnableDeathImage;
             enemy.healthEvent.GetShattered -= EnableShatterLog;
             enemy.healthEvent.OnDodged -= HealthEvent_OnDodged;
@@ -143,8 +128,6 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.StunCured -= DisableStunImage;
             enemy.healthEvent.BlindCured -= DisableBlindImage;
             enemy.healthEvent.CurseCured -= DisableCurseImage;
-            enemy.healthEvent.BlockSpecialMoveDurationEnded -= DisableBlockSkillImage;
-            enemy.healthEvent.OnGemSkinSpecialMoveEnded -= DisableGemSkinSkillImage;
         }
     }
 
@@ -186,7 +169,7 @@ public class StatusManager : MonoBehaviour
 
     private void EnableBlockSkillImage(HealthEvent healthEvent)
     {
-        blockSpecialMoveImage.SetActive(true);
+        valorSpecialMoveImage.SetActive(true);
         ClearLog();
 
         if (logRoutine != null)
@@ -199,7 +182,7 @@ public class StatusManager : MonoBehaviour
 
     private void EnableGemSkinSkillImage(HealthEvent healthEvent)
     {
-        gemSkinSpecialMoveImage.SetActive(true);
+        guardedOathSpecialMoveImage.SetActive(true);
         ClearLog();
         if (logRoutine != null)
         {
@@ -319,7 +302,7 @@ public class StatusManager : MonoBehaviour
 
     private void DisableBlockSkillImage(HealthEvent healthEvent)
     {
-        blockSpecialMoveImage.SetActive(false);
+        valorSpecialMoveImage.SetActive(false);
         ClearLog();
         if (logRoutine != null)
         {
@@ -329,29 +312,7 @@ public class StatusManager : MonoBehaviour
 
     private void DisableGemSkinSkillImage(HealthEvent healthEvent)
     {
-        gemSkinSpecialMoveImage.SetActive(false);
-        ClearLog();
-        if (logRoutine != null)
-        {
-            StopCoroutine(logRoutine);
-        }
-    }
-
-    private void HealthEvent_OnLightFeetActive(HealthEvent healthEvent)
-    {
-        lightfeetImage.SetActive(true);
-        ClearLog();
-        if (logRoutine != null)
-        {
-            StopCoroutine(logRoutine);
-        }
-
-        logRoutine = StartCoroutine(WriteLog("LIGHTFEET", new Color(0.6f, 0.8f, 1f)));
-    }
-
-    private void HealthEvent_OnLightFeetWoreOff(HealthEvent healthEvent)
-    {
-        lightfeetImage.SetActive(false);
+        guardedOathSpecialMoveImage.SetActive(false);
         ClearLog();
         if (logRoutine != null)
         {

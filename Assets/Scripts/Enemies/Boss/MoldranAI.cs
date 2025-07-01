@@ -116,7 +116,7 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
         else if (moveStatus == MoveStatus.Idle)
         {
             // Check if the player is on stealth
-            if (GameManager.Instance.GetPlayer() != null && GameManager.Instance.GetPlayer().onStealth)
+            if (GameManager.Instance.GetPlayer() != null && GameManager.Instance.GetPlayer().isStealthActive)
             {
                 PlayerStealthCheck();
             }
@@ -215,7 +215,7 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
     private void TransitionToNextPhase()
     {
         // Check if the player is on stealth
-        if (GameManager.Instance.GetPlayer().onStealth)
+        if (GameManager.Instance.GetPlayer().isStealthActive)
         {
             PlayerStealthCheck();
             return;

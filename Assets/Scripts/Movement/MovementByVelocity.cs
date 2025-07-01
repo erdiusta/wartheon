@@ -120,12 +120,6 @@ public class MovementByVelocity : MonoBehaviour
             player.healthEvent.CallAcidCuredEvent();
         }
 
-        if (player.armorStatus == ArmorStatus.SilverArmor)
-        {
-            player.health.ResetArmorValue();
-            player.healthEvent.CallArmorWoreOffEvent();
-        }
-
         player.armorStatus = ArmorStatus.Normal;
     }
 

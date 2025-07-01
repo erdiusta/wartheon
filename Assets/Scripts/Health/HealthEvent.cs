@@ -123,46 +123,104 @@ public class HealthEvent : MonoBehaviour
         BlindCured?.Invoke(this);
     }
 
-    public event Action<HealthEvent> GetBlockSpecialMove;
+    public event Action<HealthEvent> OnGraceOfTheUnscarredActive;
 
-    public void CallGetBlockSpecialMoveEvent()
+    // CAELION
+    public void CallGraceOfTheUnscarredSpecialMoveEvent()
     {
-        GetBlockSpecialMove?.Invoke(this);
+        OnGraceOfTheUnscarredActive?.Invoke(this);
     }
 
-    public event Action<HealthEvent> BlockSpecialMoveDurationEnded;
+    public event Action<HealthEvent> OnGraceOfTheUnscarredEnded;
 
-    public void CallArmorWoreOffEvent()
+    public void CallGraceOfTheUnscarredSpecialMoveEndedEvent()
     {
-        BlockSpecialMoveDurationEnded?.Invoke(this);
+        OnGraceOfTheUnscarredEnded?.Invoke(this);
     }
 
-    public event Action<HealthEvent> GetGemSkinSpecialMove;
+    public event Action<HealthEvent> OnValorActive;
 
-    public void CallGetGemSkinSpecialMoveEvent()
+    public void CallValorSpecialMoveEvent()
     {
-        GetGemSkinSpecialMove?.Invoke(this);
+        OnValorActive?.Invoke(this);
     }
 
-    public event Action<HealthEvent> OnGemSkinSpecialMoveEnded;
+    public event Action<HealthEvent> OnValorEffectEnded;
 
-    public void CallGemSkinSpecialMoveEndEvent()
+    public void CallValorWoreOffEvent()
     {
-        OnGemSkinSpecialMoveEnded?.Invoke(this);
+        OnValorEffectEnded?.Invoke(this);
     }
 
-    public event Action<HealthEvent> OnLightFeetActive;
+    public event Action<HealthEvent> OnBreakTheLineActive;
 
-    public void CallGetLightFeetEvent()
+    public void CallBreakTheLineSpecialMoveEvent()
     {
-        OnLightFeetActive?.Invoke(this);
+        OnBreakTheLineActive?.Invoke(this);
     }
 
-    public event Action<HealthEvent> OnLightFeetWoreOff;
+    public event Action<HealthEvent> OnBreakTheLineEffectEnded;
 
-    public void CallLightFeetWoreOffEvent()
+    public void CallBreakTheLineWoreOffEvent()
     {
-        OnLightFeetWoreOff?.Invoke(this);
+        OnBreakTheLineEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnGuardedOathActive;
+
+    public void CallGuardedOathSpecialMoveEvent()
+    {
+        OnGuardedOathActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnGuardedOathEffectEnded;
+
+    public void CallGuardedOathSpecialMoveEndEvent()
+    {
+        OnGuardedOathEffectEnded?.Invoke(this);
+    }
+
+    // MORVEN
+    public event Action<HealthEvent> OnUmbralMistActive;
+
+    public void CallUmbralMistSpecialMoveEvent()
+    {
+        OnUmbralMistActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnUmbralMistEffectEnded;
+
+    public void CallUmbralMistWoreOffEvent()
+    {
+        OnUmbralMistEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnStealthActive;
+
+    public void CallStealthSpecialMoveEvent()
+    {
+        OnStealthActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnStealthEffectEnded;
+
+    public void CallStealthWoreOffEvent()
+    {
+        OnStealthEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnShadowStepActive;
+
+    public void CallShadowStepSpecialMoveEvent()
+    {
+        OnShadowStepActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnShadowStepEffectEnded;
+
+    public void CallShadowStepWoreOffEvent()
+    {
+        OnShadowStepEffectEnded?.Invoke(this);
     }
 
     public event Action<HealthEvent> OnParried;

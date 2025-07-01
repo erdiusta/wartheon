@@ -99,12 +99,10 @@ public class DealContactDamage : MonoBehaviour
                     {
                         if (enemy != null)
                         {
-                            if (player.isBlockingActive)
+                            if (player.isValorActive)
                             {
-                                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.specialMoveTwoSoundEffect);
+                                //SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.activeSkillTwoSoundEffect);
                                 player.health.PostHitImmunity(true);
-                                player.isBlockingActive = false;
-                                player.healthEvent.CallArmorWoreOffEvent();
                             }
                             else
                             {
@@ -115,7 +113,7 @@ public class DealContactDamage : MonoBehaviour
                                     return;
                                 }
 
-                                if (player.onStealth) return;
+                                if (player.isStealthActive) return;
 
                                 CheckBurnStatus(player);
                                 CheckPoisonStatus(player);
@@ -183,13 +181,13 @@ public class DealContactDamage : MonoBehaviour
 
         if (player.thirtyPercentDamageAbsorbIsActive)
         {
-            inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentPhysicalResistanceValue));
+            inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentArmorValue));
             int absorbedDamage = (int)(inflictedNonElementalDamage * 0.3f);
             inflictedNonElementalDamage -= absorbedDamage;
         }
         else
         {
-            inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentPhysicalResistanceValue));
+            inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentArmorValue));
         }
 
         int inflictedElementalDamage = 0;
@@ -296,14 +294,9 @@ public class DealContactDamage : MonoBehaviour
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < enemy.enemyDetails.acidEfficiency - player.additionalNegativeStatusEffectNegatorModifier)
             {
-                if (player.armorStatus == ArmorStatus.SilverArmor)
-                {
-                    player.healthEvent.CallArmorWoreOffEvent();
-                }
-
                 player.armorStatus = ArmorStatus.Acid;
-                player.currentPhysicalResistanceValue = (float)Math.Round(player.currentPhysicalResistanceValue -  enemy.enemyDetails.acidEfficiency, 2);
-                player.currentPhysicalResistanceValue = Mathf.Clamp(player.currentPhysicalResistanceValue, player.currentPhysicalResistanceValue, 1f);
+                player.currentArmorValue = (float)Math.Round(player.currentArmorValue -  enemy.enemyDetails.acidEfficiency, 2);
+                player.currentArmorValue = Mathf.Clamp(player.currentArmorValue, player.currentArmorValue, 1f);
                 player.healthEvent.CallGetAcidEvent();
             }
         }

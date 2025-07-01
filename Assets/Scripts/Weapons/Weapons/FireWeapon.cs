@@ -106,7 +106,7 @@ public class FireWeapon : MonoBehaviour
 
                     // Fire Laser Beam Projectile (only once)
                     FireProjectile(fireWeaponEventArgs.belongingEnemy, fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector, 
-                        fireWeaponEventArgs.isLaser, fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase, 
+                        fireWeaponEventArgs.isLaser, fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.moravellePhase, 
                         fireWeaponEventArgs.treantPhase, fireWeaponEventArgs.galvanusPhase, fireWeaponEventArgs.sepharothPhase, fireWeaponEventArgs.frostWrymPhase,
                         fireWeaponEventArgs.venomancerPhase, fireWeaponEventArgs.fireWrymPhase, fireWeaponEventArgs.moldranPhase);
 
@@ -142,10 +142,10 @@ public class FireWeapon : MonoBehaviour
                 if (IsWeaponReadyToFire())
                 {
                     FireProjectile(fireWeaponEventArgs.belongingEnemy, fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector, 
-                        fireWeaponEventArgs.isLaser, fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.centaurPhase, 
+                        fireWeaponEventArgs.isLaser, fireWeaponEventArgs.headShotHappened, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.moravellePhase, 
                         fireWeaponEventArgs.treantPhase,fireWeaponEventArgs.galvanusPhase, fireWeaponEventArgs.sepharothPhase, fireWeaponEventArgs.frostWrymPhase,
                         fireWeaponEventArgs.venomancerPhase, fireWeaponEventArgs.fireWrymPhase, fireWeaponEventArgs.moldranPhase);
-                    ResetCooldownTimer(fireWeaponEventArgs.centaurPhase);
+                    ResetCooldownTimer(fireWeaponEventArgs.moravellePhase);
                     ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
                 }
             }
@@ -247,9 +247,9 @@ public class FireWeapon : MonoBehaviour
     /// Set up ammo using an ammo gameObject and component from the object pool.
     /// </summary>
     private void FireProjectile(Enemy belongingEnemy, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser, bool headShotHappened, bool isActiveItem = false, 
-        bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None,
-        SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None,
-        FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
+        bool isPenetrationArrow = false, MoravellePhase moravellePhase = MoravellePhase.None, TreantPhase treantPhase = TreantPhase.None, 
+        GalvanusPhase galvanusPhase = GalvanusPhase.None,SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, 
+        VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
     {
         if (!isActiveItem)
         {
@@ -269,7 +269,7 @@ public class FireWeapon : MonoBehaviour
             {
                 // Fire projectile routine
                 StartCoroutine(FireProjectileRoutine(belongingEnemy, currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, headShotHappened, 
-                    false, isPenetrationArrow, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase));
+                    false, isPenetrationArrow, moravellePhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase));
             }
         }
         else
@@ -296,7 +296,7 @@ public class FireWeapon : MonoBehaviour
     /// Coroutine to spawn multiple ammo per shot if specified in the ammo details - PROJECTILE
     /// </summary>
     IEnumerator  FireProjectileRoutine(Enemy belongingEnemy, ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
-        bool isLaser = false, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None, 
+        bool isLaser = false, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false, MoravellePhase moravellePhase = MoravellePhase.None, 
         TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
         FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None,
         MoldranPhase moldranPhase = MoldranPhase.None)
@@ -306,7 +306,8 @@ public class FireWeapon : MonoBehaviour
         int projectilePerShot = 1;
 
         // CENTAUR - SPREAD ARROW SHOT OR FROST WRYM - PROJECTILE
-        if (centaurPhase == CentaurPhase.SpreadArrowShot || frostWrymPhase == FrostWrymPhase.IceProjectile  || fireWrymPhase == FireWrymPhase.FireProjectile)
+        if (moravellePhase == MoravellePhase.SpreadArrowShot || frostWrymPhase == FrostWrymPhase.IceProjectile 
+            || fireWrymPhase == FireWrymPhase.FireProjectile)
         {
             projectilePerShot = 10;
         }
@@ -351,7 +352,7 @@ public class FireWeapon : MonoBehaviour
 
         if (projectilePerShot > 1)
         {
-            if (centaurPhase == CentaurPhase.SpreadArrowShot || treantPhase == TreantPhase.RazorLeaf || frostWrymPhase == FrostWrymPhase.IceProjectile ||
+            if (moravellePhase == MoravellePhase.SpreadArrowShot || treantPhase == TreantPhase.RazorLeaf || frostWrymPhase == FrostWrymPhase.IceProjectile ||
                 venomancerPhase == VenomancerPhase.SludgeThrow || fireWrymPhase == FireWrymPhase.FireProjectile || moldranPhase == MoldranPhase.Projectile)
             {
                 projectileSpawnInterval = 0;
@@ -387,11 +388,45 @@ public class FireWeapon : MonoBehaviour
             }
         }
 
+        AimDirection aimDirection = HelperUtilities.GetAimDirection(weaponAimAngle);
+
+        Vector3 weaponShootPosition = Vector3.zero;
+
+        if (enemy != null)
+        {
+            switch (aimDirection)
+            {
+                case AimDirection.Up:
+                    weaponShootPosition = activeWeapon.GetMainHandShootPositionUp();
+                    break;
+                case AimDirection.UpRight:
+                case AimDirection.Right:
+                case AimDirection.DownRight:
+                    weaponShootPosition = activeWeapon.GetMainHandShootPositionRight();
+                    break;
+                case AimDirection.Down:
+                    weaponShootPosition = activeWeapon.GetMainHandShootPositionDown();
+                    break;
+                case AimDirection.Left:
+                case AimDirection.DownLeft:
+                case AimDirection.UpLeft:
+                    weaponShootPosition = activeWeapon.GetMainHandShootPositionLeft();
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            weaponShootPosition = activeWeapon.GetMainHandShootPositionUp();
+        }
+
+
         Room currentRoom = GameManager.Instance.GetCurrentRoom();
         Grid grid = currentRoom.instantiatedRoom.grid;
 
         // Default position
-        Vector3 projectileSpawnPoint = activeWeapon.GetMainHandShootPosition();
+        Vector3 projectileSpawnPoint = activeWeapon.GetMainHandShootPositionUp();
 
       
         // Loop for number of projectile per shot
@@ -403,7 +438,7 @@ public class FireWeapon : MonoBehaviour
 
             GameObject projectilePrefab;
             // Get projectile prefab from array
-            if (centaurPhase == CentaurPhase.SpreadArrowShot || venomancerPhase == VenomancerPhase.ToxicPool)
+            if (moravellePhase == MoravellePhase.SpreadArrowShot || venomancerPhase == VenomancerPhase.ToxicPool)
             {
                 projectilePrefab = currentProjectile.projectilePrefabArray[1];
             }
@@ -467,7 +502,7 @@ public class FireWeapon : MonoBehaviour
             float projectileSpeed = currentProjectile.projectileSpeed;
 
             // Get random speed value
-            if (centaurPhase == CentaurPhase.SpreadArrowShot)
+            if (moravellePhase == MoravellePhase.SpreadArrowShot)
             {
                 projectileSpeed = currentProjectile.projectileSpeed / 2;
             }
@@ -547,7 +582,7 @@ public class FireWeapon : MonoBehaviour
             {
                 if (sepharothPhase != SepharothPhase.InvisibleAndMine && venomancerPhase != VenomancerPhase.ToxicPool)
                 {
-                    projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetMainHandShootPosition(), Quaternion.identity);
+                    projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, activeWeapon.GetMainHandShootPositionUp(), Quaternion.identity);
                 }
                 else
                 {
@@ -565,7 +600,7 @@ public class FireWeapon : MonoBehaviour
 
             // Initialize projectile
             projectile.InitializeProjectile(belongingEnemy, headShotHappened, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, false, 
-                false, isPenetrationArrow, projectileCounter - 1, projectilePerShot, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, 
+                false, isPenetrationArrow, projectileCounter - 1, projectilePerShot, moravellePhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, 
                 venomancerPhase, fireWrymPhase, moldranPhase);
 
             // Wait for projectile per shot timegap
@@ -627,7 +662,7 @@ public class FireWeapon : MonoBehaviour
             float projectileSpeed = Random.Range(currentActiveItem.projectileSpeedMin, currentActiveItem.projectileSpeedMax);
 
             // Get Gameobject with IFireable component
-            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(activeItemPrefab, activeWeapon.GetMainHandShootPosition(), Quaternion.identity);
+            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(activeItemPrefab, player.activeWeapon.GetMainHandShootPositionUp(), Quaternion.identity);
 
             // Initialize projectile
             projectile.InitializeProjectile(headShotHappened, currentActiveItem, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector);
@@ -662,11 +697,11 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Reset cooldown timer
     /// </summary>
-    private void ResetCooldownTimer(CentaurPhase centaurPhase = CentaurPhase.None)
+    private void ResetCooldownTimer(MoravellePhase moravellePhase = MoravellePhase.None)
     {
         float coolDownTimerModifier = 1f;
 
-        if (centaurPhase == CentaurPhase.SpreadArrowShot)
+        if (moravellePhase == MoravellePhase.SpreadArrowShot)
         {
             coolDownTimerModifier = 3f;
         }

@@ -36,6 +36,14 @@ public static class StaticEventHandler
         OnCharacterButtonDeselected?.Invoke();
     }
 
+    // Stat point increased
+    public static event Action<StatChangedArgs> OnStatPointChanged;
+
+    public static void CallStatPointChangedEvent(PrimaryStatName statName)
+    {
+        OnStatPointChanged?.Invoke(new StatChangedArgs { statName = statName });
+    }
+
     // Dynamic camera follow toggle changed
     public static event Action<DynamicCameraFollowArgs> OnDynamicCameraToggled;
 
@@ -112,7 +120,7 @@ public static class StaticEventHandler
     // Stats changed event
     public static event Action OnPrimaryStatsChanged;
 
-    public static void CallPrimaryStatsChangedEvent()
+    public static void CallStatsChangedOnTheBookEvent()
     {
         OnPrimaryStatsChanged?.Invoke();
     }
@@ -131,6 +139,14 @@ public static class StaticEventHandler
     public static void CallCameraShakeEvent(float shakeIntensity, float shakeDuration)
     {
         OnCameraShaken?.Invoke(new CameraShakeArgs { shakeIntensity = shakeIntensity, shakeDuration = shakeDuration });
+    }
+
+    // Place new skill to slot
+    public static event Action<ActiveUniqueSkillPlacedArgs> OnActiveUniqueSkillPlaced;
+
+    public static void CallActiveUniqueSkillPlacedEvent(int placedSlotIndex, ActiveUniqueSkillDetailsSO activeUniqueSkillDetails)
+    {
+        OnActiveUniqueSkillPlaced?.Invoke(new ActiveUniqueSkillPlacedArgs { placedSlotIndex = placedSlotIndex, activeUniqueSkillDetails = activeUniqueSkillDetails });
     }
 
     // Open book's build page
@@ -264,6 +280,14 @@ public static class StaticEventHandler
     public static void CallBookHealthChangedEvent(int currentHealth)
     {
         OnBookHealthChanged?.Invoke(new HealthChangedArgs { currentHealth = currentHealth });
+    }
+
+    // Mana change on book event
+    public static event Action<ManaChangedArgs> OnBookManaChanged;
+
+    public static void CallBookManaChangedEvent(int currentMana)
+    {
+        OnBookManaChanged?.Invoke(new ManaChangedArgs { currentMana = currentMana });
     }
 
     // Introduction ui screen opened event
@@ -473,6 +497,17 @@ public class CameraShakeArgs : EventArgs
     public float shakeDuration;
 }
 
+public class ActiveUniqueSkillPlacedArgs : EventArgs
+{
+    public int placedSlotIndex;
+    public ActiveUniqueSkillDetailsSO activeUniqueSkillDetails;
+}
+
+public class StatChangedArgs : EventArgs
+{
+    public PrimaryStatName statName;
+}
+
 public class WeaponAddedToBookArgs : EventArgs
 {
     public Weapon weapon;
@@ -507,6 +542,11 @@ public class PassiveItemRemovedFromBookArgs : EventArgs
 public class HealthChangedArgs : EventArgs
 {
     public int currentHealth;
+}
+
+public class ManaChangedArgs : EventArgs
+{
+    public int currentMana;
 }
 
 public class DecoySpawnedArgs : EventArgs 

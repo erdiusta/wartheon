@@ -3,6 +3,7 @@ using UnityEngine;
 public class Decoy : MonoBehaviour
 {
     public ActiveItemDetailsSO activeItemDetails;
+    public SoundEffectSO dummyHitSound;
     public Health health;
     public HealthEvent healthEvent;
     public Transform promptArrowContainer;
@@ -25,12 +26,14 @@ public class Decoy : MonoBehaviour
         if (tag == Settings.decoyTag )
         {
             health.SetMaximumHealth(30);
+
+            SceneObjectsManager.Instance.dynamicGameObjectsInScene.Add(gameObject);
         }
     }
 
     private void Update()
     {
-        if (InputManager.TutorialEnabled && tag == "PracticeDummy")
+        if (InputManager.TutorialEnabled && tag == Settings.practiceDummy)
         {
             if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.AimAndFire)
             {

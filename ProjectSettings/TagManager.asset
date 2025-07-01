@@ -37,6 +37,8 @@ TagManager:
   - trailerOnly
   - trailerBoss
   - Decoy
+  - Dummy
+  - skillIcon
   layers:
   - Default
   - TransparentFX

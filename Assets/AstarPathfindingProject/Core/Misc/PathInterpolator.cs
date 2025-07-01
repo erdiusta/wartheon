@@ -76,7 +76,7 @@ namespace Pathfinding.Util {
 		public void GetRemainingPath (List<Vector3> buffer) {
 			if (!valid) throw new System.Exception("PathInterpolator is not valid");
 			buffer.Add(position);
-			for (int i = segmentIndex+1; i < path.Count; i++) {
+			for (int i = segmentIndex + 1; i < path.Count; i++) {
 				buffer.Add(path[i]);
 			}
 		}
@@ -201,6 +201,14 @@ namespace Pathfinding.Util {
 			segmentIndex++;
 			distanceToSegmentStart += currentSegmentLength;
 			currentSegmentLength = (path[segmentIndex+1] - path[segmentIndex]).magnitude;
+		}
+
+        /// <summary>
+        /// Returns the number of points in the path, or 0 if path is null
+        /// </summary>
+        public int PathCountSafe()
+		{
+			return path != null ? path.Count : 0;
 		}
 	}
 }

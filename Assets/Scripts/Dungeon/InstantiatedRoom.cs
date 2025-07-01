@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -28,6 +29,8 @@ public class InstantiatedRoom : MonoBehaviour
     #endregion Tooltip
     public GameObject environmentGameObject;
 
+    [HideInInspector] public List<GameObject> roomObstaclesList = new List<GameObject>();
+
     #region Header MASK REFERENCES
     [Space(10)]
     [Header("MASK REFERENCES")]
@@ -48,6 +51,18 @@ public class InstantiatedRoom : MonoBehaviour
 
         // Save room collider bounds
         roomColliderBounds = boxCollider2D.bounds;
+    }
+
+    private void Start()
+    {
+        // Fill obstacles list
+        foreach (Transform child in environmentGameObject.transform)
+        {
+            if (child.TryGetComponent<Environment>(out Environment obstacle))
+            {
+                roomObstaclesList.Add(child.gameObject);
+            }
+        }
     }
 
     // Trigger room changed event when player enters a room

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.XR;
 using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
@@ -19,8 +20,11 @@ public class MeleeAttackMainHand : MonoBehaviour
     Transform boxOriginTransform;
     Health enemyHealth;
     Player player;
-    bool rightHandAttackBlocked;
+    bool mainHandAttackBlocked;
+
+    // SpecialAttacks
     bool isBloodDrain;
+    bool isCullTheMeek;
 
     // Collision fields
     Collider2D[] _colliders = new Collider2D[10]; // Initial size
@@ -37,16 +41,22 @@ public class MeleeAttackMainHand : MonoBehaviour
 
     private void OnEnable()
     {
-        meleeAttackEvent.OnAttack += MeleeAttackEvent_MainHandMeleeAttack;
+        meleeAttackEvent.OnAttack += MeleeAttackEvent_MeleeAttack;
         rightHandAnimationEventHelper.OnAnimationMainHandEventTriggered.AddListener(ResetIsAttackingRightHand);
         rightHandAnimationEventHelper.OnAttackMainHandPerformed.AddListener(DetectColliders);
+
+        rightHandAnimationEventHelper.OnShieldBashEventPerformed.AddListener(DetectCollidersForShieldBash);
+        rightHandAnimationEventHelper.OnShieldBashEventCompleted.AddListener(ResetIsShieldBashing);
     }
 
     private void OnDisable()
     {
-        meleeAttackEvent.OnAttack -= MeleeAttackEvent_MainHandMeleeAttack;
+        meleeAttackEvent.OnAttack -= MeleeAttackEvent_MeleeAttack;
         rightHandAnimationEventHelper.OnAnimationMainHandEventTriggered.RemoveListener(ResetIsAttackingRightHand);
         rightHandAnimationEventHelper.OnAttackMainHandPerformed.RemoveListener(DetectColliders);
+
+        rightHandAnimationEventHelper.OnShieldBashEventPerformed.RemoveListener(DetectCollidersForShieldBash);
+        rightHandAnimationEventHelper.OnShieldBashEventCompleted.RemoveListener(ResetIsShieldBashing);
     }
 
     void Start()
@@ -55,9 +65,26 @@ public class MeleeAttackMainHand : MonoBehaviour
         boxOriginTransform = boxOrigin.transform;
     }
 
-    private void MeleeAttackEvent_MainHandMeleeAttack(MeleeAttackEvent meleeAttackEvent, MeleeAttackEventArgs meleeAttackEventArgs)
+    private void MeleeAttackEvent_MeleeAttack(MeleeAttackEvent meleeAttackEvent, MeleeAttackEventArgs meleeAttackEventArgs)
     {
-        AttackAtMainHand(meleeAttackEventArgs.weapon, meleeAttackEventArgs.meleeAttackType, meleeAttackEventArgs.isBloodDrain);
+        Attack(meleeAttackEventArgs.weapon, meleeAttackEventArgs.meleeAttackType, meleeAttackEventArgs.isBloodDrain, 
+            meleeAttackEventArgs.shieldBash, meleeAttackEventArgs.isCullTheMeek);
+    }
+
+    /// <summary>
+    /// Based on circle radius of melee weapon, detect all enemy colliders for damage
+    /// </summary>
+    public void DetectCollidersForShieldBash()
+    {
+        if (!IsAttacking) return;
+
+        // Optional: also include off-hand detection here if desired
+        Weapon offHandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
+
+        if (offHandWeapon.weaponDetails.weaponClass == WeaponClass.Shield)
+        {
+            DetectHandHit(offHandWeapon, MeleeAttackType.Swing, MeleeHand.OffHand, isBloodDrain, true);
+        }
     }
 
     /// <summary>
@@ -88,7 +115,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         }
     }
 
-    private void DetectHandHit(Weapon weapon, MeleeAttackType attackType, MeleeHand hand, bool isBloodDrain)
+    private void DetectHandHit(Weapon weapon, MeleeAttackType attackType, MeleeHand hand, bool isBloodDrain, bool shieldBash = false)
     {
         Transform originTransform = attackType == MeleeAttackType.Swing ? circleOriginTransform : boxOriginTransform;
 
@@ -120,6 +147,7 @@ public class MeleeAttackMainHand : MonoBehaviour
             if (collider.TryGetComponent(out Environment environment) &&
                 collider.TryGetComponent(out Health envHealth))
             {
+                SoundEffectManager.Instance.PlaySoundEffect(weapon.weaponDetails.weaponImpactSoundEffect);
                 envHealth.TakeDamage(100, transform.position, collider.transform.position, false, null, hand); continue;
             }
 
@@ -127,7 +155,8 @@ public class MeleeAttackMainHand : MonoBehaviour
 
             if (collider.CompareTag(Settings.practiceDummy))
             {
-                DummyCheck(collider, hand); 
+                SoundEffectManager.Instance.PlaySoundEffect(weapon.weaponDetails.weaponImpactSoundEffect);
+                DummyCheck(collider, hand);
                 continue;
             }
 
@@ -138,6 +167,13 @@ public class MeleeAttackMainHand : MonoBehaviour
 
             if (attackHits)
             {
+                if (shieldBash)
+                {
+                    CheckStunStatus(enemy, true);
+                    enemyHealth.TakeDamage(20, transform.position, enemy.transform.position, false, null, hand, true);
+                    continue;
+                }
+
                 if (!enemy.enemyDetails.isEnemyBoss)
                 {
                     CheckSuddenDeathStatus(enemy, enemyHealth);
@@ -150,9 +186,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                     continue;
                 }
 
-                int inflictedDamage = isBloodDrain
-                    ? Mathf.Max((int)(enemyHealth.currentHealth * (0.2f + player.bloodDrainSkillAdditionalDamagePercentageModifier)),
-                                CalculateDamageAmount(enemy, weapon, hand)): CalculateDamageAmount(enemy, weapon, hand);
+                int inflictedDamage = CalculateDamageAmount(enemy, weapon, hand);
 
                 bool bypass = hand == MeleeHand.OffHand; // only bypass for off-hand hits
                 enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, false, null, hand, bypass);
@@ -169,7 +203,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                     CheckBlindStatus(enemy);
                 }
 
-                if (player.playerDetails.playerCharacterIndex == Character.Erebus && player.onStealth)
+                if (player.playerDetails.playerCharacterIndex == Character.Morven && player.isStealthActive)
                 {
                     player.playerControl.Unstealth();
                 }
@@ -197,7 +231,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                 hand == MeleeHand.MainHand ? player.currentMainHandMaxDamageValue : player.currentOffHandMaxDamageValue
             );
 
-        bool criticalHitHappened = CriticalHitHappened();
+        bool criticalHitHappened = CriticalHitHappened(enemy);
 
         if (criticalHitHappened)
         {
@@ -207,7 +241,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         float critMultiplier = weapon.weaponDetails.criticalHitDamageMultiplier + player.additionalCriticalMeleeDamageModifier;
 
-        if (player.onStealth) critMultiplier += player.additionalCriticalDamageOnStealth;
+        if ((enemy != null && enemy.isBlind) || player.isStealthActive) critMultiplier += player.additionalCriticalDamageOnCloakedPrecision;
 
         damageDone = criticalHitHappened ? (int)(damageDone * critMultiplier) : damageDone;
 
@@ -215,7 +249,23 @@ public class MeleeAttackMainHand : MonoBehaviour
         int elementalDamage = (int)(baseElemental * (1 + player.additionalElementalDamageModifier));
         int nonElementalDamage = damageDone - baseElemental;
 
-        int inflictedNonElemental = (int)(nonElementalDamage * (1 - enemy.currentPhysicalResistance));
+        // ARMOR DEDUCTIONS
+        float effectiveArmor = enemy.currentArmor;
+
+        if (isBloodDrain) effectiveArmor *= 0.8f; // 20% Armor Penetration
+
+        int inflictedNonElemental = (int)(nonElementalDamage * (1 - effectiveArmor));
+
+        // Apply bonus dark damage if BloodDrain is active and weapon is Dark elemental
+        if (isBloodDrain && weapon.weaponDetails.elementalBias == ElementalBias.Dark) elementalDamage = (int)(elementalDamage * 1.5f); // +50% dark damage
+
+        // Apply bonus dark damage if CullTheMeek is active and weapon is Dark elemental
+        if (isCullTheMeek && weapon.weaponDetails.elementalBias == ElementalBias.Dark)
+        {
+            int enemyMissingHealth = enemy.health.GetMaximumHealth() - enemy.health.GetCurrentHealth();
+            elementalDamage = (int)(enemyMissingHealth * 0.3f + elementalDamage);
+        }
+
         int inflictedElemental = 0;
 
         switch (weapon.weaponDetails.elementalBias)
@@ -234,18 +284,27 @@ public class MeleeAttackMainHand : MonoBehaviour
                 inflictedElemental = (int)(elementalDamage * (1 - enemy.enemyDetails.lightResistance)); break;
         }
 
-        return inflictedNonElemental + inflictedElemental;
+        int totalInflictedDamage = inflictedNonElemental + inflictedElemental;
+
+        if (isBloodDrain)
+        {
+            // DRAIN HEALTH
+            float drainedHealth = totalInflictedDamage * 0.15f;
+            player.health.AddHealth((int)drainedHealth);
+        }
+            
+        return totalInflictedDamage;
     }
 
     /// <summary>
     /// Critical hit check
     /// </summary>
     /// <returns></returns>
-    private bool CriticalHitHappened()
+    private bool CriticalHitHappened(Enemy enemy)
     {
         bool criticalHitHappened = false;
 
-        if (player.onStealth)
+        if (player.isStealthActive)
         {
             if (!player.isBlind)
             {
@@ -255,6 +314,11 @@ public class MeleeAttackMainHand : MonoBehaviour
         else
         {
             float randomCriticalDice = Random.Range(0f, 1f);
+
+            if (enemy != null && enemy.isBlind && player.playerDetails.playerCharacterIndex == Character.Morven)
+            {
+                randomCriticalDice = Mathf.Clamp01(randomCriticalDice + 0.25f); // Morven - Cloaked Precision Passive
+            }
 
             if (player.isBlind)
             {
@@ -358,7 +422,7 @@ public class MeleeAttackMainHand : MonoBehaviour
             if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.acidEfficiency)
             {
                 enemy.armorStatus = ArmorStatus.Acid;
-                enemy.currentPhysicalResistance = (float)Math.Round(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.acidEfficiency * enemy.currentPhysicalResistance, 2);
+                enemy.currentArmor = (float)Math.Round(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.acidEfficiency * enemy.currentArmor, 2);
                 enemy.healthEvent.CallGetAcidEvent();
             }
         }
@@ -385,9 +449,16 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <summary>
     /// Check stun status
     /// </summary>
-    private void CheckStunStatus(Enemy enemy)
+    private void CheckStunStatus(Enemy enemy, bool shieldBash = false)
     {
         EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
+
+        if (shieldBash)
+        {
+            enemy.enemyAI.moveStatus = MoveStatus.Stun;
+            enemy.healthEvent.CallGetStunEvent();
+            return;
+        }
 
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasStunDamage && enemyMovementAI.moveStatus != MoveStatus.Stun 
             && enemy.health.currentHealth > 0)
@@ -404,8 +475,14 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <summary>
     /// Check blind status
     /// </summary>
-    private void CheckBlindStatus(Enemy enemy)
+    public void CheckBlindStatus(Enemy enemy, bool umbralMist = false)
     {
+        if (umbralMist)
+        {
+            enemy.healthEvent.CallGetBlindEvent();
+            return;
+        }
+
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasBlindDamage)
         {
             // Check get bleeding
@@ -430,9 +507,19 @@ public class MeleeAttackMainHand : MonoBehaviour
         player.animatePlayer.SetIdleAnimationParameters();
     }
 
-    private void AttackAtMainHand(Weapon weapon, MeleeAttackType meleeAttackType, bool isBloodDrain)
+    public void ResetIsShieldBashing()
     {
-        if (rightHandAttackBlocked) return;
+        IsAttacking = false;
+        player.animator.SetBool("shieldBash", false);
+        transform.GetChild(1).GetComponent<Animator>().enabled = true;
+
+        player.isShieldBashing = false;
+        player.animatePlayer.SetIdleAnimationParameters();
+    }
+
+    private void Attack(Weapon weapon, MeleeAttackType meleeAttackType, bool isBloodDrain, bool shieldBash, bool isCullTheMeek)
+    {
+        if (mainHandAttackBlocked) return;
 
         // Ranged fire animation (Bow or staff)
         if (meleeAttackType == MeleeAttackType.None) // Ranged Attack
@@ -443,10 +530,13 @@ public class MeleeAttackMainHand : MonoBehaviour
         }
 
         this.isBloodDrain = isBloodDrain;
+        this.isCullTheMeek = isCullTheMeek;
 
-        weapon.onCooldown = true;
-
-        player.animatePlayer.SetAttackAnimationParameters();
+        if (!shieldBash && !isBloodDrain && !isCullTheMeek)
+        {
+            weapon.onCooldown = true;
+            player.animatePlayer.SetAttackAnimationParameters();
+        }
 
         // This means that's neither a dual wield nor a shield
         if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
@@ -485,6 +575,13 @@ public class MeleeAttackMainHand : MonoBehaviour
         }
         else if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
         {
+            if (shieldBash)
+            {
+                player.animator.SetBool("shieldBash", true);
+
+                goto specialAttackMoves;
+            }
+
             if (player.activeWeapon.GetCurrentMainHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Spear)
             {
                 player.animator.Play("EmptyThrustS", 0, 0);
@@ -511,6 +608,17 @@ public class MeleeAttackMainHand : MonoBehaviour
             {
                 if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger)
                 {
+                    if (isBloodDrain)
+                    {
+                        player.animator.SetBool("blood", true);
+                        goto specialAttackMoves;
+                    }
+                    else if (isCullTheMeek)
+                    {
+                        player.animator.SetBool("cullTheMeek", true);
+                        goto specialAttackMoves;
+                    }
+
                     player.animator.Play("EmptyShortDW", 0, 0);  // Play short smear animation for dual wield
                 }
                 else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Claw)
@@ -524,21 +632,30 @@ public class MeleeAttackMainHand : MonoBehaviour
             }
         }
 
+    specialAttackMoves:
+
         //Force animator to update ASAP so new state will be active.
-        player.animator.Update(0);
 
         IsAttacking = true;
-        rightHandAttackBlocked = true;
-        StartCoroutine(DelayAttackRightHand(weapon));
+        mainHandAttackBlocked = true;
+        StartCoroutine(DelayAttackMainHand(weapon, shieldBash, isBloodDrain, isCullTheMeek));
 
-        // Melee attack sound effect
-        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+        if (shieldBash)
         {
-            SoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
+            //SoundEffectManager.Instance.PlaySoundEffect(soundEffect);  PLAY A SHIELD BASH SOUND EFFECT
         }
+        else
+        {
+            player.animator.Update(0);
+            // Melee attack sound effect
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+            {
+                SoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
+            }
 
-        // Weapon fired event for starting cooldown ui
-        player.weaponFiredEvent.CallWeaponFiredEvent(player.activeWeapon.GetCurrentMainHandWeapon(), true);
+            // Weapon fired event for starting cooldown ui
+            player.weaponFiredEvent.CallWeaponFiredEvent(player.activeWeapon.GetCurrentMainHandWeapon(), true);
+        }
     }
 
     /// <summary>
@@ -565,13 +682,13 @@ public class MeleeAttackMainHand : MonoBehaviour
             weapon = player.activeWeapon.GetCurrentOffHandWeapon();
         }
 
-        bool criticalHitHappened = CriticalHitHappened();
+        bool criticalHitHappened = CriticalHitHappened(null);
 
         // Calculate damage after critical hit check
-        if (player.onStealth)
+        if (player.isStealthActive)
         {
             damageDone = criticalHitHappened ? (int)(damageDone * (weapon.weaponDetails.criticalHitDamageMultiplier +player.additionalCriticalMeleeDamageModifier + 
-                player.additionalCriticalDamageOnStealth)) : damageDone;
+                player.additionalCriticalDamageOnCloakedPrecision)) : damageDone;
         }
         else
         {
@@ -584,12 +701,18 @@ public class MeleeAttackMainHand : MonoBehaviour
         health.TakeDamage(damageDone, transform.position, health.transform.position, false, null, hand, bypass);
     }
 
-    IEnumerator DelayAttackRightHand(Weapon weapon)
+    IEnumerator DelayAttackMainHand(Weapon weapon, bool shieldBash = false, bool bloodDrain = false, bool isCullTheMeek = false)
     {
-        yield return new WaitForSeconds(weapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
+        if (shieldBash) yield return new WaitForSeconds(1.6f);
+
+        else yield return new WaitForSeconds(weapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
+
+        if (bloodDrain) player.animator.SetBool("blood", false);
+        if (isCullTheMeek) player.animator.SetBool("cullTheMeek", false);
+        if (shieldBash) player.animator.SetBool("shieldBash", false);
 
         weapon.onCooldown = false;
-        rightHandAttackBlocked = false;
+        mainHandAttackBlocked = false;
     }
 
     /// <summary>

@@ -28,10 +28,10 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     private void Awake()
     {
-        if (rectTransform == null) rectTransform = GetComponent<RectTransform>();
-        if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
-        if (image == null) image = GetComponent<Image>();
-        if (canvas == null) canvas = GetComponentInParent<Canvas>();
+        rectTransform = GetComponent<RectTransform>();
+        canvasGroup = GetComponent<CanvasGroup>();
+        image = GetComponent<Image>();
+        canvas = GetComponentInParent<Canvas>();
     }
 
     private void OnEnable()

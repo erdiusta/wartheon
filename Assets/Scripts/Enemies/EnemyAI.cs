@@ -18,7 +18,11 @@ public class EnemyAI : MonoBehaviour
     #region Tooltip
     [Tooltip("Select the layers that the enemy bullets will hit")]
     #endregion Tooltip
-    [SerializeField] LayerMask layerMask;
+    public LayerMask shootLayerMask;
+    #region Tooltip
+    [Tooltip("Select the layers that the enemy will avoid static objects during avoid")]
+    #endregion Tooltip
+    public LayerMask avoidLayerMask;
 
     [HideInInspector] public MoveStatus moveStatus = MoveStatus.Idle;
     [HideInInspector] public int updateFrameNumber = 1; // default value.  This is set by the enemy spawner
@@ -59,10 +63,22 @@ public class EnemyAI : MonoBehaviour
     protected Player player;
     protected bool deathAnimationStarted;
 
+    // AVOID
+    protected Vector3 referenceIntentionVector = Vector3.zero;
+    protected const float IntentionValue = 0.35f;
+    protected float avoidSuppressionTimer = 0f;
+    protected float avoidToPatrolTimer = 0f;
+
+    // FLANK
+    protected float flankDecisionTimer;
+    protected const float FLANK_COOLDOWN = 1.5f; // Seconds between flank attempts
+
     protected virtual void Awake()
     {
         enemy = GetComponent<Enemy>();
         currentRoom = GameManager.Instance.GetCurrentRoom();
+
+        waitForFixedUpdate = new WaitForFixedUpdate();
 
         // Cache player target reference
         player = GameManager.Instance.GetPlayer();
@@ -94,15 +110,6 @@ public class EnemyAI : MonoBehaviour
     {
         if (player != null) enemy.aiDestinationSetter.target = player.transform;
 
-        // Create waitforfixed update for use in coroutine
-        waitForFixedUpdate = new WaitForFixedUpdate();
-
-        // Reset player reference position
-        if (GameManager.Instance.GetPlayer() != null)
-        {
-            referencePosition = GameManager.Instance.GetPlayer().GetPlayerPosition();
-        }
-
         // Reset attack move timer
         attackMoveTimer = enemy.enemyDetails.attackMoveBaseCooldown;
 
@@ -114,8 +121,10 @@ public class EnemyAI : MonoBehaviour
     protected virtual void FixedUpdate()
     {
         dashTimer += Time.fixedDeltaTime;
-
         attackMoveTimer -= Time.fixedDeltaTime;
+
+        avoidToPatrolTimer = Mathf.Max(0f, avoidToPatrolTimer - Time.fixedDeltaTime);
+        avoidSuppressionTimer = Mathf.Max(0f, avoidSuppressionTimer - Time.fixedDeltaTime);
 
         if (isDashing)
         {
@@ -163,118 +172,365 @@ public class EnemyAI : MonoBehaviour
             StartCoroutine(KnockbackRoutine());
         }
 
-        // If enemy is at the time of other animations, don't move
-        if (enemy.health.getHitCoroutine != null)
+        if (moveStatus == MoveStatus.Idle)
         {
-            // STOP MOVE CODE !!!
-        }
-        else
-        {
-            if (moveStatus == MoveStatus.Idle)
+            if (player == null || player.health.hasDied) return;
+
+            // If enemy is attacking process and in attack phase, don't get involved in AStar calculations
+            if (enemyPhase == EnemyPhase.Attack && isAttacking) return;
+
+            UpdatePhaseStatus();
+
+            switch (enemyPhase)
             {
-                if (player == null || player.health.hasDied) return;
+                case EnemyPhase.Patrol:
+                    // Disable aiDestinationSetter and enable patrol
+                    enemy.aiRigidbody2D.enabled = true;
+                    enemy.aiDestinationSetter.enabled = false;
+                    enemy.patrol.enabled = true;
 
-                // If enemy is attacking process and in attack phase, don't get involved in AStar calculations
-                if (enemyPhase == EnemyPhase.Attack && isAttacking) return;
+                    // Reset animation and dashing flag
+                    ResetEnemySpeed();
 
-                if (updatePhaseRoutine == null)
-                {
-                    updatePhaseRoutine = StartCoroutine(UpdatePhaseStatus());
-                }
+                    enemy.animateEnemy.ResetAnimatonParameters();
+                    enemy.animateEnemy.SetMovementAnimationParameters();
+                    break;
 
-                switch (enemyPhase)
-                {
-                    case EnemyPhase.Patrol:
-                        // Disable aiDestinationSetter and enable patrol
-                        enemy.aiDestinationSetter.enabled = false;
-                        enemy.patrol.enabled = true;
+                case EnemyPhase.Chase:
+                    // Disable patrol during chase and enable aiDestinationSetter
+                    enemy.aiRigidbody2D.enabled = true;
+                    enemy.patrol.enabled = false;
+                    enemy.aiDestinationSetter.enabled = true;
 
-                        // Reset animation and dashing flag
-                        ResetEnemySpeed();
+                    // Reset animation and dashing flag
+                    ResetEnemySpeed();
+                    enemy.animator.SetBool(Settings.isAttack, false);
 
-                        enemy.animateEnemy.ResetAnimatonParameters();
-                        enemy.animateEnemy.SetMovementAnimationParameters();
+                    enemy.animateEnemy.ResetAnimatonParameters();
+                    enemy.animateEnemy.SetMovementAnimationParameters();
+                    break;
 
-                        //ApplySeparation();
-                        break;
+                case EnemyPhase.Avoid:
+                    // Disable patrol during chase and enable aiDestinationSetter
+                    enemy.aiRigidbody2D.enabled = false;
+                    enemy.patrol.enabled = false;
+                    enemy.aiDestinationSetter.enabled = false;
 
-                    case EnemyPhase.Chase:
-                        // Disable patrol during chase and enable aiDestinationSetter
-                        enemy.patrol.enabled = false;
-                        enemy.aiDestinationSetter.enabled = true;
+                    // Reset animation and dashing flag
+                    ResetEnemySpeed();
 
-                        // Reset animation and dashing flag
-                        ResetEnemySpeed();
-                        enemy.animator.SetBool(Settings.isAttack, false);
+                    //Vector3 intentionVector = GetMovementIntention().normalized;
+                    enemy.movementToPosition.AttackMoveRigidbodyByPosition(referenceIntentionVector.normalized, enemy.currentMoveSpeed);
 
-                        enemy.animateEnemy.ResetAnimatonParameters();
-                        enemy.animateEnemy.SetMovementAnimationParameters();
+                    break;
 
-                        //ApplySeparation();
-                        break;
+                case EnemyPhase.Attack:
+                    // Disable patrol bot aiDestination setter for attack phase
+                    enemy.aiRigidbody2D.enabled = true;
+                    enemy.patrol.enabled = false;
+                    enemy.aiDestinationSetter.enabled = false;
+                    enemy.aiRigidbody2D.canMove = false; // Disable normal attack behaviour during dash or firing
 
-                    case EnemyPhase.GetHit:
-                        // Disable patrol during get hit and enable aiDestinationSetter
-                        enemy.patrol.enabled = false;
-                        enemy.aiDestinationSetter.enabled = false;
-                        enemy.aiRigidbody2D.canMove = false; // Disable normal attack behaviour during dash or firing
-
-                        enemy.idle.StopVelocity();
-
-                        break;
-
-                    case EnemyPhase.Attack:
-                        // Disable patrol bot aiDestination setter for attack phase
-                        enemy.patrol.enabled = false;
-                        enemy.aiDestinationSetter.enabled = false;
-                        enemy.aiRigidbody2D.canMove = false; // Disable normal attack behaviour during dash or firing
-
-                        if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.PrepareAndDash)
+                    if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.PrepareAndDash)
+                    {
+                        if (tag == Settings.enemyTag && !isAttacking) // isAttacking flag added for fixed locked vectort
                         {
-                            if (tag == Settings.enemyTag && !isAttacking) // isAttacking flag added for fixed locked vectort
-                            {
-                                Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() -
-                                    enemy.GetEnemyPosition()).normalized : (GameManager.Instance.GetPlayer().GetPlayerPosition() - enemy.GetEnemyPosition()).normalized;
-                                lockedVector = direction;
-                            }
-
-                            // Check if cooldown has expired
-                            if (attackMoveTimer <= 0f)
-                            {
-                                // Trigger the attack if not already attacking
-                                attackMoveTimer = enemy.enemyDetails.attackMoveBaseCooldown; // Reset cooldown
-
-                                if (attackAnimationRoutine == null)
-                                {
-                                    attackAnimationRoutine = StartCoroutine(DashProcess());
-                                }
-                            }
-                            else
-                            {
-                                // Cooldown is active, switch to Chase phase to avoid awkward waiting
-                                enemyPhaseAtPreviousFrame = enemyPhase;
-                                enemyPhase = EnemyPhase.Chase;
-                            }
+                            Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() -
+                                enemy.GetEnemyPosition()).normalized : (GameManager.Instance.GetPlayer().GetPlayerPosition() - enemy.GetEnemyPosition()).normalized;
+                            lockedVector = direction;
                         }
 
-                        break;
-
-                    case EnemyPhase.Death:
-                        if (attackAnimationRoutine != null)
+                        // Check if cooldown has expired
+                        if (attackMoveTimer <= 0f)
                         {
-                            StopCoroutine(attackAnimationRoutine);
+                            // Trigger the attack if not already attacking
+                            attackMoveTimer = enemy.enemyDetails.attackMoveBaseCooldown; // Reset cooldown
+
+                            if (attackAnimationRoutine == null)
+                            {
+                                attackAnimationRoutine = StartCoroutine(DashProcess());
+                            }
                         }
+                        else
+                        {
+                            // Cooldown is active, switch to Chase phase to avoid awkward waiting
+                            enemyPhaseAtPreviousFrame = enemyPhase;
+                            enemyPhase = EnemyPhase.Chase;
+                        }
+                    }
 
-                        break;
+                    break;
 
-                    default:
-                        break;
-                }
+                case EnemyPhase.Death:
+                    if (attackAnimationRoutine != null)
+                    {
+                        StopCoroutine(attackAnimationRoutine);
+                    }
+
+                    break;
+
+                default:
+                    break;
             }
         }
     }
 
     protected virtual void Update() { }
+
+    protected void UpdatePhaseStatus(bool isAimAttackBehaviour = false)
+    {
+        Vector3 intention = avoidToPatrolTimer > 0f ? Vector3.zero : GetMovementIntention(); // Bypass when patrol triggered during stuck in the walls
+
+        // If neighbored enemies are close enough and not in attack motion, so avoid
+        if (intention.sqrMagnitude > IntentionValue * IntentionValue && enemy.enemyDetails.enemyBehaviour != EnemyBehaviour.Roaming &&
+            !isDashing && !isAttacking && !enemy.isFiring)
+        {
+            enemyPhase = EnemyPhase.Avoid;
+            avoidSuppressionTimer = 0.6f;
+            referenceIntentionVector = intention.normalized;
+        }
+        else if (avoidSuppressionTimer > 0f)
+        {
+            enemyPhase = EnemyPhase.Avoid;
+        }
+        else
+        {
+            referenceIntentionVector = Vector3.zero; // Reset reference intention vector
+
+            if (isAimAttackBehaviour && enemyPhase != EnemyPhase.Flank)
+            {
+                // AIM & ATTACK BEHAVIOUR
+                if (tag == Settings.enemyTag)
+                {
+                    // Check if there is any decoy(dummy)
+                    if (GameManager.Instance.GetDecoy() != null)
+                    {
+                        // Switch to attack if chase distance is lower than trigger distance
+                        if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetDecoy().GetDecoyPosition()) <
+                            enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileRange)
+                        {
+                            enemyPhase = EnemyPhase.Attack;
+
+                            enemy.animateEnemy.ResetAnimatonParameters();
+                            enemy.animateEnemy.SetMovementAnimationParameters();
+                            enemy.idle.StopVelocity(); // Stop velocity during attack
+                        }
+                        else
+                        {
+                            // Switch to change if it in chase distance but not in trigger distance
+                            if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetDecoy().GetDecoyPosition()) <
+                                enemy.enemyDetails.chaseDistance)
+                            {
+                                enemyPhaseAtPreviousFrame = enemyPhase;
+                                enemyPhase = EnemyPhase.Chase;
+                            }
+                            else
+                            {
+                                enemyPhaseAtPreviousFrame = enemyPhase;
+                                enemyPhase = EnemyPhase.Patrol;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!player.isStealthActive)
+                        {
+                            // Switch to attack if chase distance is lower than trigger distance
+                            if (Vector3.Distance(enemy.GetEnemyPosition(), player.GetPlayerPosition()) <
+                                enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileSpeed *
+                                enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.lifeDuration)
+                            {
+                                enemyPhase = EnemyPhase.Attack;
+
+                                enemy.animateEnemy.ResetAnimatonParameters();
+                                enemy.animateEnemy.SetAttackAnimationParameters();
+                                enemy.idle.StopVelocity(); // Stop velocity during attack
+                            }
+                            else
+                            {
+                                // Switch to change if it in chase distance but not in trigger distance
+                                if (Vector3.Distance(enemy.GetEnemyPosition(), player.GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
+                                {
+                                    enemyPhaseAtPreviousFrame = enemyPhase;
+                                    enemyPhase = EnemyPhase.Chase;
+                                }
+                                else
+                                {
+                                    enemyPhaseAtPreviousFrame = enemyPhase;
+                                    enemyPhase = EnemyPhase.Patrol;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            enemyPhaseAtPreviousFrame = enemyPhase;
+                            enemyPhase = EnemyPhase.Patrol;
+                        }
+                    }
+                }
+                else if (tag == Settings.summonedEnemyTag)
+                {
+                    SummonedAllyEnemyBehaviour();
+                }
+            }
+            else
+            {
+                if (tag == Settings.enemyTag)
+                {
+                    if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Roaming)
+                    {
+                        enemyPhase = EnemyPhase.Patrol;
+                    }
+                    else if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Pursuit)
+                    {
+                        enemyPhase = EnemyPhase.Chase;
+                    }
+                    else
+                    {
+                        // DASH & ATTACK BEHAVIOUR
+                        // Check if there is any decoy(dummy)
+                        if (GameManager.Instance.GetDecoy() != null)
+                        {
+                            // Switch to attack if chase distance is lower than trigger distance
+                            if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetDecoy().GetDecoyPosition()) <
+                                enemy.enemyDetails.attackMoveTriggerDistance)
+                            {
+                                if (attackMoveTimer <= 0f && !player.isStealthActive)
+                                {
+                                    enemyPhaseAtPreviousFrame = enemyPhase;
+                                    enemyPhase = EnemyPhase.Attack;
+                                    enemy.animateEnemy.SetAttackAnimationParameters();
+                                }
+                            }
+                            else
+                            {
+                                // Switch to change if it in chase distance but not in trigger distance
+                                if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetDecoy().GetDecoyPosition()) < enemy.enemyDetails.chaseDistance)
+                                {
+                                    enemyPhaseAtPreviousFrame = enemyPhase;
+                                    enemyPhase = EnemyPhase.Chase;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Switch to attack if chase distance is lower than trigger distance
+                            if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.attackMoveTriggerDistance)
+                            {
+                                if (attackMoveTimer <= 0f && !player.isStealthActive)
+                                {
+                                    enemyPhaseAtPreviousFrame = enemyPhase;
+                                    enemyPhase = EnemyPhase.Attack;
+                                    enemy.animateEnemy.SetAttackAnimationParameters();
+                                }
+                            }
+                            else
+                            {
+                                // Switch to change if it in chase distance but not in trigger distance
+                                if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
+                                {
+                                    if (!player.isStealthActive)
+                                    {
+                                        enemyPhaseAtPreviousFrame = enemyPhase;
+                                        enemyPhase = EnemyPhase.Chase;
+                                    }
+                                    else
+                                    {
+                                        enemyPhaseAtPreviousFrame = enemyPhase;
+                                        enemyPhase = EnemyPhase.Patrol;
+                                    }
+                                }
+                                else
+                                {
+                                    enemyPhaseAtPreviousFrame = enemyPhase;
+                                    enemyPhase = EnemyPhase.Patrol;
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (tag == Settings.summonedEnemyTag)
+                {
+                    SummonedAllyEnemyBehaviour();
+                }
+            }
+        }
+    }
+
+    public Vector3 GetMovementIntention()
+    {
+        // Initialize intention
+        Vector3 intention = Vector3.zero;
+
+        if (isDashing) return Vector3.zero; // During dash don't get involved in avoid calculation
+
+        // Wall avoidance
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 1f, avoidLayerMask);
+
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject == gameObject) continue;
+
+            Vector3 direction = GetDirection(gameObject, hit.gameObject);
+            float distance = GetDistance(gameObject, hit.gameObject);
+
+            float springStrength = 1f / (1f + distance * distance * distance);
+            intention -= direction * springStrength; // Push away from the walls or pools
+
+            //if (springStrength > 0.3f)
+            //{
+            //    enemyPhase = EnemyPhase.Patrol; // Transition to patrol
+            //    avoidToPatrolTimer = 1f;
+            //    return Vector3.zero;
+            //}
+        }
+
+        // Avoid obstacles
+        foreach (GameObject obstacle in GameManager.Instance.GetCurrentRoom().instantiatedRoom.roomObstaclesList)
+        {
+            Vector3 direction = GetDirection(gameObject, obstacle.gameObject);
+            float distance = GetDistance(gameObject, obstacle.gameObject);
+
+            float springStrength = 1f / (1f + distance * distance * distance); // Inverse cube of distance
+            intention -= direction * springStrength * 2; // Push away from the obstacle
+        }
+
+        // Spread out
+        foreach (GameObject otherEnemy in SceneObjectsManager.Instance.dynamicGameObjectsInScene)
+        {
+            if (otherEnemy.TryGetComponent<Player>(out Player player)) continue; // Player check is done above, don't need to do it agian here
+
+            if (otherEnemy.TryGetComponent(out Decoy decoy)) continue; // Decoy check
+
+            if (otherEnemy.GetComponent<Enemy>().enemyAI.isDashing) continue; // Don't involve dashing enemies
+
+            if (otherEnemy.GetComponent<Enemy>().isFiring) continue; // Don't involve firing enemies
+
+            if (enemy.gameObject == otherEnemy) continue; // Don't repel yourself
+
+            if (enemy.GetComponent<Enemy>().enemyDetails.enemyBehaviour == EnemyBehaviour.Roaming) continue;
+
+            Vector3 direction = GetDirection(gameObject, otherEnemy);
+            float distance = GetDistance(gameObject, otherEnemy);
+
+            float springStrength = 1f / (1f + distance * distance * distance); // Inverse cube of distance
+
+            intention -= direction * springStrength; // Push away from the other monsters
+
+            if (springStrength > 0.3f)
+            {
+                Debug.Log(enemy.enemyDetails.enemyName + "'s spring strength vs " + otherEnemy.GetComponent<Enemy>().enemyDetails.enemyName
+                    + " is " + "(" + intention.x + ", " + intention.y + ") with " + intention.sqrMagnitude + " sqr magnitude");
+            }
+        }
+
+        // Check above cutoff threshold
+        if (intention.sqrMagnitude < IntentionValue * IntentionValue) return Vector3.zero;
+
+        // Return final movement intention
+        return intention;
+    }
+
 
     protected void IdleProcess()
     {
@@ -301,6 +557,8 @@ public class EnemyAI : MonoBehaviour
             lockedTargetPosition = enemy.GetEnemyPosition() + lockedVector * enemyDetails.attackMoveEfficentDistance;
             isTargetLocked = true;
         }
+
+        yield return waitForFixedUpdate; // Pass aim and dash lock phase
 
         // Wait until dash starts
         yield return new WaitForSeconds(enemyDetails.countdownDurationBeforeDashAttack);
@@ -343,9 +601,9 @@ public class EnemyAI : MonoBehaviour
     /// <summary>   
     /// Fire the weapon - laser
     /// </summary>
-    protected void FireWeapon(Vector3 lockedPlayerVector, float lockedEnemyAngle, AimDirection lockedAimDirection, AttackDirection lockedAttackDirection, bool isLaser = false, 
-        CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, 
-        SepharothPhase sepharothPhase = SepharothPhase.None)
+    protected void FireWeapon(Vector3 lockedPlayerVector, float lockedEnemyAngle, AimDirection lockedAimDirection, AttackDirection lockedAttackDirection, 
+        bool isLaser = false, MoravellePhase moravellePhase = MoravellePhase.None, TreantPhase treantPhase = TreantPhase.None,
+        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
@@ -388,180 +646,15 @@ public class EnemyAI : MonoBehaviour
                 if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
 
                 enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, false,
-                    false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase);
+                    false, false, moravellePhase, treantPhase, galvanusPhase, sepharothPhase);
             }
         }
-    }
-
-    protected IEnumerator UpdatePhaseStatus(bool isAimAttackBehaviour = false)
-    {
-        if (isAimAttackBehaviour)
-        {
-            // AIM & ATTACK BEHAVIOUR
-            if (tag == Settings.enemyTag)
-            {
-                // Check if there is any decoy(dummy)
-                if (GameManager.Instance.GetDecoy() != null)
-                {
-                    // Switch to attack if chase distance is lower than trigger distance
-                    if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetDecoy().GetDecoyPosition()) <
-                        enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileRange)
-                    {
-                        enemyPhase = EnemyPhase.Attack;
-
-                        enemy.animateEnemy.ResetAnimatonParameters();
-                        enemy.animateEnemy.SetMovementAnimationParameters();
-                        enemy.idle.StopVelocity(); // Stop velocity during attack
-                    }
-                    else
-                    {
-                        // Switch to change if it in chase distance but not in trigger distance
-                        if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetDecoy().GetDecoyPosition()) < 
-                            enemy.enemyDetails.chaseDistance)
-                        {
-                            enemyPhaseAtPreviousFrame = enemyPhase;
-                            enemyPhase = EnemyPhase.Chase;
-                        }
-                        else
-                        {
-                            enemyPhaseAtPreviousFrame = enemyPhase;
-                            enemyPhase = EnemyPhase.Patrol;
-                        }
-                    }
-                }
-                else
-                {
-                    if (!player.onStealth)
-                    {
-                        // Switch to attack if chase distance is lower than trigger distance
-                        if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) <
-                            enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileSpeed *
-                            enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.lifeDuration)
-                        {
-                            enemyPhase = EnemyPhase.Attack;
-
-                            enemy.animateEnemy.ResetAnimatonParameters();
-                            enemy.animateEnemy.SetAttackAnimationParameters();
-                            enemy.idle.StopVelocity(); // Stop velocity during attack
-                        }
-                        else
-                        {
-                            // Switch to change if it in chase distance but not in trigger distance
-                            if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
-                            {
-                                enemyPhaseAtPreviousFrame = enemyPhase;
-                                enemyPhase = EnemyPhase.Chase;
-                            }
-                            else
-                            {
-                                enemyPhaseAtPreviousFrame = enemyPhase;
-                                enemyPhase = EnemyPhase.Patrol;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        enemyPhaseAtPreviousFrame = enemyPhase;
-                        enemyPhase = EnemyPhase.Patrol;
-                    }
-                }
-            }
-            else if (tag == Settings.summonedEnemyTag)
-            {
-                SummonedAllyEnemyBehaviour();
-            }
-        }
-        else
-        {
-            if (tag == Settings.enemyTag)
-            {
-                if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Roaming)
-                {
-                    enemyPhase = EnemyPhase.Patrol;
-                }
-                else if (enemy.enemyDetails.enemyBehaviour == EnemyBehaviour.Pursuit)
-                {
-                    enemyPhase = EnemyPhase.Chase;
-                }
-                else
-                {
-                    // DASH & ATTACK BEHAVIOUR
-                    // Check if there is any decoy(dummy)
-                    if (GameManager.Instance.GetDecoy() != null)
-                    {
-                        // Switch to attack if chase distance is lower than trigger distance
-                        if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetDecoy().GetDecoyPosition()) <
-                            enemy.enemyDetails.attackMoveTriggerDistance)
-                        {
-                            if (attackMoveTimer <= 0f && !player.onStealth)
-                            {
-                                enemyPhaseAtPreviousFrame = enemyPhase;
-                                enemyPhase = EnemyPhase.Attack;
-                                enemy.animateEnemy.SetAttackAnimationParameters();
-                            }
-                        }
-                        else
-                        {
-                            // Switch to change if it in chase distance but not in trigger distance
-                            if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetDecoy().GetDecoyPosition()) < enemy.enemyDetails.chaseDistance)
-                            {
-                                enemyPhaseAtPreviousFrame = enemyPhase;
-                                enemyPhase = EnemyPhase.Chase;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Switch to attack if chase distance is lower than trigger distance
-                        if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.attackMoveTriggerDistance)
-                        {
-                            if (attackMoveTimer <= 0f && !player.onStealth)
-                            {
-                                enemyPhaseAtPreviousFrame = enemyPhase;
-                                enemyPhase = EnemyPhase.Attack;
-                                enemy.animateEnemy.SetAttackAnimationParameters();
-                            }
-                        }
-                        else
-                        {
-                            // Switch to change if it in chase distance but not in trigger distance
-                            if (Vector3.Distance(enemy.GetEnemyPosition(), GameManager.Instance.GetPlayer().GetPlayerPosition()) < enemy.enemyDetails.chaseDistance)
-                            {
-                                if (!player.onStealth)
-                                {
-                                    enemyPhaseAtPreviousFrame = enemyPhase;
-                                    enemyPhase = EnemyPhase.Chase;
-                                }
-                                else
-                                {
-                                    enemyPhaseAtPreviousFrame = enemyPhase;
-                                    enemyPhase = EnemyPhase.Patrol;
-                                }
-                            }
-                            else
-                            {
-                                enemyPhaseAtPreviousFrame = enemyPhase;
-                                enemyPhase = EnemyPhase.Patrol;
-                            }
-                        }
-                    }
-                }
-            }
-            else if (tag == Settings.summonedEnemyTag)
-            {
-                SummonedAllyEnemyBehaviour();
-            }
-        }
-
-        yield return waitForFixedUpdate; // Wait a fixed update time after behaviour change.
-
-        updatePhaseRoutine = null;
     }
 
     /// <summary>   
     /// Fire the weapon - ordinary aim
     /// </summary>
-    protected void FireWeapon(bool isLaser = false, CentaurPhase centaurPhase = CentaurPhase.None, TreantPhase treantPhase = TreantPhase.None, 
+    protected void FireWeapon(bool isLaser = false, MoravellePhase moravellePhase = MoravellePhase.None, TreantPhase treantPhase = TreantPhase.None, 
         GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None,
         VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
     {
@@ -581,15 +674,25 @@ public class EnemyAI : MonoBehaviour
             // Is the player in range
             if (playerDirectionVector.magnitude <= enemyProjectileRange)
             {
-                // Does this enemy require line of sight to the player before firing?
-                if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange))
+                // Does this enemy require line of sight to the player before firing
+                if (enemyDetails.firingLineOfSightRequired)
                 {
-                    enemy.enemyAI.enemyPhase = EnemyPhase.Chase;
-                    return;
+                    if (!IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange))
+                    {
+                        // Attempt flank if cooldown allows
+                        if (Time.time - flankDecisionTimer > FLANK_COOLDOWN)
+                        {
+                            flankDecisionTimer = Time.time;
+                            enemyPhaseAtPreviousFrame = enemyPhase;
+                            enemyPhase = EnemyPhase.Flank;
+                        }
+
+                        return;
+                    }
                 }
 
                 enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection,
-                    false, false, false, centaurPhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
+                    false, false, false, moravellePhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
             }
         }
     }
@@ -632,9 +735,9 @@ public class EnemyAI : MonoBehaviour
         enemy.animateEnemy.SetAimWeaponAnimationParameters(enemyAimDirection);
     }
 
-    private bool IsPlayerInLineOfSight(Vector3 weaponDirection, float enemyProjectileRange)
+    protected bool IsPlayerInLineOfSight(Vector3 weaponDirection, float enemyProjectileRange)
     {
-        RaycastHit2D raycastHit2D = Physics2D.Raycast(weaponShootPosition.position, (Vector2)weaponDirection, enemyProjectileRange, layerMask);
+        RaycastHit2D raycastHit2D = Physics2D.Raycast(weaponShootPosition.position, (Vector2)weaponDirection, enemyProjectileRange, shootLayerMask);
 
         if (raycastHit2D && raycastHit2D.transform.CompareTag(Settings.playerTag))
         {
@@ -687,7 +790,7 @@ public class EnemyAI : MonoBehaviour
 
             if (distanceToTarget < enemy.enemyDetails.chaseDistance)
             {
-                if (!GameManager.Instance.GetPlayer().onStealth)
+                if (!GameManager.Instance.GetPlayer().isStealthActive)
                 {
                     enemyPhaseAtPreviousFrame = enemyPhase;
                     enemyPhase = EnemyPhase.Chase;
@@ -828,6 +931,16 @@ public class EnemyAI : MonoBehaviour
     {
         // Calculate a random weapon shoot interval
         return Random.Range(enemyDetails.firingIntervalMin, enemyDetails.firingIntervalMax);
+    }
+
+    private Vector3 GetDirection(GameObject currentObject, GameObject targetObject)
+    {
+        return ((targetObject.transform.position + new Vector3(0f, 0.7f, 0f)) - (currentObject.transform.position + new Vector3(0f, 0.7f, 0f))).normalized;
+    }
+
+    private float GetDistance(GameObject currentObject, GameObject targetObject)
+    {
+        return Vector3.Distance(targetObject.transform.position + new Vector3(0f, 0.7f, 0f), currentObject.transform.position + new Vector3(0f, 0.7f, 0f));
     }
 
     // Method to stop dashing

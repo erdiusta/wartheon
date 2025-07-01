@@ -10,9 +10,9 @@ public class Health : MonoBehaviour
 
     [HideInInspector] public int currentHealth;
     [HideInInspector] public int maximumHealth;
+    [HideInInspector] public int currentShield;
     [HideInInspector] public bool isDamageable = true;
     [HideInInspector] public Enemy enemy;
-    [HideInInspector] public Coroutine getHitCoroutine;
     [HideInInspector] public bool isBlocking;
     [HideInInspector] public bool isDodging;
     [HideInInspector] public bool suddenDeathHappened;
@@ -76,7 +76,7 @@ public class Health : MonoBehaviour
         }
         else if (enemy != null)
         {
-            enemy.currentPhysicalResistance = enemy.enemyDetails.physicalResistance;
+            enemy.currentArmor = enemy.enemyDetails.physicalResistance;
 
             if (enemy.enemyDetails.isImmuneAfterHit)
             {
@@ -239,26 +239,53 @@ public class Health : MonoBehaviour
 
         if (isDamageable || bypassImmunity)
         {
-            currentHealth -= damageAmount;
+            if (player != null)
+            {
+                // Apply to shield first
+                if (currentShield > 0)
+                {
+                    int shieldDamage = Mathf.Min(damageAmount, currentShield);
+                    currentShield -= shieldDamage;
+                    damageAmount -= shieldDamage;
+                }
+                else
+                {
+                    player.isGuardedOathActive = false;
+                }
+
+
+                // Remaining damage goes to health
+                if (damageAmount > 0)
+                {
+                    currentHealth = Mathf.Max(currentHealth - damageAmount, 0);
+                }
+            }
+            else
+            {
+                currentHealth -= damageAmount;
+            }
+
 
             // Book UI health update
             if (player != null && !player.isClone)
             {
                 StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
+
+                if (player.playerDetails.playerCharacterIndex == Character.Caelion)
+                {
+                    player.lastDamageHappenedTime = Time.time;
+                }
             }
 
-            if (player != null && getHitCoroutine == null && currentHealth > 0)
+            if (player != null && currentHealth > 0)
             {
                 PostHitImmunity();
             }
             // Decoy logic
             else if (decoy != null)
             {
-                if (getHitCoroutine == null)
-                {
-                    getHitCoroutine = StartCoroutine(DecoyGetHitRoutine());
-                    PostHitImmunity();
-                }
+                DecoyGetHitRoutine();
+                PostHitImmunity();
             }
             // Enemy logic
             else if (enemy != null)
@@ -271,29 +298,23 @@ public class Health : MonoBehaviour
 
                 if (tag == Settings.summonedEnemyTag)
                 {
-                    if (getHitCoroutine == null)
+                    if (!isBlocking && !isDodging)
                     {
-                        if (!isBlocking && !isDodging)
-                        {
-                            PostHitImmunity();
-                        }
-
-                        getHitCoroutine = StartCoroutine(EnemyGetHitRoutine(headShotHappened));
+                        PostHitImmunity();
                     }
+
+                    EnemyGetHitProcess(headShotHappened);
+
                 }
                 else
                 {
-                    if (getHitCoroutine != null)
-                    {
-                        StopCoroutine(getHitCoroutine);
-                    }
-
                     if (!isBlocking)
                     {
                         PostHitImmunity();
                     }
 
-                    getHitCoroutine = StartCoroutine(EnemyGetHitRoutine(headShotHappened));
+                    EnemyGetHitProcess(headShotHappened);
+
                 }
             }
 
@@ -302,19 +323,19 @@ public class Health : MonoBehaviour
         }
     }
 
-    IEnumerator DecoyGetHitRoutine()
+    private void DecoyGetHitRoutine()
     {
-        if (decoy.tag == Settings.decoyTag)
+        if (decoy.activeItemDetails != null) // Active item decoy
         {
             SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemSwingSoundEffect);
         }
-
-        yield return new WaitForSeconds(0.1f);
-
-        getHitCoroutine = null;
+        else // This is practice dummy
+        {
+            SoundEffectManager.Instance.PlaySoundEffect(decoy.dummyHitSound);
+        }
     }
 
-    IEnumerator EnemyGetHitRoutine(bool headShotHappened)
+    private void EnemyGetHitProcess(bool headShotHappened)
     {
         if (!isBlocking)
         {
@@ -335,7 +356,7 @@ public class Health : MonoBehaviour
             if (headShotHappened)
             {
                 enemy.healthEvent.CallHeadShotEvent();
-                SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.specialMoveOneSoundEffect);
+                //SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.activeSkillOneSoundEffect);
             }
 
             if (!fxAnimatorPlayed)
@@ -351,13 +372,9 @@ public class Health : MonoBehaviour
             SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.deflectSoundEffect);
         }
 
-        yield return new WaitForSeconds(0.4f);
-
         fxAnimatorPlayed = false; // Reset hit fx animation
         hitFXAnimator.SetInteger(Settings.impactNumber, 0);
-        enemy.animator.SetBool(Settings.block, false);
         isBlocking = false;
-        getHitCoroutine = null;
     }
 
     /// <summary>
@@ -616,6 +633,14 @@ public class Health : MonoBehaviour
     }
 
     /// <summary>
+    /// Get current shield
+    /// </summary>
+    public int GetCurrentShield()
+    {
+        return currentShield;
+    }
+
+    /// <summary>
     /// Increase health by specified percent
     /// </summary>
     public void AddHealth(int healthIncrease)
@@ -637,10 +662,42 @@ public class Health : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Increase shield by specified percent
+    /// </summary>
+    public void AddShield(int shieldIncrease)
+    {
+        currentShield += shieldIncrease;
+
+        if (enemy != null)
+        {
+            // Set health bar as the percentage of health remaining
+            if (GameManager.Instance.healthBarContainer.activeSelf)
+            {
+                GameManager.Instance.SetHealthBarValue(currentHealth, enemy);
+            }
+        }
+
+        // Trigger health event
+        healthEvent.CallHealthChangedEvent(currentHealth, 0, MeleeHand.None);
+        StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
+    }
+
+    /// <summary>
+    /// Remove shield
+    /// </summary>
+    public void RemoveShield()
+    {
+        currentShield = 0;
+
+        // Trigger health event
+        healthEvent.CallHealthChangedEvent(currentHealth, 0, MeleeHand.None);
+        StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
+    }
+
     public void ResetStatusInCaseOfDeath()
     {
         immunityCoroutine = null;
-        getHitCoroutine = null;
         flashManager.UnflashCharacter(spriteRenderer);
     }
 
@@ -651,7 +708,7 @@ public class Health : MonoBehaviour
     {
         if (player != null)
         {
-            player.currentPhysicalResistanceValue = player.playerDetails.physicalResistance;
+            player.currentArmorValue = player.playerDetails.physicalResistance;
         }
     }
 }

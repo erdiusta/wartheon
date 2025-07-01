@@ -7,7 +7,7 @@ public class FireWeaponEvent : MonoBehaviour
     public event Action<FireWeaponEvent, FireWeaponEventArgs> OnFireWeapon;
 
     public void CallFireWeaponEvent(bool fire, bool firePreviousFrame, Enemy belongingEnemy, bool isLaser, AimDirection aimDirection, float aimAngle, float weaponAimAngle,
-        Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false, CentaurPhase centaurPhase = CentaurPhase.None,
+        Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false, MoravellePhase moravellePhase = MoravellePhase.None,
         TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
         FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None,
         MoldranPhase moldranPhase = MoldranPhase.None)
@@ -25,7 +25,7 @@ public class FireWeaponEvent : MonoBehaviour
             headShotHappened = headShotHappened,
             isActiveItem = isActiveItem,
             isPenetrationArrow = isPenetrationArrow,
-            centaurPhase = centaurPhase,
+            moravellePhase = moravellePhase,
             treantPhase = treantPhase,
             galvanusPhase = galvanusPhase,
             sepharothPhase = sepharothPhase,
@@ -57,7 +57,7 @@ public class FireWeaponEventArgs : EventArgs
     public bool headShotHappened;
     public bool isActiveItem;
     public bool isPenetrationArrow;
-    public CentaurPhase centaurPhase;
+    public MoravellePhase moravellePhase;
     public TreantPhase treantPhase;
     public GalvanusPhase galvanusPhase;
     public SepharothPhase sepharothPhase;

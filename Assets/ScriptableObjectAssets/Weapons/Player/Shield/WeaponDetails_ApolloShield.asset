@@ -21,6 +21,9 @@ MonoBehaviour:
     constitution: 0
     intelligence: 0
     agility: 0
+    willpower: 0
+    ferocity: 0
+    resolve: 0
   weaponClass: 3
   weaponHitSpeed: 0
   wieldType: 0
@@ -55,10 +58,11 @@ MonoBehaviour:
   weaponSecondaryProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
-  weaponImpactSoundEffect: {fileID: 0}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: 6570c8ecce2e63942bc3102c6bd3d9d6, type: 2}
   isMeleeWeapon: 0
   isShield: 1
-  projectileDeflectRatio: 0.5
+  shieldArmorRate: 0.3
+  blockRate: 0.4
   circleRadius: 0
   boxLength: 1.2
   boxHeight: 2.6

@@ -13,18 +13,27 @@ public class HealthUI : MonoBehaviour
     [Header("OBJECT REFERENCES")]
     #endregion Header
     #region Tooltip
-    [Tooltip("Populate with the Image component of the child gameobject HealthImage")]
+    [Tooltip("Populate with the Image component of the child gameobject HealthBarImage")]
     #endregion Tooltip
-    [SerializeField] Image healthImage;
+    [SerializeField] Image healthBar;
+    #region Tooltip
+    [Tooltip("Populate with the Image component of the child gameobject ReservedHPImage")]
+    #endregion Tooltip
+    [SerializeField] Image shieldBar;
     #region Tooltip
     [Tooltip("Populate with healthText")]
     #endregion Tooltip
     [SerializeField] TextMeshProUGUI healthText;
+    #region Tooltip
+    [Tooltip("Populate with shieldText")]
+    #endregion Tooltip
+    [SerializeField] TextMeshProUGUI shieldText;
 
     [Space(10)]
     [SerializeField] Sprite standardSprite;
     [SerializeField] Sprite flashSprite;
 
+    Vector2 originalHealthTextPosition;
     Coroutine playerHealthBarCoroutine;
 
     private void Awake()
@@ -42,6 +51,11 @@ public class HealthUI : MonoBehaviour
     private void OnDisable()
     {
         player.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
+    }
+
+    private void Start()
+    {
+        originalHealthTextPosition = ((RectTransform)healthBar.transform).anchoredPosition;
     }
 
     private void TrySubscribeToHealthEvents()
@@ -91,29 +105,107 @@ public class HealthUI : MonoBehaviour
     /// </summary>
     private IEnumerator UpdateHealthBarRoutine()
     {
-        float duration = 0.6f; // Adjust duration as needed
+        float duration = 0.6f;
         float elapsed = 0f;
-        float startValue = healthImage.transform.localScale.x;
 
-        // Update availability bar
-        float barFill =  Mathf.Clamp((float)player.health.GetCurrentHealth() / (float)player.health.GetMaximumHealth(), 0, 1);
+        float maxHealth = player.health.GetMaximumHealth();
+        float currentHealth = Mathf.Clamp(player.health.GetCurrentHealth(), 0, maxHealth);
+        float currentShield = Mathf.Clamp(player.health.GetCurrentShield(), 0, maxHealth);
 
-        // Apply sprite change
-        Image barImage = transform.GetChild(0).GetChild(0).GetComponent<Image>();
-        barImage.sprite = flashSprite;
+        float total = currentShield > 0 ? Mathf.Max(currentHealth + currentShield, 1) : maxHealth; // prevent div/0
+
+        float targetHealthFill = currentHealth / total;
+        float targetShieldFill = currentShield / total;
+
+        float startHealthFill = healthBar.transform.localScale.x;
+        float startShieldFill = shieldBar.transform.localScale.x;
+
+        RectTransform barParent = (RectTransform)healthBar.transform.parent;
+        float totalWidth = barParent.rect.width;
+
+        // Optional sprite flash
+        healthBar.sprite = flashSprite;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float newValue = Mathf.Lerp(startValue, barFill, elapsed / duration);
-            healthImage.transform.localScale = new Vector3(newValue, 1f, 1f);
+            float t = elapsed / duration;
+
+            float currentHealthFill = Mathf.Lerp(startHealthFill, targetHealthFill, t);
+            float currentShieldFill = Mathf.Lerp(startShieldFill, targetShieldFill, t);
+
+            healthBar.transform.localScale = new Vector3(currentHealthFill, 1f, 1f);
+            shieldBar.transform.localScale = new Vector3(currentShieldFill, 1f, 1f);
+
+            // Interpolated health + shield values (not clamped to max)
+            float interpolatedHealth = currentHealthFill * (currentHealth + currentShield);
+            float interpolatedShield = currentShieldFill * (currentHealth + currentShield);
+
+            float totalVisual = interpolatedHealth + interpolatedShield;
+            float visualRatio = Mathf.Min(totalVisual / maxHealth, 1f);
+            float combinedVisualWidth = totalWidth * visualRatio;
+
+            float healthPortion = Mathf.Clamp01(interpolatedHealth / totalVisual);
+            float healthWidth = combinedVisualWidth * healthPortion;
+            float shieldWidth = combinedVisualWidth - healthWidth;
+
+            // Update shield bar position
+            ((RectTransform)shieldBar.transform).anchoredPosition = new Vector2(healthWidth - 1f, 0f);
+
+            // Update health text position (same deviation logic)
+            float fullBarCenter = 27.5f; // Center of full bar in your pixel-perfect layout
+            float healthBarCenter = healthWidth / 2f;
+            float healthBarAnchorDeviation = fullBarCenter - healthBarCenter;
+
+            ((RectTransform)healthText.transform).anchoredPosition = new Vector2(-healthBarAnchorDeviation, 0f);
+
+            // Optional shield text visibility
+            if (currentShieldFill < 0.05f)
+            {
+                shieldText.text = string.Empty;
+            }
+            else
+            {
+                shieldText.text = player.health.GetCurrentShield().ToString();
+            }
 
             yield return null;
         }
 
-        // Reset sprite
-        barImage.sprite = standardSprite;
-        healthImage.transform.localScale = new Vector3(barFill, 1f, 1f);
+        // Final values
+        healthBar.transform.localScale = new Vector3(targetHealthFill, 1f, 1f);
+        shieldBar.transform.localScale = new Vector3(targetShieldFill, 1f, 1f);
+
+        ShiftShieldBar(maxHealth, currentHealth, currentShield, totalWidth);
+
+        healthBar.sprite = standardSprite;
         playerHealthBarCoroutine = null;
+    }
+
+    private void ShiftShieldBar(float maxHealth, float currentHealth, float currentShield, float totalWidth)
+    {
+        float totalVisual = currentHealth + currentShield;
+
+        // Clamp the total so that over-healing/shielding doesn't overflow bar
+        float visualRatio = Mathf.Min(totalVisual / maxHealth, 1f);
+        float combinedVisualWidth = totalWidth + visualRatio;
+
+        // Health portion
+        float healthPortion = Mathf.Clamp01(currentHealth / totalVisual); // 0–1 within combined fill
+        float healthWidth = combinedVisualWidth * healthPortion;
+        float shieldWidth = combinedVisualWidth - healthWidth;
+
+
+        // Place shield bar after health
+        ((RectTransform)shieldBar.transform).anchoredPosition = new Vector2(healthWidth - 1f, 0f);
+
+        // Calculate center shift
+        float fullBarCenter = 27.5f; // original center is 0
+        float healthBarCenter = healthWidth / 2f;
+
+        float healthBarAnchorDeviation = fullBarCenter - healthBarCenter;
+
+        // Apply deviation (leftward shift)
+        ((RectTransform)healthText.transform).anchoredPosition = new Vector2(-healthBarAnchorDeviation, 0f);
     }
 }

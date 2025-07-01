@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: Solar Flare Projectile
   isPlayerProjectile: 1
-  projectileSprite: {fileID: 21300000, guid: 1dcb15e5e19fefd40956f26ae70322bb, type: 3}
   projectilePrefabArray:
   - {fileID: 2585463276777236944, guid: 57b7bf409d4b6f14fba3aa88ee752e35, type: 3}
   projectileMaterial: {fileID: 2100000, guid: a17dad796d5f693419e97628b3b559f4, type: 2}
@@ -24,22 +23,33 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 11400000, guid: a200ad9e31d7b6447bfa8906fb984cc3, type: 2}
   projectileDamageMin: 5
   projectileDamageMax: 8
-  projectileSpeedMin: 12
-  projectileSpeedMax: 16
+  projectileSpeed: 8
   projectileRange: 22
+  hasLifeTime: 0
+  lifeDuration: 1
   projectileRotationSpeed: 1
-  hasAcid: 0
-  acidEfficiency: 0
+  isGuided: 0
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 0
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
+  hasBurnDamage: 0
+  burnChance: 0
   isPoisonous: 0
   poisonChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
   hasFrostDamage: 0
   frostChance: 0
-  hasBlindDamage: 0
-  blindChance: 0
   hasCurseDamage: 0
   curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
   projectileSpreadMin: 2
   projectileSpreadMax: 6
   projectileSpawnAmountMin: 3
@@ -53,3 +63,4 @@ MonoBehaviour:
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0
   isCataclysmProjectile: 0
+  isLaser: 0

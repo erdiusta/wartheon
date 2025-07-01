@@ -104,7 +104,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             CloseTooltip();
         }
 
-        if (hasPrimaryPassiveDrop && trackPlayer && !isPickedUp)
+        if (trackPlayer && !isPickedUp)
         {
             Vector3 targetPos = player.transform.position + new Vector3(0f, 0.5f, 0f);
 
@@ -894,7 +894,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
         }
 
-        StaticEventHandler.CallPrimaryStatsChangedEvent();
+        StaticEventHandler.CallStatsChangedOnTheBookEvent();
         isColliding = true;
         pickUpAnimator.SetTrigger("pickUp");
         passiveItemDetails = null;

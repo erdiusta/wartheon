@@ -36,11 +36,6 @@ public class AnimatePlayer : MonoBehaviour
     /// </summary>
     public void InitializeAimAnimationParameters()
     {
-        player.animator.SetFloat(Settings.motionType, -1f);
-
-        player.animator.SetFloat(Settings.axisX, -1f);
-        player.animator.SetFloat(Settings.axisY, -1f);
-
         // Reset aim parameters
         player.animator.SetBool(Settings.aimUp, false);
         player.animator.SetBool(Settings.aimRight, false);
@@ -85,9 +80,6 @@ public class AnimatePlayer : MonoBehaviour
         player.animator.SetBool(Settings.isIdle, false);
         player.animator.SetBool(Settings.isRoll, false);
 
-        player.animator.SetFloat(Settings.motionType, -1f);
-        player.animator.SetFloat(Settings.axisX, -1f);
-        player.animator.SetFloat(Settings.axisY, -1f);
     }
 
     /// <summary>
@@ -122,8 +114,6 @@ public class AnimatePlayer : MonoBehaviour
         player.animator.SetBool(Settings.rollRight, false);
         player.animator.SetBool(Settings.rollLeft, false);
         player.animator.SetBool(Settings.rollUp, false);
-
-        player.animator.SetFloat(Settings.motionType, -1f);
     }
 
     /// <summary>
@@ -136,8 +126,6 @@ public class AnimatePlayer : MonoBehaviour
         player.animator.SetBool(Settings.isIdle, false);
         player.animator.SetBool(Settings.isRoll, false);
         player.animator.SetBool(Settings.isParry, true);
-
-        player.animator.SetFloat(Settings.motionType, -1f);
     }
 
     /// <summary>

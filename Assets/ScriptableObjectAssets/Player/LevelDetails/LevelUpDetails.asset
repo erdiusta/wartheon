@@ -22,32 +22,56 @@ MonoBehaviour:
   - playerLevel: 3
     levelUpExpPointForNextLevel: 950
   - playerLevel: 4
-    levelUpExpPointForNextLevel: 1500
+    levelUpExpPointForNextLevel: 1400
   - playerLevel: 5
-    levelUpExpPointForNextLevel: 2150
+    levelUpExpPointForNextLevel: 1950
   - playerLevel: 6
-    levelUpExpPointForNextLevel: 2900
+    levelUpExpPointForNextLevel: 2600
   - playerLevel: 7
-    levelUpExpPointForNextLevel: 3800
+    levelUpExpPointForNextLevel: 3300
   - playerLevel: 8
-    levelUpExpPointForNextLevel: 4900
+    levelUpExpPointForNextLevel: 3934
   - playerLevel: 9
-    levelUpExpPointForNextLevel: 6200
+    levelUpExpPointForNextLevel: 4819
   - playerLevel: 10
-    levelUpExpPointForNextLevel: 7125
+    levelUpExpPointForNextLevel: 5791
   - playerLevel: 11
-    levelUpExpPointForNextLevel: 8525
+    levelUpExpPointForNextLevel: 6847
   - playerLevel: 12
-    levelUpExpPointForNextLevel: 10050
+    levelUpExpPointForNextLevel: 7989
   - playerLevel: 13
-    levelUpExpPointForNextLevel: 11700
+    levelUpExpPointForNextLevel: 9215
   - playerLevel: 14
-    levelUpExpPointForNextLevel: 13475
+    levelUpExpPointForNextLevel: 10524
   - playerLevel: 15
-    levelUpExpPointForNextLevel: 15375
+    levelUpExpPointForNextLevel: 11918
   - playerLevel: 16
-    levelUpExpPointForNextLevel: 17400
+    levelUpExpPointForNextLevel: 13394
   - playerLevel: 17
-    levelUpExpPointForNextLevel: 19550
+    levelUpExpPointForNextLevel: 14953
   - playerLevel: 18
-    levelUpExpPointForNextLevel: 21825
+    levelUpExpPointForNextLevel: 16594
+  - playerLevel: 19
+    levelUpExpPointForNextLevel: 18317
+  - playerLevel: 20
+    levelUpExpPointForNextLevel: 20122
+  - playerLevel: 21
+    levelUpExpPointForNextLevel: 22009
+  - playerLevel: 22
+    levelUpExpPointForNextLevel: 23976
+  - playerLevel: 23
+    levelUpExpPointForNextLevel: 26025
+  - playerLevel: 24
+    levelUpExpPointForNextLevel: 28154
+  - playerLevel: 25
+    levelUpExpPointForNextLevel: 30363
+  - playerLevel: 26
+    levelUpExpPointForNextLevel: 32653
+  - playerLevel: 27
+    levelUpExpPointForNextLevel: 35022
+  - playerLevel: 28
+    levelUpExpPointForNextLevel: 37471
+  - playerLevel: 29
+    levelUpExpPointForNextLevel: 40000
+  - playerLevel: 30
+    levelUpExpPointForNextLevel: 45000

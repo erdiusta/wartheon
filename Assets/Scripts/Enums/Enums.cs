@@ -51,9 +51,9 @@ public enum Orientation
 
 public enum Character
 {
-    Astraeus,
-    Erebus,
-    Orion,
+    Caelion,
+    Morven,
+    Nyveran,
     Lyrisa
 }
 
@@ -92,6 +92,18 @@ public enum MoldranSpeechOrder
 {
     firstSpeech,
     secondSpeech
+}
+
+public enum PrimaryStatName
+{
+    Strength,
+    Constitution,
+    Dexterity,
+    Intelligence,
+    Willpower,
+    Agility,
+    Resolve,
+    Ferocity
 }
 
 public enum ActiveItemType
@@ -383,12 +395,12 @@ public enum EnemyCategory
     Wight,
     Wraith,
     Centaur,
-    Treant,
+    Sylvarok,
     Galvanus,
     Sepharoth,
-    FrostWrym,
+    Cryothar,
     Venomancer,
-    FireWrym,
+    Pyrothar,
     Moldran,
     MainSlime,
     Beholder,
@@ -397,7 +409,8 @@ public enum EnemyCategory
     EarthElemental,
     WaterElemental,
     IceNexarion,
-    MinionSlime
+    MinionSlime,
+    Moravelle
 }
 
 public enum EnemyBehaviour
@@ -406,14 +419,15 @@ public enum EnemyBehaviour
     AimAndShoot,
     PrepareAndDash,
     Centaur,
-    Treant,
+    Sylvarok,
     Galvanus,
     Sepharoth,
-    FrostWrym,
+    Cryothar,
     Venomancer,
-    FireWrym,
+    Pyrothar,
     Moldran,
-    Roaming
+    Roaming,
+    Moravelle
 }
 
 public enum EnemyType
@@ -427,12 +441,22 @@ public enum EnemyPhase
 {
     Patrol,
     Chase,
-    GetHit,
+    Avoid,
     Attack,
+    Flank,
     Death
 }
 
 public enum CentaurPhase
+{
+    None,
+    Wait,
+    StraightArrowShot,
+    ChargeAndRetreat,
+    SpreadArrowShot,
+}
+
+public enum MoravellePhase
 {
     None,
     Wait,
@@ -519,6 +543,21 @@ public enum BookPage
     Bosses,
     Build
 }
+
+public enum ActiveSkill
+{
+    SeismicSlam,
+    Valor,
+    ShieldBash,
+    BreakTheLine,
+    GuardedOath,
+    UmbralMist,
+    Stealth,
+    BloodDrain,
+    ShadowStep,
+    CullTheMeek
+}
+    
 
 public enum ItemSlotStatus
 {

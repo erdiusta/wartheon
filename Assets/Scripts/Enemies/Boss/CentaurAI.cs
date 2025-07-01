@@ -112,7 +112,7 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
         else if (moveStatus == MoveStatus.Idle)
         {
             // Check if the player is on stealth
-            if (player.onStealth)
+            if (player.isStealthActive)
             {
                 PlayerStealthCheck();
             }
@@ -200,7 +200,7 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
         if (player == null) return;
 
         // Check if the player is on stealth
-        if (player.onStealth)
+        if (player.isStealthActive)
         {
             PlayerStealthCheck();
             return;
@@ -402,7 +402,7 @@ public class CentaurAI : EnemyAI, IMutualBossBehaviour
                     if (firingDurationTimer >= 0)
                     {
                         firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(false, CentaurPhase.SpreadArrowShot);
+                        FireWeapon(false, MoravellePhase.SpreadArrowShot);
                     }
                     else
                     {
