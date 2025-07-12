@@ -50,10 +50,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trailRenderer: {fileID: 6655167238812535103}
+  projectileAnimator: {fileID: 0}
   layerMask:
     serializedVersion: 2
     m_Bits: 65536
+  belongingParent: {fileID: 0}
+  spriteRenderer: {fileID: 6268444761175253759}
+  projectileDetails: {fileID: 0}
   angleSpeed: 10
+  ropeTransform: {fileID: 0}
+  ropeSpriteRenderer: {fileID: 0}
+  grappleHeadTransform: {fileID: 0}
   lockedTargetVector: {x: 0, y: 0, z: 0}
   lockedAngle: 0
 --- !u!212 &6268444761175253759

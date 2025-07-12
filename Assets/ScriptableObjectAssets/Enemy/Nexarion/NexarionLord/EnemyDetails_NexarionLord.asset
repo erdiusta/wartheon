@@ -29,7 +29,7 @@ MonoBehaviour:
   enemyBehaviour: 1
   isEnemyBoss: 0
   isSummonedMinion: 0
-  isDummy: 0
+  isDecoy: 0
   hasAnimator: 0
   elementalBias: 0
   elementalForgeRate: 0
@@ -72,6 +72,7 @@ MonoBehaviour:
   attackSoundEffect: {fileID: 0}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
+  rootSoundEffect: {fileID: 11400000, guid: 3260cb66e2f6f36468b2beeba1c14620, type: 2}
   poisonSoundEffect: {fileID: 0}
   enemyWeapon: {fileID: 11400000, guid: 340cbc48016a7cf4681d39ab75f7db2a, type: 2}
   firingIntervalMin: 3
@@ -103,6 +104,8 @@ MonoBehaviour:
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
       ratio: 4
+    - dungeonObject: {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
+      ratio: 4
   - dungeonLevel: {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}
     spawnableObjectRatioList:
     - dungeonObject: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
@@ -116,6 +119,8 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
+      ratio: 4
+    - dungeonObject: {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
       ratio: 4
   weaponsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}

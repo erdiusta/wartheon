@@ -4,22 +4,26 @@ using UnityEngine;
 
 public class StatusManager : MonoBehaviour
 {
-    [Header("SPECIAL MOVES")]
-    [Header("Caelion")]
-    public GameObject valorSpecialMoveImage;
-    public GameObject guardedOathSpecialMoveImage;
-    [Space(10)]
-
     [Header("Debuff")]
-    public GameObject poisonImage;
-    public GameObject acidImage;
+    public GameObject bleedingImage;
     public GameObject stunImage;
-    public GameObject frostImage;
-    public GameObject curseImage;
+    public GameObject slowImage;
+    public GameObject poisonImage;
+    public GameObject rootImage;
+    public GameObject acidImage;
+    public GameObject warmImage;
     public GameObject burnImage;
-    public GameObject deathImage;
+    public GameObject chillImage;
+    public GameObject frostImage;
+    public GameObject staticImage;
+    public GameObject paralyzeImage;
     public GameObject blindImage;
-    public GameObject lightfeetImage;
+    public GameObject revealedImage;
+    public GameObject curseImage;
+    public GameObject fearImage;
+    public GameObject deathImage;
+
+    [Space(10)]
     public TextMeshPro statusLogText;
 
     Coroutine logRoutine;
@@ -34,100 +38,74 @@ public class StatusManager : MonoBehaviour
 
     private void OnEnable()
     {
-        if (player != null)
-        {
-            player.healthEvent.GetBurned += EnableBurnImage;
-            player.healthEvent.GetPoisoned += EnablePoisonImage;
-            player.healthEvent.GetAcid += EnableAcidImage;
-            player.healthEvent.GetFrost += EnableFrostImage;
-            player.healthEvent.GetStun += EnableStunImage;
-            player.healthEvent.GetCursed += EnableCurseImage;
-            player.healthEvent.GetBlind += EnableBlindImage;
-
-            player.healthEvent.GetDeath += EnableDeathImage;
-            player.healthEvent.OnDodged += HealthEvent_OnDodged;    
-            player.healthEvent.OnBlocked += HealthEvent_OnBlocked;
-            player.healthEvent.OnParried += HealthEvent_OnParried;
-
-            player.healthEvent.BurnCured += DisableBurnImage;
-            player.healthEvent.PoisonCured += DisablePoisonImage;
-            player.healthEvent.AcidCured += DisableAcidImage;
-            player.healthEvent.FrostCured += DisableFrostImage;
-            player.healthEvent.StunCured += DisableStunImage;
-            player.healthEvent.CurseCured += DisableCurseImage;
-            player.healthEvent.BlindCured += DisableBlindImage;
-        }
-
         if (enemy != null)
         {
+            enemy.healthEvent.GetBleeding += EnableBleedingImage;
+            enemy.healthEvent.GetStun += EnableStunImage;
+            enemy.healthEvent.GetSlow += EnableSlowImage;
             enemy.healthEvent.GetBurned += EnableBurnImage;
             enemy.healthEvent.GetPoisoned += EnablePoisonImage;
             enemy.healthEvent.GetAcid += EnableAcidImage;
+            enemy.healthEvent.GetChill += EnableChillImage;
             enemy.healthEvent.GetFrost += EnableFrostImage;
-            enemy.healthEvent.GetStun += EnableStunImage;
-            enemy.healthEvent.GetCursed += EnableCurseImage;
-            enemy.healthEvent.GetBlind += EnableBlindImage;
-            enemy.healthEvent.GetDeath += EnableDeathImage;
             enemy.healthEvent.GetShattered += EnableShatterLog;
+            enemy.healthEvent.GetRoot += EnableRootImage;
+            enemy.healthEvent.GetBlind += EnableBlindImage;
+            enemy.healthEvent.GetCursed += EnableCurseImage;
+            enemy.healthEvent.GetFeared += EnableFearImage;
+            enemy.healthEvent.GetDeath += EnableDeathImage;
             enemy.healthEvent.OnDodged += HealthEvent_OnDodged;
-            enemy.healthEvent.OnBlocked += HealthEvent_OnBlocked;
 
+            enemy.healthEvent.BleedingCured += DisableBleedingImage;
+            enemy.healthEvent.StunCured += DisableStunImage;
+            enemy.healthEvent.SlowCured += DisableSlowImage;
             enemy.healthEvent.BurnCured += DisableBurnImage;
             enemy.healthEvent.PoisonCured += DisablePoisonImage;
             enemy.healthEvent.AcidCured += DisableAcidImage;
+            enemy.healthEvent.ChillCured += DisableChillImage;
             enemy.healthEvent.FrostCured += DisableFrostImage;
-            enemy.healthEvent.StunCured += DisableStunImage;
-            enemy.healthEvent.CurseCured += DisableCurseImage;
+            enemy.healthEvent.ShatterCured += DisableShatterLog;
+            enemy.healthEvent.RootCured += DisableRootImage;
             enemy.healthEvent.BlindCured += DisableBlindImage;
+            enemy.healthEvent.CurseCured += DisableCurseImage;
+            enemy.healthEvent.FearCured += DisableFearImage;
         }
     }
 
     private void OnDisable()
     {
-        if (player != null)
-        {
-            player.healthEvent.GetBurned -= EnableBurnImage;
-            player.healthEvent.GetPoisoned -= EnablePoisonImage;
-            player.healthEvent.GetAcid -= EnableAcidImage;
-            player.healthEvent.GetFrost -= EnableFrostImage;
-            player.healthEvent.GetStun -= EnableStunImage;
-            player.healthEvent.GetCursed -= EnableCurseImage;
-            player.healthEvent.GetBlind -= EnableBlindImage;
-            player.healthEvent.GetDeath -= EnableDeathImage;
-            player.healthEvent.OnDodged -= HealthEvent_OnDodged;
-            player.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
-            player.healthEvent.OnParried -= HealthEvent_OnParried;
-
-            player.healthEvent.BurnCured -= DisableBurnImage;
-            player.healthEvent.PoisonCured -= DisablePoisonImage;
-            player.healthEvent.AcidCured -= DisableAcidImage;
-            player.healthEvent.FrostCured -= DisableFrostImage;
-            player.healthEvent.StunCured -= DisableStunImage;
-            player.healthEvent.BlindCured -= DisableBlindImage;
-            player.healthEvent.CurseCured -= DisableCurseImage;
-        }
-
         if (enemy != null)
         {
+            enemy.healthEvent.GetBleeding -= EnableBleedingImage;
+            enemy.healthEvent.GetStun -= EnableStunImage;
+            enemy.healthEvent.GetSlow -= EnableSlowImage;
             enemy.healthEvent.GetBurned -= EnableBurnImage;
             enemy.healthEvent.GetPoisoned -= EnablePoisonImage;
             enemy.healthEvent.GetAcid -= EnableAcidImage;
+            enemy.healthEvent.GetChill -= EnableChillImage;
             enemy.healthEvent.GetFrost -= EnableFrostImage;
-            enemy.healthEvent.GetStun -= EnableStunImage;
-            enemy.healthEvent.GetCursed -= EnableCurseImage;
-            enemy.healthEvent.GetBlind -= EnableBlindImage;
-            enemy.healthEvent.GetDeath -= EnableDeathImage;
             enemy.healthEvent.GetShattered -= EnableShatterLog;
-            enemy.healthEvent.OnDodged -= HealthEvent_OnDodged;
-            enemy.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
+            enemy.healthEvent.GetRoot -= EnableRootImage;
+            enemy.healthEvent.GetBlind -= EnableBlindImage;
+            enemy.healthEvent.GetCursed -= EnableCurseImage;
+            enemy.healthEvent.GetFeared -= EnableFearImage;
 
+            enemy.healthEvent.GetDeath -= EnableDeathImage;
+            enemy.healthEvent.OnDodged -= HealthEvent_OnDodged;
+
+            enemy.healthEvent.BleedingCured -= DisableBleedingImage;
+            enemy.healthEvent.StunCured -= DisableStunImage;
+            enemy.healthEvent.SlowCured -= DisableSlowImage;
             enemy.healthEvent.BurnCured -= DisableBurnImage;
             enemy.healthEvent.PoisonCured -= DisablePoisonImage;
             enemy.healthEvent.AcidCured -= DisableAcidImage;
+            enemy.healthEvent.ChillCured -= DisableChillImage;
             enemy.healthEvent.FrostCured -= DisableFrostImage;
-            enemy.healthEvent.StunCured -= DisableStunImage;
+            enemy.healthEvent.ShatterCured -= DisableShatterLog;
+            enemy.healthEvent.RootCured -= DisableRootImage;
             enemy.healthEvent.BlindCured -= DisableBlindImage;
             enemy.healthEvent.CurseCured -= DisableCurseImage;
+            enemy.healthEvent.FearCured -= DisableFearImage;
         }
     }
 
@@ -143,18 +121,6 @@ public class StatusManager : MonoBehaviour
         logRoutine = StartCoroutine(WriteLog("PARRIED", Color.white));
     }
 
-    private void HealthEvent_OnDodged(HealthEvent healthEvent)
-    {
-        ClearLog();
-
-        if (logRoutine != null)
-        {
-            StopCoroutine(logRoutine);
-        }
-
-        logRoutine = StartCoroutine(WriteLog("DODGED", Color.white));
-    }
-
     private void HealthEvent_OnBlocked(HealthEvent healthEvent)
     {
         ClearLog();
@@ -167,9 +133,8 @@ public class StatusManager : MonoBehaviour
         logRoutine = StartCoroutine(WriteLog("BLOCKED", Color.white));
     }
 
-    private void EnableBlockSkillImage(HealthEvent healthEvent)
+    private void HealthEvent_OnDodged(HealthEvent healthEvent)
     {
-        valorSpecialMoveImage.SetActive(true);
         ClearLog();
 
         if (logRoutine != null)
@@ -177,19 +142,19 @@ public class StatusManager : MonoBehaviour
             StopCoroutine(logRoutine);
         }
 
-        logRoutine = StartCoroutine(WriteLog("BLOCKED", Color.gray));
+        logRoutine = StartCoroutine(WriteLog("DODGED", Color.white));
     }
 
-    private void EnableGemSkinSkillImage(HealthEvent healthEvent)
+    private void EnableBleedingImage(HealthEvent healthEvent)
     {
-        guardedOathSpecialMoveImage.SetActive(true);
+        bleedingImage.SetActive(true);
         ClearLog();
         if (logRoutine != null)
         {
             StopCoroutine(logRoutine);
         }
 
-        logRoutine = StartCoroutine(WriteLog("GEM SKIN", Color.gray));
+        logRoutine = StartCoroutine(WriteLog("BLEEDING", Color.red));
     }
 
     private void EnableBurnImage(HealthEvent healthEvent)
@@ -228,6 +193,18 @@ public class StatusManager : MonoBehaviour
         logRoutine = StartCoroutine(WriteLog("ACIDIFIED - ARMOR DOWN", Color.red));
     }
 
+    private void EnableChillImage(HealthEvent healthEvent)
+    {
+        chillImage.SetActive(true);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+
+        logRoutine = StartCoroutine(WriteLog("CHILLED", new Color(0.15f, 0.66f, 0.68f)));
+    }
+
     private void EnableFrostImage(HealthEvent healthEvent)
     {
         frostImage.SetActive(true);
@@ -252,6 +229,30 @@ public class StatusManager : MonoBehaviour
         logRoutine = StartCoroutine(WriteLog("STUNNED", Color.yellow));
     }
 
+    private void EnableSlowImage(HealthEvent healthEvent)
+    {
+        slowImage.SetActive(true);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+
+        logRoutine = StartCoroutine(WriteLog("SLOWED", new Color(0.36f, 0.32f, 0.16f)));
+    }
+
+    private void EnableRootImage(HealthEvent healthEvent)
+    {
+        rootImage.SetActive(true);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+
+        logRoutine = StartCoroutine(WriteLog("ROOTED", new Color(0.36f, 0.25f, 0.20f)));
+    }
+
     private void EnableCurseImage(HealthEvent healthEvent)
     {
         curseImage.SetActive(true);
@@ -261,7 +262,19 @@ public class StatusManager : MonoBehaviour
             StopCoroutine(logRoutine);
         }
 
-        logRoutine = StartCoroutine(WriteLog("CURSED", Color.magenta));
+        logRoutine = StartCoroutine(WriteLog("CURSED", new Color(0.35f, 0.0f, 0.45f)));
+    }
+
+    private void EnableFearImage(HealthEvent healthEvent)
+    {
+        fearImage.SetActive(true);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+
+        logRoutine = StartCoroutine(WriteLog("FEARED", Color.magenta));
     }
 
     private void EnableDeathImage(HealthEvent healthEvent)
@@ -300,23 +313,14 @@ public class StatusManager : MonoBehaviour
         logRoutine = StartCoroutine(WriteLog("BLIND", Color.yellow));
     }
 
-    private void DisableBlockSkillImage(HealthEvent healthEvent)
+    private void DisableBleedingImage(HealthEvent healthEvent)
     {
-        valorSpecialMoveImage.SetActive(false);
+        bleedingImage.SetActive(false);
         ClearLog();
         if (logRoutine != null)
         {
             StopCoroutine(logRoutine);
-        }
-    }
-
-    private void DisableGemSkinSkillImage(HealthEvent healthEvent)
-    {
-        guardedOathSpecialMoveImage.SetActive(false);
-        ClearLog();
-        if (logRoutine != null)
-        {
-            StopCoroutine(logRoutine);
+            logRoutine = null;
         }
     }
 
@@ -352,10 +356,31 @@ public class StatusManager : MonoBehaviour
             logRoutine = null;
         }
     }
+    private void DisableChillImage(HealthEvent healthEvent)
+    {
+        chillImage.SetActive(false);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = null;
+        }
+    }
+
 
     private void DisableFrostImage(HealthEvent healthEvent)
     {
         frostImage.SetActive(false);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = null;
+        }
+    }
+
+    private void DisableShatterLog(HealthEvent healthEvent)
+    {
         ClearLog();
         if (logRoutine != null)
         {
@@ -375,9 +400,42 @@ public class StatusManager : MonoBehaviour
         }
     }
 
+    private void DisableSlowImage(HealthEvent healthEvent)
+    {
+        slowImage.SetActive(false);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = null;
+        }
+    }
+
+    private void DisableRootImage(HealthEvent healthEvent)
+    {
+        rootImage.SetActive(false);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = null;
+        }
+    }
+
     private void DisableCurseImage(HealthEvent healthEvent)
     {
         curseImage.SetActive(false);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = null;
+        }
+    }
+
+    private void DisableFearImage(HealthEvent healthEvent)
+    {
+        fearImage.SetActive(false);
         ClearLog();
         if (logRoutine != null)
         {

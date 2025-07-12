@@ -1,29 +1,14 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.GPUSort;
 
 public class SpecialMoveUI : MonoBehaviour
 {
-    #region Header OBJECT REFERENCES
-    [Space(10)]
-    [Header("OBJECT REFERENCES")]
-    #endregion Header OBJECT REFERENCES
-    #region Tooltip
-    [Tooltip("Populate with the Passive Skill object")]
-    #endregion Tooltip
-    [SerializeField] Transform passiveSkillContainer;
-    #region Tooltip
-    [Tooltip("Populate with the Active Skill One object")]
-    #endregion Tooltip
-    [SerializeField] Transform activeSkillOneContainer;
-    #region Tooltip
-    [Tooltip("Populate with the Active Skill Two object")]
-    #endregion Tooltip
-    [SerializeField] Transform activeSkillTwoContainer;
-    #region Tooltip
-    [Tooltip("Populate with the Active Skill Three object")]
-    #endregion Tooltip
-    [SerializeField] Transform activeSkillThreeContainer;
+    Transform passiveSkillContainer;
+    Transform activeSkillOneContainer;
+    Transform activeSkillTwoContainer;
+    Transform activeSkillThreeContainer;
 
     Transform[] activeSkillSlotContainers;
 
@@ -45,6 +30,11 @@ public class SpecialMoveUI : MonoBehaviour
 
     private void OnEnable()
     {
+        passiveSkillContainer = transform.GetChild(0);
+        activeSkillOneContainer = transform.GetChild(1);
+        activeSkillTwoContainer = transform.GetChild(2);
+        activeSkillThreeContainer = transform.GetChild(3);
+
         player.specialMoveEvent.OnSpecialMoveUsed += SpecialMoveEvent_OnSpecialMoveUsed;
 
         StaticEventHandler.OnActiveUniqueSkillPlaced += StaticEventHandler_OnActiveUniqueSkillPlaced;
@@ -54,24 +44,49 @@ public class SpecialMoveUI : MonoBehaviour
     {
         player.specialMoveEvent.OnSpecialMoveUsed -= SpecialMoveEvent_OnSpecialMoveUsed;
 
-        StaticEventHandler.OnActiveUniqueSkillPlaced += StaticEventHandler_OnActiveUniqueSkillPlaced;
-    }
-
-    private void Start()
-    {
-        // Populate special move imagaes based on selected character
-        passiveSkillContainer.GetChild(0).GetComponent<Image>().sprite = player.playerDetails.passiveSkillImage;
-        activeSkillOneContainer.GetChild(0).GetComponent<Image>().sprite = noSkillSprite;
-        activeSkillTwoContainer.GetChild(0).GetComponent<Image>().sprite = noSkillSprite;
-        activeSkillThreeContainer.GetChild(0).GetComponent<Image>().sprite = noSkillSprite;
-
-        activeSkillSlotContainers = new Transform[3] { activeSkillOneContainer, activeSkillTwoContainer, activeSkillThreeContainer };
+        StaticEventHandler.OnActiveUniqueSkillPlaced -= StaticEventHandler_OnActiveUniqueSkillPlaced;
     }
 
     private void StaticEventHandler_OnActiveUniqueSkillPlaced(ActiveUniqueSkillPlacedArgs activeUniqueSkillPlacedArgs)
     {
-        activeSkillSlotContainers[activeUniqueSkillPlacedArgs.placedSlotIndex - 1].GetChild(0).GetComponent<Image>().sprite =
-            activeUniqueSkillPlacedArgs.activeUniqueSkillDetails.activeUniqueSkillSprite;
+        StartCoroutine(SkillIconPlacementRoutine(activeUniqueSkillPlacedArgs));
+    }
+
+    IEnumerator SkillIconPlacementRoutine(ActiveUniqueSkillPlacedArgs activeUniqueSkillPlacedArgs)
+    {
+        // Wait until player and skills are ready
+        while (player == null || player.playersAllActiveUniqueSkills == null || player.playersAllActiveUniqueSkills.Length < 3)
+            yield return null;
+
+        yield return new WaitForSeconds(0.25f); // Small delay for safety, not 1s
+
+        if (activeUniqueSkillPlacedArgs.slotDrop)
+        {
+            if (activeSkillSlotContainers != null && activeSkillSlotContainers.Length > activeUniqueSkillPlacedArgs.placedSlotIndex - 1)
+            {
+                activeSkillSlotContainers[activeUniqueSkillPlacedArgs.placedSlotIndex - 1].GetChild(0).GetComponent<Image>().sprite =
+                    activeUniqueSkillPlacedArgs.activeUniqueSkillDetails.activeUniqueSkillSprite;
+            }
+        }
+        else // Game start
+        {
+            // Re-initialize skill container references
+            passiveSkillContainer = transform.GetChild(0);
+            activeSkillOneContainer = transform.GetChild(1);
+            activeSkillTwoContainer = transform.GetChild(2);
+            activeSkillThreeContainer = transform.GetChild(3);
+
+            activeSkillSlotContainers = new Transform[3]
+            {
+            activeSkillOneContainer, activeSkillTwoContainer, activeSkillThreeContainer
+            };
+
+            // Assign sprites
+            passiveSkillContainer.GetChild(0).GetComponent<Image>().sprite = player.playerDetails.passiveSkillImage;
+            activeSkillOneContainer.GetChild(0).GetComponent<Image>().sprite = player.playersAllActiveUniqueSkills[0].activeUniqueSkillSprite;
+            activeSkillTwoContainer.GetChild(0).GetComponent<Image>().sprite = player.playersAllActiveUniqueSkills[1].activeUniqueSkillSprite;
+            activeSkillThreeContainer.GetChild(0).GetComponent<Image>().sprite = player.playersAllActiveUniqueSkills[2].activeUniqueSkillSprite;
+        }
     }
 
     private void Update()

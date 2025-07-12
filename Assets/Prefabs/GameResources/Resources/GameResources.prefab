@@ -52,6 +52,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e0d260d460832bd41bff086129ad1eb6, type: 2}
   - {fileID: 11400000, guid: 8223c721c4f4e38479feb606a8ea4430, type: 2}
   - {fileID: 11400000, guid: 3c718eafb0e25534e830534a8fb1e2dc, type: 2}
+  - {fileID: 11400000, guid: 612f6f67cfd75ba4386c3cdccdeb6d23, type: 2}
   currentPlayer: {fileID: 11400000, guid: bdc48d7a1898cca47b62df50366f8c9a, type: 2}
   enemyPatrolPointsParent: {fileID: 1575039236803244801, guid: 6bccd87a0fe5028438a3b243a3de091c, type: 3}
   musicMasterMixerGroup: {fileID: 1624570340859876765, guid: 9fe0513f6a286cc4aaf6b1b1499ce087, type: 2}

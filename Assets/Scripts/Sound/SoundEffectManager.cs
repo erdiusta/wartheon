@@ -7,6 +7,8 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
 {
     public int soundVolume = 8;
 
+    SoundEffect playingSound;
+
     private void Start()
     {
         SetSoundVolume(soundVolume);
@@ -18,20 +20,30 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
     public void PlaySoundEffect(SoundEffectSO soundEffect)
     {
         // Play sound using a sound gameobject and component from the object pool
-        SoundEffect sound = (SoundEffect)PoolManager.Instance.ReuseComponent(soundEffect.soundPrefab, Vector3.zero, Quaternion.identity);
-        sound.SetSound(soundEffect);
-        sound.gameObject.SetActive(true);
+        playingSound = (SoundEffect)PoolManager.Instance.ReuseComponent(soundEffect.soundPrefab, Vector3.zero, Quaternion.identity);
+        playingSound.SetSound(soundEffect);
+        playingSound.gameObject.SetActive(true);
         AudioClip selectedClip = soundEffect.soundEffectClips[Random.Range(0, soundEffect.soundEffectClips.Length)];
-        StartCoroutine(DisableSound(sound, selectedClip.length));
+        StartCoroutine(DisableSound(selectedClip.length));
+    }
+
+    /// <summary>
+    /// Stop the sound effect
+    /// </summary>
+    public void StopSoundEffect(SoundEffectSO soundEffect)
+    {
+        // Play sound using a sound gameobject and component from the object pool
+        playingSound = (SoundEffect)PoolManager.Instance.ReuseComponent(soundEffect.soundPrefab, Vector3.zero, Quaternion.identity);
+        playingSound.gameObject.SetActive(false);
     }
 
     /// <summary>
     /// Disable sound effect object after it has played thus returning it to the object pool
     /// </summary>
-    IEnumerator DisableSound(SoundEffect sound, float soundDuration)
+    IEnumerator DisableSound(float soundDuration)
     {
         yield return new WaitForSeconds(soundDuration);
-        sound.gameObject.SetActive(false);
+        playingSound.gameObject.SetActive(false);
     }
 
     public void SetVolume(int value)

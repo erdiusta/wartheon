@@ -145,12 +145,9 @@ public class MovementByVelocity : MonoBehaviour
     {
         if (player.moveStatus == MoveStatus.Idle)
         {
-            if (!player.isClone)
+            if (player.gameObject.activeSelf)
             {
-                if (player.gameObject.activeSelf)
-                {
-                    StartCoroutine(Stagger(vector));
-                }
+                StartCoroutine(Stagger(vector));
             }
         }
     }

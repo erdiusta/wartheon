@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.XR;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(HealthEvent))]
@@ -29,11 +30,14 @@ public class Health : MonoBehaviour
     float immunityTime = 0f;
     SpriteRenderer spriteRenderer;
     WaitForSeconds waitForSecondsSpriteFlashInterval = new WaitForSeconds(spriteFlashInterval);
-    Coroutine burnCoroutine;
-    Coroutine poisonCoroutine;
+
     Coroutine bleedingCoroutine;
+    Coroutine poisonCoroutine;
+    Coroutine burnCoroutine;
+    int bleedingPeriodCount = 0;
     int poisonPeriodCount = 0;
     int burnPeriodCount = 0;
+
     bool isProjectileHit = false;
     Decoy decoy;
 
@@ -130,6 +134,20 @@ public class Health : MonoBehaviour
                 player.thirtyPercentDamageAbsorbIsActive = false;
             }
 
+            // Bleeding effect
+            if ((player.healthStatus & HealthStatus.Bleeding) != 0)
+            {
+                if (bleedingCoroutine == null)
+                {
+                    bleedingCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBleeding());
+                }
+            }
+            else if (bleedingCoroutine != null)
+            {
+                StopCoroutine(bleedingCoroutine);
+                bleedingCoroutine = null;
+            }
+
             // Poison effect
             if ((player.healthStatus & HealthStatus.Poisoned) != 0)
             {
@@ -160,6 +178,20 @@ public class Health : MonoBehaviour
         }
         else if (enemy != null)
         {
+            // Bleeding effect
+            if ((enemy.healthStatus & HealthStatus.Bleeding) != 0)
+            {
+                if (bleedingCoroutine == null)
+                {
+                    bleedingCoroutine = StartCoroutine(GraduallyHealthReduceDuetoBleeding());
+                }
+            }
+            else if (bleedingCoroutine != null)
+            {
+                StopCoroutine(bleedingCoroutine);
+                bleedingCoroutine = null;
+            }
+
             // Poison effect
             if ((enemy.healthStatus & HealthStatus.Poisoned) != 0)
             {
@@ -202,12 +234,6 @@ public class Health : MonoBehaviour
 
             if (player != null)
             {
-                if (player.isClone)
-                {
-                    Player.hasClone = false;
-                    enemy.destroyedEvent.CallDestroyedEvent(false, true); // Player clone death
-                }
-
                 player.destroyedEvent.CallDestroyedEvent(true); // Player death
             }
             else if (enemy != null)
@@ -267,7 +293,7 @@ public class Health : MonoBehaviour
 
 
             // Book UI health update
-            if (player != null && !player.isClone)
+            if (player != null)
             {
                 StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
 
@@ -303,7 +329,7 @@ public class Health : MonoBehaviour
                         PostHitImmunity();
                     }
 
-                    EnemyGetHitProcess(headShotHappened);
+                    EnemyGetHitProcess();
 
                 }
                 else
@@ -313,7 +339,7 @@ public class Health : MonoBehaviour
                         PostHitImmunity();
                     }
 
-                    EnemyGetHitProcess(headShotHappened);
+                    EnemyGetHitProcess();
 
                 }
             }
@@ -335,7 +361,7 @@ public class Health : MonoBehaviour
         }
     }
 
-    private void EnemyGetHitProcess(bool headShotHappened)
+    private void EnemyGetHitProcess()
     {
         if (!isBlocking)
         {
@@ -352,12 +378,6 @@ public class Health : MonoBehaviour
             }
 
             int randomNum = Random.Range(1, 8);
-
-            if (headShotHappened)
-            {
-                enemy.healthEvent.CallHeadShotEvent();
-                //SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetPlayer().playerDetails.activeSkillOneSoundEffect);
-            }
 
             if (!fxAnimatorPlayed)
             {
@@ -500,6 +520,53 @@ public class Health : MonoBehaviour
     }
 
     /// <summary>
+    /// Gradually reduce health - Bleeding
+    /// </summary>
+    IEnumerator GraduallyHealthReduceDuetoBleeding()
+    {
+        bleedingPeriodCount++;
+
+        int damageAmount = 0;
+
+        if (player != null)
+        {
+            damageAmount = (int)(7 - 7 * player.currentArmorValue);
+        }
+        else if (enemy != null)
+        {
+            damageAmount = (int)(7 - 7 * enemy.enemyDetails.physicalResistance);
+        }
+        else
+        {
+            damageAmount = 7;
+        }
+
+        // Trigger health event
+        healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, MeleeHand.None);
+        TakeDamage(damageAmount, Vector2.zero, transform.position, false, null, MeleeHand.None);
+
+        if (bleedingPeriodCount > 3)
+        {
+            if (player != null)
+            {
+                player.healthStatus &= ~HealthStatus.Bleeding; // Remove only bleeding status
+                player.healthEvent.CallBleedingCuredEvent();
+            }
+            if (enemy != null)
+            {
+                enemy.healthStatus &= ~HealthStatus.Bleeding;
+                enemy.healthEvent.CallBleedingCuredEvent();
+            }
+
+            bleedingPeriodCount = 0;
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        bleedingCoroutine = null; // Reset the coroutine reference when it's finished
+    }
+
+    /// <summary>
     /// Gradually reduce health - Burn
     /// </summary>
     IEnumerator GraduallyHealthReduceDuetoBurn()
@@ -529,12 +596,12 @@ public class Health : MonoBehaviour
         {
             if (player != null)
             {
-                player.healthStatus = HealthStatus.Normal;
+                player.healthStatus &= ~HealthStatus.Burned; // Remove only burn status
                 player.healthEvent.CallBurnCuredEvent();
             }
             if (enemy != null)
             {
-                enemy.healthStatus = HealthStatus.Normal;
+                enemy.healthStatus &= ~HealthStatus.Burned;
                 enemy.healthEvent.CallBurnCuredEvent();
             }
 
@@ -576,12 +643,12 @@ public class Health : MonoBehaviour
         {
             if (player != null)
             {
-                player.healthStatus = HealthStatus.Normal;
+                player.healthStatus &= ~HealthStatus.Poisoned; // Remove only poison status
                 player.healthEvent.CallPoisonCuredEvent();
             }
             if (enemy != null)
             {
-                enemy.healthStatus = HealthStatus.Normal;
+                enemy.healthStatus &= ~HealthStatus.Poisoned;
                 enemy.healthEvent.CallPoisonCuredEvent();
             }
 
@@ -602,6 +669,9 @@ public class Health : MonoBehaviour
 
         // If current health maximized together with increasing max health or not
         currentHealth = maximumHealth;
+
+        // Trigger health event
+        if(player != null) healthEvent.CallHealthChangedEvent(currentHealth, 0, MeleeHand.None);
     }
 
 
@@ -658,7 +728,7 @@ public class Health : MonoBehaviour
 
         // Trigger health event
         healthEvent.CallHealthChangedEvent(currentHealth, 0, MeleeHand.None);
-        StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
+        StaticEventHandler.CallBookHealthChangedEvent(currentHealth); // BOOK UI
     }
 
 
@@ -708,7 +778,8 @@ public class Health : MonoBehaviour
     {
         if (player != null)
         {
-            player.currentArmorValue = player.playerDetails.physicalResistance;
+            player.acidArmorDebuffModifier = 0f;
+            player.UpdateArmorValues();
         }
     }
 }

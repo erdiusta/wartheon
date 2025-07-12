@@ -8,7 +8,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 {
     [Header("PAGE HEADERS")]
     [Space(10)]
-    public Transform buildPage;
+    public Transform skillPage;
     public Transform statsPage;
     public Transform weaponsPage;
     public Transform passivesPage;
@@ -55,7 +55,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [Space(10)]
     [Header("AUXILLARY STATS")]
     [SerializeField] TextMeshProUGUI attackCooldownValue;
-    [SerializeField] TextMeshProUGUI chanceToHitValue;
+    [SerializeField] TextMeshProUGUI attackRatingValue;
     [SerializeField] TextMeshProUGUI blockRateValue;
     [SerializeField] TextMeshProUGUI debuffDurationModifierValue;
     [SerializeField] TextMeshProUGUI buffDurationModifierValue;
@@ -78,7 +78,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] Animator bookAnimator;
     [SerializeField] Transform mainHandWeaponSlot;
     [SerializeField] Transform offHandWeaponSlot;
-
     [SerializeField] Transform activeItemSlot;
 
     [Header("Passive Item Slots")]
@@ -95,22 +94,25 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     Transform inventoryParent;
     Transform inventoryItemSlot;
 
+    [Space(10)]
+    [Header("SKILLS&INNER PATH")]
+    [SerializeField] Transform innerPathContainer;
+    [SerializeField] Transform skillDescriptonInnerPanel;
+    [SerializeField] Transform skillPointsTransform;
+    [SerializeField] Transform innerPathTextContainer;
+    [SerializeField] TextMeshProUGUI innerPathTitleText;
+    [SerializeField] TextMeshProUGUI innerPathDetailsText;
+
     // SLOT TRANSFORMS
     Transform mainHandWeaponBackground;
     Transform mainHandWeaponEquipped;
     Transform offHandWeaponBackground;
     Transform offHandWeaponEquipped;
 
-    Transform activeUniqueSkillsContainer;
-    Transform innerPathContainer;
-    Transform buildDescriptonInnerPanel;
-    Transform buildPointsTransform;
-    Transform buildTextContainer;
-    TextMeshProUGUI buildTitleText;
-    TextMeshProUGUI buildDetailsText;
     Player player;
 
     // WEAPONS
+    [Space(10)]
     [SerializeField] TextMeshProUGUI weaponTitleText;
     [SerializeField] TextMeshProUGUI weaponDetailsText;
     [SerializeField] Transform weaponImageContainer;
@@ -134,8 +136,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] TextMeshProUGUI bossTitleText;
     [SerializeField] TextMeshProUGUI bossDetailsText;
     [SerializeField] Transform bossImageContainer;
-
-    bool bookStatPageOpen;
 
     private void Awake()
     {
@@ -180,7 +180,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 break;
 
             case Character.Nyveran:
-            case Character.Lyrisa:
+            case Character.Mycara:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 // WEAPON EQUIP AT START - SLOT
@@ -263,7 +263,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnItemRemovedFromActiveItemSlot += StaticEventHandler_OnItemRemovedFromActiveItemSlot;
         StaticEventHandler.OnItemAddedToPassiveItemSlot += StaticEventHandler_OnItemAddedToPassiveItemSlot;
         StaticEventHandler.OnItemRemovedFromPassiveItemSlot += StaticEventHandler_OnItemRemovedFromPassiveItemSlot;
-        StaticEventHandler.OnBuildPointUsed += StaticEventHandler_OnBuildPointUsed;
+        StaticEventHandler.OnSkillPointUsed += StaticEventHandler_OnBuildPointUsed;
         StaticEventHandler.OnLevelUp += StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnPrimaryStatsChanged += StaticEventHandler_OnPrimaryStatsChanged;
     }
@@ -314,26 +314,17 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnItemRemovedFromActiveItemSlot -= StaticEventHandler_OnItemRemovedFromActiveItemSlot;
         StaticEventHandler.OnItemAddedToPassiveItemSlot -= StaticEventHandler_OnItemAddedToPassiveItemSlot;
         StaticEventHandler.OnItemRemovedFromPassiveItemSlot -= StaticEventHandler_OnItemRemovedFromPassiveItemSlot;
-        StaticEventHandler.OnBuildPointUsed -= StaticEventHandler_OnBuildPointUsed;
+        StaticEventHandler.OnSkillPointUsed -= StaticEventHandler_OnBuildPointUsed;
         StaticEventHandler.OnLevelUp -= StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnPrimaryStatsChanged -= StaticEventHandler_OnPrimaryStatsChanged;
     }
 
     private void Start()
     {
-        activeUniqueSkillsContainer = buildPage.GetChild(0).GetChild(4);
-        innerPathContainer = buildPage.GetChild(0).GetChild(5);
-        buildDescriptonInnerPanel = buildPage.GetChild(0).GetChild(2);
-        buildTextContainer = buildPage.GetChild(0).GetChild(9);
-        buildPointsTransform = buildPage.GetChild(0).GetChild(10);
-        buildTitleText = buildTextContainer.GetChild(0).GetComponent<TextMeshProUGUI>();
-        buildDetailsText = buildTextContainer.GetChild(1).GetComponent<TextMeshProUGUI>();
-
-        buildTitleText.text = string.Empty;
-        buildDetailsText.text = string.Empty;
+        innerPathTitleText.text = string.Empty;
+        innerPathDetailsText.text = string.Empty;
 
         currentAvailableStatPoints.text = player.currentStatPoints.ToString();
-
         PopulateCharactersBuildDetails();
     }
 
@@ -369,7 +360,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     public void OnDeselect(BaseEventData eventData)
     {
-        if (buildPage.GetChild(0).gameObject.activeSelf)
+        if (skillPage.GetChild(0).gameObject.activeSelf)
         {
 
         }
@@ -400,16 +391,16 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         OpenBuildPage();
     }
 
-    private void StaticEventHandler_OnBuildInfoHovered(BuildPointsArgs buildPointsArgs)
+    private void StaticEventHandler_OnBuildInfoHovered(SkillPointsArgs skillPointsArgs)
     {
-        buildTitleText.text = player.playerDetails.charBuildDetails[buildPointsArgs.buildIndex].characterBuildName;
-        buildDetailsText.text = player.playerDetails.charBuildDetails[buildPointsArgs.buildIndex].characterBuildDetails;
+        innerPathTitleText.text = skillPointsArgs.innerPathDetails.innerPathName;
+        innerPathDetailsText.text = skillPointsArgs.innerPathDetails.innerPathDetails;
     }
 
-    private void StaticEventHandler_OnBuildInfoUnhovered(BuildPointsArgs buildPointsArgs)
+    private void StaticEventHandler_OnBuildInfoUnhovered(SkillPointsArgs buildPointsArgs)
     {
-        buildTitleText.text = string.Empty;
-        buildDetailsText.text = string.Empty;
+        innerPathTitleText.text = string.Empty;
+        innerPathDetailsText.text = string.Empty;
     }
 
     private void StaticEventHandler_OnWeaponPickedUp(WeaponAddedToBookArgs weaponAddedToBookArgs)
@@ -929,7 +920,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void UpdatePlayerStatInfo(Player player)
     {
-        float handling = player.currentWeaponHandlingValue ?? 0f;
+        float attackRating = player.currentAttackRatingValue ?? 0f;
 
         // PRIMARY STATS
         characterName.text = player.playerDetails.playerCharacterName;
@@ -952,7 +943,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         criticalHitDamageAmountValue.text = $"{player.currentMainHandCriticalHitDamage * 100}%({player.currentOffHandCriticalHitDamage * 100}%)";
 
         // AUXILLARY STATS
-        chanceToHitValue.text = $"{handling * 100}%";
+        attackRatingValue.text = $"{attackRating * 100}";
         blockRateValue.text = $"{player.currentBlockValue * 100}%";
         eveasivenessRateValue.text = $"{player.currentEvasivenessValue * 100}%";
 
@@ -968,9 +959,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     public void OpenBuildPage()
     {
-        if (buildPage.GetChild(0).gameObject.activeSelf) return;
-
-        bookStatPageOpen = false;
+        if (skillPage.GetChild(0).gameObject.activeSelf) return;
 
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Build));
@@ -980,8 +969,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     {
         if (statsPage.GetChild(0).gameObject.activeSelf) return;
 
-        bookStatPageOpen = false;
-
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Stats));
     }
@@ -989,8 +976,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     public void OpenWeaponsPage()
     {
         if (weaponsPage.GetChild(0).gameObject.activeSelf) return;
-
-        bookStatPageOpen = false;
 
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Weapons));
@@ -1000,8 +985,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     {
         if (passivesPage.GetChild(0).gameObject.activeSelf) return;
 
-        bookStatPageOpen = false;
-
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Passives));
     }
@@ -1009,8 +992,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     public void OpenActivesPage()
     {
         if (activesPage.GetChild(0).gameObject.activeSelf) return;
-
-        bookStatPageOpen = false;
 
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Actives));
@@ -1020,8 +1001,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     {
         if (beastiaryPage.GetChild(0).gameObject.activeSelf) return;
 
-        bookStatPageOpen = false;
-
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Beastiary));
     }
@@ -1029,8 +1008,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     public void OpenBossesPage()
     {
         if (bossesPage.GetChild(0).gameObject.activeSelf) return;
-
-        bookStatPageOpen = false;
 
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Bosses));
@@ -1081,8 +1058,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                     break;
                 case BookPage.Build:
                     EnableBuildsPage();
-                    buildPage.GetChild(0).gameObject.SetActive(true);
-                    buildDescriptonInnerPanel.gameObject.SetActive(true);
+                    skillPage.GetChild(0).gameObject.SetActive(true);
+                    skillDescriptonInnerPanel.gameObject.SetActive(true);
                     break;
                 default:
                     break;
@@ -1098,7 +1075,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         else if (activesPage.GetChild(0).gameObject.activeSelf) { ClearActivesPage(); }
         else if (beastiaryPage.GetChild(0).gameObject.activeSelf) { ClearBeastiaryPage();  }
         else if (bossesPage.GetChild(0).gameObject.activeSelf) { ClearBossesPage(); }
-        else if (buildPage.GetChild(0).gameObject.activeSelf) { ClearBuildsPage(); }
+        else if (skillPage.GetChild(0).gameObject.activeSelf) { ClearBuildsPage(); }
 
         bookAnimator.enabled = false;
         bookAnimator.enabled = true;
@@ -1127,8 +1104,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         {
             child.gameObject.SetActive(false);
         }
-
-        bookStatPageOpen = false;
     }
 
     private void EnableStatPage()
@@ -1137,8 +1112,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         {
             child.gameObject.SetActive(true);
         }
-
-        bookStatPageOpen = true;
     }
 
 
@@ -1300,7 +1273,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void ClearBuildsPage()
     {
-        foreach (Transform child in buildPage)
+        foreach (Transform child in skillPage)
         {
             child.gameObject.SetActive(false);
         }
@@ -1308,7 +1281,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void EnableBuildsPage()
     {
-        foreach (Transform child in buildPage)
+        foreach (Transform child in skillPage)
         {
             child.gameObject.SetActive(true);
         }
@@ -1510,383 +1483,92 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         UpdatePlayerStatInfo(player);
     }
 
-    private void StaticEventHandler_OnBuildPointUsed(BuildPointsArgs buildPointsArgs)
+    private void StaticEventHandler_OnBuildPointUsed(SkillPointsArgs buildPointsArgs)
     {
-        buildPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentSkillPoints.ToString();
-        UnlockBelowBuildIcon(buildPointsArgs.buildIndex);
+        skillPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentSkillPoints.ToString();
         SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.buildActivationSoundEffect);
-        ActivateBuild(buildPointsArgs);
+        UseInnerPath(buildPointsArgs);
     }
 
-    private void ActivateBuild(BuildPointsArgs buildPointsArgs)
+    private void UseInnerPath(SkillPointsArgs buildPointsArgs)
     {
-        for (int i = 0; i < innerPathContainer.childCount; i++)
+        switch (buildPointsArgs.innerPathDetails.innerPathSelectionName)
         {
-            if (i == buildPointsArgs.buildIndex)
-            {
-                if (i == 0)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Ironheart Endurance
-                            player.CurrentConstitutionValue++;
-                            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
-                            break;
-                        case Character.Morven:
-                            // Shadow Endurance
-                            player.CurrentConstitutionValue++;
-                            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
-                            break;
-                        case Character.Nyveran:
-                            // Windrunner's Agility
-                            player.CurrentAgilityValue++;
-                            break;
-                        case Character.Lyrisa:
-                            // Granite Resolve
-                            player.currentArmorValue += 0.1f;
-                            break;
-                    }
-                }
-                else if (i == 1)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Colossal Might
-                            player.CurrentStrengthValue++; 
-                            break;
-                        case Character.Morven:
-                            // Phantom Reflexes
-                            player.CurrentDexterityValue++;
-                            break;
-                        case Character.Nyveran:
-                            // Sharpshooter's Reflexes
-                            player.CurrentDexterityValue++;
-                            break;
-                        case Character.Lyrisa:
-                            // Mystic Insight
-                            player.CurrentIntelligenceValue++;
-                            break;
-                    }
-                }
-                else if (i == 2)
-                {
-                    // Treasure Seeker
-                    player.additionalCoinIncreaserModifier++;
-                }
-                else if (i == 3)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Adamant Bulwark
-                            player.currentArmorValue += 0.1f;
-                            break;
-                        case Character.Morven:
-                            // Blood Reaper
-                            player.bloodDrainSkillAdditionalDamagePercentageModifier += 0.1f;
-                            break;
-                        case Character.Nyveran:
-                            // Ranger Stride
-                            player.additionalLightfeetSkillDurationModifier += 0.5f;
-                            break;
-                        case Character.Lyrisa:
-                            // Aegis Mastery
-                            player.barrierSkillAdditionalDurationModifier += 0.5f;
-                            break;
-                    }
-                }
-                else if (i == 4)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Earthshatter Slam
-                            player.seismicSlamDamage = (int)(player.seismicSlamDamage * 1.5f);
-                            break;
-                        case Character.Morven:
-                            // Assassin's Precision
-                            player.additionalCriticalDamageOnCloakedPrecision++;
-                            break;
-                        case Character.Nyveran:
-                            // Dead-eye Precision
-                            player.additionalHeadShotDamageModifier += 0.5f;
-                            break;
-                        case Character.Lyrisa:
-                            // Temporal Focus
-                            player.additionalCastDurationModifier -= 0.15f;
-                            break;
-                    }
-                }
-                else if (i == 5)
-                {
-                    // Seasoned Explorer
-                    player.expGainModifier *= 1.2f;
-                }
-                else if (i == 6)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Gemstone Skin
-                            player.gemSkinBoostGainedDuringGemSkinActive = player.isGemSkinActive ? true : false;
-                            //player.gemStoneSkillAdditionalModifier += 0.1f;
-                            break;
-                        case Character.Morven:
-                            // Phantom Strength
-                            player.CurrentStrengthValue++;
-                            break;
-                        case Character.Nyveran:
-                            // Steady Resolve
-                            player.CurrentConstitutionValue++;
-                            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
-                            break;
-                        case Character.Lyrisa:
-                            // Ethereal Resilience
-                            player.CurrentConstitutionValue++;
-                            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
-                            break;
-                    }
-                }
-                else if (i == 7)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Titan's Strength
-                            player.CurrentStrengthValue++;
-                            break;
-                        case Character.Morven:
-                            // Shadow Step
-                            player.CurrentAgilityValue++;
-                            break;
-                        case Character.Nyveran:
-                            // Rapid Execution
-                            player.additionalBowAttackCoolDownModifier -= 0.1f;
-                            break;
-                        case Character.Lyrisa:
-                            // Elemental Catacylsm
-                            player.additionalCataclysmElementalDamageModifier += 0.3f;
-                            break;
-                    }
-                }
-                else if (i == 8)
-                {
-                    // Relic Hoarder
-                    player.additionalActiveItemCharge++;
-                    player.selectedActiveItem.GetCurrentActiveItem().activeItemMaxCharge += player.additionalActiveItemCharge;
-                    player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge += player.additionalActiveItemCharge;
-                }
-                else if (i == 9)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Defensive Stance
-                            //player.blockSkillAdditionalDurationModifier += 0.5f;
-                            break;
-                        case Character.Morven:
-                            // Lockpicking
-                            player.additionalLockpickingModifier += 0.15f;
-                            break;
-                        case Character.Nyveran:
-                            // Gale Dancer
-                            player.additionalEvasivenessModifier += 0.1f;
-                            player.UpdateBlockAndEvasivenessValues();
-                            break;
-                        case Character.Lyrisa:
-                            // Voidstep Shield
-                            player.threeSecInvincilibityAfterTeleportEnabled = true;
-                            break;
-                    }
-                }
-                else if (i == 10)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Berserker's Wrath
-                            player.additionalCriticalMeleeDamageModifier += 0.3f;
-                            break;
-                        case Character.Morven:
-                            // Deathmark Edge
-                            player.additionalMeleeCriticalHitChanceModifier += 0.1f;
-                            player.UpdateWeaponHandlingAndCriticalValues();
-                            break;
-                        case Character.Nyveran:
-                            // Piercing Shot
-                            player.additionalPenetrationSkillDamageModifier += 0.5f;
-                            break;
-                        case Character.Lyrisa:
-                            // Runic Mastery
-                            player.CurrentIntelligenceValue++;
-                            break;
-                    }
-                }
-                else if (i == 11)
-                {
-                    // Rare Instinct
-                    ChestSpawner.rareChestLocateModifier += 0.1f;
-                    ChestSpawner.legendaryChestLocateModifier += 0.05f;
-                }
-                else if (i == 12)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Unyielding Will
-                            player.CurrentConstitutionValue++;
-                            player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
-                            break;
-                        case Character.Morven:
-                            // Shadow Clone Mastery
-                            player.tripleTeamEnabled = true;
-                            break;
-                        case Character.Nyveran:
-                            // Enduring Marksman
-                            player.CurrentStrengthValue++;
-                            player.currentArmorValue += 0.05f;
-                            player.currentAirResistanceValue += 0.05f;
-                            player.currentEarthResistanceValue += 0.05f;
-                            player.currentFireResistanceValue += 0.05f;
-                            player.currentWaterResistanceValue += 0.05f;
-                            player.currentDarkResistanceValue += 0.05f;
-                            player.currentLightResistanceValue += 0.05f;
-                            break;
-                        case Character.Lyrisa:
-                            // Mindbender's Persuasion
-                            player.additinalNPCCostModifier -= 0.2f;
-                            break;
-                    }
-                }
-                else if (i == 13)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Relentless Fury
-                            player.additionalMeleeAttackCoolDownModifier -= 0.1f;
-                            break;
-                        case Character.Morven:
-                            // Spectral Dexterity
-                            player.CurrentDexterityValue++;
-                            break;
-                        case Character.Nyveran:
-                            // Falcon's Grace
-                            player.CurrentDexterityValue++;
-                            break;
-                        case Character.Lyrisa:
-                            // Elemental Affinity
-                            player.additionalStaffElementalDamageModifier += 0.1f;
-                            player.UpdateDamageValues();
-                            break;
-                    }
-                }
-                else if (i == 14)
-                {
-                    // Fortune's Favor
-                    player.additionalDropChanceModifier += 0.1f;
-                }
-                else if (i == 15)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Granite Resolve
-                            player.currentArmorValue += 0.05f;
-                            player.currentAirResistanceValue += 0.05f;
-                            player.currentEarthResistanceValue += 0.05f;
-                            player.currentFireResistanceValue += 0.05f;
-                            player.currentWaterResistanceValue += 0.05f;
-                            player.currentDarkResistanceValue += 0.05f;
-                            player.currentLightResistanceValue += 0.05f;
-                            break;
-                        case Character.Morven:
-                            // Elusive Phantom
-                            player.additionalEvasivenessModifier += 0.1f;
-                            player.UpdateBlockAndEvasivenessValues();
-                            break;
-                        case Character.Nyveran:
-                            // Survival Instinct
-                            player.additionalEvasivenessModifier += 0.1f;
-                            player.UpdateBlockAndEvasivenessValues();
-                            break;
-                        case Character.Lyrisa:
-                            // Hex Purification
-                            player.additionalNegativeStatusEffectNegatorModifier += 0.1f;
-                            break;
-                    }
-                }
-                else if (i == 16)
-                {
-                    switch (player.playerDetails.playerCharacterIndex)
-                    {
-                        case Character.Caelion:
-                            // Seismic Impact
-                            player.seismicSlamCircleRadius *= 1.25f;
-                            break;
-                        case Character.Morven:
-                            // Assassin's Wrath
-                            player.additionalCriticalMeleeDamageModifier += 0.3f;
-                            break;
-                        case Character.Nyveran:
-                            // Hawk's Focus
-                            player.additionalBowAccuracyModifier += 0.4f;
-                            break;
-                        case Character.Lyrisa:
-                            // Chrono Amplification
-                            player.additionalCastDurationModifier -= 0.15f;
-                            break;
-                    }
-                }
-                else if (i == 17)
-                {
-                    // Legacy
-                    player.CurrentStrengthValue++;
-                    player.CurrentDexterityValue++;
-                    player.CurrentConstitutionValue++;
-                    player.CurrentIntelligenceValue++;
-                    player.CurrentAgilityValue++;
-                    player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
-                }
-            }
+            case InnerPathName.KillersEdge:
+                player.additionalCriticalDamageModifier += 0.1f;
+                break;
+            case InnerPathName.FocusedAggression:
+                player.isFocusedAggressionActive = true;
+                break;
+            case InnerPathName.PunishersWill:
+                player.isPunishersWillActive = true;
+                break;
+            case InnerPathName.ViciousMomentum:
+                break;
+            case InnerPathName.SurgingElements:
+                break;
+            case InnerPathName.CounterRiposte:
+                break;
+            case InnerPathName.Armorbane:
+                break;
+            case InnerPathName.TriadExecution:
+                break;
+            case InnerPathName.UnyieldingGuard:
+                player.additionalShieldArmorModifier = 0.1f;
+                break;
+            case InnerPathName.DieHard:
+                break;
+            case InnerPathName.StoneSkin:
+                player.additionalArmorModifier = 0.1f;
+                break;
+            case InnerPathName.BattleScars:
+                break;
+            case InnerPathName.ReflexBarrier:
+                break;
+            case InnerPathName.ArcaneFortitude:
+                break;
+            case InnerPathName.SecondBreath:
+                break;
+            case InnerPathName.BlockThemAll:
+                player.additionalBlockModifier = 0.1f;
+                break;
+            case InnerPathName.QuickReflexes:
+                player.additionalEvasivenessModifier = 0.05f;
+                break;
+            case InnerPathName.WeaversTempo:
+                break;
+            case InnerPathName.EfficientMind:
+                break;
+            case InnerPathName.ShiftingStance:
+                player.isShiftingStanceActive = true;
+                break;
+            case InnerPathName.CombatFocus:
+                break;
+            case InnerPathName.Resourceful:
+                break;
+            case InnerPathName.BattleReady:
+                break;
+            case InnerPathName.SurgeTapGain:
+                break;
+            default:
+                break;
         }
 
-        // Update book UI after new build unlocked
+        // Recalculate and update book UI after new build unlocked
+        player.RecalculateSecondaryStats();
         UpdatePlayerStatInfo(player);
     }
 
-    private void StaticEventHandler_OnStatPointChanged(StatChangedArgs statChangedArgs)
+    private void StaticEventHandler_OnStatPointChanged()
     {
-        strengthValue.text = player.CurrentStrengthValue.ToString();
-        constitutionValue.text = player.CurrentConstitutionValue.ToString();
-        dexterityValue.text = player.CurrentDexterityValue.ToString();
-        intelligenceValue.text = player.CurrentIntelligenceValue.ToString();
-        agilityValue.text = player.CurrentAgilityValue.ToString();
-        willpowerValue.text = player.CurrentWillpowerValue.ToString();
-        resolveValue.text = player.CurrentResolveValue.ToString();
-        ferocityValue.text = player.CurrentFerocityValue.ToString();
+        UpdatePlayerStatInfo(player);
 
         currentAvailableStatPoints.text = player.currentStatPoints.ToString();
     }
 
     private void StaticEventHandler_OnLevelUp()
     {
-        buildPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentSkillPoints.ToString();
-    }
-
-    private void UnlockBelowBuildIcon(int indexNumber)
-    {
-        if (indexNumber < innerPathContainer.childCount - 3)
-        {
-            Image buildImage = innerPathContainer.GetChild(indexNumber + 3).GetComponent<Image>();
-            buildImage.color = new Color(1f, 1f, 1f, 1f);
-
-            //buildTreeFrame.GetChild(indexNumber + 3).GetChild(1).gameObject.SetActive(false);
-
-            innerPathContainer.GetChild(indexNumber + 3).GetComponent<BuildSlot>().isLocked = false;
-        }
+        skillPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentSkillPoints.ToString();
     }
 
     public void SelectWeaponSetOne()

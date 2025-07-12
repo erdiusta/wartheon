@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -86,8 +87,11 @@ public class DealContactDamage : MonoBehaviour
 
                 float blindPenalty = enemy.isBlind ? 0.5f : 0f;
 
+                int diceRoll = Random.Range(1, 101);
+                bool isAttackDodged = 100 - (player.currentEvasivenessValue + blindPenalty) * 100 < diceRoll ? true : false;
+
                 // Evasiveness - dodge check
-                if (100 - (player.currentEvasivenessValue + blindPenalty) * 100 > Random.Range(1, 101) || player.playerControl.isPlayerRolling)
+                if (!isAttackDodged || player.playerControl.isPlayerRolling)
                 {
                     contactDamageAmountMin = enemy.enemyDetails.dealtMeleeDamageMin;
                     contactDamageAmountMax = enemy.enemyDetails.dealtMeleeDamageMax;
@@ -115,17 +119,25 @@ public class DealContactDamage : MonoBehaviour
 
                                 if (player.isStealthActive) return;
 
-                                CheckBurnStatus(player);
-                                CheckPoisonStatus(player);
-                                CheckAcidStatus(player);
-                                CheckStunStatus(player);
-                                CheckFrostStatus(player);
-                                CheckCurseStatus(player);
-                                CheckBlindStatus(player);
-
                                 int inflictedDamage = CalculateDamageAmount(player, damageDone);
 
                                 receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
+
+                                if (player.health.GetCurrentHealth() > 0)
+                                {
+                                    CheckBleedingStatus(player);
+                                    CheckStunStatus(player);
+                                    CheckSlowStatus(player);
+                                    CheckBurnStatus(player);
+                                    CheckPoisonStatus(player);
+                                    CheckAcidStatus(player);
+                                    CheckRootStatus(player);
+                                    CheckChillStatus(player);
+                                    CheckFrostStatus(player);
+                                    CheckBlindStatus(player);
+                                    CheckCurseStatus(player);
+                                    CheckFearStatus(player);
+                                }
                             }
 
                             // Apply knockback
@@ -135,6 +147,15 @@ public class DealContactDamage : MonoBehaviour
                 }
                 else
                 {
+                    if (isAttackDodged && player.isShiftingStanceActive)
+                    {
+                        if (!player.shiftingStanceOnProcess)
+                        {
+                            player.shiftingStanceOnProcess = true;
+                            StartCoroutine(ShiftingStanceRoutine(player));
+                        }
+                    }
+
                     player.health.isDodging = true;
                     player.healthEvent.CallDodgeEvent();
                     player.health.PostHitImmunity(true);
@@ -153,7 +174,7 @@ public class DealContactDamage : MonoBehaviour
                 receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
                 //enemy.enemyAI.TriggerKnockback((transform.position - collision.transform.position));
             }
-            else if (collision.tag == "PracticeDummy")
+            else if (collision.tag == Settings.practiceDummy)
             {
                 return;
             }
@@ -245,6 +266,35 @@ public class DealContactDamage : MonoBehaviour
         }
     }
 
+    IEnumerator ShiftingStanceRoutine(Player player)
+    {
+        player.CurrentAgilityValue += 3;
+
+        yield return new WaitForSeconds(3f);
+
+        player.shiftingStanceOnProcess = false;
+        player.CurrentAgilityValue -= 3;
+    }
+
+    /// <summary>
+    /// Check bleeding status
+    /// </summary>
+    private void CheckBleedingStatus(Player player)
+    {
+        if (player.isImmunetoBleeding) return;
+
+        if (enemy.enemyDetails.hasBleedingDamage)
+        {
+            // Check get poisoned
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.bleedingChance - player.additionalNegativeStatusEffectNegatorModifier)
+            {
+                player.healthEvent.CallGetBleedingEvent();
+                player.healthStatus |= HealthStatus.Bleeding; // Add Burned status
+            }
+        }
+    }
+
     /// <summary>
     /// Check burn status
     /// </summary>
@@ -295,8 +345,13 @@ public class DealContactDamage : MonoBehaviour
             if (randomDice < enemy.enemyDetails.acidEfficiency - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 player.armorStatus = ArmorStatus.Acid;
-                player.currentArmorValue = (float)Math.Round(player.currentArmorValue -  enemy.enemyDetails.acidEfficiency, 2);
-                player.currentArmorValue = Mathf.Clamp(player.currentArmorValue, player.currentArmorValue, 1f);
+                player.acidArmorDebuffModifier = (float)Math.Round(enemy.enemyDetails.acidEfficiency, 2);
+
+                // Deduct armor from acid
+                player.currentArmorValue = Mathf.Clamp(player.currentArmorValue * (1 - player.acidArmorDebuffModifier), -0.5f, 
+                    player.currentArmorValue * (1 - player.acidArmorDebuffModifier));
+
+                // Call Acid Event
                 player.healthEvent.CallGetAcidEvent();
             }
         }
@@ -307,15 +362,86 @@ public class DealContactDamage : MonoBehaviour
     /// </summary>
     private void CheckStunStatus(Player player)
     {
-        if (enemy.enemyDetails.hasStunDamage && player.moveStatus != MoveStatus.Stun)
+        bool isStunned = (player.moveStatus & MoveStatus.Stun) != 0;
+
+        if (enemy.enemyDetails.hasStunDamage && !isStunned)
         {
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < enemy.enemyDetails.stunChance - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 player.playerControl.isPlayerRolling = false;
 
-                player.moveStatus = MoveStatus.Stun;
+                player.moveStatus |= MoveStatus.Stun;
                 player.healthEvent.CallGetStunEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check slow status
+    /// </summary>
+    private void CheckSlowStatus(Player player)
+    {
+        if (enemy.enemyDetails.hasSlowDamage && !player.isSlowed)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.slowChance - player.additionalNegativeStatusEffectNegatorModifier)
+            {
+                player.playerControl.isPlayerRolling = false;
+
+                player.isSlowed = true;
+                player.healthEvent.CallGetSlowEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check root status
+    /// </summary>
+    private void CheckRootStatus(Player player)
+    {
+        bool isRooted = (player.moveStatus & MoveStatus.Root) != 0;
+
+        if (enemy.enemyDetails.hasRootDamage && !isRooted)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.rootChance - player.additionalNegativeStatusEffectNegatorModifier)
+            {
+                player.playerControl.isPlayerRolling = false;
+
+                player.moveStatus |= MoveStatus.Root;
+                player.healthEvent.CallGetRootEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check chill status
+    /// </summary>
+    public void CheckChillStatus(Player player)
+    {
+        if (player.isImmunetoFrost) return;
+
+        bool isFrozen = (player.moveStatus & MoveStatus.Frozen) != 0;
+
+        if (enemy.enemyDetails.hasChillDamage && player.health.GetCurrentHealth() > 0)
+        {
+            float randomDice = Random.Range(0f, 1f);
+
+            if (randomDice < enemy.enemyDetails.chillChance)
+            {
+                if (player.isChilled && !isFrozen)
+                {
+                    player.moveStatus |= MoveStatus.Frozen; // Second chill 
+                    player.healthEvent.CallGetFrostEvent();
+
+                    player.healthEvent.CallChillCuredEvent();
+                }
+                else if (!player.isChilled && !isFrozen)
+                {
+                    player.isChilled = true;
+                    player.healthEvent.CallGetChillEvent();
+                }
             }
         }
     }
@@ -327,14 +453,16 @@ public class DealContactDamage : MonoBehaviour
     {
         if (player.isImmunetoFrost) return;
 
-        if (enemy.enemyDetails.hasFrostDamage && player.moveStatus != MoveStatus.Frozen)
+        bool isFrozen = (player.moveStatus & MoveStatus.Frozen) != 0;
+
+        if (enemy.enemyDetails.hasFrostDamage && !isFrozen)
         {
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < enemy.enemyDetails.frostChance - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 player.playerControl.isPlayerRolling = false;
 
-                player.moveStatus = MoveStatus.Frozen;
+                player.moveStatus |= MoveStatus.Frozen;
                 player.healthEvent.CallGetFrostEvent();
             }
         }
@@ -345,7 +473,7 @@ public class DealContactDamage : MonoBehaviour
     /// </summary>
     private void CheckCurseStatus(Player player)
     {
-        if (enemy.enemyDetails.hasCurseDamage)
+        if (enemy.enemyDetails.hasCurseDamage && !player.isCursed)
         {
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < enemy.enemyDetails.curseChance - player.additionalNegativeStatusEffectNegatorModifier)
@@ -363,12 +491,29 @@ public class DealContactDamage : MonoBehaviour
     {
         if (player.isImmunetoBlind) return;
 
-        if (enemy.enemyDetails.hasBlindDamage)
+        if (enemy.enemyDetails.hasBlindDamage && !player.isBlind)
         {
             float randomDice = Random.Range(0f, 1f);
             if (randomDice < enemy.enemyDetails.blindChance - player.additionalNegativeStatusEffectNegatorModifier)
             {
                 player.healthEvent.CallGetBlindEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check fear status - Player
+    /// </summary>
+    private void CheckFearStatus(Player player)
+    {
+        if (player.isImmunetoFear) return;
+
+        if (enemy.enemyDetails.hasFearDamage && !player.isFeared)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.fearChance - player.additionalNegativeStatusEffectNegatorModifier)
+            {
+                player.healthEvent.CallGetFearEvent();
             }
         }
     }

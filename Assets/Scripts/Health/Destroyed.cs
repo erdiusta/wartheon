@@ -52,21 +52,14 @@ public class Destroyed : MonoBehaviour
 
         if (destroyedEventArgs.playerDied)
         {
-            if (destroyedEventArgs.isClone)
-            {
-                Destroy(player.playerCloneObject);
-            }
-            else
-            {
-                player.polygonCollider2D.enabled = false;
-                player.animatePlayer.ResetAnimatonParameters();
-                player.animator.SetBool(Settings.death, true);
-                player.animator.Play("Death", 0, 0);
-                player.idle.StopVelocity();
-                InputManager.glossaryDisabled = true; // Disable glossary
+            player.polygonCollider2D.enabled = false;
+            player.animatePlayer.ResetAnimatonParameters();
+            player.animator.SetBool(Settings.death, true);
+            player.animator.Play("Death", 0, 0);
+            player.idle.StopVelocity();
+            InputManager.glossaryDisabled = true; // Disable glossary
 
-                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.deathSoundEffect);
-            }
+            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.deathSoundEffect);
         }
         else
         {
@@ -322,9 +315,12 @@ public class Destroyed : MonoBehaviour
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.levelUpSoundEffect);
             player.currentSkillPoints++;
             player.currentStatPoints += 3;
+            StaticEventHandler.CallStatPointChangedEvent();
             StaticEventHandler.CallLevelUp();
             player.health.SetMaximumHealth(player.health.maximumHealth, true);
+            player.mana.AddMana(30);
             player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
+            player.manaEvent.CallManaChangedEvent(player.mana.currentMana);
         }
     }
 

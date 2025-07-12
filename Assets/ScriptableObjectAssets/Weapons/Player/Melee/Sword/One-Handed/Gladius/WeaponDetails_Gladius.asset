@@ -21,6 +21,9 @@ MonoBehaviour:
     constitution: 0
     intelligence: 0
     agility: 0
+    willpower: 0
+    ferocity: 0
+    resolve: 0
   weaponClass: 0
   weaponHitSpeed: 3
   wieldType: 0
@@ -33,18 +36,38 @@ MonoBehaviour:
   weaponHoverAnimatorController: {fileID: 9100000, guid: c1aa8ec2a7ea25f4eb107777b73a89a3, type: 2}
   canKillSuddenly: 0
   suddenKillChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  canWarm: 0
+  warmChance: 0
   canBurn: 0
   burnChance: 0
   isPoisonous: 0
   poisonChance: 0
+  canStatic: 0
+  staticChance: 0
+  canParalyze: 0
+  paralyzeChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasRootDamage: 0
+  rootChance: 0
+  hasChillDamage: 0
+  chillChance: 0
   hasFrostDamage: 0
   frostChance: 0
   hasBlindDamage: 0
   blindChance: 0
+  hasRevealDamage: 0
+  revealChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasFearDamage: 0
+  fearChance: 0
   canDrainHealth: 0
   healthDrainChance: 0
   weaponRightShootPosition: {x: 0, y: 0, z: 0}
@@ -58,7 +81,8 @@ MonoBehaviour:
   weaponImpactSoundEffect: {fileID: 11400000, guid: eaf74e25edc124043a8cd50c981d16df, type: 2}
   isMeleeWeapon: 1
   isShield: 0
-  projectileDeflectRatio: 0
+  shieldArmorRate: 0.1
+  blockRate: 0.4
   circleRadius: 1.5
   boxLength: 1.2
   boxHeight: 2.6

@@ -181,6 +181,22 @@ public class ActiveItemDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float acidEfficiency = 0.4f;
     #region Tooltip
+    [Tooltip("Check if active item has bleeding")]
+    #endregion Tooltip
+    public bool hasBleedingDamage;
+    #region Tooltip
+    [Tooltip("The efficiency of active item's bleeding")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float bleedingChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if active item has slow")]
+    #endregion Tooltip
+    public bool hasSlowDamage;
+    #region Tooltip
+    [Tooltip("The efficiency of active item's slow")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float slowChance = 0f;
+    #region Tooltip
     [Tooltip("Check if item has poison damage")]
     #endregion Tooltip
     public bool isPoisonous;
@@ -197,6 +213,38 @@ public class ActiveItemDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float stunChance = 0.2f;
     #region Tooltip
+    [Tooltip("Check if active item can static")]
+    #endregion Tooltip
+    public bool hasStaticDamage;
+    #region Tooltip
+    [Tooltip("The chance of active item's static effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float staticChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if active item can paralyze")]
+    #endregion Tooltip
+    public bool hasParalyzeDamage;
+    #region Tooltip
+    [Tooltip("The chance of active item's paralyze effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float paralyzeChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if item has root damage")]
+    #endregion Tooltip
+    public bool hasRootDamage;
+    #region Tooltip
+    [Tooltip("The chance of item's root")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float rootChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if active item has chill damage")]
+    #endregion Tooltip
+    public bool hasChillDamage;
+    #region Tooltip
+    [Tooltip("The chance of active item's chill")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float chillChance = 0f;
+    #region Tooltip
     [Tooltip("Check if item has frost damage")]
     #endregion Tooltip
     public bool hasFrostDamage;
@@ -204,6 +252,14 @@ public class ActiveItemDetailsSO : ScriptableObject
     [Tooltip("The chance of item's frost")]
     #endregion Tooltip
     [Range(0f, 1f)] public float frostChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if active item can warm")]
+    #endregion Tooltip
+    public bool hasWarmDamage;
+    #region Tooltip
+    [Tooltip("The chance of active item's warm effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float warmChance = 0f;
     #region Tooltip
     [Tooltip("Check if projectile has burn damage")]
     #endregion Tooltip
@@ -221,6 +277,14 @@ public class ActiveItemDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float blindChance = 0f;
     #region Tooltip
+    [Tooltip("Check if active item has reveal damage")]
+    #endregion Tooltip
+    public bool hasRevealDamage;
+    #region Tooltip
+    [Tooltip("The chance of active item's reveal")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float revealChance = 0f;
+    #region Tooltip
     [Tooltip("Check if item has curse damage")]
     #endregion Tooltip
     public bool hasCurseDamage;
@@ -228,6 +292,19 @@ public class ActiveItemDetailsSO : ScriptableObject
     [Tooltip("The chance of item's curse")]
     #endregion Tooltip
     [Range(0f, 1f)] public float curseChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if active item has fear damage")]
+    #endregion Tooltip
+    public bool hasFearDamage;
+    #region Tooltip
+    [Tooltip("The chance of active item's fear")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float fearChance = 0f;
+    public bool canDrainHealth;
+    #region Tooltip
+    [Tooltip("The chance of health drained")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float healthDrainChance = 0f;
 
 
     #region Header PROJECTILE TRAIL DETAILS

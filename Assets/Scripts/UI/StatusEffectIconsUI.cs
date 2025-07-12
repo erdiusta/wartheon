@@ -14,33 +14,42 @@ public class StatusEffectIconsUI : MonoBehaviour
     [Space(10)]
 
     [Header("Morven")]
-    [SerializeField] Sprite umbralMistSpeicalMoveSprite;
+    [SerializeField] Sprite umbralMistSpecialMoveSprite;
     [SerializeField] Sprite stealthSpecialMoveSprite;
     [SerializeField] Sprite shadowStepSpecialMoveSprite;
     [Space(10)]
 
+    [Header("Nyveran")]
+    [SerializeField] Sprite arrowsOfTheSevenPlaguesSpecialMoveSprite;
+    [Space(10)]
+
+    [Header("Mycara")]
+    [SerializeField] Sprite mycarasSealSpecialMoveSprite;
+    [Space(10)]
+
     [Header("Debuff")]
-    [SerializeField] Sprite acidSprite;
     [SerializeField] Sprite bleedingSprite;
-    [SerializeField] Sprite blindSprite;
-    [SerializeField] Sprite burnSprite;
-    [SerializeField] Sprite chillSprite;
-    [SerializeField] Sprite confusedSprite;
-    [SerializeField] Sprite curseSprite;
-    [SerializeField] Sprite deathSprite;
-    [SerializeField] Sprite fearSprite;
-    [SerializeField] Sprite frostSprite;
-    [SerializeField] Sprite markSprite;
-    [SerializeField] Sprite petrifiedSprite;
+    [SerializeField] Sprite stunSprite;
+    [SerializeField] Sprite slowSprite;
     [SerializeField] Sprite poisonSprite;
     [SerializeField] Sprite rootedSprite;
-    [SerializeField] Sprite silenceSprite;
-    [SerializeField] Sprite slowSprite;
-    [SerializeField] Sprite stunSprite;
+    [SerializeField] Sprite acidSprite;
+    [SerializeField] Sprite warmedSprite;
+    [SerializeField] Sprite burnSprite;
+    [SerializeField] Sprite chillSprite;
+    [SerializeField] Sprite frostSprite;
+    [SerializeField] Sprite staticSprite;
+    [SerializeField] Sprite paralyzeSprite;
+    [SerializeField] Sprite markSprite;
+    [SerializeField] Sprite petrifiedSprite;
+    [SerializeField] Sprite blindSprite;
+    [SerializeField] Sprite revealedSprite;
+    [SerializeField] Sprite curseSprite;
+    [SerializeField] Sprite fearSprite;
+    [SerializeField] Sprite deathSprite;
 
     [Space(10)]
     [Header("Positive status effects")]
-    [Space(10)]
     [SerializeField] Sprite hasteSprite;
     [SerializeField] Sprite thornedSprite;
 
@@ -67,13 +76,24 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnStealthActive += EnableStealthSkillImage;
         player.healthEvent.OnShadowStepActive += EnableShadowStepSkillImage;
 
+        // Nyveran
+        player.healthEvent.OnSevenArrowsActive += EnableArrowsOfTheSevenPlaguesImage;
+
+        // Mycara
+        player.healthEvent.OnMycarasSealActive += EnableMycarasSealImage;
+
+        player.healthEvent.GetBleeding += EnableBleedingImage;
+        player.healthEvent.GetStun += EnableStunImage;
+        player.healthEvent.GetSlow += EnableSlowImage;
         player.healthEvent.GetBurned += EnableBurnImage;
         player.healthEvent.GetPoisoned += EnablePoisonImage;
         player.healthEvent.GetAcid += EnableAcidImage;
+        player.healthEvent.GetChill += EnableChillImage;
         player.healthEvent.GetFrost += EnableFrostImage;
-        player.healthEvent.GetStun += EnableStunImage;
-        player.healthEvent.GetCursed += EnableCurseImage;
+        player.healthEvent.GetRoot += EnableRootImage;
         player.healthEvent.GetBlind += EnableBlindImage;
+        player.healthEvent.GetCursed += EnableCurseImage;
+        player.healthEvent.GetFeared += EnableFearImage;
 
         player.healthEvent.GetDeath += EnableDeathImage;
         player.healthEvent.OnDodged += HealthEvent_OnDodged;
@@ -92,13 +112,25 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnStealthEffectEnded += DisableStealthSkillImage;
         player.healthEvent.OnShadowStepEffectEnded += DisableShadowStepSkillImage;
 
+        // Nyveran
+        player.healthEvent.OnSevenArrowsEffectsEnded += DisableArrowsOfTheSevenPlaguesImage;
+
+        // Mycara
+        player.healthEvent.OnMycarasSealEffectsEnded += DisableMycarasSealImage;
+
+        player.healthEvent.BleedingCured += DisableBleedingImage;
+        player.healthEvent.StunCured += DisableStunImage;
+        player.healthEvent.SlowCured += DisableSlowImage;
         player.healthEvent.BurnCured += DisableBurnImage;
         player.healthEvent.PoisonCured += DisablePoisonImage;
         player.healthEvent.AcidCured += DisableAcidImage;
+        player.healthEvent.ChillCured += DisableChillImage;
         player.healthEvent.FrostCured += DisableFrostImage;
-        player.healthEvent.StunCured += DisableStunImage;
-        player.healthEvent.CurseCured += DisableCurseImage;
+        player.healthEvent.RootCured += DisableRootImage;
         player.healthEvent.BlindCured += DisableBlindImage;
+        player.healthEvent.CurseCured += DisableCurseImage;
+        player.healthEvent.FearCured += DisabeFearImage;
+
     }
 
     private void OnDisable()
@@ -115,13 +147,24 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnStealthActive -= EnableStealthSkillImage;
         player.healthEvent.OnShadowStepActive -= EnableShadowStepSkillImage;
 
+        // Nyveran
+        player.healthEvent.OnSevenArrowsActive -= EnableArrowsOfTheSevenPlaguesImage;
+
+        // Mycara
+        player.healthEvent.OnMycarasSealActive -= EnableMycarasSealImage;
+
+        player.healthEvent.GetBleeding -= EnableBleedingImage;
+        player.healthEvent.GetStun -= EnableStunImage;
+        player.healthEvent.GetSlow -= EnableSlowImage;
         player.healthEvent.GetBurned -= EnableBurnImage;
         player.healthEvent.GetPoisoned -= EnablePoisonImage;
         player.healthEvent.GetAcid -= EnableAcidImage;
+        player.healthEvent.GetChill -= EnableChillImage;
         player.healthEvent.GetFrost -= EnableFrostImage;
-        player.healthEvent.GetStun -= EnableStunImage;
-        player.healthEvent.GetCursed -= EnableCurseImage;
+        player.healthEvent.GetRoot -= EnableRootImage;
         player.healthEvent.GetBlind -= EnableBlindImage;
+        player.healthEvent.GetCursed -= EnableCurseImage;
+        player.healthEvent.GetFeared -= EnableFearImage;
 
         player.healthEvent.GetDeath -= EnableDeathImage;
         player.healthEvent.OnDodged -= HealthEvent_OnDodged;
@@ -140,13 +183,24 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnStealthEffectEnded -= DisableStealthSkillImage;
         player.healthEvent.OnShadowStepEffectEnded -= DisableShadowStepSkillImage;
 
+        // Nyveran
+        player.healthEvent.OnSevenArrowsEffectsEnded -= DisableArrowsOfTheSevenPlaguesImage;
+
+        // Mycara
+        player.healthEvent.OnMycarasSealEffectsEnded -= DisableMycarasSealImage;
+
+        player.healthEvent.BleedingCured -= DisableBleedingImage;
+        player.healthEvent.StunCured -= DisableStunImage;
+        player.healthEvent.SlowCured -= DisableSlowImage;
         player.healthEvent.BurnCured -= DisableBurnImage;
         player.healthEvent.PoisonCured -= DisablePoisonImage;
         player.healthEvent.AcidCured -= DisableAcidImage;
+        player.healthEvent.ChillCured -= DisableChillImage;
         player.healthEvent.FrostCured -= DisableFrostImage;
-        player.healthEvent.StunCured -= DisableStunImage;
+        player.healthEvent.RootCured -= DisableRootImage;
         player.healthEvent.BlindCured -= DisableBlindImage;
         player.healthEvent.CurseCured -= DisableCurseImage;
+        player.healthEvent.FearCured -= DisabeFearImage;
     }
 
     private void HealthEvent_OnParried(HealthEvent healthEvent)
@@ -207,11 +261,11 @@ public class StatusEffectIconsUI : MonoBehaviour
 
     private void EnableUmbralMistSkillImage(HealthEvent healthEvent)
     {
-        if (!statusEffectsDictionary.ContainsKey(umbralMistSpeicalMoveSprite))
+        if (!statusEffectsDictionary.ContainsKey(umbralMistSpecialMoveSprite))
         {
             GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
-            statusIconContainer.GetComponent<Image>().sprite = umbralMistSpeicalMoveSprite;
-            statusEffectsDictionary.Add(umbralMistSpeicalMoveSprite, statusIconContainer);
+            statusIconContainer.GetComponent<Image>().sprite = umbralMistSpecialMoveSprite;
+            statusEffectsDictionary.Add(umbralMistSpecialMoveSprite, statusIconContainer);
         }
     }
 
@@ -236,6 +290,25 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
+    private void EnableArrowsOfTheSevenPlaguesImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(arrowsOfTheSevenPlaguesSpecialMoveSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = arrowsOfTheSevenPlaguesSpecialMoveSprite;
+            statusEffectsDictionary.Add(arrowsOfTheSevenPlaguesSpecialMoveSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableMycarasSealImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(mycarasSealSpecialMoveSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = mycarasSealSpecialMoveSprite;
+            statusEffectsDictionary.Add(mycarasSealSpecialMoveSprite, statusIconContainer);
+        }
+    }
 
     private void EnableBurnImage(HealthEvent healthEvent)
     {
@@ -267,6 +340,16 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
+    private void EnableChillImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(chillSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = chillSprite;
+            statusEffectsDictionary.Add(chillSprite, statusIconContainer);
+        }
+    }
+
     private void EnableFrostImage(HealthEvent healthEvent)
     {
         if (!statusEffectsDictionary.ContainsKey(frostSprite))
@@ -274,6 +357,16 @@ public class StatusEffectIconsUI : MonoBehaviour
             GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
             statusIconContainer.GetComponent<Image>().sprite = frostSprite;
             statusEffectsDictionary.Add(frostSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableBleedingImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(bleedingSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = bleedingSprite;
+            statusEffectsDictionary.Add(bleedingSprite, statusIconContainer);
         }
     }
 
@@ -287,6 +380,36 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
+    private void EnableSlowImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(slowSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = slowSprite;
+            statusEffectsDictionary.Add(slowSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableRootImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(rootedSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = rootedSprite;
+            statusEffectsDictionary.Add(rootedSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableBlindImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(blindSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = blindSprite;
+            statusEffectsDictionary.Add(blindSprite, statusIconContainer);
+        }
+    }
+
     private void EnableCurseImage(HealthEvent healthEvent)
     {
         if (!statusEffectsDictionary.ContainsKey(curseSprite))
@@ -294,6 +417,16 @@ public class StatusEffectIconsUI : MonoBehaviour
             GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
             statusIconContainer.GetComponent<Image>().sprite = curseSprite;
             statusEffectsDictionary.Add(curseSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableFearImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(fearSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = fearSprite;
+            statusEffectsDictionary.Add(fearSprite, statusIconContainer);
         }
     }
 
@@ -307,16 +440,6 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
-
-    private void EnableBlindImage(HealthEvent healthEvent)
-    {
-        if (!statusEffectsDictionary.ContainsKey(blindSprite))
-        {
-            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
-            statusIconContainer.GetComponent<Image>().sprite = blindSprite;
-            statusEffectsDictionary.Add(blindSprite, statusIconContainer);
-        }
-    }
 
     private void DisableGraceOfTheUnscarredSkillImage(HealthEvent healthEvent)
     {
@@ -356,10 +479,10 @@ public class StatusEffectIconsUI : MonoBehaviour
 
     private void DisableUmbralMistSkillImage(HealthEvent healthEvent)
     {
-        if (statusEffectsDictionary.ContainsKey(umbralMistSpeicalMoveSprite))
+        if (statusEffectsDictionary.ContainsKey(umbralMistSpecialMoveSprite))
         {
-            Destroy(statusEffectsDictionary[umbralMistSpeicalMoveSprite]);
-            statusEffectsDictionary.Remove(umbralMistSpeicalMoveSprite);
+            Destroy(statusEffectsDictionary[umbralMistSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(umbralMistSpecialMoveSprite);
         }
     }
 
@@ -378,6 +501,24 @@ public class StatusEffectIconsUI : MonoBehaviour
         {
             Destroy(statusEffectsDictionary[shadowStepSpecialMoveSprite]);
             statusEffectsDictionary.Remove(shadowStepSpecialMoveSprite);
+        }
+    }
+
+    private void DisableArrowsOfTheSevenPlaguesImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(arrowsOfTheSevenPlaguesSpecialMoveSprite))
+        {
+            Destroy(statusEffectsDictionary[arrowsOfTheSevenPlaguesSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(arrowsOfTheSevenPlaguesSpecialMoveSprite);
+        }
+    }
+
+    private void DisableMycarasSealImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(mycarasSealSpecialMoveSprite))
+        {
+            Destroy(statusEffectsDictionary[mycarasSealSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(mycarasSealSpecialMoveSprite);
         }
     }
 
@@ -408,12 +549,30 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
+    private void DisableChillImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(chillSprite))
+        {
+            Destroy(statusEffectsDictionary[chillSprite]);
+            statusEffectsDictionary.Remove(chillSprite);
+        }
+    }
+
     private void DisableFrostImage(HealthEvent healthEvent)
     {
         if (statusEffectsDictionary.ContainsKey(frostSprite))
         {
             Destroy(statusEffectsDictionary[frostSprite]);
             statusEffectsDictionary.Remove(frostSprite);
+        }
+    }
+
+    private void DisableBleedingImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(bleedingSprite))
+        {
+            Destroy(statusEffectsDictionary[bleedingSprite]);
+            statusEffectsDictionary.Remove(bleedingSprite);
         }
     }
 
@@ -426,12 +585,21 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
-    private void DisableCurseImage(HealthEvent healthEvent)
+    private void DisableSlowImage(HealthEvent healthEvent)
     {
-        if (statusEffectsDictionary.ContainsKey(curseSprite))
+        if (statusEffectsDictionary.ContainsKey(slowSprite))
         {
-            Destroy(statusEffectsDictionary[curseSprite]);
-            statusEffectsDictionary.Remove(curseSprite);
+            Destroy(statusEffectsDictionary[slowSprite]);
+            statusEffectsDictionary.Remove(slowSprite);
+        }
+    }
+
+    private void DisableRootImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(rootedSprite))
+        {
+            Destroy(statusEffectsDictionary[rootedSprite]);
+            statusEffectsDictionary.Remove(rootedSprite);
         }
     }
 
@@ -443,4 +611,24 @@ public class StatusEffectIconsUI : MonoBehaviour
             statusEffectsDictionary.Remove(blindSprite);
         }
     }
+
+    private void DisableCurseImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(curseSprite))
+        {
+            Destroy(statusEffectsDictionary[curseSprite]);
+            statusEffectsDictionary.Remove(curseSprite);
+        }
+    }
+
+    private void DisabeFearImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(fearSprite))
+        {
+            Destroy(statusEffectsDictionary[fearSprite]);
+            statusEffectsDictionary.Remove(fearSprite);
+        }
+    }
+
+
 }

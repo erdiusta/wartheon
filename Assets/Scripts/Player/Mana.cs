@@ -38,12 +38,15 @@ public class Mana : MonoBehaviour
     /// <summary>
     /// Set mana - Player
     /// </summary>
-    public void SetMaximumMana(int maximumMana, bool shouldManaFilled = true, bool onStart = false)
+    public void SetMaximumMana(int maximumMana, bool shouldManaFilled = true, bool onStart = false, bool manaReserved = false)
     {
         this.maximumMana = maximumMana;
 
         // If current health maximized together with increasing max health or not
         currentMana = onStart ? maximumMana : shouldManaFilled ? maximumMana : currentMana;
+
+        // Trigger mana event
+        if(player != null) manaEvent.CallManaChangedEvent(currentMana, manaReserved);
     }
 
     /// <summary>

@@ -153,11 +153,11 @@ public class HealthUI : MonoBehaviour
             ((RectTransform)shieldBar.transform).anchoredPosition = new Vector2(healthWidth - 1f, 0f);
 
             // Update health text position (same deviation logic)
-            float fullBarCenter = 27.5f; // Center of full bar in your pixel-perfect layout
+            float fullBarCenter = totalWidth / 2f; // Center of full bar in your pixel-perfect layout
             float healthBarCenter = healthWidth / 2f;
-            float healthBarAnchorDeviation = fullBarCenter - healthBarCenter;
+            float healthBarAnchorDeviation = Mathf.Clamp(fullBarCenter - healthBarCenter - 4, -18, 17);
 
-            ((RectTransform)healthText.transform).anchoredPosition = new Vector2(-healthBarAnchorDeviation, 0f);
+            //((RectTransform)healthText.transform).anchoredPosition = new Vector2(-healthBarAnchorDeviation, 0f);
 
             // Optional shield text visibility
             if (currentShieldFill < 0.05f)
@@ -200,7 +200,7 @@ public class HealthUI : MonoBehaviour
         ((RectTransform)shieldBar.transform).anchoredPosition = new Vector2(healthWidth - 1f, 0f);
 
         // Calculate center shift
-        float fullBarCenter = 27.5f; // original center is 0
+        float fullBarCenter = totalWidth / 2f; // original center is 0
         float healthBarCenter = healthWidth / 2f;
 
         float healthBarAnchorDeviation = fullBarCenter - healthBarCenter;

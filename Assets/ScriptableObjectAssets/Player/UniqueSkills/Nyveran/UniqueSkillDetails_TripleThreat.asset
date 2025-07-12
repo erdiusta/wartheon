@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_TripleThreat
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Triple Threat
+  activeUniqueSkillDetails: 
+  activeSkill: 11
+  activeUniqueSkillSprite: {fileID: 21300000, guid: d02c1b40a51345c479702b19df1e99c4, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: eb80da0b35683344a939c913004058d7, type: 2}
+  activeUniqueSkillSoundEffectTwo: {fileID: 0}
+  activeUniqueSkillCooldownDuration: 12
+  activeUniqueSkillEffectiveDuration: 0
+  activeUniqueSkillManaCost: 18
+  activeUniqueSkillManaReserveCost: 0

@@ -188,7 +188,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.meteor ||
+        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.aoeSkill ||
             collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile) return;
 
         if (GetComponentInParent<Player>() != null) return;
@@ -580,6 +580,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 }
                 else
                 {
+                    player.isShieldCalculated = false;
                     CollectWeaponItem(player);
                 }
             }
@@ -621,7 +622,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.meteor ||
+        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.aoeSkill ||
             collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile) return;
 
         if (collision.CompareTag(Settings.playerTag) || collision.CompareTag(Settings.playerWeapon)) droptItemsInRange.Remove(this);
@@ -837,7 +838,15 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
             }
 
-            if (passiveItem.passiveItemDetails.primaryPassiveItemName == PrimaryPassiveItemName.Medicine)
+            if (passiveItem.passiveItemDetails.primaryPassiveItemName == PrimaryPassiveItemName.Mana)
+            {
+                player.UpdatePlayerMana(20, false, false);
+
+                // Play pickup sound effect
+                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
+            }
+
+            if (passiveItem.passiveItemDetails.primaryPassiveItemName == PrimaryPassiveItemName.Cure)
             {
                 // HEALTH STATUS CHECKS
                 if ((player.healthStatus & HealthStatus.Poisoned) != 0)

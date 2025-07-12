@@ -42,35 +42,6 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public PrimaryStats primaryStats;
     [Space(10)]
-    #region Tooltip
-    [Tooltip("Player physical resistance value")]
-    #endregion
-    public float physicalResistance = 0f;
-    #region Tooltip
-    [Tooltip("Player fire resistance value")]
-    #endregion
-    public float fireResistance = 0f;
-    #region Tooltip
-    [Tooltip("Player water resistance value")]
-    #endregion
-    public float waterResistance = 0f;
-    #region Tooltip
-    [Tooltip("Player air resistance value")]
-    #endregion
-    public float airResistance = 0f;
-    #region Tooltip
-    [Tooltip("Player earth resistance value")]
-    #endregion
-    public float earthResistance = 0f;
-    #region Tooltip
-    [Tooltip("Player light resistance value")]
-    #endregion
-    public float lightResistance = 0f;
-    #region Tooltip
-    [Tooltip("Player dark resistance value")]
-    #endregion
-    public float darkResistance = 0f;
-
 
     #region Header HEALTH
     [Space(10)]
@@ -114,6 +85,10 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Passive skill image")]
     #endregion
     public Sprite passiveSkillImage;
+    #region Passive Skill
+    [Tooltip("Passive skill sound effect")]
+    #endregion
+    public SoundEffectSO passiveSkillSoundEffect;
 
     #region Active Skill One
     [Header("Active Skill Details")]
@@ -124,7 +99,6 @@ public class PlayerDetailsSO : ScriptableObject
     public ActiveUniqueSkillDetailsSO fourthActiveSkillDetails;
     public ActiveUniqueSkillDetailsSO fifthActiveSkillDetails;
 
-
     #region Misc
     [Space(10)]
     [Header("Misc")]
@@ -132,17 +106,26 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public ProjectileDetailsSO cataclysmMeteor;
     #region
+    [Tooltip("Grapple prefab")]
+    #endregion
+    public ProjectileDetailsSO grappleDetails;
+    #region
+    [Tooltip("Ice Breaker prefab")]
+    #endregion
+    public ProjectileDetailsSO iceBreakerDetails;
+    #region
+    [Tooltip("Absolute Zero prefab")]
+    #endregion
+    public ProjectileDetailsSO absoluteZeroDetails;
+    #region
     [Tooltip("Standard material")]
     #endregion
     public Material standardMaterial;
     #region
-    [Tooltip("Head Shot material")]
-    #endregion
-    public Material headShotMaterial;
-    #region
     [Tooltip("Penetrate material")]
     #endregion
     public Material penetrateMaterial;
+
 
     #region SCREEN SHAKE SETTINGS
     [Space(10)]
@@ -160,15 +143,6 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Camera shake duration")]
     #endregion
     public float shakeDuration = 0.5f;
-
-    #region Header BUILD NAMES
-    [Space(10)]
-    [Header("CHARACTER BUILD NAMES")]
-    #endregion
-    #region Tooltip
-    [Tooltip("Player's char build details")]
-    #endregion
-    public BuildDetailsSO[] charBuildDetails;
 
     #region Header ACTIVE
     [Space(10)]

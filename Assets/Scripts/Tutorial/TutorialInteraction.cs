@@ -624,7 +624,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 // This is handled by Drop Item script.
                 break;
             case TutorialPhase.Parry:
-                if (player.playerDetails.playerCharacterIndex == Character.Nyveran || player.playerDetails.playerCharacterIndex == Character.Lyrisa)
+                if (player.playerDetails.playerCharacterIndex == Character.Nyveran || player.playerDetails.playerCharacterIndex == Character.Mycara)
                 {
                     Invoke(nameof(PassTutorialProcess), 2f); // Directly pass for these characters
                 }

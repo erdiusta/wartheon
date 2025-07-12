@@ -81,7 +81,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0, y: 1.05, z: 0}
+        value: {x: -0.53125, y: 0.53125, z: 0}
         inSlope: {x: Infinity, y: Infinity, z: Infinity}
         outSlope: {x: Infinity, y: Infinity, z: Infinity}
         tangentMode: 0
@@ -90,7 +90,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.15
-        value: {x: -0.68999994, y: 0.99375004, z: 0}
+        value: {x: -0.4375, y: 0.8125, z: 0}
         inSlope: {x: Infinity, y: Infinity, z: Infinity}
         outSlope: {x: Infinity, y: Infinity, z: Infinity}
         tangentMode: 0
@@ -99,16 +99,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.2
-        value: {x: -0.37750006, y: 0.39999986, z: 0}
-        inSlope: {x: Infinity, y: Infinity, z: Infinity}
-        outSlope: {x: Infinity, y: Infinity, z: Infinity}
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-      - serializedVersion: 3
-        time: 0.5
-        value: {x: 0.16425002, y: 0.125, z: 0}
+        value: {x: -0.34375, y: 0.8125, z: 0}
         inSlope: {x: Infinity, y: Infinity, z: Infinity}
         outSlope: {x: Infinity, y: Infinity, z: Infinity}
         tangentMode: 0
@@ -118,7 +109,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: OffHandWeaponAnchorPosition/OffHandWeaponRotationPoint/Weapon/CircleOrigin
+    path: OffHandShapeOrigins/TriangleOrigin
   m_ScaleCurves: []
   m_FloatCurves:
   - serializedVersion: 2
@@ -169,20 +160,20 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
+        value: -135
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
         weightedMode: 0
         inWeight: 0
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_Radius
-    path: OffHandWeaponAnchorPosition/OffHandWeaponRotationPoint/Weapon/CircleOrigin
-    classID: 58
-    script: {fileID: 0}
+    attribute: directionAngle
+    path: OffHandShapeOrigins/TriangleOrigin
+    classID: 114
+    script: {fileID: 11500000, guid: fa8ff2cf1108cb94db80cbe89a216ded, type: 3}
     flags: 0
   m_PPtrCurves:
   - serializedVersion: 2
@@ -217,7 +208,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 4282502425
+      path: 1326974633
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -244,21 +235,21 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
+      path: 1326974633
+      attribute: 872928606
+      script: {fileID: 11500000, guid: fa8ff2cf1108cb94db80cbe89a216ded, type: 3}
+      typeID: 114
+      customType: 0
+      isPPtrCurve: 0
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    - serializedVersion: 2
       path: 0
       attribute: 0
       script: {fileID: 0}
       typeID: 212
       customType: 23
       isPPtrCurve: 1
-      isIntCurve: 0
-      isSerializeReferenceCurve: 0
-    - serializedVersion: 2
-      path: 4282502425
-      attribute: 1984117138
-      script: {fileID: 0}
-      typeID: 58
-      customType: 0
-      isPPtrCurve: 0
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
@@ -533,7 +524,28 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0
+        value: -135
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: directionAngle
+    path: OffHandShapeOrigins/TriangleOrigin
+    classID: 114
+    script: {fileID: 11500000, guid: fa8ff2cf1108cb94db80cbe89a216ded, type: 3}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: -0.53125
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -542,7 +554,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.15
-        value: -0.68999994
+        value: -0.4375
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -551,16 +563,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.2
-        value: -0.37750006
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.5
-        value: 0.16425002
+        value: -0.34375
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -571,7 +574,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: OffHandWeaponAnchorPosition/OffHandWeaponRotationPoint/Weapon/CircleOrigin
+    path: OffHandShapeOrigins/TriangleOrigin
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -581,7 +584,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1.05
+        value: 0.53125
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -590,7 +593,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.15
-        value: 0.99375004
+        value: 0.8125
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -599,16 +602,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.2
-        value: 0.39999986
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.5
-        value: 0.125
+        value: 0.8125
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -619,7 +613,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: OffHandWeaponAnchorPosition/OffHandWeaponRotationPoint/Weapon/CircleOrigin
+    path: OffHandShapeOrigins/TriangleOrigin
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -647,15 +641,6 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.2
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.5
         value: 0
         inSlope: Infinity
         outSlope: Infinity
@@ -667,29 +652,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: OffHandWeaponAnchorPosition/OffHandWeaponRotationPoint/Weapon/CircleOrigin
+    path: OffHandShapeOrigins/TriangleOrigin
     classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_Radius
-    path: OffHandWeaponAnchorPosition/OffHandWeaponRotationPoint/Weapon/CircleOrigin
-    classID: 58
     script: {fileID: 0}
     flags: 0
   m_EulerEditorCurves: []

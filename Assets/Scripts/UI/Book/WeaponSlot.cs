@@ -37,7 +37,7 @@ public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     transform.GetComponent<Button>().interactable = true;
                 }
                 break;
-            case Character.Lyrisa:
+            case Character.Mycara:
                 if (weaponDetails.weaponTitle == WeaponTitle.OldStaff)
                 {
                     weaponUnlocked = true;

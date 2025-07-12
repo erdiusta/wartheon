@@ -7,6 +7,7 @@ public class ActiveUniqueSkillDetailsSO : ScriptableObject
 
     [Space(10)]
     public string activeUniqueSkillName;
+    public string activeUniqueSkillDetails;
     public ActiveSkill activeSkill;
     public Sprite activeUniqueSkillSprite;
 

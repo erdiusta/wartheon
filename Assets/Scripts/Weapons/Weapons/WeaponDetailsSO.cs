@@ -78,6 +78,22 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float suddenKillChance = 0.1f;
     #region Tooltip
+    [Tooltip("Check if weapon has bleeding")]
+    #endregion Tooltip
+    public bool hasBleedingDamage;
+    #region Tooltip
+    [Tooltip("The efficiency of weapon's bleeding")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float bleedingChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if weapon has slow")]
+    #endregion Tooltip
+    public bool hasSlowDamage;
+    #region Tooltip
+    [Tooltip("The efficiency of weapon's slow")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float slowChance = 0f;
+    #region Tooltip
     [Tooltip("Check if weapon has acid")]
     #endregion Tooltip
     public bool hasAcid;
@@ -85,6 +101,14 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("The efficiency of weapon's acid")]
     #endregion Tooltip
     [Range(0f, 1f)] public float acidEfficiency = 0.4f;
+    #region Tooltip
+    [Tooltip("Check if weapon can warm")]
+    #endregion Tooltip
+    public bool canWarm;
+    #region Tooltip
+    [Tooltip("The chance of weapon's warm effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float warmChance = 0f;
     #region Tooltip
     [Tooltip("Check if weapon can burn")]
     #endregion Tooltip
@@ -102,6 +126,22 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float poisonChance = 0f;
     #region Tooltip
+    [Tooltip("Check if weapon can static")]
+    #endregion Tooltip
+    public bool canStatic;
+    #region Tooltip
+    [Tooltip("The chance of weapon's static effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float staticChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if weapon can paralyze")]
+    #endregion Tooltip
+    public bool canParalyze;
+    #region Tooltip
+    [Tooltip("The chance of weapon's paralyze effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float paralyzeChance = 0f;
+    #region Tooltip
     [Tooltip("Check if weapon has stun damage")]
     #endregion Tooltip
     public bool hasStunDamage;
@@ -109,6 +149,22 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("The chance of weapon's stun")]
     #endregion Tooltip
     [Range(0f, 1f)] public float stunChance = 0.2f;
+    #region Tooltip
+    [Tooltip("Check if weapon has root damage")]
+    #endregion Tooltip
+    public bool hasRootDamage;
+    #region Tooltip
+    [Tooltip("The chance of weapon's root")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float rootChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if weapon has chill damage")]
+    #endregion Tooltip
+    public bool hasChillDamage;
+    #region Tooltip
+    [Tooltip("The chance of weapon's chill")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float chillChance = 0f;
     #region Tooltip
     [Tooltip("Check if weapon has frost damage")]
     #endregion Tooltip
@@ -125,6 +181,30 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("The chance of weapon's blind")]
     #endregion Tooltip
     [Range(0f, 1f)] public float blindChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if weapon has reveal damage")]
+    #endregion Tooltip
+    public bool hasRevealDamage;
+    #region Tooltip
+    [Tooltip("The chance of weapon's reveal")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float revealChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if weapon has curse damage")]
+    #endregion Tooltip
+    public bool hasCurseDamage;
+    #region Tooltip
+    [Tooltip("The chance of weapon's curse")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float curseChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if weapon has fear damage")]
+    #endregion Tooltip
+    public bool hasFearDamage;
+    #region Tooltip
+    [Tooltip("The chance of weapon's fear")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float fearChance = 0f;
     public bool canDrainHealth;
     #region Tooltip
     [Tooltip("The chance of enemy's health drained")]
@@ -214,6 +294,14 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("Select box height amount if weapon is a melee thrust weapon")]
     #endregion Tooltip
     public float boxHeight = 2.6f;
+    #region Tooltip
+    [Tooltip("Select cone length amount if weapon attack cone shaped attack")]
+    #endregion Tooltip
+    public float coneLength = 3f;
+    #region Tooltip
+    [Tooltip("Select cone angle amount weapon covers")]
+    #endregion Tooltip
+    public float coneAngle = 35f;
     #region Tooltip
     [Tooltip("Check if the weapon is physical damaged weapon or not")]
     #endregion Tooltip

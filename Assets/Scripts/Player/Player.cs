@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
 using System;
+using System.Collections;
 
 #region REQUIRE COMPONENTS
 [RequireComponent(typeof(HealthEvent))]
@@ -46,7 +47,6 @@ using System;
 [DisallowMultipleComponent]
 public class Player : MonoBehaviour
 {
-    public bool isClone;
     public Transform forcefieldTransform;
     public Animator levelUpAnimator;
     public LevelUpDetailsSO levelUpDetails;
@@ -89,6 +89,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public MovementByVelocity movementByVelocity;
     [HideInInspector] public MovementToPositionEvent movementToPositionEvent;
     [HideInInspector] public StatusManager statusManager;
+    [HideInInspector] public SpringJoint2D springJoint2D;
+    [HideInInspector] public Projectile playersGrapple;
 
     [HideInInspector] public int keyCount = 0;
     [HideInInspector] public int previousSetIndex = 1;
@@ -140,7 +142,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public float currentOffHandCriticalHitChance;
     [HideInInspector] public float currentMainHandCriticalHitDamage;
     [HideInInspector] public float currentOffHandCriticalHitDamage;
-    [HideInInspector] public float? currentWeaponHandlingValue;
+    [HideInInspector] public float? currentAttackRatingValue;
 
     // AUXILLARY MODIFIERS
     [HideInInspector] public float buffDurationModifier = 0f;
@@ -156,48 +158,84 @@ public class Player : MonoBehaviour
     [HideInInspector] public int currentSkillPoints = 0;
     [HideInInspector] public int currentStatPoints = 0;
 
-    // ADDITIONAL MODIFIERS
-    [HideInInspector] public int seismicSlamDamage = 10;
-    [HideInInspector] public float seismicSlamCircleRadius = 5f;
-    [HideInInspector] public float expGainModifier = 1f;
-    [HideInInspector] public float additionalSpeedModifier;
-    [HideInInspector] public float bloodDrainSkillAdditionalDamagePercentageModifier = 0f;
-    [HideInInspector] public float barrierSkillAdditionalDurationModifier = 0f;
-    [HideInInspector] public bool tripleTeamEnabled = false;
+    // EXTRA MODIFIERS
+    // DAMAGE
     [HideInInspector] public float additionalMeleeDamageModifer = 0f;
-    [HideInInspector] public float additionalCriticalDamageOnCloakedPrecision = 0.5f;
-    [HideInInspector] public float additionalCriticalMeleeDamageModifier = 0f;
+    [HideInInspector] public float additionalStaffElementalDamageModifier = 0f;
+    [HideInInspector] public float additionalElementalDamageModifier = 0f;
+
+    // ATTACK COOLDOWN
+    [HideInInspector] public float additionalMeleeAttackCoolDownModifier = 0f;
+    [HideInInspector] public float additionalBowAttackCoolDownModifier = 0f;
+
+    // SPEED
+    [HideInInspector] public float additionalSpeedModifier;
+
+    // CRITICAL CHANCE
     [HideInInspector] public float additionalMeleeCriticalHitChanceModifier = 0f;
-    [HideInInspector] public float additionalEvasivenessModifier = 0f;
-    [HideInInspector] public float additionalBlockModifier = 0f;
+
+    // CRITICAL DAMAGE
+    [HideInInspector] public float additionalCriticalDamageOnCloakedPrecision = 0.5f;
+    [HideInInspector] public float additionalCriticalDamageModifier = 0f;
+    [HideInInspector] public float additionalCriticalMeleeDamageModifier = 0f;
+    [HideInInspector] public float additionalCriticalRangedDamageModifier = 0f;
+
+    // ARMOR
+    [HideInInspector] public float additionalArmorModifier = 0f;
+    [HideInInspector] public float acidArmorDebuffModifier = 0f;
     [HideInInspector] public float additionalShieldArmorModifier = 0f;
     [HideInInspector] public float currentShieldArmor = 0f;
+    [HideInInspector] public bool isShieldCalculated = false;
+
+    // BLOCK
+    [HideInInspector] public float additionalBlockModifier = 0f;
+
+    // DODGE
+    [HideInInspector] public float additionalEvasivenessModifier = 0f;
+
+    // INNER PATH BOOLS
+    // Attack
+    [HideInInspector] public bool isFocusedAggressionActive = false;
+    [HideInInspector] public bool isPunishersWillActive = false;
+    // Utility
+    [HideInInspector] public bool isShiftingStanceActive = false;
+    [HideInInspector] public bool shiftingStanceOnProcess = false;
+
+
+    // MISC
+    [HideInInspector] public float expGainModifier = 1f;
     [HideInInspector] public float additionalBowAccuracyModifier = 0f;
     [HideInInspector] public float additionalHeadShotDamageModifier = 0f;
     [HideInInspector] public bool threeSecInvincilibityAfterTeleportEnabled = false;
     [HideInInspector] public float additionalCataclysmElementalDamageModifier = 0f;
-    [HideInInspector] public float additionalLightfeetSkillDurationModifier = 0f;
+    [HideInInspector] public float bloodDrainSkillAdditionalDamagePercentageModifier = 0f;
+    [HideInInspector] public float barrierSkillAdditionalDurationModifier = 0f;
+    [HideInInspector] public float additionalShadowStepSkillDurationModifier = 0f;
     [HideInInspector] public float additionalPenetrationSkillDamageModifier = 0f;
     [HideInInspector] public float additionalCastDurationModifier = 1f;
     [HideInInspector] public int additionalActiveItemCharge = 0;
-    [HideInInspector] public float additionalMeleeAttackCoolDownModifier = 0f;
-    [HideInInspector] public float additionalBowAttackCoolDownModifier = 0f;
     [HideInInspector] public int additionalCoinIncreaserModifier = 0;
     [HideInInspector] public bool additionalCoinIncreaseActivated = false;
     [HideInInspector] public float additionalLockpickingModifier = 0f;
     [HideInInspector] public float additionalDropChanceModifier = 0f;
-    [HideInInspector] public float additionalStaffElementalDamageModifier = 0f; 
-    [HideInInspector] public float additionalElementalDamageModifier = 0f;
+
     [HideInInspector] public float additionalNegativeStatusEffectNegatorModifier = 0f;
     [HideInInspector] public float additinalNPCCostModifier = 0;
     [HideInInspector] public bool thirtyPercentDamageAbsorbIsActive = false;
     [HideInInspector] public float blindModifier = 0f;
     [HideInInspector] public float additionalBlindMakerModifier = 0f;
     [HideInInspector] public bool hasRingOfFortune;
+
+    // STATUS IMMUNITIES
+    [HideInInspector] public bool isImmunetoBleeding;
+    [HideInInspector] public bool isImmunetoStun;
+    [HideInInspector] public bool isImmunetoSlow;
     [HideInInspector] public bool isImmunetoBurn;
     [HideInInspector] public bool isImmunetoPoison;
     [HideInInspector] public bool isImmunetoFrost;
     [HideInInspector] public bool isImmunetoBlind;
+    [HideInInspector] public bool isImmunetoCurse;
+    [HideInInspector] public bool isImmunetoFear;
 
     [HideInInspector] public ParticleSystem specialMoveParticlesSystem;
     [HideInInspector] public Weapon[][] weaponSlotSetArray = new Weapon[3][] { new Weapon[2] {null, null}, new Weapon[2] {null, null}, new Weapon[2] {null, null}};
@@ -218,6 +256,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public float lastDamageHappenedTime;
     [HideInInspector] public bool passiveTriggered;
     [HideInInspector] public bool isGraceOfTheUnscarredPassiveOn;
+    [HideInInspector] public int seismicSlamDamage = 10;
+    [HideInInspector] public float seismicSlamCircleRadius = 5f;
     [HideInInspector] public bool isValorActive;
     [HideInInspector] public bool isShieldBashing;
     [HideInInspector] public bool isBreakTheLineActive;
@@ -228,17 +268,30 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool isStealthActive;
     [HideInInspector] public bool isShadowStepActive;
 
-    [HideInInspector] public bool shadowCloakEquipped;
+    // NYVERAN SKILLS
+    [HideInInspector] public bool isPenetrateActive;
+    [HideInInspector] public bool isTripleThreatActive;
+    [HideInInspector] public bool isBindingArrowActive;
+    [HideInInspector] public bool isArrowOfTheSevenActive;
+    [HideInInspector] public bool isHuntersReachActive;
 
-    [HideInInspector] public bool isGemSkinActive;
-    [HideInInspector] public static bool hasClone;
-    [HideInInspector] public GameObject playerCloneObject;
-    [HideInInspector] public GameObject playerSecondCloneObject;
+    // MYCARA SKILLS
+    [HideInInspector] public bool isBlizzardActive;
+    [HideInInspector] public bool isMycarasSealActive;
+    [HideInInspector] public bool isIceBreakerActive;
+    [HideInInspector] public bool isAbsoluteZeroActive;
+
+    [HideInInspector] public bool shadowCloakEquipped;
 
     // STATUS EFFECT
     [HideInInspector] public bool isCursed;
-    [HideInInspector] public bool gemSkinBoostGainedDuringGemSkinActive;
+    [HideInInspector] public bool isFeared;
+    [HideInInspector] public bool isRevealed;
+    [HideInInspector] public bool isStatic;
+    [HideInInspector] public bool isWarm;
+    [HideInInspector] public bool isChilled;
     [HideInInspector] public bool isBlind;
+    [HideInInspector] public bool isSlowed;
 
     private void Awake()
     {
@@ -277,6 +330,7 @@ public class Player : MonoBehaviour
         weaponMastery = GetComponent<WeaponMastery>();
         mainHandWeaponAnchorTransform = transform.GetChild(0);
         offHandWeaponAnchorTransform = transform.GetChild(1);
+        springJoint2D = GetComponent<SpringJoint2D>();
     }
     
     /// <summary>
@@ -311,7 +365,7 @@ public class Player : MonoBehaviour
     {
         manaEvent.OnManaChanged += ManaEvent_OnManaChanged;
         healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
-
+        healthEvent.GetSlow += HealthEvent_GetSlow;
 
         rangedAttackEvent.OnAnimationRangedAttackAnimationTriggered.AddListener(ResetAttackForRangedAttack);
     }
@@ -320,6 +374,7 @@ public class Player : MonoBehaviour
     {
         manaEvent.OnManaChanged -= ManaEvent_OnManaChanged;
         healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
+        healthEvent.GetSlow -= HealthEvent_GetSlow;
 
         rangedAttackEvent.OnAnimationRangedAttackAnimationTriggered.RemoveListener(ResetAttackForRangedAttack);
     }
@@ -338,20 +393,33 @@ public class Player : MonoBehaviour
         // If player has died
         if (healthEventArgs.healthAmount <= 0f)
         {
-            if (!isClone)
-            {
-                destroyedEvent.CallDestroyedEvent(true);
-            }
-            else
-            {
-                destroyedEvent.CallDestroyedEvent(true, true);
-            }
+            destroyedEvent.CallDestroyedEvent(true);
         }   
     }
 
     private void ManaEvent_OnManaChanged(ManaEvent manaEvent, ManaEventArgs manaEventArgs)
     {
 
+    }
+
+    private void HealthEvent_GetSlow(HealthEvent healthEvent)
+    {
+        StartCoroutine(SlowProcess());
+    }
+
+    IEnumerator SlowProcess()
+    {
+        additionalSpeedModifier -= 2f;
+        UpdateSpeedValue();
+        StaticEventHandler.CallStatsChangedOnTheBookEvent();
+
+        yield return new WaitForSeconds(4f);
+
+        isSlowed = false;
+        additionalSpeedModifier += 2f;
+        UpdateSpeedValue();
+        healthEvent.CallSlowCuredEvent();
+        StaticEventHandler.CallStatsChangedOnTheBookEvent();
     }
 
     public void ResetAttackForRangedAttack()
@@ -473,14 +541,6 @@ public class Player : MonoBehaviour
         currentResolveValue = playerDetails.primaryStats.resolve;
         currentFerocityValue = playerDetails.primaryStats.ferocity;
 
-        currentArmorValue = playerDetails.physicalResistance;
-        currentFireResistanceValue = playerDetails.fireResistance;
-        currentWaterResistanceValue = playerDetails.waterResistance;
-        currentAirResistanceValue = playerDetails.airResistance;
-        currentEarthResistanceValue = playerDetails.earthResistance;
-        currentLightResistanceValue = playerDetails.lightResistance;
-        currentDarkResistanceValue = playerDetails.darkResistance;
-
         // Set player starting health
         UpdatePlayerHealth(0, true, true, true);
         UpdatePlayerMana(0, true, true, true);
@@ -499,17 +559,19 @@ public class Player : MonoBehaviour
         playersAllActiveUniqueSkills = new ActiveUniqueSkillDetailsSO[]{playerDetails.firstActiveSkillDetails, playerDetails.secondActiveSkillDetails,
             playerDetails.thirdActiveSkillDetails,playerDetails.fourthActiveSkillDetails, playerDetails.fifthActiveSkillDetails};
 
-        Invoke(nameof(PopulateSkillIconToGameHUD), 0.4f); // Wait a bit for invked event after subscription
+        StartCoroutine(PopulateSkillIconToGameHUD()); // Wait a bit for invked event after subscription
     }
 
-    private void PopulateSkillIconToGameHUD()
+    IEnumerator PopulateSkillIconToGameHUD()
     {
+        yield return null;
+
         // Call event in order to update SkillUI in Gameplay HUD
         for (int i = 1; i <= 3; i++)
         {
             // Populate dragged skill 
             currentlyUsedActiveUniqueSkills.Add(i, playersAllActiveUniqueSkills[i - 1]);
-            StaticEventHandler.CallActiveUniqueSkillPlacedEvent(i, currentlyUsedActiveUniqueSkills[i]);
+            StaticEventHandler.CallActiveUniqueSkillPlacedEvent(i, currentlyUsedActiveUniqueSkills[i], false);
         }
     }
 
@@ -517,13 +579,23 @@ public class Player : MonoBehaviour
     {
         if (activeWeapon.GetCurrentOffHandWeapon() != null && activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
         {
-            currentShieldArmor = activeWeapon.GetCurrentOffHandWeapon().weaponDetails.shieldArmorRate * (1 + additionalShieldArmorModifier);
-            currentArmorValue += currentShieldArmor;
+            if (!isShieldCalculated)
+            {
+                isShieldCalculated = true;
+                currentShieldArmor = activeWeapon.GetCurrentOffHandWeapon().weaponDetails.shieldArmorRate * (1 + additionalShieldArmorModifier);
+                currentArmorValue += currentShieldArmor;
+            }
         }
         else
         {
-            currentArmorValue -= currentShieldArmor;
+            if (!isShieldCalculated)
+            {
+                isShieldCalculated = true;
+                currentArmorValue -= currentShieldArmor;
+            }
         }
+
+       currentArmorValue = (float)Math.Round(currentArmorValue + additionalArmorModifier + acidArmorDebuffModifier, 2);
     }
 
     public void UpdateDamageValues()
@@ -538,8 +610,8 @@ public class Player : MonoBehaviour
                     // Melee and physical damage excluding dagger (such as swords, axes)
                     if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass != WeaponClass.Dagger)
                     {
-                        currentMainHandMinDamageValue = (int)((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + currentStrengthValue * 2) * (1 + additionalMeleeDamageModifer));
-                        currentMainHandMaxDamageValue = (int)((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + currentStrengthValue * 2) * (1 + additionalMeleeDamageModifer));
+                        currentMainHandMinDamageValue = (int)((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + currentStrengthValue * 1.5f) * (1 + additionalMeleeDamageModifer));
+                        currentMainHandMaxDamageValue = (int)((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + currentStrengthValue * 1.5f) * (1 + additionalMeleeDamageModifer));
 
                         currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
                         currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
@@ -547,8 +619,8 @@ public class Player : MonoBehaviour
                     // Melee and physical for dagger
                     else
                     {
-                        currentMainHandMinDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + currentDexterityValue * (1 + additionalMeleeDamageModifer));
-                        currentMainHandMaxDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + currentDexterityValue * (1 + additionalMeleeDamageModifer));
+                        currentMainHandMinDamageValue = (int)((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMin + currentDexterityValue * 0.7f) * (1 + additionalMeleeDamageModifer));
+                        currentMainHandMaxDamageValue = (int)((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.meleeDamageMax + currentDexterityValue * 0.7f) * (1 + additionalMeleeDamageModifer));
 
                         currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
                         currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
@@ -556,9 +628,9 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
-                    currentMainHandMinDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 2
+                    currentMainHandMinDamageValue = (int)((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentIntelligenceValue * 2)
                         * (1 + additionalMeleeDamageModifer));
-                    currentMainHandMaxDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 2
+                    currentMainHandMaxDamageValue = (int)((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentIntelligenceValue * 2)
                         *(1 + additionalMeleeDamageModifer));
                     currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
                     currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
@@ -569,8 +641,8 @@ public class Player : MonoBehaviour
                 // Non-melee and physical damage (such as bow)
                 if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasPhysicalDamage)
                 {
-                    currentMainHandMinDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentDexterityValue;
-                    currentMainHandMaxDamageValue = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentDexterityValue;
+                    currentMainHandMinDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentDexterityValue * 0.7f);
+                    currentMainHandMaxDamageValue = (int)(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentDexterityValue * 0.7f);
 
                     currentMainHandMinDamageValue = (int)(currentMainHandMinDamageValue * (1 + additionalElementalDamageModifier));
                     currentMainHandMaxDamageValue = (int)(currentMainHandMaxDamageValue * (1 + additionalElementalDamageModifier));
@@ -602,9 +674,9 @@ public class Player : MonoBehaviour
                     // Melee and physical damage excluding dagger (such as swords, axes)
                     if (activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass != WeaponClass.Dagger)
                     {
-                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + currentStrengthValue * 2
+                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + currentStrengthValue * 1.5f
                             * (1 + additionalMeleeDamageModifer)) * 0.6f, 2);
-                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + currentStrengthValue * 2
+                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + currentStrengthValue * 1.5f
                             * (1 + additionalMeleeDamageModifer)) * 0.6f, 2);
 
                         currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
@@ -613,9 +685,9 @@ public class Player : MonoBehaviour
                     // Melee and physical for dagger
                     else
                     {
-                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + currentDexterityValue
+                        currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMin + currentDexterityValue * 0.7f
                             * (1 + additionalMeleeDamageModifer)) * 0.6f, 2);
-                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + currentDexterityValue
+                        currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.meleeDamageMax + currentDexterityValue * 0.7f
                             * (1 + additionalMeleeDamageModifer)) * 0.6f, 2);
 
                         currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
@@ -638,8 +710,10 @@ public class Player : MonoBehaviour
                 // Non-melee and physical damage (such as bow)
                 if (activeWeapon.GetCurrentOffHandWeapon().weaponDetails.hasPhysicalDamage)
                 {
-                    currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + currentDexterityValue) * 0.6f, 2);
-                    currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + currentDexterityValue) * 0.6f, 2);
+                    currentOffHandMinDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMin + 
+                        currentDexterityValue * 0.7f) * 0.6f, 2);
+                    currentOffHandMaxDamageValue = (int)Math.Round((activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax + 
+                        currentDexterityValue * 0.7f) * 0.6f, 2);
 
                     currentOffHandMinDamageValue = (int)(currentOffHandMinDamageValue * (1 + additionalElementalDamageModifier));
                     currentOffHandMaxDamageValue = (int)(currentOffHandMaxDamageValue * (1 + additionalElementalDamageModifier));
@@ -1049,11 +1123,13 @@ public class Player : MonoBehaviour
         {
             if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
             {
-                currentMainHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 2 / 100, 2) + activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitChance + additionalMeleeCriticalHitChanceModifier;
+                currentMainHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) + 
+                    activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitChance + additionalMeleeCriticalHitChanceModifier;
             }
             else
             {
-                currentMainHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 2 / 100, 2) + activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitChance;
+                currentMainHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) +
+                    activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.criticalHitChance + additionalCriticalRangedDamageModifier;
             }
         }
         else
@@ -1065,17 +1141,22 @@ public class Player : MonoBehaviour
         {
             if (activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon)
             {
-                currentOffHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 2 / 100 , 2) + activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitChance + additionalMeleeCriticalHitChanceModifier;
+                currentOffHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100 , 2) + 
+                    activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitChance + additionalMeleeCriticalHitChanceModifier;
             }
             else
             {
-                currentOffHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 2 / 100, 2) + activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitChance;
+                currentOffHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) + 
+                    activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitChance;
             }
         }
         else
         {
             currentOffHandCriticalHitChance = 0;
         }
+
+        currentMainHandCriticalHitChance = Mathf.Clamp(currentMainHandCriticalHitChance, 0f, 0.5f);
+        currentOffHandCriticalHitChance = Mathf.Clamp(currentOffHandCriticalHitChance, 0f, 0.5f);
 
         // SHADOW CLOAK
         if (shadowCloakEquipped)
@@ -1112,12 +1193,12 @@ public class Player : MonoBehaviour
             if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
             {
                 currentMainHandCriticalHitDamage = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
-                    additionalCriticalMeleeDamageModifier;
+                     currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalMeleeDamageModifier;
             }
             else
             {
-                currentMainHandCriticalHitDamage = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier;
-
+                currentMainHandCriticalHitDamage = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                    currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalRangedDamageModifier;
             }
         }
         else
@@ -1129,11 +1210,13 @@ public class Player : MonoBehaviour
         {
             if (activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon)
             {
-                currentOffHandCriticalHitDamage = activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier + additionalCriticalMeleeDamageModifier;
+                currentOffHandCriticalHitDamage = activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                    currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalMeleeDamageModifier;
             }
             else
             {
-                currentOffHandCriticalHitDamage = activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier;
+                currentOffHandCriticalHitDamage = activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                    currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalRangedDamageModifier;
             }
         }
         else
@@ -1147,7 +1230,7 @@ public class Player : MonoBehaviour
         float? weaponHandlingModifier = activeWeapon.GetCurrentOffHandWeapon() != null ? (activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponBaseHandling +
             activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponBaseHandling) / 2 * 0.7f ?? 0 : activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.weaponBaseHandling;
         float roundedModifier = weaponHandlingModifier != null ? (float)Math.Round((double)weaponHandlingModifier, 2) : 0;
-        currentWeaponHandlingValue = (float)currentDexterityValue * 10 / 100 + weaponHandlingModifier - blindModifier;
+        currentAttackRatingValue = ((float)currentDexterityValue + currentAgilityValue) / 100 + weaponHandlingModifier - blindModifier;
     }
 
     public void UpdateBlockValue()
@@ -1159,7 +1242,7 @@ public class Player : MonoBehaviour
 
     public void UpdateEvasivenessValue()
     {
-        currentEvasivenessValue = (float)Math.Round((double)(currentAgilityValue * 2.5 / 100), 2) + additionalEvasivenessModifier;
+        currentEvasivenessValue = (float)Math.Round((double)(currentAgilityValue * 0.5f / 100 + additionalEvasivenessModifier), 2) ;
     }
 
     /// <summary>
@@ -1191,10 +1274,18 @@ public class Player : MonoBehaviour
     public void RecalculateSecondaryStats()
     {
         UpdatePlayerHealth(0, false, true);
+        UpdatePlayerMana(0, false, true);
         UpdateDamageValues();
         UpdateWeaponHandlingAndCriticalValues();
         UpdateBlockAndEvasivenessValues();
         UpdateSpeedValue();
+    }
+
+    public bool HasPlayerStrongNegativeStatusEffectExcludingHealth()
+    {
+        bool hasnegativeStatusEffect = isFeared || isChilled || isBlind || isSlowed || moveStatus != MoveStatus.Idle;
+
+        return hasnegativeStatusEffect;
     }
 
     /// <summary>
@@ -1205,5 +1296,14 @@ public class Player : MonoBehaviour
         Vector3 rb2dPosition = new Vector3(rb2D.position.x, rb2D.position.y, 0f);
 
         return rb2dPosition + new Vector3(0f, 0.7f, 0f);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (isHuntersReachActive && collision.CompareTag(Settings.collisionTilemap))
+        { 
+            Debug.Log("Player hit a wall during grapple. Cancelling...");
+            playersGrapple.ReleaseGrapple(); // Reference to hook or use event
+        }
     }
 }

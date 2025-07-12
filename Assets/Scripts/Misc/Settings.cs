@@ -126,13 +126,14 @@ public static class Settings
     public const string weaponSetButton = "weaponSetButton";
     public const string dropButton = "dropButton";
     public const string playerProjectile = "playerProjectile";
-    public const string meteor = "meteor";
+    public const string aoeSkill = "aoeSkill";
     public const string enemyProjectile = "enemyProjectile";
     public const string practiceDummy = "PracticeDummy";
-    public const string astraeusTag = "astraeusTag";
-    public const string lyrisaTag = "lyrisaTag";
-    public const string orionTag = "orionTag";
-    public const string erebusTag = "erebusTag";
+    public const string caelionTag = "caelionTag";
+    public const string mycaraTag = "mycaraTag";
+    public const string nyveranTag = "nyveranTag";
+    public const string morvenTag = "morvenTag";
+    public const string karnagTag = "karnagTag";
     #endregion
 
     #region FIRING CONTROL
@@ -165,19 +166,12 @@ public static class Settings
     public const int defaultEnemyHealth = 20;
     #endregion
 
-    #region CHARACTER NAMES
-    public const string astraeus = "Astraeus";
-    public const string orion = "Orion";
-    public const string erebus = "Erebus";
-    public const string lyrisa = "Lyrisa";
-    #endregion
-
     #region UI PARAMETERS
     public const float uiHeartSpacing = 16f;
     public const float uiProjectileIconSpacing = 4f;
     #endregion
 
     #region CONTACT DAMAGE PARAMETERS
-    public const float contactDamageCollisionResetDelay = 0.4f;
+    public const float contactDamageCollisionResetDelay = 0.2f;
     #endregion
 }

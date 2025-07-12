@@ -25,13 +25,7 @@ TagManager:
   - bookCover
   - dropButton
   - forceField
-  - meteor
   - enemyProjectile
-  - astraeusTag
-  - erebusTag
-  - lyrisaTag
-  - orionTag
-  - hoverableTag
   - PracticeDummy
   - environment
   - trailerOnly
@@ -39,6 +33,12 @@ TagManager:
   - Decoy
   - Dummy
   - skillIcon
+  - caelionTag
+  - mycaraTag
+  - nyveranTag
+  - morvenTag
+  - karnagTag
+  - aoeSkill
   layers:
   - Default
   - TransparentFX

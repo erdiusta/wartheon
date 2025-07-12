@@ -87,32 +87,9 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
         // Update timers - Fire Projectile
         firingIntervalTimer -= Time.deltaTime;
 
-        // Second check if enemy is on frost status
-        if (moveStatus == MoveStatus.Frozen)
-        {
-            enemy.animateEnemy.SetIdleAnimationParameters();
+        HasNegativeMoveStatusEffect();
 
-            if (frostEnemyRoutine == null)
-            {
-                frostEnemyRoutine = StartCoroutine(FrostRoutine());
-            }
-        }
-        // Third check if enemy is on stun status
-        if (moveStatus == MoveStatus.Stun)
-        {
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
-            if (stunEnemyRoutine == null)
-            {
-                stunEnemyRoutine = StartCoroutine(StunRoutine());
-            }
-        }
-        // Fourth check if enemy is on knockback status
-        else if (moveStatus == MoveStatus.Stagger)
-        {
-            StartCoroutine(KnockbackRoutine());
-        }
-        else if (moveStatus == MoveStatus.Idle)
+        if (moveStatus == MoveStatus.Idle)
         {
             // Check if the player is on stealth
             if (GameManager.Instance.GetPlayer() != null && GameManager.Instance.GetPlayer().isStealthActive)

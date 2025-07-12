@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e767738e70a8b4386de512a7ff92be, type: 3}
+  m_Name: PassiveItem_Cure
+  m_EditorClassIdentifier: 
+  passiveItemName: Cure
+  price: 0
+  passiveItemSprite: {fileID: 1262957724, guid: 02f0616564d134f42baa863a0083e092, type: 3}
+  passiveItemCategory: 0
+  primaryPassiveItemName: 5
+  passiveItemType: 0
+  passiveItemSlotName: 0
+  passiveItemAnimatorController: {fileID: 9100000, guid: 8fc45ad79b3fec842be4a21f677a7778, type: 2}

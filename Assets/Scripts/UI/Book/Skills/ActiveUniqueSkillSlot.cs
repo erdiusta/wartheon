@@ -67,7 +67,7 @@ public class ActiveUniqueSkillSlot : MonoBehaviour, IDropHandler, IPointerEnterH
             skillImage.sprite = draggableSkillIcon.image.sprite;
 
             // Call event in order to update SkillUI in Gameplay HUD
-            StaticEventHandler.CallActiveUniqueSkillPlacedEvent(slotIndex, activeUniqueSkillDetails);
+            StaticEventHandler.CallActiveUniqueSkillPlacedEvent(slotIndex, activeUniqueSkillDetails, true);
         }
     }
 }

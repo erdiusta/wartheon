@@ -7,10 +7,11 @@ public class FireWeaponEvent : MonoBehaviour
     public event Action<FireWeaponEvent, FireWeaponEventArgs> OnFireWeapon;
 
     public void CallFireWeaponEvent(bool fire, bool firePreviousFrame, Enemy belongingEnemy, bool isLaser, AimDirection aimDirection, float aimAngle, float weaponAimAngle,
-        Vector3 weaponAimDirectionVector, bool headShotHappened = false, bool isActiveItem = false, bool isPenetrationArrow = false, MoravellePhase moravellePhase = MoravellePhase.None,
+        Vector3 weaponAimDirectionVector, bool isIceBreaker = false, bool isActiveItem = false, bool isPenetrationArrow = false, MoravellePhase moravellePhase = MoravellePhase.None,
         TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
         FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None,
-        MoldranPhase moldranPhase = MoldranPhase.None)
+        MoldranPhase moldranPhase = MoldranPhase.None, bool isTripleThreat = false, bool isBindingArrow = false, bool isArrowOfTheSeven = false, 
+        ProjectileDetailsSO grappleDetails = null, ProjectileDetailsSO iceBreakerDetails = null)
     {
         OnFireWeapon?.Invoke(this, new FireWeaponEventArgs
         {
@@ -22,7 +23,6 @@ public class FireWeaponEvent : MonoBehaviour
             aimAngle = aimAngle,
             weaponAimAngle = weaponAimAngle,
             weaponAimDirectionVector = weaponAimDirectionVector,
-            headShotHappened = headShotHappened,
             isActiveItem = isActiveItem,
             isPenetrationArrow = isPenetrationArrow,
             moravellePhase = moravellePhase,
@@ -32,7 +32,13 @@ public class FireWeaponEvent : MonoBehaviour
             frostWrymPhase = frostWrymPhase,
             venomancerPhase = venomancerPhase,
             fireWrymPhase = fireWrymPhase,
-            moldranPhase = moldranPhase
+            moldranPhase = moldranPhase,
+            isTripleThreat = isTripleThreat,
+            isBindingArrow = isBindingArrow,
+            isArrowOfTheSeven = isArrowOfTheSeven,
+            grappleDetails = grappleDetails,
+            isIceBreaker = isIceBreaker,
+            iceBreakerDetails = iceBreakerDetails
         });
     }
 
@@ -54,7 +60,7 @@ public class FireWeaponEventArgs : EventArgs
     public float aimAngle;
     public float weaponAimAngle;
     public Vector3 weaponAimDirectionVector;
-    public bool headShotHappened;
+    public bool isIceBreaker;
     public bool isActiveItem;
     public bool isPenetrationArrow;
     public MoravellePhase moravellePhase;
@@ -65,6 +71,11 @@ public class FireWeaponEventArgs : EventArgs
     public VenomancerPhase venomancerPhase;
     public FireWrymPhase fireWrymPhase;
     public MoldranPhase moldranPhase;
+    public bool isTripleThreat;
+    public bool isBindingArrow;
+    public bool isArrowOfTheSeven;
+    public ProjectileDetailsSO grappleDetails;
+    public ProjectileDetailsSO iceBreakerDetails;
 }
 
 public class FireFocusedShotEventArgs : EventArgs

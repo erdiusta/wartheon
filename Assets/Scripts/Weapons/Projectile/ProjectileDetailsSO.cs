@@ -118,11 +118,18 @@ public class ProjectileDetailsSO : ScriptableObject
     #endregion
     public int burstDamageMax = 25;
 
-
     #region Header PASSIVE
     [Space(10)]
     [Header("PROJECTILE PASSIVE EFFECT")]
     #endregion
+    #region Tooltip
+    [Tooltip("Check if projectile can warm")]
+    #endregion Tooltip
+    public bool hasWarmDamage;
+    #region Tooltip
+    [Tooltip("The chance of projetile's warm effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float warmChance = 0f;
     #region Tooltip
     [Tooltip("Check if projectile has burn damage")]
     #endregion Tooltip
@@ -132,19 +139,6 @@ public class ProjectileDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float burnChance = 0f;
     #region Tooltip
-    [Tooltip("Check if projectile has poison damage")]
-    #endregion Tooltip
-    public bool isPoisonous;
-    #region Tooltip
-    [Tooltip("The chance of projectile's poison damage")]
-    #endregion
-    [Range(0f, 1f)] public float poisonChance = 0.2f;
-    public bool hasAcid;
-    #region Tooltip
-    [Tooltip("The efficiency of projectile's acid")]
-    #endregion Tooltip
-    [Range(0f, 1f)] public float acidEfficiency = 0.4f;
-    #region Tooltip
     [Tooltip("Check if projectile has stun damage")]
     #endregion Tooltip
     public bool hasStunDamage;
@@ -152,6 +146,70 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip("The chance of projectile's stun")]
     #endregion Tooltip
     [Range(0f, 1f)] public float stunChance = 0.2f;
+    #region Tooltip
+    [Tooltip("Check if projectile has root damage")]
+    #endregion Tooltip
+    public bool hasRootDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's root")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float rootChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if projectile has bleeding")]
+    #endregion Tooltip
+    public bool hasBleedingDamage;
+    #region Tooltip
+    [Tooltip("The efficiency of projectile's bleeding")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float bleedingChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if projectile has slow")]
+    #endregion Tooltip
+    public bool hasSlowDamage;
+    #region Tooltip
+    [Tooltip("The efficiency of projectile's slow")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float slowChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if projectile has poison damage")]
+    #endregion Tooltip
+    public bool hasPoisonDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's poison damage")]
+    #endregion
+    [Range(0f, 1f)] public float poisonChance = 0.2f;
+    #region Tooltip
+    [Tooltip("Check if projectile can static")]
+    #endregion Tooltip
+    public bool hasStaticDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's static effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float staticChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if projectile can paralyze")]
+    #endregion Tooltip
+    public bool hasParalyzeDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's paralyze effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float paralyzeChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's acid effect")]
+    #endregion Tooltip
+    public bool hasAcidDamage;
+    #region Tooltip
+    [Tooltip("The efficiency of projectile's acid")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float acidEfficiency = 0.4f;
+    #region Tooltip
+    [Tooltip("Check if projectile has chill damage")]
+    #endregion Tooltip
+    public bool hasChillDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's chill")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float chillChance = 0f;
     #region Tooltip
     [Tooltip("Check if projectile has frost damage")]
     #endregion Tooltip
@@ -161,14 +219,6 @@ public class ProjectileDetailsSO : ScriptableObject
     #endregion Tooltip
     [Range(0f, 1f)] public float frostChance = 0f;
     #region Tooltip
-    [Tooltip("The chance of projectile's curse")]
-    #endregion Tooltip
-    public bool hasCurseDamage = false;
-    #region Tooltip
-    [Tooltip("Check enemy's curse chance")]
-    #endregion
-    [Range(0f, 1f)] public float curseChance = 0f;
-    #region Tooltip
     [Tooltip("Check if projectile has blind damage")]
     #endregion Tooltip
     public bool hasBlindDamage;
@@ -176,6 +226,36 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip("The chance of projectile's blind")]
     #endregion Tooltip
     [Range(0f, 1f)] public float blindChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if projectile has reveal damage")]
+    #endregion Tooltip
+    public bool hasRevealDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's reveal")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float revealChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's curse")]
+    #endregion Tooltip
+    public bool hasCurseDamage;
+    #region Tooltip
+    [Tooltip("Check enemy's curse chance")]
+    #endregion
+    [Range(0f, 1f)] public float curseChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if projectile has fear damage")]
+    #endregion Tooltip
+    public bool hasFearDamage;
+    #region Tooltip
+    [Tooltip("The chance of projectile's fear")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float fearChance = 0f;
+    public bool canDrainHealth;
+    #region Tooltip
+    [Tooltip("The chance of health drained")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float healthDrainChance = 0f;
+
 
     #region Header PROJECTILE SPREAD DETAILS
     [Space(10)]
@@ -189,6 +269,19 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip(" This is the maximum spread angle of the projectile.  A higher spread means less accuracy. A random spread is calculated between the min and max values")]
     #endregion
     public float projectileSpreadMax = 0f;
+
+    #region Header PROJECTILE SPREAD DETAILS
+    [Space(10)]
+    [Header("PROJECTILE CRITICAL DETAILS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Critical hit chance of the projectile")]
+    #endregion
+    public float criticalHitChance = 0f;
+    #region Tooltip
+    [Tooltip("Critical hit damage multiplier")]
+    #endregion
+    public float criticalHitDamageMultiplier = 1.5f;
 
     #region Header PROJECTILE SPAWN DETAILS
     [Space(10)]

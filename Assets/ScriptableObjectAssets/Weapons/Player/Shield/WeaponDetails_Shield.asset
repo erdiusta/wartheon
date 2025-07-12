@@ -36,18 +36,38 @@ MonoBehaviour:
   weaponHoverAnimatorController: {fileID: 9100000, guid: 1a628c7453d881c47a5cd0112a246f01, type: 2}
   canKillSuddenly: 0
   suddenKillChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
   hasAcid: 0
   acidEfficiency: 0
+  canWarm: 0
+  warmChance: 0
   canBurn: 0
   burnChance: 0
   isPoisonous: 0
   poisonChance: 0
+  canStatic: 0
+  staticChance: 0
+  canParalyze: 0
+  paralyzeChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasRootDamage: 0
+  rootChance: 0
+  hasChillDamage: 0
+  chillChance: 0
   hasFrostDamage: 0
   frostChance: 0
   hasBlindDamage: 0
   blindChance: 0
+  hasRevealDamage: 0
+  revealChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasFearDamage: 0
+  fearChance: 0
   canDrainHealth: 0
   healthDrainChance: 0
   weaponRightShootPosition: {x: 0, y: 0, z: 0}
@@ -66,6 +86,8 @@ MonoBehaviour:
   circleRadius: 0
   boxLength: 1.2
   boxHeight: 2.6
+  coneLength: 3
+  coneAngle: 60
   hasPhysicalDamage: 0
   meleeDamageMin: 0
   meleeDamageMax: 0

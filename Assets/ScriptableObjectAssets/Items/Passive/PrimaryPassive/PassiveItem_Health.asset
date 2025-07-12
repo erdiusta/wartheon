@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   passiveItemName: Health
   price: 0
-  passiveItemSprite: {fileID: -1216308913, guid: f9ee2bab07942d7449d2d3b8d49d5d85, type: 3}
+  passiveItemSprite: {fileID: 503904884, guid: a7b9de76c750aaf4299623fbf8a60e5d, type: 3}
   passiveItemCategory: 0
   primaryPassiveItemName: 1
   passiveItemType: 0

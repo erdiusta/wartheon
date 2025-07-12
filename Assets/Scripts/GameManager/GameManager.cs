@@ -174,6 +174,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [SerializeField] Sprite standardSprite;
     [SerializeField] Sprite flashSprite;
 
+    bool isManaRegenRunning = false;
+    Coroutine manaRegenCoroutine;
+
     // Letterbox Materials
     [Header("Letterbox Cinematics")]
     [Space(10)]
@@ -272,18 +275,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         if (decoy != null)
         {
             Destroy(decoy.gameObject);
-        }
-
-        if (Player.hasClone)
-        {
-            Destroy(player.playerCloneObject);
-
-            if (player.tripleTeamEnabled)
-            {
-                Destroy(player.playerSecondCloneObject);
-            }
-
-            Player.hasClone = false;
         }
 
         switch (roomChangedEventArgs.room.roomNodeType.roomNodeTypeName)
@@ -634,8 +625,40 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
     }
 
+    IEnumerator SmoothManaRegen()
+    {
+        float regenRate = 8f; // mana per second
+        float regenInterval = 0.5f; // wait time between regen ticks
+
+        while (player.mana.GetCurrentMana() < player.mana.GetMaximumMana() - player.mana.GetReservedMana())
+        {
+            float manaToAdd = regenRate * regenInterval;
+            player.mana.AddMana((int)Mathf.Ceil(manaToAdd)); // round up to ensure visible progress
+            yield return new WaitForSeconds(regenInterval);
+        }
+
+        isManaRegenRunning = false;
+    }
+
     private void Update()
     {
+        bool roomCleared = currentRoom != null && EnemySpawner.Instance.transform.childCount <= 0;
+        bool manaNotFull = player.mana.GetCurrentMana() < player.mana.GetMaximumMana();
+
+        if (roomCleared && manaNotFull && !isManaRegenRunning)
+        {
+            manaRegenCoroutine = StartCoroutine(SmoothManaRegen());
+            isManaRegenRunning = true;
+        }
+
+        // Stop regeneration if enemies return
+        if (!roomCleared && isManaRegenRunning)
+        {
+            if(manaRegenCoroutine != null) StopCoroutine(manaRegenCoroutine);
+
+            isManaRegenRunning = false;
+        }
+
         if (player.health.hasDied && !deathChecked)
         {
             gameState = GameState.gameLost; // Update here in case of stuck
@@ -1772,13 +1795,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Display game won - DEMO
         if (isDemo)
         {
-            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + upperName + "! YOU HAVE COMPLETED DEMO!",
+            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + upperName + "!\nYOU HAVE COMPLETED DEMO!",
                 Color.green, 7f));
         }
         else
         {
             // Display game won
-            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + upperName + "! YOU HAVE SECURED THE WARTHEON",
+            yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + upperName + "\nYOU HAVE SECURED THE WARTHEON",
                 Color.green, 7f));
         }
 

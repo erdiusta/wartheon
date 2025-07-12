@@ -79,7 +79,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SeismicSlamFX
+  m_Name: SeismicSlam
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -93,7 +93,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: ce80f9ffe566ba34ea518872f677d0ff, type: 2}
+  m_Motion: {fileID: 7400000, guid: 453c3160e1bbe5f4ab37d6aa2d4eed72, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

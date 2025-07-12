@@ -13,7 +13,7 @@ public class StatButton : MonoBehaviour
 
     public void IncreaseStatPoint()
     {
-        if(player.currentSkillPoints > 0)
+        if(player.currentStatPoints > 0)
         {
             switch (statName)
             {
@@ -46,7 +46,7 @@ public class StatButton : MonoBehaviour
             }
 
             player.currentStatPoints--;
-            StaticEventHandler.CallStatPointChangedEvent(statName);
+            StaticEventHandler.CallStatPointChangedEvent();
         }
     }
 }

@@ -23,36 +23,57 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 11400000, guid: 9e888f32de5d60a429c75fb52a068ded, type: 2}
   projectileDamageMin: 6
   projectileDamageMax: 10
-  projectileSpeedMin: 13
-  projectileSpeedMax: 16
+  projectileSpeed: 20
   projectileRange: 16
+  hasLifeTime: 0
+  lifeDuration: 15
   projectileRotationSpeed: 1
   isGuided: 0
   isBouncing: 1
   isBomb: 0
   isTrap: 0
-  hasLifeTime: 0
-  lifeDuration: 15
   blastRadius: 1
   countDown: 3
   burstDamageMin: 15
   burstDamageMax: 25
+  hasWarmDamage: 0
+  warmChance: 0
   hasBurnDamage: 0
   burnChance: 0
-  isPoisonous: 0
-  poisonChance: 0
-  hasAcid: 0
-  acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
+  hasRootDamage: 0
+  rootChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
+  hasPoisonDamage: 0
+  poisonChance: 0
+  hasStaticDamage: 0
+  staticChance: 0
+  hasParalyzeDamage: 0
+  paralyzeChance: 0
+  hasAcidDamage: 0
+  acidEfficiency: 0
+  hasChillDamage: 0
+  chillChance: 0
   hasFrostDamage: 0
   frostChance: 0
-  hasCurseDamage: 0
-  curseChance: 0
   hasBlindDamage: 0
   blindChance: 0
+  hasRevealDamage: 0
+  revealChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasFearDamage: 0
+  fearChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
   projectileSpreadMin: 0.5
   projectileSpreadMax: 3
+  criticalHitChance: 0.05
+  criticalHitDamageMultiplier: 1.5
   projectileSpawnAmountMin: 1
   projectileSpawnAmountMax: 1
   projectileSpawnIntervalMin: 0

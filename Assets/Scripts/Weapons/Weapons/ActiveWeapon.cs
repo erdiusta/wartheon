@@ -67,10 +67,10 @@ public class ActiveWeapon : MonoBehaviour
         if (player != null)
         {
             mainHandAnchorPosition = transform.GetChild(0);
-            offHandAnchorPosition = transform.GetChild(1);
+            offHandAnchorPosition = transform.GetChild(2);
 
-            thirdHandGameObject = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(3).gameObject;
-            weaponOffHandAnimator = transform.GetChild(1).GetComponent<Animator>();
+            thirdHandGameObject = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).gameObject;
+            weaponOffHandAnimator = offHandAnchorPosition.GetComponent<Animator>();
         }
     }
 

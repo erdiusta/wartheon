@@ -33,7 +33,7 @@ public class ActiveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     transform.GetComponent<Image>().color = Color.white;
                 }
                 break;
-            case Character.Lyrisa:
+            case Character.Mycara:
                 if (activeItemDetails.activeItemType == ActiveItemType.Pentagram)
                 {
                     activeUnlocked = true;

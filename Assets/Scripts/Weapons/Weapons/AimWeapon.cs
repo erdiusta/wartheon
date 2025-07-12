@@ -178,8 +178,8 @@ public class AimWeapon : MonoBehaviour
             }
 
             // In case of shield
-            Animator shieldAnimator = player.transform.GetChild(1).GetComponent<Animator>();
-            SpriteRenderer shieldSpriteRenderer = player.transform.GetChild(1).GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
+            Animator shieldAnimator = player.transform.GetChild(2).GetComponent<Animator>();
+            SpriteRenderer shieldSpriteRenderer = player.transform.GetChild(2).GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
 
             //if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
             //{

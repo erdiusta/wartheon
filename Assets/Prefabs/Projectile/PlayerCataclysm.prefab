@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8724512668055246683}
   m_Layer: 26
   m_Name: PlayerCataclysm
-  m_TagString: meteor
+  m_TagString: aoeSkill
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -49,10 +49,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trailRenderer: {fileID: 2893936929755227308}
+  projectileAnimator: {fileID: 0}
   layerMask:
     serializedVersion: 2
     m_Bits: 65536
+  belongingParent: {fileID: 0}
+  spriteRenderer: {fileID: 3372186300486076769}
+  projectileDetails: {fileID: 0}
   angleSpeed: 10
+  ropeTransform: {fileID: 0}
+  ropeSpriteRenderer: {fileID: 0}
+  grappleHeadTransform: {fileID: 0}
   lockedTargetVector: {x: 0, y: 0, z: 0}
   lockedAngle: 0
 --- !u!60 &9140885954065316800

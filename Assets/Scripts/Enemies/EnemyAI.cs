@@ -31,7 +31,12 @@ public class EnemyAI : MonoBehaviour
     protected Enemy enemy;
     protected Coroutine attackAnimationRoutine;
     protected Coroutine stunEnemyRoutine;
+    protected Coroutine rootEnemyRoutine;
+    protected Coroutine chillEnemyRoutine;
     protected Coroutine frostEnemyRoutine;
+    protected Coroutine shatterEnemyRoutine;
+    protected Coroutine slowEnemyRoutine;
+    protected Coroutine fearEnemyRoutine;
     protected Vector3 lockedVector;
     protected Room currentRoom;
 
@@ -141,35 +146,10 @@ public class EnemyAI : MonoBehaviour
 
         if (isAttacking) return;
 
-        // Second check if enemy is on frozen status
-        if (moveStatus == MoveStatus.Frozen)
+        if (HasNegativeMoveStatusEffect()) return;
+        else
         {
-            enemy.idle.StopVelocity();
-
-            if (frostEnemyRoutine == null)
-            {
-                if (attackAnimationRoutine != null)
-                {
-                    StopCoroutine(attackAnimationRoutine);
-                    isAttacking = false;
-                }
-                frostEnemyRoutine = StartCoroutine(FrostRoutine());
-            }
-        }
-        // Third check if enemy is on stun status
-        else if (moveStatus == MoveStatus.Stun)
-        {
-            enemy.idle.StopVelocity();
-
-            if (stunEnemyRoutine == null)
-            {
-                stunEnemyRoutine = StartCoroutine(StunRoutine());
-            }
-        }
-        // Fourth check if enemy is on knockback status
-        else if (moveStatus == MoveStatus.Stagger)
-        {
-            StartCoroutine(KnockbackRoutine());
+            SecondaryStatusEffectsCheck();
         }
 
         if (moveStatus == MoveStatus.Idle)
@@ -271,6 +251,44 @@ public class EnemyAI : MonoBehaviour
 
                 default:
                     break;
+            }
+        }
+    }
+
+    protected void SecondaryStatusEffectsCheck()
+    {
+        if (enemy.isFeared)
+        {
+            if (fearEnemyRoutine == null)
+            {
+                if (attackAnimationRoutine != null)
+                {
+                    StopCoroutine(attackAnimationRoutine);
+                    isAttacking = false;
+                }
+
+                fearEnemyRoutine = StartCoroutine(FearRoutine(5f));
+            }
+        }
+        if (enemy.isChilled)
+        {
+            if (chillEnemyRoutine == null)
+            {
+                chillEnemyRoutine = StartCoroutine(ChillRoutine(5f));
+            }
+        }
+        if (enemy.isShattered)
+        {
+            if (shatterEnemyRoutine == null)
+            {
+                shatterEnemyRoutine = StartCoroutine(ShatterRoutine(1f));
+            }
+        }
+        if (enemy.isSlowed)
+        {
+            if (slowEnemyRoutine == null)
+            {
+                slowEnemyRoutine = StartCoroutine(SlowRoutine(3f));
             }
         }
     }
@@ -831,8 +849,63 @@ public class EnemyAI : MonoBehaviour
 
         // Reset stun status and allow other stun coroutines to be started
         ResetEnemySpeed();
-        moveStatus = MoveStatus.Idle;
+        moveStatus &= ~MoveStatus.Root;
         stunEnemyRoutine = null;
+    }
+
+    public IEnumerator ChillRoutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        enemy.isChilled = false;
+        enemy.healthEvent.CallChillCuredEvent();
+        chillEnemyRoutine = null;
+    }
+
+    public IEnumerator SlowRoutine(float duration)
+    {
+        enemy.currentMoveSpeed = enemy.enemyDetails.movementDetails.GetBaseMoveSpeed() * 0.5f;
+
+        yield return new WaitForSeconds(duration);
+
+        enemy.currentMoveSpeed = enemy.enemyDetails.movementDetails.GetBaseMoveSpeed();
+        enemy.isSlowed = false;
+        enemy.healthEvent.CallChillCuredEvent();
+        chillEnemyRoutine = null;
+    }
+
+    public IEnumerator ShatterRoutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        // Reset All Cold Status
+        moveStatus &= ~MoveStatus.Frozen;
+        enemy.isChilled = false;
+        enemy.isShattered = false;
+        enemy.healthEvent.CallChillCuredEvent();
+        enemy.healthEvent.CallFrostCuredEvent();
+        enemy.healthEvent.CallShatterCuredEvent();
+
+        shatterEnemyRoutine = null;
+    }
+
+    public IEnumerator RootRoutine()
+    {
+        enemy.idle.StopVelocity();
+        enemy.rootAnimator.SetBool("root", true);
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.rootSoundEffect);
+
+        yield return new WaitForSeconds(4f);
+
+        enemy.rootAnimator.SetBool("root", false);
+        enemy.healthEvent.CallRootCuredEvent();
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        // Reset stun status and allow other stun coroutines to be started
+        ResetEnemySpeed();
+        moveStatus &= ~MoveStatus.Root;
+        rootEnemyRoutine = null;
     }
 
     public IEnumerator FrostRoutine()
@@ -855,9 +928,45 @@ public class EnemyAI : MonoBehaviour
 
         // Reset stun status and allow other stun coroutines to be started
         ResetEnemySpeed();
-        moveStatus = MoveStatus.Idle;
+        // Remove Frozen
+        moveStatus &= ~MoveStatus.Frozen;
         enemyPhase = EnemyPhase.Patrol;
         frostEnemyRoutine = null;
+    }
+
+    public IEnumerator FearRoutine(float duration)
+    {
+        float elapsed = 0f;
+
+        enemy.aiRigidbody2D.enabled = false;
+        enemy.aiDestinationSetter.enabled = false;
+        enemy.patrol.enabled = false;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.fixedDeltaTime;
+
+            MoveAwayFromPlayer(); // Move away from player every frame
+            yield return null;
+        }
+
+        enemy.aiRigidbody2D.enabled = true;
+        enemy.aiDestinationSetter.enabled = true;
+        enemy.patrol.enabled = true;
+
+        enemy.isFeared = false;
+        enemy.healthEvent.CallFearCuredEvent();
+        fearEnemyRoutine = null;
+    }
+
+    public void MoveAwayFromPlayer()
+    {
+        if (player == null) return;
+
+        Vector2 direction = (transform.position - player.transform.position).normalized;
+        float fearMoveSpeed = enemy.currentMoveSpeed * 0.5f;
+
+        transform.position += (Vector3)(direction * fearMoveSpeed * Time.deltaTime);
     }
 
     public IEnumerator KnockbackRoutine()
@@ -913,6 +1022,69 @@ public class EnemyAI : MonoBehaviour
 
         enemy.idle.StopVelocity();
         knockbackForce = 0f;
+    }
+
+    protected bool HasNegativeMoveStatusEffect()
+    {
+        bool negativeStatusEffect = false;
+
+        // Frozen
+        if ((moveStatus & MoveStatus.Frozen) != 0)
+        {
+            enemy.idle.StopVelocity();
+            negativeStatusEffect = true;
+
+            if (frostEnemyRoutine == null)
+            {
+                if (attackAnimationRoutine != null)
+                {
+                    StopCoroutine(attackAnimationRoutine);
+                    isAttacking = false;
+                }
+
+                frostEnemyRoutine = StartCoroutine(FrostRoutine());
+            }
+        }
+
+        // Stun
+        if ((moveStatus & MoveStatus.Stun) != 0)
+        {
+            enemy.idle.StopVelocity();
+            negativeStatusEffect = true;
+
+            if (stunEnemyRoutine == null)
+            {
+                stunEnemyRoutine = StartCoroutine(StunRoutine());
+            }
+        }
+
+        // Root
+        if ((moveStatus & MoveStatus.Root) != 0)
+        {
+            enemy.idle.StopVelocity();
+            negativeStatusEffect = true;
+
+            if (rootEnemyRoutine == null)
+            {
+                rootEnemyRoutine = StartCoroutine(RootRoutine());
+            }
+        }
+
+        // Stagger
+        if ((moveStatus & MoveStatus.Stagger) != 0)
+        {
+            negativeStatusEffect = true;
+
+            StartCoroutine(KnockbackRoutine());
+        }
+
+        // If no negative effects were detected, revert to Idle
+        if (!negativeStatusEffect)
+        {
+            moveStatus = MoveStatus.Idle;
+        }
+
+        return negativeStatusEffect;
     }
 
     /// <summary>

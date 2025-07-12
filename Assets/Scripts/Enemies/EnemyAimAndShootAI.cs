@@ -30,35 +30,8 @@ public class EnemyAimAndShootAI : EnemyAI
         Vector3 unitVector = Vector3.zero; Vector3 weaponDirection; float weaponAngleDegrees; float enemyAngleDegrees;
         AimDirection enemyAimDirection; AttackDirection enemyAttackDirection;
 
-        if (moveStatus == MoveStatus.Frozen)
-        {
-            enemy.idle.StopVelocity();
-
-            if (frostEnemyRoutine == null)
-            {
-                if (attackAnimationRoutine != null)
-                {
-                    StopCoroutine(attackAnimationRoutine);
-                    isAttacking = false;
-                }
-                frostEnemyRoutine = StartCoroutine(FrostRoutine());
-            }
-        }
-        // Third check if enemy is on stun status
-        else if (moveStatus == MoveStatus.Stun)
-        {
-            enemy.idle.StopVelocity();
-
-            if (stunEnemyRoutine == null)
-            {
-                stunEnemyRoutine = StartCoroutine(StunRoutine());
-            }
-        }
-        // Fourth check if enemy is on knockback status
-        else if (moveStatus == MoveStatus.Stagger)
-        {
-            StartCoroutine(KnockbackRoutine());
-        }
+        if (HasNegativeMoveStatusEffect()) return;
+        else SecondaryStatusEffectsCheck();
 
         if (moveStatus == MoveStatus.Idle)
         {

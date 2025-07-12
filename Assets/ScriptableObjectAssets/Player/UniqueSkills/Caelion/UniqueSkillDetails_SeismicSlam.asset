@@ -20,4 +20,4 @@ MonoBehaviour:
   activeUniqueSkillCooldownDuration: 15
   activeUniqueSkillEffectiveDuration: 0
   activeUniqueSkillManaCost: 15
-  activeUniqueSkillManaReserveCost: 15
+  activeUniqueSkillManaReserveCost: 0

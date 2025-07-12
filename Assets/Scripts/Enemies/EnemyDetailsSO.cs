@@ -170,6 +170,22 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     [Range(0f, 1f)] public float burnChance = 0f;
     #region Tooltip
+    [Tooltip("Check if enemy has bleeding")]
+    #endregion Tooltip
+    public bool hasBleedingDamage;
+    #region Tooltip
+    [Tooltip("The efficiency of enemy's bleeding")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float bleedingChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if enemy has slow")]
+    #endregion Tooltip
+    public bool hasSlowDamage;
+    #region Tooltip
+    [Tooltip("The efficiency of enemy's slow")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float slowChance = 0f;
+    #region Tooltip
     [Tooltip("Check if enemy is a poisonous")]
     #endregion
     public bool isPoisonous = false;
@@ -194,6 +210,22 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     [Range(0f, 1f)] public float stunChance = 0.4f;
     #region Tooltip
+    [Tooltip("Check if enemy has root damage")]
+    #endregion
+    public bool hasRootDamage = false;
+    #region Tooltip
+    [Tooltip("Check enemy's root chance")]
+    #endregion
+    [Range(0f, 1f)] public float rootChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if enemy has chill damage")]
+    #endregion
+    public bool hasChillDamage = false;
+    #region Tooltip
+    [Tooltip("Check enemy's chill chance")]
+    #endregion
+    [Range(0f, 1f)] public float chillChance = 0f;
+    #region Tooltip
     [Tooltip("Check if enemy has frost damage")]
     #endregion
     public bool hasFrostDamage = false;
@@ -209,6 +241,19 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check enemy's curse chance")]
     #endregion
     [Range(0f, 1f)] public float curseChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if enemy has fear damage")]
+    #endregion Tooltip
+    public bool hasFearDamage;
+    #region Tooltip
+    [Tooltip("The chance of enemy's fear")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float fearChance = 0f;
+    public bool canDrainHealth;
+    #region Tooltip
+    [Tooltip("The chance of player's health drained")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float healthDrainChance = 0f;
     public bool hasBlindDamage = false;
     #region Tooltip
     [Tooltip("Check enemy's blind chance")]
@@ -285,6 +330,10 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("The sound effect for this enemy to be stunned")]
     #endregion
     public SoundEffectSO stunSoundEffect;
+    #region Tooltip
+    [Tooltip("The sound effect for this enemy to be rooted")]
+    #endregion
+    public SoundEffectSO rootSoundEffect;
     #region Tooltip
     [Tooltip("The sound effect for this enemy to be poisoned")]
     #endregion

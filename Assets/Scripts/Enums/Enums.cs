@@ -54,7 +54,11 @@ public enum Character
     Caelion,
     Morven,
     Nyveran,
-    Lyrisa
+    Mycara,
+    Karnag,
+    Kynara,
+    Nymara,
+    Nyxa
 }
 
 public enum NpcType
@@ -106,6 +110,34 @@ public enum PrimaryStatName
     Ferocity
 }
 
+public enum InnerPathName
+{
+    KillersEdge,
+    FocusedAggression,
+    PunishersWill,
+    ViciousMomentum,
+    SurgingElements,
+    CounterRiposte,
+    Armorbane,
+    TriadExecution,
+    UnyieldingGuard,
+    DieHard,
+    StoneSkin,
+    BattleScars,
+    ReflexBarrier,
+    ArcaneFortitude,
+    SecondBreath,
+    BlockThemAll,
+    QuickReflexes,
+    WeaversTempo,
+    EfficientMind,
+    ShiftingStance,
+    CombatFocus,
+    Resourceful,
+    BattleReady,
+    SurgeTapGain
+}
+
 public enum ActiveItemType
 {
     Generic,
@@ -135,8 +167,9 @@ public enum PrimaryPassiveItemName
     SilverCoin,
     GoldCoin,
     Key,
-    Medicine,
-    HolyWater
+    Cure,
+    HolyWater,
+    Mana
 }
 
 public enum PassiveItemType
@@ -197,26 +230,30 @@ public enum ShirukenPhase
     Ricochet
 }
 
+[System.Flags]
 public enum MoveStatus
 {
-    Idle,
-    Stagger,
-    Stun,
-    Frozen
+    None = 0,
+    Idle = 1 << 0, // 1
+    Stagger = 1 << 1, // 2
+    Stun = 1 << 2, // 4
+    Root = 1 << 3, // 8
+    Frozen = 1 << 4, // 16
+    Paralyze = 1 << 5  // 32
 }
 
 [System.Flags]
 public enum HealthStatus
 {
     Normal = 0,
-    Poisoned = 1 << 0, // 1
-    Burned = 1 << 1 // 2
+    Poisoned = 1 << 0, // 1 (binary 0001)
+    Burned = 1 << 1, // 2 (binary 0010)
+    Bleeding = 1 << 2  // 4 (binary 0100)
 }
 
 public enum ArmorStatus
 {
     Normal,
-    SilverArmor,
     Acid
 }
 
@@ -337,11 +374,12 @@ public enum ElementalBias
     Light
 }
 
-public enum MeleeAttackType
+public enum AttackShape
 {
     None,
     Swing,
-    Thrust
+    Thrust,
+    Cone
 }
 
 public enum AttackType
@@ -555,7 +593,17 @@ public enum ActiveSkill
     Stealth,
     BloodDrain,
     ShadowStep,
-    CullTheMeek
+    CullTheMeek,
+    Penetrate,
+    TripleThreat,
+    BindingArrow,
+    ArrowsOfTheSevenPlagues,
+    HuntersReach,
+    Blizzard,
+    MycarasSeal,
+    SheerCold,
+    Icebreaker,
+    AbsoluteZero
 }
     
 

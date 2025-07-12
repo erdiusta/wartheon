@@ -37,11 +37,11 @@ public static class StaticEventHandler
     }
 
     // Stat point increased
-    public static event Action<StatChangedArgs> OnStatPointChanged;
+    public static event Action OnStatPointChanged;
 
-    public static void CallStatPointChangedEvent(PrimaryStatName statName)
+    public static void CallStatPointChangedEvent()
     {
-        OnStatPointChanged?.Invoke(new StatChangedArgs { statName = statName });
+        OnStatPointChanged?.Invoke();
     }
 
     // Dynamic camera follow toggle changed
@@ -61,27 +61,27 @@ public static class StaticEventHandler
     }
 
     // Build Info Hovered
-    public static event Action<BuildPointsArgs> OnBuildInfoHovered;
+    public static event Action<SkillPointsArgs> OnBuildInfoHovered;
 
-    public static void CallBuildInfoHoveredEvent(int buildIndex)
+    public static void CallInnerPathInfoHoveredEvent(InnerPathDetailsSO innerPathDetails)
     {
-        OnBuildInfoHovered?.Invoke(new BuildPointsArgs { buildIndex = buildIndex});
+        OnBuildInfoHovered?.Invoke(new SkillPointsArgs { innerPathDetails = innerPathDetails });
     }
 
     // Build Info Unhovered
-    public static event Action<BuildPointsArgs> OnBuildInfoUnhovered;
+    public static event Action<SkillPointsArgs> OnBuildInfoUnhovered;
 
-    public static void CallBuildInfoUnhoveredEvent(int buildIndex)
+    public static void CallInnerPathInfoUnhoveredEvent(InnerPathDetailsSO innerPathDetails)
     {
-        OnBuildInfoUnhovered?.Invoke(new BuildPointsArgs { buildIndex = buildIndex });
+        OnBuildInfoUnhovered?.Invoke(new SkillPointsArgs { innerPathDetails = innerPathDetails });
     }
 
     // Build point used
-    public static event Action<BuildPointsArgs> OnBuildPointUsed;
+    public static event Action<SkillPointsArgs> OnSkillPointUsed;
 
-    public static void CallBuildPointsUsed(int buildIndex)
+    public static void CallSkillPointsUsed(InnerPathDetailsSO innerPathDetails)
     {
-        OnBuildPointUsed?.Invoke(new BuildPointsArgs { buildIndex = buildIndex });
+        OnSkillPointUsed?.Invoke(new SkillPointsArgs { innerPathDetails = innerPathDetails });
     }
 
     // Room changed event
@@ -144,9 +144,10 @@ public static class StaticEventHandler
     // Place new skill to slot
     public static event Action<ActiveUniqueSkillPlacedArgs> OnActiveUniqueSkillPlaced;
 
-    public static void CallActiveUniqueSkillPlacedEvent(int placedSlotIndex, ActiveUniqueSkillDetailsSO activeUniqueSkillDetails)
+    public static void CallActiveUniqueSkillPlacedEvent(int placedSlotIndex, ActiveUniqueSkillDetailsSO activeUniqueSkillDetails, bool slotDrop)
     {
-        OnActiveUniqueSkillPlaced?.Invoke(new ActiveUniqueSkillPlacedArgs { placedSlotIndex = placedSlotIndex, activeUniqueSkillDetails = activeUniqueSkillDetails });
+        OnActiveUniqueSkillPlaced?.Invoke(new ActiveUniqueSkillPlacedArgs { placedSlotIndex = placedSlotIndex, activeUniqueSkillDetails = activeUniqueSkillDetails,
+            slotDrop = slotDrop});
     }
 
     // Open book's build page
@@ -458,6 +459,11 @@ public static class StaticEventHandler
     {
         OnEnemyKilled?.Invoke(new EnemyKilledArgs { enemy = enemy });
     }
+
+    public static void ClearAll()
+    {
+        OnActiveUniqueSkillPlaced = null;
+    }
 }
 
 public class GameplayUToggledEventArgs : EventArgs
@@ -501,6 +507,7 @@ public class ActiveUniqueSkillPlacedArgs : EventArgs
 {
     public int placedSlotIndex;
     public ActiveUniqueSkillDetailsSO activeUniqueSkillDetails;
+    public bool slotDrop;
 }
 
 public class StatChangedArgs : EventArgs
@@ -560,9 +567,9 @@ public class IntroductionPopUpUIArgs : EventArgs
     public ItemGeneric receivable;
 }
 
-public class BuildPointsArgs : EventArgs
+public class SkillPointsArgs : EventArgs
 {
-    public int buildIndex;
+    public InnerPathDetailsSO innerPathDetails;
 }
 
 public class MobHoverArgs : EventArgs

@@ -58,17 +58,30 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public DropOnDestroy dropOnDestroy;
     [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
     [HideInInspector] public ArmorStatus armorStatus = ArmorStatus.Normal;
-    [HideInInspector] public bool isCursed;
     [HideInInspector] public StatusManager statusManager;
     [HideInInspector] public DamageDisplay damageDisplay;
     [HideInInspector] public bool rightHandWeaponDamageHappened;
     [HideInInspector] public bool leftHandWeaponDamageHappened;
     [HideInInspector] public float currentArmor;
-    [HideInInspector] public bool isBlind;
+
     [HideInInspector] public bool isMaterializing;
     [HideInInspector] public float currentMoveSpeed;
     [HideInInspector] public float addionalSpeedModifier = 0f;
     [HideInInspector] public bool minionsSpawned = false;
+
+    // STATUS EFFECTS
+    [HideInInspector] public bool isCursed;
+    [HideInInspector] public bool isFeared;
+    [HideInInspector] public bool isRevealed;
+    [HideInInspector] public bool isStatic;
+    [HideInInspector] public bool isWarm;
+    [HideInInspector] public bool isChilled;
+    [HideInInspector] public bool isBlind;
+    [HideInInspector] public bool isSlowed;
+    [HideInInspector] public bool isShattered;
+
+    // Status animator
+    public Animator rootAnimator;
 
     float blindTimer;
     SetActiveWeaponEvent setActiveWeaponEvent;
@@ -103,19 +116,22 @@ public class Enemy : MonoBehaviour
         damageDisplay = GetComponent<DamageDisplay>();
         aiDestinationSetter = GetComponent<AIDestinationSetter>();
         patrol = GetComponent<Patrol>();
-        //aiLerp = GetComponent<AILerp>();
         aiRigidbody2D = GetComponent<AIRigidbody2D>();
     }
 
     private void OnEnable()
     {
         healthEvent.OnHealthChanged += HealthEvent_OnHealthLost;
+        healthEvent.GetSlow += HealthEvent_GetSlow;
+
         healthEvent.GetBlind += HealthEvent_GetBlind;
     }
 
     private void OnDisable()
     {
         healthEvent.OnHealthChanged -= HealthEvent_OnHealthLost;
+        healthEvent.GetSlow -= HealthEvent_GetSlow;
+
         healthEvent.GetBlind -= HealthEvent_GetBlind;
     }
 
@@ -128,6 +144,22 @@ public class Enemy : MonoBehaviour
         {
             EnemyDestroyed();
         }
+    }
+
+    private void HealthEvent_GetSlow(HealthEvent healthEvent)
+    {
+        StartCoroutine(SlowProcess());
+    }
+
+    IEnumerator SlowProcess()
+    {
+        currentMoveSpeed -= 2f;
+
+        yield return new WaitForSeconds(4f);
+
+        isSlowed = false;
+        currentMoveSpeed += 2f;
+        healthEvent.CallSlowCuredEvent();
     }
 
     private void HealthEvent_GetBlind(HealthEvent healthEvent)

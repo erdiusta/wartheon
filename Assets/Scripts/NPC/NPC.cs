@@ -11,7 +11,7 @@ public class NPC : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.meteor ||
+        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.aoeSkill ||
             collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile) return;
 
         if (collision.tag == Settings.playerTag || collision.tag == Settings.playerWeapon)
@@ -24,7 +24,7 @@ public class NPC : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.meteor ||
+        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.aoeSkill ||
             collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile) return;
 
         if (collision.tag == Settings.playerTag || collision.tag == Settings.playerWeapon)

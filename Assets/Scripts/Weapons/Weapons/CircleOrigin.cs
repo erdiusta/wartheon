@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[ExecuteAlways]
 [RequireComponent(typeof(CircleCollider2D))]
 public class CircleOrigin : MonoBehaviour
 {
@@ -12,30 +13,43 @@ public class CircleOrigin : MonoBehaviour
     {
         player = GetComponentInParent<Player>();
         circleCollider = GetComponent<CircleCollider2D>();
-        circleCollider.isTrigger = true; // Ensure it's used for detection, not physics collision
+
+        UpdateColliderShape();
     }
 
     private void Update()
     {
-        if (GetComponentInParent<Projectile>() == null)
+        if (!Application.isPlaying)
         {
-            if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
-            {
-                circleRadius = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.circleRadius;
+            UpdateColliderShape(); // Editor live preview
+            return;
+        }
 
-                // Sync the collider radius
-                if (circleCollider.radius != circleRadius)
-                {
-                    circleCollider.radius = circleRadius;
-                }
-            }
+        // Runtime logic
+        if (GetComponentInParent<Projectile>() == null && player.activeWeapon.GetCurrentMainHandWeapon() != null)
+        {
+            circleRadius = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.circleRadius;
+
+            UpdateColliderShape();
         }
     }
 
-    private void OnDrawGizmosSelected()
+    private void UpdateColliderShape()
     {
-        Gizmos.color = Color.blue;
-        Vector3 position = this == null ? Vector3.zero : transform.position;
-        Gizmos.DrawWireSphere(position, circleRadius);
+        // Sync the collider radius
+        if (circleCollider.radius != circleRadius)
+        {
+            circleCollider.radius = circleRadius;
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (!Application.isPlaying)
+        {
+            if (circleCollider == null) circleCollider = GetComponent<CircleCollider2D>();
+
+            UpdateColliderShape();
+        }
     }
 }

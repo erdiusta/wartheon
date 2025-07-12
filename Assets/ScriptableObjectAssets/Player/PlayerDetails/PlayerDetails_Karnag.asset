@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352fbee161db0434d9a6bbbc0a4e4c34, type: 3}
+  m_Name: PlayerDetails_Karnag
+  m_EditorClassIdentifier: 
+  playerCharacterName: Karnag
+  playerCharacterIndex: 4
+  playerPrefab: {fileID: 38858171499291080, guid: d6606faa84179f749bb56cd08c40bec6, type: 3}
+  playerClonePrefab: {fileID: 38858171499291080, guid: 99441b6cf3625464f962bf7a7f7ed8ee, type: 3}
+  collectibleWeaponsArray: []
+  bodyRuntimeAnimatorController: {fileID: 9100000, guid: 2d8d797da90d1e94aba6ccf97d942321, type: 2}
+  primaryStats:
+    strength: 8
+    dexterity: 3
+    constitution: 7
+    intelligence: 3
+    agility: 5
+    willpower: 4
+    ferocity: 7
+    resolve: 4
+  isImmuneAfterHit: 1
+  hitImmunityTime: 1
+  getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
+  blockSoundEffect: {fileID: 11400000, guid: 5a66c8bf2077f0a4caf767997e7b7749, type: 2}
+  dodgeSoundEffect: {fileID: 11400000, guid: 47e336b005c25684099a3b05096549a8, type: 2}
+  parrySoundEffect: {fileID: 11400000, guid: 1f535785069b176429525f2fb0e96cc7, type: 2}
+  passiveSkillImage: {fileID: 21300000, guid: 20702da12a84f354e9eb42450454cc4b, type: 3}
+  passiveSkillSoundEffect: {fileID: 0}
+  firstActiveSkillDetails: {fileID: 11400000, guid: 02146b13486009242b34bbc2d46234e9, type: 2}
+  secondActiveSkillDetails: {fileID: 11400000, guid: 19a545be19273fb499a0008dd151080f, type: 2}
+  thirdActiveSkillDetails: {fileID: 11400000, guid: e640bbd84dc798e49944e87df1ad0576, type: 2}
+  fourthActiveSkillDetails: {fileID: 11400000, guid: a39c68cdbba39a545a3baf68007c1289, type: 2}
+  fifthActiveSkillDetails: {fileID: 11400000, guid: 882f6a5e3c2b32c47954c564313da533, type: 2}
+  cataclysmMeteor: {fileID: 0}
+  grappleDetails: {fileID: 0}
+  blizzardDetails: {fileID: 0}
+  standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  penetrateMaterial: {fileID: 0}
+  applyScreenShake: 1
+  shakeIntensity: 2
+  shakeDuration: 1
+  selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  activeItemsList:
+  - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  passiveItemsList: []
+  startingWeapon: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
+  mainHandAnimatorController: {fileID: 9100000, guid: 763046c15b6ac0a4db7e14a096c4ace1, type: 2}
+  offHandAnimatorController: {fileID: 9100000, guid: 763046c15b6ac0a4db7e14a096c4ace1, type: 2}
+  startingWeaponList:
+  - {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
+  - {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
+  playerMiniMapIcon: {fileID: 21300000, guid: 3640f47ca78384741a1cfa06c932e212, type: 3}
+  playerHandSprite: {fileID: 21300000, guid: 61f9f1056a5486644b029259a89f6cce, type: 3}
+  playerBookSprite: {fileID: 1307114046, guid: 5d12ab0ad64a9914b9b6ff838f7feeb7, type: 3}
+  levelUpSoundEffect: {fileID: 11400000, guid: 65554e211d459a1499ae37e7fc5d6cdf, type: 2}
+  buildActivationSoundEffect: {fileID: 11400000, guid: 89b538f65e0e2894582436b50b37b10f, type: 2}

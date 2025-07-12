@@ -1604,8 +1604,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
   indexNumber: 3
+  innerPathDetails: {fileID: 11400000, guid: 2f8819d8d44beaa42885670d43547f69, type: 2}
 --- !u!114 &24848668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5870,8 +5870,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 0
   indexNumber: 2
+  innerPathDetails: {fileID: 11400000, guid: 0ae4a9e5968aa984daea804b892d78c8, type: 2}
 --- !u!114 &84037795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7291,7 +7291,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &100579399
 MonoBehaviour:
@@ -17263,7 +17263,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &228414215
 MonoBehaviour:
@@ -18735,8 +18735,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
   indexNumber: 7
+  innerPathDetails: {fileID: 11400000, guid: 4609f9f6cfebd87458a23cf52ae4a78f, type: 2}
 --- !u!114 &252797112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20329,7 +20329,7 @@ GameObject:
   - component: {fileID: 266811415}
   - component: {fileID: 266811414}
   m_Layer: 5
-  m_Name: Build_22
+  m_Name: Build_20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20368,8 +20368,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 17
+  indexNumber: 20
+  innerPathDetails: {fileID: 11400000, guid: e6c2120cc2400d848b17990378d279cc, type: 2}
 --- !u!114 &266811415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20573,7 +20573,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -45.201653, y: 2.6835582}
+  m_AnchoredPosition: {x: -46, y: -2}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &268702052
@@ -20742,7 +20742,7 @@ GameObject:
   - component: {fileID: 270736530}
   - component: {fileID: 270736529}
   m_Layer: 5
-  m_Name: Build_17
+  m_Name: Build_16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20819,8 +20819,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 17
+  indexNumber: 16
+  innerPathDetails: {fileID: 11400000, guid: a784a117c56571142888a05418752329, type: 2}
 --- !u!114 &270736530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23074,8 +23074,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 1}
-  m_SizeDelta: {x: 0, y: 8.000003}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &306538525
 CanvasGroup:
@@ -26774,7 +26774,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &350574652
 MonoBehaviour:
@@ -27921,7 +27921,7 @@ GameObject:
   - component: {fileID: 376810884}
   - component: {fileID: 376810883}
   m_Layer: 5
-  m_Name: BuildPointsText
+  m_Name: SkillPointsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27966,7 +27966,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Build Points
+  m_text: Skill Points
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
   m_sharedMaterial: {fileID: -6719382211919318480, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
@@ -29186,7 +29186,7 @@ GameObject:
   m_Component:
   - component: {fileID: 391953056}
   m_Layer: 5
-  m_Name: BuildPage
+  m_Name: SkillPage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29992,7 +29992,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28.099976, y: -1.7999878}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &404901920
@@ -30898,7 +30898,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &417084517
 MonoBehaviour:
@@ -31903,8 +31903,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
   indexNumber: 6
+  innerPathDetails: {fileID: 11400000, guid: 948b0ffadee82fa4db681ab03deee636, type: 2}
 --- !u!114 &430009050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34926,7 +34926,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &473675006
 MonoBehaviour:
@@ -35411,7 +35411,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &483773934
 MonoBehaviour:
@@ -36924,7 +36924,7 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1
+    width: 0.99930984
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -37601,7 +37601,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &530135473
 MonoBehaviour:
@@ -39734,7 +39734,7 @@ GameObject:
   - component: {fileID: 561433442}
   - component: {fileID: 561433441}
   m_Layer: 5
-  m_Name: Build_24
+  m_Name: Build_22
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39773,8 +39773,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 17
+  indexNumber: 22
+  innerPathDetails: {fileID: 11400000, guid: be52ccb3908fce14293c20372e9c6dba, type: 2}
 --- !u!114 &561433442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40532,7 +40532,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &573077867
 MonoBehaviour:
@@ -43713,7 +43713,7 @@ GameObject:
   - component: {fileID: 615852465}
   - component: {fileID: 615852464}
   m_Layer: 5
-  m_Name: BuildTitleText
+  m_Name: InnerPathTitleText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45228,7 +45228,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &634271846
 MonoBehaviour:
@@ -45498,7 +45498,7 @@ GameObject:
   - component: {fileID: 638773989}
   - component: {fileID: 638773988}
   m_Layer: 5
-  m_Name: Build_14
+  m_Name: Build_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45575,8 +45575,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 14
+  indexNumber: 13
+  innerPathDetails: {fileID: 11400000, guid: b0b2a7d6fb97567438a4a1c70300a130, type: 2}
 --- !u!114 &638773989
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48060,6 +48060,9 @@ MonoBehaviour:
   - poolSize: 40
     prefab: {fileID: 5263536334675765252, guid: 59e583c8581962145b11dfd8f2b08a6f, type: 3}
     componentType: IFireable
+  - poolSize: 3
+    prefab: {fileID: 2585463276777236944, guid: 1ed1bfbb899812242b19f2e43c5288e1, type: 3}
+    componentType: IFireable
   - poolSize: 40
     prefab: {fileID: 3547249067481803369, guid: 4af97ecce45d8b94ab3dac7009743a96, type: 3}
     componentType: IFireable
@@ -48068,6 +48071,9 @@ MonoBehaviour:
     componentType: IFireable
   - poolSize: 50
     prefab: {fileID: 3547249067481803369, guid: 25c855d1a7cc8df4687b46e7a277274f, type: 3}
+    componentType: IFireable
+  - poolSize: 20
+    prefab: {fileID: 2585463276777236944, guid: 569648123c1819e469accd30cbb20fe4, type: 3}
     componentType: IFireable
   - poolSize: 40
     prefab: {fileID: 2585463276777236944, guid: f4e4d1711bd02c642a40a2c214b79ae2, type: 3}
@@ -51888,7 +51894,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &724748773
 MonoBehaviour:
@@ -53632,7 +53638,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &756099918
 MonoBehaviour:
@@ -54131,7 +54137,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &761339141
 MonoBehaviour:
@@ -56775,7 +56781,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 30}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &801574159
@@ -57165,26 +57171,30 @@ MonoBehaviour:
   valorSpecialMoveSprite: {fileID: 21300000, guid: 0ecf52fd62ab1354590324dbb4f70243, type: 3}
   guardedOathSpecialMoveSprite: {fileID: 21300000, guid: 0b62cc97b4b732a46801622eaf620374, type: 3}
   breakTheLineSpecialMoveSprite: {fileID: 21300000, guid: 09a4385fa2ab98344960e57cd2c8e81e, type: 3}
-  umbralMistSpeicalMoveSprite: {fileID: 21300000, guid: fd0a1eb56a8ee9644ad5fc9dc2dfe886, type: 3}
+  umbralMistSpecialMoveSprite: {fileID: 21300000, guid: fd0a1eb56a8ee9644ad5fc9dc2dfe886, type: 3}
   stealthSpecialMoveSprite: {fileID: 21300000, guid: ab5e3ceecd5d02744ad15dace82894fe, type: 3}
   shadowStepSpecialMoveSprite: {fileID: 21300000, guid: 75875b50e9caf3d4ca1a956ed089df59, type: 3}
-  acidSprite: {fileID: 21300000, guid: df8bae93e790e7049907b6a7a107a087, type: 3}
+  arrowsOfTheSevenPlaguesSpecialMoveSprite: {fileID: 21300000, guid: ec9d8ee50cc0b8046b0693c15c1b2c1f, type: 3}
+  mycarasSealSpecialMoveSprite: {fileID: 21300000, guid: 07bb887efc5952c4da4558e877f87701, type: 3}
   bleedingSprite: {fileID: 21300000, guid: 23ffdf59d69faea47b122088722c054a, type: 3}
-  blindSprite: {fileID: 21300000, guid: 908868b197d826043bd72f8c76755155, type: 3}
-  burnSprite: {fileID: 21300000, guid: 49c08327d2def0c499975e0780dc69f9, type: 3}
-  chillSprite: {fileID: 21300000, guid: 0706710e2cf44e54e80d3a17c10109e4, type: 3}
-  confusedSprite: {fileID: 21300000, guid: 425a1cb0c8463d24e81b1ffd497c69b9, type: 3}
-  curseSprite: {fileID: 21300000, guid: ecc9f5016bcabea429d09deb4dc00381, type: 3}
-  deathSprite: {fileID: 21300000, guid: 33e6cc38d770e0e48a85cd4cb08cfdc4, type: 3}
-  fearSprite: {fileID: 21300000, guid: 1613e6b0cc2d7bf47b4755337679bce1, type: 3}
-  frostSprite: {fileID: 21300000, guid: a6731540d6a432a428559ed5f0804b22, type: 3}
-  markSprite: {fileID: 21300000, guid: 8e1bb99c186f3ce4c85009520e357dfc, type: 3}
-  petrifiedSprite: {fileID: 21300000, guid: f32e154ba873a9144983e39d8c67d79c, type: 3}
+  stunSprite: {fileID: 21300000, guid: e9bf5af6496b73f4d8a9cff2e1d41051, type: 3}
+  slowSprite: {fileID: 21300000, guid: 06315fcb74c26e0498180725fe3bd143, type: 3}
   poisonSprite: {fileID: 21300000, guid: eabc00f86a7800449b5805da58f014e6, type: 3}
   rootedSprite: {fileID: 21300000, guid: a5777d962459d2541857edb060ce8cef, type: 3}
-  silenceSprite: {fileID: 21300000, guid: 9572f312445f1294994ff6fc543dc07b, type: 3}
-  slowSprite: {fileID: 21300000, guid: 06315fcb74c26e0498180725fe3bd143, type: 3}
-  stunSprite: {fileID: 21300000, guid: e9bf5af6496b73f4d8a9cff2e1d41051, type: 3}
+  acidSprite: {fileID: 21300000, guid: df8bae93e790e7049907b6a7a107a087, type: 3}
+  warmedSprite: {fileID: 21300000, guid: 99d36d358e4af514aacada87be50b3cc, type: 3}
+  burnSprite: {fileID: 21300000, guid: 49c08327d2def0c499975e0780dc69f9, type: 3}
+  chillSprite: {fileID: 21300000, guid: 0706710e2cf44e54e80d3a17c10109e4, type: 3}
+  frostSprite: {fileID: 21300000, guid: a6731540d6a432a428559ed5f0804b22, type: 3}
+  staticSprite: {fileID: 21300000, guid: 838e234821b6f024b904ef07654e7b64, type: 3}
+  paralyzeSprite: {fileID: 21300000, guid: 74ed36ae8b690a947baa14795b4c8479, type: 3}
+  markSprite: {fileID: 21300000, guid: 8e1bb99c186f3ce4c85009520e357dfc, type: 3}
+  petrifiedSprite: {fileID: 21300000, guid: f32e154ba873a9144983e39d8c67d79c, type: 3}
+  blindSprite: {fileID: 21300000, guid: 908868b197d826043bd72f8c76755155, type: 3}
+  revealedSprite: {fileID: 21300000, guid: 71cd5161d81cb694c975eaeb40a4844a, type: 3}
+  curseSprite: {fileID: 21300000, guid: ecc9f5016bcabea429d09deb4dc00381, type: 3}
+  fearSprite: {fileID: 21300000, guid: 1613e6b0cc2d7bf47b4755337679bce1, type: 3}
+  deathSprite: {fileID: 21300000, guid: 33e6cc38d770e0e48a85cd4cb08cfdc4, type: 3}
   hasteSprite: {fileID: 21300000, guid: a8b90f22f95423f47b9f763703ce2279, type: 3}
   thornedSprite: {fileID: 21300000, guid: 15fe47de6eb4cdd4a95d74591fe26420, type: 3}
 --- !u!1 &807568889
@@ -60409,7 +60419,7 @@ GameObject:
   - component: {fileID: 862918521}
   - component: {fileID: 862918520}
   m_Layer: 5
-  m_Name: Build_21
+  m_Name: Build_19
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60448,8 +60458,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 17
+  indexNumber: 19
+  innerPathDetails: {fileID: 11400000, guid: 84de9f49509c190408715b94181562c2, type: 2}
 --- !u!114 &862918521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60556,7 +60566,7 @@ GameObject:
   - component: {fileID: 863561477}
   - component: {fileID: 863561476}
   m_Layer: 5
-  m_Name: ChanceToHitText
+  m_Name: AttackRatingText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60601,7 +60611,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Chance to Hit \n"
+  m_text: Attack Rating
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
   m_sharedMaterial: {fileID: -6719382211919318480, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
@@ -60983,7 +60993,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &871390901
 MonoBehaviour:
@@ -65752,7 +65762,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &976598620
 MonoBehaviour:
@@ -67655,7 +67665,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1008873309
 MonoBehaviour:
@@ -69702,8 +69712,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
   indexNumber: 4
+  innerPathDetails: {fileID: 11400000, guid: ad05d3f5a5dc0d64cb0694769e50bc75, type: 2}
 --- !u!114 &1029214182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71536,7 +71546,7 @@ RectTransform:
   m_GameObject: {fileID: 1075054695}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -0.22, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1626212412}
@@ -75895,7 +75905,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1138377334}
   m_Layer: 5
-  m_Name: BuildTextContainer
+  m_Name: InnerPathTextContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76500,7 +76510,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.66, y: 0}
-  m_SizeDelta: {x: 14, y: 14}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1149570312
 MonoBehaviour:
@@ -76980,8 +76990,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
   indexNumber: 8
+  innerPathDetails: {fileID: 11400000, guid: 5fdba03d95081384a8bb863b8634bfd7, type: 2}
 --- !u!114 &1156975353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80179,7 +80189,7 @@ GameObject:
   - component: {fileID: 1218261856}
   - component: {fileID: 1218261855}
   m_Layer: 5
-  m_Name: Build_11
+  m_Name: Build_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80256,8 +80266,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
   indexNumber: 10
+  innerPathDetails: {fileID: 11400000, guid: a28c5598e79abb74aa10325b1dc321a0, type: 2}
 --- !u!114 &1218261856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81722,7 +81732,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1239522991}
   m_Layer: 5
-  m_Name: BuildPageContainer
+  m_Name: SkillPageContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -85287,7 +85297,7 @@ GameObject:
   - component: {fileID: 1313578397}
   - component: {fileID: 1313578398}
   m_Layer: 5
-  m_Name: BuildPoints
+  m_Name: SkillPoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -85357,7 +85367,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1313812017
 MonoBehaviour:
@@ -85411,7 +85421,7 @@ GameObject:
   - component: {fileID: 1316237579}
   - component: {fileID: 1316237578}
   m_Layer: 5
-  m_Name: Build_25
+  m_Name: Build_23
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -85450,8 +85460,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 17
+  indexNumber: 23
+  innerPathDetails: {fileID: 11400000, guid: 015e284831b6f8246af12583b3b13142, type: 2}
 --- !u!114 &1316237579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89819,7 +89829,7 @@ GameObject:
   - component: {fileID: 1389504852}
   - component: {fileID: 1389504851}
   m_Layer: 5
-  m_Name: InnerPathFrame
+  m_Name: InnerPathContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91103,7 +91113,7 @@ GameObject:
   - component: {fileID: 1407578176}
   - component: {fileID: 1407578175}
   m_Layer: 5
-  m_Name: Build_13
+  m_Name: Build_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91180,8 +91190,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 13
+  indexNumber: 12
+  innerPathDetails: {fileID: 11400000, guid: 67f9f8f33dcb4ac4ba5d91390c290cd1, type: 2}
 --- !u!114 &1407578176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91720,7 +91730,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1410475701
 MonoBehaviour:
@@ -91795,7 +91805,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1412409473
 MonoBehaviour:
@@ -93594,7 +93604,7 @@ GameObject:
   - component: {fileID: 1434623492}
   - component: {fileID: 1434623491}
   m_Layer: 5
-  m_Name: Build_20
+  m_Name: Build_18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93633,8 +93643,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 17
+  indexNumber: 18
+  innerPathDetails: {fileID: 11400000, guid: 358d2f7cd78200b44b70f47c1e87b598, type: 2}
 --- !u!114 &1434623492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98736,7 +98746,7 @@ GameObject:
   - component: {fileID: 1512870777}
   - component: {fileID: 1512870776}
   m_Layer: 5
-  m_Name: Build_15
+  m_Name: Build_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98813,8 +98823,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 15
+  indexNumber: 14
+  innerPathDetails: {fileID: 11400000, guid: 76ffdd6c26dbd9b4eb9793ddaa23cee6, type: 2}
 --- !u!114 &1512870777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98981,7 +98991,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -46, y: -18}
+  m_AnchoredPosition: {x: -46, y: -20}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1516794000
@@ -101206,10 +101216,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f0dea1bfe7a83744af2260236616f06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  passiveSkillContainer: {fileID: 934502872}
-  activeSkillOneContainer: {fileID: 1955488637}
-  activeSkillTwoContainer: {fileID: 1997749079}
-  activeSkillThreeContainer: {fileID: 1751970428}
   noSkillSprite: {fileID: 21300000, guid: 8760afd85e4d3be47861ba2f44c3fe0b, type: 3}
 --- !u!222 &1543980891
 CanvasRenderer:
@@ -101467,7 +101473,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1549543153
 MonoBehaviour:
@@ -102677,7 +102683,7 @@ GameObject:
   - component: {fileID: 1553636696}
   - component: {fileID: 1553636695}
   m_Layer: 5
-  m_Name: Build_12
+  m_Name: Build_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -102754,8 +102760,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
   indexNumber: 11
+  innerPathDetails: {fileID: 11400000, guid: df26df5028447de48a115d960fe2f314, type: 2}
 --- !u!114 &1553636696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104270,7 +104276,7 @@ GameObject:
   - component: {fileID: 1575317191}
   - component: {fileID: 1575317190}
   m_Layer: 5
-  m_Name: ChanceToHitText
+  m_Name: AttackRatingText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104315,9 +104321,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '85%
-
-'
+  m_text: 90
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
   m_sharedMaterial: {fileID: -6719382211919318480, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
@@ -107433,7 +107437,7 @@ GameObject:
   - component: {fileID: 1618370053}
   - component: {fileID: 1618370052}
   m_Layer: 5
-  m_Name: Build_26
+  m_Name: Build_24
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -107472,8 +107476,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 17
+  indexNumber: 24
+  innerPathDetails: {fileID: 11400000, guid: b56927c6470bc7a4f97c5e838383b33a, type: 2}
 --- !u!114 &1618370053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107739,8 +107743,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 0
   indexNumber: 1
+  innerPathDetails: {fileID: 11400000, guid: 1d1d44df84091b445b946d610b86053a, type: 2}
 --- !u!114 &1620010150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109337,8 +109341,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
   indexNumber: 5
+  innerPathDetails: {fileID: 11400000, guid: 229c81689f6567244930fbfa4e2e7ea1, type: 2}
 --- !u!114 &1634136785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115935,7 +115939,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -6.6390877, y: -6.142712}
+  m_AnchoredPosition: {x: -7.650497, y: -6.142712}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1709194799
@@ -116502,7 +116506,7 @@ GameObject:
   - component: {fileID: 1711795394}
   - component: {fileID: 1711795393}
   m_Layer: 5
-  m_Name: BuildPointsAmount
+  m_Name: SkillPointsAmount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -118392,7 +118396,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1745060260
 MonoBehaviour:
@@ -120229,7 +120233,7 @@ GameObject:
   - component: {fileID: 1776417433}
   - component: {fileID: 1776417432}
   m_Layer: 5
-  m_Name: BuildDescriptonInnerPanel
+  m_Name: SkillDescriptonInnerPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -122110,7 +122114,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1788880867
 MonoBehaviour:
@@ -122706,7 +122710,7 @@ GameObject:
   - component: {fileID: 1796558867}
   - component: {fileID: 1796558866}
   m_Layer: 5
-  m_Name: BuildTitle
+  m_Name: SkillsTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -127161,7 +127165,7 @@ GameObject:
   - component: {fileID: 1850822415}
   - component: {fileID: 1850822414}
   m_Layer: 5
-  m_Name: Build_19
+  m_Name: Build_17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -127200,8 +127204,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
   indexNumber: 17
+  innerPathDetails: {fileID: 11400000, guid: 0db6a3c00a969d4419f278975a712588, type: 2}
 --- !u!114 &1850822415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129069,7 +129073,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1860539158
 MonoBehaviour:
@@ -133249,7 +133253,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1931611513
 MonoBehaviour:
@@ -134448,7 +134452,7 @@ GameObject:
   - component: {fileID: 1951764219}
   - component: {fileID: 1951764218}
   m_Layer: 5
-  m_Name: InnerPathHeadText
+  m_Name: InnerPathTitleText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -135358,8 +135362,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -1.6752843}
-  m_SizeDelta: {x: 16, y: 16}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1959879434
 MonoBehaviour:
@@ -138236,7 +138240,7 @@ GameObject:
   - component: {fileID: 1992622585}
   - component: {fileID: 1992622584}
   m_Layer: 5
-  m_Name: Build_16
+  m_Name: Build_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138313,8 +138317,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 16
+  indexNumber: 15
+  innerPathDetails: {fileID: 11400000, guid: a2deddd2d9c20744d9993fc8ab2d789d, type: 2}
 --- !u!114 &1992622585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138693,7 +138697,7 @@ GameObject:
   - component: {fileID: 1996209504}
   - component: {fileID: 1996209503}
   m_Layer: 5
-  m_Name: Build_10
+  m_Name: Build_9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138770,8 +138774,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
   indexNumber: 9
+  innerPathDetails: {fileID: 11400000, guid: 9ee450f82cd793947b08e81bbf42ed73, type: 2}
 --- !u!114 &1996209504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143313,7 +143317,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 24, y: 24}
+  m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2057957868
 MonoBehaviour:
@@ -144126,7 +144130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb98948550ac9644bb8825470814c450, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildPage: {fileID: 391953056}
+  skillPage: {fileID: 391953056}
   statsPage: {fileID: 1454803304}
   weaponsPage: {fileID: 247612441}
   passivesPage: {fileID: 915328124}
@@ -144157,7 +144161,7 @@ MonoBehaviour:
   globalResistanceValue: {fileID: 1615621075}
   criticalHitDamageAmountValue: {fileID: 1681792721}
   attackCooldownValue: {fileID: 510518426}
-  chanceToHitValue: {fileID: 1575317190}
+  attackRatingValue: {fileID: 1575317190}
   blockRateValue: {fileID: 1146201277}
   debuffDurationModifierValue: {fileID: 1899109372}
   buffDurationModifierValue: {fileID: 1416651934}
@@ -144176,6 +144180,12 @@ MonoBehaviour:
   mainHandWeaponSlot: {fileID: 783512911}
   offHandWeaponSlot: {fileID: 783452591}
   activeItemSlot: {fileID: 1979192227}
+  innerPathContainer: {fileID: 1389504850}
+  skillDescriptonInnerPanel: {fileID: 1776417431}
+  skillPointsTransform: {fileID: 1313578397}
+  innerPathTextContainer: {fileID: 1138377334}
+  innerPathTitleText: {fileID: 615852464}
+  innerPathDetailsText: {fileID: 1409493856}
   weaponTitleText: {fileID: 2061017177}
   weaponDetailsText: {fileID: 1585081695}
   weaponImageContainer: {fileID: 2121229577}
@@ -145378,7 +145388,7 @@ GameObject:
   - component: {fileID: 2079774690}
   - component: {fileID: 2079774689}
   m_Layer: 5
-  m_Name: Build_23
+  m_Name: Build_21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -145417,8 +145427,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  isLocked: 1
-  indexNumber: 17
+  indexNumber: 21
+  innerPathDetails: {fileID: 11400000, guid: fef0ac98c2e040d4daeb0edf58b52b3e, type: 2}
 --- !u!114 &2079774690
 MonoBehaviour:
   m_ObjectHideFlags: 0

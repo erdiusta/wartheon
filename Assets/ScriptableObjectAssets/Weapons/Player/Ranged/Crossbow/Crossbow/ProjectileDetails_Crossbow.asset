@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: Crossbow Bolt
   isPlayerProjectile: 1
-  projectileSprite: {fileID: 21300000, guid: 35287454ad842574080549528057c022, type: 3}
   projectilePrefabArray:
   - {fileID: 3547249067481803369, guid: d2bf635c5fcb4fb40a8dc04ec29e4de3, type: 3}
   projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -24,22 +23,57 @@ MonoBehaviour:
   projectileHitEffect: {fileID: 11400000, guid: a9ec9a673fcdeea47a9014c8929ee1b6, type: 2}
   projectileDamageMin: 12
   projectileDamageMax: 14
-  projectileSpeedMin: 24
-  projectileSpeedMax: 30
+  projectileSpeed: 20
   projectileRange: 18
+  hasLifeTime: 0
+  lifeDuration: 1
   projectileRotationSpeed: 1
-  hasAcid: 0
-  acidEfficiency: 0
-  isPoisonous: 0
-  poisonChance: 0
+  isGuided: 0
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 0
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
+  hasWarmDamage: 0
+  warmChance: 0
+  hasBurnDamage: 0
+  burnChance: 0
   hasStunDamage: 0
   stunChance: 0
+  hasRootDamage: 0
+  rootChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
+  hasPoisonDamage: 0
+  poisonChance: 0
+  hasStaticDamage: 0
+  staticChance: 0
+  hasParalyzeDamage: 0
+  paralyzeChance: 0
+  hasAcidDamage: 0
+  acidEfficiency: 0
+  hasChillDamage: 0
+  chillChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  hasRevealDamage: 0
+  revealChance: 0
   hasCurseDamage: 0
   curseChance: 0
+  hasFearDamage: 0
+  fearChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
   projectileSpreadMin: 0.5
   projectileSpreadMax: 0.8
+  criticalHitChance: 0.15
+  criticalHitDamageMultiplier: 1.5
   projectileSpawnAmountMin: 1
   projectileSpawnAmountMax: 1
   projectileSpawnIntervalMin: 0
@@ -50,3 +84,5 @@ MonoBehaviour:
   projectileTrailMaterial: {fileID: 0}
   projectileTrailStartWidth: 0
   projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

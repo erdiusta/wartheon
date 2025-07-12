@@ -1,56 +1,82 @@
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider2D))]
+[ExecuteAlways]
+[RequireComponent(typeof(PolygonCollider2D))]
 public class BoxOrigin : MonoBehaviour
 {
     public float boxLength = 1f;
     public float boxHeight = 1f;
-
-    [SerializeField] private Transform weaponRotationPointTransform;
+    public float directionAngle = 0f;
 
     private Player player;
-    private BoxCollider2D boxCollider;
+    private PolygonCollider2D polygonCollider;
 
     private void Awake()
     {
         player = GetComponentInParent<Player>();
-        boxCollider = GetComponent<BoxCollider2D>();
-        boxCollider.isTrigger = true; // Ensure it's used for detection, not physics collision
+        polygonCollider = GetComponent<PolygonCollider2D>();
+
+        UpdateColliderShape();
     }
 
     private void Update()
     {
-        if (GetComponentInParent<Projectile>() == null)
+        if (!Application.isPlaying)
         {
-            if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
-            {
-                boxLength = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxLength;
-                boxHeight = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxHeight;
+            UpdateColliderShape(); // Editor live preview
+            return;
+        }
 
-                // Update collider size if needed
-                Vector2 newSize = new Vector2(boxLength, boxHeight);
-                if (boxCollider.size != newSize)
-                {
-                    boxCollider.size = newSize;
-                }
-            }
+        // Runtime logic
+        if (GetComponentInParent<Projectile>() == null && player.activeWeapon.GetCurrentMainHandWeapon() != null)
+        {
+            boxLength = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxLength;
+            boxHeight = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxHeight;
+
+            UpdateColliderShape();
         }
     }
 
-    private void OnDrawGizmosSelected()
+    private void UpdateColliderShape()
     {
-        Gizmos.color = Color.yellow;
-        Vector3 position = transform ? transform.position : Vector3.zero;
+        float angleRad = directionAngle * Mathf.Deg2Rad;
 
-        // Convert angle value from degrees to radians
-        float angle = weaponRotationPointTransform.eulerAngles.z * Mathf.Deg2Rad;
+        // Local corner points of the box, centered at origin
+        Vector2 topLeft = new Vector2(-boxLength / 2, boxHeight / 2);
+        Vector2 topRight = new Vector2(boxLength / 2, boxHeight / 2);
+        Vector2 bottomRight = new Vector2(boxLength / 2, -boxHeight / 2);
+        Vector2 bottomLeft = new Vector2(-boxLength / 2, -boxHeight / 2);
 
-        // Adjust box size based on rotation
-        float cosAngle = Mathf.Abs(Mathf.Cos(angle));
-        float sinAngle = Mathf.Abs(Mathf.Sin(angle));
-        float adjustedLength = boxLength * cosAngle + boxHeight * sinAngle;
-        float adjustedHeight = boxHeight * cosAngle + boxLength * sinAngle;
+        // Rotate each point manually
+        Vector2[] points = new Vector2[]
+        {
+            RotatePoint(topLeft, angleRad),
+            RotatePoint(topRight, angleRad),
+            RotatePoint(bottomRight, angleRad),
+            RotatePoint(bottomLeft, angleRad)
+        };
 
-        Gizmos.DrawWireCube(position, new Vector3(adjustedLength, adjustedHeight, 0));
+        polygonCollider.SetPath(0, points);
+    }
+
+    private Vector3 RotatePoint(Vector2 point, float radians)
+    {
+        float cos = Mathf.Cos(radians);
+        float sin = Mathf.Sin(radians);
+        return new Vector3(
+            point.x * cos - point.y * sin,
+            point.x * sin + point.y * cos,
+            0f
+        );
+    }
+
+    private void OnValidate()
+    {
+        if (!Application.isPlaying)
+        {
+            if (polygonCollider == null) polygonCollider = GetComponent<PolygonCollider2D>();
+
+            UpdateColliderShape();
+        }
     }
 }

@@ -20,7 +20,6 @@ MonoBehaviour:
   movementDetails: {fileID: 11400000, guid: 4667adc93b8676442887de1ecd7d2831, type: 2}
   experiencePoint: 80
   chaseDistance: 12
-  hasAttackMove: 0
   attackMoveTriggerDistance: 0
   attackMoveEfficentDistance: 0
   countdownDurationBeforeDashAttack: 0.4
@@ -30,7 +29,7 @@ MonoBehaviour:
   enemyBehaviour: 1
   isEnemyBoss: 0
   isSummonedMinion: 0
-  isDummy: 0
+  isDecoy: 0
   hasAnimator: 0
   elementalBias: 2
   elementalForgeRate: 0.2
@@ -73,6 +72,7 @@ MonoBehaviour:
   attackSoundEffect: {fileID: 11400000, guid: 49b9c611a31cfaa4fb504722dc0a02e2, type: 2}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
+  rootSoundEffect: {fileID: 11400000, guid: 3260cb66e2f6f36468b2beeba1c14620, type: 2}
   poisonSoundEffect: {fileID: 0}
   enemyWeapon: {fileID: 11400000, guid: fcc300bd7b04e9f4c95bd7626144b7c8, type: 2}
   firingIntervalMin: 2.5
@@ -101,6 +101,8 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 2
     - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
+      ratio: 4
+    - dungeonObject: {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
       ratio: 4
   weaponsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: c3413b0ad50f98a4ba7edfccd5230ccf, type: 2}

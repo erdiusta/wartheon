@@ -32,11 +32,39 @@ public class HealthEvent : MonoBehaviour
         GetAcid?.Invoke(this);
     }
 
+    public event Action<HealthEvent> GetBleeding;
+
+    public void CallGetBleedingEvent()
+    {
+        GetBleeding?.Invoke(this);
+    }
+
     public event Action<HealthEvent> GetStun;
 
     public void CallGetStunEvent()
     {
         GetStun?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetSlow;
+
+    public void CallGetSlowEvent()
+    {
+        GetSlow?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetRoot;
+
+    public void CallGetRootEvent()
+    {
+        GetRoot?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetChill;
+
+    public void CallGetChillEvent()
+    {
+        GetChill?.Invoke(this);
     }
 
     public event Action<HealthEvent> GetFrost;
@@ -58,6 +86,13 @@ public class HealthEvent : MonoBehaviour
     public void CallGetCurseEvent()
     {
         GetCursed?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetFeared;
+
+    public void CallGetFearEvent()
+    {
+        GetFeared?.Invoke(this);
     }
 
     public event Action<HealthEvent> GetDeath;
@@ -95,11 +130,39 @@ public class HealthEvent : MonoBehaviour
         AcidCured?.Invoke(this);
     }
 
+    public event Action<HealthEvent> BleedingCured;
+
+    public void CallBleedingCuredEvent()
+    {
+        BleedingCured?.Invoke(this);
+    }
+
     public event Action<HealthEvent> StunCured;
 
     public void CallStunCuredEvent()
     {
         StunCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> SlowCured;
+
+    public void CallSlowCuredEvent()
+    {
+        SlowCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> RootCured;
+
+    public void CallRootCuredEvent()
+    {
+        RootCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> ChillCured;
+
+    public void CallChillCuredEvent()
+    {
+        ChillCured?.Invoke(this);
     }
 
     public event Action<HealthEvent> FrostCured;
@@ -109,11 +172,25 @@ public class HealthEvent : MonoBehaviour
         FrostCured?.Invoke(this);
     }
 
+    public event Action<HealthEvent> ShatterCured;
+
+    public void CallShatterCuredEvent()
+    {
+        ShatterCured?.Invoke(this);
+    }
+
     public event Action<HealthEvent> CurseCured;
 
     public void CallCurseCuredEvent()
     {
         CurseCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> FearCured;
+
+    public void CallFearCuredEvent()
+    {
+        FearCured?.Invoke(this);
     }
 
     public event Action<HealthEvent> BlindCured;
@@ -221,6 +298,34 @@ public class HealthEvent : MonoBehaviour
     public void CallShadowStepWoreOffEvent()
     {
         OnShadowStepEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnSevenArrowsActive;
+
+    public void CallSevenArrowsSpecialMoveEvent()
+    {
+        OnSevenArrowsActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnSevenArrowsEffectsEnded;
+
+    public void CallSevenArrowsWoreOffEvent()
+    {
+        OnSevenArrowsEffectsEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnMycarasSealActive;
+
+    public void CallMycarasSealSpecialMoveEvent()
+    {
+        OnMycarasSealActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnMycarasSealEffectsEnded;
+
+    public void CallMycarasSealWoreOffEvent()
+    {
+        OnMycarasSealEffectsEnded?.Invoke(this);
     }
 
     public event Action<HealthEvent> OnParried;

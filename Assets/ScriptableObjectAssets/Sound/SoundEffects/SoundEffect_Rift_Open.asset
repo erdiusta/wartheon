@@ -16,6 +16,6 @@ MonoBehaviour:
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundEffectClips:
   - {fileID: 8300000, guid: 2a615d0c21bb2204b82d15745d1a8515, type: 3}
-  soundEffectPitchRandomVariationMin: 0.98
-  soundEffectPitchRandomVariationMax: 1.02
+  soundEffectPitchRandomVariationMin: 0.95
+  soundEffectPitchRandomVariationMax: 1.05
   soundEffectVolume: 0.25
