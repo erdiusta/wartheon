@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_Rage
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Rage
+  activeUniqueSkillDetails: 
+  activeSkill: 25
+  activeUniqueSkillSprite: {fileID: 21300000, guid: 9c7d9981d92962240b8b43a40f1ecc27, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 3b76c3d17ac68484ca5710be04c5d02e, type: 2}
+  activeUniqueSkillSoundEffectTwo: {fileID: 0}
+  activeUniqueSkillCooldownDuration: 15
+  activeUniqueSkillEffectiveDuration: 6
+  activeUniqueSkillManaCost: 12
+  activeUniqueSkillManaReserveCost: 0

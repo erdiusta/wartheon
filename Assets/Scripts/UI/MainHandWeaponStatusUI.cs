@@ -184,15 +184,11 @@ public class MainHandWeaponStatusUI : MonoBehaviour
         {
             if (currentWeapon.weaponDetails.isMeleeWeapon)
             {
-                cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
-            }
-            else if (currentWeapon.weaponDetails.weaponClass == WeaponClass.Bow || currentWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
-            {
-                cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalBowAttackCoolDownModifier));
+                cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalMeleeAttackCoolDownModifier));
             }
             else
             {
-                cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration;
+                cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalRangedAttackCoolDownModifier));
             }
 
 
@@ -236,15 +232,11 @@ public class MainHandWeaponStatusUI : MonoBehaviour
             // Update cooldown bar
             if (currentWeapon.weaponDetails.isMeleeWeapon)
             {
-                barFill = cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier));
-            }
-            else if (currentWeapon.weaponDetails.weaponClass == WeaponClass.Bow || currentWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
-            {
-                barFill = cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalBowAttackCoolDownModifier));
+                barFill = cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalMeleeAttackCoolDownModifier));
             }
             else
             {
-                barFill = cooldownTimer / currentWeapon.weaponDetails.weaponCooldownDuration;
+                barFill = cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalRangedAttackCoolDownModifier));
             }
 
             // Update bar fill

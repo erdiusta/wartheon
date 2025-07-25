@@ -21,10 +21,6 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public GameObject playerPrefab;
     #region Tooltip
-    [Tooltip("Prefab gameobject for the player clone")]
-    #endregion
-    public GameObject playerClonePrefab;
-    #region Tooltip
     [Tooltip("Collectible weapons array for the specific selected character")]
     #endregion
     public WeaponDetailsSO[] collectibleWeaponsArray;
@@ -102,21 +98,31 @@ public class PlayerDetailsSO : ScriptableObject
     #region Misc
     [Space(10)]
     [Header("Misc")]
-    [Tooltip("Cataclysm meteor prefab")]
     #endregion
-    public ProjectileDetailsSO cataclysmMeteor;
     #region
-    [Tooltip("Grapple prefab")]
+    [Tooltip("Throwing axe details")]
+    #endregion
+    public ProjectileDetailsSO throwingAxeDetails;
+    #region
+    [Tooltip("Grapple details")]
     #endregion
     public ProjectileDetailsSO grappleDetails;
     #region
-    [Tooltip("Ice Breaker prefab")]
+    [Tooltip("Ice Breaker details")]
     #endregion
     public ProjectileDetailsSO iceBreakerDetails;
     #region
-    [Tooltip("Absolute Zero prefab")]
+    [Tooltip("Absolute Zero details")]
     #endregion
     public ProjectileDetailsSO absoluteZeroDetails;
+    #region
+    [Tooltip("Fire Blast details")]
+    #endregion
+    public ProjectileDetailsSO fireBlastDetails;
+    #region
+    [Tooltip("Blazing Cyclone details")]
+    #endregion
+    public ProjectileDetailsSO blazingCycloneDetails;
     #region
     [Tooltip("Standard material")]
     #endregion
@@ -218,7 +224,6 @@ public class PlayerDetailsSO : ScriptableObject
     {
         HelperUtilities.ValidateCheckEmptyString(this, nameof(playerCharacterName), playerCharacterName);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerPrefab), playerPrefab);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(playerClonePrefab), playerClonePrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(startingWeapon), startingWeapon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerMiniMapIcon), playerMiniMapIcon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(playerHandSprite), playerHandSprite);

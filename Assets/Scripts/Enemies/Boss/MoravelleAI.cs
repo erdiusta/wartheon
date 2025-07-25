@@ -71,10 +71,10 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
         enemy.animator.SetBool(Settings.cast, false);
     }
 
-    protected override void FixedUpdate() { }
-
-    protected override void Update()
+    protected override void FixedUpdate() 
     {
+        prevVel = rb2D.linearVelocity;
+
         if (enemy.enemyAI.enemyPhase == EnemyPhase.Death)
         {
             if (attackAnimationRoutine != null)
@@ -83,6 +83,16 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
             }
 
             return;
+        }
+
+        // Emergency pullback if Moravelle drifts outside bounds
+        if (IsOutsideBossRoom(transform.position, cellMin, cellMax))
+        {
+            Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
+            transform.position = safePos;
+            rb2D.linearVelocity = Vector2.zero;
+
+            Debug.LogWarning("Moravelle was outside bounds. Snapped back.");
         }
 
         Vector3 direction = Vector3.zero;
@@ -103,67 +113,55 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
         enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
 
         // Update timers - Fire Projectile
-        firingIntervalTimer -= Time.deltaTime;
+        firingIntervalTimer -= Time.fixedDeltaTime;
 
         HasNegativeMoveStatusEffect();
 
         if (moveStatus == MoveStatus.Idle)
         {
-            // Check if the player is on stealth
             if (player.isStealthActive)
             {
                 PlayerStealthCheck();
             }
 
-            // Check if the enemy is a Moravelle boss
-            if (enemyDetails.enemyBehaviour == EnemyBehaviour.Moravelle)
+            switch (currentMoravellePhase)
             {
-                // Handle phases based on currentPhase
-                switch (currentMoravellePhase)
-                {
-                    case MoravellePhase.Wait:
+                case MoravellePhase.Wait:
+                    enemy.animator.SetBool(Settings.charge, false);
+                    enemy.animator.SetBool(Settings.focused, false);
+                    enemy.animator.SetBool(Settings.cast, false);
 
-                        enemy.animator.SetBool(Settings.charge, false);
-                        enemy.animator.SetBool(Settings.focused, false);
-                        enemy.animator.SetBool(Settings.cast, false);
+                    PassedToWait = true;
 
-                        if (Time.frameCount % 20 == 0)
-                        {
-                            Debug.Log("Current phase is " + currentMoravellePhase.ToString());
-                        }
+                    firingIntervalTimer = WeaponShootInterval();
+                    firingDurationTimer = WeaponShootDuration();
 
-                        PassedToWait = true;
+                    phaseTimer += Time.fixedDeltaTime;
+                    if (phaseTimer >= waitPhase)
+                    {
+                        TransitionToNextPhase();
+                        phaseTimer = 0f;
+                    }
+                    break;
 
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
+                case MoravellePhase.StraightArrowShot:
+                    HandleStraightArrowShot();
+                    break;
 
-                        // Optionally handle phase transitions based on a timer
-                        phaseTimer += Time.deltaTime;
-                        if (phaseTimer >= waitPhase)
-                        {
-                            TransitionToNextPhase();
-                            phaseTimer = 0f;  // Reset the timer for the next phase
-                        }
-                        break;
+                case MoravellePhase.ChargeAndRetreat:
+                    HandleChargeAndRetreat();
+                    break;
 
-                    case MoravellePhase.StraightArrowShot:
-                        HandleStraightArrowShot();
-                        break;
-
-                    case MoravellePhase.ChargeAndRetreat:
-                        HandleChargeAndRetreat();
-                        break;
-
-                    case MoravellePhase.SpreadArrowShot:
-                        HandleSpreadArrowShot();
-                        break;
-
-                    default:
-                        break;
-                }
+                case MoravellePhase.SpreadArrowShot:
+                    HandleSpreadArrowShot();
+                    break;
             }
         }
+    }
+
+    protected override void Update()
+    {
+
     }
 
     public void HandleWaitPhase()
@@ -207,7 +205,6 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
     {
         if (player == null) return;
 
-        // Check if the player is on stealth
         if (player.isStealthActive)
         {
             PlayerStealthCheck();
@@ -216,35 +213,31 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
 
         if (Vector3.Distance(transform.position, player.GetPlayerPosition()) < 4f)
         {
-            int rng = Random.Range(0, 101);
-
-            if (rng > 65)
+            if (Random.Range(0, 101) > 65)
             {
-                // If player is too close to Moravelle, automatically next phase will be chargeAndRetreat
                 currentMoravellePhase = MoravellePhase.ChargeAndRetreat;
                 return;
             }
         }
 
-        if (currentMoravellePhase == MoravellePhase.StraightArrowShot || currentMoravellePhase == MoravellePhase.ChargeAndRetreat ||
+        if (currentMoravellePhase == MoravellePhase.StraightArrowShot ||
+            currentMoravellePhase == MoravellePhase.ChargeAndRetreat ||
             currentMoravellePhase == MoravellePhase.SpreadArrowShot)
         {
-            // If Moravelle made a move then next phase will be wait
             currentMoravellePhase = MoravellePhase.Wait;
         }
         else
         {
-            // Example of conditional or random phase transitions
             currentMoravellePhase = (MoravellePhase)Random.Range(2, Enum.GetValues(typeof(MoravellePhase)).Length);
         }
     }
 
     IEnumerator AttackRoutine(MoravellePhase moravellePhase)
     {
+        if (enemy.health.hasDied) yield break;
+
         if (moravellePhase == MoravellePhase.StraightArrowShot)
         {
-            if (enemy.health.hasDied) yield break;
-
             float fireTimer = 0f;
             float fireProjectileDuration = 5f;
 
@@ -254,23 +247,19 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
             {
                 if (enemy.health.hasDied) yield break;
 
-                fireTimer += Time.deltaTime;
+                fireTimer += Time.fixedDeltaTime;
 
-                // Interval Timer
                 if (firingIntervalTimer < 0f)
                 {
                     if (firingDurationTimer >= 0)
                     {
                         firingDurationTimer -= Time.deltaTime;
                         enemy.animator.SetBool(Settings.cast, true);
-
                         yield return null;
-
                         FireWeapon();
                     }
                     else
                     {
-                        // Reset timers and animation
                         firingIntervalTimer = WeaponShootInterval();
                         firingDurationTimer = WeaponShootDuration();
                         enemy.animator.SetBool(Settings.cast, false);
@@ -278,117 +267,79 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
                     }
                 }
 
-
                 yield return null;
             }
         }
         else if (moravellePhase == MoravellePhase.ChargeAndRetreat)
         {
-            if (enemy.health.hasDied) yield break;
-
             isAttacking = true;
 
-            // Lock-on player position during the start of precharge
-            if (!chargeProcessStarted)
+            if (!chargeProcessStarted && player != null)
             {
-                if (player != null)
-                {
-                    lockedPosition = player.GetPlayerPosition();
-                }
+                lockedPosition = ClampToBossRoom(player.GetPlayerPosition(), cellMin, cellMax);
             }
 
             chargeProcessStarted = true;
 
-            // ----- PRECHARGE PHASE -----
             float prechargeDuration = 0.4f;
             float chargeTimer = 0f;
-
             enemy.animator.SetBool(Settings.charge, true);
-            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
 
             while (chargeTimer < prechargeDuration)
             {
                 if (enemy.health.hasDied) yield break;
 
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
+                chargeTimer += Time.fixedDeltaTime;
+                yield return waitForFixedUpdate;
             }
 
-            // ----- CHARGE PHASE START -----
+            isCharging = true;
+
             chargeTimer = 0f;
             float chargeDuration = 1f;
+            Vector3 clampedPosition = ClampToBossRoom(lockedPosition, cellMin, cellMax);
 
-            //// Reset animation, enter movement mode
-            //enemy.animateEnemy.ResetAnimatonParameters();
+            Vector3 currentPos = ClampToBossRoom(transform.position, cellMin, cellMax);
+            transform.position = currentPos; // Optional but safe snap-in
+            Vector2 moveDir = (clampedPosition - currentPos).normalized;
 
-            // Clamp destination inside boss room bounds
-            Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
-            Vector3Int cellPosition = grid.WorldToCell(lockedPosition);
-            cellPosition.x = Mathf.Clamp(cellPosition.x, cellMin.x, cellMax.x);
-            cellPosition.y = Mathf.Clamp(cellPosition.y, cellMin.y, cellMax.y);
-            Vector3 clampedPosition = grid.GetCellCenterWorld(cellPosition);
+            float distance = Vector2.Distance(transform.position, clampedPosition);
+            float requiredVelocity = distance / chargeDuration;
+            Vector2 force = moveDir * requiredVelocity * rb2D.mass;
 
-            float chargeSpeed = 20f;
+            rb2D.linearVelocity = Vector2.zero;
+            rb2D.linearDamping = 0;
+            rb2D.AddForce(force, ForceMode2D.Impulse);
 
-            while (chargeTimer < chargeDuration)
+            yield return waitForFixedUpdate;
+
+            float timer = 0f;
+            while (timer < chargeDuration)
             {
                 if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                Vector3 moveDir = (clampedPosition - transform.position).normalized;
-                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
-                float degree = HelperUtilities.GetAngleFromVector(moveDir);
-                AimDirection aimDirection = HelperUtilities.GetAimDirection(degree);
-
-                //// Update movement animation based on direction every frame
-                //enemy.animateEnemy.SetAimWeaponAnimationParameters(aimDirection);
-                //enemy.animateEnemy.SetMovementAnimationParameters();
-
-                if (Vector3.Distance(transform.position, clampedPosition) < 0.02f)
-                {
-                    enemy.animateEnemy.ResetAnimatonParameters();
-                    enemy.animateEnemy.SetIdleAnimationParameters();
-                    break; // Stop early if destination reached
-                }
-
-                yield return null;
+                timer += Time.fixedDeltaTime;
+                yield return waitForFixedUpdate;
             }
 
-            // Revert to the idle state after charge completed
+            rb2D.linearDamping = 3;
+            rb2D.linearVelocity = Vector2.zero;
+            enemy.animateEnemy.ResetAnimatonParameters();
             enemy.animateEnemy.SetIdleAnimationParameters();
-            chargeTimer = 0f;
-
-            yield return null;
-
-            isAttacking = false;
+            isCharging = false;
+            isAttacking = false;     
         }
         else if (moravellePhase == MoravellePhase.SpreadArrowShot)
         {
-            if (enemy.health.hasDied) yield break;
-
-            // PREPARE PRECHARGE PHASE
             float prechargeDuration = 0.8f;
             float chargeTimer = 0f;
-
-            // Set the motion type for the precharge phase
             enemy.animator.SetBool(Settings.focused, true);
-
             yield return null;
 
             while (chargeTimer < prechargeDuration)
             {
-                chargeTimer += Time.deltaTime;
-
+                chargeTimer += Time.fixedDeltaTime;
                 yield return null;
             }
-
-            chargeTimer = 0f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
 
             float fireTimer = 0f;
             float fireProjectileDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
@@ -397,19 +348,17 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
             {
                 if (enemy.health.hasDied) yield break;
 
-                fireTimer += Time.deltaTime;
+                fireTimer += Time.fixedDeltaTime;
 
-                // Interval Timer
                 if (firingIntervalTimer < 0f)
                 {
                     if (firingDurationTimer >= 0)
                     {
-                        firingDurationTimer -= Time.deltaTime;
+                        firingDurationTimer -= Time.fixedDeltaTime;
                         FireWeapon(false, MoravellePhase.SpreadArrowShot);
                     }
                     else
                     {
-                        // Reset timers
                         firingIntervalTimer = WeaponShootInterval();
                         firingDurationTimer = WeaponShootDuration();
                         enemy.animator.SetBool(Settings.focused, false);
@@ -419,8 +368,6 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
 
                 yield return null;
             }
-
-            yield return null;
         }
 
         chargeProcessStarted = false;

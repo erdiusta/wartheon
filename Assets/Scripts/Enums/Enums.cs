@@ -124,7 +124,7 @@ public enum InnerPathName
     DieHard,
     StoneSkin,
     BattleScars,
-    ReflexBarrier,
+    FortifiedResolve,
     ArcaneFortitude,
     SecondBreath,
     BlockThemAll,
@@ -235,7 +235,7 @@ public enum MoveStatus
 {
     None = 0,
     Idle = 1 << 0, // 1
-    Stagger = 1 << 1, // 2
+    KnockedBack = 1 << 1, // 2
     Stun = 1 << 2, // 4
     Root = 1 << 3, // 8
     Frozen = 1 << 4, // 16
@@ -479,9 +479,7 @@ public enum EnemyPhase
 {
     Patrol,
     Chase,
-    Avoid,
     Attack,
-    Flank,
     Death
 }
 
@@ -503,7 +501,7 @@ public enum MoravellePhase
     SpreadArrowShot,
 }
 
-public enum TreantPhase
+public enum SylvarokPhase
 {
     None,
     Wait,
@@ -603,7 +601,27 @@ public enum ActiveSkill
     MycarasSeal,
     SheerCold,
     Icebreaker,
-    AbsoluteZero
+    AbsoluteZero,
+    FireBlast,
+    MoltenRift,
+    FlameLotus,
+    KynarasEmbrace,
+    BlazingCyclone,
+    Rage,
+    Shattercry,
+    AxeThrow,
+    Whirlrend,
+    FeastOfWar,
+    MistOfDisruption,
+    NymarasWindveil,
+    ChainLightning,
+    EyeOfTheStorm,
+    IonicRejuvenation,
+    DontBlink,
+    Whisperslice,
+    Shiruken,
+    VenomousIvy,
+    FadeAndFeed
 }
     
 

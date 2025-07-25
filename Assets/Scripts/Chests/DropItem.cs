@@ -30,6 +30,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [HideInInspector] public int gambleValue;
     [HideInInspector] public static DropItem toBeDroppedDropItem;
     [HideInInspector] public static DropItem nearestDropItem = null;
+    [HideInInspector] public static WeaponDetailsSO droppedThrowingAxe = null;
     [HideInInspector] public bool isInitialized = false;
 
     bool isPurchasing;
@@ -513,6 +514,9 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void DropWeaponPickUpProcess(Player player, WeaponDetailsSO toBeSwappedWeaponDetails,bool dropToInventory = false)
     {
+        Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+        Weapon offHandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
+
         if (!InputManager.Instance.isPressedPreviousFrame)
         {
             if (nearestDropItem != this) return;
@@ -523,7 +527,9 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 return;
             }
 
-            if (weaponDetails.weaponClass == WeaponClass.Shield)
+            if (weaponDetails.weaponClass == WeaponClass.Shield || (offHandWeapon == null && weaponDetails.wieldType == WieldType.OneHanded && 
+                weaponDetails.weaponClass != WeaponClass.Spear && mainHandWeapon != null && mainHandWeapon.weaponDetails.wieldType == WieldType.OneHanded &&
+                mainHandWeapon.weaponDetails.weaponClass != WeaponClass.Spear))
             {
                 goto shieldContinue; // Skip drop process because you equip one-handed weapon and chest contains a shield
             }

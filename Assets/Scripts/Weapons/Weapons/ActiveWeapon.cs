@@ -45,16 +45,12 @@ public class ActiveWeapon : MonoBehaviour
     Enemy enemy;
     Transform mainHandAnchorPosition;
     Transform offHandAnchorPosition;
-    GameObject thirdHandGameObject;
-    Vector3 startRightHandPosition;
     SetActiveWeaponEvent setActiveWeaponEvent;
     Animator playerAnimator;
     Animator weaponMainHandAnimator;
     Animator weaponOffHandAnimator;
     Weapon currentMainHandWeapon;
     Weapon currentOffHandWeapon;
-
-    int previousWeaponSetIndex;
 
     private void Awake()
     {
@@ -69,7 +65,6 @@ public class ActiveWeapon : MonoBehaviour
             mainHandAnchorPosition = transform.GetChild(0);
             offHandAnchorPosition = transform.GetChild(2);
 
-            thirdHandGameObject = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).gameObject;
             weaponOffHandAnimator = offHandAnchorPosition.GetComponent<Animator>();
         }
     }
@@ -107,7 +102,7 @@ public class ActiveWeapon : MonoBehaviour
         // Update new weapon values
         player?.UpdateDamageValues();
         player?.UpdateArmorValues();
-        player?.UpdateWeaponHandlingAndCriticalValues();
+        player?.UpdateAttackRatingAndCriticalValues();
         player?.UpdateBlockAndEvasivenessValues();
     }
 
@@ -118,7 +113,7 @@ public class ActiveWeapon : MonoBehaviour
         // Update new weapon values
         player?.UpdateDamageValues();
         player?.UpdateArmorValues();
-        player?.UpdateWeaponHandlingAndCriticalValues();
+        player?.UpdateAttackRatingAndCriticalValues();
         player?.UpdateBlockAndEvasivenessValues();
     }
 
@@ -130,7 +125,7 @@ public class ActiveWeapon : MonoBehaviour
         // Update new weapon values
         player.UpdateDamageValues();
         player?.UpdateArmorValues();
-        player.UpdateWeaponHandlingAndCriticalValues();
+        player.UpdateAttackRatingAndCriticalValues();
         player.UpdateBlockAndEvasivenessValues();
     }
 
@@ -141,7 +136,7 @@ public class ActiveWeapon : MonoBehaviour
         // Update new weapon values
         player?.UpdateDamageValues();
         player?.UpdateArmorValues();
-        player?.UpdateWeaponHandlingAndCriticalValues();
+        player?.UpdateAttackRatingAndCriticalValues();
         player?.UpdateBlockAndEvasivenessValues();
     }
 
@@ -268,7 +263,7 @@ public class ActiveWeapon : MonoBehaviour
             // Update new weapon values
             player?.UpdateDamageValues();
             player?.UpdateArmorValues();
-            player?.UpdateWeaponHandlingAndCriticalValues();
+            player?.UpdateAttackRatingAndCriticalValues();
             player?.UpdateBlockAndEvasivenessValues();
         }
     }

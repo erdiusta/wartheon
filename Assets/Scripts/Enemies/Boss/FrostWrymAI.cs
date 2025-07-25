@@ -423,19 +423,19 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
                             // Evasiveness - dodge check
                             if (100 - (player.currentEvasivenessValue + blindPenalty) * 100 > Random.Range(1, 101))
                             {
-                                playerHealth.TakeDamage(25, transform.position, player.transform.position, false);
+                                playerHealth.TakeDamage(25, transform.position, player.transform.position);
 
                                 //SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
                                 // Apply knockback
-                                player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
+                                ApplyKnockbackToPlayer(player);
                             }
                             else
                             {
                                 player.health.isDodging = true;
                                 player.healthEvent.CallDodgeEvent();
                                 player.health.PostHitImmunity(true);
-                                player.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
+                                player.health.TakeDamage(0, transform.position, enemy.health.transform.position);
                             }
                         }
                     }
@@ -639,19 +639,19 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
                             // Evasiveness - dodge check
                             if (100 - (player.currentEvasivenessValue + blindPenalty) * 100 > Random.Range(1, 101))
                             {
-                                playerHealth.TakeDamage(25, transform.position, player.transform.position, false);
+                                playerHealth.TakeDamage(25, transform.position, player.transform.position);
 
                                 //SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
 
                                 // Apply knockback
-                                player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
+                                ApplyKnockbackToPlayer(player);
                             }
                             else
                             {
                                 player.health.isDodging = true;
                                 player.healthEvent.CallDodgeEvent();
                                 player.health.PostHitImmunity(true);
-                                player.health.TakeDamage(0, transform.position, enemy.health.transform.position, false);
+                                player.health.TakeDamage(0, transform.position, enemy.health.transform.position);
                             }
                         }
                     }

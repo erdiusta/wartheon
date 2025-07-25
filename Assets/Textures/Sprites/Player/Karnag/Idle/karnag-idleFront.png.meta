@@ -113,9 +113,9 @@ TextureImporter:
       name: karnag-idleFront_0
       rect:
         serializedVersion: 2
-        x: 10
+        x: 9
         y: 4
-        width: 12
+        width: 14
         height: 25
       alignment: 9
       pivot: {x: 0.5, y: 0}
@@ -135,9 +135,9 @@ TextureImporter:
       name: karnag-idleFront_1
       rect:
         serializedVersion: 2
-        x: 42
+        x: 41
         y: 4
-        width: 12
+        width: 14
         height: 26
       alignment: 9
       pivot: {x: 0.5, y: 0}
@@ -157,9 +157,9 @@ TextureImporter:
       name: karnag-idleFront_2
       rect:
         serializedVersion: 2
-        x: 74
+        x: 73
         y: 4
-        width: 12
+        width: 14
         height: 27
       alignment: 9
       pivot: {x: 0.5, y: 0}
@@ -179,9 +179,9 @@ TextureImporter:
       name: karnag-idleFront_3
       rect:
         serializedVersion: 2
-        x: 106
+        x: 105
         y: 4
-        width: 12
+        width: 14
         height: 26
       alignment: 9
       pivot: {x: 0.5, y: 0}

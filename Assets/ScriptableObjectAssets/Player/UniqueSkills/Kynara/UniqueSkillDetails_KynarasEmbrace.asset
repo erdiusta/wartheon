@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_KynarasEmbrace
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Kynara's Embrace
+  activeUniqueSkillDetails: 
+  activeSkill: 23
+  activeUniqueSkillSprite: {fileID: 21300000, guid: b1fdb395fb3526e4c8e17948875054a0, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 0bd3ad6810b841341902eaece36165af, type: 2}
+  activeUniqueSkillSoundEffectTwo: {fileID: 11400000, guid: ba5f670600a73c148b3e607ea68787d5, type: 2}
+  activeUniqueSkillCooldownDuration: 15
+  activeUniqueSkillEffectiveDuration: 6
+  activeUniqueSkillManaCost: 15
+  activeUniqueSkillManaReserveCost: 0

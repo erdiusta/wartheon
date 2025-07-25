@@ -67,7 +67,7 @@ public class PlayerControl : MonoBehaviour
         player.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
 
         animationEventHelperMainHand.OnSeismicSlamTriggered.AddListener(PerformSeismicSlam);
-        animationEventHelperMainHand.OnSeismicSlamSoundTriggered.AddListener(PlaySeismicSlamSound);
+        animationEventHelperMainHand.OnShatterCryTriggered.AddListener(PerformShatterCry);
     }
 
     private void OnDisable()
@@ -75,7 +75,7 @@ public class PlayerControl : MonoBehaviour
         player.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged;
 
         animationEventHelperMainHand.OnSeismicSlamTriggered.RemoveListener(PerformSeismicSlam);
-        animationEventHelperMainHand.OnSeismicSlamSoundTriggered.RemoveListener(PlaySeismicSlamSound);
+        animationEventHelperMainHand.OnShatterCryTriggered.RemoveListener(PerformShatterCry);
     }
 
     private void Start()
@@ -99,7 +99,7 @@ public class PlayerControl : MonoBehaviour
     private void SetPlayerAnimationSpeed()
     {
         // Set animator speed to match movement speed
-        player.animator.speed = player.movementByVelocity.moveSpeed / Settings.baseSpeedForPlayerAnimations;
+        player.animator.speed = player.movementByForce.moveSpeed / Settings.baseSpeedForPlayerAnimations;
     }
 
     private void Update()
@@ -147,6 +147,7 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
+        // GUARDED OATH
         if (player.isGuardedOathActive && player.activeWeapon.GetCurrentOffHandWeapon() != null &&
             player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass != WeaponClass.Shield)
         {
@@ -155,6 +156,45 @@ public class PlayerControl : MonoBehaviour
                 if (skill.Value.activeSkill == ActiveSkill.GuardedOath)
                 {
                     player.mana.ResetReservedMana(skill.Value.activeUniqueSkillManaReserveCost);
+                }
+            }
+        }
+
+        // INNER PATH
+        // Vicious Momentum
+        ViciousMomentumCheck();
+
+        // Combat Focus
+        CombatFocusCheck();
+
+        // Triad Execution
+        TriadExecutionCheck();
+
+        // Fortified Resolve
+        if (player.isFortifiedResolveActive)
+        {
+            if (HasNegativeStatusEffect())
+            {
+                if (!player.fortifiedResolveTriggered)
+                {
+                    player.additionalArmorModifier += 0.15f;
+                    player.healthEvent.CalllFortifiedResolveEvent();
+                    player.UpdateArmorValues();
+                    StaticEventHandler.CallStatPointChangedEvent();
+
+                    player.fortifiedResolveTriggered = false;
+                }
+            }
+            else
+            {
+                if (player.fortifiedResolveTriggered)
+                {
+                    player.additionalArmorModifier -= 0.15f;
+                    player.healthEvent.CallFortifiedResolveWoreOffEvent();
+                    player.UpdateArmorValues();
+                    StaticEventHandler.CallStatPointChangedEvent();
+
+                    player.fortifiedResolveTriggered = false;
                 }
             }
         }
@@ -237,14 +277,20 @@ public class PlayerControl : MonoBehaviour
                 rootCoroutine = StartCoroutine(RootRoutine());
             }
         }
-        // Stagger
-        else if((player.moveStatus & MoveStatus.Stagger) != 0)
+        // Knocked Back
+        else if ((player.moveStatus & MoveStatus.KnockedBack) != 0)
         {
             isPlayerRolling = false;
             player.meleeAttackMainHand.IsAttacking = false;
             player.polygonCollider2D.enabled = false;
+
             if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
             {
+                if (player.rb2D.linearVelocity.magnitude < 0.08f)
+                {
+                    player.rb2D.linearVelocity = Vector2.zero;
+                }
+
                 if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
                 {
                     // Trigger fire weapon event for precharge weapons
@@ -252,8 +298,6 @@ public class PlayerControl : MonoBehaviour
                         weaponCurrentProjectile.isLaser, AimDirection.Right, 0f, 0f, Vector3.zero, false);
                 }
             }
-
-            StartCoroutine(Stagger());
         }
         else if (player.moveStatus == MoveStatus.Idle)
         {
@@ -269,7 +313,7 @@ public class PlayerControl : MonoBehaviour
             UseItemInput();
             // Process the player use special move input
             SpecialMoveInput();
-        }  
+        }
     }
 
     /// <summary>
@@ -277,63 +321,38 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void MovementInput()
     {
-        // Ensure movement doesn't override attack animations
+        // Cancel movement if attacking, parrying, or using special skill
         if (player.meleeAttackMainHand.IsAttacking || isParrying || player.isHuntersReachActive)
         {
-            player.movementByVelocity.MovementInput = new Vector2(0f, 0f);
+            player.movementByForce.MovementInput = Vector2.zero;
             return;
         }
-            
-        // Get movement input
-        movementInput = InputManager.Instance.movement.action.ReadValue<Vector2>().normalized;
 
-        float horizontalMovement = movementInput.x;
-        float verticalMovement = movementInput.y;
+        // Read and normalize input
+        movementInput = InputManager.Instance.movement.action.ReadValue<Vector2>().normalized;
         bool jumpButtonDown = InputManager.Instance.jumpButton.action.WasPerformedThisFrame();
 
-        player.movementByVelocity.MovementInput = movementInput;
+        // Update movement timer (for trail dust)
+        movementTimer = movementInput.magnitude > 0.1f ? movementTimer + Time.deltaTime : 0f;
 
-        if (Mathf.Abs(movementInput.x) > 0.1f || Mathf.Abs(movementInput.y) > 0.1f)
-        {
-            movementTimer += Time.deltaTime;
-        }
-        else
-        {
-            movementTimer = 0;
-        }
+        // Store for physics force application
+        player.movementByForce.MovementInput = movementInput;
 
-        // Create a direction vector based on the input
-        Vector2 direction = new Vector2(horizontalMovement, verticalMovement);
-
-        // Adjust distance for diagonal movement (pythagoras approximation)
-        if (horizontalMovement != 0f && verticalMovement != 0f)
-        {
-            direction *= 0.7f;
-        }
-
-        // If there is movement either move or roll
-        if (direction != Vector2.zero)
+        if (movementInput != Vector2.zero)
         {
             if (!jumpButtonDown)
             {
-                // Trigger movement event
-                player.movementByVelocity.MoveRigidbody(direction.normalized, player.movementByVelocity.moveSpeed);
-
-                // Trigger move animations
                 player.animatePlayer.SetMovementAnimationParameters();
             }
-            // Else player roll if not cooling down
-            else if(playerRollCooldownTimer <= 0f)
+            else if (playerRollCooldownTimer <= 0f && !InputManager.dodgeRollDisabled)
             {
-                if (InputManager.dodgeRollDisabled) return;
-
-                PlayerRoll((Vector3)direction);
+                PlayerRoll(movementInput);
             }
         }
-        // Else trigger idle event
         else
         {
-            player.idle.StopVelocity();
+            // You may want to disable this if StopVelocity resets Rigidbody velocity
+            player.rb2D.linearVelocity = Vector2.zero;
 
             if (!player.meleeAttackMainHand.IsAttacking)
             {
@@ -388,11 +407,11 @@ public class PlayerControl : MonoBehaviour
 
         isPlayerRolling = true;
 
-        Vector3 targetPosition = player.transform.position + (Vector3)direction * player.movementByVelocity.movementDetails.rollDistance;
+        Vector3 targetPosition = player.transform.position + (Vector3)direction * player.movementByForce.movementDetails.rollDistance;
 
         while (Vector3.Distance(player.transform.position, targetPosition) > minDistance)
         {
-            player.movementToPositionEvent.CallMovementToPositionEvent(targetPosition, player.rb2D.position, player.movementByVelocity.movementDetails.rollSpeed,
+            player.movementToPositionEvent.CallMovementToPositionEvent(targetPosition, player.rb2D.position, player.movementByForce.movementDetails.rollSpeed,
                 direction, isPlayerRolling);
 
             yield return waitForFixedUpdate;
@@ -401,18 +420,10 @@ public class PlayerControl : MonoBehaviour
         isPlayerRolling = false;
 
         // Set cooldown timer
-        playerRollCooldownTimer = player.movementByVelocity.movementDetails.rollCooldownTime;
+        playerRollCooldownTimer = player.movementByForce.movementDetails.rollCooldownTime;
 
         player.animatePlayer.SetIdleAnimationParameters();
         player.transform.position = targetPosition;
-    }
-
-    IEnumerator Stagger()
-    {
-        yield return new WaitForSeconds(player.knockback.knockbackTimeWeight);
-
-        player.moveStatus = MoveStatus.Idle;
-        player.polygonCollider2D.enabled = true;
     }
 
     /// <summary>
@@ -441,7 +452,7 @@ public class PlayerControl : MonoBehaviour
         SwitchWeaponInput();
     }
 
-    private void AimWeaponInput(out Vector3 weaponDirection, out float weaponAngleDegrees, out float playerAngleDegrees, out AimDirection playerAimDirection, 
+    public void AimWeaponInput(out Vector3 weaponDirection, out float weaponAngleDegrees, out float playerAngleDegrees, out AimDirection playerAimDirection, 
         out AttackDirection playerAttackDirection)
     {
         playerAngleDegrees = 0f;
@@ -508,7 +519,7 @@ public class PlayerControl : MonoBehaviour
         if (InputManager.firingDisabled) return; // For tutorial issues
 
         // Fire when left mouse button is clicked - melee
-        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon && !GameManager.Instance.isOverviewCameraEnabled)
         {
             if (InputManager.Instance.attack.action.WasPressedThisFrame() && !IsClickingSpecificUILayer() && !isParrying)
             {
@@ -536,7 +547,7 @@ public class PlayerControl : MonoBehaviour
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
         {
             if (InputManager.Instance.attack.action.IsPressed() && !player.activeWeapon.GetCurrentMainHandWeapon().firingCompletedIfWeaponIsPrecharged 
-                && !IsClickingSpecificUILayer()) // Only trigger once per hold
+                && !IsClickingSpecificUILayer() && !GameManager.Instance.isOverviewCameraEnabled) // Only trigger once per hold
             {
                 if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
                 {
@@ -555,7 +566,7 @@ public class PlayerControl : MonoBehaviour
         }
         // Fire for non-precharge weapons (fire once per press)
         else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime == 0f && InputManager.Instance.attack.action.WasPressedThisFrame()
-            && !IsClickingSpecificUILayer())
+            && !IsClickingSpecificUILayer() && !GameManager.Instance.isOverviewCameraEnabled)
         {
             isSoundPlayed = false;
 
@@ -578,7 +589,7 @@ public class PlayerControl : MonoBehaviour
         }
 
         // Reset when fire button is released
-        if (InputManager.Instance.attack.action.WasReleasedThisFrame())
+        if (InputManager.Instance.attack.action.WasReleasedThisFrame() && !GameManager.Instance.isOverviewCameraEnabled)
         {
             isSoundPlayed = false;
 
@@ -823,6 +834,8 @@ public class PlayerControl : MonoBehaviour
 
     private void SwitchWeaponInput(bool onStart = false)
     {
+        if (player.meleeAttackMainHand.IsAttacking) return;
+
         float scrollValue = (InputManager.Instance.switchWeaponByWheel.action.ReadValue<Vector2>().normalized).y;
 
         if (InputManager.switchDisabled) return;
@@ -1015,7 +1028,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     IEnumerator FrostRoutine()
     {
-        player.movementByVelocity.moveSpeed = 0f;
+        player.movementByForce.moveSpeed = 0f;
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         player.animator.SetBool(Settings.isFrozen, true);
 
@@ -1025,7 +1038,7 @@ public class PlayerControl : MonoBehaviour
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallFrostCuredEvent();
         player.animator.SetBool(Settings.isFrozen, false);
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.CurrentAgilityValue * 0.25f;
+        player.movementByForce.moveSpeed = player.movementByForce.movementDetails.GetBaseMaxMoveSpeed() + player.CurrentAgilityValue * 0.25f;
         frostCoroutine = null;
     }
 
@@ -1034,7 +1047,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     IEnumerator RootRoutine()
     {
-        player.movementByVelocity.moveSpeed = 0f;
+        player.movementByForce.moveSpeed = 0f;
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
 
         yield return new WaitForSeconds(2f);
@@ -1042,7 +1055,7 @@ public class PlayerControl : MonoBehaviour
         player.moveStatus &= ~MoveStatus.Root; // Remove root
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallRootCuredEvent();
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.CurrentAgilityValue * 0.25f;
+        player.movementByForce.moveSpeed = player.movementByForce.movementDetails.GetBaseMaxMoveSpeed() + player.CurrentAgilityValue * 0.25f;
         rootCoroutine = null;
     }
 
@@ -1051,7 +1064,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     IEnumerator StunRoutine()
     {
-        player.movementByVelocity.moveSpeed = 0f;
+        player.movementByForce.moveSpeed = 0f;
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         player.animator.SetBool(Settings.isStunned, true);
 
@@ -1061,7 +1074,7 @@ public class PlayerControl : MonoBehaviour
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallStunCuredEvent();
         player.animator.SetBool(Settings.isStunned, false);
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.CurrentAgilityValue * 0.25f;
+        player.movementByForce.moveSpeed = player.movementByForce.movementDetails.GetBaseMaxMoveSpeed() + player.CurrentAgilityValue * 0.25f;
         stunCoroutine = null;
     }
 
@@ -1083,15 +1096,19 @@ public class PlayerControl : MonoBehaviour
         {
             if (!player.currentlyUsedActiveUniqueSkills.ContainsKey(inputSlotNumber)) return;
 
-            if (player.mana.GetCurrentMana() >= player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost) // Check if there is enough mana
+            if (player.mana.GetCurrentMana() >= player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost * (1 - player.additionalManaReductionModifier))
+                // Check if there is enough mana
             {
+                int consumedMana = (int)(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost * (1 - player.additionalManaReductionModifier));
+                int reservedMana = (int)(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaReserveCost * (1 - player.additionalManaReductionModifier));
+
                 switch (player.playerDetails.playerCharacterIndex)
                 {
                     case Character.Caelion:
                         switch (player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeSkill)
                         {
                             case ActiveSkill.SeismicSlam:
-                                player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                player.mana.ConsumeMana(consumedMana);
 
                                 SeismicSlamProcess();
                                 player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1100,7 +1117,7 @@ public class PlayerControl : MonoBehaviour
                             case ActiveSkill.Valor:
                                 if (!player.isValorActive)
                                 {
-                                    player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                    player.mana.ConsumeMana(consumedMana);
 
                                     Valor(inputSlotNumber);
                                     player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.Valor, inputSlotNumber);
@@ -1110,7 +1127,7 @@ public class PlayerControl : MonoBehaviour
                                 // OFF-HAND
                                 if (player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
                                 {
-                                    player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                    player.mana.ConsumeMana(consumedMana);
 
                                     // Shield bash attack
                                     player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1122,7 +1139,7 @@ public class PlayerControl : MonoBehaviour
                             case ActiveSkill.BreakTheLine:
                                 if (!player.isBreakTheLineActive && player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
                                 {
-                                    player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                    player.mana.ConsumeMana(consumedMana);
 
                                     BreakTheLine(inputSlotNumber);
                                     player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.BreakTheLine, inputSlotNumber);
@@ -1135,9 +1152,9 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 else if (!player.isGuardedOathActive && player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
                                 {
-                                    if (player.mana.GetCurrentMana() >= player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaReserveCost)
+                                    if (player.mana.GetCurrentMana() >= reservedMana)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaReserveCost, true); // Mana reserved
+                                        player.mana.ConsumeMana(reservedMana, true); // Mana reserved
                                         GuardedOath(inputSlotNumber);
                                         player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.GuardedOath, inputSlotNumber);
                                     }
@@ -1154,7 +1171,7 @@ public class PlayerControl : MonoBehaviour
                             case ActiveSkill.UmbralMist:
                                 if (!player.isUmbralMistActive)
                                 {
-                                    player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                    player.mana.ConsumeMana(consumedMana);
 
                                     UmbralMist(inputSlotNumber);
                                     player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.UmbralMist, inputSlotNumber);
@@ -1164,7 +1181,7 @@ public class PlayerControl : MonoBehaviour
                             case ActiveSkill.Stealth:
                                 if (!player.isStealthActive)
                                 {
-                                    player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                    player.mana.ConsumeMana(consumedMana);
 
                                     Stealth(inputSlotNumber);
                                     player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.Stealth, inputSlotNumber);
@@ -1178,7 +1195,7 @@ public class PlayerControl : MonoBehaviour
                                     if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger &&
                                         player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger && !player.meleeAttackMainHand.IsAttacking)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                        player.mana.ConsumeMana(consumedMana);
 
                                         // Blood drain attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1191,7 +1208,7 @@ public class PlayerControl : MonoBehaviour
                             case ActiveSkill.ShadowStep:
                                 if (!player.isShadowStepActive)
                                 {
-                                    player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                    player.mana.ConsumeMana(consumedMana);
 
                                     ShadowStep(inputSlotNumber);
                                     player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.ShadowStep, inputSlotNumber);
@@ -1205,7 +1222,7 @@ public class PlayerControl : MonoBehaviour
                                     if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger &&
                                         player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger && !player.meleeAttackMainHand.IsAttacking)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                        player.mana.ConsumeMana(consumedMana);
 
                                         // Cull the meek attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1229,7 +1246,7 @@ public class PlayerControl : MonoBehaviour
                                 {
                                     if (!player.isPenetrateActive)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                        player.mana.ConsumeMana(consumedMana);
 
                                         // Penetrate attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1244,7 +1261,7 @@ public class PlayerControl : MonoBehaviour
                                 {
                                     if (!player.isTripleThreatActive)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                        player.mana.ConsumeMana(consumedMana);
 
                                         // Triple threat attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1259,7 +1276,7 @@ public class PlayerControl : MonoBehaviour
                                 {
                                     if (!player.isBindingArrowActive)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                        player.mana.ConsumeMana(consumedMana);
 
                                         // Triple threat attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1274,7 +1291,7 @@ public class PlayerControl : MonoBehaviour
                                 {
                                     if (!player.isArrowOfTheSevenActive)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                        player.mana.ConsumeMana(consumedMana);
 
                                         // Arrow of The Seven Plagues attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1287,7 +1304,7 @@ public class PlayerControl : MonoBehaviour
                             case ActiveSkill.HuntersReach:
                                 if (!player.isHuntersReachActive && !isPlayerRolling)
                                 {
-                                    player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                    player.mana.ConsumeMana(consumedMana);
 
                                     // Use Hunter's Reach - Grapple Hook
                                     player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1302,6 +1319,67 @@ public class PlayerControl : MonoBehaviour
 
                         break;
                     case Character.Karnag:
+                        switch (player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeSkill)
+                        {
+                            case ActiveSkill.Rage:
+                                if (!player.isRageActive)
+                                {
+                                    player.mana.ConsumeMana(consumedMana);
+
+                                    Rage(inputSlotNumber);
+                                    player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.Rage, inputSlotNumber);
+                                }
+
+                                break;
+                            case ActiveSkill.Shattercry:
+                                if (!player.isShatterCryActive)
+                                {
+                                    player.mana.ConsumeMana(consumedMana);
+
+                                    ShatterCry(inputSlotNumber);
+                                    player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.Shattercry, inputSlotNumber);
+                                }
+
+                                break;
+                            case ActiveSkill.AxeThrow:
+                                // AXE CHECK
+                                if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon() != null 
+                                    && !player.isAxeThrowActive)
+                                {
+                                    if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Axe &&
+                                        player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Axe && 
+                                        !player.meleeAttackMainHand.IsAttacking)
+                                    {
+                                        player.mana.ConsumeMana(consumedMana);
+
+                                        // Axe throw attack
+                                        player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
+                                        AxeThrow(inputSlotNumber);
+                                        player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.AxeThrow, inputSlotNumber);
+                                    }
+                                }
+
+
+                                break;
+                            case ActiveSkill.Whirlrend:
+                                player.mana.ConsumeMana(consumedMana);
+
+                                player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
+                                Whirlrend(inputSlotNumber);
+                                player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.Whirlrend, inputSlotNumber);
+                                break;
+                            case ActiveSkill.FeastOfWar:
+                                if (!player.isFeastOfWarActive)
+                                {
+                                    player.mana.ConsumeMana(consumedMana);
+
+                                    FeastOfWar(inputSlotNumber);
+                                    player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.FeastOfWar, inputSlotNumber);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                     case Character.Nyxa:
                         break;
@@ -1313,7 +1391,7 @@ public class PlayerControl : MonoBehaviour
                                 {
                                     if (!player.isBlizzardActive)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                        player.mana.ConsumeMana(consumedMana);
 
                                         // Blizzard attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1323,17 +1401,14 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.MycarasSeal:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                                if (!player.isMycarasSealActive)
                                 {
-                                    if (!player.isMycarasSealActive)
-                                    {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                    player.mana.ConsumeMana(consumedMana);
 
-                                        // Activate Mycara's Seal
-                                        player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
-                                        MycarasSeal(inputSlotNumber);
-                                        player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.MycarasSeal, inputSlotNumber);
-                                    }
+                                    // Activate Mycara's Seal
+                                    player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
+                                    MycarasSeal(inputSlotNumber);
+                                    player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.MycarasSeal, inputSlotNumber);
                                 }
                                 break;
                             case ActiveSkill.SheerCold:
@@ -1343,7 +1418,7 @@ public class PlayerControl : MonoBehaviour
                                     if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff &&
                                         !player.meleeAttackMainHand.IsAttacking)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                        player.mana.ConsumeMana(consumedMana);
 
                                         // Sheer cold attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1358,7 +1433,7 @@ public class PlayerControl : MonoBehaviour
                                 {
                                     if (!player.isIceBreakerActive)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                        player.mana.ConsumeMana(consumedMana);
 
                                         // Ice breaker attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1372,7 +1447,7 @@ public class PlayerControl : MonoBehaviour
                                 {
                                     if (!player.isAbsoluteZeroActive)
                                     {
-                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+                                        player.mana.ConsumeMana(consumedMana);
 
                                         // Absolute Zero attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
@@ -1386,6 +1461,74 @@ public class PlayerControl : MonoBehaviour
                         }
                         break;
                     case Character.Kynara:
+                        switch (player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeSkill)
+                        {
+                            case ActiveSkill.FireBlast:
+
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                                {
+                                    if (!player.isFireBlastActive)
+                                    {
+                                        player.mana.ConsumeMana(consumedMana);
+
+                                        // Fire blast attack
+                                        player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
+                                        FireBlast(inputSlotNumber);
+                                        player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.FireBlast, inputSlotNumber);
+                                    }
+                                }
+                                break;
+                            case ActiveSkill.MoltenRift:
+                                if (!player.isMoltenRiftActive)
+                                {
+                                    player.mana.ConsumeMana(consumedMana);
+
+                                    // Molten rift skill
+                                    player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
+                                    MoltenRift(inputSlotNumber);
+                                    player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.MoltenRift, inputSlotNumber);
+                                }
+                                break;
+                            case ActiveSkill.FlameLotus:
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                                {
+                                    if (!player.isFlameLotusActive)
+                                    {
+                                        player.mana.ConsumeMana(player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeUniqueSkillManaCost);
+
+                                        // Flame lotus attack
+                                        player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
+                                        FlameLotus(inputSlotNumber);
+                                        player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.FlameLotus, inputSlotNumber);
+                                    }
+                                }
+                                break;
+                            case ActiveSkill.KynarasEmbrace:
+                                if (!player.isKynarasEmbraceActive)
+                                {
+                                    player.mana.ConsumeMana(consumedMana);
+
+                                    // Activate Kynara's Embrace
+                                    player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
+                                    KynarasEmbrace(inputSlotNumber);
+                                    player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.KynarasEmbrace, inputSlotNumber);
+                                }
+                                break;
+                            case ActiveSkill.BlazingCyclone:
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                                {
+                                    if (!player.isBlazingCycloneActive)
+                                    {
+                                        player.mana.ConsumeMana(consumedMana);
+
+                                        // Blazing Cyclone attack
+                                        player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
+                                        BlazingCyclone(inputSlotNumber);
+                                        player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.BlazingCyclone, inputSlotNumber);
+                                    }
+                                }
+                                break;
+                        }
                         break;
                     case Character.Nymara:
                         break;
@@ -1407,48 +1550,15 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void SeismicSlamProcess()
     {
-        SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.firstActiveSkillDetails.activeUniqueSkillSoundEffectTwo);
+        //SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.firstActiveSkillDetails.activeUniqueSkillSoundEffectTwo);
         player.animator.SetTrigger("seismicSlam");
-    }
-
-    private void PlaySeismicSlamSound()
-    {
-        SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.firstActiveSkillDetails.activeUniqueSkillSoundEffectOne);
     }
 
     private void PerformSeismicSlam()
     {
         GameObject slamEffectObject = Instantiate(activeSkillTypeThreeAnimator.gameObject, transform.position, Quaternion.identity);
 
-        // Get all colliders within the radius of the seismic slam
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, player.seismicSlamCircleRadius);
-
         slamEffectObject.GetComponent<Animator>().SetTrigger("slam");
-
-        if (player.playerDetails.applyScreenShake)
-        {
-            StaticEventHandler.CallCameraShakeEvent(player.playerDetails.shakeIntensity, player.playerDetails.shakeDuration);
-        }
-
-        foreach (Collider2D col in colliders)
-        {
-            // Check if the collider belongs to an enemy or any other object you want to affect
-            if (col.CompareTag(Settings.enemyTag))
-            {
-                // Apply damage to the enemy
-                Enemy enemy = col.GetComponent<Enemy>();
-
-                if (!enemy.enemyDetails.hasKnockbackResistance && enemy.health.currentHealth > 0)
-                {
-                    enemy.GetComponent<EnemyAI>().TriggerKnockback((enemy.transform.position - transform.position).normalized);
-                }
-
-                if (enemy.health != null)
-                {
-                    enemy.health.TakeDamage(player.seismicSlamDamage, transform.position, enemy.health.transform.position, false, null, MeleeHand.None);
-                }
-            }
-        }
 
         Destroy(slamEffectObject, 4f); // Destroy slam object after animation completed
     }
@@ -1803,8 +1913,6 @@ public class PlayerControl : MonoBehaviour
         // Aim weapon input
         AimWeaponInput(out weaponDirection, out weaponAngleDegrees, out playerAngleDegrees, out playerAimDirection, out playerAttackDirection);
 
-        Debug.Log("Penetrate is " + player.isPenetrateActive);
-
         player.isPenetrateActive = true;
         //Reset precharge for loading again
         isSoundPlayed = false;
@@ -1958,7 +2066,7 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
-    /// Execute Force Field special move
+    /// Execute Mycara's Seal special move
     /// </summary>
     private void MycarasSeal(int slotIndex)
     {
@@ -2068,59 +2176,52 @@ public class PlayerControl : MonoBehaviour
         Destroy(absoluteZeroObject, 2f); // Destroy blizzard object after animation completed
     }
 
-    IEnumerator NullifyBooleanAfterTwoFrame(System.Action setFalseAction)
+    /// <summary>
+    /// Execute Fire Blast special move
+    /// </summary>
+    private void FireBlast(int slotIndex)
     {
-        yield return null;
-        yield return null;
+        Vector3 weaponDirection;
+        float weaponAngleDegrees, playerAngleDegrees;
+        AimDirection playerAimDirection;
+        AttackDirection playerAttackDirection;
 
-        setFalseAction?.Invoke();
+        // Aim weapon input
+        AimWeaponInput(out weaponDirection, out weaponAngleDegrees, out playerAngleDegrees, out playerAimDirection, out playerAttackDirection);
+
+        player.isFireBlastActive = true;
+        //Reset precharge for loading again
+        isSoundPlayed = false;
+
+        // Trigger fire weapon event
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+            playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, false, false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, null,
+            null, true, player.playerDetails.fireBlastDetails);
+
+        StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isFireBlastActive = false));
     }
 
     /// <summary>
-    /// Execute Teleport special move
+    /// Execute Molten Rift special move
     /// </summary>
-    private void Teleport()
+    private void MoltenRift(int slotIndex)
     {
-        if (player.specialMovesCooldownCheckArray[0] == false)
+        player.isMoltenRiftActive = true;
+
+        // Start playing teleport particle system
+        if (teleportParticleRoutine != null)
         {
-            // Start playing teleport particle system
-            if (teleportParticleRoutine != null)
-            {
-                StopCoroutine(teleportParticleRoutine);
-            }
-            teleportParticleRoutine = StartCoroutine(ParticleSystemRoutine());
-
-            // Wait for mouse click to teleport the character
-            InputManager.Instance.pointerPosition.action.performed += OnTeleportInput;
-
-            // Play special move sound effect
-            //SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.activeSkillOneSoundEffect);
-
-            if (player.threeSecInvincilibityAfterTeleportEnabled)
-            {
-                StartCoroutine(EnableInvincibility());
-            }
+            StopCoroutine(teleportParticleRoutine);
         }
-    }
+        teleportParticleRoutine = StartCoroutine(ParticleSystemRoutine());
 
-    /// <summary>
-    /// Execute Cataclysm special move
-    /// </summary>
-    private void Cataclysm()
-    {
-        // Get mouse world position and teleport the character
-        Vector3 pointerWorldPosition = HelperUtilities.GetMouseWorldPosition();
+        // Wait for mouse click to teleport the character
+        InputManager.Instance.pointerPosition.action.performed += OnMoltenRiftInput;
 
-        // Locate the position where meteor starts to fall
-        Vector3 meteorStartsToFallPosition = pointerWorldPosition + new Vector3(0f, 10f, 0f);
+        // Play special move sound effect
+        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
-        // Calculate direction vector of mouse cursor from fall position
-        Vector3 direction = (pointerWorldPosition - meteorStartsToFallPosition);
-
-        // Calculate angle based on the vector
-        float angle = HelperUtilities.GetAngleFromVector(direction);
-
-        StartCoroutine(FireCataclysmMeteorRoutine(player.playerDetails.cataclysmMeteor, angle, angle, direction, meteorStartsToFallPosition));
+        StartCoroutine(EnableInvincibility());
     }
 
     /// <summary>
@@ -2147,10 +2248,11 @@ public class PlayerControl : MonoBehaviour
             yield return null;
         }
 
+        player.isMoltenRiftActive = false;
         player.health.isDamageable = true;
     }
 
-    private void OnTeleportInput(InputAction.CallbackContext context)
+    private void OnMoltenRiftInput(InputAction.CallbackContext context)
     {
         if (particlePlayed)
         {
@@ -2172,56 +2274,476 @@ public class PlayerControl : MonoBehaviour
                 particlePlayed = false;
 
                 // Unsubscribe from the event to prevent multiple teleports
-                InputManager.Instance.pointerPosition.action.performed -= OnTeleportInput;
+                InputManager.Instance.pointerPosition.action.performed -= OnMoltenRiftInput;
             }
         }
     }
 
     /// <summary>
-    /// Coroutine to spawn multiple ammo per shot if specified in the ammo details - PROJECTILE
+    /// Execute Flame Lotus special move
     /// </summary>
-    IEnumerator FireCataclysmMeteorRoutine(ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle,
-        Vector3 direction, Vector3 meteorStartsToFallPosition)
+    private void FlameLotus(int slotIndex)
     {
-        int projectileCounter = 0;
-
-        // Get random projectile per shot
-        int projectilePerShot = Random.Range(currentProjectile.projectileSpawnAmountMin, currentProjectile.projectileSpawnAmountMax + 1);
-
-        // Get random interval between projectile
-        float projectileSpawnInterval;
-
-        projectileSpawnInterval = Random.Range(currentProjectile.projectileSpawnIntervalMin, currentProjectile.projectileSpawnIntervalMax);
-
-        // Loop for number of projectile per shot
-        while (projectileCounter < projectilePerShot)
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier))
         {
-            projectileCounter++;
+            if (!player.isFlameLotusActive)
+            {
+                player.isBlizzardActive = true;
+                SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+                StartCoroutine(FlameLotusRoutine(slotIndex));
+            }
+        }
+    }
 
-            // Get projectile prefab from array
-            GameObject projectilePrefab = currentProjectile.projectilePrefabArray[Random.Range(0, currentProjectile.projectilePrefabArray.Length)];
+    IEnumerator FlameLotusRoutine(int slotIndex)
+    {
+        activeSkillTypeOneAnimator.gameObject.SetActive(true);
 
-            // Get random speed value
-            float projectileSpeed = currentProjectile.projectileSpeed;
+        GameObject flameLotusObject = Instantiate(activeSkillTypeOneAnimator.gameObject, HelperUtilities.GetMouseWorldPosition(), Quaternion.identity);
 
-            // Get Gameobject with IFireable component
-            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, meteorStartsToFallPosition, Quaternion.identity);
+        flameLotusObject.GetComponent<Animator>().SetBool("flameLotus", true);
 
-            // Initialize projectile
-            projectile.InitializeProjectile(null, false, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, direction, false, true);
+        // Wait until effective duration of skill ended
+        yield return new WaitForSeconds(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier));
 
-            Projectile meteor = (Projectile)projectile;
-            meteor.GetComponentInChildren<SpriteRenderer>().transform.eulerAngles = Vector3.zero;
+        SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        player.isFlameLotusActive = false;
 
-            // Wait for projectile per shot timegap
-            yield return new WaitForSeconds(projectileSpawnInterval);
+        flameLotusObject.GetComponent<Animator>().SetBool("flameLotus", false);
+        activeSkillTypeOneAnimator.gameObject.SetActive(false);
+        player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duratin of aura skill ended
+
+        Destroy(flameLotusObject, 2f); // Destroy flame lotus object after animation completed
+    }
+
+    /// <summary>
+    /// Execute Kynara's Embrace special move
+    /// </summary>
+    private void KynarasEmbrace(int slotIndex)
+    {
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier))
+        {
+            activeSkillTypeTwoAnimator.gameObject.SetActive(true);
+
+            activeSkillTypeTwoAnimator.SetBool("kynarasEmbrace", true);
+            player.healthEvent.CallKynarasSealSpecialMoveEvent(); // This is for displaying valor icon
+            player.isKynarasEmbraceActive = true;
+            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+            StartCoroutine(KynarasEmbraceRoutine(slotIndex));
+
+            GameObject forceFieldObject = player.forcefieldTransform.gameObject;
+            forceFieldObject.SetActive(true);
+        }
+    }
+
+    IEnumerator KynarasEmbraceRoutine(int slotIndex)
+    {
+        // Wait until effective duration of skill ended
+        yield return new WaitForSeconds(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier));
+
+        if (!player.isKynarasEmbraceShieldExploding)
+        {
+            player.isKynarasEmbraceShieldExploding = false;
+            player.healthEvent.CallKynarasEmbraceWoreOffEvent();
+
+            activeSkillTypeTwoAnimator.SetTrigger("explosion");
+            Explosion(slotIndex);
         }
 
-        //// Set weapon's onCooldown status to true for triggering Weapon status UI
-        //if (!activeWeapon.GetCurrentMainHandWeapon().onPrecharge)
-        //{
-        //    activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
-        //}
+        yield return new WaitForSeconds(0.5f); // Explosion duration
+
+        player.isKynarasEmbraceActive = false;
+        activeSkillTypeTwoAnimator.SetBool("kynarasEmbrace", false);
+        activeSkillTypeTwoAnimator.gameObject.SetActive(false);
+        player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duratin of aura skill ended
+    }
+
+
+    /// <summary>
+    /// Based on circle radius of the bomb, detect all enemy colliders for damage
+    /// </summary>
+    public void Explosion(int slotIndex)
+    {
+        player.filter.SetLayerMask(player.layerMask);
+        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectTwo);
+
+        Collider2D[] results = new Collider2D[20];
+        int hitCount = Physics2D.OverlapCircle(transform.position, player.kynarasEmbraceCircleRadius, player.filter, results);
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider2D collider = results[i];
+            if (collider == null) continue;
+
+            if (collider is PolygonCollider2D)
+            {
+                // Don't hit yourself if player is also in the collider list
+                if (collider.tag == Settings.playerTag) continue;
+
+                if (collider.tag == Settings.enemyTag)
+                {
+                    Enemy enemy = collider.GetComponent<Enemy>();
+
+                    int inflictedDamage = player.kynarasEmbraceDamage;
+                    enemy.health.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, collider, MeleeHand.None);
+
+
+                    if (!enemy.enemyDetails.hasKnockbackResistance && enemy.GetComponent<Health>().currentHealth > 0)
+                    {
+                        // Knockback
+                        Vector2 knockbackDir = (enemy.transform.position - transform.position).normalized;
+                        float knockbackForce = 5f;
+                        float dealDamageMass = 1f;
+
+                        enemy.movementToPosition.ApplyKnockbackToEnemy(knockbackDir, knockbackForce, dealDamageMass);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Execute Blazing Cyclone special move
+    /// </summary>
+    private void BlazingCyclone(int slotIndex)
+    {
+        Vector3 weaponDirection;
+        float weaponAngleDegrees, playerAngleDegrees;
+        AimDirection playerAimDirection;
+        AttackDirection playerAttackDirection;
+
+        // Aim weapon input
+        AimWeaponInput(out weaponDirection, out weaponAngleDegrees, out playerAngleDegrees, out playerAimDirection, out playerAttackDirection);
+
+        player.isBlazingCycloneActive = true;
+        //Reset precharge for loading again
+        isSoundPlayed = false;
+
+        // Trigger fire weapon event
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+            playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, false, false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, null,
+            null, false, null, true, player.playerDetails.blazingCycloneDetails);
+
+        StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isBlazingCycloneActive = false));
+    }
+
+    /// <summary>
+    /// Execute Rage special move
+    /// </summary>
+    private void Rage(int slotIndex)
+    {
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier))
+        {
+            player.animator.SetTrigger("rage");
+            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+            player.healthEvent.CallRageSpecialMoveEvent(); // This is for displaying rage icon
+            player.isRageActive = true;
+            StartCoroutine(RageRoutine(slotIndex));
+        }
+    }
+
+    IEnumerator RageRoutine(int slotIndex)
+    {
+        player.additionalMeleeDamageModifer += 0.5f;
+        player.currentArmorValue -= 0.2f;
+        player.UpdateDamageValues();
+        player.UpdateArmorValues();
+        StaticEventHandler.CallStatsChangedOnTheBookEvent();
+
+        // Wait until effective duration of skill ended
+        yield return new WaitForSeconds(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier));
+
+        player.isRageActive = false;
+
+        player.additionalMeleeDamageModifer -= 0.5f;
+        player.currentArmorValue += 0.2f;
+        player.UpdateDamageValues();
+        player.UpdateArmorValues();
+        StaticEventHandler.CallStatsChangedOnTheBookEvent();
+
+        player.healthEvent.CallRageWoreOffEvent();
+        player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duration of aura skill ended
+    }
+
+    /// <summary>
+    /// Execute Shatter Cry special move
+    /// </summary>
+    private void ShatterCry(int slotIndex)
+    {
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier))
+        {
+            player.animator.SetTrigger("shatterCry");
+            activeSkillTypeOneAnimator.gameObject.SetActive(true);
+
+            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+            player.healthEvent.CallShatterCrySpecialMoveEvent(); // This is for displaying shatter cry icon
+            player.isShatterCryActive = true;
+            StartCoroutine(ShatterCryRoutine(slotIndex));
+        }
+    }
+
+    // Triggered By Animation Event
+    private void PerformShatterCry()
+    {
+        CircleCollider2D circleCollider2D = activeSkillTypeOneAnimator.gameObject.GetComponent<CircleCollider2D>();
+
+        // Get all colliders within the radius of the seismic slam
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, circleCollider2D.radius);
+
+        foreach (Collider2D col in colliders)
+        {
+            // Check if the collider belongs to an enemy or any other object you want to affect
+            if (col.CompareTag(Settings.enemyTag))
+            {
+                // Apply damage to the enemy
+                Enemy affectedEnemy = col.GetComponent<Enemy>();
+
+                if (affectedEnemy.health.currentHealth > 0)
+                {
+                    // Apply effects
+                    player.meleeAttackMainHand.CheckFearStatus(affectedEnemy, true);
+                }
+            }
+        }
+    }
+
+    IEnumerator ShatterCryRoutine(int slotIndex)
+    {
+        // Wait until effective duration of skill ended
+        yield return new WaitForSeconds(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier));
+
+        player.isShatterCryActive = false;
+        activeSkillTypeOneAnimator.gameObject.SetActive(false);
+        player.healthEvent.CallShatterCryWoreOffEvent();
+        player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duration of aura skill ended
+    }
+
+    /// <summary>
+    /// Execute Axe throw special move
+    /// </summary>
+    private void AxeThrow(int slotIndex)
+    {
+        //Reset precharge for loading again
+        isSoundPlayed = false;
+        player.isAxeThrowActive = true;
+
+        player.playersThrowingAxe = player.playerDetails.throwingAxeDetails.projectilePrefabArray[0].GetComponentInChildren<Projectile>();
+
+        // Modify throwing axe's damage
+        player.playersThrowingAxe.maxDamage = player.currentOffHandMaxDamageValue;
+
+        // OFF-HAND
+        AttackShape offHandAttackType = DetermineAttackType(player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails);
+        player.meleeAttackEvent.CallAttackEvent(aimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), offHandAttackType, MeleeHand.OffHand);
+    }
+
+    /// <summary>
+    /// Execute Whirlrend special move
+    /// </summary>
+    private void Whirlrend(int slotIndex)
+    {
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier))
+        {
+            if (!player.isWhirlrendActive)
+            {
+                player.animator.SetBool("whirlrend", true);
+                activeSkillTypeTwoAnimator.gameObject.SetActive(true);
+                SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+                player.healthEvent.CallWhirlrendSpecialMoveEvent(); // This is for displaying rage icon
+                player.isWhirlrendActive = true;
+                StartCoroutine(WhirlrendRoutine(slotIndex));
+            }
+        }
+    }
+
+    IEnumerator WhirlrendRoutine(int slotIndex)
+    {
+        // Wait until effective duration of skill ended
+        yield return new WaitForSeconds(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier));
+
+        player.isWhirlrendActive = false;
+
+        player.animator.SetBool("whirlrend", false);
+        activeSkillTypeTwoAnimator.gameObject.SetActive(false);
+        player.healthEvent.CallWhirlrendWoreOffEvent();
+        player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duration of aura skill ended
+    }
+
+    /// <summary>
+    /// Execute Feast of War special move
+    /// </summary>
+    private void FeastOfWar(int slotIndex)
+    {
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier))
+        {
+            if (!player.isFeastOfWarActive)
+            {
+                player.healthEvent.CallFeastOfWarSpecialMoveEvent(); // This is for displaying valor icon
+                player.isFeastOfWarActive = true;
+                StartCoroutine(FeastOfWarRoutine(slotIndex));
+            }
+        }
+    }
+
+    IEnumerator FeastOfWarRoutine(int slotIndex)
+    {
+        // Wait until effective duration of skill ended
+        yield return new WaitForSeconds(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
+            * (1 + player.buffDurationModifier));
+
+        player.isFeastOfWarActive = false;
+        player.healthEvent.CallFeastOfWarWoreOffEvent();
+        player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duratin of aura skill ended
+    }
+
+    IEnumerator NullifyBooleanAfterTwoFrame(System.Action setFalseAction)
+    {
+        yield return null;
+        yield return null;
+
+        setFalseAction?.Invoke();
+    }
+
+
+    private void ViciousMomentumCheck()
+    {
+        if (player.isViciousMomentumActive)
+        {
+            if (player.viciousMomentumTriggered)
+            {
+                player.viciousMomentumCooldownTimer += Time.deltaTime;
+
+                if (!player.viciousMomentumAttackBonusObtained)
+                {
+                    // Damage Boost
+                    player.additionalMeleeDamageModifer += 0.05f;
+                    player.UpdateDamageValues();
+                    player.healthEvent.CallViciousMomentumEvent();
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
+
+                    player.viciousMomentumAttackBonusObtained = true;
+                }
+
+                if (player.viciousMomentumCooldownTimer > player.viciousMomentumDuration)
+                {
+                    // Damage Reset
+                    player.additionalMeleeDamageModifer -= 0.05f;
+                    player.UpdateDamageValues();
+                    player.healthEvent.CallViciousMomentumWoreOffEvent();
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
+
+                    player.viciousMomentumCooldownTimer = 0f;
+                    player.viciousMomentumTriggered = false;
+                    player.viciousMomentumAttackBonusObtained = false;
+                }
+            }
+        }
+    }
+
+    private void CombatFocusCheck()
+    {
+        if (player.isCombatFocusActive)
+        {
+            if (player.combatFocusTriggered)
+            {
+                player.combatFocusCooldownTimer += Time.deltaTime;
+
+                if (!player.combatFocusCooldownBonusObtained)
+                {
+                    // Cooldown Reduce Boost
+                    player.additionalMeleeAttackCoolDownModifier += 0.2f;
+                    player.additionalRangedAttackCoolDownModifier += 0.1f;
+
+                    player.healthEvent.CallCombatFocusEvent();
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
+
+                    player.viciousMomentumAttackBonusObtained = true;
+                }
+
+                if (player.combatFocusCooldownTimer > player.combatFocusDuration)
+                {
+                    // Cooldown Reset
+                    player.additionalMeleeAttackCoolDownModifier -= 0.2f;
+                    player.additionalRangedAttackCoolDownModifier -= 0.1f;
+
+                    player.healthEvent.CallCombatFocusWoreOffEvent();
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
+
+                    player.combatFocusCooldownTimer = 0f;
+                    player.combatFocusTriggered = false;
+                    player.combatFocusCooldownBonusObtained = false;
+                }
+            }
+        }
+    }
+
+    private void TriadExecutionCheck()
+    {
+        if (player.isTriadExecutionActive)
+        {
+            if (player.triadExecutionCounter >= 3 && !player.triadExecutionTriggered)
+            {
+                player.triadExecutionTriggered = true;
+                player.triadExecutionCounter = 0;
+
+                player.additionalMeleeDamageModifer += 0.2f;
+                player.additionalRangedDamageModifier += 0.1f;
+                player.UpdateDamageValues();
+                player.healthEvent.CallTriadExecutionEvent();
+                StaticEventHandler.CallStatsChangedOnTheBookEvent();
+            }
+            else
+            {
+                if (player.triadExecutionTriggered)
+                {
+                    player.additionalMeleeDamageModifer -= 0.2f;
+                    player.additionalRangedDamageModifier -= 0.1f;
+                    player.UpdateDamageValues();
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
+
+                    StartCoroutine(DisableImageForTriadExecutionRoutine());
+
+                    player.triadExecutionTriggered = false;
+                }
+            }
+        }
+    }
+
+    private bool HasNegativeStatusEffect()
+    {
+        if ((player.moveStatus & MoveStatus.Root) != 0 || (player.moveStatus & MoveStatus.Stun) != 0 || (player.moveStatus & MoveStatus.Paralyze) != 0 ||
+            (player.moveStatus & MoveStatus.Frozen) != 0)
+        {
+            return true;
+        }
+
+        if ((player.healthStatus & HealthStatus.Poisoned) != 0 || (player.healthStatus & HealthStatus.Burned) != 0 || (player.healthStatus & HealthStatus.Bleeding) != 0)
+        {
+            return true;
+        }
+
+        if (player.isCursed || player.isFeared || player.isRevealed || player.isWarmed || player.isChilled || player.isBlind || player.isSlowed) return true;
+
+        return false;
+    }
+
+    IEnumerator DisableImageForTriadExecutionRoutine()
+    {
+        yield return new WaitForSeconds(1f);
+
+        player.healthEvent.CallTriadExecutionWoreOffEvent();
     }
 
     IEnumerator ParticleSystemRoutine()
@@ -2250,37 +2772,6 @@ public class PlayerControl : MonoBehaviour
         // Check if the cell is marked as an obstacle
         return room.instantiatedRoom.aStarMovementPenalty[adjustedCellPosition.x, adjustedCellPosition.y] == 0;
     }
-
-
-
-
-    /// <summary>
-    /// Execute Head Shot special move
-    /// </summary>
-    private void HeadShot()
-    {
-        Vector3 weaponDirection;
-        float weaponAngleDegrees, playerAngleDegrees;
-        AimDirection playerAimDirection;
-        AttackDirection playerAttackDirection;
-
-        // Aim weapon input
-        AimWeaponInput(out weaponDirection, out weaponAngleDegrees, out playerAngleDegrees, out playerAimDirection, out playerAttackDirection);
-
-        //Reset precharge for loading again
-        isSoundPlayed = false;
-
-        player.meleeAttackMainHand.IsAttacking = true;
-        player.meleeAttackEvent.CallAttackEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), AttackShape.None, MeleeHand.None);
-
-        // Trigger fire weapon event
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
-            playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, true);
-    }
-
-
-
-
 
     /// <summary>
     /// Use the nearest item within 2 unity units from the player
@@ -2395,7 +2886,7 @@ public class PlayerControl : MonoBehaviour
 
                 // Update stat values
                 player.UpdateDamageValues();
-                player.UpdateWeaponHandlingAndCriticalValues();
+                player.UpdateAttackRatingAndCriticalValues();
                 player.UpdateBlockAndEvasivenessValues();
 
                 DropItem.toBeDroppedDropItem.transform.SetParent(GameManager.Instance.GetCurrentRoom().instantiatedRoom.transform);
@@ -2501,7 +2992,7 @@ public class PlayerControl : MonoBehaviour
 
                 // Update stat values
                 player.UpdateDamageValues();
-                player.UpdateWeaponHandlingAndCriticalValues();
+                player.UpdateAttackRatingAndCriticalValues();
                 player.UpdateBlockAndEvasivenessValues();
 
                 StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponMainHand);
@@ -2562,7 +3053,7 @@ public class PlayerControl : MonoBehaviour
                 // Update stat values
                 player.UpdateDamageValues();
                 player.UpdateArmorValues();
-                player.UpdateWeaponHandlingAndCriticalValues();
+                player.UpdateAttackRatingAndCriticalValues();
                 player.UpdateBlockAndEvasivenessValues();
 
                 StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponOffHand);
@@ -2588,7 +3079,7 @@ public class PlayerControl : MonoBehaviour
         player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = null;
     }
 
-    private void DeactivateOffhandWeapon()
+    public void DeactivateOffhandWeapon()
     {
         // Set dropped set's off hand null
         player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = null;
@@ -2668,90 +3159,6 @@ public class PlayerControl : MonoBehaviour
         dropItem.isColliding = false;
     }
 
-    public bool IsMainHandDropPossible(bool isWeaponSwapping)
-    {
-        int gauge = 0;
-
-        for (int i = 0; i < 3; i++)
-        {
-            if (player.weaponSlotSetArray[i][0] != null)
-            {
-                gauge++;
-            }
-            else
-            {
-                continue;
-            }
-        }
-
-        bool dropPossible = gauge > 1 ;
-
-        if (isWeaponSwapping)
-        {
-            dropPossible = true;
-        }
-
-        return dropPossible;
-    }
-
-    /// <summary>
-    /// Slow motion item
-    /// </summary>
-    private IEnumerator MoveItemDown(DropItem dropItem)
-    {
-        float elapsedTime = 0f;
-        Vector3 initialPosition = dropItem.transform.position + new Vector3(0f, 0.5f, 0f);
-        float xPos = 0f;
-        float yPos = 0f;
-
-        // Drop x position adjustment
-        if (initialPosition.x - HelperUtilities.GetMouseWorldPosition().x > -0.5f && initialPosition.x - HelperUtilities.GetMouseWorldPosition().x < 0.5f)
-        {
-            xPos = HelperUtilities.GetMouseWorldPosition().x;
-        }
-        else if (initialPosition.x - HelperUtilities.GetMouseWorldPosition().x > 0.5f)
-        {
-            xPos = initialPosition.x - 0.5f;
-        }
-        else if (initialPosition.x - HelperUtilities.GetMouseWorldPosition().x < -0.5f)
-        {
-            xPos = initialPosition.x + 0.5f;
-        }
-
-        // Drop y position adjustment
-        if (initialPosition.y - HelperUtilities.GetMouseWorldPosition().y > -0.5f && initialPosition.y - HelperUtilities.GetMouseWorldPosition().y < 0.5f)
-        {
-            yPos = HelperUtilities.GetMouseWorldPosition().y;
-        }
-        else if (initialPosition.y - HelperUtilities.GetMouseWorldPosition().y > 0.5f)
-        {
-            yPos = initialPosition.y - 0.5f;
-        }
-        else if (initialPosition.y - HelperUtilities.GetMouseWorldPosition().y < -0.5f)
-        {
-            yPos = initialPosition.y + 0.5f;
-        }
-
-        Vector3 targetPosition = new Vector3(xPos, yPos, 0f);
-
-        float dropDuration = Random.Range(0.05f, 0.5f);
-
-        while (elapsedTime < dropDuration)
-        {
-            elapsedTime += Time.deltaTime; // Increment time based on frame rate
-            dropItem.transform.position = Vector3.Lerp(initialPosition, targetPosition, elapsedTime);
-            yield return null; // Wait for the next frame
-        }
-
-        // Ensure the item reaches the target position
-        dropItem.transform.position = targetPosition;
-
-        // Make sure drop completed
-        dropCoroutine = null;
-        dropItem.boxCollider2D.enabled = true;
-        dropItem.isColliding = false;
-    }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // If collided with something stop player roll coroutine
@@ -2779,7 +3186,7 @@ public class PlayerControl : MonoBehaviour
     public void EnablePlayer()
     {
         isPlayerMovementDisabled = false;
-        player.movementByVelocity.moveSpeed = player.movementByVelocity.movementDetails.GetBaseMoveSpeed() + player.CurrentAgilityValue * 0.25f;
+        player.movementByForce.moveSpeed = player.movementByForce.movementDetails.GetBaseMaxMoveSpeed() + player.CurrentAgilityValue * 0.25f;
     }
 
     /// <summary>
@@ -2788,7 +3195,7 @@ public class PlayerControl : MonoBehaviour
     public void DisablePlayer()
     {
         isPlayerMovementDisabled = true;
-        player.movementByVelocity.moveSpeed = 0f;
+        player.movementByForce.moveSpeed = 0f;
         player.idle.StopVelocity();
         player.animatePlayer.ResetAnimatonParameters();
         player.animator.SetBool(Settings.isIdle, true);

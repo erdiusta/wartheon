@@ -16,7 +16,7 @@ public class Idle : MonoBehaviour
     /// </summary>
     public void StopVelocity()
     {
-        if (TryGetComponent<Enemy>(out Enemy enemy))
+        if (TryGetComponent(out Enemy enemy))
         {
             if (!enemy.enemyDetails.isEnemyBoss)
             {

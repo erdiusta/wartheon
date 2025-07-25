@@ -28048,7 +28048,7 @@ GameObject:
   - component: {fileID: 1280140502967062622}
   - component: {fileID: -8537000056490222610}
   - component: {fileID: 7400821728870662684}
-  - component: {fileID: -5970059223594176715}
+  - component: {fileID: 3498926230347751319}
   m_Layer: 16
   m_Name: Enemy
   m_TagString: Enemy
@@ -28127,9 +28127,11 @@ MonoBehaviour:
   isFeared: 0
   isRevealed: 0
   isStatic: 0
-  isWarm: 0
+  isWarmed: 0
   isChilled: 0
   isBlind: 0
+  isSlowed: 0
+  isShattered: 0
   rootAnimator: {fileID: 4984977853616883760}
 --- !u!210 &5050891164117682802
 SortingGroup:
@@ -28211,10 +28213,10 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 3
   m_AngularDamping: 0
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ace74a4c3c2f6b743b98d2ae3dd7b714, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -28241,21 +28243,21 @@ PolygonCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 16448
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 536854463
   m_ForceReceiveLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 536854463
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 536854463
   m_CallbackLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
+    m_Bits: 536854463
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -28289,29 +28291,29 @@ CapsuleCollider2D:
   m_Material: {fileID: 6200000, guid: c6d517278826f1842b107c4ea7dec022, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 33570880
+    m_Bits: 16448
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 234864575
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
-    m_Bits: 33570880
+    m_Bits: 16448
   m_ForceReceiveLayers:
     serializedVersion: 2
-    m_Bits: 33570880
+    m_Bits: 16448
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 33570880
+    m_Bits: 16448
   m_CallbackLayers:
     serializedVersion: 2
-    m_Bits: 33570880
+    m_Bits: 16448
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.75}
-  m_Size: {x: 1, y: 1.5}
+  m_Offset: {x: 0, y: 0.5}
+  m_Size: {x: 0.8, y: 0.8}
   m_Direction: 0
 --- !u!95 &9053816728829046246
 Animator:
@@ -28768,7 +28770,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   target: {fileID: 0}
---- !u!114 &-5970059223594176715
+--- !u!114 &3498926230347751319
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28777,7 +28779,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7736189416814370986}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22e6c29e32504465faa943c537d8029b, type: 3}
+  m_Script: {fileID: 11500000, guid: b3bfc3983e0f4d443abf72560a085cdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1

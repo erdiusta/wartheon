@@ -11,7 +11,7 @@ public class Destroyed : MonoBehaviour
     Enemy enemy;
     Player player;
     Decoy decoy;
-
+    bool deathSoundPlayed;
     private void Awake()
     {
         destroyedEvent = GetComponent<DestroyedEvent>();
@@ -52,14 +52,20 @@ public class Destroyed : MonoBehaviour
 
         if (destroyedEventArgs.playerDied)
         {
-            player.polygonCollider2D.enabled = false;
-            player.animatePlayer.ResetAnimatonParameters();
-            player.animator.SetBool(Settings.death, true);
-            player.animator.Play("Death", 0, 0);
-            player.idle.StopVelocity();
-            InputManager.glossaryDisabled = true; // Disable glossary
+            if (!deathSoundPlayed)
+            {
+                player.polygonCollider2D.enabled = false;
+                player.animatePlayer.ResetAnimatonParameters();
+                player.animator.SetBool(Settings.death, true);
+                player.animator.Play("Death", 0, 0);
+                GetComponent<PolygonCollider2D>().enabled = false;
+                player.idle.StopVelocity();
+                player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+                InputManager.glossaryDisabled = true; // Disable glossary
 
-            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.deathSoundEffect);
+                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.deathSoundEffect);
+                deathSoundPlayed = true;
+            }
         }
         else
         {
@@ -191,11 +197,11 @@ public class Destroyed : MonoBehaviour
                     case EnemyBehaviour.PrepareAndDash:
                         enemy.enemyAI.StopAllCoroutines();
                         break;
-                    case EnemyBehaviour.Centaur:
+                    case EnemyBehaviour.Moravelle:
                         enemy.GetComponent<MoravelleAI>().StopAllCoroutines();
                         break;
                     case EnemyBehaviour.Sylvarok:
-                        enemy.GetComponent<TreantAI>().StopAllCoroutines();
+                        enemy.GetComponent<SylvarokAI>().StopAllCoroutines();
                         break;
                     case EnemyBehaviour.Galvanus:
                         enemy.GetComponent<GalvanusAI>().StopAllCoroutines();
@@ -241,7 +247,7 @@ public class Destroyed : MonoBehaviour
                 if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Combat)
                 {
                     player.health.isDamageable = true;
-                    player.health.TakeDamage(20, Vector2.zero, player.transform.position, false, null, MeleeHand.None);
+                    player.health.TakeDamage(20, Vector2.zero, player.transform.position, null, MeleeHand.None);
                     TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
                 }
                 else if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Parry)
@@ -264,12 +270,23 @@ public class Destroyed : MonoBehaviour
                 StaticEventHandler.CallEnemyKilledEvent(enemy);
             }
 
+            if (player != null && player.isViciousMomentumActive)
+            {
+                player.viciousMomentumCooldownTimer = 0f;
+                player.viciousMomentumTriggered = true;
+            }
+
+            if (player != null && player.isCombatFocusActive)
+            {
+                player.combatFocusCooldownTimer = 0f;
+                player.combatFocusTriggered = true;
+            }
+
             enemy.health.hitFXAnimator.SetTrigger(Settings.death);
             enemy.health.fxAnimatorPlayed = true;
             enemy.enemyAI.isDashing = false;
             enemy.enemyAI.isAttacking = false;
             enemy.enemyAI.enemyPhase = EnemyPhase.Death;
-            enemy.health.ResetStatusInCaseOfDeath();
             enemy.rb2D.mass = 5000;
             enemy.rb2D.linearVelocity = Vector2.zero;
 

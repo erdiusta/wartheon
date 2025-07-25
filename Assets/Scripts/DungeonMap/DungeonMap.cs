@@ -18,6 +18,8 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
     Camera dungeonMapCamera;
     Camera cameraMain;
 
+    Player player;
+
     private void Start()
     {
         // Cache main camera
@@ -33,12 +35,15 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
         // Get dungeonmap camera
         dungeonMapCamera = GetComponentInChildren<Camera>();
         dungeonMapCamera.gameObject.SetActive(false);
+        StaticEventHandler.CallOverviewCameraToggled(false);
+
+        player = GameManager.Instance.GetPlayer();
     }
 
     private void Update()
     {
         // If mouse button pressed and gamestate is dungeon overview map then get the room clicked
-        if (InputManager.Instance.attack.action.WasPerformedThisFrame() && GameManager.Instance.gameState == GameState.dungeonOverviewMap)
+        if (InputManager.Instance.click.action.WasPerformedThisFrame() && GameManager.Instance.gameState == GameState.dungeonOverviewMap)
         {
             GetRoomClicked();
         }
@@ -73,6 +78,8 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
                 }
             }
         }
+
+        player.meleeAttackMainHand.IsAttacking = false;
     }
 
     /// <summary>
@@ -120,6 +127,7 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
         //// Disable main camera and enable dungeon overview camera
         //cameraMain.gameObject.SetActive(false);
         dungeonMapCamera.gameObject.SetActive(true);
+        StaticEventHandler.CallOverviewCameraToggled(true);
 
         // Ensure all rooms are active so they can be displayed
         ActivateRoomsForDisplay();
@@ -143,6 +151,7 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
         // Enable main camera and disable dungeon overview camera
         cameraMain.gameObject.SetActive(true);
         dungeonMapCamera.gameObject.SetActive(false);
+        StaticEventHandler.CallOverviewCameraToggled(false);
 
         // Enable Small Minimap UI
         minimapUI.SetActive(true);

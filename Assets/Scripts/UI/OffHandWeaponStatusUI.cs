@@ -284,11 +284,11 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     {
         if (currentWeapon.weaponDetails.isMeleeWeapon)
         {
-            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier);
+            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalMeleeAttackCoolDownModifier);
         }
         else
         {
-            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration;
+            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalRangedAttackCoolDownModifier); ;
         }
 
         // Set bar scale to 1

@@ -39,6 +39,8 @@ TagManager:
   - morvenTag
   - karnagTag
   - aoeSkill
+  - originTag
+  - whirlrend
   layers:
   - Default
   - TransparentFX
@@ -68,7 +70,7 @@ TagManager:
   - ForceField
   - Meteor
   - SpecialUI
-  - 
+  - AttackShape
   - 
   - 
   - 

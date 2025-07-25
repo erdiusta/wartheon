@@ -28,7 +28,7 @@ MonoBehaviour:
     ferocity: 3
     resolve: 5
   isImmuneAfterHit: 1
-  hitImmunityTime: 1
+  hitImmunityTime: 0.5
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
   blockSoundEffect: {fileID: 11400000, guid: 5a66c8bf2077f0a4caf767997e7b7749, type: 2}
@@ -43,7 +43,6 @@ MonoBehaviour:
   fifthActiveSkillDetails: {fileID: 11400000, guid: 32fca3ce13bd30a498ffc52d6b6351df, type: 2}
   cataclysmMeteor: {fileID: 11400000, guid: 8e8582df663c5634b8c767ca670c0382, type: 2}
   grappleDetails: {fileID: 0}
-  blizzardDetails: {fileID: 11400000, guid: aeadc6b3bfbf432499a81d7d8a8b588b, type: 2}
   iceBreakerDetails: {fileID: 11400000, guid: 8f96c84dbb54e224ba6823768a8dd2d6, type: 2}
   absoluteZeroDetails: {fileID: 0}
   standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}

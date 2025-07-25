@@ -2,7 +2,6 @@ using Pathfinding;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.UIElements;
 
 #region REQUIRE COMPONENTS
 [RequireComponent(typeof(HealthEvent))]
@@ -34,7 +33,7 @@ public class Enemy : MonoBehaviour
 {
     [HideInInspector] public EnemyDetailsSO enemyDetails;
     [HideInInspector] public AIDestinationSetter aiDestinationSetter;
-    [HideInInspector] public Patrol patrol;
+    [HideInInspector] public PatrolRigidbody2D patrol;
     [HideInInspector] public AIRigidbody2D aiRigidbody2D;
     [HideInInspector] public FireWeaponEvent fireWeaponEvent;
     [HideInInspector] public FireWeapon fireWeapon;
@@ -74,7 +73,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool isFeared;
     [HideInInspector] public bool isRevealed;
     [HideInInspector] public bool isStatic;
-    [HideInInspector] public bool isWarm;
+    [HideInInspector] public bool isWarmed;
     [HideInInspector] public bool isChilled;
     [HideInInspector] public bool isBlind;
     [HideInInspector] public bool isSlowed;
@@ -115,7 +114,7 @@ public class Enemy : MonoBehaviour
         statusManager = GetComponent<StatusManager>();
         damageDisplay = GetComponent<DamageDisplay>();
         aiDestinationSetter = GetComponent<AIDestinationSetter>();
-        patrol = GetComponent<Patrol>();
+        patrol = GetComponent<PatrolRigidbody2D>();
         aiRigidbody2D = GetComponent<AIRigidbody2D>();
     }
 

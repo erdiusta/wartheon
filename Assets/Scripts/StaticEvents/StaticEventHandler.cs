@@ -23,9 +23,9 @@ public static class StaticEventHandler
     // Character button selected
     public static event Action<CharacterButtonArgs> OnCharacterButtonSelected;
 
-    public static void CallCharacterButtonSelectedEvent(string charName)
+    public static void CallCharacterButtonSelectedEvent(Character charIndex)
     {
-        OnCharacterButtonSelected?.Invoke(new CharacterButtonArgs { charName = charName });
+        OnCharacterButtonSelected?.Invoke(new CharacterButtonArgs { charIndex = charIndex });
     }
 
     // Character buttons deselected
@@ -50,6 +50,14 @@ public static class StaticEventHandler
     public static void CallDynamicCameraToggled(bool isOn)
     {
         OnDynamicCameraToggled?.Invoke(new DynamicCameraFollowArgs { isOn = isOn });
+    }
+
+    // Overview camera enabled
+    public static event Action<OverviewCameraFollowArgs> OnOverviewCameraToggled;
+
+    public static void CallOverviewCameraToggled(bool isOn)
+    {
+        OnOverviewCameraToggled?.Invoke(new OverviewCameraFollowArgs { isOn = isOn });
     }
 
     // Cheat code activated
@@ -489,10 +497,15 @@ public class RoomEnemiesDefeatedArgs : EventArgs
 
 public class CharacterButtonArgs : EventArgs
 {
-    public string charName;
+    public Character charIndex;
 }
 
 public class DynamicCameraFollowArgs : EventArgs
+{
+    public bool isOn;
+}
+
+public class OverviewCameraFollowArgs : EventArgs
 {
     public bool isOn;
 }

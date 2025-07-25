@@ -9,6 +9,7 @@ public class AnimationEventHelperMainHand : MonoBehaviour
     public UnityEvent OnSeismicSlamTriggered;
     public UnityEvent OnShieldBashEventCompleted;
     public UnityEvent OnShieldBashEventPerformed;
+    public UnityEvent OnShatterCryTriggered;
 
     public void TriggerEventAtMainHand()
     {
@@ -43,5 +44,10 @@ public class AnimationEventHelperMainHand : MonoBehaviour
     public void TriggerShieldBash()
     {
         OnShieldBashEventPerformed?.Invoke();
+    }
+
+    public void TriggerShatterCry()
+    {
+        OnShatterCryTriggered?.Invoke();
     }
 }

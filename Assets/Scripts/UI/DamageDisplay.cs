@@ -84,7 +84,7 @@ public class DamageDisplay : MonoBehaviour
     /// <summary>
     /// Display amount of damage
     /// </summary>
-    private void DisplayDamage(int damageAmount, MeleeHand hand = MeleeHand.None)
+    private void DisplayDamage(int damageAmount, MeleeHand hand = MeleeHand.None, bool onStart = false)
     {
         var damageText = Instantiate(damageDisplayTextPrefab, damageTextSpawnPoint.position, Quaternion.identity, damageTextSpawnPoint);
 

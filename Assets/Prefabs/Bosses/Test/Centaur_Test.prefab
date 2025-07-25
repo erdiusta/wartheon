@@ -13,6 +13,10 @@ PrefabInstance:
       value: 0.215
       objectReference: {fileID: 0}
     - target: {fileID: -5271647833751286019, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_SpriteTilingProperty.pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5271647833751286019, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
       value: 3.125
       objectReference: {fileID: 0}
@@ -554,9 +558,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyDetails: {fileID: 11400000, guid: 46c6f2d94442df34e8e5b064d69c2b65, type: 2}
   weaponShootPosition: {fileID: 3455516063969396250}
-  layerMask:
+  shootLayerMask:
     serializedVersion: 2
-    m_Bits: 18432
+    m_Bits: 0
+  avoidLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
   moveStatus: 0
   updateFrameNumber: 1
   enemyPhase: 0

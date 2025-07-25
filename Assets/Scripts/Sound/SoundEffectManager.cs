@@ -14,6 +14,8 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
         SetSoundVolume(soundVolume);
     }
 
+
+
     /// <summary>
     /// Play the sound effect
     /// </summary>
@@ -27,14 +29,18 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
         StartCoroutine(DisableSound(selectedClip.length));
     }
 
+
     /// <summary>
     /// Stop the sound effect
     /// </summary>
     public void StopSoundEffect(SoundEffectSO soundEffect)
     {
-        // Play sound using a sound gameobject and component from the object pool
-        playingSound = (SoundEffect)PoolManager.Instance.ReuseComponent(soundEffect.soundPrefab, Vector3.zero, Quaternion.identity);
-        playingSound.gameObject.SetActive(false);
+        // Select a random clip
+        AudioClip selectedClip = soundEffect.soundEffectClips[Random.Range(0, soundEffect.soundEffectClips.Length)];
+        playingSound.audioSource.clip = selectedClip;
+        playingSound.audioSource.loop = false;
+
+        StartCoroutine(DisableSound(selectedClip.length));
     }
 
     /// <summary>

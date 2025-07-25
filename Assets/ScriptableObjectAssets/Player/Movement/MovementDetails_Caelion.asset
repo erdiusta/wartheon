@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be803c3d22954c743afeeadf2eb708fd, type: 3}
   m_Name: MovementDetails_Caelion
   m_EditorClassIdentifier: 
-  baseMoveSpeed: 5
+  baseMinMoveSpeed: 5
+  baseMaxMoveSpeed: 12
   rollSpeed: 7.5
   rollDistance: 5
   rollCooldownTime: 0.2

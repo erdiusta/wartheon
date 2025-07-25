@@ -43,6 +43,7 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetBleeding += EnableBleedingImage;
             enemy.healthEvent.GetStun += EnableStunImage;
             enemy.healthEvent.GetSlow += EnableSlowImage;
+            enemy.healthEvent.GetWarm += EnableWarmImage;
             enemy.healthEvent.GetBurned += EnableBurnImage;
             enemy.healthEvent.GetPoisoned += EnablePoisonImage;
             enemy.healthEvent.GetAcid += EnableAcidImage;
@@ -59,6 +60,7 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.BleedingCured += DisableBleedingImage;
             enemy.healthEvent.StunCured += DisableStunImage;
             enemy.healthEvent.SlowCured += DisableSlowImage;
+            enemy.healthEvent.WarmCured += DisableWarmImage;
             enemy.healthEvent.BurnCured += DisableBurnImage;
             enemy.healthEvent.PoisonCured += DisablePoisonImage;
             enemy.healthEvent.AcidCured += DisableAcidImage;
@@ -79,6 +81,7 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetBleeding -= EnableBleedingImage;
             enemy.healthEvent.GetStun -= EnableStunImage;
             enemy.healthEvent.GetSlow -= EnableSlowImage;
+            enemy.healthEvent.GetWarm -= EnableWarmImage;
             enemy.healthEvent.GetBurned -= EnableBurnImage;
             enemy.healthEvent.GetPoisoned -= EnablePoisonImage;
             enemy.healthEvent.GetAcid -= EnableAcidImage;
@@ -96,6 +99,7 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.BleedingCured -= DisableBleedingImage;
             enemy.healthEvent.StunCured -= DisableStunImage;
             enemy.healthEvent.SlowCured -= DisableSlowImage;
+            enemy.healthEvent.WarmCured -= DisableWarmImage;
             enemy.healthEvent.BurnCured -= DisableBurnImage;
             enemy.healthEvent.PoisonCured -= DisablePoisonImage;
             enemy.healthEvent.AcidCured -= DisableAcidImage;
@@ -155,6 +159,18 @@ public class StatusManager : MonoBehaviour
         }
 
         logRoutine = StartCoroutine(WriteLog("BLEEDING", Color.red));
+    }
+
+    private void EnableWarmImage(HealthEvent healthEvent)
+    {
+        warmImage.SetActive(true);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+
+        logRoutine = StartCoroutine(WriteLog("WARMED", new Color(0.75f, 0.647f, 0f)));
     }
 
     private void EnableBurnImage(HealthEvent healthEvent)
@@ -316,6 +332,17 @@ public class StatusManager : MonoBehaviour
     private void DisableBleedingImage(HealthEvent healthEvent)
     {
         bleedingImage.SetActive(false);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = null;
+        }
+    }
+
+    private void DisableWarmImage(HealthEvent healthEvent)
+    {
+        warmImage.SetActive(false);
         ClearLog();
         if (logRoutine != null)
         {

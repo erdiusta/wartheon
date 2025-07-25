@@ -563,11 +563,12 @@ public class VenomancerAI : EnemyAI, IMutualBossBehaviour
                 // Apply damage to the enemy
                 Player player = col.GetComponent<Player>();
 
-                player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
+                // Apply knockback
+                ApplyKnockbackToPlayer(player);
 
                 if (player.health != null)
                 {
-                    player.health.TakeDamage(15, transform.position, player.health.transform.position, false);
+                    player.health.TakeDamage(15, transform.position, player.health.transform.position);
                 }
             }
         }

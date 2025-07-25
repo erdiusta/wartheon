@@ -109,8 +109,7 @@ public class SpecialMoveUI : MonoBehaviour
 
             if (duration > 0) player.specialMoveDurationTimerArray[slotIndex - 1] += Time.deltaTime;
 
-            float cooldown = player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillCooldownDuration
-                * (1 + player.cooldownDurationModifier);
+            float cooldown = player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillCooldownDuration * (1 - player.additionalSkillCoolDownModifier);
 
             if (player.specialMoveCooldownTimerArray[slotIndex - 1] > cooldown)
             {
@@ -174,9 +173,10 @@ public class SpecialMoveUI : MonoBehaviour
         Image specialMoveCooldownImage;
         Image specialMoveImage;
 
+        float activeCooldownDuration = player.currentlyUsedActiveUniqueSkills[specialMoveNumber].activeUniqueSkillCooldownDuration * (1 - player.additionalSkillCoolDownModifier);
+
         // Animate the weapon reload bar
-        while (player.specialMoveCooldownTimerArray[specialMoveNumber - 1] < player.currentlyUsedActiveUniqueSkills[specialMoveNumber].activeUniqueSkillCooldownDuration
-                * (1 + player.cooldownDurationModifier))
+        while (player.specialMoveCooldownTimerArray[specialMoveNumber - 1] < activeCooldownDuration)
         {
             if (!specialMoveResetArray[specialMoveNumber - 1])
             {

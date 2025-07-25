@@ -36,26 +36,49 @@ MonoBehaviour:
   countDown: 3
   burstDamageMin: 15
   burstDamageMax: 25
+  hasWarmDamage: 0
+  warmChance: 0
   hasBurnDamage: 0
   burnChance: 0
-  isPoisonous: 0
-  poisonChance: 0
-  hasAcid: 0
-  acidEfficiency: 0
   hasStunDamage: 1
   stunChance: 0.15
+  hasRootDamage: 0
+  rootChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
+  hasPoisonDamage: 0
+  poisonChance: 0
+  hasStaticDamage: 0
+  staticChance: 0
+  hasParalyzeDamage: 0
+  paralyzeChance: 0
+  hasAcidDamage: 0
+  acidEfficiency: 0
+  hasChillDamage: 0
+  chillChance: 0
   hasFrostDamage: 0
   frostChance: 0
-  hasCurseDamage: 0
-  curseChance: 0
   hasBlindDamage: 0
   blindChance: 0
+  hasRevealDamage: 0
+  revealChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasFearDamage: 0
+  fearChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
   projectileSpreadMin: 0
   projectileSpreadMax: 0
+  criticalHitChance: 0
+  criticalHitDamageMultiplier: 1.5
   projectileSpawnAmountMin: 1
   projectileSpawnAmountMax: 1
   projectileSpawnIntervalMin: 1
   projectileSpawnIntervalMax: 1
+  projectileFireSoundEffect: {fileID: 0}
   projectileImpactSoundEffect: {fileID: 11400000, guid: 9e542a5e72bb37e42bcdc07dc47e4943, type: 2}
   isProjectileTrail: 0
   projectileTrailTime: 0

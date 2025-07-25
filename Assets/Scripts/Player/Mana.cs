@@ -88,6 +88,8 @@ public class Mana : MonoBehaviour
 
         currentMana = Mathf.Clamp(currentMana - manaDecrease, 0, maximumMana);
 
+        if (player != null && player.isSurgeTapGainActive && currentMana < 10) currentMana += 10; // Surge Tap Gain - Instant 10 mana if mana is below 10
+
         // Trigger mana event
         manaEvent.CallManaChangedEvent(currentMana, manaReserved);
         StaticEventHandler.CallBookManaChangedEvent(currentMana);

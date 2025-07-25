@@ -1,11 +1,7 @@
-using System.Collections;
 using UnityEngine;
 
 public class EnemyAimAndShootAI : EnemyAI
 {
-    Coroutine waitAfterFiringRoutine;
-
-    bool isFired;
     float enemyShotCooldownTimer = 0f;
 
     protected override void Awake()
@@ -22,9 +18,7 @@ public class EnemyAimAndShootAI : EnemyAI
     {
         // Update timers - Fire Projectile
         firingIntervalTimer -= Time.fixedDeltaTime;
-
         enemyShotCooldownTimer = Mathf.Max(0f, enemyShotCooldownTimer - Time.fixedDeltaTime);
-        avoidSuppressionTimer = Mathf.Max(0f, avoidSuppressionTimer - Time.fixedDeltaTime);
 
         // AIM
         Vector3 unitVector = Vector3.zero; Vector3 weaponDirection; float weaponAngleDegrees; float enemyAngleDegrees;
@@ -74,20 +68,6 @@ public class EnemyAimAndShootAI : EnemyAI
                     enemy.animateEnemy.SetMovementAnimationParameters();
                     break;
 
-                case EnemyPhase.Avoid:
-                    // Disable patrol during chase and enable aiDestinationSetter
-                    enemy.aiRigidbody2D.enabled = false;
-                    enemy.patrol.enabled = false;
-                    enemy.aiDestinationSetter.enabled = false;
-
-                    // Reset animation and dashing flag
-                    ResetEnemySpeed();
-
-                    //Vector3 intentionVector = GetMovementIntention().normalized;
-                    enemy.movementToPosition.AttackMoveRigidbodyByPosition(referenceIntentionVector, enemy.currentMoveSpeed);
-
-                    break;
-
                 case EnemyPhase.Attack:
                     if (enemy.health.hasDied) return;
 
@@ -117,27 +97,6 @@ public class EnemyAimAndShootAI : EnemyAI
                     }
                     break;
 
-                case EnemyPhase.Flank:
-                    // Disable pathfinder classes
-                    enemy.aiRigidbody2D.enabled = false;
-                    enemy.patrol.enabled = false;
-                    enemy.aiDestinationSetter.enabled = false;
-
-                    Aim(out Vector3 _, out Vector3 weaponDir, out float _, out float _, out AimDirection _, out AttackDirection _);
-
-                    if (IsPlayerInLineOfSight(weaponDir, enemyDetails.enemyWeapon.weaponCurrentProjectile.projectileRange))
-                    {
-                        enemyPhase = EnemyPhase.Attack;
-                        enemy.aiRigidbody2D.canMove = false;
-                        return;
-                    }
-
-                    // NEED TO ADD
-                    Vector3 flankDirection = Quaternion.Euler(0f, 0f, 90f) * (player.transform.position - enemy.transform.position).normalized;
-                    enemy.movementToPosition.AttackMoveRigidbodyByPosition(flankDirection, enemy.currentMoveSpeed);
-
-                    break;
-
                 case EnemyPhase.Death:
                     if (attackAnimationRoutine != null)
                     {
@@ -150,21 +109,5 @@ public class EnemyAimAndShootAI : EnemyAI
                     break;
             }
         }
-    }
-
-    IEnumerator WaitAfterFiringRoutine()
-    {
-        yield return new WaitForSeconds(enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration);
-
-        // Transition to patrol phase
-        if (GameManager.Instance.GetPlayer() != null)
-        {
-            if ((Vector3.Distance(transform.position, GameManager.Instance.GetPlayer().transform.position) >= enemy.enemyDetails.chaseDistance))
-            {
-                enemyPhase = EnemyPhase.Patrol;
-            }
-        }
-
-        waitAfterFiringRoutine = null;
     }
 }

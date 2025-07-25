@@ -150,17 +150,17 @@ BoxCollider2D:
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 0
   m_ForceReceiveLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 0
   m_ContactCaptureLayers:
     serializedVersion: 2
     m_Bits: 4294967295
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -203,6 +203,7 @@ MonoBehaviour:
   hitFXAnimator: {fileID: 0}
   currentHealth: 0
   maximumHealth: 0
+  currentShield: 0
   isDamageable: 1
   enemy: {fileID: 0}
   isBlocking: 0
@@ -210,6 +211,8 @@ MonoBehaviour:
   suddenDeathHappened: 0
   flashManager: {fileID: 0}
   fxAnimatorPlayed: 0
+  damageTaken: 0
+  hasDied: 0
 --- !u!114 &3042279324210234784
 MonoBehaviour:
   m_ObjectHideFlags: 0

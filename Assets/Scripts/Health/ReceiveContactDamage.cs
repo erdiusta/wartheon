@@ -18,9 +18,12 @@ public class ReceiveContactDamage : MonoBehaviour
 
     public void TakeContactDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition)
     {
-        if (contactDamageAmount > 0) damageAmount = contactDamageAmount;
+        if (GetComponent<Enemy>() == null)
+        {
+            if (contactDamageAmount > 0) damageAmount = contactDamageAmount;
+        }
 
-        health.TakeDamage(damageAmount, dealerPosition, receiverPosition, false);
+        health.TakeDamage(damageAmount, dealerPosition, receiverPosition);
     }
 
     #region Validation

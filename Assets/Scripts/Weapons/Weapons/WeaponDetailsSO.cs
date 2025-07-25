@@ -96,7 +96,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Check if weapon has acid")]
     #endregion Tooltip
-    public bool hasAcid;
+    public bool hasAcidDamage;
     #region Tooltip
     [Tooltip("The efficiency of weapon's acid")]
     #endregion Tooltip
@@ -104,7 +104,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Check if weapon can warm")]
     #endregion Tooltip
-    public bool canWarm;
+    public bool hasWarmDamage;
     #region Tooltip
     [Tooltip("The chance of weapon's warm effect")]
     #endregion Tooltip
@@ -112,7 +112,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Check if weapon can burn")]
     #endregion Tooltip
-    public bool canBurn;
+    public bool hasBurnDamage;
     #region Tooltip
     [Tooltip("The chance of weapon's burn effect")]
     #endregion Tooltip
@@ -120,7 +120,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Check if weapon has poison")]
     #endregion Tooltip
-    public bool isPoisonous;
+    public bool hasPoisonDamage;
     #region Tooltip
     [Tooltip("The chance of weapon's poison")]
     #endregion Tooltip
@@ -128,7 +128,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Check if weapon can static")]
     #endregion Tooltip
-    public bool canStatic;
+    public bool hasStaticDamage;
     #region Tooltip
     [Tooltip("The chance of weapon's static effect")]
     #endregion Tooltip
@@ -136,7 +136,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Check if weapon can paralyze")]
     #endregion Tooltip
-    public bool canParalyze;
+    public bool hasParalyzeDamage;
     #region Tooltip
     [Tooltip("The chance of weapon's paralyze effect")]
     #endregion Tooltip

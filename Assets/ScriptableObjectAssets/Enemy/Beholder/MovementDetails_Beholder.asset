@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be803c3d22954c743afeeadf2eb708fd, type: 3}
   m_Name: MovementDetails_Beholder
   m_EditorClassIdentifier: 
-  baseMoveSpeed: 4
+  baseMinMoveSpeed: 3
+  baseMaxMoveSpeed: 5
   rollSpeed: 0
   rollDistance: 0
   rollCooldownTime: 0

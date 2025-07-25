@@ -189,22 +189,6 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: OffHandWeaponAnchorPosition
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: {x: 0.2739423, y: 0.97985303, z: 0}
-        inSlope: {x: Infinity, y: 0, z: 0}
-        outSlope: {x: Infinity, y: 0, z: 0}
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    path: MainHandWeaponAnchorPosition/MainHandWeaponRotationPoint/Weapon/CircleOrigin
   m_ScaleCurves: []
   m_FloatCurves:
   - serializedVersion: 2
@@ -316,9 +300,9 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: -2
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 69
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
         weightedMode: 0
         inWeight: 0
         outWeight: 0
@@ -334,17 +318,17 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -19388817, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
+      value: {fileID: -219839229, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
     - time: 0.05
-      value: {fileID: 1496421449, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
+      value: {fileID: -1323126048, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
     - time: 0.1
-      value: {fileID: -497695509, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
+      value: {fileID: -770875790, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
     - time: 0.4
-      value: {fileID: -1811949678, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
+      value: {fileID: 1129398119, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
     - time: 0.45
-      value: {fileID: 2060395842, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
+      value: {fileID: 2052099991, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
     - time: 0.5
-      value: {fileID: -1414945687, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
+      value: {fileID: 413852841, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -368,15 +352,6 @@ AnimationClip:
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
       path: 2159483692
-      attribute: 1
-      script: {fileID: 0}
-      typeID: 4
-      customType: 0
-      isPPtrCurve: 0
-      isIntCurve: 0
-      isSerializeReferenceCurve: 0
-    - serializedVersion: 2
-      path: 2132002652
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -430,15 +405,6 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 0
-      attribute: 0
-      script: {fileID: 0}
-      typeID: 212
-      customType: 23
-      isPPtrCurve: 1
-      isIntCurve: 0
-      isSerializeReferenceCurve: 0
-    - serializedVersion: 2
       path: 2045303653
       attribute: 3762991556
       script: {fileID: 0}
@@ -447,13 +413,22 @@ AnimationClip:
       isPPtrCurve: 0
       isIntCurve: 0
       isSerializeReferenceCurve: 0
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -19388817, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
-    - {fileID: 1496421449, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
-    - {fileID: -497695509, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
-    - {fileID: -1811949678, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
-    - {fileID: 2060395842, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
-    - {fileID: -1414945687, guid: c3caf5a12ce5f8146a0b7300f6203901, type: 3}
+    - {fileID: -219839229, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
+    - {fileID: -1323126048, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
+    - {fileID: -770875790, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
+    - {fileID: 1129398119, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
+    - {fileID: 2052099991, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
+    - {fileID: 413852841, guid: ce91717c42a0b624d80c9449cef5fd3c, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
@@ -1078,69 +1053,6 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.2739423
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalPosition.x
-    path: MainHandWeaponAnchorPosition/MainHandWeaponRotationPoint/Weapon/CircleOrigin
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.97985303
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalPosition.y
-    path: MainHandWeaponAnchorPosition/MainHandWeaponRotationPoint/Weapon/CircleOrigin
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalPosition.z
-    path: MainHandWeaponAnchorPosition/MainHandWeaponRotationPoint/Weapon/CircleOrigin
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
         value: 7.5625
         inSlope: Infinity
         outSlope: Infinity
@@ -1214,9 +1126,9 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: -2
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 69
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
         weightedMode: 0
         inWeight: 0
         outWeight: 0

@@ -109,19 +109,24 @@ public class HealthUI : MonoBehaviour
         float elapsed = 0f;
 
         float maxHealth = player.health.GetMaximumHealth();
-        float currentHealth = Mathf.Clamp(player.health.GetCurrentHealth(), 0, maxHealth);
-        float currentShield = Mathf.Clamp(player.health.GetCurrentShield(), 0, maxHealth);
+        float currentHealth = Mathf.Clamp(player.health.GetCurrentHealth(), 0, maxHealth);  // Health 96
+        float currentShield = Mathf.Clamp(player.health.GetCurrentShield(), 0, maxHealth);  // Shield 20
 
-        float total = currentShield > 0 ? Mathf.Max(currentHealth + currentShield, 1) : maxHealth; // prevent div/0
+        if (currentShield > 0)
+        {
+            Debug.Log(currentShield + " is different than zero.");
+        }
 
-        float targetHealthFill = currentHealth / total;
-        float targetShieldFill = currentShield / total;
+        float total = currentShield > 0 ? Mathf.Max(currentHealth + currentShield, 1) : maxHealth; // prevent div/0  // Total 116
+
+        float targetHealthFill = currentHealth / total; // 0.82
+        float targetShieldFill = currentShield / total; // 0.18
 
         float startHealthFill = healthBar.transform.localScale.x;
-        float startShieldFill = shieldBar.transform.localScale.x;
+        float startShieldFill = shieldBar.transform.localScale.x; 
 
-        RectTransform barParent = (RectTransform)healthBar.transform.parent;
-        float totalWidth = barParent.rect.width;
+        RectTransform barParent = (RectTransform)healthBar.transform.parent; 
+        float totalWidth = barParent.rect.width; // 55
 
         // Optional sprite flash
         healthBar.sprite = flashSprite;
@@ -129,52 +134,46 @@ public class HealthUI : MonoBehaviour
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / duration;
+            float t = Mathf.Clamp01(elapsed / duration);
 
+            // Interpolate fill values
             float currentHealthFill = Mathf.Lerp(startHealthFill, targetHealthFill, t);
             float currentShieldFill = Mathf.Lerp(startShieldFill, targetShieldFill, t);
 
+            // Update scales
             healthBar.transform.localScale = new Vector3(currentHealthFill, 1f, 1f);
-            shieldBar.transform.localScale = new Vector3(currentShieldFill, 1f, 1f);
+            shieldBar.transform.localScale = new Vector3(-currentShieldFill, 1f, 1f); // Negative for leftward fill
 
-            // Interpolated health + shield values (not clamped to max)
-            float interpolatedHealth = currentHealthFill * (currentHealth + currentShield);
-            float interpolatedShield = currentShieldFill * (currentHealth + currentShield);
+            // Compute combined visual width
+            total = Mathf.Max(currentHealth + currentShield, 1f);
+            float interpolatedHealth = currentHealthFill * total;
+            float interpolatedShield = currentShieldFill * total;
+            float totalVisual = Mathf.Max(interpolatedHealth + interpolatedShield, 1f);
 
-            float totalVisual = interpolatedHealth + interpolatedShield;
             float visualRatio = Mathf.Min(totalVisual / maxHealth, 1f);
             float combinedVisualWidth = totalWidth * visualRatio;
 
             float healthPortion = Mathf.Clamp01(interpolatedHealth / totalVisual);
             float healthWidth = combinedVisualWidth * healthPortion;
-            float shieldWidth = combinedVisualWidth - healthWidth;
 
-            // Update shield bar position
+            // ShieldBar always starts at end of HealthBar
             ((RectTransform)shieldBar.transform).anchoredPosition = new Vector2(healthWidth - 1f, 0f);
 
-            // Update health text position (same deviation logic)
-            float fullBarCenter = totalWidth / 2f; // Center of full bar in your pixel-perfect layout
+            // Optional: Update health text position
+            float fullBarCenter = totalWidth / 2f;
             float healthBarCenter = healthWidth / 2f;
-            float healthBarAnchorDeviation = Mathf.Clamp(fullBarCenter - healthBarCenter - 4, -18, 17);
-
+            float healthBarAnchorDeviation = Mathf.Clamp(fullBarCenter - healthBarCenter - 4f, -18f, 17f);
             //((RectTransform)healthText.transform).anchoredPosition = new Vector2(-healthBarAnchorDeviation, 0f);
 
-            // Optional shield text visibility
-            if (currentShieldFill < 0.05f)
-            {
-                shieldText.text = string.Empty;
-            }
-            else
-            {
-                shieldText.text = player.health.GetCurrentShield().ToString();
-            }
+            // Optional: Shield text visibility
+            shieldText.text = (currentShieldFill < 0.05f) ? "" : player.health.GetCurrentShield().ToString();
 
             yield return null;
         }
 
         // Final values
         healthBar.transform.localScale = new Vector3(targetHealthFill, 1f, 1f);
-        shieldBar.transform.localScale = new Vector3(targetShieldFill, 1f, 1f);
+        shieldBar.transform.localScale = new Vector3(-targetShieldFill, 1f, 1f);
 
         ShiftShieldBar(maxHealth, currentHealth, currentShield, totalWidth);
 

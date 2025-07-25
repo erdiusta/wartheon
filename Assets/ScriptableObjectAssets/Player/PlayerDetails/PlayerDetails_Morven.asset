@@ -27,52 +27,29 @@ MonoBehaviour:
     willpower: 5
     ferocity: 7
     resolve: 4
-  physicalResistance: 0
-  fireResistance: 0
-  waterResistance: 0
-  airResistance: 0
-  earthResistance: 0
-  lightResistance: 0
-  darkResistance: 0
   isImmuneAfterHit: 1
-  hitImmunityTime: 1
+  hitImmunityTime: 0.5
   getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
   deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
   blockSoundEffect: {fileID: 11400000, guid: 5a66c8bf2077f0a4caf767997e7b7749, type: 2}
   dodgeSoundEffect: {fileID: 11400000, guid: 47e336b005c25684099a3b05096549a8, type: 2}
   parrySoundEffect: {fileID: 11400000, guid: 1f535785069b176429525f2fb0e96cc7, type: 2}
   passiveSkillImage: {fileID: 21300000, guid: 7fc17332675bb9d4388eabb4939c0444, type: 3}
+  passiveSkillSoundEffect: {fileID: 0}
   firstActiveSkillDetails: {fileID: 11400000, guid: b66f273d71fbf0443856c8bd82f0bd5d, type: 2}
   secondActiveSkillDetails: {fileID: 11400000, guid: 6a55a645402730a49a9ea228be2e1e5c, type: 2}
   thirdActiveSkillDetails: {fileID: 11400000, guid: a41f8f4831161914caf97a0b7a057893, type: 2}
   fourthActiveSkillDetails: {fileID: 11400000, guid: e1827bde4575a0c4a85df87069ef4b7e, type: 2}
   fifthActiveSkillDetails: {fileID: 11400000, guid: e8d5fbe9a3becdf4a944380097750534, type: 2}
   cataclysmMeteor: {fileID: 0}
+  grappleDetails: {fileID: 0}
+  iceBreakerDetails: {fileID: 0}
+  absoluteZeroDetails: {fileID: 0}
   standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  headShotMaterial: {fileID: 0}
   penetrateMaterial: {fileID: 0}
   applyScreenShake: 0
   shakeIntensity: 0
   shakeDuration: 0
-  charBuildDetails:
-  - {fileID: 11400000, guid: a59e5831ccc37b94394ab5a3b7b650ba, type: 2}
-  - {fileID: 11400000, guid: e834f90725231f4469e35bc73eeee1b2, type: 2}
-  - {fileID: 11400000, guid: 38018d83bb370bc40aa2bd73ea33d7fa, type: 2}
-  - {fileID: 11400000, guid: 71fd4371088e2a447b009790441619fe, type: 2}
-  - {fileID: 11400000, guid: e70ff31c43dc9cd4a966ffaf561a72a9, type: 2}
-  - {fileID: 11400000, guid: 8b7d34a836334a7468ac67126b62932b, type: 2}
-  - {fileID: 11400000, guid: 974ed19cca124e044add057f3b97e34f, type: 2}
-  - {fileID: 11400000, guid: dac7e939d3e2b364c94efdb4afceb6e7, type: 2}
-  - {fileID: 11400000, guid: 902bcd5b618daf44787589f7557ec405, type: 2}
-  - {fileID: 11400000, guid: c4700eb66c415cc49afa37a6b87dc549, type: 2}
-  - {fileID: 11400000, guid: 0df85542e75f4f24481d37f3a36586a9, type: 2}
-  - {fileID: 11400000, guid: e9b44c084ad53564e959a189bd6cf601, type: 2}
-  - {fileID: 11400000, guid: a23bebbc3c5d3aa4b8a1605a53ebce9b, type: 2}
-  - {fileID: 11400000, guid: 8c56b006f9ad5da4f81a86a76c5ed787, type: 2}
-  - {fileID: 11400000, guid: 7399697a6430c7b49a42bab5a7d74a1d, type: 2}
-  - {fileID: 11400000, guid: 42e535a379467b045ab1d1e5961807ef, type: 2}
-  - {fileID: 11400000, guid: 1b708bb4ca97662459142bc1b736df0d, type: 2}
-  - {fileID: 11400000, guid: 259814896dc9d3b489c3d00cbc8909c9, type: 2}
   selectedActiveItem: {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
   activeItemsList:
   - {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}

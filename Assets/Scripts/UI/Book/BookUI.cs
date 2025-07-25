@@ -166,6 +166,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         {
             case Character.Caelion:
             case Character.Morven:
+            case Character.Karnag:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 // MAIN HAND WEAPON EQUIP AT START - SLOT
@@ -181,6 +182,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
             case Character.Nyveran:
             case Character.Mycara:
+            case Character.Kynara:
+            case Character.Nymara:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 // WEAPON EQUIP AT START - SLOT
@@ -920,8 +923,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void UpdatePlayerStatInfo(Player player)
     {
-        float attackRating = player.currentAttackRatingValue ?? 0f;
-
         // PRIMARY STATS
         characterName.text = player.playerDetails.playerCharacterName;
         strengthValue.text = player.CurrentStrengthValue.ToString();
@@ -939,11 +940,11 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         damageValue.text = $"{player.currentMainHandMinDamageValue}-{player.currentMainHandMaxDamageValue}({player.currentOffHandMinDamageValue}-" +
             $"{player.currentOffHandMaxDamageValue})";
         criticalHitChanceDamageValue.text = $"{player.currentMainHandCriticalHitChance * 100}%({player.currentOffHandCriticalHitChance * 100}%)";
-        speedValue.text = $"{player.movementByVelocity.moveSpeed}";
+        speedValue.text = $"{player.movementByForce.moveSpeed}";
         criticalHitDamageAmountValue.text = $"{player.currentMainHandCriticalHitDamage * 100}%({player.currentOffHandCriticalHitDamage * 100}%)";
 
         // AUXILLARY STATS
-        attackRatingValue.text = $"{attackRating * 100}";
+        attackRatingValue.text = $"{player.currentAttackRatingValue * 100}";
         blockRateValue.text = $"{player.currentBlockValue * 100}%";
         eveasivenessRateValue.text = $"{player.currentEvasivenessValue * 100}%";
 
@@ -1504,30 +1505,45 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 player.isPunishersWillActive = true;
                 break;
             case InnerPathName.ViciousMomentum:
+                player.isViciousMomentumActive = true;
                 break;
             case InnerPathName.SurgingElements:
+                player.additionalElementalDamageModifier = 0.1f;
                 break;
             case InnerPathName.CounterRiposte:
+                player.isCounterRiposteActive = true;
                 break;
             case InnerPathName.Armorbane:
+                player.additionalArmorPenetrationModifier = 0.06f;
                 break;
             case InnerPathName.TriadExecution:
+                player.isTriadExecutionActive = true;
                 break;
             case InnerPathName.UnyieldingGuard:
                 player.additionalShieldArmorModifier = 0.1f;
                 break;
             case InnerPathName.DieHard:
+                player.isDieHardActive = true;
                 break;
             case InnerPathName.StoneSkin:
                 player.additionalArmorModifier = 0.1f;
                 break;
             case InnerPathName.BattleScars:
+                player.isBattleScarsActive = true;
                 break;
-            case InnerPathName.ReflexBarrier:
+            case InnerPathName.FortifiedResolve:
+                player.isFortifiedResolveActive = true;
                 break;
             case InnerPathName.ArcaneFortitude:
+                player.currentFireResistanceValue += 0.1f;
+                player.currentWaterResistanceValue += 0.1f;
+                player.currentAirResistanceValue += 0.1f;
+                player.currentEarthResistanceValue += 0.1f;
+                player.currentLightResistanceValue += 0.1f;
+                player.currentDarkResistanceValue += 0.1f;
                 break;
             case InnerPathName.SecondBreath:
+                player.isSecondBreathActive = true;
                 break;
             case InnerPathName.BlockThemAll:
                 player.additionalBlockModifier = 0.1f;
@@ -1536,19 +1552,25 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 player.additionalEvasivenessModifier = 0.05f;
                 break;
             case InnerPathName.WeaversTempo:
+                player.additionalSkillCoolDownModifier = 0.08f;
                 break;
             case InnerPathName.EfficientMind:
+                player.additionalManaReductionModifier = 0.1f;
                 break;
             case InnerPathName.ShiftingStance:
                 player.isShiftingStanceActive = true;
                 break;
             case InnerPathName.CombatFocus:
+                player.isCombatFocusActive = true;
                 break;
             case InnerPathName.Resourceful:
+                player.resourcefulActive = true;
                 break;
             case InnerPathName.BattleReady:
+                player.isBattleReadyActive = true;
                 break;
             case InnerPathName.SurgeTapGain:
+                player.isSurgeTapGainActive = true;
                 break;
             default:
                 break;

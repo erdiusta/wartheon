@@ -141,9 +141,9 @@ GameObject:
   - component: {fileID: 8447202650038424383}
   - component: {fileID: 2226921973809070019}
   - component: {fileID: 4937508002795313926}
-  m_Layer: 18
+  m_Layer: 28
   m_Name: BoxOrigin
-  m_TagString: Untagged
+  m_TagString: originTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -785,9 +785,9 @@ GameObject:
   - component: {fileID: 7936086671000619909}
   - component: {fileID: 6885515782890191060}
   - component: {fileID: 8156907797649625243}
-  m_Layer: 18
+  m_Layer: 28
   m_Name: CircleOrigin
-  m_TagString: Untagged
+  m_TagString: originTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1163,7 +1163,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2700196412855126822}
-  m_Layer: 18
+  m_Layer: 28
   m_Name: MainHandShapeOrigins
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1359,9 +1359,9 @@ GameObject:
   - component: {fileID: 7711342700722197549}
   - component: {fileID: 5329036343371862779}
   - component: {fileID: 2879147223515215136}
-  m_Layer: 18
+  m_Layer: 28
   m_Name: TriangleOrigin
-  m_TagString: Untagged
+  m_TagString: originTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1619,9 +1619,9 @@ GameObject:
   - component: {fileID: 7806165928976285397}
   - component: {fileID: 6450046392103005957}
   - component: {fileID: 6238425226974797665}
-  m_Layer: 18
+  m_Layer: 28
   m_Name: TriangleOrigin
-  m_TagString: Untagged
+  m_TagString: originTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1717,9 +1717,9 @@ GameObject:
   - component: {fileID: 2935184723905329284}
   - component: {fileID: 6993977867922307612}
   - component: {fileID: 2250965943103963786}
-  m_Layer: 18
+  m_Layer: 28
   m_Name: BoxOrigin
-  m_TagString: Untagged
+  m_TagString: originTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1816,9 +1816,9 @@ GameObject:
   - component: {fileID: 2111572377593781178}
   - component: {fileID: 8459880889773683550}
   - component: {fileID: 2246981869558898825}
-  m_Layer: 18
+  m_Layer: 28
   m_Name: CircleOrigin
-  m_TagString: Untagged
+  m_TagString: originTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2176,6 +2176,7 @@ GameObject:
   - component: {fileID: -9133217020520152176}
   - component: {fileID: 6815216415085289844}
   - component: {fileID: 6237763269965026576}
+  - component: {fileID: 8750277059502281644}
   m_Layer: 11
   m_Name: Player
   m_TagString: Player
@@ -2350,9 +2351,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 3
-  m_AngularDamping: 0
+  m_Mass: 0.2
+  m_LinearDamping: 10
+  m_AngularDamping: 0.5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -2441,7 +2442,7 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -2475,7 +2476,7 @@ CapsuleCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 65536
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 268369919
@@ -2570,11 +2571,13 @@ MonoBehaviour:
   knockback: {fileID: 0}
   coins: {fileID: 0}
   idle: {fileID: 0}
-  movementByVelocity: {fileID: 0}
+  movementByForce: {fileID: 0}
   movementToPositionEvent: {fileID: 0}
   statusManager: {fileID: 0}
+  damageTracker: {fileID: 0}
   springJoint2D: {fileID: 0}
   playersGrapple: {fileID: 0}
+  playersThrowingAxe: {fileID: 0}
   keyCount: 0
   previousSetIndex: 1
   branchMastery: {fileID: 0}
@@ -2597,18 +2600,20 @@ MonoBehaviour:
   currentOffHandCriticalHitChance: 0
   currentMainHandCriticalHitDamage: 0
   currentOffHandCriticalHitDamage: 0
+  currentAttackRatingValue: 0
   buffDurationModifier: 0
-  cooldownDurationModifier: 0
   currentEvasivenessValue: 0
   currentLevel: 1
   currentGainedTotalExperiencePoints: 0
   currentSkillPoints: 0
   currentStatPoints: 0
   additionalMeleeDamageModifer: 0
-  additionalStaffElementalDamageModifier: 0
+  additionalRangedDamageModifier: 0
   additionalElementalDamageModifier: 0
+  additionalArmorPenetrationModifier: 0
   additionalMeleeAttackCoolDownModifier: 0
-  additionalBowAttackCoolDownModifier: 0
+  additionalRangedAttackCoolDownModifier: 0
+  additionalSkillCoolDownModifier: 0
   additionalSpeedModifier: 0
   additionalMeleeCriticalHitChanceModifier: 0
   additionalCriticalDamageOnCloakedPrecision: 0.5
@@ -2624,13 +2629,37 @@ MonoBehaviour:
   additionalEvasivenessModifier: 0
   isFocusedAggressionActive: 0
   isPunishersWillActive: 0
+  isViciousMomentumActive: 0
+  viciousMomentumTriggered: 0
+  viciousMomentumAttackBonusObtained: 0
+  viciousMomentumCooldownTimer: 0
+  viciousMomentumDuration: 3
+  isCounterRiposteActive: 0
+  isTriadExecutionActive: 0
+  triadExecutionCounter: 0
+  triadExecutionTriggered: 0
+  isDieHardActive: 0
+  isBattleScarsActive: 0
+  battleScarsArmorBoostActivated: 0
+  isSecondBreathActive: 0
+  secondBreathReset: 0
+  isFortifiedResolveActive: 0
+  fortifiedResolveTriggered: 0
   isShiftingStanceActive: 0
   shiftingStanceOnProcess: 0
+  resourcefulActive: 0
+  isSurgeTapGainActive: 0
+  isCombatFocusActive: 0
+  combatFocusTriggered: 0
+  combatFocusCooldownBonusObtained: 0
+  combatFocusCooldownTimer: 0
+  combatFocusDuration: 3
+  isBattleReadyActive: 0
   expGainModifier: 1
   additionalBowAccuracyModifier: 0
+  additionalManaReductionModifier: 0
   additionalHeadShotDamageModifier: 0
   threeSecInvincilibityAfterTeleportEnabled: 0
-  additionalCataclysmElementalDamageModifier: 0
   bloodDrainSkillAdditionalDamagePercentageModifier: 0
   barrierSkillAdditionalDurationModifier: 0
   additionalShadowStepSkillDurationModifier: 0
@@ -2693,15 +2722,49 @@ MonoBehaviour:
   isMycarasSealActive: 0
   isIceBreakerActive: 0
   isAbsoluteZeroActive: 0
+  isFireBlastActive: 0
+  isMoltenRiftActive: 0
+  isFlameLotusActive: 0
+  isKynarasEmbraceActive: 0
+  kynarasEmbraceDamage: 10
+  kynarasEmbraceCircleRadius: 5
+  isKynarasEmbraceShieldExploding: 0
+  isBlazingCycloneActive: 0
+  phoenixRisingUsed: 0
+  isRageActive: 0
+  isShatterCryActive: 0
+  isAxeThrowActive: 0
+  isWhirlrendActive: 0
+  whirlrendBleedChance: 0.1
+  whirlrendDamage: 10
+  isFeastOfWarActive: 0
+  feastOfWarDrainPercentage: 0.1
   shadowCloakEquipped: 0
   isCursed: 0
   isFeared: 0
   isRevealed: 0
   isStatic: 0
-  isWarm: 0
+  isWarmed: 0
   isChilled: 0
   isBlind: 0
   isSlowed: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  filter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
 --- !u!114 &3362413763628156882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3194,6 +3257,21 @@ MonoBehaviour:
   OnShieldBashEventPerformed:
     m_PersistentCalls:
       m_Calls: []
+  OnShatterCryTriggered:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &8750277059502281644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28a9e9b2a6069b4498f77a1829841a2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4966358325702215446
 GameObject:
   m_ObjectHideFlags: 0
@@ -3628,7 +3706,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7153118114434509566}
-  m_Layer: 18
+  m_Layer: 28
   m_Name: OffHandShapeOrigins
   m_TagString: Untagged
   m_Icon: {fileID: 0}

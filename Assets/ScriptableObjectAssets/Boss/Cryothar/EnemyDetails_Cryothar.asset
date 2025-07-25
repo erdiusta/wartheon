@@ -48,16 +48,28 @@ MonoBehaviour:
   dealtMeleeDamageMax: 15
   canBurn: 0
   burnChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
   isPoisonous: 0
   poisonChance: 0
   hasAcid: 0
   acidEfficiency: 0
   hasStunDamage: 0
   stunChance: 0
+  hasRootDamage: 0
+  rootChance: 0
+  hasChillDamage: 0
+  chillChance: 0
   hasFrostDamage: 1
   frostChance: 0.15
   hasCurseDamage: 0
   curseChance: 0
+  hasFearDamage: 0
+  fearChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
   hasBlindDamage: 0
   blindChance: 0
   enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -73,6 +85,7 @@ MonoBehaviour:
   attackSoundEffect: {fileID: 11400000, guid: 014a461094ff83c4bb12f11bc2bd899b, type: 2}
   deflectSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
   stunSoundEffect: {fileID: 11400000, guid: 2bc620c0bbee7da46a23d7aebb2dd2ec, type: 2}
+  rootSoundEffect: {fileID: 11400000, guid: 3260cb66e2f6f36468b2beeba1c14620, type: 2}
   poisonSoundEffect: {fileID: 0}
   enemyWeapon: {fileID: 11400000, guid: 789080475bbb5924dbad6a8b30dbd621, type: 2}
   firingIntervalMin: 0.6

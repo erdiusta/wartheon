@@ -15076,12 +15076,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1344477452585567910, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Mass
-      value: 200
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: -1344477452585567910, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
-      propertyPath: m_BodyType
-      value: 0
-      objectReference: {fileID: 0}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 7d7c863eed111b44a9afd124ca0854f2, type: 2}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_FlipX
       value: 1
@@ -15320,9 +15320,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyDetails: {fileID: 11400000, guid: ef4ad0df83d1cf1408ea42c982970db3, type: 2}
   weaponShootPosition: {fileID: 3455516063969396250}
-  layerMask:
+  shootLayerMask:
     serializedVersion: 2
-    m_Bits: 1067008
+    m_Bits: 0
+  avoidLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
   moveStatus: 0
   updateFrameNumber: 1
   enemyPhase: 0

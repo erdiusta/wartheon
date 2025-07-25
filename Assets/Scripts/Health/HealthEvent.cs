@@ -18,6 +18,13 @@ public class HealthEvent : MonoBehaviour
         GetPoisoned?.Invoke(this);
     }
 
+    public event Action<HealthEvent> GetWarm;
+
+    public void CallGetWarmedEvent()
+    {
+        GetWarm?.Invoke(this);
+    }
+
     public event Action<HealthEvent> GetBurned;
 
     public void CallGetBurnEvent()
@@ -108,6 +115,14 @@ public class HealthEvent : MonoBehaviour
     {
         GetBlind?.Invoke(this);
     }
+
+    public event Action<HealthEvent> WarmCured;
+
+    public void CallWarmCuredEvent()
+    {
+        WarmCured?.Invoke(this);
+    }
+
 
     public event Action<HealthEvent> BurnCured;
 
@@ -314,6 +329,21 @@ public class HealthEvent : MonoBehaviour
         OnSevenArrowsEffectsEnded?.Invoke(this);
     }
 
+    public event Action<HealthEvent> OnKynarasEmbraceActive;
+
+    public void CallKynarasSealSpecialMoveEvent()
+    {
+        OnKynarasEmbraceActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnKynarasEmbraceEffectsEnded;
+
+    public void CallKynarasEmbraceWoreOffEvent()
+    {
+        OnKynarasEmbraceEffectsEnded?.Invoke(this);
+    }
+
+
     public event Action<HealthEvent> OnMycarasSealActive;
 
     public void CallMycarasSealSpecialMoveEvent()
@@ -326,6 +356,149 @@ public class HealthEvent : MonoBehaviour
     public void CallMycarasSealWoreOffEvent()
     {
         OnMycarasSealEffectsEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnRageActive;
+
+    public void CallRageSpecialMoveEvent()
+    {
+        OnRageActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnRageEffectEnded;
+
+    public void CallRageWoreOffEvent()
+    {
+        OnRageEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnShatterCryActive;
+
+    public void CallShatterCrySpecialMoveEvent()
+    {
+        OnShatterCryActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnShatterCryEffectEnded;
+
+    public void CallShatterCryWoreOffEvent()
+    {
+        OnShatterCryEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnWhirlrendActive;
+
+    public void CallWhirlrendSpecialMoveEvent()
+    {
+        OnWhirlrendActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnWhirlrendEffectEnded;
+
+    public void CallWhirlrendWoreOffEvent()
+    {
+        OnWhirlrendEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnFeastOfWarActive;
+
+    public void CallFeastOfWarSpecialMoveEvent()
+    {
+        OnFeastOfWarActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnFeastOfWarEffectEnded;
+
+    public void CallFeastOfWarWoreOffEvent()
+    {
+        OnFeastOfWarEffectEnded?.Invoke(this);
+    }
+
+    // INNER PATH
+    public event Action<HealthEvent> OnBattleScarsActive;
+
+    public void CallBattleScarsEvent()
+    {
+        OnBattleScarsActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnBattleScarsEffectEnded;
+
+    public void CallBattleScarsWoreOffEvent()
+    {
+        OnBattleScarsEffectEnded?.Invoke(this);
+    }
+
+
+    public event Action<HealthEvent> OnSecondBreathActive;
+
+    public void CallSecondBreathEvent()
+    {
+        OnSecondBreathActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnSecondBreathEffectEnded;
+
+    public void CallSecondBreathWoreOffEvent()
+    {
+        OnSecondBreathEffectEnded?.Invoke(this);
+    }
+
+
+    public event Action<HealthEvent> OnViciousMomentumActive;
+
+    public void CallViciousMomentumEvent()
+    {
+        OnViciousMomentumActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnViciousMomentumEffectEnded;
+
+    public void CallViciousMomentumWoreOffEvent()
+    {
+        OnViciousMomentumEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnCombatFocusActive;
+
+    public void CallCombatFocusEvent()
+    {
+        OnCombatFocusActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnCombatFocusEffectEnded;
+
+    public void CallCombatFocusWoreOffEvent()
+    {
+        OnCombatFocusEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnTriadExecutionActive;
+
+    public void CallTriadExecutionEvent()
+    {
+        OnTriadExecutionActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnTriadExecutionEffectEnded;
+
+    public void CallTriadExecutionWoreOffEvent()
+    {
+        OnTriadExecutionEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnFortifiedResolveActive;
+
+    public void CalllFortifiedResolveEvent()
+    {
+        OnFortifiedResolveActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnFortifiedResolveEffectEnded;
+
+    public void CallFortifiedResolveWoreOffEvent()
+    {
+        OnFortifiedResolveEffectEnded?.Invoke(this);
     }
 
     public event Action<HealthEvent> OnParried;
@@ -375,5 +548,6 @@ public class HealthEventArgs : EventArgs
     public int healthAmount;
     public int damageAmount;
     public MeleeHand hand;
+    public bool onStart;
 }
 

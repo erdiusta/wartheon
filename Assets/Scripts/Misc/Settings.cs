@@ -70,7 +70,7 @@ public static class Settings
     public static int dash = Animator.StringToHash("dash");
     public static int focused = Animator.StringToHash("focused");
     public static int attackType = Animator.StringToHash("attackType");
-    public const float baseSpeedForPlayerAnimations = 6f;
+
 
     // Animator parameters - Status
     public static int isStunned = Animator.StringToHash("isStunned");
@@ -90,8 +90,9 @@ public static class Settings
     // Animator parameters - Parry
     public static int isParry = Animator.StringToHash("parry");
 
-    // Animator parameters - Enemy
-    public const float baseSpeedForEnemyAnimations = 2.5f;
+    // Animator speed parameters
+    public const float baseSpeedForPlayerAnimations = 12f;
+    public const float baseSpeedForEnemyAnimations = 3f;
 
     // Animator parameters - Door
     public static int open = Animator.StringToHash("open");
@@ -129,6 +130,7 @@ public static class Settings
     public const string aoeSkill = "aoeSkill";
     public const string enemyProjectile = "enemyProjectile";
     public const string practiceDummy = "PracticeDummy";
+    public const string environment = "environment";
     public const string caelionTag = "caelionTag";
     public const string mycaraTag = "mycaraTag";
     public const string nyveranTag = "nyveranTag";

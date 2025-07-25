@@ -15321,9 +15321,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyDetails: {fileID: 11400000, guid: a90942061a6b7094eb3a33936432a3d7, type: 2}
   weaponShootPosition: {fileID: 3455516063969396250}
-  layerMask:
+  shootLayerMask:
     serializedVersion: 2
-    m_Bits: 1067008
+    m_Bits: 0
+  avoidLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
   moveStatus: 0
   updateFrameNumber: 1
   enemyPhase: 0

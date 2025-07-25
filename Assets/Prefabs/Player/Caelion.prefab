@@ -121,6 +121,8 @@ GameObject:
   - component: {fileID: 1002129837406734480}
   - component: {fileID: 8347641891302525839}
   - component: {fileID: 4924813047675553036}
+  - component: {fileID: 4028027875029602213}
+  - component: {fileID: 1519165541778251561}
   m_Layer: 11
   m_Name: SeismicSlam
   m_TagString: Untagged
@@ -220,6 +222,63 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
+--- !u!114 &4028027875029602213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1846329502410550298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9d8b921fcda15042a690e533d444efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSlamSoundPlayed:
+    m_PersistentCalls:
+      m_Calls: []
+  OnSlamActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnSlamDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!58 &1519165541778251561
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1846329502410550298}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 3.5
 --- !u!1 &5184880328455751175
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,11 +419,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -6498518524249918456, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 0.9375
+      value: 3.25
       objectReference: {fileID: 0}
     - target: {fileID: -6498518524249918456, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.y
-      value: 1.5
+      value: 3.8125
       objectReference: {fileID: 0}
     - target: {fileID: -6498518524249918456, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
@@ -384,11 +443,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 0.9375
+      value: 3.25
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.y
-      value: 1.5
+      value: 3.8125
       objectReference: {fileID: 0}
     - target: {fileID: -3717498421023012475, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
@@ -868,11 +927,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4653744369360300805, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.x
-      value: 0.9375
+      value: 3.25
       objectReference: {fileID: 0}
     - target: {fileID: 4653744369360300805, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.y
-      value: 1.5
+      value: 3.8125
       objectReference: {fileID: 0}
     - target: {fileID: 4653744369360300805, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Sprite
@@ -992,19 +1051,19 @@ PrefabInstance:
       objectReference: {fileID: 4893521545800900471}
     - target: {fileID: 6238425226974797665, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[1].x
-      value: -2.1650634
+      value: -2.598076
       objectReference: {fileID: 0}
     - target: {fileID: 6238425226974797665, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[1].y
-      value: 1.2500001
+      value: 1.5000001
       objectReference: {fileID: 0}
     - target: {fileID: 6238425226974797665, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[2].x
-      value: -2.1650634
+      value: -2.598076
       objectReference: {fileID: 0}
     - target: {fileID: 6238425226974797665, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[2].y
-      value: -1.2499999
+      value: -1.4999999
       objectReference: {fileID: 0}
     - target: {fileID: 6284854564011189762, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Controller
@@ -1036,7 +1095,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6450046392103005957, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: coneLength
-      value: 2.5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6450046392103005957, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: directionAngle

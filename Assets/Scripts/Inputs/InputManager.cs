@@ -88,6 +88,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
 
     [Header("UI")]
     public InputActionReference OKButton;
+    public InputActionReference click;
     public InputActionReference escapeButton;
     public InputActionReference uiNavigate;
     public InputActionReference scroll;

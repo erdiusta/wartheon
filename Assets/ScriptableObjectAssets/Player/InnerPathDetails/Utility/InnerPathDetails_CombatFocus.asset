@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   innerPathName: Combat Focus
   innerPathSelectionName: 20
-  innerPathDetails: Reduces Cooldowns by 0.2 Sec per Enemy Kill
+  innerPathDetails: Reduces Melee Attack Cooldowns by 20%, Ranged Attack Cooldowns
+    by 10%  per Enemy Kill for 3 Seconds

@@ -46,11 +46,12 @@ public class ProjectilePattern : MonoBehaviour, IFireable
     // FOR PROJECTILE
     public void InitializeProjectile(Enemy belongingEnemy, bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
         float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement, bool fallingFromSkies = false, bool isPenetrationArrow = false,
-        int projectileCounter = 0, int totalProjectiles = 0, MoravellePhase moravellePhase = MoravellePhase.None, TreantPhase treantPhase = TreantPhase.None,
+        int projectileCounter = 0, int totalProjectiles = 0, MoravellePhase moravellePhase = MoravellePhase.None, SylvarokPhase treantPhase = SylvarokPhase.None,
         GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None,
         VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None,
         bool isTripleThreat = false, bool isBindingArrow = false, bool isArrowOfTheSeven = false, ProjectileDetailsSO grappleDetails = null,
-        ProjectileDetailsSO blizzardDetails = null)
+        ProjectileDetailsSO iceBreakerDetails = null, bool isFireBlast = false, ProjectileDetailsSO fireBlastDetails = null, bool isBlazingCyclone = false,
+        ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null)
     {
         this.projectileDetails = projectileDetails;
         this.projectileSpeed = projectileSpeed;
@@ -74,7 +75,9 @@ public class ProjectilePattern : MonoBehaviour, IFireable
 
             projectileArray[i].ResetProjectileState();
 
-            projectileArray[i].InitializeProjectile(belongingEnemy, false, projectileDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true);
+            projectileArray[i].InitializeProjectile(belongingEnemy, false, projectileDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true, fallingFromSkies, isPenetrationArrow,
+                projectileCounter, totalProjectiles, 0, 0, 0, 0, 0, 0, 0, 0, isTripleThreat, isBindingArrow, isArrowOfTheSeven, grappleDetails, iceBreakerDetails, isFireBlast, fireBlastDetails,
+                isBlazingCyclone, blazingCycloneDetails, isThrowingAxe);
         }
 
         // Set ammo charge timer - this will hold the ammo briefly

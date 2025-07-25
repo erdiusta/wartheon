@@ -122,6 +122,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     [HideInInspector] public bool popUpWindowOpen;
 
+    // Overview camera
+    [HideInInspector] public bool isOverviewCameraEnabled;
+
     #region Header DUNGEON LEVELS
     [Space(10)]
     [Header("DUNGEON LEVELS")]
@@ -214,6 +217,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     }
     private void OnEnable()
     {
+        StaticEventHandler.OnOverviewCameraToggled += StaticEventHandler_OnOverviewCameraToggled;
+
         StaticEventHandler.OnLevelUp += StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
         StaticEventHandler.OnRoomEnemiesDefeated += StaticEventHandler_OnRoomEnemiesDefeated;
@@ -236,6 +241,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void OnDisable()
     {
+        StaticEventHandler.OnOverviewCameraToggled -= StaticEventHandler_OnOverviewCameraToggled;
+
         StaticEventHandler.OnLevelUp -= StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnRoomChanged -= StaticEventHandler_OnRoomChanged;
         StaticEventHandler.OnRoomEnemiesDefeated -= StaticEventHandler_OnRoomEnemiesDefeated;
@@ -256,12 +263,17 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
     }
 
+    private void StaticEventHandler_OnOverviewCameraToggled(OverviewCameraFollowArgs overviewCameraFollowArgs)
+    {
+        isOverviewCameraEnabled = overviewCameraFollowArgs.isOn;
+    }
+
     private void PlayerGetBlind(HealthEvent healthEvent)
     {
         blindTimer = 8f;
         player.isBlind = true;
         player.blindModifier = 0.5f;
-        player.UpdateCurrentHandlingValues();
+        player.UpdateCurrentAttackRatingValues();
         StaticEventHandler.CallStatsChangedOnTheBookEvent();
     }
 
@@ -703,7 +715,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             player.isBlind = false;
             player.blindModifier = 0f;
             player.healthEvent.CallBlindCuredEvent();
-            player.UpdateCurrentHandlingValues();
+            player.UpdateCurrentAttackRatingValues();
             StaticEventHandler.CallStatsChangedOnTheBookEvent();
         }
     }
@@ -1595,6 +1607,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         // Get nearest spawn point in room nearest to player
         player.gameObject.transform.position = HelperUtilities.GetSpawnPositionNearestToPlayer(player.gameObject.transform.position);
+
+        // Reset Phoenix Rising
+        player.phoenixRisingUsed = false;
 
         // Display Dungeon Level Text
         StartCoroutine(DisplayDungeonLevelText());

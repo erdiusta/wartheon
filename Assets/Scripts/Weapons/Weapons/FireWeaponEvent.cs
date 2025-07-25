@@ -8,10 +8,11 @@ public class FireWeaponEvent : MonoBehaviour
 
     public void CallFireWeaponEvent(bool fire, bool firePreviousFrame, Enemy belongingEnemy, bool isLaser, AimDirection aimDirection, float aimAngle, float weaponAimAngle,
         Vector3 weaponAimDirectionVector, bool isIceBreaker = false, bool isActiveItem = false, bool isPenetrationArrow = false, MoravellePhase moravellePhase = MoravellePhase.None,
-        TreantPhase treantPhase = TreantPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
+        SylvarokPhase treantPhase = SylvarokPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
         FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None,
         MoldranPhase moldranPhase = MoldranPhase.None, bool isTripleThreat = false, bool isBindingArrow = false, bool isArrowOfTheSeven = false, 
-        ProjectileDetailsSO grappleDetails = null, ProjectileDetailsSO iceBreakerDetails = null)
+        ProjectileDetailsSO grappleDetails = null, ProjectileDetailsSO iceBreakerDetails = null, bool isFireBlast = false, ProjectileDetailsSO fireBlastDetails = null,
+        bool isBlazingCyclone = false, ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null)
     {
         OnFireWeapon?.Invoke(this, new FireWeaponEventArgs
         {
@@ -38,7 +39,13 @@ public class FireWeaponEvent : MonoBehaviour
             isArrowOfTheSeven = isArrowOfTheSeven,
             grappleDetails = grappleDetails,
             isIceBreaker = isIceBreaker,
-            iceBreakerDetails = iceBreakerDetails
+            iceBreakerDetails = iceBreakerDetails,
+            isFireBlast = isFireBlast,
+            fireBlastDetails = fireBlastDetails,
+            isBlazingCyclone = isBlazingCyclone,
+            blazingCycloneDetails = blazingCycloneDetails,
+            isThrowingAxe = isThrowingAxe,
+            throwingAxeDetails = throwingAxeDetails
         });
     }
 
@@ -64,7 +71,7 @@ public class FireWeaponEventArgs : EventArgs
     public bool isActiveItem;
     public bool isPenetrationArrow;
     public MoravellePhase moravellePhase;
-    public TreantPhase treantPhase;
+    public SylvarokPhase treantPhase;
     public GalvanusPhase galvanusPhase;
     public SepharothPhase sepharothPhase;
     public FrostWrymPhase frostWrymPhase;
@@ -76,6 +83,12 @@ public class FireWeaponEventArgs : EventArgs
     public bool isArrowOfTheSeven;
     public ProjectileDetailsSO grappleDetails;
     public ProjectileDetailsSO iceBreakerDetails;
+    public bool isFireBlast;
+    public ProjectileDetailsSO fireBlastDetails;
+    public bool isBlazingCyclone;
+    public ProjectileDetailsSO blazingCycloneDetails;
+    public bool isThrowingAxe;
+    public ProjectileDetailsSO throwingAxeDetails;
 }
 
 public class FireFocusedShotEventArgs : EventArgs

@@ -15203,6 +15203,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6350093367968429045, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
+      propertyPath: m_LinearDamping
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6404704124105479618, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: radius
       value: 0.84

@@ -309,6 +309,10 @@ public class ProjectileDetailsSO : ScriptableObject
     [Header("PROJECTILE SOUND EFFECT DETAILS")]
     #endregion
     #region Tooltip
+    [Tooltip("The fire sound effect SO for the projectile")]
+    #endregion Tooltip
+    public SoundEffectSO projectileFireSoundEffect;
+    #region Tooltip
     [Tooltip("The impact sound effect SO for the projectile")]
     #endregion Tooltip
     public SoundEffectSO projectileImpactSoundEffect;
@@ -342,10 +346,6 @@ public class ProjectileDetailsSO : ScriptableObject
     [Space(10)]
     [Header("PROJECTILE MISC")]
     #endregion
-    #region Tooltip
-    [Tooltip("The misc info for projectile")]
-    #endregion Tooltip
-    public bool isCataclysmProjectile = false;
     #region Tooltip
     [Tooltip("The laser check for projectile")]
     #endregion Tooltip

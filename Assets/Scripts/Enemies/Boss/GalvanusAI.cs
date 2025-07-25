@@ -49,10 +49,10 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
     protected override void OnDisable() { }
 
-    protected override void FixedUpdate() { }
-
-    protected override void Update()
+    protected override void FixedUpdate() 
     {
+        prevVel = rb2D.linearVelocity;
+
         if (enemy.enemyAI.enemyPhase == EnemyPhase.Death)
         {
             if (attackAnimationRoutine != null)
@@ -63,10 +63,22 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
             return;
         }
 
+        // Emergency pullback if Moravelle drifts outside bounds
+        if (IsOutsideBossRoom(transform.position, cellMin, cellMax))
+        {
+            Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
+            transform.position = safePos;
+            rb2D.linearVelocity = Vector2.zero;
+
+            Debug.LogWarning("Sylvarok was outside bounds. Snapped back.");
+        }
+
+        Vector3 direction = Vector3.zero;
+
         if (player != null)
         {
-            Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-                (GameManager.Instance.GetPlayer().GetPlayerPosition() - transform.position).normalized;
+            direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
+                (player.GetPlayerPosition() - transform.position).normalized;
             lockedVector = direction;
         }
 
@@ -79,61 +91,58 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
         enemy.animateEnemy.SetAimWeaponAnimationParameters(unitAimDirection);
 
         // Update timers - Fire Projectile
-        firingIntervalTimer -= Time.deltaTime;
+        firingIntervalTimer -= Time.fixedDeltaTime;
 
         HasNegativeMoveStatusEffect();
 
         if (moveStatus == MoveStatus.Idle)
         {
-            if (player != null)
+            if (player.isStealthActive)
             {
-                // Check if the player is on stealth
-                if (player.isStealthActive)
-                {
-                    PlayerStealthCheck();
-                }
+                PlayerStealthCheck();
+            }
+
+            if (player != null && player.isStealthActive)
+            {
+                PlayerStealthCheck();
             }
 
             // Check if the enemy is a Galvanus boss
-            if (enemyDetails.enemyBehaviour == EnemyBehaviour.Galvanus)
+            switch (currentGalvanusPhase)
             {
-                // Handle phases based on currentPhase
-                switch (currentGalvanusPhase)
-                {
-                    case GalvanusPhase.Wait:
-                        PassedToWait = true;
+                case GalvanusPhase.None:
+                    break;
+                case GalvanusPhase.Wait:
+                    PassedToWait = true;
 
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
+                    // Reset timers
+                    firingIntervalTimer = WeaponShootInterval();
+                    firingDurationTimer = WeaponShootDuration();
 
-                        // Optionally handle phase transitions based on a timer
-                        phaseTimer += Time.deltaTime;
-                        if (phaseTimer >= waitPhase)
-                        {
-                            TransitionToNextPhase();
-                            phaseTimer = 0f;  // Reset the timer for the next phase
-                        }
-                        break;
-
-                    case GalvanusPhase.LightningBolt:
-                        HandleLightningBolt();
-                        break;
-
-                    case GalvanusPhase.DashAttack:
-                        HandleDashAttack();
-                        break;
-
-                    case GalvanusPhase.Lightning:
-                        HandleLightning();
-                        break;
-
-                    default:
-                        break;
-                }
+                    // Optionally handle phase transitions based on a timer
+                    phaseTimer += Time.fixedDeltaTime;
+                    if (phaseTimer >= waitPhase)
+                    {
+                        TransitionToNextPhase();
+                        phaseTimer = 0f;  // Reset the timer for the next phase
+                    }
+                    break;
+                case GalvanusPhase.DashAttack:
+                    HandleDashAttack();
+                    break;
+                case GalvanusPhase.LightningBolt:
+                    HandleLightningBolt();
+                    break;
+                case GalvanusPhase.Lightning:
+                    HandleLightning();
+                    break;
+                default:
+                    break;
             }
         }
     }
+
+    protected override void Update() { }
 
     public void HandleWaitPhase()
     {
@@ -174,6 +183,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
     private void TransitionToNextPhase()
     {
         if (player == null) return;
+
         if (player.isStealthActive)
         {
             PlayerStealthCheck();
@@ -218,14 +228,14 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
             {
                 if (enemy.health.hasDied) yield break;
 
-                fireTimer += Time.deltaTime;
+                fireTimer += Time.fixedDeltaTime;
 
                 // Interval Timer
                 if (firingIntervalTimer < 0f)
                 {
                     if (firingDurationTimer >= 0)
                     {
-                        firingDurationTimer -= Time.deltaTime;
+                        firingDurationTimer -= Time.fixedDeltaTime;
                         enemy.animateEnemy.SetAttackAnimationParameters();
                         FireWeapon(false, 0, 0, GalvanusPhase.LightningBolt);
                     }
@@ -255,79 +265,61 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
             if (enemy.health.hasDied) yield break;
 
             enemyPhase = EnemyPhase.Attack;
+
             isAttacking = true;
 
-            // PREPARE PRECHARGE PHASE
-            // Lock-on player position during the start of precharge
-            if (!chargeProcessStarted)
+            if (!chargeProcessStarted && player != null)
             {
-                if (GameManager.Instance.GetPlayer() != null)
-                {
-                    lockedPosition = GameManager.Instance.GetPlayer().transform.position + new Vector3(0f, 0.5f, 0f);
-                }
-
+                lockedPosition = ClampToBossRoom(player.GetPlayerPosition(), cellMin, cellMax);
             }
 
             chargeProcessStarted = true;
 
-            float prehargeDuration = 1.5f;
+            float prechargeDuration = 0.4f;
             float chargeTimer = 0f;
             enemy.animator.SetFloat(Settings.motionType, 3f); // charge trigger to blend tree
 
-            while (chargeTimer < prehargeDuration)
+            while (chargeTimer < prechargeDuration)
             {
                 if (enemy.health.hasDied) yield break;
 
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
+                chargeTimer += Time.fixedDeltaTime;
+                yield return waitForFixedUpdate;
             }
 
+            isCharging = true;
+
             chargeTimer = 0f;
-            float chargeDuration = 2f;
+            float chargeDuration = 1f;
+            Vector3 clampedPosition = ClampToBossRoom(lockedPosition, cellMin, cellMax);
 
-            yield return null;  // Wait for the animation to start
+            Vector3 currentPos = ClampToBossRoom(transform.position, cellMin, cellMax);
+            transform.position = currentPos; // Optional but safe snap-in
+            Vector2 moveDir = (clampedPosition - currentPos).normalized;
 
-            // START CHARGE PHASE
+            float distance = Vector2.Distance(transform.position, clampedPosition);
+            float requiredVelocity = distance / chargeDuration;
+            Vector2 force = moveDir * requiredVelocity * rb2D.mass;
+
+            rb2D.linearVelocity = Vector2.zero;
+            rb2D.linearDamping = 0;
+            rb2D.AddForce(force, ForceMode2D.Impulse);
+
+            yield return waitForFixedUpdate;
+
+            float timer = 0f;
+            while (timer < chargeDuration)
+            {
+                if (enemy.health.hasDied) yield break;
+                timer += Time.fixedDeltaTime;
+                yield return waitForFixedUpdate;
+            }
+
+            rb2D.linearDamping = 3;
+            rb2D.linearVelocity = Vector2.zero;
             enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animateEnemy.SetMovementAnimationParameters();
-
-            // Clamp lockedPosition
-            Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
-
-            Vector3Int cell = grid.WorldToCell(lockedPosition);
-            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
-            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
-            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
-
-            Vector3 direction = (clampedPosition - transform.position).normalized;
-            float chargeSpeed = 20f;
-            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.attackSoundEffect);
-
-            while (chargeTimer < chargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
-
-                // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, clampedPosition) < 0.02f)  // Small threshold for accuracy
-                {
-                    // Exit the loop early if boss has reached the destination
-                    break;
-                }
-
-                yield return null;
-            }
-
-            // Revert to the idle state after charge completed
             enemy.animateEnemy.SetIdleAnimationParameters();
-            chargeTimer = 0f;
-
-            yield return null;
-
+            isCharging = false;
             isAttacking = false;
 
             currentGalvanusPhase = GalvanusPhase.Wait;
@@ -355,7 +347,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
             {
                 if (enemy.health.hasDied) yield break;
 
-                chargeTimer += Time.deltaTime;
+                chargeTimer += Time.fixedDeltaTime;
 
                 yield return null;
             }
@@ -375,14 +367,14 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
             {
                 if (enemy.health.hasDied) yield break;
 
-                fireTimer += Time.deltaTime;
+                fireTimer += Time.fixedDeltaTime;
 
                 // Interval Timer
                 if (firingIntervalTimer < 0f)
                 {
                     if (firingDurationTimer >= 0)
                     {
-                        firingDurationTimer -= Time.deltaTime;
+                        firingDurationTimer -= Time.fixedDeltaTime;
                         FireWeapon(false, 0, 0, GalvanusPhase.Lightning);
                     }
                     else
@@ -403,9 +395,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
         chargeProcessStarted = false;
         galvanusAttackMoveRoutine = null;
 
-        currentGalvanusPhase = GalvanusPhase.Wait;
-        phaseTimer = 0f;
-        passedToWait = false; // Ensure wait phase triggers again
+        TransitionToNextPhase();
     }
 
     public void PlayerStealthCheck()

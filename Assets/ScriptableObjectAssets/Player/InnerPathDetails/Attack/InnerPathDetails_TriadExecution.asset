@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   innerPathName: Triad Execution
   innerPathSelectionName: 7
-  innerPathDetails: Every Third Hit Deals +20% Damage
+  innerPathDetails: Every Third Hit Deals +20% Damage for Melee Damage, +10% for
+    Ranged Damage

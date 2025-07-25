@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   innerPathName: Battle Scars
   innerPathSelectionName: 11
-  innerPathDetails: Gain 10+ Shield If Struck Under 30% Health (10s Cooldown)
+  innerPathDetails: Gain +40% Armor for 3 Seconds after Taking 100 Damage within
+    4 seconds

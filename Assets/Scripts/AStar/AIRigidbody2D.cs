@@ -616,16 +616,15 @@ namespace Pathfinding
 
         private void FixedUpdate()
         {
+            var enemy = GetComponent<Enemy>();
+            if (enemy != null && enemy.enemyDetails.isEnemyBoss) return; // Skip motion if enemy is a boss
+
             if (shouldRecalculatePath) SearchPath();
             if (canMove)
             {
                 Vector3 nextPosition;
                 Quaternion nextRotation;
                 MovementUpdate(Time.fixedDeltaTime, out nextPosition, out nextRotation);
-
-                //// Apply repulsion before movement
-                //Vector2 separationOffset = CalculateSeparationOffset();
-                //nextPosition += (Vector3)separationOffset;
 
                 FinalizeMovement(nextPosition, nextRotation);
 
@@ -662,12 +661,19 @@ namespace Pathfinding
             previousPosition1 = simulatedPosition = nextPosition;
             simulatedRotation = nextRotation;
 
+            Vector2 direction = (previousPosition1 - previousPosition2).normalized;
+
+            Vector2 targetVelocity = direction * speed;
+            Vector2 velocityDelta = targetVelocity - rb2D.linearVelocity;
+            Vector2 force = rb2D.mass * velocityDelta / Time.fixedDeltaTime;
+
             if (updatePosition)
             {
-                rb2D.MovePosition(nextPosition);  // Uses physics  
+                //rb2D.MovePosition(nextPosition);  // Uses physics  
+                rb2D.AddForce(force, ForceMode2D.Force);
             }
 
-            if (updateRotation) rb2D.rotation = nextRotation.z;
+            if (updateRotation) rb2D.rotation = nextRotation.eulerAngles.z;
         }
 
         Quaternion SimulateRotationTowards(Vector3 direction, float deltaTime)

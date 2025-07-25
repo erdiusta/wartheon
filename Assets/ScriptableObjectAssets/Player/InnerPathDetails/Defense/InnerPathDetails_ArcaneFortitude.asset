@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   innerPathName: Arcane Fortitude
   innerPathSelectionName: 13
-  innerPathDetails: +10% Magic Resistance
+  innerPathDetails: +10% Elemental Resistance

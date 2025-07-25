@@ -162,6 +162,14 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public int dealtMeleeDamageMax = 15;
     #region Tooltip
+    [Tooltip("Check if enemy can warm")]
+    #endregion
+    public bool canWarm = false;
+    #region Tooltip
+    [Tooltip("Check enemy's warm chance")]
+    #endregion
+    [Range(0f, 1f)] public float warmChance = 0f;
+    #region Tooltip
     [Tooltip("Check if enemy can burn")]
     #endregion
     public bool canBurn = false;

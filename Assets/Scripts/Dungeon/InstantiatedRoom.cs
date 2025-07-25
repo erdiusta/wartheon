@@ -44,6 +44,7 @@ public class InstantiatedRoom : MonoBehaviour
     [SerializeField] SpriteMask westMask;
 
     BoxCollider2D boxCollider2D;
+    Player player;
 
     private void Awake()
     {
@@ -58,7 +59,7 @@ public class InstantiatedRoom : MonoBehaviour
         // Fill obstacles list
         foreach (Transform child in environmentGameObject.transform)
         {
-            if (child.TryGetComponent<Environment>(out Environment obstacle))
+            if (child.TryGetComponent(out Environment obstacle))
             {
                 roomObstaclesList.Add(child.gameObject);
             }
@@ -71,6 +72,17 @@ public class InstantiatedRoom : MonoBehaviour
         // If the player triggered the collider
         if (collision.tag == Settings.playerTag && room != GameManager.Instance.GetCurrentRoom())
         {
+            if (!room.roomNodeType.isEntrance)
+            {
+                player = GameManager.Instance.GetPlayer();
+
+                if (player != null && player.isBattleReadyActive && !room.isPreviouslyVisited && room.roomNodeType.isCombatRoom) // Battle Ready Mechanic
+                {
+                    player.health.AddHealth(3);
+                    player.health.AddShield(5);
+                }
+            }
+
             // Set room as visited
             room.isPreviouslyVisited = true;
 
@@ -82,6 +94,7 @@ public class InstantiatedRoom : MonoBehaviour
     // Delete chest items when exiting rooms
     private void OnTriggerExit2D(Collider2D collision)
     {
+
         if (collision.CompareTag(Settings.playerTag))
         {
             if (IsCorridor()) return;

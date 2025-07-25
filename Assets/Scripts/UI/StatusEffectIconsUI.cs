@@ -27,6 +27,25 @@ public class StatusEffectIconsUI : MonoBehaviour
     [SerializeField] Sprite mycarasSealSpecialMoveSprite;
     [Space(10)]
 
+    [Header("Kynara")]
+    [SerializeField] Sprite kynarasEmbraceSpecialMoveSprite;
+    [Space(10)]
+
+    [Header("Karnag")]
+    [SerializeField] Sprite rageSpecialMoveSprite;
+    [SerializeField] Sprite whirlrendSpecialMoveSprite;
+    [SerializeField] Sprite feastOfWarSpecialMoveSprite;
+    [Space(10)]
+
+    [Header("INNER PATH")]
+    [SerializeField] Sprite battleScarsSprite;
+    [SerializeField] Sprite secondBreathSprite;
+    [SerializeField] Sprite viciousMomentumSprite;
+    [SerializeField] Sprite combatFocusSprite;
+    [SerializeField] Sprite triadExecutionSprite;
+    [SerializeField] Sprite reflexBarrierSprite;
+    [Space(10)]
+
     [Header("Debuff")]
     [SerializeField] Sprite bleedingSprite;
     [SerializeField] Sprite stunSprite;
@@ -82,9 +101,26 @@ public class StatusEffectIconsUI : MonoBehaviour
         // Mycara
         player.healthEvent.OnMycarasSealActive += EnableMycarasSealImage;
 
+        // Kynara
+        player.healthEvent.OnKynarasEmbraceActive += EnableKynarasEmbraceImage;
+
+        // Karnag
+        player.healthEvent.OnRageActive += EnableRageImage;
+        player.healthEvent.OnWhirlrendActive += EnableWhirlrendImage;
+        player.healthEvent.OnFeastOfWarActive += EnableFeastOfWarImage;
+
+        // INNER PATH
+        player.healthEvent.OnBattleScarsActive += EnableBattleScarsImage;
+        player.healthEvent.OnSecondBreathActive += EnableSecondBreathImage;
+        player.healthEvent.OnViciousMomentumActive += EnableViciousMomentumImage;
+        player.healthEvent.OnCombatFocusActive += EnableCombatFocusImage;
+        player.healthEvent.OnTriadExecutionActive += EnableTriadExecutionImage;
+        player.healthEvent.OnFortifiedResolveActive += EnableReflexBarrierImage;
+
         player.healthEvent.GetBleeding += EnableBleedingImage;
         player.healthEvent.GetStun += EnableStunImage;
         player.healthEvent.GetSlow += EnableSlowImage;
+        player.healthEvent.GetWarm += EnableWarmedImage;
         player.healthEvent.GetBurned += EnableBurnImage;
         player.healthEvent.GetPoisoned += EnablePoisonImage;
         player.healthEvent.GetAcid += EnableAcidImage;
@@ -118,9 +154,26 @@ public class StatusEffectIconsUI : MonoBehaviour
         // Mycara
         player.healthEvent.OnMycarasSealEffectsEnded += DisableMycarasSealImage;
 
+        // Kynara
+        player.healthEvent.OnKynarasEmbraceEffectsEnded += DisableKynarasEmbraceImage;
+
+        // Karnag
+        player.healthEvent.OnRageEffectEnded += DisableRageImage;
+        player.healthEvent.OnWhirlrendEffectEnded += DisableWhirlrendImage;
+        player.healthEvent.OnFeastOfWarEffectEnded += DisableFeastOfWarImage;
+
+        // INNER PATH
+        player.healthEvent.OnSecondBreathEffectEnded += DisableSecondBreathImage;
+        player.healthEvent.OnBattleScarsEffectEnded += DisableBattleScarsImage;
+        player.healthEvent.OnViciousMomentumEffectEnded += DisableViciousMomentImage;
+        player.healthEvent.OnCombatFocusEffectEnded += DisableCombatFocusImage;
+        player.healthEvent.OnTriadExecutionEffectEnded += DisableTriadExecutionImage;
+        player.healthEvent.OnFortifiedResolveEffectEnded += DisableReflexBarrierImage;
+
         player.healthEvent.BleedingCured += DisableBleedingImage;
         player.healthEvent.StunCured += DisableStunImage;
         player.healthEvent.SlowCured += DisableSlowImage;
+        player.healthEvent.WarmCured += DisableWarmedImage;
         player.healthEvent.BurnCured += DisableBurnImage;
         player.healthEvent.PoisonCured += DisablePoisonImage;
         player.healthEvent.AcidCured += DisableAcidImage;
@@ -153,9 +206,26 @@ public class StatusEffectIconsUI : MonoBehaviour
         // Mycara
         player.healthEvent.OnMycarasSealActive -= EnableMycarasSealImage;
 
+        // Kynara
+        player.healthEvent.OnKynarasEmbraceActive -= EnableKynarasEmbraceImage;
+
+        // Karnag
+        player.healthEvent.OnRageActive -= EnableRageImage;
+        player.healthEvent.OnWhirlrendActive -= EnableWhirlrendImage;
+        player.healthEvent.OnFeastOfWarActive -= EnableFeastOfWarImage;
+
+        // INNER PATH
+        player.healthEvent.OnBattleScarsActive -= EnableBattleScarsImage;
+        player.healthEvent.OnSecondBreathActive -= EnableSecondBreathImage;
+        player.healthEvent.OnViciousMomentumActive -= EnableViciousMomentumImage;
+        player.healthEvent.OnCombatFocusActive -= EnableCombatFocusImage;
+        player.healthEvent.OnTriadExecutionActive -= EnableTriadExecutionImage;
+        player.healthEvent.OnFortifiedResolveActive -= EnableReflexBarrierImage;
+
         player.healthEvent.GetBleeding -= EnableBleedingImage;
         player.healthEvent.GetStun -= EnableStunImage;
         player.healthEvent.GetSlow -= EnableSlowImage;
+        player.healthEvent.GetWarm -= EnableWarmedImage;
         player.healthEvent.GetBurned -= EnableBurnImage;
         player.healthEvent.GetPoisoned -= EnablePoisonImage;
         player.healthEvent.GetAcid -= EnableAcidImage;
@@ -189,9 +259,26 @@ public class StatusEffectIconsUI : MonoBehaviour
         // Mycara
         player.healthEvent.OnMycarasSealEffectsEnded -= DisableMycarasSealImage;
 
+        // Kynara
+        player.healthEvent.OnKynarasEmbraceEffectsEnded -= DisableKynarasEmbraceImage;
+
+        // Karnag
+        player.healthEvent.OnRageEffectEnded -= DisableRageImage;
+        player.healthEvent.OnWhirlrendEffectEnded -= DisableWhirlrendImage;
+        player.healthEvent.OnFeastOfWarEffectEnded -= DisableFeastOfWarImage;
+
+        // INNER PATH
+        player.healthEvent.OnSecondBreathEffectEnded -= DisableSecondBreathImage;
+        player.healthEvent.OnBattleScarsEffectEnded -= DisableBattleScarsImage;
+        player.healthEvent.OnViciousMomentumEffectEnded -= DisableViciousMomentImage;
+        player.healthEvent.OnCombatFocusEffectEnded -= DisableCombatFocusImage;
+        player.healthEvent.OnTriadExecutionEffectEnded -= DisableTriadExecutionImage;
+        player.healthEvent.OnFortifiedResolveEffectEnded -= DisableReflexBarrierImage;
+
         player.healthEvent.BleedingCured -= DisableBleedingImage;
         player.healthEvent.StunCured -= DisableStunImage;
         player.healthEvent.SlowCured -= DisableSlowImage;
+        player.healthEvent.WarmCured -= DisableWarmedImage;
         player.healthEvent.BurnCured -= DisableBurnImage;
         player.healthEvent.PoisonCured -= DisablePoisonImage;
         player.healthEvent.AcidCured -= DisableAcidImage;
@@ -309,6 +396,118 @@ public class StatusEffectIconsUI : MonoBehaviour
             statusEffectsDictionary.Add(mycarasSealSpecialMoveSprite, statusIconContainer);
         }
     }
+
+    private void EnableKynarasEmbraceImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(kynarasEmbraceSpecialMoveSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = kynarasEmbraceSpecialMoveSprite;
+            statusEffectsDictionary.Add(kynarasEmbraceSpecialMoveSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableRageImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(rageSpecialMoveSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = rageSpecialMoveSprite;
+            statusEffectsDictionary.Add(rageSpecialMoveSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableWhirlrendImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(whirlrendSpecialMoveSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = whirlrendSpecialMoveSprite;
+            statusEffectsDictionary.Add(whirlrendSpecialMoveSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableFeastOfWarImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(feastOfWarSpecialMoveSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = feastOfWarSpecialMoveSprite;
+            statusEffectsDictionary.Add(feastOfWarSpecialMoveSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableCombatFocusImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(combatFocusSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = combatFocusSprite;
+            statusEffectsDictionary.Add(combatFocusSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableViciousMomentumImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(viciousMomentumSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = viciousMomentumSprite;
+            statusEffectsDictionary.Add(viciousMomentumSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableSecondBreathImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(secondBreathSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = secondBreathSprite;
+            statusEffectsDictionary.Add(secondBreathSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableBattleScarsImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(battleScarsSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = battleScarsSprite;
+            statusEffectsDictionary.Add(battleScarsSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableTriadExecutionImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(triadExecutionSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = triadExecutionSprite;
+            statusEffectsDictionary.Add(triadExecutionSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableReflexBarrierImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(reflexBarrierSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = reflexBarrierSprite;
+            statusEffectsDictionary.Add(reflexBarrierSprite, statusIconContainer);
+        }
+    }
+
+
+    private void EnableWarmedImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(warmedSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = warmedSprite;
+            statusEffectsDictionary.Add(warmedSprite, statusIconContainer);
+        }
+    }
+
 
     private void EnableBurnImage(HealthEvent healthEvent)
     {
@@ -519,6 +718,106 @@ public class StatusEffectIconsUI : MonoBehaviour
         {
             Destroy(statusEffectsDictionary[mycarasSealSpecialMoveSprite]);
             statusEffectsDictionary.Remove(mycarasSealSpecialMoveSprite);
+        }
+    }
+
+    private void DisableKynarasEmbraceImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(kynarasEmbraceSpecialMoveSprite))
+        {
+            Destroy(statusEffectsDictionary[kynarasEmbraceSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(kynarasEmbraceSpecialMoveSprite);
+        }
+    }
+
+    private void DisableRageImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(rageSpecialMoveSprite))
+        {
+            Destroy(statusEffectsDictionary[rageSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(rageSpecialMoveSprite);
+        }
+    }
+
+    private void DisableWhirlrendImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(whirlrendSpecialMoveSprite))
+        {
+            Destroy(statusEffectsDictionary[whirlrendSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(whirlrendSpecialMoveSprite);
+        }
+    }
+
+    private void DisableFeastOfWarImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(feastOfWarSpecialMoveSprite))
+        {
+            Destroy(statusEffectsDictionary[feastOfWarSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(feastOfWarSpecialMoveSprite);
+        }
+    }
+
+    // INNER PATH
+    private void DisableCombatFocusImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(combatFocusSprite))
+        {
+            Destroy(statusEffectsDictionary[combatFocusSprite]);
+            statusEffectsDictionary.Remove(combatFocusSprite);
+        }
+    }
+
+    private void DisableViciousMomentImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(viciousMomentumSprite))
+        {
+            Destroy(statusEffectsDictionary[viciousMomentumSprite]);
+            statusEffectsDictionary.Remove(viciousMomentumSprite);
+        }
+    }
+
+    private void DisableBattleScarsImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(battleScarsSprite))
+        {
+            Destroy(statusEffectsDictionary[battleScarsSprite]);
+            statusEffectsDictionary.Remove(battleScarsSprite);
+        }
+    }
+
+    private void DisableSecondBreathImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(secondBreathSprite))
+        {
+            Destroy(statusEffectsDictionary[secondBreathSprite]);
+            statusEffectsDictionary.Remove(secondBreathSprite);
+        }
+    }
+
+    private void DisableTriadExecutionImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(triadExecutionSprite))
+        {
+            Destroy(statusEffectsDictionary[triadExecutionSprite]);
+            statusEffectsDictionary.Remove(triadExecutionSprite);
+        }
+    }
+
+    private void DisableReflexBarrierImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(reflexBarrierSprite))
+        {
+            Destroy(statusEffectsDictionary[reflexBarrierSprite]);
+            statusEffectsDictionary.Remove(reflexBarrierSprite);
+        }
+    }
+
+    private void DisableWarmedImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(warmedSprite))
+        {
+            Destroy(statusEffectsDictionary[warmedSprite]);
+            statusEffectsDictionary.Remove(warmedSprite);
         }
     }
 

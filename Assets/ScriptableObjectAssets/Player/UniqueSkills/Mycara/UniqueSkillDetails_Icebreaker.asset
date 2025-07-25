@@ -16,7 +16,7 @@ MonoBehaviour:
   activeUniqueSkillDetails: 
   activeSkill: 18
   activeUniqueSkillSprite: {fileID: 21300000, guid: 713788cb9f1a77e4397ba24b08855314, type: 3}
-  activeUniqueSkillSoundEffectOne: {fileID: 0}
+  activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 23896c00bd2f46743a4aa7e0b4a7a0d4, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
   activeUniqueSkillCooldownDuration: 10
   activeUniqueSkillEffectiveDuration: 0

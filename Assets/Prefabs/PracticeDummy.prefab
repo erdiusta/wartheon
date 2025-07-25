@@ -254,7 +254,6 @@ GameObject:
   - component: {fileID: 6324173214570880254}
   - component: {fileID: 8471996442918014301}
   - component: {fileID: 1998767356546858130}
-  - component: {fileID: 8576493831988961197}
   - component: {fileID: 534065257701088608}
   - component: {fileID: 1763475327228340487}
   - component: {fileID: 2215825472470616014}
@@ -392,7 +391,7 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -408,44 +407,11 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.2684456, y: 0.9375}
-      - {x: -0.23506156, y: 0.057470877}
-      - {x: -0.42957583, y: 0.061738998}
-      - {x: -0.46798906, y: -0.02668405}
-      - {x: -0.057173043, y: -0.50640213}
-      - {x: 0.060365934, y: -0.50426817}
-      - {x: 0.46875, y: -0.03125}
-      - {x: 0.4375, y: 0.0625}
-      - {x: 0.2385285, y: 0.06817754}
-      - {x: 0.24009067, y: 0.9353659}
+    - - {x: -0.55, y: 0.88}
+      - {x: -0.55, y: -0.45}
+      - {x: 0.55, y: -0.45}
+      - {x: 0.55, y: 0.88}
   m_UseDelaunayMesh: 0
---- !u!50 &8576493831988961197
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5693136729584463025}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 1
-  m_Constraints: 4
 --- !u!114 &534065257701088608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -473,6 +439,7 @@ MonoBehaviour:
   hitFXAnimator: {fileID: 0}
   currentHealth: 0
   maximumHealth: 0
+  currentShield: 0
   isDamageable: 1
   enemy: {fileID: 0}
   isBlocking: 0

@@ -41,6 +41,9 @@ public class Health : MonoBehaviour
     bool isProjectileHit = false;
     Decoy decoy;
 
+    // Inner Path
+    float secondBreathHealTimer = 0f;
+
     private void Awake()
     {
         healthEvent = GetComponent<HealthEvent>();
@@ -53,7 +56,7 @@ public class Health : MonoBehaviour
         if (player != null && !player.isInitialized) return;
 
         // Trigger health event
-        if (player == null)
+        if (player == null && tag != Settings.practiceDummy)
         {
             healthEvent.CallHealthChangedEvent(currentHealth, 0, MeleeHand.None);
         }
@@ -115,6 +118,38 @@ public class Health : MonoBehaviour
                 {
                     isDamageable = false;
                 }
+            }
+
+            // Battle scars mechanism
+            if (player.isBattleScarsActive && player.damageTracker.GetRecentDamage() > 100 && !hasDied)
+            {
+                if (!player.battleScarsArmorBoostActivated)
+                {
+                    StartCoroutine(BattleScarsRoutine());
+                }
+            }
+
+            float currentHealth = GetCurrentHealth();
+            float maximumHealth = GetMaximumHealth();
+
+            // Second breath mechanism
+            if (player.isSecondBreathActive && currentHealth / maximumHealth < 0.2f && !hasDied)
+            {
+                player.secondBreathReset = false;
+
+                secondBreathHealTimer += Time.deltaTime;
+
+                if (secondBreathHealTimer >= 1f)
+                {
+                    AddHealth(2);
+                    player.healthEvent.CallSecondBreathEvent();
+                    secondBreathHealTimer = 0f;
+                }
+            }
+            else if(!player.secondBreathReset)
+            {
+                player.secondBreathReset = true;
+                player.healthEvent.CallSecondBreathWoreOffEvent();
             }
 
             // Passive item effect - ChestplateOfTheLastLight Specific
@@ -224,6 +259,23 @@ public class Health : MonoBehaviour
         DeathCheck();
     }
 
+    IEnumerator BattleScarsRoutine()
+    {
+        player.battleScarsArmorBoostActivated = true;
+        player.additionalArmorModifier += 0.4f;
+        player.UpdateArmorValues();
+        player.healthEvent.CallBattleScarsEvent();
+        StaticEventHandler.CallStatsChangedOnTheBookEvent();
+
+        yield return new WaitForSeconds(3f);
+
+        player.battleScarsArmorBoostActivated = false;
+        player.additionalArmorModifier -= 0.4f;
+        player.UpdateArmorValues();
+        player.healthEvent.CallBattleScarsWoreOffEvent();
+        StaticEventHandler.CallStatsChangedOnTheBookEvent();
+    }
+
     private void DeathCheck()
     {
         // Death check
@@ -238,6 +290,8 @@ public class Health : MonoBehaviour
             }
             else if (enemy != null)
             {
+                if (player != null && player.resourcefulActive) player.mana.AddMana(4); // Add mana on kill
+
                 enemy.dropOnDestroy.DropProcess();
                 enemy.destroyedEvent.CallDestroyedEvent(false); // Enemy death
             }
@@ -248,7 +302,7 @@ public class Health : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, bool headShotHappened, Collider2D collider = null,
+    public void TakeDamage(int damageAmount, Vector2 dealerPosition, Vector2 receiverPosition, Collider2D collider = null,
         MeleeHand hand = MeleeHand.None, bool bypassImmunity = false)
     {
         if (decoy != null)
@@ -279,6 +333,10 @@ public class Health : MonoBehaviour
                     player.isGuardedOathActive = false;
                 }
 
+                float playerCurrentHealth = player.health.GetCurrentHealth();
+                float playerMaximumHealth = player.health.GetMaximumHealth();
+
+                if (player.isDieHardActive && playerCurrentHealth / playerMaximumHealth < 0.25f) damageAmount = (int)(damageAmount * 0.75f); // %25 damage reduction
 
                 // Remaining damage goes to health
                 if (damageAmount > 0)
@@ -341,6 +399,20 @@ public class Health : MonoBehaviour
 
                     EnemyGetHitProcess();
 
+                }
+            }
+
+            // PHOENIX RISING PASSIVE
+            if (player != null)
+            {
+                if (player.playerDetails.playerCharacterIndex == Character.Kynara && !player.phoenixRisingUsed
+                    && currentHealth <= 0)
+                {
+                    player.phoenixRisingUsed = true;
+                    currentHealth = 0;
+                    AddHealth(player.health.GetMaximumHealth() / 4);
+                    SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.passiveSkillSoundEffect);
+                    player.playerControl.activeSkillTypeThreeAnimator.SetTrigger("phoenixRising");
                 }
             }
 
@@ -543,7 +615,7 @@ public class Health : MonoBehaviour
 
         // Trigger health event
         healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, MeleeHand.None);
-        TakeDamage(damageAmount, Vector2.zero, transform.position, false, null, MeleeHand.None);
+        TakeDamage(damageAmount, Vector2.zero, transform.position, null, MeleeHand.None);
 
         if (bleedingPeriodCount > 3)
         {
@@ -590,7 +662,7 @@ public class Health : MonoBehaviour
 
         // Trigger health event
         healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, MeleeHand.None);
-        TakeDamage(damageAmount, Vector2.zero, transform.position, false, null, MeleeHand.None);
+        TakeDamage(damageAmount, Vector2.zero, transform.position, null, MeleeHand.None);
 
         if (burnPeriodCount > 3)
         {
@@ -637,7 +709,7 @@ public class Health : MonoBehaviour
 
         // Trigger health event
         healthEvent.CallHealthChangedEvent(currentHealth, damageAmount, MeleeHand.None);
-        TakeDamage(damageAmount, Vector2.zero, transform.position, false, null, MeleeHand.None);
+        TakeDamage(damageAmount, Vector2.zero, transform.position, null, MeleeHand.None);
 
         if (poisonPeriodCount > 3)
         {
@@ -763,12 +835,6 @@ public class Health : MonoBehaviour
         // Trigger health event
         healthEvent.CallHealthChangedEvent(currentHealth, 0, MeleeHand.None);
         StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
-    }
-
-    public void ResetStatusInCaseOfDeath()
-    {
-        immunityCoroutine = null;
-        flashManager.UnflashCharacter(spriteRenderer);
     }
 
     /// <summary>

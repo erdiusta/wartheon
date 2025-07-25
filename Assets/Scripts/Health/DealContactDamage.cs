@@ -23,7 +23,8 @@ public class DealContactDamage : MonoBehaviour
     #endregion
     [SerializeField] private LayerMask layerMask;
 
-    Enemy enemy; 
+    Enemy enemy;
+    Player player;
     [HideInInspector] public bool isColliding = false;
 
     private void Awake()
@@ -31,24 +32,29 @@ public class DealContactDamage : MonoBehaviour
         enemy = GetComponent<Enemy>();
     }
 
-    // Trigger contact damage when enter a collider
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnEnable()
     {
-        // If already colliding with something return
-        if (isColliding) return;
-
-        ContactDamage(collision);
-        GetDamageFromSummonedEnemies(collision);
+        player = GetComponentInParent<Player>();
     }
 
     // Trigger contact damage when enter a collider
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         // If already colliding with something return
         if (isColliding) return;
 
-        ContactDamage(collision);
-        GetDamageFromSummonedEnemies(collision);
+        ContactDamage(collision.collider);
+        GetDamageFromSummonedEnemies(collision.collider);
+    }
+
+    // Trigger contact damage when enter a collider
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        // If already colliding with something return
+        if (isColliding) return;
+
+        ContactDamage(collision.collider);
+        GetDamageFromSummonedEnemies(collision.collider);
     }
 
     private void ContactDamage(Collider2D collision)
@@ -62,10 +68,8 @@ public class DealContactDamage : MonoBehaviour
 
         if (receiveContactDamage != null)
         {
-            isColliding = true;
-
-            // Reset the contact collision after set time
-            Invoke(nameof(ResetContactCollision), Settings.contactDamageCollisionResetDelay);
+            //// Reset the contact collision after set time
+            //ResetContactCollision();
 
             if (collision.tag == Settings.playerTag)
             {
@@ -80,6 +84,14 @@ public class DealContactDamage : MonoBehaviour
                         TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
                     }
 
+                    if (tag == Settings.enemyTag && player.isCounterRiposteActive)
+                    {
+                        int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMax);
+                        int counterRiposteDamge = damageDone / 2;
+
+                        enemy.health.TakeDamage(counterRiposteDamge, player.transform.position, transform.position);
+                    }
+
                     player.healthEvent.CallParryEvent();
                     player.health.PostHitImmunity(true);
                     return;
@@ -91,7 +103,7 @@ public class DealContactDamage : MonoBehaviour
                 bool isAttackDodged = 100 - (player.currentEvasivenessValue + blindPenalty) * 100 < diceRoll ? true : false;
 
                 // Evasiveness - dodge check
-                if (!isAttackDodged || player.playerControl.isPlayerRolling)
+                if (!isAttackDodged && !player.playerControl.isPlayerRolling && !player.isWhirlrendActive)
                 {
                     contactDamageAmountMin = enemy.enemyDetails.dealtMeleeDamageMin;
                     contactDamageAmountMax = enemy.enemyDetails.dealtMeleeDamageMax;
@@ -121,6 +133,15 @@ public class DealContactDamage : MonoBehaviour
 
                                 int inflictedDamage = CalculateDamageAmount(player, damageDone);
 
+                                if (player.isKynarasEmbraceActive)
+                                {
+                                    inflictedDamage /= 2;
+
+                                    // Enemy gets burned
+                                    enemy.healthEvent.CallGetBurnEvent();
+                                    enemy.healthStatus |= HealthStatus.Burned; // Add Burned status
+                                }
+
                                 receiveContactDamage.TakeContactDamage(inflictedDamage, receiveContactDamage.transform.position, transform.position);
 
                                 if (player.health.GetCurrentHealth() > 0)
@@ -128,6 +149,7 @@ public class DealContactDamage : MonoBehaviour
                                     CheckBleedingStatus(player);
                                     CheckStunStatus(player);
                                     CheckSlowStatus(player);
+                                    CheckWarmStatus(player);
                                     CheckBurnStatus(player);
                                     CheckPoisonStatus(player);
                                     CheckAcidStatus(player);
@@ -141,7 +163,7 @@ public class DealContactDamage : MonoBehaviour
                             }
 
                             // Apply knockback
-                            player.movementByVelocity.TriggerKnockback((player.transform.position - transform.position).normalized);
+                            enemy.enemyAI.ApplyKnockbackToPlayer(player);
                         }
                     }
                 }
@@ -164,7 +186,7 @@ public class DealContactDamage : MonoBehaviour
             else if (collision.tag == Settings.summonedEnemyTag)
             {
                 // Damage produced by enemy - %70 less effect to summoned enemy than player
-                int damageDone = Random.Range((int)(contactDamageAmountMin * 0.3f), (int)(contactDamageAmountMin * 0.3f));
+                int damageDone = Random.Range((int)(contactDamageAmountMin * 0.3f), (int)(contactDamageAmountMax * 0.3f));
 
                 // Apply damage
                 receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
@@ -178,8 +200,20 @@ public class DealContactDamage : MonoBehaviour
             {
                 return;
             }
-            else if (collision.tag == "environment")
+            else if (collision.tag == Settings.environment)
             {
+                if (player != null && player.isWhirlrendActive)
+                {
+                    // Damage produced by enemy - %70 less effect to summoned enemy than player
+                    int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMax);
+
+                    Enemy enemy = collision.GetComponent<Enemy>();
+
+                    // Apply damage
+                    receiveContactDamage.TakeContactDamage(damageDone, receiveContactDamage.transform.position, transform.position);
+                    return;
+                }
+
                 receiveContactDamage.TakeContactDamage(contactDamageAmountMax, receiveContactDamage.transform.position, transform.position);
             }
             else
@@ -262,7 +296,7 @@ public class DealContactDamage : MonoBehaviour
 
             // Apply knockback and damage the enemy
             //enemy.enemyAI.TriggerKnockback(transform.position - collision.transform.position);
-            enemy.health.TakeDamage(damageDone, transform.position, collision.transform.position, false, null, MeleeHand.MainHand);
+            enemy.health.TakeDamage(damageDone, transform.position, collision.transform.position, null, MeleeHand.MainHand);
         }
     }
 
@@ -277,7 +311,7 @@ public class DealContactDamage : MonoBehaviour
     }
 
     /// <summary>
-    /// Check bleeding status
+    /// Check bleeding status - Player
     /// </summary>
     private void CheckBleedingStatus(Player player)
     {
@@ -291,6 +325,37 @@ public class DealContactDamage : MonoBehaviour
             {
                 player.healthEvent.CallGetBleedingEvent();
                 player.healthStatus |= HealthStatus.Bleeding; // Add Burned status
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check warm status
+    /// </summary>
+    public void CheckWarmStatus(Player player)
+    {
+        if (player.isImmunetoBurn) return;
+
+        bool isWarmed = (player.healthStatus & HealthStatus.Burned) != 0;
+
+        if (enemy.enemyDetails.canWarm && player.health.GetCurrentHealth() > 0)
+        {
+            float randomDice = Random.Range(0f, 1f);
+
+            if (randomDice < enemy.enemyDetails.warmChance)
+            {
+                if (player.isWarmed && !isWarmed)
+                {
+                    player.healthStatus |= HealthStatus.Burned; // Second chill 
+                    player.healthEvent.CallGetBurnEvent();
+
+                    player.healthEvent.CallWarmCuredEvent();
+                }
+                else if (!player.isWarmed && !isWarmed)
+                {
+                    player.isWarmed = true;
+                    player.healthEvent.CallGetWarmedEvent();
+                }
             }
         }
     }
@@ -521,8 +586,10 @@ public class DealContactDamage : MonoBehaviour
     /// <summary>
     /// Reset the isColliding bool
     /// </summary>
-    private void ResetContactCollision()
+    IEnumerator ResetContactCollision()
     {
+        yield return null;
+
         isColliding = false;
     }
 

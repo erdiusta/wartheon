@@ -149,7 +149,7 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -230,6 +230,7 @@ MonoBehaviour:
   hitFXAnimator: {fileID: 0}
   currentHealth: 0
   maximumHealth: 0
+  currentShield: 0
   isDamageable: 1
   enemy: {fileID: 0}
   isBlocking: 0
@@ -252,6 +253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeItemDetails: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
+  dummyHitSound: {fileID: 0}
   health: {fileID: 0}
   healthEvent: {fileID: 0}
   promptArrowContainer: {fileID: 0}

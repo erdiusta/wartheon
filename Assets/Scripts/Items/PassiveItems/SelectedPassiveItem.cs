@@ -139,7 +139,7 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.CurrentStrengthValue++;
                     player.currentArmorValue = (float)Math.Round(player.currentArmorValue + 0.2f, 2);
                     player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.1f, 2);
-                    player.additionalBowAttackCoolDownModifier -= 0.05f;
+                    player.additionalRangedAttackCoolDownModifier -= 0.05f;
                     player.additionalMeleeAttackCoolDownModifier -= 0.05f;
                 }
                 else if (item.passiveItemDetails.passiveItemType == PassiveItemType.FrostboundChainmail)
@@ -177,7 +177,7 @@ public class SelectedPassiveItem : MonoBehaviour
                 if (item.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
                 {
                     player.currentArmorValue = (float)Math.Round(player.currentArmorValue - 0.1f, 2);
-                    player.additionalBowAttackCoolDownModifier -= 0.2f;
+                    player.additionalRangedAttackCoolDownModifier -= 0.2f;
                     player.additionalMeleeAttackCoolDownModifier -= 0.2f;
                 }
                 else if (item.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
@@ -273,7 +273,7 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     player.currentArmorValue = (float)Math.Round(player.currentArmorValue + 0.1f, 2);
                     player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue + 0.08f, 2);
-                    player.additionalBowAttackCoolDownModifier -= 0.05f;
+                    player.additionalRangedAttackCoolDownModifier -= 0.05f;
                     player.additionalMeleeAttackCoolDownModifier -= 0.05f;
                 }
                 else if (item.passiveItemDetails.passiveItemType == PassiveItemType.VenomTouchedGloves)
@@ -350,7 +350,7 @@ public class SelectedPassiveItem : MonoBehaviour
                     player.CurrentStrengthValue--;
                     player.currentArmorValue = (float)Math.Round(player.currentArmorValue - 0.2f, 2);
                     player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.1f, 2);
-                    player.additionalBowAttackCoolDownModifier += 0.05f;
+                    player.additionalRangedAttackCoolDownModifier += 0.05f;
                     player.additionalMeleeAttackCoolDownModifier += 0.05f;
                 }
                 else if (item.passiveItemDetails.passiveItemType == PassiveItemType.FrostboundChainmail)
@@ -388,7 +388,7 @@ public class SelectedPassiveItem : MonoBehaviour
                 if (item.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
                 {
                     player.currentArmorValue = (float)Math.Round(player.currentArmorValue + 0.1f, 2);
-                    player.additionalBowAttackCoolDownModifier += 0.2f;
+                    player.additionalRangedAttackCoolDownModifier += 0.2f;
                     player.additionalMeleeAttackCoolDownModifier += 0.2f;
                 }
                 else if (item.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
@@ -484,7 +484,7 @@ public class SelectedPassiveItem : MonoBehaviour
                 {
                     player.currentArmorValue = (float)Math.Round(player.currentArmorValue - 0.1f, 2);
                     player.currentFireResistanceValue = (float)Math.Round(player.currentFireResistanceValue - 0.08f, 2);
-                    player.additionalBowAttackCoolDownModifier += 0.05f;
+                    player.additionalRangedAttackCoolDownModifier += 0.05f;
                     player.additionalMeleeAttackCoolDownModifier += 0.05f;
                 }
                 else if (item.passiveItemDetails.passiveItemType == PassiveItemType.VenomTouchedGloves)

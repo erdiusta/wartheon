@@ -81,20 +81,38 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void StaticEventHandler_OnCharacterButtonDeselected()
     {
-        DisableDetailsPopup(ref caelionDetailsPopUp);
-        DisableDetailsPopup(ref morvenDetailsPopUp);
-        DisableDetailsPopup(ref nyveranDetailsPopUp);
-        DisableDetailsPopup(ref mycaraDetailsPopUp);
-        DisableDetailsPopup(ref karnagDetailsPopUp);
+        DisableAllPopUps();
     }
 
     private void StaticEventHandler_OnCharacterButtonSelected(CharacterButtonArgs characterButtonArgs)
     {
-        if (characterButtonArgs.charName == Settings.caelionTag) HoverCaelion();
-        else if (characterButtonArgs.charName == Settings.morvenTag) HoverMorven();
-        else if (characterButtonArgs.charName == Settings.mycaraTag) HoverMycara();
-        else if (characterButtonArgs.charName == Settings.nyveranTag) HoverNyveran();
-        else if (characterButtonArgs.charName == Settings.karnagTag) HoverKarnag();
+        switch (characterButtonArgs.charIndex)
+        {
+            case Character.Caelion:
+                HoverCaelion();
+                break;
+            case Character.Morven:
+                HoverMorven();
+                break;
+            case Character.Nyveran:
+                HoverNyveran();
+                break;
+            case Character.Mycara:
+                HoverMycara();
+                break;
+            case Character.Karnag:
+                HoverKarnag();
+                break;
+            case Character.Kynara:
+                HoverKynara();
+                break;
+            case Character.Nymara:
+                break;
+            case Character.Nyxa:
+                break;
+            default:
+                break;
+        }
     }
 
     private IEnumerator SetFirstSelected()
@@ -136,7 +154,7 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void OpenCharacterTooltip(PointerEventData eventData)
     {
-        SelectedCharacterButton charButton = eventData.pointerEnter.GetComponentInParent<SelectedCharacterButton>(true);
+        CharacterSelectionButton charButton = eventData.pointerEnter.GetComponentInParent<CharacterSelectionButton>(true);
 
         if (charButton != null)
         {
@@ -158,6 +176,7 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
                     HoverKarnag();
                     break;
                 case Character.Kynara:
+                    HoverKynara();
                     break;
                 case Character.Nymara:
                     break;
@@ -171,11 +190,7 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void CloseCharacterTooltip(PointerEventData eventData)
     {
-        DisableDetailsPopup(ref caelionDetailsPopUp);
-        DisableDetailsPopup(ref morvenDetailsPopUp);
-        DisableDetailsPopup(ref mycaraDetailsPopUp);
-        DisableDetailsPopup(ref nyveranDetailsPopUp);
-        DisableDetailsPopup(ref karnagDetailsPopUp);
+        DisableAllPopUps();
     }
 
     public void HoverCaelion()
@@ -198,11 +213,15 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         StartCoroutine(SelectionRoutine(3, mycaraSpotlight, mycaraDetailsPopUp));
     }
 
-    public void HoverKarnag()
+    public void HoverKynara()
     {
-        StartCoroutine(SelectionRoutine(4, nyveranSpotlight, karnagDetailsPopUp));
+        StartCoroutine(SelectionRoutine(4, nyveranSpotlight, kynaraDetailsPopUp));
     }
 
+    public void HoverKarnag()
+    {
+        StartCoroutine(SelectionRoutine(5, nyveranSpotlight, karnagDetailsPopUp));
+    }
 
     private void DisableDetailsPopup(ref GameObject popupObject)
     {
@@ -259,18 +278,28 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
 
     IEnumerator SelectionRoutine(int index, Light2D selectedCharSpotlight, GameObject selectedCharPopUp)
     {
+        DisableAllPopUps();
+
         mycaraSpotlight.gameObject.SetActive(false);
         caelionSpotlight.gameObject.SetActive(false);
         nyveranSpotlight.gameObject.SetActive(false);
         morvenSpotlight.gameObject.SetActive(false);
-
-        //yield return null;
 
         selectedPlayerIndex = index;
         currentPlayer.playerDetails = playerDetailsList[index];
         selectedCharSpotlight.gameObject.SetActive(true);
         selectedCharPopUp.SetActive(true);
 
-        yield return null;
+        yield return new WaitForEndOfFrame();
+    }
+
+    private void DisableAllPopUps()
+    {
+        DisableDetailsPopup(ref caelionDetailsPopUp);
+        DisableDetailsPopup(ref morvenDetailsPopUp);
+        DisableDetailsPopup(ref nyveranDetailsPopUp);
+        DisableDetailsPopup(ref mycaraDetailsPopUp);
+        DisableDetailsPopup(ref kynaraDetailsPopUp);
+        DisableDetailsPopup(ref karnagDetailsPopUp);
     }
 }
