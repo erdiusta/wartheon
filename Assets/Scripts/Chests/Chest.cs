@@ -8,8 +8,6 @@ public class Chest : MonoBehaviour, IUsable
 {
     [HideInInspector] public bool dropCompleted = false;
     [HideInInspector] public ChestState chestState = ChestState.closed;
-    [HideInInspector] public bool bobbyPinTried = false;
-    [HideInInspector] public bool bobbyPinTrySuccessful = false;
     [HideInInspector] public Coroutine chestLockSoundRoutine;
 
     #region Tooltip
@@ -17,18 +15,15 @@ public class Chest : MonoBehaviour, IUsable
     #endregion Tooltip
     [SerializeField] private Transform itemSpawnPoint;
     WeaponDetailsSO weaponDetails;
-    int ammoPercent;
     Animator animator;
     bool isEnabled = false;
 
     GameObject chestItemGameObject;
     DropItem chestItem;
-    TextMeshPro messageTextTMP;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        messageTextTMP = GetComponentInChildren<TextMeshPro>();
     }
 
     /// <summary>
@@ -60,7 +55,7 @@ public class Chest : MonoBehaviour, IUsable
         switch (chestState)
         {
             case ChestState.closed:
-                if (GameManager.Instance.GetPlayer().keyCount > 0 || bobbyPinTrySuccessful)
+                if (GameManager.Instance.GetPlayer().keyCount > 0)
                 {
                     OpenChest();
                     StartCoroutine(MoveItemDown(chestItem.transform, 1.5f));
@@ -91,10 +86,7 @@ public class Chest : MonoBehaviour, IUsable
     /// </summary>
     private void OpenChest()
     {
-        if (!bobbyPinTrySuccessful)
-        {
-            GameManager.Instance.GetPlayer().keyCount--;
-        }
+        GameManager.Instance.GetPlayer().keyCount--;
         animator.SetBool(Settings.use, true);
 
         // chest open sound effect

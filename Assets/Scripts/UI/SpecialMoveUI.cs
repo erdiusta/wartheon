@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.GPUSort;
 
 public class SpecialMoveUI : MonoBehaviour
 {
@@ -21,6 +20,10 @@ public class SpecialMoveUI : MonoBehaviour
     Coroutine specialMoveTwoCooldownCoroutine;
     Coroutine specialMoveThreeCooldownCoroutine;
 
+    Coroutine specialMoveOneRecastCoroutine;
+    Coroutine specialMoveTwoRecastCoroutine;
+    Coroutine specialMoveThreeRecastCoroutine;
+
     bool[] specialMoveResetArray = new bool[3];
 
     private void Awake()
@@ -36,14 +39,12 @@ public class SpecialMoveUI : MonoBehaviour
         activeSkillThreeContainer = transform.GetChild(3);
 
         player.specialMoveEvent.OnSpecialMoveUsed += SpecialMoveEvent_OnSpecialMoveUsed;
-
         StaticEventHandler.OnActiveUniqueSkillPlaced += StaticEventHandler_OnActiveUniqueSkillPlaced;
     }
 
     private void OnDisable()
     {
         player.specialMoveEvent.OnSpecialMoveUsed -= SpecialMoveEvent_OnSpecialMoveUsed;
-
         StaticEventHandler.OnActiveUniqueSkillPlaced -= StaticEventHandler_OnActiveUniqueSkillPlaced;
     }
 
@@ -54,11 +55,10 @@ public class SpecialMoveUI : MonoBehaviour
 
     IEnumerator SkillIconPlacementRoutine(ActiveUniqueSkillPlacedArgs activeUniqueSkillPlacedArgs)
     {
-        // Wait until player and skills are ready
         while (player == null || player.playersAllActiveUniqueSkills == null || player.playersAllActiveUniqueSkills.Length < 3)
             yield return null;
 
-        yield return new WaitForSeconds(0.25f); // Small delay for safety, not 1s
+        yield return new WaitForSeconds(0.25f);
 
         if (activeUniqueSkillPlacedArgs.slotDrop)
         {
@@ -68,9 +68,8 @@ public class SpecialMoveUI : MonoBehaviour
                     activeUniqueSkillPlacedArgs.activeUniqueSkillDetails.activeUniqueSkillSprite;
             }
         }
-        else // Game start
+        else
         {
-            // Re-initialize skill container references
             passiveSkillContainer = transform.GetChild(0);
             activeSkillOneContainer = transform.GetChild(1);
             activeSkillTwoContainer = transform.GetChild(2);
@@ -78,10 +77,9 @@ public class SpecialMoveUI : MonoBehaviour
 
             activeSkillSlotContainers = new Transform[3]
             {
-            activeSkillOneContainer, activeSkillTwoContainer, activeSkillThreeContainer
+                activeSkillOneContainer, activeSkillTwoContainer, activeSkillThreeContainer
             };
 
-            // Assign sprites
             passiveSkillContainer.GetChild(0).GetComponent<Image>().sprite = player.playerDetails.passiveSkillImage;
             activeSkillOneContainer.GetChild(0).GetComponent<Image>().sprite = player.playersAllActiveUniqueSkills[0].activeUniqueSkillSprite;
             activeSkillTwoContainer.GetChild(0).GetComponent<Image>().sprite = player.playersAllActiveUniqueSkills[1].activeUniqueSkillSprite;
@@ -98,24 +96,43 @@ public class SpecialMoveUI : MonoBehaviour
 
     private void SlotSkillUpdate(int slotIndex)
     {
-        if (player.specialMovesCooldownCheckArray[slotIndex - 1])
+        int idx = slotIndex - 1;
+
+        if (player.specialMoveRecastCountArray[idx] > 0)
         {
-            specialMoveResetArray[slotIndex - 1] = false;
+            specialMoveResetArray[idx] = false;
 
-            player.specialMoveCooldownTimerArray[slotIndex - 1] += Time.deltaTime;
+            player.specialMoveRecastCooldownTimerArray[idx] += Time.deltaTime;
 
-            float duration = player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration
-                * (1 + player.buffDurationModifier);
+            float recastDuration = player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillRecastDuration * (1 + player.buffDurationModifier);
+            if (recastDuration > 0)
+                player.specialMoveRecastDurationTimerArray[idx] += Time.deltaTime;
 
-            if (duration > 0) player.specialMoveDurationTimerArray[slotIndex - 1] += Time.deltaTime;
+            float recastCooldown = player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillRecastCooldown * (1 - player.additionalSkillCoolDownModifier);
+
+            // If recast is not triggered during recast duration time, reset cooldown
+            if (player.specialMoveRecastCooldownTimerArray[idx] > recastCooldown && player.specialMoveRecastCountArray[idx] > 0)
+            {
+                ReduceRecastRepeatCount(slotIndex, inUpdate: true);
+            }
+        }
+        else if (player.specialMovesCooldownCheckArray[idx])
+        {
+            specialMoveResetArray[idx] = false;
+
+            player.specialMoveCooldownTimerArray[idx] += Time.deltaTime;
+
+            float duration = player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillEffectiveDuration * (1 + player.buffDurationModifier);
+            if (duration > 0)
+                player.specialMoveDurationTimerArray[idx] += Time.deltaTime;
 
             float cooldown = player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillCooldownDuration * (1 - player.additionalSkillCoolDownModifier);
 
-            if (player.specialMoveCooldownTimerArray[slotIndex - 1] > cooldown)
+            if (player.specialMoveCooldownTimerArray[idx] > cooldown)
             {
-                player.specialMovesCooldownCheckArray[slotIndex - 1] = false;
-                player.specialMoveCooldownTimerArray[slotIndex - 1] = 0f;
-                player.specialMoveDurationTimerArray[slotIndex - 1] = 0f;
+                player.specialMovesCooldownCheckArray[idx] = false;
+                player.specialMoveCooldownTimerArray[idx] = 0f;
+                player.specialMoveDurationTimerArray[idx] = 0f;
                 ResetSpecialMoveCooldownSlot(slotIndex);
             }
         }
@@ -123,88 +140,161 @@ public class SpecialMoveUI : MonoBehaviour
 
     private void SpecialMoveEvent_OnSpecialMoveUsed(SpecialMoveEvent specialMoveEvent, SpecialMoveEventArgs specialMoveEventArgs)
     {
-        if (specialMoveEventArgs.onlyChangeAlpha)
-        {
-            Image specialMoveCooldownImage = activeSkillOneContainer.GetChild(1).GetComponent<Image>();
-            Image specialMoveImage = activeSkillOneContainer.GetChild(0).GetComponent<Image>();
+        int index = specialMoveEventArgs.specialMoveNumber - 1;
 
-            // update cooldownCircle
-            specialMoveCooldownImage.fillAmount = 1;
+        if (player.specialMoveRecastCountArray[index] > 0)
+        {
+            StopSpecialMoveCoroutine(GetRecastCoroutine(index));
+            SetRecastCoroutine(index, StartCoroutine(UpdateRecastCooldownSlotRoutine(specialMoveEventArgs.specialMoveNumber)));
+
+            // Only reduce if we're not at full count (initial cast)
+            int maxCount = player.currentlyUsedActiveUniqueSkills[specialMoveEventArgs.specialMoveNumber].activeUniqueSkillRecastRepeatCount;
+            if (player.specialMoveRecastCountArray[index] < maxCount)
+            {
+                ReduceRecastRepeatCount(specialMoveEventArgs.specialMoveNumber);
+            }
         }
         else
         {
-            switch (specialMoveEventArgs.specialMoveNumber)
-            {
-                case 1:
-                    StopSpecialMoveCoroutine(specialMoveOneCooldownCoroutine);
-                    specialMoveOneCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(1));
-                    break;
-                case 2:
-                    StopSpecialMoveCoroutine(specialMoveTwoCooldownCoroutine);
-                    specialMoveTwoCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(2));
-                    break;
-                case 3:
-                    StopSpecialMoveCoroutine(specialMoveThreeCooldownCoroutine);
-                    specialMoveThreeCooldownCoroutine = StartCoroutine(UpdateCooldownSlotRoutine(3));
-                    break;
-                default:
-                    break;
-            }
+            ResetSpecialMoveRecastCooldownSlot(specialMoveEventArgs.specialMoveNumber);
+            StartNormalCooldown(specialMoveEventArgs.specialMoveNumber);
         }
     }
 
-    /// <summary>
-    /// Stop coroutine updating special move progress bar
-    /// </summary>
+    private void ReduceRecastRepeatCount(int skillNumber, bool inUpdate = false)
+    {
+        int index = skillNumber - 1;
+
+        if (player.specialMoveRecastCountArray[index] <= 0 && !inUpdate)
+        {
+            ResetSpecialMoveRecastCooldownSlot(skillNumber);
+            StartNormalCooldown(skillNumber);
+        }
+    }
+
+    private void StartNormalCooldown(int specialMoveNumber)
+    {
+        player.specialMovesCooldownCheckArray[specialMoveNumber - 1] = true;
+        int index = specialMoveNumber - 1;
+        player.specialMoveRecastCountArray[index] = -1;
+        StopSpecialMoveCoroutine(GetCooldownCoroutine(index));
+        SetCooldownCoroutine(index, StartCoroutine(UpdateCooldownSlotRoutine(specialMoveNumber)));
+    }
+
     private void StopSpecialMoveCoroutine(Coroutine coroutine)
     {
-        // Stop any active weapon reload bar on the UI
         if (coroutine != null)
         {
             StopCoroutine(coroutine);
         }
     }
 
-    /// <summary>
-    /// Animate special cooldown slot coroutine
-    /// </summary>
+    private Coroutine GetCooldownCoroutine(int index)
+    {
+        return index switch
+        {
+            0 => specialMoveOneCooldownCoroutine,
+            1 => specialMoveTwoCooldownCoroutine,
+            2 => specialMoveThreeCooldownCoroutine,
+            _ => null
+        };
+    }
+
+    private void SetCooldownCoroutine(int index, Coroutine coroutine)
+    {
+        switch (index)
+        {
+            case 0: specialMoveOneCooldownCoroutine = coroutine; break;
+            case 1: specialMoveTwoCooldownCoroutine = coroutine; break;
+            case 2: specialMoveThreeCooldownCoroutine = coroutine; break;
+        }
+    }
+
+    private Coroutine GetRecastCoroutine(int index)
+    {
+        return index switch
+        {
+            0 => specialMoveOneRecastCoroutine,
+            1 => specialMoveTwoRecastCoroutine,
+            2 => specialMoveThreeRecastCoroutine,
+            _ => null
+        };
+    }
+
+    private void SetRecastCoroutine(int index, Coroutine coroutine)
+    {
+        switch (index)
+        {
+            case 0: specialMoveOneRecastCoroutine = coroutine; break;
+            case 1: specialMoveTwoRecastCoroutine = coroutine; break;
+            case 2: specialMoveThreeRecastCoroutine = coroutine; break;
+        }
+    }
+
+    private IEnumerator UpdateRecastCooldownSlotRoutine(int specialMoveNumber)
+    {
+        int index = specialMoveNumber - 1;
+        float activeRecastCooldownDuration = player.currentlyUsedActiveUniqueSkills[specialMoveNumber].activeUniqueSkillRecastCooldown *
+            (1 - player.additionalSkillCoolDownModifier);
+
+        // Ensure reset flag is false at start
+        player.specialMoveRecastCooldownTimerArray[index] = 0f;
+
+        while (player.specialMoveRecastCooldownTimerArray[index] < activeRecastCooldownDuration)
+        {
+            if (player.specialMoveRecastCountArray[index] > 0)
+            {
+                Image bgImage = activeSkillSlotContainers[index].GetChild(2).GetComponent<Image>();
+                Image fillImage = bgImage.transform.GetChild(0).GetComponent<Image>();
+
+                bgImage.gameObject.SetActive(true);
+                float circleFill = Mathf.Clamp01(player.specialMoveRecastCooldownTimerArray[index] / activeRecastCooldownDuration);
+                fillImage.fillAmount = 1 - circleFill;
+            }
+
+            yield return null;
+        }
+
+        // UI only — actual reset will happen from SlotSkillUpdate when count hits 0
+        ResetSpecialMoveRecastCooldownSlot(specialMoveNumber);
+        player.specialMovesCooldownCheckArray[index] = true;
+        StartNormalCooldown(specialMoveNumber);
+    }
+
     private IEnumerator UpdateCooldownSlotRoutine(int specialMoveNumber)
     {
-        Image specialMoveCooldownImage;
-        Image specialMoveImage;
-
+        int index = specialMoveNumber - 1;
         float activeCooldownDuration = player.currentlyUsedActiveUniqueSkills[specialMoveNumber].activeUniqueSkillCooldownDuration * (1 - player.additionalSkillCoolDownModifier);
 
-        // Animate the weapon reload bar
-        while (player.specialMoveCooldownTimerArray[specialMoveNumber - 1] < activeCooldownDuration)
+        while (player.specialMoveCooldownTimerArray[index] < activeCooldownDuration)
         {
-            if (!specialMoveResetArray[specialMoveNumber - 1])
+            if (!specialMoveResetArray[index])
             {
-                specialMoveCooldownImage = activeSkillSlotContainers[specialMoveNumber - 1].GetChild(1).GetComponent<Image>();
-                specialMoveImage = activeSkillSlotContainers[specialMoveNumber - 1].GetChild(0).GetComponent<Image>();
-                specialMoveCooldownImage.gameObject.SetActive(true);
-
-                // update cooldownCircle
-                float circleFill = Mathf.Clamp(player.specialMoveCooldownTimerArray[specialMoveNumber - 1] / 
-                    player.currentlyUsedActiveUniqueSkills[specialMoveNumber].activeUniqueSkillCooldownDuration, 0, 1);
-                specialMoveCooldownImage.fillAmount = 1 - circleFill;
+                Image cooldownImage = activeSkillSlotContainers[index].GetChild(1).GetComponent<Image>();
+                cooldownImage.gameObject.SetActive(true);
+                cooldownImage.fillAmount = 1 - (player.specialMoveCooldownTimerArray[index] / activeCooldownDuration);
             }
 
             yield return null;
         }
     }
 
-    /// <summary>
-    /// Reset special move bar coroutine
     private void ResetSpecialMoveCooldownSlot(int specialMoveNum)
     {
-        Image specialMoveCooldownImage;
-        Image specialMoveImage;
+        int index = specialMoveNum - 1;
+        Image cooldownImage = activeSkillSlotContainers[index].GetChild(1).GetComponent<Image>();
+        cooldownImage.fillAmount = 1;
+        cooldownImage.gameObject.SetActive(false);
+        specialMoveResetArray[index] = true;
+    }
 
-        specialMoveCooldownImage = activeSkillSlotContainers[specialMoveNum - 1].GetChild(1).GetComponent<Image>();
-        specialMoveImage = activeSkillSlotContainers[specialMoveNum - 1].GetChild(0).GetComponent<Image>();
-        specialMoveCooldownImage.fillAmount = 1;
-        specialMoveCooldownImage.gameObject.SetActive(false);
-        specialMoveResetArray[specialMoveNum - 1] = true;
+    private void ResetSpecialMoveRecastCooldownSlot(int specialMoveNum)
+    {
+        int index = specialMoveNum - 1;
+        Image bgImage = activeSkillSlotContainers[index].GetChild(2).GetComponent<Image>();
+        Image fillImage = bgImage.transform.GetChild(0).GetComponent<Image>();
+
+        fillImage.fillAmount = 1;
+        bgImage.gameObject.SetActive(false);
     }
 }

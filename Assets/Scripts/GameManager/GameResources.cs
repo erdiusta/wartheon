@@ -211,6 +211,14 @@ public class GameResources : MonoBehaviour
 
     #region Header UI
     [Space(10)]
+    [Header("Level UI")]
+    #endregion
+    public Sprite levelOneFrameSprite;
+    public Sprite levelTwoFrameSprite;
+    public Sprite levelThreeFrameSprite;
+
+    #region Header UI
+    [Space(10)]
     [Header("Book UI")]
     #endregion
     #region Tooltip

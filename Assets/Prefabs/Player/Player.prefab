@@ -178,6 +178,7 @@ MonoBehaviour:
   boxLength: 1
   boxHeight: 1
   directionAngle: 0
+  isMainHand: 0
 --- !u!60 &4937508002795313926
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1396,6 +1397,7 @@ MonoBehaviour:
   coneLength: 1
   coneAngle: 45
   directionAngle: 0
+  isMainHand: 1
 --- !u!60 &2879147223515215136
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1656,6 +1658,7 @@ MonoBehaviour:
   coneLength: 1
   coneAngle: 45
   directionAngle: 0
+  isMainHand: 0
 --- !u!60 &6238425226974797665
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1754,6 +1757,7 @@ MonoBehaviour:
   boxLength: 1
   boxHeight: 1
   directionAngle: 0
+  isMainHand: 1
 --- !u!60 &2250965943103963786
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -2386,10 +2390,10 @@ BoxCollider2D:
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 16448
   m_ForceReceiveLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 16448
   m_ContactCaptureLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -2577,7 +2581,7 @@ MonoBehaviour:
   damageTracker: {fileID: 0}
   springJoint2D: {fileID: 0}
   playersGrapple: {fileID: 0}
-  playersThrowingAxe: {fileID: 0}
+  playerSkillProjectile: {fileID: 0}
   keyCount: 0
   previousSetIndex: 1
   branchMastery: {fileID: 0}
@@ -2616,6 +2620,7 @@ MonoBehaviour:
   additionalSkillCoolDownModifier: 0
   additionalSpeedModifier: 0
   additionalMeleeCriticalHitChanceModifier: 0
+  additionalRangedCriticalHitChanceModifier: 0
   additionalCriticalDamageOnCloakedPrecision: 0.5
   additionalCriticalDamageModifier: 0
   additionalCriticalMeleeDamageModifier: 0
@@ -2682,6 +2687,7 @@ MonoBehaviour:
   isImmunetoBurn: 0
   isImmunetoPoison: 0
   isImmunetoFrost: 0
+  isImmunetoParalyze: 0
   isImmunetoBlind: 0
   isImmunetoCurse: 0
   isImmunetoFear: 0
@@ -2698,6 +2704,15 @@ MonoBehaviour:
   - 0
   - 0
   specialMoveDurationTimerArray:
+  - 0
+  - 0
+  - 0
+  specialMoveRecastCountArray: 000000000000000000000000
+  specialMoveRecastCooldownTimerArray:
+  - 0
+  - 0
+  - 0
+  specialMoveRecastDurationTimerArray:
   - 0
   - 0
   - 0
@@ -2739,6 +2754,21 @@ MonoBehaviour:
   whirlrendDamage: 10
   isFeastOfWarActive: 0
   feastOfWarDrainPercentage: 0.1
+  isNyxasReflexPassiveOn: 0
+  lastDashTeleportHappenedTime: 0
+  isDontBlinkActive: 0
+  cancelledDueToInvalidTile: 0
+  isVenomousIvyActive: 0
+  isFadeAndFeedActive: 0
+  isBladeAndDashActive: 0
+  isShirukenActive: 0
+  isMistOfDisruptionActive: 0
+  isInMistOfDisruption: 0
+  isNymarasWindveilActive: 0
+  NymarasWindveilCircleRadius: 1.5
+  isChainLightningActive: 0
+  isEyeOfTheStormActive: 0
+  isIonicRejuvenationActive: 0
   shadowCloakEquipped: 0
   isCursed: 0
   isFeared: 0
@@ -2823,6 +2853,7 @@ MonoBehaviour:
   activeSkillTypeTwoAnimator: {fileID: 0}
   activeSkillTypeThreeAnimator: {fileID: 0}
   activeSkillTypeFourAnimator: {fileID: 0}
+  isDashing: 0
   meleeAttackTypeMainHand: 0
   meleeAttackTypeOffHand: 0
 --- !u!114 &8675837940116119588
@@ -2962,6 +2993,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a6aa9295d82db46b7e5e9b4da5612f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainHandCircleOriginTransform: {fileID: 2111572377593781178}
+  mainHandBoxOriginTransform: {fileID: 2935184723905329284}
+  mainHandTriangleOriginTransform: {fileID: 7711342700722197549}
+  offHandCircleOriginTransform: {fileID: 7936086671000619909}
+  offHandBoxOriginTransform: {fileID: 8447202650038424383}
+  offHandTriangleOriginTransform: {fileID: 7806165928976285397}
 --- !u!114 &2937774627651676991
 MonoBehaviour:
   m_ObjectHideFlags: 0

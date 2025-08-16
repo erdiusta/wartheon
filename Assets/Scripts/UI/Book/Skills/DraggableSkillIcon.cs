@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -8,7 +7,8 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
     public static bool IsDragging = false;
 
     public int skillIconIndexNumber = 0;
-    
+    public Image frameImage;
+
     [HideInInspector] public ActiveUniqueSkillDetailsSO activeUniqueSkillDetails;
     [HideInInspector] public Transform originalParent;
     [HideInInspector] public RectTransform rectTransform;
@@ -18,6 +18,8 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
     CanvasGroup canvasGroup;
     Canvas canvas;
     Player player;
+
+    int skillLevel = 1;
 
     private void Awake()
     {
@@ -59,5 +61,25 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
         rectTransform.anchoredPosition = originalPosition; // Reset position
 
         IsDragging = false;
+    }
+
+    public void SkillBoost()
+    {
+        StaticEventHandler.CallSkillBoostUsed(++skillLevel);
+
+        switch (skillLevel)
+        {
+            case 1:
+                frameImage.sprite = GameResources.Instance.levelOneFrameSprite;
+                break;
+            case 2:
+                frameImage.sprite = GameResources.Instance.levelTwoFrameSprite;
+                break;
+            case 3:
+                frameImage.sprite = GameResources.Instance.levelThreeFrameSprite;
+                break;
+            default:
+                break;
+        }
     }
 }

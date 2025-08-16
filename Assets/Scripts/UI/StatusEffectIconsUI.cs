@@ -31,10 +31,19 @@ public class StatusEffectIconsUI : MonoBehaviour
     [SerializeField] Sprite kynarasEmbraceSpecialMoveSprite;
     [Space(10)]
 
+    [Header("Nymara")]
+    [SerializeField] Sprite nymarasWindveilSpecialMoveSprite;
+    [Space(10)]
+
     [Header("Karnag")]
     [SerializeField] Sprite rageSpecialMoveSprite;
     [SerializeField] Sprite whirlrendSpecialMoveSprite;
     [SerializeField] Sprite feastOfWarSpecialMoveSprite;
+    [Space(10)]
+
+    [Header("Nyxa")]
+    [SerializeField] Sprite nyxasReflexSpecialMoveSprite;
+    [SerializeField] Sprite fadeAndFeedSpecialMoveSprite;
     [Space(10)]
 
     [Header("INNER PATH")]
@@ -104,10 +113,17 @@ public class StatusEffectIconsUI : MonoBehaviour
         // Kynara
         player.healthEvent.OnKynarasEmbraceActive += EnableKynarasEmbraceImage;
 
+        // Nymara
+        player.healthEvent.OnNymarasWindveilActive += EnableNymarasWindveilImage;
+
         // Karnag
         player.healthEvent.OnRageActive += EnableRageImage;
         player.healthEvent.OnWhirlrendActive += EnableWhirlrendImage;
         player.healthEvent.OnFeastOfWarActive += EnableFeastOfWarImage;
+
+        // Nyxa
+        player.healthEvent.OnNyxasReflexActive += EnableNyxasReflexImage;
+        player.healthEvent.OnFadeAndFeedActive += EnableFadeAndFeed;
 
         // INNER PATH
         player.healthEvent.OnBattleScarsActive += EnableBattleScarsImage;
@@ -117,6 +133,7 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnTriadExecutionActive += EnableTriadExecutionImage;
         player.healthEvent.OnFortifiedResolveActive += EnableReflexBarrierImage;
 
+        // STATUS EFFECT
         player.healthEvent.GetBleeding += EnableBleedingImage;
         player.healthEvent.GetStun += EnableStunImage;
         player.healthEvent.GetSlow += EnableSlowImage;
@@ -126,6 +143,8 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.GetAcid += EnableAcidImage;
         player.healthEvent.GetChill += EnableChillImage;
         player.healthEvent.GetFrost += EnableFrostImage;
+        player.healthEvent.GetStatic += EnableStaticImage;
+        player.healthEvent.GetParalyzed += EnableParalyzeImage;
         player.healthEvent.GetRoot += EnableRootImage;
         player.healthEvent.GetBlind += EnableBlindImage;
         player.healthEvent.GetCursed += EnableCurseImage;
@@ -157,10 +176,17 @@ public class StatusEffectIconsUI : MonoBehaviour
         // Kynara
         player.healthEvent.OnKynarasEmbraceEffectsEnded += DisableKynarasEmbraceImage;
 
+        // Nymara
+        player.healthEvent.OnNymarasWindveilEffectEnded += DisableNymarasWindveilImage;
+
         // Karnag
         player.healthEvent.OnRageEffectEnded += DisableRageImage;
         player.healthEvent.OnWhirlrendEffectEnded += DisableWhirlrendImage;
         player.healthEvent.OnFeastOfWarEffectEnded += DisableFeastOfWarImage;
+
+        // Nyxa
+        player.healthEvent.OnNyxasReflexEffectEnded += DisableNyxasReflexImage;
+        player.healthEvent.OnFadeAndFeedEffectEnded += DisableFadeAndFeedImage;
 
         // INNER PATH
         player.healthEvent.OnSecondBreathEffectEnded += DisableSecondBreathImage;
@@ -170,6 +196,8 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnTriadExecutionEffectEnded += DisableTriadExecutionImage;
         player.healthEvent.OnFortifiedResolveEffectEnded += DisableReflexBarrierImage;
 
+        // STATUS EFFECT
+        player.healthEvent.CuredCompletely += DisableAllImages;
         player.healthEvent.BleedingCured += DisableBleedingImage;
         player.healthEvent.StunCured += DisableStunImage;
         player.healthEvent.SlowCured += DisableSlowImage;
@@ -179,6 +207,8 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.AcidCured += DisableAcidImage;
         player.healthEvent.ChillCured += DisableChillImage;
         player.healthEvent.FrostCured += DisableFrostImage;
+        player.healthEvent.StaticCured += DisableStaticImage;
+        player.healthEvent.ParalyzeCured += DisableParalyzeImage;
         player.healthEvent.RootCured += DisableRootImage;
         player.healthEvent.BlindCured += DisableBlindImage;
         player.healthEvent.CurseCured += DisableCurseImage;
@@ -209,10 +239,17 @@ public class StatusEffectIconsUI : MonoBehaviour
         // Kynara
         player.healthEvent.OnKynarasEmbraceActive -= EnableKynarasEmbraceImage;
 
+        // Nymara
+        player.healthEvent.OnNymarasWindveilActive -= EnableNymarasWindveilImage;
+
         // Karnag
         player.healthEvent.OnRageActive -= EnableRageImage;
         player.healthEvent.OnWhirlrendActive -= EnableWhirlrendImage;
         player.healthEvent.OnFeastOfWarActive -= EnableFeastOfWarImage;
+
+        // Nyxa
+        player.healthEvent.OnNyxasReflexActive -= EnableNyxasReflexImage;
+        player.healthEvent.OnFadeAndFeedActive -= EnableFadeAndFeed;
 
         // INNER PATH
         player.healthEvent.OnBattleScarsActive -= EnableBattleScarsImage;
@@ -222,6 +259,7 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnTriadExecutionActive -= EnableTriadExecutionImage;
         player.healthEvent.OnFortifiedResolveActive -= EnableReflexBarrierImage;
 
+        // STATUS EFFECT
         player.healthEvent.GetBleeding -= EnableBleedingImage;
         player.healthEvent.GetStun -= EnableStunImage;
         player.healthEvent.GetSlow -= EnableSlowImage;
@@ -231,6 +269,8 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.GetAcid -= EnableAcidImage;
         player.healthEvent.GetChill -= EnableChillImage;
         player.healthEvent.GetFrost -= EnableFrostImage;
+        player.healthEvent.GetStatic -= EnableStaticImage;
+        player.healthEvent.GetParalyzed -= EnableParalyzeImage;
         player.healthEvent.GetRoot -= EnableRootImage;
         player.healthEvent.GetBlind -= EnableBlindImage;
         player.healthEvent.GetCursed -= EnableCurseImage;
@@ -262,10 +302,17 @@ public class StatusEffectIconsUI : MonoBehaviour
         // Kynara
         player.healthEvent.OnKynarasEmbraceEffectsEnded -= DisableKynarasEmbraceImage;
 
+        // Nymara
+        player.healthEvent.OnNymarasWindveilEffectEnded -= DisableNymarasWindveilImage;
+
         // Karnag
         player.healthEvent.OnRageEffectEnded -= DisableRageImage;
         player.healthEvent.OnWhirlrendEffectEnded -= DisableWhirlrendImage;
         player.healthEvent.OnFeastOfWarEffectEnded -= DisableFeastOfWarImage;
+
+        // Nyxa
+        player.healthEvent.OnNyxasReflexEffectEnded -= DisableNyxasReflexImage;
+        player.healthEvent.OnFadeAndFeedEffectEnded -= DisableFadeAndFeedImage;
 
         // INNER PATH
         player.healthEvent.OnSecondBreathEffectEnded -= DisableSecondBreathImage;
@@ -275,6 +322,7 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnTriadExecutionEffectEnded -= DisableTriadExecutionImage;
         player.healthEvent.OnFortifiedResolveEffectEnded -= DisableReflexBarrierImage;
 
+        player.healthEvent.CuredCompletely -= DisableAllImages;
         player.healthEvent.BleedingCured -= DisableBleedingImage;
         player.healthEvent.StunCured -= DisableStunImage;
         player.healthEvent.SlowCured -= DisableSlowImage;
@@ -437,6 +485,37 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
+    private void EnableNyxasReflexImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(nyxasReflexSpecialMoveSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = nyxasReflexSpecialMoveSprite;
+            statusEffectsDictionary.Add(nyxasReflexSpecialMoveSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableFadeAndFeed(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(fadeAndFeedSpecialMoveSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = fadeAndFeedSpecialMoveSprite;
+            statusEffectsDictionary.Add(fadeAndFeedSpecialMoveSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableNymarasWindveilImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(nymarasWindveilSpecialMoveSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = nymarasWindveilSpecialMoveSprite;
+            statusEffectsDictionary.Add(nymarasWindveilSpecialMoveSprite, statusIconContainer);
+        }
+    }
+
+    // INNER PATH
     private void EnableCombatFocusImage(HealthEvent healthEvent)
     {
         if (!statusEffectsDictionary.ContainsKey(combatFocusSprite))
@@ -559,6 +638,26 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
+    private void EnableStaticImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(staticSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = staticSprite;
+            statusEffectsDictionary.Add(staticSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableParalyzeImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(paralyzeSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = paralyzeSprite;
+            statusEffectsDictionary.Add(paralyzeSprite, statusIconContainer);
+        }
+    }
+
     private void EnableBleedingImage(HealthEvent healthEvent)
     {
         if (!statusEffectsDictionary.ContainsKey(bleedingSprite))
@@ -639,6 +738,24 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
+    private void DisableAllImages(HealthEvent healthEvent)
+    {
+        DisableWarmedImage(healthEvent);
+        DisableBurnImage(healthEvent);
+        DisablePoisonImage(healthEvent);
+        DisableAcidImage(healthEvent);
+        DisableChillImage(healthEvent);
+        DisableFrostImage(healthEvent);
+        DisableStaticImage(healthEvent);
+        DisableParalyzeImage(healthEvent);
+        DisableBleedingImage(healthEvent);
+        DisableStunImage(healthEvent);
+        DisableSlowImage(healthEvent);
+        DisableRootImage(healthEvent);
+        DisableBlindImage(healthEvent);
+        DisableCurseImage(healthEvent);
+        DisableCurseImage(healthEvent);
+    }
 
     private void DisableGraceOfTheUnscarredSkillImage(HealthEvent healthEvent)
     {
@@ -757,6 +874,33 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
+    private void DisableNyxasReflexImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(nyxasReflexSpecialMoveSprite))
+        {
+            Destroy(statusEffectsDictionary[nyxasReflexSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(nyxasReflexSpecialMoveSprite);
+        }
+    }
+
+    private void DisableFadeAndFeedImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(fadeAndFeedSpecialMoveSprite))
+        {
+            Destroy(statusEffectsDictionary[fadeAndFeedSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(fadeAndFeedSpecialMoveSprite);
+        }
+    }
+
+    private void DisableNymarasWindveilImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(nymarasWindveilSpecialMoveSprite))
+        {
+            Destroy(statusEffectsDictionary[nymarasWindveilSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(nymarasWindveilSpecialMoveSprite);
+        }
+    }
+
     // INNER PATH
     private void DisableCombatFocusImage(HealthEvent healthEvent)
     {
@@ -866,6 +1010,24 @@ public class StatusEffectIconsUI : MonoBehaviour
         }
     }
 
+    private void DisableStaticImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(staticSprite))
+        {
+            Destroy(statusEffectsDictionary[staticSprite]);
+            statusEffectsDictionary.Remove(staticSprite);
+        }
+    }
+
+    private void DisableParalyzeImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(paralyzeSprite))
+        {
+            Destroy(statusEffectsDictionary[paralyzeSprite]);
+            statusEffectsDictionary.Remove(paralyzeSprite);
+        }
+    }
+
     private void DisableBleedingImage(HealthEvent healthEvent)
     {
         if (statusEffectsDictionary.ContainsKey(bleedingSprite))
@@ -928,6 +1090,4 @@ public class StatusEffectIconsUI : MonoBehaviour
             statusEffectsDictionary.Remove(fearSprite);
         }
     }
-
-
 }

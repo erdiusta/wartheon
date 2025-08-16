@@ -50,6 +50,8 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetChill += EnableChillImage;
             enemy.healthEvent.GetFrost += EnableFrostImage;
             enemy.healthEvent.GetShattered += EnableShatterLog;
+            enemy.healthEvent.GetStatic += EnableStaticImage;
+            enemy.healthEvent.GetParalyzed += EnableParalyzeImage;
             enemy.healthEvent.GetRoot += EnableRootImage;
             enemy.healthEvent.GetBlind += EnableBlindImage;
             enemy.healthEvent.GetCursed += EnableCurseImage;
@@ -67,6 +69,8 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.ChillCured += DisableChillImage;
             enemy.healthEvent.FrostCured += DisableFrostImage;
             enemy.healthEvent.ShatterCured += DisableShatterLog;
+            enemy.healthEvent.StaticCured += DisableStaticImage;
+            enemy.healthEvent.ParalyzeCured += DisableParalyzeImage;
             enemy.healthEvent.RootCured += DisableRootImage;
             enemy.healthEvent.BlindCured += DisableBlindImage;
             enemy.healthEvent.CurseCured += DisableCurseImage;
@@ -88,6 +92,8 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetChill -= EnableChillImage;
             enemy.healthEvent.GetFrost -= EnableFrostImage;
             enemy.healthEvent.GetShattered -= EnableShatterLog;
+            enemy.healthEvent.GetStatic -= EnableStaticImage;
+            enemy.healthEvent.GetParalyzed -= EnableParalyzeImage;
             enemy.healthEvent.GetRoot -= EnableRootImage;
             enemy.healthEvent.GetBlind -= EnableBlindImage;
             enemy.healthEvent.GetCursed -= EnableCurseImage;
@@ -106,6 +112,8 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.ChillCured -= DisableChillImage;
             enemy.healthEvent.FrostCured -= DisableFrostImage;
             enemy.healthEvent.ShatterCured -= DisableShatterLog;
+            enemy.healthEvent.StaticCured -= DisableStaticImage;
+            enemy.healthEvent.ParalyzeCured -= DisableParalyzeImage;
             enemy.healthEvent.RootCured -= DisableRootImage;
             enemy.healthEvent.BlindCured -= DisableBlindImage;
             enemy.healthEvent.CurseCured -= DisableCurseImage;
@@ -317,6 +325,31 @@ public class StatusManager : MonoBehaviour
         logRoutine = StartCoroutine(WriteLog("SHATTERED", new Color(0.16f, 0.54f, 0.8f)));
     }
 
+    private void EnableStaticImage(HealthEvent healthEvent)
+    {
+        staticImage.SetActive(true);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+
+        logRoutine = StartCoroutine(WriteLog("STATIC", new Color(1f, 1f, 0.7f)));
+    }
+
+    private void EnableParalyzeImage(HealthEvent healthEvent)
+    {
+        paralyzeImage.SetActive(true);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+        }
+
+        logRoutine = StartCoroutine(WriteLog("PARALYZED", new Color(1f, 0.85f, 0.3f)));
+    }
+
+
     private void EnableBlindImage(HealthEvent healthEvent)
     {
         blindImage.SetActive(true);
@@ -408,6 +441,28 @@ public class StatusManager : MonoBehaviour
 
     private void DisableShatterLog(HealthEvent healthEvent)
     {
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = null;
+        }
+    }
+
+    private void DisableStaticImage(HealthEvent healthEvent)
+    {
+        staticImage.SetActive(false);
+        ClearLog();
+        if (logRoutine != null)
+        {
+            StopCoroutine(logRoutine);
+            logRoutine = null;
+        }
+    }
+
+    private void DisableParalyzeImage(HealthEvent healthEvent)
+    {
+        paralyzeImage.SetActive(false);
         ClearLog();
         if (logRoutine != null)
         {

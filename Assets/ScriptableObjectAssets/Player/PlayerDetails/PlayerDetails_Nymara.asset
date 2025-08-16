@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352fbee161db0434d9a6bbbc0a4e4c34, type: 3}
+  m_Name: PlayerDetails_Nymara
+  m_EditorClassIdentifier: 
+  playerCharacterName: Nymara
+  playerCharacterIndex: 6
+  playerPrefab: {fileID: 38858171499291080, guid: a26f29b39e265c94fb0e28ba47e3da4d, type: 3}
+  collectibleWeaponsArray: []
+  bodyRuntimeAnimatorController: {fileID: 9100000, guid: 54a4c55288ad57042879ec6a285c3e61, type: 2}
+  primaryStats:
+    strength: 4
+    dexterity: 4
+    constitution: 4
+    intelligence: 8
+    agility: 4
+    willpower: 8
+    ferocity: 3
+    resolve: 4
+  isImmuneAfterHit: 1
+  hitImmunityTime: 0.5
+  getHitSoundEffect: {fileID: 11400000, guid: 576e5f5228e2b474887187265e1728dd, type: 2}
+  deathSoundEffect: {fileID: 11400000, guid: cc8255f324bd9bb439c50fc4b7b0c063, type: 2}
+  blockSoundEffect: {fileID: 11400000, guid: 5a66c8bf2077f0a4caf767997e7b7749, type: 2}
+  dodgeSoundEffect: {fileID: 11400000, guid: 47e336b005c25684099a3b05096549a8, type: 2}
+  parrySoundEffect: {fileID: 11400000, guid: 1f535785069b176429525f2fb0e96cc7, type: 2}
+  passiveSkillImage: {fileID: 21300000, guid: e4b3ee019eca0de46ba36065015ccaa0, type: 3}
+  passiveSkillSoundEffect: {fileID: 0}
+  firstActiveSkillDetails: {fileID: 11400000, guid: 3805c2c57bb3955459664d78dd6a9ee4, type: 2}
+  secondActiveSkillDetails: {fileID: 11400000, guid: cd28ca6c45aef3540ac81b56e68d407f, type: 2}
+  thirdActiveSkillDetails: {fileID: 11400000, guid: ca651d5d60bcfd34e8ae9ab66e1db42b, type: 2}
+  fourthActiveSkillDetails: {fileID: 11400000, guid: 5835069f16608534ebace9411e226826, type: 2}
+  fifthActiveSkillDetails: {fileID: 11400000, guid: 628ec73e894c1cf40a06e889b79718f5, type: 2}
+  throwingAxeDetails: {fileID: 0}
+  shirukenDetails: {fileID: 0}
+  grappleDetails: {fileID: 0}
+  iceBreakerDetails: {fileID: 0}
+  absoluteZeroDetails: {fileID: 0}
+  fireBlastDetails: {fileID: 0}
+  blazingCycloneDetails: {fileID: 0}
+  chainLightningDetails: {fileID: 11400000, guid: 58241cf362806b34bbe1208a069695a5, type: 2}
+  standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  penetrateMaterial: {fileID: 0}
+  applyScreenShake: 0
+  shakeIntensity: 3
+  shakeDuration: 1
+  passiveItemsList: []
+  startingWeapon: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+  mainHandAnimatorController: {fileID: 9100000, guid: a9f6b3580707cd749861dcb2fc4d7f34, type: 2}
+  offHandAnimatorController: {fileID: 0}
+  startingWeaponList:
+  - {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+  playerMiniMapIcon: {fileID: 21300000, guid: 6a268ba1aabe51546808769958236554, type: 3}
+  playerHandSprite: {fileID: 21300000, guid: b70311d0005c1e84097834db844c4dda, type: 3}
+  playerBookSprite: {fileID: 386633566, guid: 90a9c93cf9a589d43ae16698cdcd809e, type: 3}
+  levelUpSoundEffect: {fileID: 11400000, guid: 65554e211d459a1499ae37e7fc5d6cdf, type: 2}
+  buildActivationSoundEffect: {fileID: 11400000, guid: 89b538f65e0e2894582436b50b37b10f, type: 2}

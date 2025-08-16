@@ -90,10 +90,6 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public bool isDecoy = false;
     #region Tooltip
-    [Tooltip("Check if weapon animator exists")]
-    #endregion
-    public bool hasAnimator = false;
-    #region Tooltip
     [Tooltip("Weapon elemental bias")]
     #endregion Tooltip
     public ElementalBias elementalBias;
@@ -241,6 +237,22 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("Check enemy's stun chance")]
     #endregion
     [Range(0f, 1f)] public float frostChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if enemy has static damage")]
+    #endregion
+    public bool hasStaticDamage = false;
+    #region Tooltip
+    [Tooltip("Check enemy's static chance")]
+    #endregion
+    [Range(0f, 1f)] public float staticChance = 0f;
+    #region Tooltip
+    [Tooltip("Check if enemy has paralyze damage")]
+    #endregion
+    public bool hasParalyzeDamage = false;
+    #region Tooltip
+    [Tooltip("Check enemy's paralyze chance")]
+    #endregion
+    [Range(0f, 1f)] public float paralyzeChance = 0f;
     #region Tooltip
     [Tooltip("Check if enemy has curse damage")]
     #endregion

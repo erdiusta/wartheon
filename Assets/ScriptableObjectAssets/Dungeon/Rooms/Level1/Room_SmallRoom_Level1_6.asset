@@ -54,14 +54,14 @@ MonoBehaviour:
     isConnected: 0
     isUnavailable: 0
   spawnPositionArray:
-  - {x: -5, y: 3}
-  - {x: 3, y: 3}
-  - {x: 11, y: 3}
-  - {x: 11, y: 9}
-  - {x: 11, y: 15}
+  - {x: -6, y: 2}
+  - {x: 3, y: 2}
+  - {x: 12, y: 2}
+  - {x: 12, y: 9}
+  - {x: 12, y: 15}
   - {x: 3, y: 16}
-  - {x: -5, y: 15}
-  - {x: -5, y: 9}
+  - {x: -6, y: 15}
+  - {x: -6, y: 9}
   enemiesByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     spawnableObjectRatioList:

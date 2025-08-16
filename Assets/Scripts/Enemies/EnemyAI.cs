@@ -31,6 +31,7 @@ public class EnemyAI : MonoBehaviour
     protected Enemy enemy;
     protected Coroutine attackAnimationRoutine;
     protected Coroutine stunEnemyRoutine;
+    protected Coroutine paralyzeEnemyRoutine;
     protected Coroutine rootEnemyRoutine;
     protected Coroutine chillEnemyRoutine;
     protected Coroutine frostEnemyRoutine;
@@ -311,6 +312,12 @@ public class EnemyAI : MonoBehaviour
 
     protected void UpdatePhaseStatus(bool isAimAttackBehaviour = false)
     {
+        if (enemy.isDisoriented)
+        {
+            SwitchToPatrol();
+            return;
+        }
+
         if(tag == Settings.summonedEnemyTag)
         {
             SummonedAllyEnemyBehaviour();
@@ -333,17 +340,21 @@ public class EnemyAI : MonoBehaviour
             {
                 attackRange = enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileRange;     
             }
+
             if (distanceToTarget < attackRange)
             {
                 SwitchToAttack();
+                Debug.Log("Distance to target is lower than attack range. Switched to Attack.");
             }
             else if (distanceToTarget < chaseDistance)
             {
                 SwitchToChase();
+                Debug.Log("Distance to target is lower than chase distance. Switched to Chase.");
             }
             else
             {
                 SwitchToPatrol();
+                Debug.Log("Switched to Patrol.");
             }
         }
         else
@@ -562,21 +573,19 @@ public class EnemyAI : MonoBehaviour
             if (playerDirectionVector.magnitude <= enemyProjectileRange)
             {
                 // Does this enemy require line of sight to the player before firing
-                if (enemyDetails.firingLineOfSightRequired)
-                {
-                    if (!IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange))
-                    {
-                        //// Attempt flank if cooldown allows
-                        //if (Time.time - flankDecisionTimer > FLANK_COOLDOWN)
-                        //{
-                        //    flankDecisionTimer = Time.time;
-                        //    enemyPhaseAtPreviousFrame = enemyPhase;
-                        //    enemyPhase = EnemyPhase.Flank;
-                        //}
+                //if (enemyDetails.firingLineOfSightRequired)
+                //{
+                //    if (!IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange))
+                //    {
+                //        // Attempt flank if cooldown allows
+                //        if (Time.time - flankDecisionTimer > FLANK_COOLDOWN)
+                //        {
+                //            enemyPhaseAtPreviousFrame = enemyPhase;
+                //        }
 
-                        return;
-                    }
-                }
+                //        return;
+                //    }
+                //}
 
                 enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection,
                     false, false, false, moravellePhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
@@ -718,7 +727,24 @@ public class EnemyAI : MonoBehaviour
 
         // Reset stun status and allow other stun coroutines to be started
         ResetEnemySpeed();
-        moveStatus &= ~MoveStatus.Root;
+        moveStatus &= ~MoveStatus.Stun;
+        stunEnemyRoutine = null;
+    }
+
+    public IEnumerator ParalyzeRoutine()
+    {
+        enemy.idle.StopVelocity();
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+        SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
+
+        yield return new WaitForSeconds(3f);
+
+        enemy.healthEvent.CallParalyzeCuredEvent();
+        enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        // Reset stun status and allow other stun coroutines to be started
+        ResetEnemySpeed();
+        moveStatus &= ~MoveStatus.Paralyze;
         stunEnemyRoutine = null;
     }
 
@@ -869,6 +895,18 @@ public class EnemyAI : MonoBehaviour
             if (stunEnemyRoutine == null)
             {
                 stunEnemyRoutine = StartCoroutine(StunRoutine());
+            }
+        }
+
+        // Paralyze
+        if ((moveStatus & MoveStatus.Paralyze) != 0)
+        {
+            enemy.idle.StopVelocity();
+            negativeStatusEffect = true;
+
+            if (paralyzeEnemyRoutine == null)
+            {
+                paralyzeEnemyRoutine = StartCoroutine(ParalyzeRoutine());
             }
         }
 

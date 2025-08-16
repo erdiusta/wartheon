@@ -29,7 +29,6 @@ namespace Pathfinding {
         float collisionCooldown = 1f;
         float cooldownTimer = 1;
         bool isCollided = false;
-        bool search = false;
 
 		protected override void Awake () {
 			base.Awake();
@@ -73,7 +72,11 @@ namespace Pathfinding {
 
         private void OnCollisionStay2D(Collision2D collision)
         {
-            if ((collision.collider.CompareTag(Settings.enemyTag) || collision.collider.CompareTag(Settings.collisionTilemap)) && collisionCooldown < cooldownTimer)
+            Enemy enemy = GetComponent<Enemy>();
+
+            if (enemy != null && enemy.enemyAI.enemyPhase != EnemyPhase.Patrol) return;
+
+            if ((collision.collider.CompareTag(Settings.enemyTag) || collision.collider.CompareTag(Settings.collisionTilemap)) && cooldownTimer >= collisionCooldown)
             {
                 int originalIndex = index;
 

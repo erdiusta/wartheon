@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.XR;
 using Random = UnityEngine.Random;
 
 [DisallowMultipleComponent]
@@ -86,16 +87,18 @@ public class DealContactDamage : MonoBehaviour
 
                     if (tag == Settings.enemyTag && player.isCounterRiposteActive)
                     {
-                        int damageDone = Random.Range(contactDamageAmountMin, contactDamageAmountMax);
-                        int counterRiposteDamge = damageDone / 2;
+                        int counterRiposteDamage = player.isCursed ? player.currentMainHandMinDamageValue / 2 :
+                            Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue) / 2;
 
-                        enemy.health.TakeDamage(counterRiposteDamge, player.transform.position, transform.position);
+                        enemy.health.TakeDamage(counterRiposteDamage, player.transform.position, transform.position);
                     }
 
                     player.healthEvent.CallParryEvent();
                     player.health.PostHitImmunity(true);
                     return;
                 }
+
+                if (player.playerControl.isDashing) return; // If player is in dash mode, player will receive no damage
 
                 float blindPenalty = enemy.isBlind ? 0.5f : 0f;
 
@@ -156,6 +159,8 @@ public class DealContactDamage : MonoBehaviour
                                     CheckRootStatus(player);
                                     CheckChillStatus(player);
                                     CheckFrostStatus(player);
+                                    CheckStaticStatus(player);
+                                    CheckParalyzeStatus(player);
                                     CheckBlindStatus(player);
                                     CheckCurseStatus(player);
                                     CheckFearStatus(player);
@@ -529,6 +534,59 @@ public class DealContactDamage : MonoBehaviour
 
                 player.moveStatus |= MoveStatus.Frozen;
                 player.healthEvent.CallGetFrostEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check static status
+    /// </summary>
+    public void CheckStaticStatus(Player player)
+    {
+        if (player.isImmunetoParalyze) return;
+
+        bool isParalyzed = (player.moveStatus & MoveStatus.Paralyze) != 0;
+
+        if (enemy.enemyDetails.hasStaticDamage && player.health.GetCurrentHealth() > 0)
+        {
+            float randomDice = Random.Range(0f, 1f);
+
+            if (randomDice < enemy.enemyDetails.staticChance)
+            {
+                if (player.isStatic && !isParalyzed)
+                {
+                    player.moveStatus |= MoveStatus.Paralyze; // Second chill 
+                    player.healthEvent.CallGetParalyzedEvent();
+
+                    player.healthEvent.CallStaticCuredEvent();
+                }
+                else if (!player.isStatic && !isParalyzed)
+                {
+                    player.isStatic = true;
+                    player.healthEvent.CallStaticCuredEvent();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check paralyze status
+    /// </summary>
+    private void CheckParalyzeStatus(Player player)
+    {
+        if (player.isImmunetoParalyze) return;
+
+        bool isParalyzed = (player.moveStatus & MoveStatus.Paralyze) != 0;
+
+        if (enemy.enemyDetails.hasParalyzeDamage && !isParalyzed)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < enemy.enemyDetails.paralyzeChance - player.additionalNegativeStatusEffectNegatorModifier)
+            {
+                player.playerControl.isPlayerRolling = false;
+
+                player.moveStatus |= MoveStatus.Paralyze;
+                player.healthEvent.CallGetParalyzedEvent();
             }
         }
     }

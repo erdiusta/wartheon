@@ -88,6 +88,21 @@ public class HealthEvent : MonoBehaviour
         GetShattered?.Invoke(this);
     }
 
+
+    public event Action<HealthEvent> GetStatic;
+
+    public void CallGetStaticEvent()
+    {
+        GetStatic?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> GetParalyzed;
+
+    public void CallGetParalyzedEvent()
+    {
+        GetParalyzed?.Invoke(this);
+    }
+
     public event Action<HealthEvent> GetCursed;
 
     public void CallGetCurseEvent()
@@ -114,6 +129,13 @@ public class HealthEvent : MonoBehaviour
     public void CallGetBlindEvent()
     {
         GetBlind?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> CuredCompletely;
+
+    public void CallCuredCompletelyEvent()
+    {
+        CuredCompletely?.Invoke(this);
     }
 
     public event Action<HealthEvent> WarmCured;
@@ -192,6 +214,20 @@ public class HealthEvent : MonoBehaviour
     public void CallShatterCuredEvent()
     {
         ShatterCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> StaticCured;
+
+    public void CallStaticCuredEvent()
+    {
+        StaticCured?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> ParalyzeCured;
+
+    public void CallParalyzeCuredEvent()
+    {
+        ParalyzeCured?.Invoke(this);
     }
 
     public event Action<HealthEvent> CurseCured;
@@ -331,7 +367,7 @@ public class HealthEvent : MonoBehaviour
 
     public event Action<HealthEvent> OnKynarasEmbraceActive;
 
-    public void CallKynarasSealSpecialMoveEvent()
+    public void CallKynarasEmbraceSpecialMoveEvent()
     {
         OnKynarasEmbraceActive?.Invoke(this);
     }
@@ -412,6 +448,63 @@ public class HealthEvent : MonoBehaviour
     public void CallFeastOfWarWoreOffEvent()
     {
         OnFeastOfWarEffectEnded?.Invoke(this);
+    }
+
+
+    public event Action<HealthEvent> OnNyxasReflexActive;
+
+    public void CallNyxasReflexSpecialMoveEvent()
+    {
+        OnNyxasReflexActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnNyxasReflexEffectEnded;
+
+    public void CallNyxasReflexSpecialMoveEndEvent()
+    {
+        OnNyxasReflexEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnFadeAndFeedActive;
+
+    public void CallFadeAndFeedSpecialMoveEvent()
+    {
+        OnFadeAndFeedActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnFadeAndFeedEffectEnded;
+
+    public void CallFadeAndFeedSpecialMoveEndEvent()
+    {
+        OnFadeAndFeedEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnNymarasWindveilActive;
+
+    public void CallNymarasWindveilSpecialMoveEvent()
+    {
+        OnNymarasWindveilActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnNymarasWindveilEffectEnded;
+
+    public void CallNymarasWindveilWoreOffEvent()
+    {
+        OnNymarasWindveilEffectEnded?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnIonicRejuvenationActive;
+
+    public void CallIonicRejuvenationSpecialMoveEvent()
+    {
+        OnIonicRejuvenationActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnIonicRejuvenationEffectEnded;
+
+    public void CallIonicRejuvenationWoreOffEvent()
+    {
+        OnIonicRejuvenationEffectEnded?.Invoke(this);
     }
 
     // INNER PATH

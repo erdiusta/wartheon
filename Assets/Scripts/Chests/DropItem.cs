@@ -332,38 +332,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                                 InputManager.Instance.isPressedPreviousFrame = false;
                             }
                         }
-                        else if (hasActiveDrop)
-                        {
-                            if (InputManager.Instance.interaction.action.IsPressed() && !InputManager.interactionDisabled)
-                            {
-                                if (!InputManager.Instance.isPressedPreviousFrame)
-                                {
-                                    if (nearestDropItem != this) return;
-
-                                    // Drop process
-                                    if (player.selectedActiveItem.GetCurrentActiveItem() != null && !isPickedUp)
-                                    {
-                                        player.playerControl.DropProcess(DropType.ActiveItem);
-                                    }
-
-                                    // Pick up process
-                                    if (player.selectedActiveItem.GetCurrentActiveItem() == null)
-                                    {
-                                        isColliding = false;
-                                        CollectActiveItem(player, this);
-                                    }
-                                }
-
-                                if (isPickedUp)
-                                {
-                                    InputManager.Instance.isPressedPreviousFrame = true;
-                                }
-                            }
-                            else
-                            {
-                                InputManager.Instance.isPressedPreviousFrame = false;
-                            }
-                        }
                         else if (hasSecondaryPassiveDrop)
                         {
                             if (InputManager.Instance.interaction.action.IsPressed() && !InputManager.interactionDisabled)
@@ -446,22 +414,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                             else
                             {
                                 InputManager.Instance.isPressedPreviousFrame = false;
-                            }
-                        }
-                        else if (hasActiveDrop)
-                        {
-                            // Drop process
-                            if (player.selectedActiveItem.GetCurrentActiveItem() != null && !isPickedUp)
-                            {
-                                player.playerControl.DropProcess(DropType.ActiveItem);
-                            }
-
-                            // Pick up process
-                            if (player.selectedActiveItem.GetCurrentActiveItem() == null)
-                            {
-                                isColliding = false;
-                                CollectActiveItem(player, this);
-                                chest.chestState = ChestState.empty;
                             }
                         }
                         else if (hasSecondaryPassiveDrop)
@@ -915,42 +867,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         passiveItemDetails = null;
         animator.runtimeAnimatorController = null;
         spriteRenderer.sprite = null;
-        Destroy(gameObject, 1f);
-    }
-
-    /// <summary>
-    /// Collect an active item and add it to the player's current active item
-    /// </summary>
-    private void CollectActiveItem(Player player, DropItem chestItem)
-    {
-        if (!hasActiveDrop) return;
-
-        if (isPickedUp || isColliding) return;
-
-        ActiveItem activeItem = new ActiveItem();
-        activeItem.activeItemDetails = activeItemDetails;
-        activeItem.activeItemMaxCharge = activeItemDetails.activeItemMaxCharge + player.additionalActiveItemCharge;
-
-        if (activeItemDetails != null)
-        {
-            chestItem.remainingItemCharge = droppedByPlayer ? chestItem.remainingItemCharge : activeItem.activeItemMaxCharge;
-        }
-
-        if (!droppedByPlayer)
-        {
-            activeItem.activeItemRemainingCharge = activeItem.activeItemMaxCharge;
-        }
-
-        player.AddActiveItemToPlayer(activeItemDetails, this, chestItem.remainingItemCharge);
-
-        pickUpAnimator.SetTrigger("pickUp");
-        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
-
-        isColliding = true;
-        isPickedUp = true;
-
-        //transform.SetParent(player.transform);
-
         Destroy(gameObject, 1f);
     }
 }

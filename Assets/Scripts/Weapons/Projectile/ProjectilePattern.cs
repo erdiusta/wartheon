@@ -22,6 +22,7 @@ public class ProjectilePattern : MonoBehaviour, IFireable
     ProjectileDetailsSO projectileDetails;
     ActiveItemDetailsSO activeItemDetails;
     float projectileChargeTimer;
+    Vector3 velocity;
 
     public GameObject GetGameObject()
     {
@@ -51,7 +52,9 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None,
         bool isTripleThreat = false, bool isBindingArrow = false, bool isArrowOfTheSeven = false, ProjectileDetailsSO grappleDetails = null,
         ProjectileDetailsSO iceBreakerDetails = null, bool isFireBlast = false, ProjectileDetailsSO fireBlastDetails = null, bool isBlazingCyclone = false,
-        ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null)
+        ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null, bool isShiruken = false,
+        ProjectileDetailsSO shirukenDetails = null, bool isChaingLightning = false, ProjectileDetailsSO chainLightningDetails = null,
+        ChainLightningPhase chainLightningPhase = ChainLightningPhase.None)
     {
         this.projectileDetails = projectileDetails;
         this.projectileSpeed = projectileSpeed;
@@ -75,55 +78,16 @@ public class ProjectilePattern : MonoBehaviour, IFireable
 
             projectileArray[i].ResetProjectileState();
 
-            projectileArray[i].InitializeProjectile(belongingEnemy, false, projectileDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true, fallingFromSkies, isPenetrationArrow,
-                projectileCounter, totalProjectiles, 0, 0, 0, 0, 0, 0, 0, 0, isTripleThreat, isBindingArrow, isArrowOfTheSeven, grappleDetails, iceBreakerDetails, isFireBlast, fireBlastDetails,
-                isBlazingCyclone, blazingCycloneDetails, isThrowingAxe);
+            projectileArray[i].InitializeProjectile(belongingEnemy, false, projectileDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true, 
+                fallingFromSkies, isPenetrationArrow, projectileCounter, totalProjectiles, 0, 0, 0, 0, 0, 0, 0, 0, isTripleThreat, isBindingArrow, isArrowOfTheSeven, 
+                grappleDetails, iceBreakerDetails, isFireBlast, fireBlastDetails, isBlazingCyclone, blazingCycloneDetails, isThrowingAxe, throwingAxeDetails, isShiruken, 
+                shirukenDetails);
         }
 
         // Set ammo charge timer - this will hold the ammo briefly
         if (projectileDetails.projectileChargeTime > 0f)
         {
             projectileChargeTimer = projectileDetails.projectileChargeTime;
-        }
-        else
-        {
-            projectileChargeTimer = 0f;
-        }
-    }
-
-    // FOR ACTIVE ITEM
-    public void InitializeProjectile(bool headShotHappened, ActiveItemDetailsSO activeItemDetails, float aimAngle, 
-        float weaponAimAngle, float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement)
-    {
-        this.activeItemDetails = activeItemDetails;
-        this.projectileSpeed = projectileSpeed;
-
-        // Set fire direction
-        SetFireDirection(activeItemDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector);
-
-        // Set ammo range
-        projectileRange = activeItemDetails.projectileRange;
-
-        // Activate ammo pattern gameobject
-        gameObject.SetActive(true);
-
-        // Loop through all child ammo and initialize it
-        for (int i = 0; i < projectileArray.Length; i++)
-        {
-            // Reset transform
-            projectileArray[i].transform.localPosition = cachedLocalPositions[i];
-            projectileArray[i].transform.localEulerAngles = cachedLocalRotations[i];
-            projectileArray[i].transform.localScale = cachedLocalScales[i];
-
-            projectileArray[i].ResetProjectileState();
-
-            projectileArray[i].InitializeProjectile(false, activeItemDetails, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, true);
-        }
-
-        // Set ammo charge timer - this will hold the ammo briefly
-        if (activeItemDetails.projectileChargeTime > 0f)
-        {
-            projectileChargeTimer = activeItemDetails.projectileChargeTime;
         }
         else
         {
@@ -243,6 +207,24 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         }
     }
 
+    // This is for bouncing projectiles
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // BOUNCING PROCESS
+        if (projectileDetails != null && projectileDetails.isBouncing)
+        {
+            if (collision.collider.tag == Settings.collisionTilemap || collision.collider.tag == Settings.environment)
+            {
+                // Reflect off wall/prop
+                Vector2 normal = collision.contacts[0].normal;
+                velocity = Vector2.Reflect(velocity, normal);
+
+                float angle = HelperUtilities.GetAngleFromVector(velocity);
+                transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            }
+        }
+    }
+
     /// <summary>
     /// Set projectile fire direction based on the input angle and direction adjusted by the random spread - PROJECTILE
     /// </summary>
@@ -250,33 +232,6 @@ public class ProjectilePattern : MonoBehaviour, IFireable
     {
         // calculate random spread angle between min and max
         float randomSpread = Random.Range(projectileDetails.projectileSpreadMin, projectileDetails.projectileSpreadMax);
-
-        // Get a random spread toggle of 1 or -1
-        int spreadToggle = Random.Range(0, 2) * 2 - 1;
-
-        if (weaponAimDirectionVector.magnitude < Settings.useAimAngleDistance)
-        {
-            fireDirectionAngle = aimAngle;
-        }
-        else
-        {
-            fireDirectionAngle = weaponAimAngle;
-        }
-
-        // Adjust projectile fire angle angle by random spread
-        fireDirectionAngle += spreadToggle * randomSpread;
-
-        // Set projectile fire direction
-        fireDirectionVector = HelperUtilities.GetDirectionVectorFromAngle(fireDirectionAngle);
-    }
-
-    /// <summary>
-    /// Set projectile fire direction based on the input angle and direction adjusted by the random spread - ACTIVE ITEM
-    /// </summary>
-    private void SetFireDirection(ActiveItemDetailsSO activeItemDetails, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector)
-    {
-        // calculate random spread angle between min and max
-        float randomSpread = Random.Range(activeItemDetails.projectileSpreadMin, activeItemDetails.projectileSpreadMax);
 
         // Get a random spread toggle of 1 or -1
         int spreadToggle = Random.Range(0, 2) * 2 - 1;

@@ -763,8 +763,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         if (InputManager.TutorialEnabled) bookView.GetComponent<Animator>().updateMode = AnimatorUpdateMode.Normal;
         else bookView.GetComponent<Animator>().updateMode = AnimatorUpdateMode.UnscaledTime;
 
-        Transform arrowTransform = bookView.transform.GetChild(8);
-        Transform secondArrowTransform = bookView.transform.GetChild(9);
+        Transform arrowTransform = bookView.transform.GetChild(7);
+        Transform secondArrowTransform = bookView.transform.GetChild(8);
 
         TutorialIndicatorArrowTransactions(arrowTransform, secondArrowTransform);
 

@@ -84,12 +84,20 @@ public static class StaticEventHandler
         OnBuildInfoUnhovered?.Invoke(new SkillPointsArgs { innerPathDetails = innerPathDetails });
     }
 
-    // Build point used
+    // Inner path point used
     public static event Action<SkillPointsArgs> OnSkillPointUsed;
 
     public static void CallSkillPointsUsed(InnerPathDetailsSO innerPathDetails)
     {
         OnSkillPointUsed?.Invoke(new SkillPointsArgs { innerPathDetails = innerPathDetails });
+    }
+
+    // Skill point boost used
+    public static event Action<SkillBoostArgs> OnSkillBoostUsed;
+
+    public static void CallSkillBoostUsed(int skillBoostLevel)
+    {
+        OnSkillBoostUsed?.Invoke(new SkillBoostArgs { skillBoostLevel = skillBoostLevel });
     }
 
     // Room changed event
@@ -583,6 +591,11 @@ public class IntroductionPopUpUIArgs : EventArgs
 public class SkillPointsArgs : EventArgs
 {
     public InnerPathDetailsSO innerPathDetails;
+}
+
+public class SkillBoostArgs : EventArgs
+{
+    public int skillBoostLevel;
 }
 
 public class MobHoverArgs : EventArgs

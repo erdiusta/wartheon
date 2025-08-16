@@ -22,6 +22,12 @@ public class ActiveUniqueSkillDetailsSO : ScriptableObject
     public float activeUniqueSkillEffectiveDuration = 0f;
 
     [Space(10)]
+    [Header("Skill Recast Details")]
+    public float activeUniqueSkillRecastCooldown = 0f;
+    public float activeUniqueSkillRecastDuration = 0f;
+    public int activeUniqueSkillRecastRepeatCount = 0;
+
+    [Space(10)]
     [Header("Mana Details")]
     public int activeUniqueSkillManaCost = 10;
     public int activeUniqueSkillManaReserveCost = 15;

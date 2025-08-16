@@ -21,13 +21,13 @@ public class Mana : MonoBehaviour
         // Trigger a mana event for UI update
         if (player != null && !player.isInitialized) return;
 
+        // Attempt to load components
+        player = GetComponent<Player>();
+
         if (player == null)
         {
             manaEvent.CallManaChangedEvent(currentMana);
         }
-
-        // Attempt to load components
-        player = GetComponent<Player>();
     }
 
     private void Update()

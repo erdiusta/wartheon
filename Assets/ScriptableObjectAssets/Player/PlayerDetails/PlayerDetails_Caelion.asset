@@ -15,7 +15,6 @@ MonoBehaviour:
   playerCharacterName: Caelion
   playerCharacterIndex: 0
   playerPrefab: {fileID: 38858171499291080, guid: af0377fdaae0f9149837404546914c2a, type: 3}
-  playerClonePrefab: {fileID: 38858171499291080, guid: 346ad554c5e0aae41adf3cae0cc87e16, type: 3}
   collectibleWeaponsArray: []
   bodyRuntimeAnimatorController: {fileID: 9100000, guid: 836fd2be91cb18a48a7e9b5427b0fb5c, type: 2}
   primaryStats:
@@ -41,18 +40,18 @@ MonoBehaviour:
   thirdActiveSkillDetails: {fileID: 11400000, guid: e640bbd84dc798e49944e87df1ad0576, type: 2}
   fourthActiveSkillDetails: {fileID: 11400000, guid: a39c68cdbba39a545a3baf68007c1289, type: 2}
   fifthActiveSkillDetails: {fileID: 11400000, guid: 882f6a5e3c2b32c47954c564313da533, type: 2}
-  cataclysmMeteor: {fileID: 0}
+  throwingAxeDetails: {fileID: 0}
+  shirukenDetails: {fileID: 0}
   grappleDetails: {fileID: 0}
   iceBreakerDetails: {fileID: 0}
   absoluteZeroDetails: {fileID: 0}
+  fireBlastDetails: {fileID: 0}
+  blazingCycloneDetails: {fileID: 0}
   standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   penetrateMaterial: {fileID: 0}
   applyScreenShake: 1
   shakeIntensity: 1.5
   shakeDuration: 0.8
-  selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
-  activeItemsList:
-  - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
   passiveItemsList: []
   startingWeapon: {fileID: 11400000, guid: 98962520648a5db4dafef4fea8787065, type: 2}
   mainHandAnimatorController: {fileID: 9100000, guid: 4d6238627c4ee314e8a1a4fec3ad65d4, type: 2}

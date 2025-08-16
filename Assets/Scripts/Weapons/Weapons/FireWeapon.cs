@@ -136,49 +136,41 @@ public class FireWeapon : MonoBehaviour
         }
 
         // Standard weapon routine
-        if (!fireWeaponEventArgs.isActiveItem)
+        if (tag == Settings.enemyTag)
         {
-            if (tag == Settings.enemyTag)
-            {
-                // Flag firing
-                enemy.isFiring = true;
-            }
-
-            // Handle weapon precharge timer
-            WeaponPrecharge(fireWeaponEventArgs);
-
-            // Weapon fire
-            if (fireWeaponEventArgs.fire)
-            {
-                if (fireWeaponEventArgs.sepharothPhase == SepharothPhase.InvisibleAndMine)
-                {
-                    firePrechargeTimer = -3f; // Prevent charger issue for mine
-                }
-
-                bool isShotSpecialSkill = fireWeaponEventArgs.isIceBreaker || fireWeaponEventArgs.isFireBlast || fireWeaponEventArgs.isPenetrationArrow || 
-                    fireWeaponEventArgs.isBindingArrow || fireWeaponEventArgs.isArrowOfTheSeven || fireWeaponEventArgs.grappleDetails != null ||
-                    fireWeaponEventArgs.isBlazingCyclone || fireWeaponEventArgs.isThrowingAxe; 
-
-                // Test if weapon is ready to fire
-                if (IsWeaponReadyToFire() || isShotSpecialSkill)
-                {
-                    FireProjectile(fireWeaponEventArgs.belongingEnemy, fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector, 
-                        fireWeaponEventArgs.isLaser, fireWeaponEventArgs.isIceBreaker, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.moravellePhase, 
-                        fireWeaponEventArgs.treantPhase,fireWeaponEventArgs.galvanusPhase, fireWeaponEventArgs.sepharothPhase, fireWeaponEventArgs.frostWrymPhase,
-                        fireWeaponEventArgs.venomancerPhase, fireWeaponEventArgs.fireWrymPhase, fireWeaponEventArgs.moldranPhase, fireWeaponEventArgs.isTripleThreat,
-                        fireWeaponEventArgs.isBindingArrow, fireWeaponEventArgs.isArrowOfTheSeven, fireWeaponEventArgs.grappleDetails, fireWeaponEventArgs.iceBreakerDetails,
-                        fireWeaponEventArgs.isFireBlast, fireWeaponEventArgs.fireBlastDetails, fireWeaponEventArgs.isBlazingCyclone, fireWeaponEventArgs.blazingCycloneDetails,
-                        fireWeaponEventArgs.isThrowingAxe, fireWeaponEventArgs.throwingAxeDetails);
-                    ResetCooldownTimer(fireWeaponEventArgs.moravellePhase);
-                    ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
-                }
-            }
+            // Flag firing
+            enemy.isFiring = true;
         }
-        // Active item routine
-        else
+
+        // Handle weapon precharge timer
+        WeaponPrecharge(fireWeaponEventArgs);
+
+        // Weapon fire
+        if (fireWeaponEventArgs.fire)
         {
-            FireProjectile(fireWeaponEventArgs.belongingEnemy, fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
-                fireWeaponEventArgs.isLaser, fireWeaponEventArgs.isIceBreaker, true);
+            if (fireWeaponEventArgs.sepharothPhase == SepharothPhase.InvisibleAndMine)
+            {
+                firePrechargeTimer = -3f; // Prevent charger issue for mine
+            }
+
+            bool isShotSpecialSkill = fireWeaponEventArgs.isIceBreaker || fireWeaponEventArgs.isFireBlast || fireWeaponEventArgs.isPenetrationArrow ||
+                fireWeaponEventArgs.isBindingArrow || fireWeaponEventArgs.isArrowOfTheSeven || fireWeaponEventArgs.grappleDetails != null ||
+                fireWeaponEventArgs.isBlazingCyclone || fireWeaponEventArgs.isThrowingAxe || fireWeaponEventArgs.isShiruken || fireWeaponEventArgs.isChainLightning;
+
+            // Test if weapon is ready to fire
+            if (IsWeaponReadyToFire() || isShotSpecialSkill)
+            {
+                FireProjectile(fireWeaponEventArgs.belongingEnemy, fireWeaponEventArgs.aimAngle, fireWeaponEventArgs.weaponAimAngle, fireWeaponEventArgs.weaponAimDirectionVector,
+                    fireWeaponEventArgs.isLaser, fireWeaponEventArgs.isIceBreaker, false, fireWeaponEventArgs.isPenetrationArrow, fireWeaponEventArgs.moravellePhase,
+                    fireWeaponEventArgs.treantPhase, fireWeaponEventArgs.galvanusPhase, fireWeaponEventArgs.sepharothPhase, fireWeaponEventArgs.frostWrymPhase,
+                    fireWeaponEventArgs.venomancerPhase, fireWeaponEventArgs.fireWrymPhase, fireWeaponEventArgs.moldranPhase, fireWeaponEventArgs.isTripleThreat,
+                    fireWeaponEventArgs.isBindingArrow, fireWeaponEventArgs.isArrowOfTheSeven, fireWeaponEventArgs.grappleDetails, fireWeaponEventArgs.iceBreakerDetails,
+                    fireWeaponEventArgs.isFireBlast, fireWeaponEventArgs.fireBlastDetails, fireWeaponEventArgs.isBlazingCyclone, fireWeaponEventArgs.blazingCycloneDetails,
+                    fireWeaponEventArgs.isThrowingAxe, fireWeaponEventArgs.throwingAxeDetails, fireWeaponEventArgs.isShiruken, fireWeaponEventArgs.shirukenDetails,
+                    fireWeaponEventArgs.isChainLightning, fireWeaponEventArgs.chainLightningDetails, fireWeaponEventArgs.chainLightningPhase);
+                ResetCooldownTimer(fireWeaponEventArgs.moravellePhase);
+                ResetPrechargeTimer(fireWeaponEventArgs.firePreviousFrame);
+            }
         }
     }
 
@@ -283,73 +275,62 @@ public class FireWeapon : MonoBehaviour
         VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None,
         bool isTripleThreat = false, bool isBindingArrow = false, bool isArrowOfTheSeven = false, ProjectileDetailsSO grappleDetails = null,
         ProjectileDetailsSO iceBreakerDetails = null, bool isFireBlast = false, ProjectileDetailsSO fireBlastDetails = null, bool isBlazingCyclone = false,
-        ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null)
+        ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null, bool isShiruken = false,
+        ProjectileDetailsSO shirukenDetails = null, bool isChainLightning = false, ProjectileDetailsSO chainLightningDetails = null,
+        ChainLightningPhase chainLightningPhase = ChainLightningPhase.None)
     {
-        if (!isActiveItem)
+        ProjectileDetailsSO currentProjectile;
+
+        if (galvanusPhase == GalvanusPhase.LightningBolt || sepharothPhase == SepharothPhase.InvisibleAndMine || frostWrymPhase == FrostWrymPhase.Icicle ||
+            venomancerPhase == VenomancerPhase.StoneRain || fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
         {
-            ProjectileDetailsSO currentProjectile;
-
-            if (galvanusPhase == GalvanusPhase.LightningBolt || sepharothPhase == SepharothPhase.InvisibleAndMine || frostWrymPhase == FrostWrymPhase.Icicle ||
-                venomancerPhase == VenomancerPhase.StoneRain || fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
-            {
-                currentProjectile = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSecondaryProjectile;
-            }
-            else if (grappleDetails != null)
-            {
-                currentProjectile = grappleDetails;
-            }
-            else if (iceBreakerDetails != null)
-            {
-                currentProjectile = iceBreakerDetails;
-            }
-            else if (fireBlastDetails != null)
-            {
-                currentProjectile = fireBlastDetails;
-            }
-            else if (blazingCycloneDetails != null)
-            {
-                currentProjectile = blazingCycloneDetails;
-            }
-            else if (throwingAxeDetails != null)
-            {
-                currentProjectile = throwingAxeDetails;
-            }
-            else
-            {
-                currentProjectile = activeWeapon.GetCurrentProjectile();
-            }
-
-            if (currentProjectile != null && !isFiringCoroutineRunning)
-            {
-                // Fire projectile routine
-                StartCoroutine(FireProjectileRoutine(belongingEnemy, currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, isIceBreaker, 
-                    false, isPenetrationArrow, moravellePhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase,
-                    isTripleThreat, isBindingArrow, isArrowOfTheSeven, grappleDetails, iceBreakerDetails, isFireBlast, fireBlastDetails, isBlazingCyclone, blazingCycloneDetails,
-                    isThrowingAxe, throwingAxeDetails));
-            }
+            currentProjectile = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSecondaryProjectile;
+        }
+        else if (grappleDetails != null)
+        {
+            currentProjectile = grappleDetails;
+        }
+        else if (iceBreakerDetails != null)
+        {
+            currentProjectile = iceBreakerDetails;
+        }
+        else if (fireBlastDetails != null)
+        {
+            currentProjectile = fireBlastDetails;
+        }
+        else if (blazingCycloneDetails != null)
+        {
+            currentProjectile = blazingCycloneDetails;
+        }
+        else if (throwingAxeDetails != null)
+        {
+            currentProjectile = throwingAxeDetails;
+        }
+        else if (shirukenDetails != null)
+        {
+            currentProjectile = shirukenDetails;
+        }
+        else if (chainLightningDetails != null)
+        {
+            currentProjectile = chainLightningDetails;
         }
         else
         {
-            ActiveItemDetailsSO currentActiveItem = selectedActiveItem.GetCurrentActiveItem().activeItemDetails;
+            currentProjectile = activeWeapon.GetCurrentProjectile();
+        }
 
-            if (currentActiveItem != null)
-            {
-                if (selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge > 0 && !isFiringCoroutineRunning)
-                {
-                    if (currentActiveItem.activeItemSwingSoundEffect != null)
-                    {
-                        SoundEffectManager.Instance.PlaySoundEffect(currentActiveItem.activeItemSwingSoundEffect);
-                    }
-
-                    // Fire projectile routine for active item
-                    StartCoroutine(FireProjectileRoutine(currentActiveItem, aimAngle, weaponAimAngle, weaponAimDirectionVector, isIceBreaker, true));
-                }
-            }
+        if (currentProjectile != null && !isFiringCoroutineRunning)
+        {
+            // Fire projectile routine
+            StartCoroutine(FireProjectileRoutine(belongingEnemy, currentProjectile, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, isIceBreaker,
+                false, isPenetrationArrow, moravellePhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase,
+                isTripleThreat, isBindingArrow, isArrowOfTheSeven, grappleDetails, iceBreakerDetails, isFireBlast, fireBlastDetails, isBlazingCyclone, blazingCycloneDetails,
+                isThrowingAxe, throwingAxeDetails, isShiruken, shirukenDetails, isChainLightning, chainLightningDetails, chainLightningPhase));
         }
     }
 
     /// <summary>
-    /// Coroutine to spawn multiple ammo per shot if specified in the ammo details - PROJECTILE
+    /// Coroutine to spawn multiple ammo per shot if specified in the projectile details - PROJECTILE
     /// </summary>
     IEnumerator  FireProjectileRoutine(Enemy belongingEnemy, ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
         bool isLaser = false, bool isIceBreaker = false, bool isActiveItem = false, bool isPenetrationArrow = false, MoravellePhase moravellePhase = MoravellePhase.None, 
@@ -357,7 +338,9 @@ public class FireWeapon : MonoBehaviour
         FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None,
         MoldranPhase moldranPhase = MoldranPhase.None, bool isTripleThreat = false, bool isBindingArrow = false, bool isArrowOfTheSeven = false,
         ProjectileDetailsSO grappleDetails = null, ProjectileDetailsSO iceBreakerDetails = null, bool isFireBlast = false, ProjectileDetailsSO fireBlastDetails = null,
-        bool isBlazingCyclone = false, ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null)
+        bool isBlazingCyclone = false, ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null,
+        bool isShiruken = false, ProjectileDetailsSO shirukenDetails = null, bool isChainLightning = false, ProjectileDetailsSO chainLightningDetails = null,
+        ChainLightningPhase chainLightningPhase = ChainLightningPhase.None)
     {      
         int projectileCounter = 0;
 
@@ -658,7 +641,7 @@ public class FireWeapon : MonoBehaviour
                 {
                     projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, player.GetPlayerPosition(), Quaternion.identity, transform);
                 }
-                else if (throwingAxeDetails)
+                else if (throwingAxeDetails != null || shirukenDetails != null)
                 {
                     projectile = (IFireable)PoolManager.Instance.ReuseComponent(projectilePrefab, player.GetPlayerPosition() + new Vector3(0f, 0.6f, 0f), 
                         Quaternion.identity, transform);
@@ -681,7 +664,8 @@ public class FireWeapon : MonoBehaviour
             projectile.InitializeProjectile(belongingEnemy, isIceBreaker, currentProjectile, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector, false, 
                 false, isPenetrationArrow, projectileCounter - 1, projectilePerShot, moravellePhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, 
                 venomancerPhase, fireWrymPhase, moldranPhase, isTripleThreat, isBindingArrow, isArrowOfTheSeven, grappleDetails, iceBreakerDetails, 
-                isFireBlast, fireBlastDetails, isBlazingCyclone, blazingCycloneDetails, isThrowingAxe, throwingAxeDetails);
+                isFireBlast, fireBlastDetails, isBlazingCyclone, blazingCycloneDetails, isThrowingAxe, throwingAxeDetails, isShiruken, shirukenDetails,
+                isChainLightning, chainLightningDetails, chainLightningPhase);
 
             // Wait for projectile per shot timegap
             yield return new WaitForSeconds(projectileSpawnInterval);
@@ -699,74 +683,7 @@ public class FireWeapon : MonoBehaviour
         bool isGrapple = grappleDetails != null; // Don't play arrow sound if projectile is grapple
 
         // Weapon fired sound effect
-        WeaponSoundEffect(isActiveItem, isGrapple, isPenetrationArrow, isIceBreaker, isFireBlast, isBlazingCyclone);
-
-        if (enemy != null)
-        {
-            enemy.isFiring = false;
-        }
-
-        isFiringCoroutineRunning = false;
-    }
-
-    /// <summary>
-    /// Coroutine to spawn for specified active item details - ACTIVE ITEM
-    /// </summary>
-    IEnumerator FireProjectileRoutine(ActiveItemDetailsSO currentActiveItem, float aimAngle, float weaponAimAngle,
-        Vector3 weaponAimDirectionVector, bool headShotHappened, bool isActiveItem = false)
-    {
-        int projectileCounter = 0;
-
-        // Get random projectile per shot
-        int projectilePerShot = Random.Range(currentActiveItem.projectileSpawnAmountMin, currentActiveItem.projectileSpawnAmountMax + 1);
-
-        // Get random interval between projectile
-        float projectileSpawnInterval;
-
-        if (projectilePerShot > 1)
-        {
-            projectileSpawnInterval = Random.Range(currentActiveItem.projectileSpawnIntervalMin, currentActiveItem.projectileSpawnIntervalMax);
-        }
-        else
-        {
-            projectileSpawnInterval = 0f;
-        }
-
-        // Loop for number of projectile per shot
-        while (projectileCounter < projectilePerShot)
-        {
-            projectileCounter++;
-
-            // Get active item prefab from array
-            GameObject activeItemPrefab = currentActiveItem.activeItemPrefabArray[Random.Range(0, currentActiveItem.activeItemPrefabArray.Length)];
-
-            // Get random speed value
-            float projectileSpeed = Random.Range(currentActiveItem.projectileSpeedMin, currentActiveItem.projectileSpeedMax);
-
-            // Get Gameobject with IFireable component
-            IFireable projectile = (IFireable)PoolManager.Instance.ReuseComponent(activeItemPrefab, player.activeWeapon.GetMainHandShootPositionUp(), Quaternion.identity);
-
-            // Initialize projectile
-            projectile.InitializeProjectile(headShotHappened, currentActiveItem, aimAngle, weaponAimAngle, projectileSpeed, weaponAimDirectionVector);
-
-            // Wait for projectile per shot timegap
-            yield return new WaitForSeconds(projectileSpawnInterval);
-        }
-
-        // Reduce projectile clip count if not infinite clip capacity
-        if (!selectedActiveItem.GetCurrentActiveItem().activeItemDetails.hasNoProjectileNumberLimit)
-        {
-            selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge--;
-        }
-
-        // Call weapon fired event
-        weaponFiredEvent.CallActiveItemFiredEvent(selectedActiveItem.GetCurrentActiveItem());
-
-        // Display weapon shoot effect
-        WeaponShootEffect(aimAngle);
-
-        // Weapon fired sound effect
-        WeaponSoundEffect(isActiveItem, false, false, false, false, false);
+        WeaponSoundEffect(isActiveItem, isGrapple, isPenetrationArrow, isIceBreaker, isFireBlast, isBlazingCyclone, isChainLightning);
 
         if (enemy != null)
         {
@@ -861,7 +778,7 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Play weapon shooting sound effect
     /// </summary>
-    private void WeaponSoundEffect(bool isActiveItem, bool isGrapple, bool isPenetrationArrow, bool isIceBreaker, bool isFireBlast, bool isBlazingCyclone)
+    private void WeaponSoundEffect(bool isActiveItem, bool isGrapple, bool isPenetrationArrow, bool isIceBreaker, bool isFireBlast, bool isBlazingCyclone, bool isChainLightning)
     {
         if (isActiveItem) return;
 
@@ -876,9 +793,9 @@ public class FireWeapon : MonoBehaviour
         }
         else
         {
-            if (isIceBreaker)
+            if (isIceBreaker) 
             {
-                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.iceBreakerDetails.projectileFireSoundEffect); 
+                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.iceBreakerDetails.projectileFireSoundEffect);
                 return;
             }
             else if (isFireBlast)
@@ -889,6 +806,11 @@ public class FireWeapon : MonoBehaviour
             else if (isBlazingCyclone)
             {
                 SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.blazingCycloneDetails.projectileFireSoundEffect);
+                return;
+            }
+            else if (isChainLightning)
+            {
+                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.chainLightningDetails.projectileFireSoundEffect);
                 return;
             }
 

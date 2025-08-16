@@ -107,8 +107,10 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
                 HoverKynara();
                 break;
             case Character.Nymara:
+                HoverNymara();
                 break;
             case Character.Nyxa:
+                HoverNyxa();
                 break;
             default:
                 break;
@@ -179,8 +181,10 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
                     HoverKynara();
                     break;
                 case Character.Nymara:
+                    HoverNymara();
                     break;
                 case Character.Nyxa:
+                    HoverNyxa();
                     break;
                 default:
                     break;
@@ -221,6 +225,16 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
     public void HoverKarnag()
     {
         StartCoroutine(SelectionRoutine(5, nyveranSpotlight, karnagDetailsPopUp));
+    }
+
+    public void HoverNyxa()
+    {
+        StartCoroutine(SelectionRoutine(6, nyveranSpotlight, nyxaDetailsPopUp));
+    }
+
+    public void HoverNymara()
+    {
+        StartCoroutine(SelectionRoutine(7, nyveranSpotlight, nymaraDetailsPopUp));
     }
 
     private void DisableDetailsPopup(ref GameObject popupObject)
@@ -301,5 +315,7 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         DisableDetailsPopup(ref mycaraDetailsPopUp);
         DisableDetailsPopup(ref kynaraDetailsPopUp);
         DisableDetailsPopup(ref karnagDetailsPopUp);
+        DisableDetailsPopup(ref nyxaDetailsPopUp);
+        DisableDetailsPopup(ref nymaraDetailsPopUp);
     }
 }

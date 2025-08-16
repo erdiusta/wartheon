@@ -9,16 +9,19 @@ public class MeleeAttackMainHand : MonoBehaviour
 {
     public bool IsAttacking { get; set; }
 
+    [SerializeField] Transform mainHandCircleOriginTransform;
+    [SerializeField] Transform mainHandBoxOriginTransform;
+    [SerializeField] Transform mainHandTriangleOriginTransform;
+
+    [SerializeField] Transform offHandCircleOriginTransform;
+    [SerializeField] Transform offHandBoxOriginTransform;
+    [SerializeField] Transform offHandTriangleOriginTransform;
+
     MeleeAttackEvent meleeAttackEvent;
     AttackShape attackShape;
     AnimationEventHelperMainHand rightHandAnimationEventHelper;
     Animator mainHandWeaponAnimator;
-    CircleOrigin circleOrigin;
-    BoxOrigin boxOrigin;
-    TriangleOrigin triangleOrigin;
-    Transform circleOriginTransform;
-    Transform boxOriginTransform;
-    Transform triangleOriginTransform;
+
     Player player;
     bool mainHandAttackBlocked;
     bool offHandAttackBlocked;
@@ -27,6 +30,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     bool isBloodDrain;
     bool isCullTheMeek;
     bool isSheerCold;
+    bool isDontBlink;
+    bool isWhisperSlice;
 
     // Collision fields
     Collider2D[] _colliders = new Collider2D[10]; // Initial size
@@ -38,10 +43,6 @@ public class MeleeAttackMainHand : MonoBehaviour
         meleeAttackEvent = GetComponent<MeleeAttackEvent>();
         rightHandAnimationEventHelper = GetComponent<AnimationEventHelperMainHand>();
         mainHandWeaponAnimator = transform.GetChild(0).GetComponent<Animator>();
-
-        circleOrigin = GetComponentInChildren<CircleOrigin>();
-        boxOrigin = GetComponentInChildren<BoxOrigin>();
-        triangleOrigin = GetComponentInChildren<TriangleOrigin>();
     }
 
     private void OnEnable()
@@ -64,17 +65,11 @@ public class MeleeAttackMainHand : MonoBehaviour
         rightHandAnimationEventHelper.OnShieldBashEventCompleted.RemoveListener(ResetIsShieldBashing);
     }
 
-    void Start()
-    {
-        circleOriginTransform = circleOrigin.transform;
-        boxOriginTransform = boxOrigin.transform;
-        triangleOriginTransform = triangleOrigin.transform;
-    }
-
     private void MeleeAttackEvent_MeleeAttack(MeleeAttackEvent meleeAttackEvent, MeleeAttackEventArgs meleeAttackEventArgs)
     {
         Attack(meleeAttackEventArgs.weapon, meleeAttackEventArgs.attackShape, meleeAttackEventArgs.meleeHand, meleeAttackEventArgs.isBloodDrain, 
-            meleeAttackEventArgs.shieldBash, meleeAttackEventArgs.isCullTheMeek, meleeAttackEventArgs.isSheerCold);
+            meleeAttackEventArgs.shieldBash, meleeAttackEventArgs.isCullTheMeek, meleeAttackEventArgs.isSheerCold, meleeAttackEventArgs.isDontBlink,
+            meleeAttackEventArgs.isBladeDash);
     }
 
     /// <summary>
@@ -89,7 +84,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         if (offHandWeapon.weaponDetails.weaponClass == WeaponClass.Shield)
         {
-            DetectHandHit(offHandWeapon, AttackShape.Swing, MeleeHand.OffHand, isBloodDrain, true);
+            DetectHandHit(offHandWeapon, AttackShape.Cone, MeleeHand.OffHand, isBloodDrain, true);
         }
     }
 
@@ -107,19 +102,27 @@ public class MeleeAttackMainHand : MonoBehaviour
             Debug.LogError("Main weapon's weapon details reference is null!");
         }
 
-        DetectHandHit(mainHandWeapon, attackShape, MeleeHand.MainHand, isBloodDrain, false, isSheerCold);
+        DetectHandHit(mainHandWeapon, attackShape, MeleeHand.MainHand, isBloodDrain, false, isSheerCold, isDontBlink, isWhisperSlice);
 
         // Optional: also include off-hand detection here if desired
         Weapon offHandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
 
         if (offHandWeapon?.weaponDetails.isMeleeWeapon == true)
         {
-            AttackShape offHandMeleeAttackType = offHandWeapon.weaponDetails.hasSwing ? AttackShape.Swing : AttackShape.Thrust;
-            DetectHandHit(offHandWeapon, offHandMeleeAttackType, MeleeHand.OffHand, isBloodDrain);
+            if (isDontBlink)
+            {
+                DetectHandHit(offHandWeapon, AttackShape.Thrust, MeleeHand.OffHand, isBloodDrain, false, false, isDontBlink: true);
+            }
+            else
+            {
+                AttackShape offHandMeleeAttackType = offHandWeapon.weaponDetails.hasSwing ? AttackShape.Swing : AttackShape.Thrust;
+                DetectHandHit(offHandWeapon, offHandMeleeAttackType, MeleeHand.OffHand, isBloodDrain);
+            }
         }
     }
 
-    private void DetectHandHit(Weapon weapon, AttackShape attackType, MeleeHand hand, bool isBloodDrain, bool shieldBash = false, bool isSheerCold = false)
+    private void DetectHandHit(Weapon weapon, AttackShape attackType, MeleeHand hand, bool isBloodDrain, bool shieldBash = false, bool isSheerCold = false,
+        bool isDontBlink = false, bool isWhisperSlice = false)
     {
         if(hand == MeleeHand.OffHand && player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon &&
             player.isAxeThrowActive)
@@ -152,13 +155,28 @@ public class MeleeAttackMainHand : MonoBehaviour
             player.offHandSlotFilled = false;
         }
 
-        Transform originTransform = attackType switch
+        Transform originTransform = null;
+
+        if (hand == MeleeHand.MainHand)
         {
-            AttackShape.Swing => circleOriginTransform,
-            AttackShape.Thrust => boxOriginTransform,
-            AttackShape.Cone => triangleOriginTransform,
-            _ => null
-        };
+            originTransform = attackType switch
+            {
+                AttackShape.Swing => mainHandCircleOriginTransform,
+                AttackShape.Thrust => mainHandBoxOriginTransform,
+                AttackShape.Cone => mainHandTriangleOriginTransform,
+                _ => null
+            };
+        }
+        else if (hand == MeleeHand.OffHand)
+        {
+            originTransform = attackType switch
+            {
+                AttackShape.Swing => offHandCircleOriginTransform,
+                AttackShape.Thrust => offHandBoxOriginTransform,
+                AttackShape.Cone => offHandTriangleOriginTransform,
+                _ => null
+            };
+        }
 
         Collider2D attackCollider = originTransform.GetComponent<Collider2D>();
 
@@ -256,6 +274,8 @@ public class MeleeAttackMainHand : MonoBehaviour
                     CheckChillStatus(enemy);
                     CheckFrostStatus(enemy, isSheerCold);
                     CheckShatterStatus(enemy, ref inflictedDamage);
+                    CheckStaticStatus(enemy);
+                    CheckParalyzeStatus(enemy);
                     CheckRootStatus(enemy);
                     CheckWarmStatus(enemy);
                     CheckBurnStatus(enemy);
@@ -354,6 +374,8 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         if (isBloodDrain) effectiveArmor *= 0.8f - player.additionalArmorPenetrationModifier; // 20% Armor Penetration
 
+        if (isDontBlink) effectiveArmor *= 0.7f - player.additionalArmorPenetrationModifier; // 30% Armor Penetration
+
         if (player.isShatterCryActive) effectiveArmor *= 0.8f - player.additionalArmorPenetrationModifier;
 
         int inflictedNonElemental = (int)(nonElementalDamage * (1 - effectiveArmor));
@@ -423,18 +445,17 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             float randomCriticalDice = Random.Range(0f, 1f);
 
-            if (enemy != null && enemy.isBlind && player.playerDetails.playerCharacterIndex == Character.Morven)
-            {
-                randomCriticalDice = Mathf.Clamp01(randomCriticalDice ); 
-            }
-
             if (player.isBlind)
             {
                 criticalHitHappened = false;
             }
-            else
+            else if (enemy != null && enemy.isBlind && player.playerDetails.playerCharacterIndex == Character.Morven)
             {
                 criticalHitHappened = randomCriticalDice < player.currentMainHandCriticalHitChance + 0.25f; // Morven - Cloaked Precision Passive
+            }
+            else
+            {
+                criticalHitHappened = randomCriticalDice < player.currentMainHandCriticalHitChance;
             }
         }
 
@@ -524,13 +545,13 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <summary>
     /// Check poison status
     /// </summary>
-    private void CheckPoisonStatus(Enemy enemy, bool isActiveItem = false)
+    public void CheckPoisonStatus(Enemy enemy, bool isActiveItem = false, bool isVenomousIvy = false)
     {
-        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasPoisonDamage)
+        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasPoisonDamage || isVenomousIvy)
         {
             // Check get bleeding
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.poisonChance)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.poisonChance || isVenomousIvy)
             {
                 enemy.healthEvent.CallGetPoisonedEvent();
                 enemy.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
@@ -627,6 +648,55 @@ public class MeleeAttackMainHand : MonoBehaviour
         }
     }
 
+
+
+    /// <summary>
+    /// Check static status
+    /// </summary>
+    public void CheckStaticStatus(Enemy enemy, bool isNymarasWindveil = false)
+    {
+        EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
+        bool isParalyzed = (enemyAI.moveStatus & MoveStatus.Paralyze) != 0;
+
+        if ((player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasStaticDamage && enemy.health.currentHealth > 0) || isNymarasWindveil)
+        {
+            float randomDice = Random.Range(0f, 1f);
+
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.staticChance || isNymarasWindveil)
+            {
+                if (enemy.isStatic && !isParalyzed && !isNymarasWindveil)
+                {
+                    enemy.enemyAI.moveStatus |= MoveStatus.Paralyze; // Second static 
+                    enemy.healthEvent.CallStaticCuredEvent();
+                }
+                else if (!enemy.isChilled && !isParalyzed)
+                {
+                    enemy.isStatic = true;
+                    enemy.healthEvent.CallGetStaticEvent();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check paralyze status
+    /// </summary>
+    private void CheckParalyzeStatus(Enemy enemy, bool isSheerCold = false)
+    {
+        EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
+        bool isParalyzed = (enemyAI.moveStatus & MoveStatus.Paralyze) != 0;
+
+        if ((player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasParalyzeDamage && !isParalyzed) || isSheerCold)
+        {
+            float randomDice = Random.Range(0f, 1f);
+
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.paralyzeChance || isSheerCold)
+            {
+                enemy.enemyAI.moveStatus |= MoveStatus.Paralyze;
+            }
+        }
+    }
+
     /// <summary>
     /// Check slow status
     /// </summary>
@@ -673,15 +743,15 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <summary>
     /// Check root status
     /// </summary>
-    private void CheckRootStatus(Enemy enemy)
+    public void CheckRootStatus(Enemy enemy, bool isVenomousIvy = false)
     {
         EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
         bool isRooted = (enemyAI.moveStatus & MoveStatus.Root) != 0;
 
-        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasRootDamage && !isRooted)
+        if ((player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasRootDamage && !isRooted) || isVenomousIvy)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.rootChance)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.rootChance || isVenomousIvy)
             {
                 enemy.enemyAI.moveStatus |= MoveStatus.Root;
                 enemy.healthEvent.CallGetRootEvent();
@@ -737,12 +807,12 @@ public class MeleeAttackMainHand : MonoBehaviour
     {
         IsAttacking = false;
         player.playerControl.meleeAttackTypeMainHand = AttackShape.None;
-        ResetAnimations(isBloodDrain, isCullTheMeek, isSheerCold);
+        ResetAnimations(isBloodDrain, isCullTheMeek, isSheerCold, isWhisperSlice);
 
         player.animatePlayer.SetIdleAnimationParameters();
     }
 
-    private void ResetAnimations(bool isBloodDrain, bool isCullTheMeek, bool isSheerCold)
+    private void ResetAnimations(bool isBloodDrain, bool isCullTheMeek, bool isSheerCold, bool isWhisperSlice)
     {
         if (isBloodDrain) player.animator.SetBool("blood", false);
         if (isCullTheMeek) player.animator.SetBool("cullTheMeek", false);
@@ -751,6 +821,8 @@ public class MeleeAttackMainHand : MonoBehaviour
             player.animator.SetBool("sheerCold", false);
             mainHandWeaponAnimator.enabled = true;
         }
+        if (isDontBlink) player.animator.SetBool("dontBlink", false);
+        if (isWhisperSlice) player.animator.SetBool("whisperSlice", false);
     }
 
     public void ResetIsShieldBashing()
@@ -763,7 +835,8 @@ public class MeleeAttackMainHand : MonoBehaviour
         player.animatePlayer.SetIdleAnimationParameters();
     }
 
-    private void Attack(Weapon weapon, AttackShape attackShape, MeleeHand hand,bool isBloodDrain, bool shieldBash, bool isCullTheMeek, bool isSheerCold)
+    private void Attack(Weapon weapon, AttackShape attackShape, MeleeHand hand,bool isBloodDrain, bool shieldBash, bool isCullTheMeek, bool isSheerCold, 
+        bool isDontBlink, bool isWhisperSlice)
     {
         if (hand == MeleeHand.MainHand) if (mainHandAttackBlocked) return;
         if (hand == MeleeHand.OffHand) if (offHandAttackBlocked) return;
@@ -782,20 +855,25 @@ public class MeleeAttackMainHand : MonoBehaviour
         this.isBloodDrain = isBloodDrain;
         this.isCullTheMeek = isCullTheMeek;
         this.isSheerCold = isSheerCold;
+        this.isDontBlink = isDontBlink;
+        this.isWhisperSlice = isWhisperSlice;
 
-        if (!shieldBash && !isBloodDrain && !isCullTheMeek && !isSheerCold)
+        if (!shieldBash && !isBloodDrain && !isCullTheMeek && !isSheerCold && !isDontBlink)
         {
             weapon.onCooldown = true;
             player.animatePlayer.SetAttackAnimationParameters();
         }
 
+        Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+        Weapon offHandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
+
         // This means that's neither a dual wield nor a shield
-        if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
+        if (offHandWeapon == null)
         {
             // If weapon is a spear, thrust motions should be enabled
-            if (player.activeWeapon.GetCurrentMainHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Spear) 
+            if (mainHandWeapon != null && mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Spear) 
             {
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+                if (mainHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded)
                 {
                     player.animator.Play("EmptyThrustLong", 0, 0);
                 }
@@ -806,14 +884,13 @@ public class MeleeAttackMainHand : MonoBehaviour
             }
             else
             {
-                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+                if (mainHandWeapon != null)
                 {
-                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger || player.activeWeapon.GetCurrentMainHandWeapon().
-                        weaponDetails.weaponClass == WeaponClass.Claw)
+                    if (mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Dagger || mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw)
                     {
                         player.animator.Play("EmptyShort", 0, 0);  // Play short smear animation
                     }
-                    else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+                    else if (mainHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded)
                     {
                         if(isSheerCold) 
                         {
@@ -829,7 +906,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                 }
             }
         }
-        else if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+        else if (offHandWeapon.weaponDetails.weaponClass == WeaponClass.Shield)
         {
             if (shieldBash)
             {
@@ -838,16 +915,15 @@ public class MeleeAttackMainHand : MonoBehaviour
                 goto specialAttackMoves;
             }
 
-            if (player.activeWeapon.GetCurrentMainHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Spear)
+            if (mainHandWeapon != null && mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Spear)
             {
                 player.animator.Play("EmptyThrustS", 0, 0);
             }
             else
             {
-                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+                if (mainHandWeapon != null)
                 {
-                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger || player.activeWeapon.GetCurrentMainHandWeapon().
-                        weaponDetails.weaponClass == WeaponClass.Claw)
+                    if (mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Dagger || mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw)
                     {
                         player.animator.Play("EmptyShortS", 0, 0);  // Play short smear animation
                     }
@@ -860,9 +936,9 @@ public class MeleeAttackMainHand : MonoBehaviour
         }
         else
         {
-            if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+            if (mainHandWeapon != null)
             {
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger)
+                if (mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Dagger)
                 {
                     if (isBloodDrain)
                     {
@@ -874,11 +950,32 @@ public class MeleeAttackMainHand : MonoBehaviour
                         player.animator.SetBool("cullTheMeek", true);
                         goto specialAttackMoves;
                     }
+                    else if (isDontBlink)
+                    {
+                        player.animator.SetBool("dontBlink", true);
+                        goto specialAttackMoves;
+                    }
+                    else if (isWhisperSlice)
+                    {
+                        player.animator.SetBool("whisperSlice", true);
+                        goto specialAttackMoves;
+                    }
 
                     player.animator.Play("EmptyShortDW", 0, 0);  // Play short smear animation for dual wield
                 }
-                else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Claw)
+                else if (mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw)
                 {
+                    if (isDontBlink)
+                    {
+                        player.animator.SetBool("dontBlink", true);
+                        goto specialAttackMoves;
+                    }
+                    else if (isWhisperSlice)
+                    {
+                        player.animator.SetBool("whisperSlice", true);
+                        goto specialAttackMoves;
+                    }
+
                     player.animator.Play("EmptyThrustDW", 0, 0);  // Play thrust smear animation for dual wield
                 }
                 else
@@ -897,7 +994,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         else if (hand == MeleeHand.OffHand) offHandAttackBlocked = true;
 
 
-        StartCoroutine(DelayAttack(weapon, hand, shieldBash, isBloodDrain, isCullTheMeek, isSheerCold));
+        StartCoroutine(DelayAttack(weapon, hand, shieldBash, isBloodDrain, isCullTheMeek, isSheerCold, isDontBlink, isWhisperSlice));
 
         if (shieldBash)
         {
@@ -907,13 +1004,13 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             player.animator.Update(0);
             // Melee attack sound effect
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+            if (mainHandWeapon.weaponDetails.isMeleeWeapon)
             {
-                SoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
+                SoundEffect(mainHandWeapon.weaponDetails.weaponSwingSoundEffect);
             }
 
             // Weapon fired event for starting cooldown ui
-            player.weaponFiredEvent.CallWeaponFiredEvent(player.activeWeapon.GetCurrentMainHandWeapon(), true);
+            player.weaponFiredEvent.CallWeaponFiredEvent(mainHandWeapon, true);
         }
     }
 
@@ -960,9 +1057,10 @@ public class MeleeAttackMainHand : MonoBehaviour
         health.TakeDamage(damageDone, transform.position, health.transform.position, null, hand, bypass);
     }
 
-    IEnumerator DelayAttack(Weapon weapon, MeleeHand hand,bool shieldBash = false, bool bloodDrain = false, bool isCullTheMeek = false, bool isSheerCold = false)
+    IEnumerator DelayAttack(Weapon weapon, MeleeHand hand,bool shieldBash = false, bool bloodDrain = false, bool isCullTheMeek = false, 
+        bool isSheerCold = false, bool isDontBlink = false, bool isWhisperSlice = false)
     {
-        bool isSpecialMove = shieldBash || bloodDrain || isCullTheMeek || isSheerCold;
+        bool isSpecialMove = shieldBash || bloodDrain || isCullTheMeek || isSheerCold || isDontBlink || isWhisperSlice;
 
         if (isSpecialMove) yield return new WaitForSeconds(1f);
 

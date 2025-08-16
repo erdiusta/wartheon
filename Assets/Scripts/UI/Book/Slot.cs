@@ -181,8 +181,17 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             }
             else
             {
-                if (player.equippedPassiveItems[passiveItemSlotName] == null)
+                if (player.equippedPassiveItems != null &&
+                    player.equippedPassiveItems.TryGetValue(passiveItemSlotName, out var passiveItem))
                 {
+                    if (passiveItem == null)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                    }
+                }
+                else
+                {
+                    // Key doesn't exist, treat as empty slot (safe fail)
                     tooltipPanel.gameObject.SetActive(false);
                 }
             }
@@ -384,120 +393,6 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                         hitSpeedText.text = "+15% Fire Resistance";
                     }
                 }
-            }
-        }
-        else if (slotType == SlotType.Active)
-        {
-            headerText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
-            headerText.text = string.Empty;
-            levelText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
-            levelText.text = string.Empty;
-            weaponClassText.text = string.Empty;
-            hitSpeedText.text = string.Empty;
-            weaponWieldText.text = string.Empty;
-            damageText.text = string.Empty;
-            baseHandlingText.text = string.Empty;
-            crHitChanceText.text = string.Empty;
-            crHitDamageText.text = string.Empty;
-            elementalBiasText.text = string.Empty;
-            elementText.text = string.Empty;
-            elementalForgeRateText.text = string.Empty;
-            masteryText1.text = string.Empty;
-            masteryText2.text = string.Empty;
-            masteryText3.text = string.Empty;
-
-            if (player.selectedActiveItem.GetCurrentActiveItem() == null)
-            {
-                tooltipPanel.gameObject.SetActive(false);
-                return;
-            }
-
-            // Check if the slot is occupied
-            if (equippedTransform.childCount > 0)
-            {
-                currentChild = equippedTransform.GetChild(0);
-
-                // Retrieve draggable item and weapon from current child
-                DraggableItem slotDragggableItem = currentChild.GetComponent<DraggableItem>();
-                ActiveItem activeItem = slotDragggableItem.GetDraggedActiveItem();
-
-                if (activeItem != null)
-                {
-                    headerText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
-                    headerText.text = activeItem.activeItemDetails.activeItemName;
-                    levelText.text = $"(Active Item)";
-
-                    if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Decoy)
-                    {
-                        weaponClassText.text = "Distracts Enemies Until";
-                        hitSpeedText.text = "Being Destroyed";
-                    }
-                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Potion)
-                    {
-                        weaponClassText.text = "Slowly Regenerates Health";
-                    }
-                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Bomb)
-                    {
-                        weaponClassText.text = "Explodes and Gives";
-                        hitSpeedText.text = "AoE Damage";
-                    }
-                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Compass)
-                    {
-                        weaponClassText.text = "Locates Boss Room's";
-                        hitSpeedText.text = "Direction";
-                    }
-                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Boomerang)
-                    {
-                        weaponClassText.text = "Strikes And Return, Useful";
-                        hitSpeedText.text = "For Stunning Enemies";
-                    }
-                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Hourglass)
-                    {
-                        weaponClassText.text = "Slows the Time Flow By";
-                        hitSpeedText.text = "Half to Act More Precisely";
-                    }
-                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Shiruken)
-                    {
-                        weaponClassText.text = "Several Quick Throwable";
-                        hitSpeedText.text = "Star Projectiles";
-                    }
-                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Pentagram)
-                    {
-                        weaponClassText.text = "Trap for Enemies To";
-                        hitSpeedText.text = "Step On";
-                    }
-                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Summoner)
-                    {
-                        weaponClassText.text = "Summoning Ally Mobs as Companion";
-                        hitSpeedText.text = "For a Short Time";
-                    }
-                    else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.BobbyPin)
-                    {
-                        weaponClassText.text = "Chance to Crack The";
-                        hitSpeedText.text = "Chest Without a Key";
-                        weaponWieldText.text = "Only One Attempt Permitted";
-                    }
-                }
-
-                //levelText.text = $"({weapon.weaponDetails.weaponLevel.ToString()})";
-                //weaponClassText.text = $"Class: {weapon.weaponDetails.weaponClass.ToString()}";
-
-                //if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
-                //{
-                //    weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
-                //    damageText.text = $"Deflect Rate: {weapon.weaponDetails.projectileDeflectRatio * 100}%";
-                //}
-                //else
-                //{
-                //    hitSpeedText.text = $"Speed: {weapon.weaponDetails.weaponHitSpeed.ToString()}";
-                //    weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
-                //    damageText.text = $"Damage: {weapon.weaponDetails.meleeDamageMin}-{weapon.weaponDetails.meleeDamageMax}";
-                //}
-
-                //baseHandlingText.text = $"Base Handling: {weapon.weaponDetails.weaponBaseHandling * 100}%";
-                //crHitChanceText.text = $"Base Cr. Hit Chance: {weapon.weaponDetails.criticalHitChance * 100}%";
-                //crHitDamageText.text = $"Base Cr. Hit Damage: {weapon.weaponDetails.criticalHitDamageMultiplier * 100}%";
-                //elementalBiasText.text = "Elemental Bias";
             }
         }
         else if (slotType == SlotType.WeaponMainHand || slotType == SlotType.WeaponOffHand)
@@ -1029,6 +924,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                     // Book update
                     StaticEventHandler.CallInventoryWeaponDroppedEventForBook(draggableItem.belongingSlot.inventoryIndexNumber);
+
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
                 else if (slotType == SlotType.WeaponOffHand)
                 {
@@ -1043,6 +940,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                     // Book update
                     StaticEventHandler.CallInventoryWeaponDroppedEventForBook(draggableItem.belongingSlot.inventoryIndexNumber);
+
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
             }
             // Passive item in the inventory moves to passive item slot
@@ -1056,7 +955,9 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 // Book update for passive slot addition and inventory slot drop
                 StaticEventHandler.CallInventoryPassiveItemDroppedEventForBook(draggableItem.belongingSlot.inventoryIndexNumber);
-                StaticEventHandler.CallItemAddedToPassiveItemSlot(draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);              
+                StaticEventHandler.CallItemAddedToPassiveItemSlot(draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
+
+                StaticEventHandler.CallStatsChangedOnTheBookEvent();
             }
 
             return; // This is dragged from inventory so don't go further
@@ -1083,6 +984,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                     StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(draggableItemWeapon, invetoryIndex);
 
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
                 else if (slotType == SlotType.WeaponMainHand)
                 {
@@ -1093,6 +995,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                     draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
                     player.playerControl.SetWeaponSetByIndex(true, false);
+
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
                 else
                 {
@@ -1130,6 +1034,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
                     draggableItem.dragMainSlotOff = true;
                     player.playerControl.SetWeaponSetByIndex(true, false);
+
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
             }
             else
@@ -1148,6 +1054,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     player.playerControl.SetWeaponSetByIndex(true, false, false, true);
 
                     StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(draggableItemWeapon, inventoryIndex);
+
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
 
                 }
                 else if (slotType == SlotType.WeaponMainHand)
@@ -1168,6 +1076,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
                     draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
                     player.playerControl.SetWeaponSetByIndex(true, false);
+
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
                 else
                 {
@@ -1186,6 +1096,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                     draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
                     player.playerControl.SetWeaponSetByIndex(true, false);
+
+                    StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
             }
         }
@@ -1204,6 +1116,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 // Book update for passive slot inventory addition and passive slot drop
                 StaticEventHandler.CallItemRemovedFromPassiveItemSlot(draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
                 StaticEventHandler.CallPassiveItemAddedToInventorySlot(draggableInventoryPassiveItem, inventoryItemIndex);
+
+                StaticEventHandler.CallStatsChangedOnTheBookEvent();
             }
         }
     }

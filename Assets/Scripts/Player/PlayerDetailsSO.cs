@@ -104,6 +104,10 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public ProjectileDetailsSO throwingAxeDetails;
     #region
+    [Tooltip("Shiruken details")]
+    #endregion
+    public ProjectileDetailsSO shirukenDetails;
+    #region
     [Tooltip("Grapple details")]
     #endregion
     public ProjectileDetailsSO grappleDetails;
@@ -124,6 +128,10 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public ProjectileDetailsSO blazingCycloneDetails;
     #region
+    [Tooltip("Chain Lightning details")]
+    #endregion
+    public ProjectileDetailsSO chainLightningDetails;
+    #region
     [Tooltip("Standard material")]
     #endregion
     public Material standardMaterial;
@@ -131,7 +139,6 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Penetrate material")]
     #endregion
     public Material penetrateMaterial;
-
 
     #region SCREEN SHAKE SETTINGS
     [Space(10)]
@@ -149,19 +156,6 @@ public class PlayerDetailsSO : ScriptableObject
     [Tooltip("Camera shake duration")]
     #endregion
     public float shakeDuration = 0.5f;
-
-    #region Header ACTIVE
-    [Space(10)]
-    [Header("ACTIVE")]
-    #endregion
-    #region Tooltip
-    [Tooltip("Player's current active item")]
-    #endregion
-    public ActiveItemDetailsSO selectedActiveItem;
-    #region Tooltip
-    [Tooltip("Player's active items list")]
-    #endregion
-    public List<ActiveItemDetailsSO> activeItemsList;
 
     #region Header PASSIVE
     [Space(10)]

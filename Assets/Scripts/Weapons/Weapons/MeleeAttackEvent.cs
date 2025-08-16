@@ -6,10 +6,11 @@ public class MeleeAttackEvent : MonoBehaviour
     public event Action<MeleeAttackEvent, MeleeAttackEventArgs> OnAttack;
 
     public void CallAttackEvent(AimDirection aimDirection, Weapon weapon, AttackShape attackShape, MeleeHand meleeHand, bool isBloodDrain = false,
-        bool shieldBash = false, bool isCullTheMeek = false, bool isSheerCold = false)
+        bool shieldBash = false, bool isCullTheMeek = false, bool isSheerCold = false, bool isDontBlink = false, bool isBladeDash = false)
     {
         OnAttack?.Invoke(this, new MeleeAttackEventArgs { aimDirection = aimDirection, weapon = weapon, attackShape = attackShape, meleeHand = meleeHand,
-            isBloodDrain = isBloodDrain, shieldBash = shieldBash, isCullTheMeek = isCullTheMeek, isSheerCold = isSheerCold});
+            isBloodDrain = isBloodDrain, shieldBash = shieldBash, isCullTheMeek = isCullTheMeek, isSheerCold = isSheerCold, isDontBlink = isDontBlink,
+            isBladeDash = isBladeDash});
     }
 }
 
@@ -23,4 +24,6 @@ public class MeleeAttackEventArgs : EventArgs
     public bool shieldBash;
     public bool isCullTheMeek;
     public bool isSheerCold;
+    public bool isDontBlink;
+    public bool isBladeDash;
 }

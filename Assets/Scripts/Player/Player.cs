@@ -92,7 +92,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public DamageTracker damageTracker;
     [HideInInspector] public SpringJoint2D springJoint2D;
     [HideInInspector] public Projectile playersGrapple;
-    [HideInInspector] public Projectile playersThrowingAxe;
+    [HideInInspector] public Projectile playerSkillProjectile;
 
     [HideInInspector] public int keyCount = 0;
     [HideInInspector] public int previousSetIndex = 1;
@@ -180,6 +180,7 @@ public class Player : MonoBehaviour
 
     // CRITICAL CHANCE
     [HideInInspector] public float additionalMeleeCriticalHitChanceModifier = 0f;
+    [HideInInspector] public float additionalRangedCriticalHitChanceModifier = 0f;
 
     // CRITICAL DAMAGE
     [HideInInspector] public float additionalCriticalDamageOnCloakedPrecision = 0.5f;
@@ -266,6 +267,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool isImmunetoBurn;
     [HideInInspector] public bool isImmunetoPoison;
     [HideInInspector] public bool isImmunetoFrost;
+    [HideInInspector] public bool isImmunetoParalyze;
     [HideInInspector] public bool isImmunetoBlind;
     [HideInInspector] public bool isImmunetoCurse;
     [HideInInspector] public bool isImmunetoFear;
@@ -284,6 +286,9 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool[] specialMovesCooldownCheckArray = new bool[3]; // Check if related slot is on cooldown or not
     [HideInInspector] public float[] specialMoveCooldownTimerArray = new float[3]; // Related slot's cooldown timer
     [HideInInspector] public float[] specialMoveDurationTimerArray = new float[3]; // Related slot's duration timer
+    [HideInInspector] public int[] specialMoveRecastCountArray = new int[3]; // Recast repeat count
+    [HideInInspector] public float[] specialMoveRecastCooldownTimerArray = new float[3]; // Related slot's recast timer
+    [HideInInspector] public float[] specialMoveRecastDurationTimerArray = new float[3]; // Related slot's recast timer
 
     // CAELION SKILLS
     [HideInInspector] public float lastDamageHappenedTime;
@@ -335,6 +340,25 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool isFeastOfWarActive;
     [HideInInspector] public float feastOfWarDrainPercentage = 0.1f;
 
+    // NYXA SKILLS
+    [HideInInspector] public bool isNyxasReflexPassiveOn;
+    [HideInInspector] public float lastDashTeleportHappenedTime;
+    [HideInInspector] public bool isDontBlinkActive;
+    [HideInInspector] public bool cancelledDueToInvalidTile;
+    [HideInInspector] public bool isVenomousIvyActive;
+    [HideInInspector] public bool isFadeAndFeedActive;
+    [HideInInspector] public bool isBladeAndDashActive;
+    [HideInInspector] public bool isShirukenActive;
+
+    // NYMARA SKILLS
+    [HideInInspector] public bool isMistOfDisruptionActive;
+    [HideInInspector] public bool isInMistOfDisruption;
+    [HideInInspector] public bool isNymarasWindveilActive;
+    [HideInInspector] public float NymarasWindveilCircleRadius = 1.5f;
+    [HideInInspector] public bool isChainLightningActive;
+    [HideInInspector] public bool isEyeOfTheStormActive;
+    [HideInInspector] public bool isIonicRejuvenationActive;
+
     [HideInInspector] public bool shadowCloakEquipped;
 
     // STATUS EFFECT
@@ -346,6 +370,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool isChilled;
     [HideInInspector] public bool isBlind;
     [HideInInspector] public bool isSlowed;
+
+    float testAdditionArmor = 0.1f;
 
     public LayerMask layerMask;
     [HideInInspector] public ContactFilter2D filter = new ContactFilter2D();
@@ -398,17 +424,17 @@ public class Player : MonoBehaviour
     {
         this.playerDetails = playerDetails;
 
+        // Set player primary stats
+        SetPlayerPrimaryStats(playerDetails);
+
         //Create player starting weapons
         CreatePlayerStartingWeapons();
 
         //Create player active item
-        CreatePlayerStartingActiveItem();
-
-        //Create player active item
         CreatePlayerStartingPassiveItem();
 
-        // Set player starting primary stats
-        SetPlayerPrimaryStats();
+        // Set player starting secondary stats
+        SetPlayerSecondaryStats();
 
         // Set player all active unique skills
         SetPlayerActiveUniqueSkills();
@@ -417,6 +443,8 @@ public class Player : MonoBehaviour
         manaEvent.CallManaChangedEvent(mana.currentMana);
 
         isInitialized = true;
+
+        specialMoveRecastCountArray = new int[] { -1, -1, -1 };
     }
 
     private void OnEnable()
@@ -485,6 +513,18 @@ public class Player : MonoBehaviour
         meleeAttackMainHand.IsAttacking = false;
     }
 
+    private void SetPlayerPrimaryStats(PlayerDetailsSO playerDetails)
+    {
+        currentStrengthValue = playerDetails.primaryStats.strength;
+        currentConstitutionValue = playerDetails.primaryStats.constitution;
+        currentDexterityValue = playerDetails.primaryStats.dexterity;
+        currentIntelligenceValue = playerDetails.primaryStats.intelligence;
+        currentAgilityValue = playerDetails.primaryStats.agility;
+        currentWillpowerValue = playerDetails.primaryStats.willpower;
+        currentResolveValue = playerDetails.primaryStats.resolve;
+        currentFerocityValue = playerDetails.primaryStats.ferocity;
+    }
+
     /// <summary>
     /// Set the player starting weapon
     /// </summary>
@@ -492,33 +532,27 @@ public class Player : MonoBehaviour
     {
         if (InputManager.TutorialEnabled) return;
 
-        // Populate weapon list from starting weapons for right hand and shield for left hand if have any
         for (int i = 0; i < playerDetails.startingWeaponList.Count; i++)
         {
-            // Add weapon to right hand list of player
             bool dualWieldOnStart = false;
+            bool equipOffHand = false;
 
-            if (i == 1 &&  (playerDetails.playerCharacterIndex == Character.Morven || playerDetails.playerCharacterIndex == Character.Karnag))
+            // Special case: Caelion should equip shield (2nd item) to off-hand
+            if (playerDetails.playerCharacterIndex == Character.Caelion && i == 1)
+            {
+                equipOffHand = true;
+            }
+
+            // Other dual wield characters equip off-hand if i == 1
+            if (i == 1 && (playerDetails.playerCharacterIndex == Character.Morven || playerDetails.playerCharacterIndex == Character.Karnag || 
+                playerDetails.playerCharacterIndex == Character.Nyxa))
             {
                 dualWieldOnStart = true;
             }
 
-            AddNextWeaponToPlayer(playerDetails.startingWeaponList[i], false, true, false, dualWieldOnStart);
+            AddNextWeaponToPlayer(playerDetails.startingWeaponList[i], pickingUp: false, onStart: true, onlySwitch: false, dualWieldOnStart: dualWieldOnStart,
+                equipOffHand: equipOffHand);
         }
-    }
-
-    /// <summary>
-    /// Set the player starting active item
-    /// </summary>
-    private void CreatePlayerStartingActiveItem()
-    {
-        if (InputManager.TutorialEnabled) return;
-
-        GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        activeDropItem = chestItemObject.GetComponent<DropItem>();
-
-        activeDropItem.remainingItemCharge = playerDetails.selectedActiveItem.activeItemMaxCharge;
-        AddActiveItemToPlayer(playerDetails.selectedActiveItem, activeDropItem, activeDropItem.remainingItemCharge);
     }
 
     /// <summary>
@@ -608,21 +642,12 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Set the player primary stats
     /// </summary>
-    private void SetPlayerPrimaryStats()
+    private void SetPlayerSecondaryStats()
     {
-        currentStrengthValue = playerDetails.primaryStats.strength;
-        currentConstitutionValue = playerDetails.primaryStats.constitution;
-        currentDexterityValue = playerDetails.primaryStats.dexterity;
-        currentIntelligenceValue = playerDetails.primaryStats.intelligence;
-        currentAgilityValue = playerDetails.primaryStats.agility;
-        currentWillpowerValue = playerDetails.primaryStats.willpower;
-        currentResolveValue = playerDetails.primaryStats.resolve;
-        currentFerocityValue = playerDetails.primaryStats.ferocity;
-
         // Set player starting health
         UpdatePlayerHealth(0, true, true, true);
         UpdatePlayerMana(0, true, true, true);
-        UpdateArmorValues();
+        UpdateArmorValues(onStart: true);
         UpdateDamageValues();
         UpdateAttackRatingAndCriticalValues();
         UpdateBlockAndEvasivenessValues();
@@ -653,9 +678,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void UpdateArmorValues()
+    public void UpdateArmorValues(bool onStart = false)
     {
-        if (activeWeapon.GetCurrentOffHandWeapon() != null && activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+        Weapon mainHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+
+        if (mainHandWeapon != null && offHandWeapon != null && offHandWeapon.weaponDetails.weaponClass == WeaponClass.Shield)
         {
             if (!isShieldCalculated)
             {
@@ -673,7 +701,9 @@ public class Player : MonoBehaviour
             }
         }
 
-       currentArmorValue = (float)Math.Round(currentArmorValue + additionalArmorModifier + acidArmorDebuffModifier, 2);
+        currentArmorValue = (float)Math.Round(currentArmorValue + additionalArmorModifier + acidArmorDebuffModifier, 2);
+
+        if (playerDetails.playerCharacterIndex == Character.Nyxa && onStart) currentArmorValue = (float)Math.Round(currentArmorValue + testAdditionArmor, 2);
     }
 
     public void UpdateDamageValues()
@@ -832,42 +862,6 @@ public class Player : MonoBehaviour
         movementByForce.moveSpeed = movementByForce.movementDetails.baseMaxMoveSpeed + currentAgilityValue * 0.25f + additionalSpeedModifier;
     }
 
-    /// <summary>
-    /// Add an active item to the player
-    /// </summary>
-    public ActiveItem AddActiveItemToPlayer(ActiveItemDetailsSO activeItemDetails, DropItem dropItem, int remainingItemCharge)
-    {
-        ActiveItem activeItem = new ActiveItem();
-
-        activeItem = new ActiveItem
-        {
-            activeItemDetails = activeItemDetails,
-            activeItemMaxCharge = activeItemDetails.activeItemMaxCharge + additionalActiveItemCharge,
-            activeItemRemainingCharge = remainingItemCharge,
-        };
-
-        dropItem.boxCollider2D.enabled = false;
-
-        // Set the added active item as active
-        setActiveItemEvent.CallSelectedActiveItem(activeItem);
-
-        // Set hasActiveDrop flag to true
-        dropItem.hasActiveDrop = true; 
-
-        // Initialize chest item
-        dropItem.Initialize(activeItem, activeItemDetails.activeItemSprite, transform.position);
-
-        // Disable some components during equipped
-        dropItem.spriteRenderer.enabled = false;
-        dropItem.animator.enabled = false;
-
-        // Declare this chest item as to-be-dropped chest item
-        DropItem.toBeDroppedDropItem = dropItem;
-        DropItem.toBeDroppedDropItem.toBeDroppedActiveItem = activeItem;
-
-        return activeItem;
-    }
-
     public PassiveItem AddPassiveItemToPlayer(PassiveItemDetailsSO passiveItemDetails, DropItem dropItem = null)
     {
         PassiveItem passiveItem = new PassiveItem
@@ -893,33 +887,57 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Add a weapon to the right hand of player weapon list
+    /// Add a weapon to the player weapon list
     /// </summary>
     public void AddNextWeaponToPlayer(WeaponDetailsSO weaponDetails, bool pickingUp, bool onStart, bool onlySwitch, bool dualWieldOnStart = false, 
         bool equipOffHand = false)
     {
         if (equipOffHand)
         {
-            // Main hand slot filled at weapon if it is not a two-handed weapon
             if (weaponDetails.wieldType == WieldType.TwoHanded) return;
 
-            // Shield check for off-hand is already done above, so avoid duplicate check
-            if (weaponDetails.weaponClass == WeaponClass.Shield) return;
+            if (weaponDetails.weaponClass == WeaponClass.Shield)
+            {
+                if (onStart)
+                {
+                    Weapon weapon = new Weapon
+                    {
+                        weaponDetails = weaponDetails,
+                        weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
+                        itemSlotStatus = ItemSlotStatus.OffHand
+                    };
 
-            Weapon weapon = new Weapon
+                    weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] = weapon;
+
+                    ActivateWeapon(weapon, weapon.itemSlotStatus, currentWeaponSlotSetIndex, onStart, onlySwitch);
+                    StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
+                    weapon.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;
+
+                    if (weaponSlotSetArray[0][1] != null && weaponSlotSetArray[1][1] != null && weaponSlotSetArray[2][1] != null)
+                    {
+                        offHandSlotFilled = true;
+                    }
+
+                    return; // EARLY RETURN ADDED
+                }
+                else return;
+            }
+
+            // Non-shield off-hand logic
+            Weapon nonShieldWeapon = new Weapon
             {
                 weaponDetails = weaponDetails,
                 weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
                 itemSlotStatus = ItemSlotStatus.OffHand
             };
 
-            weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] = weapon;
+            weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] = nonShieldWeapon;
 
-            ActivateWeapon(weapon, weapon.itemSlotStatus, currentWeaponSlotSetIndex, onStart, onlySwitch);
-            StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
-            weapon.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;
+            ActivateWeapon(nonShieldWeapon, nonShieldWeapon.itemSlotStatus, currentWeaponSlotSetIndex, onStart, onlySwitch);
+            StaticEventHandler.CallWeaponPickedUpEventForBook(nonShieldWeapon, true);
+            nonShieldWeapon.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;
 
-            if (weaponSlotSetArray[0][1] != null && weaponSlotSetArray[1][1] != null && weaponSlotSetArray[2][1] != null) // All three set are full
+            if (weaponSlotSetArray[0][1] != null && weaponSlotSetArray[1][1] != null && weaponSlotSetArray[2][1] != null)
             {
                 offHandSlotFilled = true;
             }
@@ -1177,7 +1195,6 @@ public class Player : MonoBehaviour
                 }
             }
         }
-
     }
     
     public void ActivateWeapon(Weapon weapon, ItemSlotStatus itemSlotStatus, int setIndex, bool onStart, bool onSwitch)
@@ -1214,17 +1231,20 @@ public class Player : MonoBehaviour
 
     public void UpdateCurrentCriticalHitChance()
     {
-        if (activeWeapon.GetCurrentMainHandWeapon() != null)
+        Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+
+        if (mainHandWeapon != null)
         {
-            if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+            if (mainHandWeapon.weaponDetails.isMeleeWeapon)
             {
-                currentMainHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) + 
-                    activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitChance + additionalMeleeCriticalHitChanceModifier;
+                currentMainHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) +
+                    mainHandWeapon.weaponDetails.criticalHitChance + additionalMeleeCriticalHitChanceModifier;
             }
             else
             {
                 currentMainHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) +
-                    activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.criticalHitChance + additionalCriticalRangedDamageModifier;
+                    mainHandWeapon.weaponDetails.weaponCurrentProjectile.criticalHitChance + additionalRangedCriticalHitChanceModifier;
             }
         }
         else
@@ -1232,17 +1252,21 @@ public class Player : MonoBehaviour
             currentMainHandCriticalHitChance = 0;
         }
 
-        if (activeWeapon.GetCurrentOffHandWeapon() != null)
+        if (offHandWeapon != null)
         {
-            if (activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon)
+            if (offHandWeapon.weaponDetails.isMeleeWeapon)
             {
-                currentOffHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100 , 2) + 
-                    activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitChance + additionalMeleeCriticalHitChanceModifier;
+                currentOffHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100 , 2) +
+                    offHandWeapon.weaponDetails.criticalHitChance + additionalMeleeCriticalHitChanceModifier;
+            }
+            else if (offHandWeapon.weaponDetails.isShield)
+            {
+                currentOffHandCriticalHitChance = 0;
             }
             else
             {
-                currentOffHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) + 
-                    activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitChance;
+                currentOffHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) +
+                    offHandWeapon.weaponDetails.weaponCurrentProjectile.criticalHitChance + additionalRangedCriticalHitChanceModifier;
             }
         }
         else
@@ -1256,15 +1280,15 @@ public class Player : MonoBehaviour
         // SHADOW CLOAK
         if (shadowCloakEquipped)
         {
-            if (activeWeapon.GetCurrentMainHandWeapon() != null && activeWeapon.GetCurrentOffHandWeapon() != null)
+            if (mainHandWeapon != null && offHandWeapon != null)
             {
                 if (equippedPassiveItems.TryGetValue(PassiveItemSlotName.Back, out PassiveItem item) && item != null)
                 {
                     if (item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                     {
-                        if ((activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger && activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass
-                            == WeaponClass.Dagger) || (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Claw && activeWeapon.GetCurrentOffHandWeapon().
-                            weaponDetails.weaponClass == WeaponClass.Claw)) // Grant extra cr. chance if dual-wield
+                        if ((mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Dagger && offHandWeapon.weaponDetails.weaponClass
+                            == WeaponClass.Dagger) || (mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw &&
+                            offHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw)) // Grant extra cr. chance if dual-wield
                         {
                             currentMainHandCriticalHitChance += 0.05f;
                             currentOffHandCriticalHitChance += 0.05f;
@@ -1283,16 +1307,19 @@ public class Player : MonoBehaviour
 
     private void UpdateCurrentCriticalHitDamage()
     {
-        if (activeWeapon.GetCurrentMainHandWeapon() != null)
+        Weapon currentMainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon currentOffHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+
+        if (currentMainHandWeapon != null)
         {
-            if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+            if (currentMainHandWeapon.weaponDetails.isMeleeWeapon)
             {
-                currentMainHandCriticalHitDamage = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                currentMainHandCriticalHitDamage = currentMainHandWeapon.weaponDetails.criticalHitDamageMultiplier +
                      currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalMeleeDamageModifier;
             }
             else
             {
-                currentMainHandCriticalHitDamage = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                currentMainHandCriticalHitDamage = currentMainHandWeapon.weaponDetails.weaponCurrentProjectile.criticalHitDamageMultiplier +
                     currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalRangedDamageModifier;
             }
         }
@@ -1301,16 +1328,20 @@ public class Player : MonoBehaviour
             currentMainHandCriticalHitDamage = 0;
         }
 
-        if (activeWeapon.GetCurrentOffHandWeapon() != null)
+        if (currentOffHandWeapon != null)
         {
-            if (activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon)
+            if (currentOffHandWeapon.weaponDetails.isMeleeWeapon)
             {
-                currentOffHandCriticalHitDamage = activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                currentOffHandCriticalHitDamage = currentOffHandWeapon.weaponDetails.criticalHitDamageMultiplier +
                     currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalMeleeDamageModifier;
+            }
+            else if (currentOffHandWeapon.weaponDetails.isShield)
+            {
+                currentOffHandCriticalHitDamage = 0;
             }
             else
             {
-                currentOffHandCriticalHitDamage = activeWeapon.GetCurrentOffHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+                currentOffHandCriticalHitDamage = currentOffHandWeapon.weaponDetails.weaponCurrentProjectile.criticalHitDamageMultiplier +
                     currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalRangedDamageModifier;
             }
         }
@@ -1318,6 +1349,9 @@ public class Player : MonoBehaviour
         {
             currentOffHandCriticalHitDamage = 0;
         }
+
+        currentMainHandCriticalHitDamage = (float)Math.Round(currentMainHandCriticalHitDamage, 2);
+        currentOffHandCriticalHitDamage = (float)Math.Round(currentOffHandCriticalHitDamage, 2);
     }
 
     public void UpdateCurrentAttackRatingValues()
@@ -1432,6 +1466,6 @@ public class Player : MonoBehaviour
     {
         Gizmos.color = Color.blue;
         Vector3 position = this == null ? Vector3.zero : transform.position + new Vector3(0f, 0.8f, 0f);
-        Gizmos.DrawWireSphere(position, kynarasEmbraceCircleRadius);
+        Gizmos.DrawWireSphere(position, NymarasWindveilCircleRadius);
     }
 }

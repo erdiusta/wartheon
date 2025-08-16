@@ -12,7 +12,9 @@ public class FireWeaponEvent : MonoBehaviour
         FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None,
         MoldranPhase moldranPhase = MoldranPhase.None, bool isTripleThreat = false, bool isBindingArrow = false, bool isArrowOfTheSeven = false, 
         ProjectileDetailsSO grappleDetails = null, ProjectileDetailsSO iceBreakerDetails = null, bool isFireBlast = false, ProjectileDetailsSO fireBlastDetails = null,
-        bool isBlazingCyclone = false, ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null)
+        bool isBlazingCyclone = false, ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null,
+        bool isShiruken = false, ProjectileDetailsSO shirukenDetails = null, bool isChainLightning = false, ProjectileDetailsSO chainLightningDetails = null,
+        ChainLightningPhase chainLightningPhase = ChainLightningPhase.None)
     {
         OnFireWeapon?.Invoke(this, new FireWeaponEventArgs
         {
@@ -45,7 +47,12 @@ public class FireWeaponEvent : MonoBehaviour
             isBlazingCyclone = isBlazingCyclone,
             blazingCycloneDetails = blazingCycloneDetails,
             isThrowingAxe = isThrowingAxe,
-            throwingAxeDetails = throwingAxeDetails
+            throwingAxeDetails = throwingAxeDetails,
+            isShiruken = isShiruken,
+            shirukenDetails = shirukenDetails,
+            isChainLightning = isChainLightning,
+            chainLightningDetails = chainLightningDetails,
+            chainLightningPhase = chainLightningPhase
         });
     }
 
@@ -89,6 +96,11 @@ public class FireWeaponEventArgs : EventArgs
     public ProjectileDetailsSO blazingCycloneDetails;
     public bool isThrowingAxe;
     public ProjectileDetailsSO throwingAxeDetails;
+    public bool isShiruken;
+    public ProjectileDetailsSO shirukenDetails;
+    public bool isChainLightning;
+    public ProjectileDetailsSO chainLightningDetails;
+    public ChainLightningPhase chainLightningPhase;
 }
 
 public class FireFocusedShotEventArgs : EventArgs

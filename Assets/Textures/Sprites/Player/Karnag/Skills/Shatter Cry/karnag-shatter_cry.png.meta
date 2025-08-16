@@ -307,6 +307,116 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: karnag-shatter_cry_9
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.406}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3611e09124f890247980e4725b969e01
+      internalID: 2121400747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: karnag-shatter_cry_10
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.406}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46e66511a8ac4a741ac4b6f7bb1098a2
+      internalID: -1350165696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: karnag-shatter_cry_11
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.406}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 556dc686ef0d425409feaa302b6aa9aa
+      internalID: -284200219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: karnag-shatter_cry_12
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.406}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2af75ab769111fc48a0df1f031a2011e
+      internalID: 1396982295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: karnag-shatter_cry_13
+      rect:
+        serializedVersion: 2
+        x: 1664
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.406}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 749dc4caed8576b4f80b9d279c785358
+      internalID: -1074322817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -323,6 +433,10 @@ TextureImporter:
     nameFileIdTable:
       karnag-shatter_cry_0: 1661249309
       karnag-shatter_cry_1: -1436876077
+      karnag-shatter_cry_10: -1350165696
+      karnag-shatter_cry_11: -284200219
+      karnag-shatter_cry_12: 1396982295
+      karnag-shatter_cry_13: -1074322817
       karnag-shatter_cry_2: -1392160832
       karnag-shatter_cry_3: 1691120880
       karnag-shatter_cry_4: -1111004070
@@ -330,6 +444,7 @@ TextureImporter:
       karnag-shatter_cry_6: 1630001877
       karnag-shatter_cry_7: -884821748
       karnag-shatter_cry_8: 580939074
+      karnag-shatter_cry_9: 2121400747
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -40,17 +40,17 @@ MonoBehaviour:
   bleedingChance: 0
   hasSlowDamage: 0
   slowChance: 0
-  hasAcid: 0
+  hasAcidDamage: 0
   acidEfficiency: 0
-  canWarm: 0
+  hasWarmDamage: 0
   warmChance: 0
-  canBurn: 0
+  hasBurnDamage: 0
   burnChance: 0
-  isPoisonous: 0
+  hasPoisonDamage: 0
   poisonChance: 0
-  canStatic: 0
+  hasStaticDamage: 0
   staticChance: 0
-  canParalyze: 0
+  hasParalyzeDamage: 0
   paralyzeChance: 0
   hasStunDamage: 0
   stunChance: 0

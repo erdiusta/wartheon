@@ -276,23 +276,23 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
             case TutorialPhase.PickUpActiveItem:
                 isCheckPlayed = false;
 
-                keyboardBinding = InputManager.Instance.interaction.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
-                gamepadBinding = InputManager.Instance.interaction.action.GetBindingDisplayString(InputBinding.MaskByGroup("Gamepad"));
+                //keyboardBinding = InputManager.Instance.interaction.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
+                //gamepadBinding = InputManager.Instance.interaction.action.GetBindingDisplayString(InputBinding.MaskByGroup("Gamepad"));
 
-                SoundAndImageTrigger(questImage);
+                //SoundAndImageTrigger(questImage);
 
-                questText.text = "Use interaction key again for picking-up an active item. You can use one at the same time.\n\nIt is " + keyboardBinding + " for keyboard.\n\n" +
-                    gamepadBinding + " button for gamepad.";
+                //questText.text = "Use interaction key again for picking-up an active item. You can use one at the same time.\n\nIt is " + keyboardBinding + " for keyboard.\n\n" +
+                //    gamepadBinding + " button for gamepad.";
 
-                DropItem secondDropItem = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<DropItem>(true);
-                secondDropItem.gameObject.SetActive(true);
+                //DropItem secondDropItem = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<DropItem>(true);
+                //secondDropItem.gameObject.SetActive(true);
 
-                // Initialize drop
-                ActiveItem activeItem = new ActiveItem();
-                activeItem.activeItemDetails = player.playerDetails.selectedActiveItem;
+                //// Initialize drop
+                //ActiveItem activeItem = new ActiveItem();
+                //activeItem.activeItemDetails = player.playerDetails.selectedActiveItem;
 
-                secondDropItem.hasActiveDrop = true;
-                secondDropItem.Initialize(activeItem, activeItem.activeItemDetails.activeItemSprite, secondDropItem.transform.position, true);
+                //secondDropItem.hasActiveDrop = true;
+                //secondDropItem.Initialize(activeItem, activeItem.activeItemDetails.activeItemSprite, secondDropItem.transform.position, true);
                 break;
             case TutorialPhase.UseActiveItem:
                 isCheckPlayed = false;

@@ -7,6 +7,7 @@ public class BoxOrigin : MonoBehaviour
     public float boxLength = 1f;
     public float boxHeight = 1f;
     public float directionAngle = 0f;
+    public bool isMainHand;
 
     private Player player;
     private PolygonCollider2D polygonCollider;
@@ -19,22 +20,50 @@ public class BoxOrigin : MonoBehaviour
         UpdateColliderShape();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (!Application.isPlaying)
-        {
-            UpdateColliderShape(); // Editor live preview
-            return;
-        }
+        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
+        player.setActiveWeaponEvent.OnSetActiveOffHandWeapon += SetActiveWeaponEvent_OnSetActiveOffHandWeapon;
+    }
 
+    private void OnDisable()
+    {
+        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
+        player.setActiveWeaponEvent.OnSetActiveOffHandWeapon -= SetActiveWeaponEvent_OnSetActiveOffHandWeapon;
+    }
+
+    private void SetActiveWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    {
         // Runtime logic
         if (GetComponentInParent<Projectile>() == null && player.activeWeapon.GetCurrentMainHandWeapon() != null)
         {
-            boxLength = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxLength;
-            boxHeight = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxHeight;
-
-            UpdateColliderShape();
+            if (isMainHand)
+            {
+                WeaponDetailsSO weapon = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails;
+                boxLength = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxLength;
+                boxHeight = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxHeight;
+            }
         }
+    }
+
+    private void SetActiveWeaponEvent_OnSetActiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    {
+        // Runtime logic
+        if (GetComponentInParent<Projectile>() == null && player.activeWeapon.GetCurrentMainHandWeapon() != null)
+        {
+            if (player.activeWeapon.GetCurrentOffHandWeapon() != null && !isMainHand)
+            {
+                WeaponDetailsSO weapon = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails;
+                boxLength = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxLength;
+                boxHeight = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxHeight;
+            }
+        }
+    }
+
+    private void Update()
+    {
+        UpdateColliderShape();
+        return;
     }
 
     private void UpdateColliderShape()

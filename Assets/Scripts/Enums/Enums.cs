@@ -618,12 +618,19 @@ public enum ActiveSkill
     EyeOfTheStorm,
     IonicRejuvenation,
     DontBlink,
-    Whisperslice,
-    Shiruken,
     VenomousIvy,
-    FadeAndFeed
+    FadeAndFeed,
+    BladeDash,
+    Shiruken,
 }
-    
+
+public enum ChainLightningPhase
+{
+    None,
+    First,
+    Second,
+    Third
+}
 
 public enum ItemSlotStatus
 {

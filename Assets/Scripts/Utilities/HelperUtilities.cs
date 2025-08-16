@@ -11,8 +11,7 @@ public static class HelperUtilities
     /// </summary>
     public static Vector3 GetMouseWorldPosition()
     {
-        if (mainCamera == null)
-            mainCamera = Camera.main;
+        if (mainCamera == null) mainCamera = Camera.main;
 
         Vector2 mouseScreenPosition = InputManager.Instance.pointerPosition.action.ReadValue<Vector2>();
 

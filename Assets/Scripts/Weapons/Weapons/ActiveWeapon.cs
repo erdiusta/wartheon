@@ -123,10 +123,10 @@ public class ActiveWeapon : MonoBehaviour
         SetOffHandWeapon(setActiveWeaponEventArgs.weapon, setActiveWeaponEventArgs.onStart);
 
         // Update new weapon values
-        player.UpdateDamageValues();
+        player?.UpdateDamageValues();
         player?.UpdateArmorValues();
-        player.UpdateAttackRatingAndCriticalValues();
-        player.UpdateBlockAndEvasivenessValues();
+        player?.UpdateAttackRatingAndCriticalValues();
+        player?.UpdateBlockAndEvasivenessValues();
     }
 
     private void SetActiveWeaponEvent_OnSetInactiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
@@ -261,10 +261,10 @@ public class ActiveWeapon : MonoBehaviour
             DeselectOffHandWeapon();
 
             // Update new weapon values
-            player?.UpdateDamageValues();
-            player?.UpdateArmorValues();
-            player?.UpdateAttackRatingAndCriticalValues();
-            player?.UpdateBlockAndEvasivenessValues();
+            player.UpdateDamageValues();
+            player.UpdateArmorValues();
+            player.UpdateAttackRatingAndCriticalValues();
+            player.UpdateBlockAndEvasivenessValues();
         }
     }
 

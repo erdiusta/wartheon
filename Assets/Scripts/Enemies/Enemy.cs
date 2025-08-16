@@ -79,6 +79,11 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool isSlowed;
     [HideInInspector] public bool isShattered;
 
+    // DISORIENTED
+    [HideInInspector] public bool isDisoriented;
+    [HideInInspector] public float disorientDuration = 0f;
+    float disorientTimer;
+
     // Status animator
     public Animator rootAnimator;
 
@@ -175,11 +180,18 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         blindTimer -= Time.deltaTime;
+        disorientTimer += Time.deltaTime;
 
         if (blindTimer <= 0 && isBlind)
         {
             isBlind = false;
             healthEvent.CallBlindCuredEvent();
+        }
+
+        if (disorientTimer >= disorientDuration && isDisoriented)
+        {
+            disorientTimer = 0;
+            isDisoriented = false;
         }
 
         if (InputManager.TutorialEnabled)

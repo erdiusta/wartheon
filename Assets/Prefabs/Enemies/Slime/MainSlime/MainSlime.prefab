@@ -452,6 +452,14 @@ PrefabInstance:
       propertyPath: layerMask.m_Bits
       value: 17827840
       objectReference: {fileID: 0}
+    - target: {fileID: 8497238629979407875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: contactDamageAmountMax
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8497238629979407875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: contactDamageAmountMin
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 8901436270454263267, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: knockbackForce
       value: 2.5

@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,7 +13,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     public Transform statsPage;
     public Transform weaponsPage;
     public Transform passivesPage;
-    public Transform activesPage;
     public Transform beastiaryPage;
     public Transform bossesPage;
 
@@ -167,6 +167,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             case Character.Caelion:
             case Character.Morven:
             case Character.Karnag:
+            case Character.Nyxa:
                 characterImage.sprite = player.playerDetails.playerBookSprite;
 
                 // MAIN HAND WEAPON EQUIP AT START - SLOT
@@ -201,19 +202,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 break;
         }
 
-        // ACTIVE ITEM EQUIP AT START
-        if (!InputManager.TutorialEnabled)
-        {
-            Transform activeBackground = activeItemSlot.GetChild(0);
-            Transform activeEquipped = activeItemSlot.GetChild(1);
-            activeBackground.gameObject.SetActive(false);
-            activeEquipped.gameObject.SetActive(true);
-            GameObject activeItem = Instantiate(GameResources.Instance.bookWeaponSlot, activeEquipped);
-            activeItem.GetComponent<Image>().sprite = player.playerDetails.activeItemsList[0].activeItemSprite;
-        }
-
         // Inventory parent
-        inventoryParent = transform.GetChild(1).GetChild(1).GetChild(8).GetChild(0).transform;
+        inventoryParent = transform.GetChild(1).GetChild(1).GetChild(7).GetChild(0).transform;
     }
 
     private void OnEnable()
@@ -266,7 +256,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnItemRemovedFromActiveItemSlot += StaticEventHandler_OnItemRemovedFromActiveItemSlot;
         StaticEventHandler.OnItemAddedToPassiveItemSlot += StaticEventHandler_OnItemAddedToPassiveItemSlot;
         StaticEventHandler.OnItemRemovedFromPassiveItemSlot += StaticEventHandler_OnItemRemovedFromPassiveItemSlot;
-        StaticEventHandler.OnSkillPointUsed += StaticEventHandler_OnBuildPointUsed;
+        StaticEventHandler.OnSkillPointUsed += StaticEventHandler_OnInnerPathPointUsed;
+        StaticEventHandler.OnSkillBoostUsed += StaticEventHandler_OnSkillBoostUsed;
         StaticEventHandler.OnLevelUp += StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnPrimaryStatsChanged += StaticEventHandler_OnPrimaryStatsChanged;
     }
@@ -317,7 +308,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnItemRemovedFromActiveItemSlot -= StaticEventHandler_OnItemRemovedFromActiveItemSlot;
         StaticEventHandler.OnItemAddedToPassiveItemSlot -= StaticEventHandler_OnItemAddedToPassiveItemSlot;
         StaticEventHandler.OnItemRemovedFromPassiveItemSlot -= StaticEventHandler_OnItemRemovedFromPassiveItemSlot;
-        StaticEventHandler.OnSkillPointUsed -= StaticEventHandler_OnBuildPointUsed;
+        StaticEventHandler.OnSkillPointUsed -= StaticEventHandler_OnInnerPathPointUsed;
+        StaticEventHandler.OnSkillBoostUsed -= StaticEventHandler_OnSkillBoostUsed;
         StaticEventHandler.OnLevelUp -= StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnPrimaryStatsChanged -= StaticEventHandler_OnPrimaryStatsChanged;
     }
@@ -328,7 +320,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         innerPathDetailsText.text = string.Empty;
 
         currentAvailableStatPoints.text = player.currentStatPoints.ToString();
-        PopulateCharactersBuildDetails();
     }
 
     private void Update()
@@ -344,10 +335,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
         }
         else if (passivesPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
-        else if (activesPage.GetChild(0).gameObject.activeSelf)
         {
 
         }
@@ -372,10 +359,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
         }
         else if (passivesPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
-        else if (activesPage.GetChild(0).gameObject.activeSelf)
         {
 
         }
@@ -941,7 +924,10 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             $"{player.currentOffHandMaxDamageValue})";
         criticalHitChanceDamageValue.text = $"{player.currentMainHandCriticalHitChance * 100}%({player.currentOffHandCriticalHitChance * 100}%)";
         speedValue.text = $"{player.movementByForce.moveSpeed}";
-        criticalHitDamageAmountValue.text = $"{player.currentMainHandCriticalHitDamage * 100}%({player.currentOffHandCriticalHitDamage * 100}%)";
+
+        float deductedMainHandCriticalDamage = (float)Math.Round((double)((player.currentMainHandCriticalHitDamage * 100) - 100));
+        float deductedOffHandCriticalDamage = (float)Math.Round((double)((player.currentOffHandCriticalHitDamage * 100) - 100));
+        criticalHitDamageAmountValue.text = $"+{Mathf.Max(0, deductedMainHandCriticalDamage)}%(+{Mathf.Max(0, deductedOffHandCriticalDamage)}%)";
 
         // AUXILLARY STATS
         attackRatingValue.text = $"{player.currentAttackRatingValue * 100}";
@@ -990,14 +976,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Passives));
     }
 
-    public void OpenActivesPage()
-    {
-        if (activesPage.GetChild(0).gameObject.activeSelf) return;
-
-        StopAllCoroutines();
-        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Actives));
-    }
-
     public void OpenBestiaryPage()
     {
         if (beastiaryPage.GetChild(0).gameObject.activeSelf) return;
@@ -1042,11 +1020,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                     EnablePassivesPage();
                     UpdatePassivesPage();
                     break;
-                case BookPage.Actives:
-                    activesPage.GetChild(0).gameObject.SetActive(true);
-                    EnableActivesPage();
-                    UpdateActivesPage();
-                    break;
                 case BookPage.Beastiary:
                     beastiaryPage.GetChild(0).gameObject.SetActive(true);
                     EnableBeastiaryPage();
@@ -1073,7 +1046,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         if (statsPage.GetChild(0).gameObject.activeSelf) { ClearStatPage(); }
         else if (weaponsPage.GetChild(0).gameObject.activeSelf) { ClearWeaponsPage(); }
         else if (passivesPage.GetChild(0).gameObject.activeSelf) { ClearPassivesPage(); }
-        else if (activesPage.GetChild(0).gameObject.activeSelf) { ClearActivesPage(); }
         else if (beastiaryPage.GetChild(0).gameObject.activeSelf) { ClearBeastiaryPage();  }
         else if (bossesPage.GetChild(0).gameObject.activeSelf) { ClearBossesPage(); }
         else if (skillPage.GetChild(0).gameObject.activeSelf) { ClearBuildsPage(); }
@@ -1082,21 +1054,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         bookAnimator.enabled = true;
         SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.openBookSoundEffect);
         bookAnimator.SetBool(Settings.turnPage, true);
-    }
-
-    private void PopulateCharactersBuildDetails()
-    {
-        for (int i = 0; i < innerPathContainer.childCount; i++)
-        {
-            //// Manipulate build title 
-            //buildTreeFrame.GetChild(i).GetChild(buildTreeFrame.GetChild(i).childCount - 1).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-            //    player.playerDetails.charBuildDetails[i].characterBuildName;
-            //// Manipulate detailed info title
-            //buildTreeFrame.GetChild(i).GetChild(buildTreeFrame.GetChild(i).childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>().text =
-            //    player.playerDetails.charBuildDetails[i].characterBuildDetails;
-            // Manipulate build icon
-            //innerPathContainer.GetChild(i).GetComponent<Image>().sprite = player.playerDetails.charBuildDetails[i].characterBuildImage;
-        }
     }
 
     private void ClearStatPage()
@@ -1171,36 +1128,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     private void EnablePassivesPage()
     {
         foreach (Transform child in passivesPage)
-        {
-            child.gameObject.SetActive(true);
-        }
-    }
-
-    private void ClearActivesPage()
-    {
-        foreach (Transform child in activesPage)
-        {
-            child.gameObject.SetActive(false);
-        }
-    }
-
-    private void UpdateActivesPage()
-    {
-        for (int i = 0; i < activesImageContainer.childCount; i++)
-        {
-            ActiveSlot activeSlot = activesImageContainer.GetChild(i).GetComponent<ActiveSlot>();
-
-            if (activeSlot.activeUnlocked)
-            {
-                activeSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-                activeSlot.GetComponent<Button>().interactable = true;
-            }
-        }
-    }
-
-    private void EnableActivesPage()
-    {
-        foreach (Transform child in activesPage)
         {
             child.gameObject.SetActive(true);
         }
@@ -1484,7 +1411,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         UpdatePlayerStatInfo(player);
     }
 
-    private void StaticEventHandler_OnBuildPointUsed(SkillPointsArgs buildPointsArgs)
+    private void StaticEventHandler_OnInnerPathPointUsed(SkillPointsArgs buildPointsArgs)
     {
         skillPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentSkillPoints.ToString();
         SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.buildActivationSoundEffect);
@@ -1591,6 +1518,11 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     private void StaticEventHandler_OnLevelUp()
     {
         skillPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentSkillPoints.ToString();
+    }
+
+    private void StaticEventHandler_OnSkillBoostUsed(SkillBoostArgs skillBoostArgs)
+    {
+
     }
 
     public void SelectWeaponSetOne()
