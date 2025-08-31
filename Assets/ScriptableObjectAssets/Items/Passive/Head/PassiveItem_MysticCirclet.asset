@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e767738e70a8b4386de512a7ff92be, type: 3}
+  m_Name: PassiveItem_MysticCirclet
+  m_EditorClassIdentifier: 
+  passiveItemName: Mystic Circlet
+  price: 60
+  passiveItemSprite: {fileID: 1504731469, guid: 0f54e54e71af1444fa873e71783bf6f9, type: 3}
+  rarity: 0
+  passiveItemCategory: 1
+  primaryPassiveItemName: 0
+  passiveItemType: 2
+  passiveItemSlotName: 1
+  passiveItemAnimatorController: {fileID: 9100000, guid: 874d9c5ce6f3cd044af1dd5b194c8d0d, type: 2}
+  baseUniqueModifier: 4
+  additionalModifierPoolForType: 10000000110000000f0000000d0000000b0000000c000000

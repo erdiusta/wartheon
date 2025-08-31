@@ -55,11 +55,19 @@ public class ProjectileDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("The min damage each projectile deals")]
     #endregion
-    public int projectileDamageMin = 0;
+    public int projectilePhyDamageMin = 0;
     #region Tooltip
     [Tooltip("The max damage each projectile deals")]
     #endregion
-    public int projectileDamageMax = 1;
+    public int projectilePhyDamageMax = 1;
+    #region Tooltip
+    [Tooltip("The min magic damage each projectile deals")]
+    #endregion
+    public int projectileMagicDamageMin = 0;
+    #region Tooltip
+    [Tooltip("The max magic damage each projectile deals")]
+    #endregion
+    public int projectileMagicDamageMax = 1;
     #region Tooltip
     [Tooltip("The speed of the projectile")]
     #endregion
@@ -361,8 +369,8 @@ public class ProjectileDetailsSO : ScriptableObject
         HelperUtilities.ValidateCheckNullValue(this, nameof(projectileMaterial), projectileMaterial);
         if (projectileChargeTime > 0)
             HelperUtilities.ValidateCheckNullValue(this, nameof(projectileChargeMaterial), projectileChargeMaterial);
-        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamageMin), projectileDamageMin, false);
-        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamageMax), projectileDamageMax, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectilePhyDamageMin), projectilePhyDamageMin, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectilePhyDamageMax), projectilePhyDamageMax, false);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileRange), projectileRange, false);
         HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpreadMin), projectileSpreadMin, nameof(projectileSpreadMax), projectileSpreadMax, true);
         HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpawnAmountMin), projectileSpawnAmountMin, nameof(projectileSpawnAmountMax), projectileSpawnAmountMax, false);

@@ -17,7 +17,69 @@ MonoBehaviour:
   activeUniqueSkillSprite: {fileID: 21300000, guid: 87a48b509fa0e5144bbed0d15af5ba25, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 2efaec4acc943a84e83af928efd003ce, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 6
-  activeUniqueSkillEffectiveDuration: 0
-  activeUniqueSkillManaCost: 8
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Deals small damage and stun enemies while active.
+
+
+      Base
+      Attack Damage: 50%
+
+      Base Mana Cost: 8
+
+      Base Cooldown: 6
+
+      Base
+      Stun Duration: 1'
+    cooldown: 6
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 8
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals small damage and stun enemies while active.
+
+
+      Base
+      Attack Damage: 50%
+
+      Base Mana Cost: 8
+
+      Base Cooldown: 5
+
+      Base
+      Stun Duration: 2'
+    cooldown: 5
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 8
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals small damage and stun enemies while active.
+
+
+      Base
+      Attack Damage: 50%
+
+      Base Mana Cost: 8
+
+      Base Cooldown: 4
+
+      Base
+      Stun Duration: 3'
+    cooldown: 4
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 8
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

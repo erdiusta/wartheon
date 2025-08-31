@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class Decoy : MonoBehaviour
 {
-    public ActiveItemDetailsSO activeItemDetails;
     public SoundEffectSO dummyHitSound;
     public Health health;
     public HealthEvent healthEvent;
@@ -10,8 +9,6 @@ public class Decoy : MonoBehaviour
 
     [HideInInspector] public SpriteRenderer spriteRenderer;
     [HideInInspector] public DestroyedEvent destroyedEvent;
-
-    ActiveItem activeItem;
 
     private void Awake()
     {
@@ -49,17 +46,6 @@ public class Decoy : MonoBehaviour
                 promptArrowContainer.gameObject.SetActive(false);
             }
         }
-    }
-
-    public ActiveItem InitializeDecoy()
-    {
-        activeItem = new ActiveItem
-        {
-            activeItemDetails = activeItemDetails,
-            activeItemRemainingCharge = activeItemDetails.activeItemMaxCharge
-        };
-
-        return activeItem;
     }
 
     public Vector3 GetDecoyPosition() => transform.position + new Vector3(0f, 0.7f, 0f);

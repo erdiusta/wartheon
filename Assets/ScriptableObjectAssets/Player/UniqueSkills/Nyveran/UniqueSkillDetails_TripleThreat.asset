@@ -13,12 +13,64 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_TripleThreat
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Triple Threat
-  activeUniqueSkillDetails: 
   activeSkill: 11
   activeUniqueSkillSprite: {fileID: 21300000, guid: d02c1b40a51345c479702b19df1e99c4, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: eb80da0b35683344a939c913004058d7, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 12
-  activeUniqueSkillEffectiveDuration: 0
-  activeUniqueSkillManaCost: 18
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Shots three arrows.
+
+
+      Base Attack Damage: 100%
+
+      Base
+      Mana Cost: 18
+
+      Base Cooldown: 12'
+    cooldown: 12
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 18
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Shots three arrows.
+
+
+      Base Attack Damage: 110%
+
+      Base
+      Mana Cost: 20
+
+      Base Cooldown: 11'
+    cooldown: 11
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Shots three arrows.
+
+
+      Base Attack Damage: 125%
+
+      Base
+      Mana Cost: 23
+
+      Base Cooldown: 9'
+    cooldown: 9
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 23
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

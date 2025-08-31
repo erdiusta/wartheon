@@ -10,22 +10,10 @@ public class WeaponFiredEvent : MonoBehaviour
     {
         OnWeaponFired?.Invoke(this, new WeaponFiredEventArgs { weapon = weapon, mainHand = mainHand });
     }
-
-    public event Action<WeaponFiredEvent, ActiveItemFiredEventArgs> OnActiveItemFired;
-
-    public void CallActiveItemFiredEvent(ActiveItem activeItem)
-    {
-        OnActiveItemFired?.Invoke(this, new ActiveItemFiredEventArgs { activeItem = activeItem});
-    }
 }
 
 public class WeaponFiredEventArgs : EventArgs
 {
     public Weapon weapon;
     public bool mainHand;
-}
-
-public class ActiveItemFiredEventArgs : EventArgs
-{
-    public ActiveItem activeItem;
 }

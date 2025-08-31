@@ -17,7 +17,69 @@ MonoBehaviour:
   activeUniqueSkillSprite: {fileID: 21300000, guid: fd0a1eb56a8ee9644ad5fc9dc2dfe886, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 65771ccd5a8ddb44bbeb1d4b0f60aeeb, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 15
-  activeUniqueSkillEffectiveDuration: 8
-  activeUniqueSkillManaCost: 12
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Creates smoke so that enemies will be blind within
+      the smoke.
+
+
+      Base Mana Cost: 12
+
+      Base Cooldown: 15
+
+      Base
+      Effective Duration: 5
+
+      Base AoE Radius: 5'
+    cooldown: 15
+    effectiveDuration: 5
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 12
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Creates smoke so that enemies will be blind within
+      the smoke.
+
+
+      Base Mana Cost: 13
+
+      Base Cooldown: 14
+
+      Base
+      Effective Duration: 6
+
+      Base AoE Radius: 5'
+    cooldown: 14
+    effectiveDuration: 6
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 13
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Creates smoke so that enemies will be blind within
+      the smoke.
+
+
+      Base Mana Cost: 15
+
+      Base Cooldown: 12
+
+      Base
+      Effective Duration: 8
+
+      Base AoE Radius: 5'
+    cooldown: 12
+    effectiveDuration: 8
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 15
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

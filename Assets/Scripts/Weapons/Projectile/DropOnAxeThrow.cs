@@ -73,7 +73,7 @@ public class DropOnAxeThrow : MonoBehaviour
         if (dropItem == null) return;
 
         dropItem.hasWeaponDrop = true;
-        Weapon weapon = new Weapon();
+        Weapon weapon = new Weapon(weaponDetails.rarity);
         weapon.weaponDetails = weaponDetails;
 
         dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position);

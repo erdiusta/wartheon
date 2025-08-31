@@ -479,6 +479,20 @@ public class HealthEvent : MonoBehaviour
         OnFadeAndFeedEffectEnded?.Invoke(this);
     }
 
+    public event Action<HealthEvent> OnConductiveTouchActive;
+
+    public void CallConductiveTouchSpecialMoveEvent()
+    {
+        OnConductiveTouchActive?.Invoke(this);
+    }
+
+    public event Action<HealthEvent> OnConductiveTouchEffectEnded;
+
+    public void CallConductiveTouchWoreOffEvent()
+    {
+        OnConductiveTouchEffectEnded?.Invoke(this);
+    }
+
     public event Action<HealthEvent> OnNymarasWindveilActive;
 
     public void CallNymarasWindveilSpecialMoveEvent()

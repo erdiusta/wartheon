@@ -71,7 +71,6 @@ public class Destroyed : MonoBehaviour
         {
             if (decoy != null)
             {
-                SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemImpactSoundEffect);
                 Destroy(gameObject, 0.4f);
                 return;
             }
@@ -113,65 +112,6 @@ public class Destroyed : MonoBehaviour
                     break;
             }
 
-            // Upon death, add experience points to player's related weapon mastery points
-            switch (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponTitle)
-            {
-                case WeaponTitle.None:
-                    break;
-                case WeaponTitle.Gladius:
-                    player.weaponMastery.gladiusMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.Scimitar:
-                    player.weaponMastery.scimitarMasterPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.SizzlingSword:
-                    player.weaponMastery.sizzlingSwordMasterPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.Hatchet:
-                    player.weaponMastery.hatchetMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.PhalanxSpear:
-                    player.weaponMastery.phalanxSpearMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.ClobberingTime:
-                    player.weaponMastery.clobberingTimeMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.HolySword:
-                    player.weaponMastery.holySwordMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.AncientKatana:
-                    player.weaponMastery.ancientKatanaMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.Carnage:
-                    player.weaponMastery.carnageMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.Crusher:
-                    player.weaponMastery.crusherMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.Dirk:
-                    player.weaponMastery.dirkMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.Gambit:
-                    player.weaponMastery.gambitMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.CrudeBow:
-                    player.weaponMastery.bowMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.Crossbow:
-                    player.weaponMastery.crossBowMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.OldStaff:
-                    player.weaponMastery.staffMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.SolarFlare:
-                    player.weaponMastery.solarFlareMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                case WeaponTitle.HeavensGale:
-                    player.weaponMastery.heavensGaleMasteryPoints += enemy.enemyDetails.experiencePoint;
-                    break;
-                default:
-                    break;
-            }
 
             // Gain Experience Upon Killing An Enemy
             int gainedExpFromEnemy = (int)(enemy.enemyDetails.experiencePoint * player.expGainModifier);

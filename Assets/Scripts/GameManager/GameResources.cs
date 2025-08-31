@@ -157,6 +157,55 @@ public class GameResources : MonoBehaviour
     #endregion
     public SoundEffectSO weaponPickup;
 
+    #region Header SOUNDS
+    [Space(10)]
+    [Header("STATUS EFFECT SOUNDS")]
+    #endregion Header
+    #region Tooltip
+    [Tooltip("Populate with the root status sound effect")]
+    #endregion
+    public SoundEffectSO rootSoundEffect;
+    #region Tooltip
+    [Tooltip("Populate with the heal status sound effect")]
+    #endregion
+    public SoundEffectSO healSoundEffect;
+    #region Tooltip
+    [Tooltip("Populate with the stun status sound effect")]
+    #endregion
+    public SoundEffectSO stunSoundEffect;
+    #region Tooltip
+    [Tooltip("Populate with the paralyze status sound effect")]
+    #endregion
+    public SoundEffectSO paralyzeSoundEffect;
+    #region Tooltip
+    [Tooltip("Populate with the freeze status sound effect")]
+    #endregion
+    public SoundEffectSO freezeSoundEffect;
+    #region Tooltip
+    [Tooltip("Populate with the poison status sound effect")]
+    #endregion
+    public SoundEffectSO poisonSoundEffect;
+    #region Tooltip
+    [Tooltip("Populate with the bleeding status sound effect")]
+    #endregion
+    public SoundEffectSO bleedingSoundEffect;
+    #region Tooltip
+    [Tooltip("Populate with the burn status sound effect")]
+    #endregion
+    public SoundEffectSO burnSoundEffect;
+    #region Tooltip
+    [Tooltip("Populate with the curse status sound effect")]
+    #endregion
+    public SoundEffectSO curseSoundEffect;
+    #region Tooltip
+    [Tooltip("Populate with the blind status sound effect")]
+    #endregion
+    public SoundEffectSO blindSoundEffect;
+    #region Tooltip
+    [Tooltip("Populate with the fear status sound effect")]
+    #endregion
+    public SoundEffectSO fearSoundEffect;
+
     #region Header PRIMARY PASSIVE ITEMS
     [Space(10)]
     [Header("PRIMARY PASSIVES")]

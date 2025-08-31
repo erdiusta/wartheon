@@ -6,10 +6,12 @@ public class DropOnDestroy : MonoBehaviour
 {
     [HideInInspector] public GameObject dropItemGameObject;
 
+    // Consumables
     List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> enemyPrimaryPassiveItemDropList;
+
+    // Equipped weapons and passive body items
     List<SpawnableObjectsByLevel<WeaponDetailsSO>> enemyWeaponDropList;
     List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> enemySecondaryPassiveItemDropList;
-    List<SpawnableObjectsByLevel<ActiveItemDetailsSO>> enemyActiveItemDropList;
 
     int dropSpawnChanceMin;
     int dropSpawnChanceMax;
@@ -17,7 +19,6 @@ public class DropOnDestroy : MonoBehaviour
     WeaponDetailsSO weaponDetails;
     PassiveItemDetailsSO primaryPassiveItemDetails;
     PassiveItemDetailsSO secondaryPassiveItemDetails;
-    ActiveItemDetailsSO activeItemDetails;
     DropItem dropItem;
     Enemy enemy;
     Player player;
@@ -36,7 +37,7 @@ public class DropOnDestroy : MonoBehaviour
     {
         // PRIMARY PASSIVE DROP PHASE
         // Get primary passive items
-        if (enemy.enemyDetails.enemyType == EnemyType.Minion) return; // If it is minion do drop happens
+        if (enemy.enemyDetails.enemyType == EnemyType.Minion) return; // If it is a minion, no drop happens
 
         int primaryPassiveItemNum = Random.Range(0, enemy.enemyDetails.primaryPassiveDropChanceMax + 1);
 
@@ -57,8 +58,6 @@ public class DropOnDestroy : MonoBehaviour
 
         // OTHER DROPS PHASE IF HAS
         // Should drop be spawned based on specified chance? If not return.
-        player.additionalCoinIncreaseActivated = false;
-
         if (!RandomDropCheck())
         {
             Destroy(dropItemGameObject);
@@ -68,13 +67,12 @@ public class DropOnDestroy : MonoBehaviour
         // Instantiate container
         InstantiateDropItem();
         
-        // Get number of Active & Passive & Weapon Items To Spawn (max 2 of each)
-        GetItemsToSpawn(out int activeItemNum, out int secondaryPassiveItemNum, out int weaponNum);
+        // Get number of Passive & Weapon Items To Spawn (max 2 of each)
+        GetItemsToSpawn(out int secondaryPassiveItemNum, out int weaponNum);
 
         // Initialize drops
         weaponDetails = GetWeaponDetailsToSpawn(weaponNum);
         secondaryPassiveItemDetails = GetSecondaryPassiveItemDetailsToSpawn(secondaryPassiveItemNum);
-        activeItemDetails = GetActiveItemDetailsToSpawn(activeItemNum);
 
         if (weaponDetails != null)
         {
@@ -87,12 +85,6 @@ public class DropOnDestroy : MonoBehaviour
             InstantiatePassiveItem(secondaryPassiveItemDetails);
             dropItem.transform.SetParent(currentRoom.instantiatedRoom.transform);
         }
-
-        if (activeItemDetails != null)
-        {
-            InstantiateActiveItem(activeItemDetails);
-            dropItem.transform.SetParent(currentRoom.instantiatedRoom.transform);
-        }
     }
 
     private void SetDropList()
@@ -100,7 +92,6 @@ public class DropOnDestroy : MonoBehaviour
         enemySecondaryPassiveItemDropList = enemy.enemyDetails.secondaryPassiveItemsByLevelList;
         enemyWeaponDropList = enemy.enemyDetails.weaponsByLevelList;
         enemyPrimaryPassiveItemDropList = enemy.enemyDetails.primaryPassiveItemsByLevelList;
-        enemyActiveItemDropList = enemy.enemyDetails.activeItemsByLevelList;
         dropSpawnChanceMin = enemy.enemyDetails.dropSpawnChanceMin;
         dropSpawnChanceMax = enemy.enemyDetails.dropSpawnChanceMax;
     }
@@ -112,40 +103,30 @@ public class DropOnDestroy : MonoBehaviour
     {
         int chancePercent = 100 - Random.Range(dropSpawnChanceMin, dropSpawnChanceMax + 1);
 
-        int passiveItemModifier = (int)(player.additionalDropChanceModifier * 100);
+        //int passiveItemModifier = (int)(player.additionalDropChanceModifier * 100);
 
         // get random value between 1 and 100
         int randomPercent = Random.Range(1, 101);
 
-        randomPercent += passiveItemModifier;
+        //randomPercent += passiveItemModifier;
         randomPercent = randomPercent >= 100 ? 100 : randomPercent;
 
-        if (randomPercent >= chancePercent)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        if (randomPercent >= chancePercent) return true;
+        else return false;
     }
 
     /// <summary>
-    /// Get the number of items to spawn - max 1 of each - max 3 in total
+    /// Get the number of items to spawn - max 1 of each - max 2 in total
     /// </summary>
-    private void GetItemsToSpawn(out int actives, out int secondaryPassives, out int weapons)
+    private void GetItemsToSpawn(out int secondaryPassives, out int weapons)
     {
-        actives = 0;
         secondaryPassives = 0;
         weapons = 0;
 
         int choice = Random.Range(0, 50);
 
-        if (choice >= 0 && choice <= 35) { weapons++; return; }
-        if (choice > 35 && choice <= 40) { actives++; return; }
-        if (choice > 40 && choice <= 50) { secondaryPassives++; return; }
-
-        return;
+        if (choice >= 0 && choice <= 25) { weapons++; return; }
+        if (choice > 25 && choice <= 50) { secondaryPassives++; return; }
     }
 
     /// <summary>
@@ -169,8 +150,9 @@ public class DropOnDestroy : MonoBehaviour
         if (dropItem == null) return;
 
         dropItem.hasWeaponDrop = true;
-        Weapon weapon = new Weapon();
-        weapon.weaponDetails = weaponDetails;
+
+        // Create a weapon instance with rolled modifiers
+        Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails);
 
         dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position);
     }
@@ -191,24 +173,9 @@ public class DropOnDestroy : MonoBehaviour
             dropItem.hasSecondaryPassiveDrop = true;
         }
 
-        PassiveItem passiveItem = new PassiveItem();
-        passiveItem.passiveItemDetails = passiveItemDetails;
+        PassiveItem passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails);
 
         dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position);
-    }
-
-    /// <summary>
-    /// Instantiate an active item for the player to collect
-    /// </summary>
-    private void InstantiateActiveItem(ActiveItemDetailsSO activeItemDetails)
-    {
-        if (dropItem == null) return;
-
-        dropItem.hasActiveDrop = true;
-        ActiveItem activeItem = new ActiveItem();
-        activeItem.activeItemDetails = activeItemDetails;
-
-        dropItem.Initialize(activeItem, activeItemDetails.activeItemSprite, transform.position);
     }
 
     /// <summary>
@@ -223,29 +190,7 @@ public class DropOnDestroy : MonoBehaviour
 
         WeaponDetailsSO weaponDetails = weaponRandom.GetItem();
 
-        if (IsWeaponAvailableForTheCharacter(weaponDetails))
-        {
-            return weaponDetails;
-        }
-        else
-        {
-            Destroy(dropItemGameObject);
-            return null;
-        }
-    }
-
-    private bool IsWeaponAvailableForTheCharacter(WeaponDetailsSO weaponDetails)
-    {
-
-        //for (int i = 0; i < player.playerDetails.collectibleWeaponsArray.Length; i++)
-        //{
-        //    if (player.playerDetails.collectibleWeaponsArray[i].weaponName == weaponDetails.weaponName)
-        //    {
-        //        return true;
-        //    }
-        //}
-
-        return true;
+        return weaponDetails;
     }
 
     /// <summary>
@@ -276,20 +221,5 @@ public class DropOnDestroy : MonoBehaviour
         PassiveItemDetailsSO passiveItemDetails = primaryPassiveItemRandom.GetItem();
 
         return passiveItemDetails;
-    }
-
-    /// <summary>
-    /// Get the active item details to spawn - return null if no active item is to be spawned
-    /// </summary>
-    private ActiveItemDetailsSO GetActiveItemDetailsToSpawn(int activeItemNumber)
-    {
-        if (activeItemNumber == 0) return null;
-
-        // Create an instance of the class used to select a random item from a list based on the relative 'ratios' of the items specified
-        RandomSpawnableObject<ActiveItemDetailsSO> activeItemRandom = new RandomSpawnableObject<ActiveItemDetailsSO>(enemyActiveItemDropList);
-
-        ActiveItemDetailsSO activeItemDetails = activeItemRandom.GetItem();
-
-        return activeItemDetails;
     }
 }

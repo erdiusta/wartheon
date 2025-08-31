@@ -17,7 +17,60 @@ MonoBehaviour:
   activeUniqueSkillSprite: {fileID: 21300000, guid: ab5e3ceecd5d02744ad15dace82894fe, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 8cb0c975001857a4580d53cd4e0f34c6, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 24
-  activeUniqueSkillEffectiveDuration: 6
-  activeUniqueSkillManaCost: 30
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Becomes invisible while active.
+
+
+      Base Mana
+      Cost: 30
+
+      Base Cooldown: 24
+
+      Base Effective Duration: 4'
+    cooldown: 24
+    effectiveDuration: 4
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 30
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Becomes invisible while active.
+
+
+      Base Mana
+      Cost: 34
+
+      Base Cooldown: 22
+
+      Base Effective Duration: 5'
+    cooldown: 22
+    effectiveDuration: 5
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 34
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Becomes invisible while active.
+
+
+      Base Mana
+      Cost: 38
+
+      Base Cooldown: 20
+
+      Base Effective Duration: 6'
+    cooldown: 20
+    effectiveDuration: 6
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 38
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

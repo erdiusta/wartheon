@@ -15,7 +15,6 @@ MonoBehaviour:
   playerCharacterName: Morven
   playerCharacterIndex: 1
   playerPrefab: {fileID: 38858171499291080, guid: dd7a903ea8b0ca44e8877d7b30e01d9f, type: 3}
-  playerClonePrefab: {fileID: 38858171499291080, guid: 70b22c5bcd48a8f4d94cb4d32de4146a, type: 3}
   collectibleWeaponsArray: []
   bodyRuntimeAnimatorController: {fileID: 9100000, guid: 0ac28d9b77320e242a2bfc5fd0b91114, type: 2}
   primaryStats:
@@ -41,25 +40,26 @@ MonoBehaviour:
   thirdActiveSkillDetails: {fileID: 11400000, guid: a41f8f4831161914caf97a0b7a057893, type: 2}
   fourthActiveSkillDetails: {fileID: 11400000, guid: e1827bde4575a0c4a85df87069ef4b7e, type: 2}
   fifthActiveSkillDetails: {fileID: 11400000, guid: e8d5fbe9a3becdf4a944380097750534, type: 2}
-  cataclysmMeteor: {fileID: 0}
+  throwingAxeDetails: {fileID: 0}
+  shirukenDetails: {fileID: 0}
   grappleDetails: {fileID: 0}
   iceBreakerDetails: {fileID: 0}
   absoluteZeroDetails: {fileID: 0}
+  fireBlastDetails: {fileID: 0}
+  blazingCycloneDetails: {fileID: 0}
+  chainLightningDetails: {fileID: 0}
   standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   penetrateMaterial: {fileID: 0}
   applyScreenShake: 0
   shakeIntensity: 0
   shakeDuration: 0
-  selectedActiveItem: {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
-  activeItemsList:
-  - {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
   passiveItemsList: []
-  startingWeapon: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
-  mainHandAnimatorController: {fileID: 9100000, guid: fe2632354abf80540ae561908fd9d705, type: 2}
-  offHandAnimatorController: {fileID: 9100000, guid: fe2632354abf80540ae561908fd9d705, type: 2}
+  startingWeapon: {fileID: 11400000, guid: a180a18503c8871438259132c6706d84, type: 2}
+  mainHandAnimatorController: {fileID: 0}
+  offHandAnimatorController: {fileID: 0}
   startingWeaponList:
-  - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
-  - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+  - {fileID: 11400000, guid: a180a18503c8871438259132c6706d84, type: 2}
+  - {fileID: 11400000, guid: a180a18503c8871438259132c6706d84, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: f10364e9e25cea94e8f0ec8d6826ca20, type: 3}
   playerHandSprite: {fileID: 21300000, guid: 61f9f1056a5486644b029259a89f6cce, type: 3}
   playerBookSprite: {fileID: -1826810253, guid: 98a505682cf58fd419593061928ac788, type: 3}

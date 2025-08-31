@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using TMPro;
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.GPUSort;
 
 public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 {
@@ -42,6 +43,11 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] TextMeshProUGUI currentAvailableStatPoints;
 
     [Space(10)]
+    [Header("COINS AND SHARDS")]
+    [SerializeField] TextMeshProUGUI coinsText;
+    [SerializeField] TextMeshProUGUI shardText;
+
+    [Space(10)]
     [Header("SECONDARY STATS")]
     [SerializeField] TextMeshProUGUI damageValue;
     [SerializeField] TextMeshProUGUI healthValue;
@@ -67,18 +73,12 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [Header("RESISTANCE STATS")]
     [SerializeField] TextMeshProUGUI resistanceText;
     [SerializeField] TextMeshProUGUI physicalResistanceText;
-    [SerializeField] TextMeshProUGUI fireResistanceText;
-    [SerializeField] TextMeshProUGUI waterResistanceText;
-    [SerializeField] TextMeshProUGUI airResistanceText;
-    [SerializeField] TextMeshProUGUI earthResistanceText;
-    [SerializeField] TextMeshProUGUI lightResistanceText;
-    [SerializeField] TextMeshProUGUI darkResistanceText;
+    [SerializeField] TextMeshProUGUI magicResistanceText;
 
     [Space(10)]
     [SerializeField] Animator bookAnimator;
     [SerializeField] Transform mainHandWeaponSlot;
     [SerializeField] Transform offHandWeaponSlot;
-    [SerializeField] Transform activeItemSlot;
 
     [Header("Passive Item Slots")]
     Transform passiveItemHeadSlot;
@@ -87,7 +87,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     Transform passiveItemArmSlot;
     Transform passiveItemBackSlot;
     Transform passiveItemLegSlot;
-    Transform passiveItemWaistSlot;
     Transform passiveItemFingerSlot;
 
     [Header("Inventory Item Slots")]
@@ -122,11 +121,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] TextMeshProUGUI passivesDetailsText;
     [SerializeField] Transform passivesImageContainer;
 
-    // ACTIVES
-    [SerializeField] TextMeshProUGUI activesTitleText;
-    [SerializeField] TextMeshProUGUI activesDetailsText;
-    [SerializeField] Transform activesImageContainer;
-
     // BEASTIARY
     [SerializeField] TextMeshProUGUI mobTitleText;
     [SerializeField] TextMeshProUGUI mobDetailsText;
@@ -142,14 +136,13 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         characterSeparatorImage = transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
 
         // Passive Item Slots
-        passiveItemHeadSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(0);
-        passiveItemChestSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(1);
-        passiveItemNeckSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(2);
-        passiveItemArmSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(3);
-        passiveItemFingerSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(4);
-        passiveItemWaistSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(5);
-        passiveItemBackSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(6);
-        passiveItemLegSlot = transform.GetChild(1).GetChild(1).GetChild(6).GetChild(7);
+        passiveItemHeadSlot = transform.GetChild(1).GetChild(1).GetChild(8).GetChild(0);
+        passiveItemChestSlot = transform.GetChild(1).GetChild(1).GetChild(8).GetChild(1);
+        passiveItemNeckSlot = transform.GetChild(1).GetChild(1).GetChild(8).GetChild(2);
+        passiveItemArmSlot = transform.GetChild(1).GetChild(1).GetChild(8).GetChild(3);
+        passiveItemFingerSlot = transform.GetChild(1).GetChild(1).GetChild(8).GetChild(4);
+        passiveItemBackSlot = transform.GetChild(1).GetChild(1).GetChild(8).GetChild(5);
+        passiveItemLegSlot = transform.GetChild(1).GetChild(1).GetChild(8).GetChild(6);
 
         player = GameManager.Instance.GetPlayer();
         characterSeparatorImage.sprite = player.playerDetails.playerMiniMapIcon;
@@ -203,7 +196,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         }
 
         // Inventory parent
-        inventoryParent = transform.GetChild(1).GetChild(1).GetChild(7).GetChild(0).transform;
+        inventoryParent = transform.GetChild(1).GetChild(1).GetChild(9).GetChild(0).transform;
     }
 
     private void OnEnable()
@@ -212,6 +205,10 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
         // BOOK STAT POINTS
         StaticEventHandler.OnStatPointChanged += StaticEventHandler_OnStatPointChanged;
+
+        // BOOK COIN&SHARD AMOUNT
+        StaticEventHandler.OnCoinAmountChanged += StaticEventHandler_OnCoinAmountChanged;
+        StaticEventHandler.OnShardAmountChanged += StaticEventHandler_OnShardAmountChanged;
 
         // BOOK WEAPON EVENTS
         StaticEventHandler.OnWeaponPickedUp += StaticEventHandler_OnWeaponPickedUp;
@@ -226,9 +223,15 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnPassiveItemsSwapped += StaticEventHandler_OnPassiveItemsSwapped;
         StaticEventHandler.OnWeaponsSwappedWithInventory += StaticEventHandler_OnWeaponsSwappedWithInventory;
 
-        // BUILD EVENTS
-        StaticEventHandler.OnBuildInfoHovered += StaticEventHandler_OnBuildInfoHovered;
-        StaticEventHandler.OnBuildInfoUnhovered += StaticEventHandler_OnBuildInfoUnhovered;
+        // WEAPON&PASSIVE UPGRADED
+        StaticEventHandler.OnInventoryWeaponUpgraded += StaticEventHandler_OnInventoryWeaponUpgraded;
+        StaticEventHandler.OnInventoryPassiveUpgraded += StaticEventHandler_OnInventoryPassiveUpgraded;
+
+        // UNIQUE SKILL AND INNER PATH EVENTS
+        StaticEventHandler.OnUniqueSkillInfoHovered += StaticEventHandler_OnUniqueSkillInfoHovered;
+        StaticEventHandler.OnUniqueSkillInfoUnhovered += StaticEventHandler_OnUniqueSkillInfoUnhovered;
+        StaticEventHandler.OnInnerPathInfoHovered += StaticEventHandler_OnBuildInfoHovered;
+        StaticEventHandler.OnInnerPathInfoUnhovered += StaticEventHandler_OnBuildInfoUnhovered;
 
         // BEASTIARY EVENTS
         StaticEventHandler.OnMobUnlocked += StaticEventHandler_OnMobUnlocked;
@@ -245,15 +248,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnPassiveHovered += StaticEventHandler_OnPassiveHovered;
         StaticEventHandler.OnPassiveUnhovered += StaticEventHandler_OnPassiveUnhovered;
 
-        // ACTIVE EVENTS
-        StaticEventHandler.OnActiveUnlocked += StaticEventHandler_OnActiveUnlocked;
-        StaticEventHandler.OnActiveHovered += StaticEventHandler_OnActiveHovered;
-        StaticEventHandler.OnActiveUnhovered += StaticEventHandler_OnActiveUnhovered;
-
         StaticEventHandler.OnBookHealthChanged += StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnBookManaChanged += StaticEventHandler_OnBookManaChanged;
-        StaticEventHandler.OnItemAddedToActiveItemSlot += StaticEventHandler_OnItemAddedToActiveItemSlot;
-        StaticEventHandler.OnItemRemovedFromActiveItemSlot += StaticEventHandler_OnItemRemovedFromActiveItemSlot;
         StaticEventHandler.OnItemAddedToPassiveItemSlot += StaticEventHandler_OnItemAddedToPassiveItemSlot;
         StaticEventHandler.OnItemRemovedFromPassiveItemSlot += StaticEventHandler_OnItemRemovedFromPassiveItemSlot;
         StaticEventHandler.OnSkillPointUsed += StaticEventHandler_OnInnerPathPointUsed;
@@ -269,6 +265,10 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         // BOOK STAT POINTS
         StaticEventHandler.OnStatPointChanged -= StaticEventHandler_OnStatPointChanged;
 
+        // BOOK COIN&SHARD AMOUNT
+        StaticEventHandler.OnCoinAmountChanged -= StaticEventHandler_OnCoinAmountChanged;
+        StaticEventHandler.OnShardAmountChanged -= StaticEventHandler_OnShardAmountChanged;
+
         // BOOK WEAPON EVENTS
         StaticEventHandler.OnWeaponPickedUp -= StaticEventHandler_OnWeaponPickedUp;
         StaticEventHandler.OnWeaponSwitched -= StaticEventHandler_OnWeaponSwitched;
@@ -281,6 +281,16 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnInventoryPassiveItemDropped -= StaticEventHandler_OnInventoryPassiveItemDropped;
         StaticEventHandler.OnPassiveItemsSwapped -= StaticEventHandler_OnPassiveItemsSwapped;
         StaticEventHandler.OnWeaponsSwappedWithInventory -= StaticEventHandler_OnWeaponsSwappedWithInventory;
+
+        // WEAPON&PASSIVE UPGRADED
+        StaticEventHandler.OnInventoryWeaponUpgraded -= StaticEventHandler_OnInventoryWeaponUpgraded;
+        StaticEventHandler.OnInventoryPassiveUpgraded -= StaticEventHandler_OnInventoryPassiveUpgraded;
+
+        // UNIQUE SKILL AND INNER PATH EVENTS
+        StaticEventHandler.OnUniqueSkillInfoHovered -= StaticEventHandler_OnUniqueSkillInfoHovered;
+        StaticEventHandler.OnUniqueSkillInfoUnhovered -= StaticEventHandler_OnUniqueSkillInfoUnhovered;
+        StaticEventHandler.OnInnerPathInfoHovered -= StaticEventHandler_OnBuildInfoHovered;
+        StaticEventHandler.OnInnerPathInfoUnhovered -= StaticEventHandler_OnBuildInfoUnhovered;
 
         // BEASTIARY EVENTS
         StaticEventHandler.OnMobUnlocked -= StaticEventHandler_OnMobUnlocked;
@@ -297,15 +307,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnPassiveHovered -= StaticEventHandler_OnPassiveHovered;
         StaticEventHandler.OnPassiveUnhovered -= StaticEventHandler_OnPassiveUnhovered;
 
-        // ACTIVE EVENTS
-        StaticEventHandler.OnActiveUnlocked -= StaticEventHandler_OnActiveUnlocked;
-        StaticEventHandler.OnActiveHovered -= StaticEventHandler_OnActiveHovered;
-        StaticEventHandler.OnActiveUnhovered -= StaticEventHandler_OnActiveUnhovered;
-
         StaticEventHandler.OnBookHealthChanged -= StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnBookManaChanged -= StaticEventHandler_OnBookManaChanged;
-        StaticEventHandler.OnItemAddedToActiveItemSlot -= StaticEventHandler_OnItemAddedToActiveItemSlot;
-        StaticEventHandler.OnItemRemovedFromActiveItemSlot -= StaticEventHandler_OnItemRemovedFromActiveItemSlot;
         StaticEventHandler.OnItemAddedToPassiveItemSlot -= StaticEventHandler_OnItemAddedToPassiveItemSlot;
         StaticEventHandler.OnItemRemovedFromPassiveItemSlot -= StaticEventHandler_OnItemRemovedFromPassiveItemSlot;
         StaticEventHandler.OnSkillPointUsed -= StaticEventHandler_OnInnerPathPointUsed;
@@ -383,7 +386,20 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         innerPathDetailsText.text = skillPointsArgs.innerPathDetails.innerPathDetails;
     }
 
-    private void StaticEventHandler_OnBuildInfoUnhovered(SkillPointsArgs buildPointsArgs)
+    private void StaticEventHandler_OnBuildInfoUnhovered(SkillPointsArgs skillPointsArgs)
+    {
+        innerPathTitleText.text = string.Empty;
+        innerPathDetailsText.text = string.Empty;
+    }
+
+    private void StaticEventHandler_OnUniqueSkillInfoHovered(SkillPointsArgs skillPointsArgs)
+    {
+        innerPathTitleText.text = skillPointsArgs.activeUniqueSkillContainer.activeUniqueSkillName;
+        innerPathDetailsText.text = skillPointsArgs.activeUniqueSkillContainer.levels[skillPointsArgs.activeUniqueSkillContainer.GetCurrentActiveLevel() - 1].
+            activeUniqueSkillDetails;
+    }
+
+    private void StaticEventHandler_OnUniqueSkillInfoUnhovered(SkillPointsArgs skillPointsArgs)
     {
         innerPathTitleText.text = string.Empty;
         innerPathDetailsText.text = string.Empty;
@@ -599,6 +615,26 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
     }
 
+    private void StaticEventHandler_OnInventoryWeaponUpgraded(InventoryWeaponUpgradedArgs args)
+    {
+        StartCoroutine(InventoryWeaponUpgradeRoutine(args.inventoryIndexNumber, args.weapon));
+    }
+
+    private void StaticEventHandler_OnInventoryPassiveUpgraded(InventoryPassiveUpgradedArgs args)
+    {
+        StartCoroutine(InventoryPassiveUpgradeRoutine(args.inventoryIndexNumber, args.passiveItem));
+    }
+
+    IEnumerator InventoryWeaponUpgradeRoutine(int index, Weapon weapon)
+    {
+        yield return new WaitForEndOfFrame();
+    }
+
+    IEnumerator InventoryPassiveUpgradeRoutine(int index, PassiveItem item)
+    {
+        yield return new WaitForEndOfFrame();
+    }
+
     private void SafeReparentDraggableItem(DraggableItem item, Transform newParent)
     {
         if (item.transform.parent != newParent)
@@ -770,45 +806,14 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         Player player = GameManager.Instance.GetPlayer();
         manaValue.text = $"{player.mana.GetCurrentMana()} / {player.mana.GetMaximumMana()}";
     }
-
-    private void StaticEventHandler_OnItemAddedToActiveItemSlot(SetSelectedActiveItemArgs itemAddedToBookArgs)
+    private void StaticEventHandler_OnCoinAmountChanged(CoinAndShardArgs coinAndShardArgs)
     {
-        StartCoroutine(DelayedPickUpActiveItemSlot(itemAddedToBookArgs.activeItem));
+        coinsText.text = coinAndShardArgs.updatedCoinAmount.ToString();
     }
 
-    IEnumerator DelayedPickUpActiveItemSlot(ActiveItem activeItem)
+    private void StaticEventHandler_OnShardAmountChanged(CoinAndShardArgs coinAndShardArgs)
     {
-        // Wait for end of frame
-        yield return new WaitForEndOfFrame();
-
-        Transform activeItemBackground = activeItemSlot.GetChild(0);
-        Transform activeItemEquipped = activeItemSlot.GetChild(1);
-        activeItemBackground.gameObject.SetActive(false);
-        activeItemEquipped.gameObject.SetActive(true);
-        GameObject activeItemGameObject = Instantiate(GameResources.Instance.bookWeaponSlot, activeItemEquipped);
-        activeItemGameObject.GetComponent<Image>().sprite = activeItem.activeItemDetails.activeItemSprite;
-    }
-
-    private void StaticEventHandler_OnItemRemovedFromActiveItemSlot()
-    {
-        StartCoroutine(DelayedClearActiveItemSlot());
-    }
-
-    IEnumerator DelayedClearActiveItemSlot()
-    {
-        // Wait for end of frame so OnEndDrag completes
-        yield return new WaitForEndOfFrame();
-
-        Transform activeItemBackground = activeItemSlot.GetChild(0);
-        Transform activeItemEquipped = activeItemSlot.GetChild(1);
-
-        foreach (Transform item in activeItemSlot)
-        {
-            DestroyDraggableItems(item);
-        }
-
-        activeItemBackground.gameObject.SetActive(true);
-        activeItemEquipped.gameObject.SetActive(false);
+        shardText.text = coinAndShardArgs.updatedShardAmount.ToString();
     }
 
     private void DestroyDraggableItems(Transform current)
@@ -897,7 +902,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             PassiveItemSlotName.Neck => passiveItemNeckSlot,
             PassiveItemSlotName.Finger => passiveItemFingerSlot,
             PassiveItemSlotName.Back => passiveItemBackSlot,
-            PassiveItemSlotName.Waist => passiveItemWaistSlot,
             PassiveItemSlotName.Arm => passiveItemArmSlot,
             PassiveItemSlotName.Leg => passiveItemLegSlot,
             _ => null,
@@ -936,12 +940,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
         // RESISTANCE STATS
         physicalResistanceText.text = $"Armor : {player.currentArmorValue * 100} %";
-        fireResistanceText.text = $"Fire : {player.currentFireResistanceValue * 100} %";
-        waterResistanceText.text = $"Water : {player.currentWaterResistanceValue * 100} %";
-        airResistanceText.text = $"Air : {player.currentAirResistanceValue * 100} %";
-        earthResistanceText.text = $"Earth : {player.currentEarthResistanceValue * 100} %";
-        lightResistanceText.text = $"Light : {player.currentLightResistanceValue * 100} %";
-        darkResistanceText.text = $"Dark : {player.currentDarkResistanceValue * 100} %";
+        magicResistanceText.text = $"Fire : {player.currentMagicResistanceValue * 100} %";
     }
 
     public void OpenBuildPage()
@@ -1072,7 +1071,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         }
     }
 
-
     private void ClearWeaponsPage()
     {
         foreach (Transform child in weaponsPage)
@@ -1197,7 +1195,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             }
         }
     }
-
 
     private void ClearBuildsPage()
     {
@@ -1369,43 +1366,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         passivesDetailsText.text = string.Empty;
     }
 
-    private void StaticEventHandler_OnActiveUnlocked(ActiveUnlockArgs activeUnlockArgs)
-    {
-        for (int i = 0; i < activesImageContainer.childCount; i++)
-        {
-            ActiveSlot activeSlot = activesImageContainer.GetChild(i).GetComponent<ActiveSlot>();
-
-            if (activeSlot.activeUnlocked == true) continue;
-
-            if (activeSlot.activeItemDetails.activeItemType == activeUnlockArgs.activeItemType)
-            {
-                activeSlot.activeUnlocked = true;
-                activeSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-                activeSlot.GetComponent<Button>().interactable = true;
-            }
-        }
-    }
-
-    private void StaticEventHandler_OnActiveHovered(ActiveHoverArgs activeHoverArgs)
-    {
-        for (int i = 0; i < activesImageContainer.childCount; i++)
-        {
-            ActiveSlot activeSlot = activesImageContainer.GetChild(i).GetComponent<ActiveSlot>();
-
-            if (activeSlot.activeUnlocked == true && activeSlot.activeItemDetails.activeItemType == activeHoverArgs.activeItemType)
-            {
-                activesTitleText.text = activeSlot.activeItemDetails.activeItemName;
-                activesDetailsText.text = activeSlot.activeItemDetails.activeItemDetails;
-            }
-        }
-    }
-
-    private void StaticEventHandler_OnActiveUnhovered()
-    {
-        activesTitleText.text = string.Empty;
-        activesDetailsText.text = string.Empty;
-    }
-
     private void StaticEventHandler_OnPrimaryStatsChanged()
     {
         UpdatePlayerStatInfo(player);
@@ -1435,7 +1395,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 player.isViciousMomentumActive = true;
                 break;
             case InnerPathName.SurgingElements:
-                player.additionalElementalDamageModifier = 0.1f;
+                player.additionalMagicDamageModifier = 0.1f;
                 break;
             case InnerPathName.CounterRiposte:
                 player.isCounterRiposteActive = true;
@@ -1462,12 +1422,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 player.isFortifiedResolveActive = true;
                 break;
             case InnerPathName.ArcaneFortitude:
-                player.currentFireResistanceValue += 0.1f;
-                player.currentWaterResistanceValue += 0.1f;
-                player.currentAirResistanceValue += 0.1f;
-                player.currentEarthResistanceValue += 0.1f;
-                player.currentLightResistanceValue += 0.1f;
-                player.currentDarkResistanceValue += 0.1f;
+                player.currentMagicResistanceValue += 0.1f;
                 break;
             case InnerPathName.SecondBreath:
                 player.isSecondBreathActive = true;
@@ -1522,7 +1477,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void StaticEventHandler_OnSkillBoostUsed(SkillBoostArgs skillBoostArgs)
     {
-
+        skillPointsTransform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.currentSkillPoints.ToString();
     }
 
     public void SelectWeaponSetOne()

@@ -42,9 +42,25 @@ public class Whirlend : MonoBehaviour
 
                     if (enemy.health != null)
                     {
-                        enemy.health.TakeDamage(player.whirlrendDamage, transform.position, enemy.health.transform.position, null, MeleeHand.None);
+                        float enemyDamageModifier = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
+                        {
+                            1 => 0.7f,
+                            2 => 0.8f,
+                            3 => 1f,
+                            _ => 1f
+                        };
 
-                        player.health.TakeDamage((int)(player.whirlrendDamage * 0.15f), Vector2.zero, Vector2.zero);
+                        enemy.health.TakeDamage((int)(player.whirlrendDamage * enemyDamageModifier), transform.position, enemy.health.transform.position, null, MeleeHand.None);
+
+                        float playerDamageModifier = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
+                        {
+                            1 => 0.15f,
+                            2 => 0.13f,
+                            3 => 0.1f,
+                            _ => 0f
+                        };
+
+                        player.health.TakeDamage((int)(player.whirlrendDamage * playerDamageModifier), Vector2.zero, Vector2.zero);
                     }
 
                     if (!enemy.enemyDetails.hasKnockbackResistance && enemy.health.currentHealth > 0)
@@ -80,7 +96,15 @@ public class Whirlend : MonoBehaviour
         // Check get bleeding
         float randomDice = Random.Range(0f, 1f);
 
-        if (randomDice < player.whirlrendBleedChance)
+        float chanceToBleed = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
+        {
+            1 => 0.1f,
+            2 => 0.15f,
+            3 => 0.2f,
+            _ => 0
+        };
+
+        if (randomDice < chanceToBleed)
         {
             enemy.healthEvent.CallGetBleedingEvent();
             enemy.healthStatus |= HealthStatus.Bleeding; // Add Bleeding status

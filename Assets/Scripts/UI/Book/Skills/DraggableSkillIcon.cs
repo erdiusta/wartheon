@@ -1,13 +1,17 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Collections;
 
-public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+[RequireComponent(typeof(RectTransform), typeof(CanvasGroup), typeof(Image))]
+public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public static bool IsDragging = false;
 
+    [Header("Binding")]
     public int skillIconIndexNumber = 0;
     public Image frameImage;
+    public SoundEffectSO clickButtonSound;
 
     [HideInInspector] public ActiveUniqueSkillDetailsSO activeUniqueSkillDetails;
     [HideInInspector] public Transform originalParent;
@@ -20,23 +24,59 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
     Player player;
 
     int skillLevel = 1;
+    bool uiReady;
 
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         image = GetComponent<Image>();
-        canvas = GetComponentInParent<Canvas>();
+        canvas = GetComponentInParent<Canvas>(true);
     }
 
     private void OnEnable()
     {
+        uiReady = false;
+
         player = GameManager.Instance.GetPlayer();
 
+        // Pull the SO by index (already prepared on Player)
         activeUniqueSkillDetails = player.playersAllActiveUniqueSkills[skillIconIndexNumber];
-        image.sprite = activeUniqueSkillDetails.activeUniqueSkillSprite;
+
+        // Set icon sprite
+        if (activeUniqueSkillDetails != null) image.sprite = activeUniqueSkillDetails.activeUniqueSkillSprite;
+
+        // Sync local level from SO and update frame
+        int maxLevel = GetMaxLevel();
+        skillLevel = Mathf.Clamp(activeUniqueSkillDetails?.GetCurrentActiveLevel() ?? 1, 1, maxLevel);
+        UpdateFrameSprite();
+
+        // Avoid accidental clicks during enable
+        StartCoroutine(EnableClicksNextFrame());
     }
 
+    private void OnDisable()
+    {
+        uiReady = false;
+    }
+
+    IEnumerator EnableClicksNextFrame()
+    {
+        yield return null;
+        uiReady = true;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (player == null || activeUniqueSkillDetails == null) return;
+
+        StaticEventHandler.CallUniqueSkillInfoHoveredEvent(activeUniqueSkillDetails);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        StaticEventHandler.CallUniqueSkillInfoUnhoveredEvent(activeUniqueSkillDetails);
+    }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -50,7 +90,8 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
     {
         IsDragging = true;
 
-        rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        float scale = canvas ? canvas.scaleFactor : 1f;
+        rectTransform.anchoredPosition += eventData.delta / Mathf.Max(scale, 0.0001f);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -65,21 +106,49 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
 
     public void SkillBoost()
     {
-        StaticEventHandler.CallSkillBoostUsed(++skillLevel);
+        if (!uiReady) return;
+        if (player == null || activeUniqueSkillDetails == null) return;
 
-        switch (skillLevel)
+        if (player.currentSkillPoints <= 0) return;
+
+        if (skillLevel >= GetMaxLevel()) return;
+
+        // Apply upgrade
+        skillLevel++;
+        UpdateFrameSprite();
+
+        // Sync SO (your setter is incremental)
+        int currentSOLevel = activeUniqueSkillDetails.GetCurrentActiveLevel();
+        int delta = skillLevel - currentSOLevel;
+        if (delta != 0) activeUniqueSkillDetails.SetCurrentActiveLevel(delta);
+
+        player.currentSkillPoints--;
+
+        // Notify AFTER successful upgrade
+        StaticEventHandler.CallSkillBoostUsed(skillLevel);
+        StaticEventHandler.CallUniqueSkillInfoHoveredEvent(activeUniqueSkillDetails);
+    }
+
+    /// <summary>
+    /// SO defaults to 3 levels; this will handle any future count too
+    /// </summary>
+    private int GetMaxLevel() => Mathf.Max(1, activeUniqueSkillDetails?.levels?.Count ?? 1);
+
+    private void UpdateFrameSprite()
+    {
+        if (frameImage == null) return; 
+
+        // Map 1..3 -> specific frames; >=3 uses level three frame
+        frameImage.sprite = skillLevel switch
         {
-            case 1:
-                frameImage.sprite = GameResources.Instance.levelOneFrameSprite;
-                break;
-            case 2:
-                frameImage.sprite = GameResources.Instance.levelTwoFrameSprite;
-                break;
-            case 3:
-                frameImage.sprite = GameResources.Instance.levelThreeFrameSprite;
-                break;
-            default:
-                break;
-        }
+            1 => GameResources.Instance.levelOneFrameSprite,
+            2 => GameResources.Instance.levelTwoFrameSprite,
+            _ => GameResources.Instance.levelThreeFrameSprite
+        };
+    }
+
+    public void PlayButtonClickSound()
+    {
+        SoundEffectManager.Instance.PlaySoundEffect(clickButtonSound);
     }
 }

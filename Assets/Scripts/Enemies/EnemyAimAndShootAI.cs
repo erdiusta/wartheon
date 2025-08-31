@@ -14,6 +14,11 @@ public class EnemyAimAndShootAI : EnemyAI
         base.Start();
     }
 
+    protected override void Update()
+    {
+        base.Update();
+    }
+
     protected override void FixedUpdate() 
     {
         // Update timers - Fire Projectile

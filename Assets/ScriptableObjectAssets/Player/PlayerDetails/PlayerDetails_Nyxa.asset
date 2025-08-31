@@ -47,21 +47,19 @@ MonoBehaviour:
   absoluteZeroDetails: {fileID: 0}
   fireBlastDetails: {fileID: 0}
   blazingCycloneDetails: {fileID: 0}
+  chainLightningDetails: {fileID: 0}
   standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   penetrateMaterial: {fileID: 0}
   applyScreenShake: 0
   shakeIntensity: 0
   shakeDuration: 0
-  selectedActiveItem: {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
-  activeItemsList:
-  - {fileID: 11400000, guid: 6eeff12a695e2084088d17f64d170047, type: 2}
   passiveItemsList: []
-  startingWeapon: {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
-  mainHandAnimatorController: {fileID: 9100000, guid: fe2632354abf80540ae561908fd9d705, type: 2}
-  offHandAnimatorController: {fileID: 9100000, guid: fe2632354abf80540ae561908fd9d705, type: 2}
+  startingWeapon: {fileID: 11400000, guid: 952add40abcfaff4689bbbdbcf57990f, type: 2}
+  mainHandAnimatorController: {fileID: 0}
+  offHandAnimatorController: {fileID: 0}
   startingWeaponList:
-  - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
-  - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+  - {fileID: 11400000, guid: 952add40abcfaff4689bbbdbcf57990f, type: 2}
+  - {fileID: 11400000, guid: 952add40abcfaff4689bbbdbcf57990f, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: ced4ba155930df34eb703a6ddf99d070, type: 3}
   playerHandSprite: {fileID: 21300000, guid: 61f9f1056a5486644b029259a89f6cce, type: 3}
   playerBookSprite: {fileID: -1061532935, guid: 102f1f110908b7b4ba0e88f99488bcac, type: 3}

@@ -13,7 +13,7 @@ public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         switch (GameManager.Instance.GetPlayer().playerDetails.playerCharacterIndex)
         {
             case Character.Caelion:
-                if (weaponDetails.weaponTitle == WeaponTitle.Hatchet || weaponDetails.weaponTitle == WeaponTitle.Shield)
+                if (weaponDetails.weaponTitle == WeaponTitle.Gladius || weaponDetails.weaponTitle == WeaponTitle.WoodenShield)
                 {
                     weaponUnlocked = true;
                     transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
@@ -30,7 +30,7 @@ public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
                 break;
             case Character.Nyveran:
-                if (weaponDetails.weaponTitle == WeaponTitle.CrudeBow || weaponDetails.weaponTitle == WeaponTitle.Dirk)
+                if (weaponDetails.weaponTitle == WeaponTitle.ShortBow || weaponDetails.weaponTitle == WeaponTitle.Dirk)
                 {
                     weaponUnlocked = true;
                     transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
@@ -38,7 +38,7 @@ public class WeaponSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
                 break;
             case Character.Mycara:
-                if (weaponDetails.weaponTitle == WeaponTitle.OldStaff)
+                if (weaponDetails.weaponTitle == WeaponTitle.WoodenStaff)
                 {
                     weaponUnlocked = true;
                     transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);

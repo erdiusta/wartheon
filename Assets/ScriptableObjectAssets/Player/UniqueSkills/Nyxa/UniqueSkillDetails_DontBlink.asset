@@ -13,12 +13,82 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_DontBlink
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Don't Blink
-  activeUniqueSkillDetails: 
   activeSkill: 35
   activeUniqueSkillSprite: {fileID: 21300000, guid: d3879663f2c44af4e88b184fbc694a11, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 0}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 12
-  activeUniqueSkillEffectiveDuration: 0
-  activeUniqueSkillManaCost: 16
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Deals damage inflicting armor penetration with teleport
+      then return with more critical hit chance.
+
+
+      Base Attack Damage: 120%
+
+      Base
+      Critical Hit Chance Increase: +10%
+
+      Base Attack Penetration: 30%
+
+      Base
+      Mana Cost: 16
+
+      Base Cooldown: 12'
+    cooldown: 12
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 16
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals damage inflicting armor penetration with teleport
+      then return with more critical hit chance.
+
+
+      Base Attack Damage: 130%
+
+      Base
+      Critical Hit Chance Increase: +15%
+
+      Base Attack Penetration: 30%
+
+      Base
+      Mana Cost: 18
+
+      Base Cooldown: 11'
+    cooldown: 11
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 18
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals damage inflicting armor penetration with teleport
+      then return with more critical hit chance.
+
+
+      Base Attack Damage: 150%
+
+      Base
+      Critical Hit Chance Increase: +20%
+
+      Base Attack Penetration: 30%
+
+      Base
+      Mana Cost: 20
+
+      Base Cooldown: 10'
+    cooldown: 10
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

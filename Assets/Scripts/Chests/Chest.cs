@@ -118,8 +118,9 @@ public class Chest : MonoBehaviour, IUsable
     {
         InstantiateItem();
         chestItem.hasWeaponDrop = true;
-        Weapon weapon = new Weapon();
-        weapon.weaponDetails = weaponDetails;
+
+        // Create a weapon instance with rolled modifiers
+        Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails);
 
         chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, itemSpawnPoint.position);
     }

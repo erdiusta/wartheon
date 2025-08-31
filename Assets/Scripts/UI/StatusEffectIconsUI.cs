@@ -32,6 +32,7 @@ public class StatusEffectIconsUI : MonoBehaviour
     [Space(10)]
 
     [Header("Nymara")]
+    [SerializeField] Sprite conductiveTouchSpecialMoveSprite;
     [SerializeField] Sprite nymarasWindveilSpecialMoveSprite;
     [Space(10)]
 
@@ -114,6 +115,7 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnKynarasEmbraceActive += EnableKynarasEmbraceImage;
 
         // Nymara
+        player.healthEvent.OnConductiveTouchActive += EnableConductiveTouchImage;
         player.healthEvent.OnNymarasWindveilActive += EnableNymarasWindveilImage;
 
         // Karnag
@@ -177,6 +179,7 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnKynarasEmbraceEffectsEnded += DisableKynarasEmbraceImage;
 
         // Nymara
+        player.healthEvent.OnConductiveTouchEffectEnded += DisableConductiveTouchImage;
         player.healthEvent.OnNymarasWindveilEffectEnded += DisableNymarasWindveilImage;
 
         // Karnag
@@ -240,6 +243,7 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnKynarasEmbraceActive -= EnableKynarasEmbraceImage;
 
         // Nymara
+        player.healthEvent.OnConductiveTouchActive -= EnableConductiveTouchImage;
         player.healthEvent.OnNymarasWindveilActive -= EnableNymarasWindveilImage;
 
         // Karnag
@@ -303,6 +307,7 @@ public class StatusEffectIconsUI : MonoBehaviour
         player.healthEvent.OnKynarasEmbraceEffectsEnded -= DisableKynarasEmbraceImage;
 
         // Nymara
+        player.healthEvent.OnConductiveTouchEffectEnded -= DisableConductiveTouchImage;
         player.healthEvent.OnNymarasWindveilEffectEnded -= DisableNymarasWindveilImage;
 
         // Karnag
@@ -502,6 +507,16 @@ public class StatusEffectIconsUI : MonoBehaviour
             GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
             statusIconContainer.GetComponent<Image>().sprite = fadeAndFeedSpecialMoveSprite;
             statusEffectsDictionary.Add(fadeAndFeedSpecialMoveSprite, statusIconContainer);
+        }
+    }
+
+    private void EnableConductiveTouchImage(HealthEvent healthEvent)
+    {
+        if (!statusEffectsDictionary.ContainsKey(conductiveTouchSpecialMoveSprite))
+        {
+            GameObject statusIconContainer = Instantiate(GameResources.Instance.statusEffectPrefab, transform);
+            statusIconContainer.GetComponent<Image>().sprite = conductiveTouchSpecialMoveSprite;
+            statusEffectsDictionary.Add(conductiveTouchSpecialMoveSprite, statusIconContainer);
         }
     }
 
@@ -889,6 +904,15 @@ public class StatusEffectIconsUI : MonoBehaviour
         {
             Destroy(statusEffectsDictionary[fadeAndFeedSpecialMoveSprite]);
             statusEffectsDictionary.Remove(fadeAndFeedSpecialMoveSprite);
+        }
+    }
+
+    private void DisableConductiveTouchImage(HealthEvent healthEvent)
+    {
+        if (statusEffectsDictionary.ContainsKey(conductiveTouchSpecialMoveSprite))
+        {
+            Destroy(statusEffectsDictionary[conductiveTouchSpecialMoveSprite]);
+            statusEffectsDictionary.Remove(conductiveTouchSpecialMoveSprite);
         }
     }
 

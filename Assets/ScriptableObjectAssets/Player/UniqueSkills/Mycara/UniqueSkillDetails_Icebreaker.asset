@@ -13,12 +13,46 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_Icebreaker
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Icebreaker
-  activeUniqueSkillDetails: 
   activeSkill: 18
   activeUniqueSkillSprite: {fileID: 21300000, guid: 713788cb9f1a77e4397ba24b08855314, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 23896c00bd2f46743a4aa7e0b4a7a0d4, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 10
-  activeUniqueSkillEffectiveDuration: 0
-  activeUniqueSkillManaCost: 20
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: "Chills enemies, if already chilled freezes, if frozen
+      shatters.\n\nBase Attack Damage: 100%\nBase Shatter Damage: \t+150%\nBase Mana
+      Cost: 20\nBase Cooldown: 10"
+    cooldown: 10
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: "Chills enemies, if already chilled freezes, if frozen
+      shatters.\n\nBase Attack Damage: 100%\nBase Shatter Damage: \t+170%\nBase Mana
+      Cost: 25\nBase Cooldown: 9"
+    cooldown: 9
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 25
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: "Chills enemies, if already chilled freezes, if frozen
+      shatters.\n\nBase Attack Damage: 100%\nBase Shatter Damage: \t+200%\nBase Mana
+      Cost: 30\nBase Cooldown: 8"
+    cooldown: 8
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 30
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

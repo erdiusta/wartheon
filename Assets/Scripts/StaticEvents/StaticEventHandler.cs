@@ -44,6 +44,22 @@ public static class StaticEventHandler
         OnStatPointChanged?.Invoke();
     }
 
+    // Coin amount changed
+    public static event Action<CoinAndShardArgs> OnCoinAmountChanged;
+
+    public static void CallCoinAmountChanged(int updatedCoinAmount)
+    {
+        OnCoinAmountChanged?.Invoke(new CoinAndShardArgs { updatedCoinAmount = updatedCoinAmount });
+    }
+
+    // Shard amount changed
+    public static event Action<CoinAndShardArgs> OnShardAmountChanged;
+
+    public static void CallShardAmountChanged(int updatedShardAmount)
+    {
+        OnShardAmountChanged?.Invoke(new CoinAndShardArgs { updatedShardAmount = updatedShardAmount });
+    }
+
     // Dynamic camera follow toggle changed
     public static event Action<DynamicCameraFollowArgs> OnDynamicCameraToggled;
 
@@ -68,20 +84,20 @@ public static class StaticEventHandler
         OnCheatActivated?.Invoke();
     }
 
-    // Build Info Hovered
-    public static event Action<SkillPointsArgs> OnBuildInfoHovered;
+    // Inner Path Info Hovered
+    public static event Action<SkillPointsArgs> OnInnerPathInfoHovered;
 
     public static void CallInnerPathInfoHoveredEvent(InnerPathDetailsSO innerPathDetails)
     {
-        OnBuildInfoHovered?.Invoke(new SkillPointsArgs { innerPathDetails = innerPathDetails });
+        OnInnerPathInfoHovered?.Invoke(new SkillPointsArgs { innerPathDetails = innerPathDetails });
     }
 
-    // Build Info Unhovered
-    public static event Action<SkillPointsArgs> OnBuildInfoUnhovered;
+    // Inner Path Info Unhovered
+    public static event Action<SkillPointsArgs> OnInnerPathInfoUnhovered;
 
     public static void CallInnerPathInfoUnhoveredEvent(InnerPathDetailsSO innerPathDetails)
     {
-        OnBuildInfoUnhovered?.Invoke(new SkillPointsArgs { innerPathDetails = innerPathDetails });
+        OnInnerPathInfoUnhovered?.Invoke(new SkillPointsArgs { innerPathDetails = innerPathDetails });
     }
 
     // Inner path point used
@@ -90,6 +106,22 @@ public static class StaticEventHandler
     public static void CallSkillPointsUsed(InnerPathDetailsSO innerPathDetails)
     {
         OnSkillPointUsed?.Invoke(new SkillPointsArgs { innerPathDetails = innerPathDetails });
+    }
+
+    // Unique Skill Info Hovered
+    public static event Action<SkillPointsArgs> OnUniqueSkillInfoHovered;
+
+    public static void CallUniqueSkillInfoHoveredEvent(ActiveUniqueSkillDetailsSO activeUniqueSkillContainer)
+    {
+        OnUniqueSkillInfoHovered?.Invoke(new SkillPointsArgs { activeUniqueSkillContainer = activeUniqueSkillContainer });
+    }
+
+    // Unique Skill Info Unhovered
+    public static event Action<SkillPointsArgs> OnUniqueSkillInfoUnhovered;
+
+    public static void CallUniqueSkillInfoUnhoveredEvent(ActiveUniqueSkillDetailsSO activeUniqueSkillContainer)
+    {
+        OnUniqueSkillInfoUnhovered?.Invoke(new SkillPointsArgs { activeUniqueSkillContainer = activeUniqueSkillContainer });
     }
 
     // Skill point boost used
@@ -222,16 +254,29 @@ public static class StaticEventHandler
         OnWeaponDropped?.Invoke(new WeaponAddedToBookArgs { slotType = slotType });
     }
 
-    // Item added to active item slot on book event
-    public static event Action<SetSelectedActiveItemArgs> OnItemAddedToActiveItemSlot;
-
-    public static void CallItemAddedToActiveItemSlot(ActiveItem activeItem)
+    // Book weapon upgraded (in-place, inventory)
+    public static event Action<InventoryWeaponUpgradedArgs> OnInventoryWeaponUpgraded;
+    public static void CallInventoryWeaponUpgradedEventForBook(Weapon weapon, int inventoryIndexNumber)
     {
-        OnItemAddedToActiveItemSlot?.Invoke(new SetSelectedActiveItemArgs { activeItem = activeItem });
+        OnInventoryWeaponUpgraded?.Invoke(new InventoryWeaponUpgradedArgs
+        {
+            inventoryIndexNumber = inventoryIndexNumber,
+            weapon = weapon
+        });
+    }
+
+    // Book passive upgraded (in-place, inventory)
+    public static event Action<InventoryPassiveUpgradedArgs> OnInventoryPassiveUpgraded;
+    public static void CallInventoryPassiveUpgradedEventForBook(PassiveItem passiveItem, int inventoryIndexNumber)
+    {
+        OnInventoryPassiveUpgraded?.Invoke(new InventoryPassiveUpgradedArgs
+        {
+            inventoryIndexNumber = inventoryIndexNumber,
+            passiveItem = passiveItem
+        });
     }
 
     // Item removed from active item slot on book event
-
     public static event Action OnItemRemovedFromActiveItemSlot;
 
     public static void CallItemRemovedFromActiveItemSlot()
@@ -444,30 +489,6 @@ public static class StaticEventHandler
         OnPassiveUnlocked?.Invoke(new PassiveUnlockArgs { passiveItemType = passiveItemType });
     }
 
-    // Active hovered
-    public static event Action<ActiveHoverArgs> OnActiveHovered;
-
-    public static void CallActiveHoveredEvent(ActiveItemType activeItemType)
-    {
-        OnActiveHovered?.Invoke(new ActiveHoverArgs { activeItemType = activeItemType });
-    }
-
-    // Active unhovered
-    public static event Action OnActiveUnhovered;
-
-    public static void CallActiveUnhoveredEvent()
-    {
-        OnActiveUnhovered?.Invoke();
-    }
-
-    // Active unlocked
-    public static event Action<ActiveUnlockArgs> OnActiveUnlocked;
-
-    public static void CallActiveUnlockedEvent(ActiveItemType activeItemType)
-    {
-        OnActiveUnlocked?.Invoke(new ActiveUnlockArgs { activeItemType = activeItemType });
-    }
-
     // Enemy killed
     public static event Action<EnemyKilledArgs> OnEnemyKilled;
 
@@ -582,6 +603,19 @@ public class DecoySpawnedArgs : EventArgs
     public Decoy decoy;
 }
 
+public class InventoryWeaponUpgradedArgs : EventArgs
+{
+    public int inventoryIndexNumber;
+    public Weapon weapon;
+}
+
+public class InventoryPassiveUpgradedArgs : EventArgs
+{
+    public int inventoryIndexNumber;
+    public PassiveItem passiveItem;
+}
+
+
 public class IntroductionPopUpUIArgs : EventArgs
 {
     public DropType dropType;
@@ -591,11 +625,18 @@ public class IntroductionPopUpUIArgs : EventArgs
 public class SkillPointsArgs : EventArgs
 {
     public InnerPathDetailsSO innerPathDetails;
+    public ActiveUniqueSkillDetailsSO activeUniqueSkillContainer;
 }
 
 public class SkillBoostArgs : EventArgs
 {
     public int skillBoostLevel;
+}
+
+public class CoinAndShardArgs : EventArgs
+{
+    public int updatedCoinAmount;
+    public int updatedShardAmount;
 }
 
 public class MobHoverArgs : EventArgs
@@ -629,15 +670,7 @@ public class PassiveUnlockArgs : EventArgs
 {
     public PassiveItemType passiveItemType;
 }
-public class ActiveHoverArgs : EventArgs
-{
-    public ActiveItemType activeItemType;
-}
 
-public class ActiveUnlockArgs : EventArgs
-{
-    public ActiveItemType activeItemType;
-}
 
 public class EnemyKilledArgs : EventArgs
 {

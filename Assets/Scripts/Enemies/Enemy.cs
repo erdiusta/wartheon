@@ -65,7 +65,7 @@ public class Enemy : MonoBehaviour
 
     [HideInInspector] public bool isMaterializing;
     [HideInInspector] public float currentMoveSpeed;
-    [HideInInspector] public float addionalSpeedModifier = 0f;
+    [HideInInspector] public float additionalSpeedModifier = 0f;
     [HideInInspector] public bool minionsSpawned = false;
 
     // STATUS EFFECTS
@@ -79,13 +79,31 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool isSlowed;
     [HideInInspector] public bool isShattered;
 
+    // STATUS EFFECT DURATION
+    [HideInInspector] public float poisonDuration = 2;
+    [HideInInspector] public float bleedDuration = 2;
+    [HideInInspector] public float rootDuration = 2;
+    [HideInInspector] public float stunDuration = 2;
+    [HideInInspector] public float curseDuration = 2;
+    [HideInInspector] public float fearDuration = 2;
+    [HideInInspector] public float revealDuration = 2;
+    [HideInInspector] public float staticDuration = 2;
+    [HideInInspector] public float paralyzeDuration = 2;
+    [HideInInspector] public float warmDuration = 2;
+    [HideInInspector] public float burnDuration = 2;
+    [HideInInspector] public float chillDuration = 2;
+    [HideInInspector] public float freezeDuration = 2;
+    [HideInInspector] public float blindDuration = 2;
+    [HideInInspector] public float slowDuration = 2;
+
     // DISORIENTED
     [HideInInspector] public bool isDisoriented;
     [HideInInspector] public float disorientDuration = 0f;
     float disorientTimer;
 
-    // Status animator
+    // STATUS EFFECT ANIMATORS
     public Animator rootAnimator;
+    public Animator healAnimator;
 
     float blindTimer;
     SetActiveWeaponEvent setActiveWeaponEvent;
@@ -268,7 +286,8 @@ public class Enemy : MonoBehaviour
         // Process if enemy has a weapon
         if (enemyDetails.enemyWeapon != null)
         {
-            Weapon weapon = new Weapon { weaponDetails = enemyDetails.enemyWeapon, weaponRemainingProjectile = enemyDetails.enemyWeapon.weaponProjectileCapacity };
+            Weapon weapon = new Weapon (enemyDetails.enemyWeapon.rarity)
+            { weaponDetails = enemyDetails.enemyWeapon, weaponRemainingProjectile = enemyDetails.enemyWeapon.weaponProjectileCapacity };
 
             //Set weapon for enemy
             setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, 1, false, false);

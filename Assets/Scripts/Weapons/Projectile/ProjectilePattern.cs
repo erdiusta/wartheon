@@ -20,7 +20,6 @@ public class ProjectilePattern : MonoBehaviour, IFireable
     Vector3 fireDirectionVector;
     float fireDirectionAngle;
     ProjectileDetailsSO projectileDetails;
-    ActiveItemDetailsSO activeItemDetails;
     float projectileChargeTimer;
     Vector3 velocity;
 
@@ -48,8 +47,8 @@ public class ProjectilePattern : MonoBehaviour, IFireable
     public void InitializeProjectile(Enemy belongingEnemy, bool headShotHappened, ProjectileDetailsSO projectileDetails, float aimAngle, float weaponAimAngle,
         float projectileSpeed, Vector3 weaponAimDirectionVector, bool overrideProjectileMovement, bool fallingFromSkies = false, bool isPenetrationArrow = false,
         int projectileCounter = 0, int totalProjectiles = 0, MoravellePhase moravellePhase = MoravellePhase.None, SylvarokPhase treantPhase = SylvarokPhase.None,
-        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None,
-        VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None,
+        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, CryotharPhase frostWrymPhase = CryotharPhase.None,
+        VenomancerPhase venomancerPhase = VenomancerPhase.None, PyrotharPhase fireWrymPhase = PyrotharPhase.None, MoldranPhase moldranPhase = MoldranPhase.None,
         bool isTripleThreat = false, bool isBindingArrow = false, bool isArrowOfTheSeven = false, ProjectileDetailsSO grappleDetails = null,
         ProjectileDetailsSO iceBreakerDetails = null, bool isFireBlast = false, ProjectileDetailsSO fireBlastDetails = null, bool isBlazingCyclone = false,
         ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null, bool isShiruken = false,
@@ -95,18 +94,6 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         }
     }
 
-    private void Start()
-    {
-        if (activeItemDetails != null)
-        {
-            if (activeItemDetails.activeItemType == ActiveItemType.Boomerang)
-            {
-                boomerangPhase = BoomerangPhase.Fire;
-                SoundEffectManager.Instance.PlaySoundEffect(activeItemDetails.activeItemSwingSoundEffect);
-            }
-        }
-    }
-
     private void Update()
     {
         // Projectile charge effect
@@ -119,91 +106,17 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         // Calculate distance vector to move projectile
         Vector3 distanceVector = fireDirectionVector * projectileSpeed * Time.deltaTime;
 
-        if (activeItemDetails != null)
-        {
-            if (activeItemDetails.activeItemType == ActiveItemType.Boomerang)
-            {
-                if (boomerangPhase == BoomerangPhase.Fire)
-                {
-                    transform.position += distanceVector;
-                }
-                else
-                {
-                    transform.position = Vector3.MoveTowards(transform.position, GameManager.Instance.GetPlayer().GetPlayerPosition(),
-                        projectileSpeed * Time.deltaTime);
-
-                    boomerangPhase = BoomerangPhase.Return;
-
-                    if (transform.position == GameManager.Instance.GetPlayer().GetPlayerPosition())
-                    {
-                        // Boomerang has returned to the player
-                        ResetBoomerang();
-                        gameObject.SetActive(false);
-                    }
-                }
-
-            }
-            else if (activeItemDetails.activeItemType == ActiveItemType.Shiruken)
-            {
-                if (shirukenPhase == ShirukenPhase.Fire)
-                {
-                    transform.position += distanceVector;
-                }
-                else if(shirukenPhase == ShirukenPhase.Ricochet)
-                {
-                    // Calculate angle perpendicular to the distance vector
-                    float angle = Mathf.Atan2(fireDirectionVector.y, fireDirectionVector.x) + Mathf.PI / 2f;
-
-                    // Calculate normal vector
-                    Vector2 normalVector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-
-                    // Calculate reflection direction
-                    transform.position += Vector3.Reflect(fireDirectionVector.normalized, normalVector);
-
-                    // Set shuriken phase to Fire
-                    shirukenPhase = ShirukenPhase.Fire;
-                }
-            }
-            else
-            {
-                transform.position += distanceVector;
-            }
-        }
-        else
-        {
-            transform.position += distanceVector;
-        }
+        transform.position += distanceVector;
 
         // Rotate projectile for projectiles and active items
-        if (activeItemDetails == null)
-        {
-            transform.Rotate(new Vector3(0f, 0f, projectileDetails.projectileRotationSpeed * Time.deltaTime));
-        }
-        else
-        {
-            transform.Rotate(new Vector3(0f, 0f, activeItemDetails.projectileRotationSpeed * Time.deltaTime));
-        }
+        transform.Rotate(new Vector3(0f, 0f, projectileDetails.projectileRotationSpeed * Time.deltaTime));
 
         // Disable after max range reached
         projectileRange -= distanceVector.magnitude;
 
         if (projectileRange < 0f)
         {
-            if (activeItemDetails != null)
-            {
-                if (activeItemDetails.activeItemType == ActiveItemType.Boomerang)
-                {
-                    boomerangPhase = BoomerangPhase.Return;
-                }
-                else
-                {
-                    StartCoroutine(DisableProcess());
-                }
-            }
-            else
-            {
-                StartCoroutine(DisableProcess());
-            }
+            StartCoroutine(DisableProcess());
         }
     }
 
@@ -260,13 +173,6 @@ public class ProjectilePattern : MonoBehaviour, IFireable
         yield return new WaitForSeconds(0.3f);
 
         gameObject.SetActive(false);
-    }
-
-    private void ResetBoomerang()
-    {
-        boomerangPhase = BoomerangPhase.Aim;
-
-        GameManager.Instance.GetPlayer().selectedActiveItem.IncreaseRemainingProjectile(1);
     }
 
     #region Validation

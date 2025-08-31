@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "PassiveItem_", menuName = "Scriptable Objects/Passive Items")]
@@ -20,6 +21,10 @@ public class PassiveItemDetailsSO : ScriptableObject
     #endregion Tooltip
     public Sprite passiveItemSprite;
     #region Tooltip
+    [Tooltip("Passive item rarity")]
+    #endregion Tooltip
+    public Rarity rarity;
+    #region Tooltip
     [Tooltip("The passive item category for the item")]
     #endregion Tooltip
     public PassiveItemCategory passiveItemCategory;
@@ -39,6 +44,19 @@ public class PassiveItemDetailsSO : ScriptableObject
     [Tooltip("The animatior controller for the item")]
     #endregion Tooltip
     public RuntimeAnimatorController passiveItemAnimatorController;
+
+    #region Header DROP MODIFIERS
+    [Space(10)]
+    [Header("DROP MODIFIERS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Passive items's base unique modifier")]
+    #endregion Tooltip
+    public BoostType baseUniqueModifier;
+    #region Tooltip
+    [Tooltip("Passive item's additonal modifier type pool")]
+    #endregion Tooltip
+    public List<BoostType> additionalModifierPoolForType;
 
     #region Validation
 #if UNITY_EDITOR

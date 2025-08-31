@@ -17,7 +17,45 @@ MonoBehaviour:
   activeUniqueSkillSprite: {fileID: 21300000, guid: b48ae12b31bff0a40890f1ee1d6d9bf5, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 11400000, guid: 03826c86544c84b47938552393e9a08b, type: 2}
-  activeUniqueSkillCooldownDuration: 20
-  activeUniqueSkillEffectiveDuration: 0
-  activeUniqueSkillManaCost: 15
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: "Deals bonus +50% magic damage with armor penetration
+      and enemy health drain.\n\nBase Attack Damage: 100%\nBase Additional Magic
+      Damage: +50%\nBase Armor Penetration: 20%\nBase Enemy Health Drain: 15%\nBase
+      Mana Cost: \t15\nBase Cooldown: 20"
+    cooldown: 20
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 15
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: "Deals bonus +50% magic damage with armor penetration
+      and enemy health drain.\n\nBase Attack Damage: 100%\nBase Additional Magic
+      Damage: +50%\nBase Armor Penetration: 25%\nBase Enemy Health Drain: 18%\nBase
+      Mana Cost: \t18\nBase Cooldown: 18"
+    cooldown: 18
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 18
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: "Deals bonus +50% magic damage with armor penetration
+      and enemy health drain.\n\nBase Attack Damage: 100%\nBase Additional Magic
+      Damage: +50%\nBase Armor Penetration: 30%\nBase Enemy Health Drain: 23%\nBase
+      Mana Cost: \t23\nBase Cooldown: 15"
+    cooldown: 15
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 23
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

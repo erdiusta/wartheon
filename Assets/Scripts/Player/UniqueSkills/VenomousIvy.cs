@@ -63,8 +63,8 @@ public class VenomousIvy : MonoBehaviour
             }
 
             // Apply effects
-            player.meleeAttackMainHand.CheckPoisonStatus(affectedEnemy, false, true);
-            player.meleeAttackMainHand.CheckRootStatus(affectedEnemy, true);
+            player.meleeAttackMainHand.CheckPoisonStatus(affectedEnemy, false, isVenomousIvy: true);
+            player.meleeAttackMainHand.CheckRootStatus(affectedEnemy, isVenomousIvy: true);
 
             // Update last affected time
             affectedEnemies[affectedEnemy] = Time.time;

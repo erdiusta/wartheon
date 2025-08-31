@@ -90,10 +90,6 @@ public class EnemyDetailsSO : ScriptableObject
     #endregion
     public bool isDecoy = false;
     #region Tooltip
-    [Tooltip("Weapon elemental bias")]
-    #endregion Tooltip
-    public ElementalBias elementalBias;
-    #region Tooltip
     [Tooltip("Weapon elemental compound rate")]
     #endregion Tooltip
     public float elementalForgeRate;
@@ -438,10 +434,6 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("The enemy secondary passive drops list")]
     #endregion
     public List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> secondaryPassiveItemsByLevelList;
-    #region Tooltip
-    [Tooltip("The enemy active drops list")]
-    #endregion
-    public List<SpawnableObjectsByLevel<ActiveItemDetailsSO>> activeItemsByLevelList;
 
     #region Header DROP SPAWN CHANCE
     [Space(10)]

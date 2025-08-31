@@ -13,12 +13,91 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_Whirlrend
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Whirlrend
-  activeUniqueSkillDetails: 
   activeSkill: 28
   activeUniqueSkillSprite: {fileID: 21300000, guid: 6f60747f7c83e0b4f9e9fa63724be784, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 1369b5d0bd152f04eb6bc12c70a9c549, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 18
-  activeUniqueSkillEffectiveDuration: 2
-  activeUniqueSkillManaCost: 30
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Spins and deals damage to enemies around but takes
+      small damage as well. Chance to apply Bleeding to enemies.
+
+
+      Base Attack
+      Damage: 70%
+
+      Base Damage Taken: 15%
+
+      Base Enemy Bleeding Chance:
+      10%
+
+      Base Mana Cost: 30
+
+      Base Cooldown: 18
+
+      Base Effective
+      Duration: 3'
+    cooldown: 18
+    effectiveDuration: 3
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 30
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Spins and deals damage to enemies around but takes
+      small damage as well. Chance to apply Bleeding to enemies.
+
+
+      Base Attack
+      Damage: 80%
+
+      Base Damage Taken: 13%
+
+      Base Enemy Bleeding Chance:
+      15%
+
+      Base Mana Cost: 30
+
+      Base Cooldown: 17
+
+      Base Effective
+      Duration: 3'
+    cooldown: 17
+    effectiveDuration: 3
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 30
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Spins and deals damage to enemies around but takes
+      small damage as well. Chance to apply Bleeding to enemies.
+
+
+      Base Attack
+      Damage: 100%
+
+      Base Damage Taken: 10%
+
+      Base Enemy Bleeding Chance:
+      20%
+
+      Base Mana Cost: 30
+
+      Base Cooldown: 15
+
+      Base Effective
+      Duration: 3'
+    cooldown: 15
+    effectiveDuration: 3
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 30
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

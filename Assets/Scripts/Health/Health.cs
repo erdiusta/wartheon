@@ -152,22 +152,22 @@ public class Health : MonoBehaviour
                 player.healthEvent.CallSecondBreathWoreOffEvent();
             }
 
-            // Passive item effect - ChestplateOfTheLastLight Specific
-            if (player.equippedPassiveItems.TryGetValue(PassiveItemSlotName.Chest, out PassiveItem passiveItem) && passiveItem != null)
-            {
-                if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight && currentHealth < maximumHealth * 0.5f)
-                {
-                    player.thirtyPercentDamageAbsorbIsActive = true;
-                }
-                else
-                {
-                    player.thirtyPercentDamageAbsorbIsActive = false;
-                }
-            }
-            else
-            {
-                player.thirtyPercentDamageAbsorbIsActive = false;
-            }
+            //// Passive item effect - ChestplateOfTheLastLight Specific
+            //if (player.equippedPassiveItems.TryGetValue(PassiveItemSlotName.Chest, out PassiveItem passiveItem) && passiveItem != null)
+            //{
+            //    if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight && currentHealth < maximumHealth * 0.5f)
+            //    {
+            //        player.thirtyPercentDamageAbsorbIsActive = true;
+            //    }
+            //    else
+            //    {
+            //        player.thirtyPercentDamageAbsorbIsActive = false;
+            //    }
+            //}
+            //else
+            //{
+            //    player.thirtyPercentDamageAbsorbIsActive = false;
+            //}
 
             // Bleeding effect
             if ((player.healthStatus & HealthStatus.Bleeding) != 0)
@@ -423,14 +423,8 @@ public class Health : MonoBehaviour
 
     private void DecoyGetHitRoutine()
     {
-        if (decoy.activeItemDetails != null) // Active item decoy
-        {
-            SoundEffectManager.Instance.PlaySoundEffect(decoy.activeItemDetails.activeItemSwingSoundEffect);
-        }
-        else // This is practice dummy
-        {
-            SoundEffectManager.Instance.PlaySoundEffect(decoy.dummyHitSound);
-        }
+        // Practice Dummy
+        SoundEffectManager.Instance.PlaySoundEffect(decoy.dummyHitSound);
     }
 
     private void EnemyGetHitProcess()
@@ -649,7 +643,7 @@ public class Health : MonoBehaviour
 
         if (player != null)
         {
-            damageAmount = (int)(7 - 7 * player.currentFireResistanceValue);
+            damageAmount = (int)(7 - 7 * player.currentMagicResistanceValue);
         }
         else if (enemy != null)
         {
@@ -696,7 +690,7 @@ public class Health : MonoBehaviour
 
         if (player != null)
         {
-            damageAmount = (int)(7 - 7 * player.currentEarthResistanceValue);
+            damageAmount = (int)(7 - 7 * player.currentMagicResistanceValue);
         }
         else if (enemy != null)
         {

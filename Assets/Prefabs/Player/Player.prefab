@@ -2170,17 +2170,15 @@ GameObject:
   - component: {fileID: 305337201806947726}
   - component: {fileID: 337600116752569046}
   - component: {fileID: 6156243514526406718}
-  - component: {fileID: 9050973798060747845}
   - component: {fileID: 3760601999533703318}
   - component: {fileID: -7766726267448648419}
-  - component: {fileID: 2746591249784291253}
-  - component: {fileID: 8582659391090279790}
   - component: {fileID: 4129974003213523600}
   - component: {fileID: 448431427010442839}
   - component: {fileID: -9133217020520152176}
   - component: {fileID: 6815216415085289844}
   - component: {fileID: 6237763269965026576}
   - component: {fileID: 8750277059502281644}
+  - component: {fileID: 3058858957874564112}
   m_Layer: 11
   m_Name: Player
   m_TagString: Player
@@ -2557,11 +2555,9 @@ MonoBehaviour:
   meleeAttackMainHand: {fileID: 0}
   rangedAttackEvent: {fileID: 0}
   setActiveWeaponEvent: {fileID: 0}
-  setActiveItemEvent: {fileID: 0}
   setPassiveItemEvent: {fileID: 0}
   aimWeapon: {fileID: 0}
   activeWeapon: {fileID: 0}
-  selectedActiveItem: {fileID: 0}
   selectedPassiveItem: {fileID: 0}
   weaponFiredEvent: {fileID: 0}
   spriteRenderer: {fileID: 0}
@@ -2573,7 +2569,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   animatePlayer: {fileID: 0}
   knockback: {fileID: 0}
-  coins: {fileID: 0}
+  coinsAndShards: {fileID: 0}
   idle: {fileID: 0}
   movementByForce: {fileID: 0}
   movementToPositionEvent: {fileID: 0}
@@ -2589,12 +2585,7 @@ MonoBehaviour:
   activeDropItem: {fileID: 0}
   playersAllActiveUniqueSkills: []
   currentArmorValue: 0
-  currentFireResistanceValue: 0
-  currentWaterResistanceValue: 0
-  currentAirResistanceValue: 0
-  currentEarthResistanceValue: 0
-  currentLightResistanceValue: 0
-  currentDarkResistanceValue: 0
+  currentMagicResistanceValue: 0
   isPhysicalDamage: 0
   currentMainHandMinDamageValue: 0
   currentMainHandMaxDamageValue: 0
@@ -2611,27 +2602,30 @@ MonoBehaviour:
   currentGainedTotalExperiencePoints: 0
   currentSkillPoints: 0
   currentStatPoints: 0
-  additionalMeleeDamageModifer: 0
-  additionalRangedDamageModifier: 0
-  additionalElementalDamageModifier: 0
-  additionalArmorPenetrationModifier: 0
-  additionalMeleeAttackCoolDownModifier: 0
-  additionalRangedAttackCoolDownModifier: 0
-  additionalSkillCoolDownModifier: 0
-  additionalSpeedModifier: 0
-  additionalMeleeCriticalHitChanceModifier: 0
-  additionalRangedCriticalHitChanceModifier: 0
-  additionalCriticalDamageOnCloakedPrecision: 0.5
-  additionalCriticalDamageModifier: 0
-  additionalCriticalMeleeDamageModifier: 0
-  additionalCriticalRangedDamageModifier: 0
   additionalArmorModifier: 0
   acidArmorDebuffModifier: 0
   additionalShieldArmorModifier: 0
   currentShieldArmor: 0
   isShieldCalculated: 0
+  additionalAttackCoolDownModifier: 0
+  additionalAttackRangeModifier: 0
+  additionalArmorPenetrationModifier: 0
+  additionalAttackRatingModifier: 0
   additionalBlockModifier: 0
+  additionalStatusEffectInflictModifier: 0
+  additionalCriticalHitChanceModifier: 0
+  additionalCriticalDamageOnCloakedPrecision: 0.5
+  additionalCriticalDamageModifier: 0
+  additionalCriticalMeleeDamageModifier: 0
+  additionalCriticalRangedDamageModifier: 0
+  additionalCriticalResistanceModifier: 0
+  additionalPhysicalDamageModifer: 0
+  additionalMagicDamageModifier: 0
+  additionalDamageReductionModifier: 0
   additionalEvasivenessModifier: 0
+  additionalLifeStealModifier: 0
+  additionalSkillCoolDownModifier: 0
+  additionalSpeedModifier: 0
   isFocusedAggressionActive: 0
   isPunishersWillActive: 0
   isViciousMomentumActive: 0
@@ -2663,19 +2657,10 @@ MonoBehaviour:
   expGainModifier: 1
   additionalBowAccuracyModifier: 0
   additionalManaReductionModifier: 0
-  additionalHeadShotDamageModifier: 0
   threeSecInvincilibityAfterTeleportEnabled: 0
-  bloodDrainSkillAdditionalDamagePercentageModifier: 0
-  barrierSkillAdditionalDurationModifier: 0
-  additionalShadowStepSkillDurationModifier: 0
-  additionalPenetrationSkillDamageModifier: 0
   additionalCastDurationModifier: 1
-  additionalActiveItemCharge: 0
-  additionalCoinIncreaserModifier: 0
-  additionalCoinIncreaseActivated: 0
-  additionalLockpickingModifier: 0
   additionalDropChanceModifier: 0
-  additionalNegativeStatusEffectNegatorModifier: 0
+  additionalStatusResistanceModifier: 0
   additinalNPCCostModifier: 0
   thirtyPercentDamageAbsorbIsActive: 0
   blindModifier: 0
@@ -2725,6 +2710,8 @@ MonoBehaviour:
   isShieldBashing: 0
   isBreakTheLineActive: 0
   isGuardedOathActive: 0
+  originalShieldArmorModifier: 0
+  originalBlockModifier: 0
   isUmbralMistActive: 0
   isStealthActive: 0
   isShadowStepActive: 0
@@ -2750,10 +2737,8 @@ MonoBehaviour:
   isShatterCryActive: 0
   isAxeThrowActive: 0
   isWhirlrendActive: 0
-  whirlrendBleedChance: 0.1
   whirlrendDamage: 10
   isFeastOfWarActive: 0
-  feastOfWarDrainPercentage: 0.1
   isNyxasReflexPassiveOn: 0
   lastDashTeleportHappenedTime: 0
   isDontBlinkActive: 0
@@ -2761,6 +2746,7 @@ MonoBehaviour:
   isVenomousIvyActive: 0
   isFadeAndFeedActive: 0
   isBladeAndDashActive: 0
+  bladeAndDashOnRecast: 0
   isShirukenActive: 0
   isMistOfDisruptionActive: 0
   isInMistOfDisruption: 0
@@ -2769,7 +2755,24 @@ MonoBehaviour:
   isChainLightningActive: 0
   isEyeOfTheStormActive: 0
   isIonicRejuvenationActive: 0
+  isConductiveTouchActive: 0
+  nymaraSkillUsageTimer: 0
   shadowCloakEquipped: 0
+  poisonDuration: 2
+  bleedDuration: 2
+  rootDuration: 2
+  stunDuration: 2
+  curseDuration: 2
+  fearDuration: 2
+  revealDuration: 2
+  staticDuration: 2
+  paralyzeDuration: 2
+  warmDuration: 2
+  burnDuration: 2
+  chillDuration: 2
+  freezeDuration: 2
+  blindDuration: 2
+  slowDuration: 2
   isCursed: 0
   isFeared: 0
   isRevealed: 0
@@ -3112,19 +3115,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   knockbackForce: 3.5
   knockbackTimeWeight: 1.2
---- !u!114 &9050973798060747845
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4770697194666701406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb5df6a702759df4baaf0aab72659115, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  coinAmount: 0
 --- !u!114 &3760601999533703318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3165,30 +3155,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 464ba421347284e4dae41c0475660f7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2746591249784291253
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4770697194666701406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16285e5781419b342b06ddc963008928, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8582659391090279790
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4770697194666701406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3152a0b0bab69846ad02b521e8e5289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4129974003213523600
@@ -3309,6 +3275,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28a9e9b2a6069b4498f77a1829841a2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3058858957874564112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770697194666701406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 445db9c21f241f44ebde0d98e51f7e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinAmount: 0
+  shardAmount: 0
 --- !u!1 &4966358325702215446
 GameObject:
   m_ObjectHideFlags: 0

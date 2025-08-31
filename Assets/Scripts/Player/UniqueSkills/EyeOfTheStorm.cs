@@ -56,12 +56,32 @@ public class EyeOfTheStorm : MonoBehaviour
         Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
         if (mainHandWeapon == null || mainHandWeapon.weaponDetails.weaponCurrentProjectile == null) return;
 
-        float multiplier = isEpicenter ? 1.2f : 0.6f;
+        float damageModifier = 1f;
 
-        int rng = Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
-        int tornadoDamage = (int)(rng * multiplier);
+        if (isEpicenter)
+        {
+            damageModifier = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
+            {
+                1 => 1.2f,
+                2 => 1.35f,
+                3 => 1.5f,
+                _ => 1f
+            };
+        }
+        else
+        {
+            damageModifier = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
+            {
+                1 => 0.6f,
+                2 => 0.7f,
+                3 => 0.8f,
+                _ => 1f
+            };
+        }
 
-        affectedEnemy.health.TakeDamage(tornadoDamage, player.transform.position, affectedEnemy.transform.position, enemyCollider, MeleeHand.None);
+        int inflictedDamage = player.meleeAttackMainHand.CalculateDamageAmount(affectedEnemy, mainHandWeapon, MeleeHand.MainHand, damageModifier);
+
+        affectedEnemy.health.TakeDamage(inflictedDamage, player.transform.position, affectedEnemy.transform.position, enemyCollider, MeleeHand.None);
 
         affectedEnemies[affectedEnemy] = Time.time;
     }

@@ -75,5 +75,28 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>
         originalSlotIndex = index;
     }
 
+    public ItemGeneric ReplaceItemAt(int index, ItemGeneric replacement, bool setStatusToInventory = true)
+    {
+        if (index < 0 || index >= inventoryArray.Length)
+        {
+            Debug.LogWarning($"InventoryManager.ReplaceItemAt: index {index} is out of range.");
+            return null;
+        }
+
+        // Preserve previous item so the caller can handle it if necessary
+        ItemGeneric previous = inventoryArray[index];
+
+        // Write the new reference
+        inventoryArray[index] = replacement;
+
+        // Ensure upgraded items are marked as inventory items (optional toggle)
+        if (replacement != null && setStatusToInventory)
+        {
+            replacement.itemSlotStatus = ItemSlotStatus.Inventory;
+        }
+
+        return previous;
+    }
+
     public int GetOriginalSlotIndex() => originalSlotIndex;
 }

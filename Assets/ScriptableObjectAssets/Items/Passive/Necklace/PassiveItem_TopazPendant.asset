@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e767738e70a8b4386de512a7ff92be, type: 3}
+  m_Name: PassiveItem_TopazPendant
+  m_EditorClassIdentifier: 
+  passiveItemName: Topaz Pendant
+  price: 60
+  passiveItemSprite: {fileID: 1874452604, guid: 01ae72f2dce6ca04e838f82d49d1939a, type: 3}
+  rarity: 0
+  passiveItemCategory: 1
+  primaryPassiveItemName: 0
+  passiveItemType: 12
+  passiveItemSlotName: 3
+  passiveItemAnimatorController: {fileID: 9100000, guid: b7e5ab535b833704e90ac93ff26a0cd6, type: 2}
+  baseUniqueModifier: 8
+  additionalModifierPoolForType: 110000000d00000008000000040000000b0000000c000000

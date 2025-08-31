@@ -182,14 +182,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     {
         if (currentWeapon != null)
         {
-            if (currentWeapon.weaponDetails.isMeleeWeapon)
-            {
-                cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalMeleeAttackCoolDownModifier));
-            }
-            else
-            {
-                cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalRangedAttackCoolDownModifier));
-            }
+            cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalAttackCoolDownModifier));
 
 
             // Set bar scale to 1
@@ -230,14 +223,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
             float barFill = 0f;
 
             // Update cooldown bar
-            if (currentWeapon.weaponDetails.isMeleeWeapon)
-            {
-                barFill = cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalMeleeAttackCoolDownModifier));
-            }
-            else
-            {
-                barFill = cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalRangedAttackCoolDownModifier));
-            }
+            barFill = cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalAttackCoolDownModifier));
 
             // Update bar fill
             if (barFill > 0f)

@@ -79,6 +79,17 @@ MonoBehaviour:
   healthPickup: {fileID: 11400000, guid: 4638ce053d31bdd4595c3991e645fac9, type: 2}
   itemPickup: {fileID: 11400000, guid: 0c046751a4ee285408725ea69f299bed, type: 2}
   weaponPickup: {fileID: 11400000, guid: 89c2519ed7c7c0546a8b53183833b881, type: 2}
+  rootSoundEffect: {fileID: 11400000, guid: 3260cb66e2f6f36468b2beeba1c14620, type: 2}
+  healSoundEffect: {fileID: 11400000, guid: 92d4634a6b7add14690e1689ff3f95f8, type: 2}
+  stunSoundEffect: {fileID: 0}
+  paralyzeSoundEffect: {fileID: 0}
+  freezeSoundEffect: {fileID: 0}
+  poisonSoundEffect: {fileID: 0}
+  bleedingSoundEffect: {fileID: 0}
+  burnSoundEffect: {fileID: 0}
+  curseSoundEffect: {fileID: 0}
+  blindSoundEffect: {fileID: 0}
+  fearSoundEffect: {fileID: 0}
   healthPassiveItem: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
   coinPassiveItem: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
   secondaryPassiveItem: {fileID: 11400000, guid: ce61e302d49e153479d6e82d40b1dbf8, type: 2}
@@ -93,7 +104,6 @@ MonoBehaviour:
   levelOneFrameSprite: {fileID: 21300000, guid: fdc02b4292398ec42b8a58443ff086b7, type: 3}
   levelTwoFrameSprite: {fileID: 21300000, guid: 6b42a3fcfdb83b045b40c6312569d2c2, type: 3}
   levelThreeFrameSprite: {fileID: 21300000, guid: 58e6d6057b5fbe048a8b5ed6683228e9, type: 3}
-  levelFourFrameSprite: {fileID: 21300000, guid: 58e6d6057b5fbe048a8b5ed6683228e9, type: 3}
   bookWeaponSlot: {fileID: 5499570960415012034, guid: 57827440d6b492d4c8b2c2c7723f9158, type: 3}
   lockSlotIcon: {fileID: 21300000, guid: 0f39839699a5d5348b14439733365e2d, type: 3}
   dustTrailPrefab: {fileID: 8196255681527788008, guid: 9e1e12b38f4aaa94db184b78672ad703, type: 3}

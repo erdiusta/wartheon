@@ -13,15 +13,67 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_MistOfDisruption
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Mist Of Disruption
-  activeUniqueSkillDetails: 
   activeSkill: 30
   activeUniqueSkillSprite: {fileID: 21300000, guid: 8c8606a5cbef8524794356b95734ad96, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: f671320a1607d1c40bdbd8ef336d31a3, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 18
-  activeUniqueSkillEffectiveDuration: 6
-  activeUniqueSkillRecastCooldown: 0
-  activeUniqueSkillRecastDuration: 0
-  activeUniqueSkillRecastRepeatCount: 0
-  activeUniqueSkillManaCost: 16
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Creates a mist that disables enemy''s attack behaviours
+      while active.
+
+
+      Base Mana Cost: 16
+
+      Base Cooldown: 18
+
+      Base
+      Effective Duration: 6'
+    cooldown: 18
+    effectiveDuration: 6
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 16
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Creates a mist that disables enemy''s attack behaviours
+      while active.
+
+
+      Base Mana Cost: 18
+
+      Base Cooldown: 17
+
+      Base
+      Effective Duration: 7'
+    cooldown: 17
+    effectiveDuration: 7
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 18
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Creates a mist that disables enemy''s attack behaviours
+      while active.
+
+
+      Base Mana Cost: 20
+
+      Base Cooldown: 15
+
+      Base
+      Effective Duration: 8'
+    cooldown: 15
+    effectiveDuration: 8
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

@@ -54,11 +54,11 @@ MonoBehaviour:
   shakeIntensity: 3
   shakeDuration: 1
   passiveItemsList: []
-  startingWeapon: {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
-  mainHandAnimatorController: {fileID: 9100000, guid: a9f6b3580707cd749861dcb2fc4d7f34, type: 2}
+  startingWeapon: {fileID: 11400000, guid: 1109c002fb10494449768d7d021b2323, type: 2}
+  mainHandAnimatorController: {fileID: 0}
   offHandAnimatorController: {fileID: 0}
   startingWeaponList:
-  - {fileID: 11400000, guid: 5d295485e5148b3468e26ccd2ea1d42a, type: 2}
+  - {fileID: 11400000, guid: 1109c002fb10494449768d7d021b2323, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: 6a268ba1aabe51546808769958236554, type: 3}
   playerHandSprite: {fileID: 21300000, guid: b70311d0005c1e84097834db844c4dda, type: 3}
   playerBookSprite: {fileID: 386633566, guid: 90a9c93cf9a589d43ae16698cdcd809e, type: 3}

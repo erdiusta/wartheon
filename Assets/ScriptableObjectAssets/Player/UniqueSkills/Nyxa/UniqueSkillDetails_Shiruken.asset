@@ -13,15 +13,81 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_Shiruken
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Shiruken
-  activeUniqueSkillDetails: 
   activeSkill: 39
   activeUniqueSkillSprite: {fileID: 21300000, guid: 33cdaf20f8e8f2340a8ffe94961f3fdc, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 0}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 12
-  activeUniqueSkillEffectiveDuration: 4
-  activeUniqueSkillRecastCooldown: 5
-  activeUniqueSkillRecastDuration: 0
-  activeUniqueSkillRecastRepeatCount: 3
-  activeUniqueSkillManaCost: 24
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Flips shirukens which bounces from walls. Can recast
+      2 times more.
+
+
+      Base Attack Damage: 50%
+
+      Base Mana Cost: 24
+
+      Base
+      Cooldown: 12
+
+      Base Recast Cooldown: 4
+
+      Base Recast Repeat Count:
+      2'
+    cooldown: 12
+    effectiveDuration: 0
+    recastCooldown: 4
+    recastWindowDuration: 0
+    recastRepeatCount: 3
+    manaCost: 24
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Flips shirukens which bounces from walls. Can recast
+      2 times more.
+
+
+      Base Attack Damage: 60%
+
+      Base Mana Cost: 24
+
+      Base
+      Cooldown: 11
+
+      Base Recast Cooldown: 4
+
+      Base Recast Repeat Count:
+      2'
+    cooldown: 11
+    effectiveDuration: 0
+    recastCooldown: 4
+    recastWindowDuration: 0
+    recastRepeatCount: 3
+    manaCost: 24
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Flips shiruken. Can recast 2 times more.
+
+
+      Base
+      Attack Damage: 75%
+
+      Base Mana Cost: 24
+
+      Base Cooldown: 10
+
+      Base
+      Recast Cooldown: 4
+
+      Base Recast Repeat Count: 2'
+    cooldown: 10
+    effectiveDuration: 0
+    recastCooldown: 4
+    recastWindowDuration: 0
+    recastRepeatCount: 3
+    manaCost: 24
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 2
+  startingLevel: 1

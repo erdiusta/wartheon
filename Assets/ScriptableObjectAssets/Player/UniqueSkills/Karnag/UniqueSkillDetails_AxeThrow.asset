@@ -13,12 +13,75 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_AxeThrow
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Axe Throw
-  activeUniqueSkillDetails: 
   activeSkill: 27
   activeUniqueSkillSprite: {fileID: 21300000, guid: 7b2dbf72ad6f25344ad135f7f179d1e3, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 65771ccd5a8ddb44bbeb1d4b0f60aeeb, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 5
-  activeUniqueSkillEffectiveDuration: 0
-  activeUniqueSkillManaCost: 8
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Throw''s off-hand axe then it can be picked-up again.
+      Chance to apply Bleeding to enemies.
+
+
+      Base Attack Damage: 100%
+
+      Base
+      Enemy Bleeding Chance: 20%
+
+      Base Mana Cost: 8
+
+      Base Cooldown: 6'
+    cooldown: 6
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 8
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Throw''s off-hand axe then it can be picked-up again.
+      Chance to apply Bleeding to enemies.
+
+
+      Base Attack Damage: 120%
+
+      Base
+      Enemy Bleeding Chance:  30%
+
+      Base Mana Cost: 9
+
+      Base Cooldown:
+      5'
+    cooldown: 5
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 9
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Throw''s off-hand axe then it can be picked-up again.
+      Chance to apply Bleeding to enemies.
+
+
+      Base Attack Damage: 150%
+
+      Base
+      Enemy Bleeding Chance:  45%
+
+      Base Mana Cost: 11
+
+      Base Cooldown:
+      4'
+    cooldown: 4
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 11
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

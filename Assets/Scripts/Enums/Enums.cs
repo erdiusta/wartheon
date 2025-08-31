@@ -5,8 +5,6 @@ public enum TutorialPhase
     Move,
     PickUpWeapon,
     AimAndFire,
-    PickUpActiveItem,
-    UseActiveItem,
     OpenGlossaryBook,
     MinimapCheck,
     OverviewMapCheck,
@@ -38,7 +36,6 @@ public enum TooltipSource
     Pointer,
     Proximity
 }
-
 
 public enum Orientation
 {
@@ -138,22 +135,6 @@ public enum InnerPathName
     SurgeTapGain
 }
 
-public enum ActiveItemType
-{
-    Generic,
-    Boomerang,
-    Bomb,
-    Shiruken,
-    Pentagram,
-    Decoy,
-    Hourglass,
-    Compass,
-    Potion,
-    Summoner,
-    Incendiary,
-    BobbyPin
-}
-
 public enum PassiveItemCategory
 {
     Primary,
@@ -175,40 +156,34 @@ public enum PrimaryPassiveItemName
 public enum PassiveItemType
 {
     Generic,
-    RingOfFortune,
-    ShadowCloak,
-    WardenOfForest,
-    BeltOfSorcery,
-    WingedSandals,
-    OminousGripOfThunder,
-    HaloOfBlindingRadiance,
-    ChestplateOfTheLastLight,
-    RingOfTempestStrikes,
-    HelmOfTheEternalVigil,
-    InfernoSash,
-    GirdleOfFirmament,
-    BloodforgedGirdle,
-    SandweaversSash,
+    GallantHelm,
+    MysticCirclet,
+    HunterHood,
+    ArmoredCap,
+    PlateArmor,
+    SilkRobe,
+    LeatherVest,
+    ChainArmor,
     RubyPendant,
+    EmeraldPendant,
     SapphirePendant,
     TopazPendant,
-    EmeraldPendant,
-    GildedGuardian,
-    WhisperingHood,
-    EnchantersSpire,
-    RecantersCloak,
+    RubyRing,
+    EmeraldRing,
+    SapphireRing,
+    TopazRing,
+    WindCape,
+    ShadowCloak,
     MantleOfStars,
-    CloakOfWindwalker,
-    GoldenCloak,
-    EmbercladBracers,
-    VenomTouchedGloves,
-    RingOfMight,
-    BootsOfInfernalMarch,
-    RingOfVitality,
-    RingOfSagacity,
-    BlazingHeartplate,
-    FrostboundChainmail,
-    VenomweaveVest
+    GuardianMantle,
+    IronBracers,
+    VelvetGloves,
+    DeerskinGloves,
+    WrappedMitts,
+    LeatherBoots,
+    IronGreaves,
+    SatinSlippers,
+    RingmailBoots
 }
 
 public enum ProjectileType
@@ -281,12 +256,74 @@ public enum AttackDirection
     UpLeft
 }
 
-public enum WeaponLevel
+public enum ModifierSource 
+{ 
+    Unique,
+    Type,
+    Enchanted,
+    Mythic
+}
+
+public enum Hand
+{
+    Main,
+    Off
+}
+
+public enum ModifierStat
+{
+    // Resistances
+    ArmorPct, MagicResistPct,
+
+    // Damage / handling
+    PhysicalDamagePct, MagicDamagePct, AttackCooldownPct, AttackRatingPct,
+    CritChancePct, CritDamagePct, CritMeleeDamagePct, CritRangedDamagePct,
+
+    // Defense / utility
+    BlockPct, EvasivenessPct, LifeStealPct, SkillCooldownPct, SpeedFlat,
+    ArmorPenetrationPct, StatusInflictPct, BlindMakePct,
+}
+
+public enum Rarity
 {
     Basic,
     Enchanted,
     Mythic,
     Legendary
+}
+
+public enum BoostPhase
+{
+    Unique,
+    Type,
+    Enchanted,
+    Mythic,
+    Legendary
+}
+
+public enum BoostType
+{
+    None,
+    AttackCooldown,
+    AttackDamage,
+    AttackRating,
+    MagicDamage,
+    CritChance,
+    CritDamage,
+    LifeSteal,
+    BlockChance,
+    DodgeChance,
+    HealthIncrease,
+    ManaIncrease,
+    StatusResistance,
+    AttackVsLowHealthEnemies,
+    CritResistance,
+    ArmorIncrease,
+    MagicResistance,
+    MoveSpeed,
+    DamageReduction,
+    ArmorPenetration,
+    AttackRange
 }
 
 public enum WeaponHitSpeed
@@ -303,44 +340,34 @@ public enum WeaponTitle
     None,
     Gladius,
     Scimitar,
-    SizzlingSword,
+    Shortsword,
+    Cutlass,
+    Wakizashi,
     Hatchet,
-    PhalanxSpear,
-    ClobberingTime,
-    HolySword,
-    AncientKatana,
-    Carnage,
-    Crusher,
+    BroadAxe,
+    Cleaver,
+    Tomahawk,
+    BattleAxe,
+    WoodenShield,
+    IronBuckler,
+    KiteShield,
+    TowerShield,
+    RoundShield,
+    ShortBow,
+    Longbow,
+    HuntingBow,
+    CompositeBow,
+    RecurveBow,
+    WoodenStaff,
+    ElixirStaff,
+    WarStaff,
+    ArcaneRod,
+    ElderStaff,
     Dirk,
-    Gambit,
-    CrudeBow,
-    Crossbow,
-    OldStaff,
-    SolarFlare,
-    HeavensGale,
-    Shield,
-    ApolloShield,
-    BronzeHuntingBow,
-    ChordOfTheSerpent,
-    EbonLongbow,
-    Netherstrand,
-    BlackTalon,
-    HailstormSculptor,
-    Trident,
-    Blazefury,
-    Scarlet,
-    Doombringer,
-    Stormblade,
-    Ravager,
-    ArcaneConduit,
-    StaffOfTheWild,
-    TwilightStaff,
-    VenomAxe,
-    PhoenixBolt,
-    HammerOfTheThunderlord,
-    VipersBite,
-    BloodfangClaw,
-    SilverwingBow
+    Stiletto,
+    Shank,
+    Kris,
+    HuntingKnife
 }
 
 public enum WeaponClass
@@ -529,7 +556,7 @@ public enum SepharothPhase
     LaserBeam
 }
 
-public enum FrostWrymPhase
+public enum CryotharPhase
 {
     None,
     Wait,
@@ -549,7 +576,7 @@ public enum VenomancerPhase
     SludgeThrow
 }
 
-public enum FireWrymPhase
+public enum PyrotharPhase
 {
     None,
     Wait,
@@ -650,7 +677,6 @@ public enum PassiveItemSlotName
     Neck,
     Finger,
     Back,
-    Waist,
     Arm,
     Leg
 }
@@ -662,7 +688,9 @@ public enum SlotType
     WeaponMainHand,
     WeaponOffHand,
     None,
-    Drop
+    Drop,
+    Upgrade,
+    Dissamble
 }
 
 public enum ItemSwapPos

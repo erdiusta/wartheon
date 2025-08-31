@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   passiveItemName: Key
   price: 0
-  passiveItemSprite: {fileID: 1910173572, guid: 62471a51733a99d48b45de20275d2ffd, type: 3}
+  passiveItemSprite: {fileID: 21300000, guid: b5d6fe69b85b8dd41b38b8b943522bbb, type: 3}
   passiveItemCategory: 0
   primaryPassiveItemName: 4
   passiveItemType: 0
   passiveItemSlotName: 0
-  passiveItemAnimatorController: {fileID: 9100000, guid: b82618ea05b186c43bafa59dc6134318, type: 2}
+  passiveItemAnimatorController: {fileID: 0}

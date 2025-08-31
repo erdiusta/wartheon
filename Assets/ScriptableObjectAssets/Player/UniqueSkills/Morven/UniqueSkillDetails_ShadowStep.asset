@@ -17,7 +17,69 @@ MonoBehaviour:
   activeUniqueSkillSprite: {fileID: 21300000, guid: 75875b50e9caf3d4ca1a956ed089df59, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 8cb0c975001857a4580d53cd4e0f34c6, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 20
-  activeUniqueSkillEffectiveDuration: 5
-  activeUniqueSkillManaCost: 20
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Increases move speed while active.
+
+
+      Base Additional
+      Speed: +2
+
+      Base Mana Cost: 20
+
+      Base Cooldown: 20
+
+      Base Effective
+      Duration: 5'
+    cooldown: 20
+    effectiveDuration: 5
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Increases move speed while active.
+
+
+      Base Additional
+      Speed: +3
+
+      Base Mana Cost: 22
+
+      Base Cooldown: 18
+
+      Base Effective
+      Duration: 5'
+    cooldown: 18
+    effectiveDuration: 5
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 22
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Increases move speed while active.
+
+
+      Base Additional
+      Speed: +4
+
+      Base Mana Cost: 25
+
+      Base Cooldown: 15
+
+      Base Effective
+      Duration: 5'
+    cooldown: 15
+    effectiveDuration: 5
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 25
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

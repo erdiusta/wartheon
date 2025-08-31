@@ -2,8 +2,6 @@ public static class SlotPlacementRules
 {
     public static bool IsPlacementAllowed(ItemGeneric item, SlotType targetSlotType, Weapon mainHandWeapon, int weaponSetIndexNumber)
     {
-        if (item is ActiveItem) return targetSlotType == SlotType.Drop;
-
         if (item is Weapon && (targetSlotType == SlotType.Active || targetSlotType == SlotType.Passive)) return false;
 
         if (item is PassiveItem && (targetSlotType == SlotType.WeaponMainHand || targetSlotType == SlotType.WeaponOffHand ||
@@ -48,8 +46,6 @@ public static class SlotPlacementRules
         Weapon offHandWeapon, Weapon peekedWeaponSetsOffHandWeapon, out ItemSwapPos itemSwapPos)
     {
         itemSwapPos = ItemSwapPos.None;
-
-        if (draggingItem is ActiveItem || targetItem is ActiveItem) return false;
 
         if (draggingItem is PassiveItem && targetItem is not PassiveItem) return false;
 

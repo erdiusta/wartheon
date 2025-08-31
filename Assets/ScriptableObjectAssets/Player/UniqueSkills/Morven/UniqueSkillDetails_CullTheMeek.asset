@@ -17,7 +17,69 @@ MonoBehaviour:
   activeUniqueSkillSprite: {fileID: 21300000, guid: bc13695512395924891b696ee03c3203, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 2efaec4acc943a84e83af928efd003ce, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 5
-  activeUniqueSkillEffectiveDuration: 0
-  activeUniqueSkillManaCost: 10
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Deals damage including enemy missing health damage.
+
+
+      Base
+      Attack Damage: 100%
+
+      Base Enemy Missing Health Damage: 20%
+
+      Base
+      Mana Cost: 10
+
+      Base Cooldown: 10'
+    cooldown: 10
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 10
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals damage including enemy missing health damage.
+
+
+      Base
+      Attack Damage: 100%
+
+      Base Enemy Missing Health Damage: 25%
+
+      Base
+      Mana Cost: 12
+
+      Base Cooldown: 9'
+    cooldown: 9
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 12
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals damage including enemy missing health damage.
+
+
+      Base
+      Attack Damage: 100%
+
+      Base Enemy Missing Health Damage: 30%
+
+      Base
+      Mana Cost: 14
+
+      Base Cooldown: 8'
+    cooldown: 8
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 14
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

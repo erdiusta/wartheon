@@ -13,15 +13,84 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_IonicRejuvenation
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Ionic Rejuvenation
-  activeUniqueSkillDetails: 
   activeSkill: 34
   activeUniqueSkillSprite: {fileID: 21300000, guid: d2cae8c63e9408a47803e61fd4ad94eb, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: f53fe6f4cdabdcc4c8f98cd1edd82a60, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 3
-  activeUniqueSkillEffectiveDuration: 1
-  activeUniqueSkillRecastCooldown: 0
-  activeUniqueSkillRecastDuration: 0
-  activeUniqueSkillRecastRepeatCount: 0
-  activeUniqueSkillManaCost: 20
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Restores minor health and clears negative status effects.
+      Doubles health restore amount if in Mist of Disruption. (Only active in fight)
+
+
+      Base
+      Health Restoration: 6
+
+      Base Health Restoration(M): 12
+
+      Base Mana
+      Cost: 20
+
+      Base Cooldown: 7
+
+      Base Effective Duration: 1
+
+'
+    cooldown: 7
+    effectiveDuration: 1
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Restores minor health and clears negative status effects.
+      Doubles health restore amount if in Mist of Disruption. (Only active in fight)
+
+
+      Base
+      Health Restoration: 7
+
+      Base Health Restoration(M): 14
+
+      Base Mana
+      Cost: 23
+
+      Base Cooldown: 6
+
+      Base Effective Duration: 1'
+    cooldown: 6
+    effectiveDuration: 1
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 23
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Restores minor health and clears negative status effects.
+      Doubles health restore amount if in Mist of Disruption. (Only active in fight)
+
+
+      Base
+      Health Restoration: 8
+
+      Base Health Restoration(M): 16
+
+      Base Mana
+      Cost: 27
+
+      Base Cooldown: 5
+
+      Base Effective Duration: 1'
+    cooldown: 5
+    effectiveDuration: 1
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 27
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

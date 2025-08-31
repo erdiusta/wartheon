@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using UnityEngine.PlayerLoop;
 
 [RequireComponent(typeof(Enemy))]
 [DisallowMultipleComponent]
@@ -45,6 +46,8 @@ public class EnemyAI : MonoBehaviour
 
     protected bool isCharging;
     protected float dashTimer;
+    protected float healTimer;
+    protected bool healTriggered;
     protected WaitForFixedUpdate waitForFixedUpdate;
     protected float attackMoveTimer;
 
@@ -72,6 +75,9 @@ public class EnemyAI : MonoBehaviour
 
     protected Player player;
     protected bool deathAnimationStarted;
+
+    protected bool isSlowTriggered;
+    protected float speedReducer;
 
     protected virtual void Awake()
     {
@@ -119,17 +125,19 @@ public class EnemyAI : MonoBehaviour
         enemyPhaseAtPreviousFrame = EnemyPhase.Patrol;
     }
 
+    protected virtual void Update()
+    {
+        healTimer += Time.deltaTime;
+    }
+
     protected virtual void FixedUpdate()
     {
         dashTimer += Time.fixedDeltaTime;
         attackMoveTimer -= Time.fixedDeltaTime;
 
-        if (Time.frameCount % 20 == 0)
-        {
-            Debug.Log("Current enemy move speed is " + enemy.currentMoveSpeed);
-        }
+        Debug.Log("Enemy's current speed is " + enemy.currentMoveSpeed);
 
-        enemy.currentMoveSpeed = enemy.enemyDetails.movementDetails.GetBaseMaxMoveSpeed();
+        enemy.currentMoveSpeed = enemy.enemyDetails.movementDetails.GetBaseMaxMoveSpeed() - speedReducer;
 
         if (isDashing)
         {
@@ -282,14 +290,14 @@ public class EnemyAI : MonoBehaviour
                     isAttacking = false;
                 }
 
-                fearEnemyRoutine = StartCoroutine(FearRoutine(5f));
+                fearEnemyRoutine = StartCoroutine(FearRoutine(enemy.fearDuration));
             }
         }
         if (enemy.isChilled)
         {
             if (chillEnemyRoutine == null)
             {
-                chillEnemyRoutine = StartCoroutine(ChillRoutine(5f));
+                chillEnemyRoutine = StartCoroutine(ChillRoutine(enemy.chillDuration));
             }
         }
         if (enemy.isShattered)
@@ -303,12 +311,10 @@ public class EnemyAI : MonoBehaviour
         {
             if (slowEnemyRoutine == null)
             {
-                slowEnemyRoutine = StartCoroutine(SlowRoutine(3f));
+                slowEnemyRoutine = StartCoroutine(SlowRoutine(enemy.slowDuration));
             }
         }
     }
-
-    protected virtual void Update() { }
 
     protected void UpdatePhaseStatus(bool isAimAttackBehaviour = false)
     {
@@ -333,28 +339,46 @@ public class EnemyAI : MonoBehaviour
 
         if (isAimAttackBehaviour)
         {
-            float attackRange = enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileSpeed *
-                            enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.lifeDuration;
+            bool isNexarion = enemy.enemyDetails.enemyCategory == EnemyCategory.Nexarion || enemy.enemyDetails.enemyCategory == EnemyCategory.IceNexarion ||
+                enemy.enemyDetails.enemyCategory == EnemyCategory.NexarionLord;
 
-            if (target.CompareTag(Settings.decoyTag))
+            if (isNexarion)
             {
-                attackRange = enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileRange;     
-            }
+                int rng = 1;
 
-            if (distanceToTarget < attackRange)
-            {
-                SwitchToAttack();
-                Debug.Log("Distance to target is lower than attack range. Switched to Attack.");
-            }
-            else if (distanceToTarget < chaseDistance)
-            {
-                SwitchToChase();
-                Debug.Log("Distance to target is lower than chase distance. Switched to Chase.");
+                rng = HealCheck(rng);
+
+                if (rng == 1) // Ranged Attack
+                {
+                    RangedAttackProcess(target, distanceToTarget, chaseDistance);
+                }
+                else if(rng == 2) // Heal
+                {
+                    foreach (Enemy checkedEnemy in EnemySpawner.Instance.GetComponentsInChildren<Enemy>())
+                    {
+                        float healthRatio = (float)checkedEnemy.health.GetCurrentHealth() / (float)checkedEnemy.health.GetMaximumHealth();
+
+                        if (healthRatio < 0.5f)
+                        {
+                            if (enemy.enemyDetails.enemyCategory == EnemyCategory.Nexarion || enemy.enemyDetails.enemyCategory == EnemyCategory.IceNexarion)
+                            {
+                                checkedEnemy.health.AddHealth(15);
+                            }
+                            else if (enemy.enemyDetails.enemyCategory == EnemyCategory.NexarionLord)
+                            {
+                                checkedEnemy.health.AddHealth(30);
+                            }
+
+                            checkedEnemy.healAnimator.SetTrigger("heal");
+                            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healSoundEffect);
+                            break;
+                        }
+                    }
+                }
             }
             else
             {
-                SwitchToPatrol();
-                Debug.Log("Switched to Patrol.");
+                RangedAttackProcess(target, distanceToTarget, chaseDistance);
             }
         }
         else
@@ -387,6 +411,49 @@ public class EnemyAI : MonoBehaviour
                     SwitchToPatrol();
                 }
             }
+        }
+    }
+
+    private int HealCheck(int rng)
+    {
+        if (healTimer < 5 && !healTriggered)
+        {
+            healTriggered = true;
+            rng = Random.Range(1, 3);
+        }
+        else if (healTimer >= 5)
+        {
+            healTimer = 0;
+            healTriggered = false;
+        }
+
+        return rng;
+    }
+
+    private void RangedAttackProcess(Transform target, float distanceToTarget, float chaseDistance)
+    {
+        float attackRange = enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileSpeed *
+        enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.lifeDuration;
+
+        if (target.CompareTag(Settings.decoyTag))
+        {
+            attackRange = enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileRange;
+        }
+
+        if (distanceToTarget < attackRange)
+        {
+            SwitchToAttack();
+            Debug.Log("Distance to target is lower than attack range. Switched to Attack.");
+        }
+        else if (distanceToTarget < chaseDistance)
+        {
+            SwitchToChase();
+            Debug.Log("Distance to target is lower than chase distance. Switched to Chase.");
+        }
+        else
+        {
+            SwitchToPatrol();
+            Debug.Log("Switched to Patrol.");
         }
     }
 
@@ -553,8 +620,8 @@ public class EnemyAI : MonoBehaviour
     /// Fire the weapon - ordinary aim
     /// </summary>
     protected void FireWeapon(bool isLaser = false, MoravellePhase moravellePhase = MoravellePhase.None, SylvarokPhase treantPhase = SylvarokPhase.None, 
-        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None,
-        VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
+        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, CryotharPhase frostWrymPhase = CryotharPhase.None,
+        VenomancerPhase venomancerPhase = VenomancerPhase.None, PyrotharPhase fireWrymPhase = PyrotharPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
@@ -719,7 +786,7 @@ public class EnemyAI : MonoBehaviour
         enemy.animator.SetBool(Settings.isStunned, true);
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(enemy.stunDuration);
 
         enemy.healthEvent.CallStunCuredEvent();
         enemy.animator.SetBool(Settings.isStunned, false);
@@ -727,6 +794,7 @@ public class EnemyAI : MonoBehaviour
 
         // Reset stun status and allow other stun coroutines to be started
         ResetEnemySpeed();
+        enemy.stunDuration = 2; // Reset to default value
         moveStatus &= ~MoveStatus.Stun;
         stunEnemyRoutine = null;
     }
@@ -737,13 +805,14 @@ public class EnemyAI : MonoBehaviour
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(enemy.paralyzeDuration);
 
         enemy.healthEvent.CallParalyzeCuredEvent();
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         // Reset stun status and allow other stun coroutines to be started
         ResetEnemySpeed();
+        enemy.paralyzeDuration = 2; // Reset to default value
         moveStatus &= ~MoveStatus.Paralyze;
         stunEnemyRoutine = null;
     }
@@ -759,12 +828,18 @@ public class EnemyAI : MonoBehaviour
 
     public IEnumerator SlowRoutine(float duration)
     {
-        enemy.currentMoveSpeed *= 0.5f;
+        if (!isSlowTriggered)
+        {
+            isSlowTriggered = true;
+            speedReducer = enemy.currentMoveSpeed * 0.8f;
+        }
 
         yield return new WaitForSeconds(duration);
 
-        enemy.currentMoveSpeed = enemy.enemyDetails.movementDetails.GetBaseMaxMoveSpeed();
+        speedReducer = 0;
+        isSlowTriggered = false;
         enemy.isSlowed = false;
+        enemy.slowDuration = 2; // Reset to default value
         enemy.healthEvent.CallChillCuredEvent();
         chillEnemyRoutine = null;
     }
@@ -791,8 +866,9 @@ public class EnemyAI : MonoBehaviour
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.rootSoundEffect);
 
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(enemy.rootDuration);
 
+        enemy.rootDuration = 2; // Reset to default value
         enemy.rootAnimator.SetBool("root", false);
         enemy.healthEvent.CallRootCuredEvent();
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -814,8 +890,9 @@ public class EnemyAI : MonoBehaviour
         enemy.animator.SetBool(Settings.isFrozen, true);
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(enemy.freezeDuration);
 
+        enemy.freezeDuration = 2; // Reset to default value
         enemy.healthEvent.CallFrostCuredEvent();
         enemy.animateEnemy.SetIdleAnimationParameters();
         enemy.animator.SetBool(Settings.isFrozen, false);
@@ -845,6 +922,7 @@ public class EnemyAI : MonoBehaviour
             yield return null;
         }
 
+        enemy.fearDuration = 2; // Reset to default value
         enemy.aiRigidbody2D.enabled = true;
         enemy.aiDestinationSetter.enabled = true;
         enemy.patrol.enabled = true;
@@ -992,7 +1070,7 @@ public class EnemyAI : MonoBehaviour
 
     public void ResetEnemySpeed()
     {
-        enemy.currentMoveSpeed = enemyDetails.movementDetails.GetBaseMaxMoveSpeed() + enemy.addionalSpeedModifier;
+        enemy.currentMoveSpeed = enemyDetails.movementDetails.GetBaseMaxMoveSpeed() + enemy.additionalSpeedModifier - speedReducer;
         enemy.aiRigidbody2D.canMove = true;
         enemy.aiRigidbody2D.speed = enemy.currentMoveSpeed;
     }

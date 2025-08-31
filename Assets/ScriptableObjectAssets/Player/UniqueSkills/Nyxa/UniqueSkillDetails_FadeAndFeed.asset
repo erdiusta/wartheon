@@ -13,15 +13,73 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_FadeAndFeed
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Fade And Feed
-  activeUniqueSkillDetails: 
   activeSkill: 37
   activeUniqueSkillSprite: {fileID: 21300000, guid: f5bf00fa3c88dc740a0417d033d61e05, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 92d4634a6b7add14690e1689ff3f95f8, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 3
-  activeUniqueSkillEffectiveDuration: 1
-  activeUniqueSkillRecastCooldown: 0
-  activeUniqueSkillRecastDuration: 0
-  activeUniqueSkillRecastRepeatCount: 0
-  activeUniqueSkillManaCost: 20
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Restores health in exchange of mana. (Only active
+      in fight)
+
+
+      Base Health Restoration: 8
+
+      Base Mana Cost: 20
+
+      Base
+      Cooldown: 5
+
+      Base Effective Duration: 1'
+    cooldown: 5
+    effectiveDuration: 1
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Restores health in exchange of mana. (Only active
+      in fight)
+
+
+      Base Health Restoration: 10
+
+      Base Mana Cost: 24
+
+      Base
+      Cooldown: 4
+
+      Base Effective Duration: 1'
+    cooldown: 4
+    effectiveDuration: 1
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 24
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Restores health in exchange of mana. (Only active
+      in fight)
+
+
+      Base Health Restoration: 12
+
+      Base Mana Cost: 30
+
+      Base
+      Cooldown: 3
+
+      Base Effective Duration: 1'
+    cooldown: 3
+    effectiveDuration: 1
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 30
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

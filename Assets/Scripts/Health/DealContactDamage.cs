@@ -138,7 +138,20 @@ public class DealContactDamage : MonoBehaviour
 
                                 if (player.isKynarasEmbraceActive)
                                 {
-                                    inflictedDamage /= 2;
+                                    switch (player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel())
+                                    {
+                                        case 1:
+                                            inflictedDamage = (int)(inflictedDamage * 0.6f);
+                                            break;
+                                        case 2:
+                                            inflictedDamage = (int)(inflictedDamage * 0.5f);
+                                            break;
+                                        case 3:
+                                            inflictedDamage = (int)(inflictedDamage * 0.4f);
+                                            break;
+                                        default:
+                                            break;
+                                    }
 
                                     // Enemy gets burned
                                     enemy.healthEvent.CallGetBurnEvent();
@@ -234,8 +247,8 @@ public class DealContactDamage : MonoBehaviour
     private int CalculateDamageAmount(Player player, int damageDone)
     {
         // Segregate elemental and non-elemental damage
-        int elementalDamage = (int)(enemy.enemyDetails.elementalForgeRate * damageDone);
-        int nonElementalDamage = damageDone - elementalDamage;
+        int magicDamage = (int)(enemy.enemyDetails.elementalForgeRate * damageDone);
+        int nonElementalDamage = damageDone - magicDamage;
 
         int inflictedNonElementalDamage = 0;
 
@@ -250,35 +263,11 @@ public class DealContactDamage : MonoBehaviour
             inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentArmorValue));
         }
 
-        int inflictedElementalDamage = 0;
+        int inflictedMagicDamage = 0;
         // Calculate inflicted elemental damage
-        switch (enemy.enemyDetails.elementalBias)
-        {
-            case ElementalBias.None:
-                break;
-            case ElementalBias.Fire:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentFireResistanceValue));
-                break;
-            case ElementalBias.Water:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentWaterResistanceValue));
-                break;
-            case ElementalBias.Earth:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentEarthResistanceValue));
-                break;
-            case ElementalBias.Air:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentAirResistanceValue));
-                break;
-            case ElementalBias.Dark:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentDarkResistanceValue));
-                break;
-            case ElementalBias.Light:
-                inflictedElementalDamage = (int)(elementalDamage * (1 - player.currentLightResistanceValue));
-                break;
-            default:
-                break;
-        }
+        inflictedMagicDamage = (int)(magicDamage * (1 - player.currentMagicResistanceValue));
 
-        return inflictedElementalDamage + inflictedNonElementalDamage;
+        return inflictedMagicDamage + inflictedNonElementalDamage;
     }
 
     private void GetDamageFromSummonedEnemies(Collider2D collision)
@@ -326,7 +315,7 @@ public class DealContactDamage : MonoBehaviour
         {
             // Check get poisoned
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.bleedingChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.bleedingChance - player.additionalStatusResistanceModifier)
             {
                 player.healthEvent.CallGetBleedingEvent();
                 player.healthStatus |= HealthStatus.Bleeding; // Add Burned status
@@ -376,7 +365,7 @@ public class DealContactDamage : MonoBehaviour
         {
             // Check get poisoned
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.burnChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.burnChance - player.additionalStatusResistanceModifier)
             {
                 player.healthEvent.CallGetBurnEvent();
                 player.healthStatus |= HealthStatus.Burned; // Add Burned status
@@ -395,7 +384,7 @@ public class DealContactDamage : MonoBehaviour
         {
             // Check get poisoned
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.poisonChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.poisonChance - player.additionalStatusResistanceModifier)
             {
                 player.healthEvent.CallGetPoisonedEvent();
                 player.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
@@ -412,7 +401,7 @@ public class DealContactDamage : MonoBehaviour
         {
             // Check get acid
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.acidEfficiency - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.acidEfficiency - player.additionalStatusResistanceModifier)
             {
                 player.armorStatus = ArmorStatus.Acid;
                 player.acidArmorDebuffModifier = (float)Math.Round(enemy.enemyDetails.acidEfficiency, 2);
@@ -437,7 +426,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasStunDamage && !isStunned)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.stunChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.stunChance - player.additionalStatusResistanceModifier)
             {
                 player.playerControl.isPlayerRolling = false;
 
@@ -455,7 +444,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasSlowDamage && !player.isSlowed)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.slowChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.slowChance - player.additionalStatusResistanceModifier)
             {
                 player.playerControl.isPlayerRolling = false;
 
@@ -475,7 +464,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasRootDamage && !isRooted)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.rootChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.rootChance - player.additionalStatusResistanceModifier)
             {
                 player.playerControl.isPlayerRolling = false;
 
@@ -528,7 +517,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasFrostDamage && !isFrozen)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.frostChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.frostChance - player.additionalStatusResistanceModifier)
             {
                 player.playerControl.isPlayerRolling = false;
 
@@ -581,7 +570,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasParalyzeDamage && !isParalyzed)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.paralyzeChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.paralyzeChance - player.additionalStatusResistanceModifier)
             {
                 player.playerControl.isPlayerRolling = false;
 
@@ -599,7 +588,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasCurseDamage && !player.isCursed)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.curseChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.curseChance - player.additionalStatusResistanceModifier)
             {
                 player.isCursed = true;
                 player.healthEvent.CallGetCurseEvent();
@@ -617,7 +606,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasBlindDamage && !player.isBlind)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.blindChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.blindChance - player.additionalStatusResistanceModifier)
             {
                 player.healthEvent.CallGetBlindEvent();
             }
@@ -634,7 +623,7 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasFearDamage && !player.isFeared)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.fearChance - player.additionalNegativeStatusEffectNegatorModifier)
+            if (randomDice < enemy.enemyDetails.fearChance - player.additionalStatusResistanceModifier)
             {
                 player.healthEvent.CallGetFearEvent();
             }

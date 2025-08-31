@@ -81,11 +81,15 @@ public class AimWeapon : MonoBehaviour
         {
             if (player.activeWeapon.isSwitching) return;
 
+            Weapon playerMainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+            Weapon playerOffHandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
+            Transform offhandHoldingHand = player.transform.GetChild(2).GetChild(0).GetChild(0).GetChild(0);
+
             // Bow aim
-            if (player.activeWeapon.GetCurrentMainHandWeapon() != null && (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow ||
-                player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow))
+            if (playerMainHandWeapon != null && (playerMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Bow ||
+                playerMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow))
             {
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow)
+                if (playerMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Bow)
                 {
                     switch (aimDirection)
                     {
@@ -126,7 +130,7 @@ public class AimWeapon : MonoBehaviour
                             break;
                     }
                 }
-                else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow)
+                else if (playerMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
                 {
                     switch (aimDirection)
                     {
@@ -187,10 +191,8 @@ public class AimWeapon : MonoBehaviour
             //    shieldSpriteRenderer.sprite = null;
             //}
 
-            if (player.activeWeapon.GetCurrentOffHandWeapon() != null &&
-                player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+            if (playerOffHandWeapon != null && playerOffHandWeapon.weaponDetails.weaponClass == WeaponClass.Shield)
             {
-
                 if (player.moveStatus == MoveStatus.Stun || player.moveStatus == MoveStatus.Frozen) return;
 
                 switch (aimDirection)
@@ -202,7 +204,8 @@ public class AimWeapon : MonoBehaviour
                         // Disable child weapon animator
                         shieldAnimator.runtimeAnimatorController = null;
                         // Flip rear face if equipped weapon is a shield
-                        shieldSpriteRenderer.sprite = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponRearSprite;
+                        shieldSpriteRenderer.sprite = playerOffHandWeapon.weaponDetails.weaponRearSprite;
+                        offhandHoldingHand.gameObject.SetActive(true);
                         break;
 
                     case AimDirection.Right:
@@ -212,14 +215,19 @@ public class AimWeapon : MonoBehaviour
                     case AimDirection.Left:
 
                         // Flip rear face if equipped weapon is a shield
-                        shieldSpriteRenderer.sprite = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponFrontSprite;
+                        shieldSpriteRenderer.sprite = playerOffHandWeapon.weaponDetails.weaponFrontSprite;
                         // Re-enable child weapon animator
-                        shieldAnimator.runtimeAnimatorController = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponAnimatorController;
+                        shieldAnimator.runtimeAnimatorController = playerOffHandWeapon.weaponDetails.weaponAnimatorController;
+                        offhandHoldingHand.gameObject.SetActive(false);
                         break;
 
                     default:
                         break;
                 }
+            }
+            else
+            {
+                if (!offhandHoldingHand.gameObject.activeSelf) offhandHoldingHand.gameObject.SetActive(true);
             }
         }
     }

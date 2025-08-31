@@ -834,7 +834,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.75, y: 1.75}
+  m_Size: {x: 1.1875, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
@@ -850,7 +850,7 @@ Animator:
   m_GameObject: {fileID: 3862346107794283166}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: aee30f20b17ad354992ee885f7067a4b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2048,7 +2048,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPanel: {fileID: 2472769772267327563}
   hasWeaponDrop: 0
-  hasActiveDrop: 0
   hasPrimaryPassiveDrop: 0
   hasSecondaryPassiveDrop: 0
   spriteRenderer: {fileID: 0}
@@ -2065,7 +2064,6 @@ MonoBehaviour:
   isInitialized: 0
   weaponDetails: {fileID: 0}
   passiveItemDetails: {fileID: 0}
-  activeItemDetails: {fileID: 0}
 --- !u!61 &6777748807740845358
 BoxCollider2D:
   m_ObjectHideFlags: 0

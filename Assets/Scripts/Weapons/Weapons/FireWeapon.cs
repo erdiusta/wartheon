@@ -16,7 +16,6 @@ public class FireWeapon : MonoBehaviour
     Enemy enemy;
     float firePrechargeTimer = 0f;
     ActiveWeapon activeWeapon;
-    SelectedActiveItem selectedActiveItem;
     FireWeaponEvent fireWeaponEvent;
     WeaponFiredEvent weaponFiredEvent;
     bool isFiringCoroutineRunning = false;
@@ -27,7 +26,6 @@ public class FireWeapon : MonoBehaviour
         enemy = GetComponent<Enemy>();
         activeWeapon = GetComponent<ActiveWeapon>();
         fireWeaponEvent = GetComponent<FireWeaponEvent>();
-        selectedActiveItem = GetComponent<SelectedActiveItem>();
         weaponFiredEvent = GetComponent<WeaponFiredEvent>();
     }
 
@@ -271,8 +269,8 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     private void FireProjectile(Enemy belongingEnemy, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser, bool isIceBreaker, 
         bool isActiveItem = false, bool isPenetrationArrow = false, MoravellePhase moravellePhase = MoravellePhase.None, SylvarokPhase treantPhase = SylvarokPhase.None, 
-        GalvanusPhase galvanusPhase = GalvanusPhase.None,SepharothPhase sepharothPhase = SepharothPhase.None, FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, 
-        VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None, MoldranPhase moldranPhase = MoldranPhase.None,
+        GalvanusPhase galvanusPhase = GalvanusPhase.None,SepharothPhase sepharothPhase = SepharothPhase.None, CryotharPhase frostWrymPhase = CryotharPhase.None, 
+        VenomancerPhase venomancerPhase = VenomancerPhase.None, PyrotharPhase fireWrymPhase = PyrotharPhase.None, MoldranPhase moldranPhase = MoldranPhase.None,
         bool isTripleThreat = false, bool isBindingArrow = false, bool isArrowOfTheSeven = false, ProjectileDetailsSO grappleDetails = null,
         ProjectileDetailsSO iceBreakerDetails = null, bool isFireBlast = false, ProjectileDetailsSO fireBlastDetails = null, bool isBlazingCyclone = false,
         ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null, bool isShiruken = false,
@@ -281,8 +279,8 @@ public class FireWeapon : MonoBehaviour
     {
         ProjectileDetailsSO currentProjectile;
 
-        if (galvanusPhase == GalvanusPhase.LightningBolt || sepharothPhase == SepharothPhase.InvisibleAndMine || frostWrymPhase == FrostWrymPhase.Icicle ||
-            venomancerPhase == VenomancerPhase.StoneRain || fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
+        if (galvanusPhase == GalvanusPhase.LightningBolt || sepharothPhase == SepharothPhase.InvisibleAndMine || frostWrymPhase == CryotharPhase.Icicle ||
+            venomancerPhase == VenomancerPhase.StoneRain || fireWrymPhase == PyrotharPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
         {
             currentProjectile = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSecondaryProjectile;
         }
@@ -335,7 +333,7 @@ public class FireWeapon : MonoBehaviour
     IEnumerator  FireProjectileRoutine(Enemy belongingEnemy, ProjectileDetailsSO currentProjectile, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, 
         bool isLaser = false, bool isIceBreaker = false, bool isActiveItem = false, bool isPenetrationArrow = false, MoravellePhase moravellePhase = MoravellePhase.None, 
         SylvarokPhase treantPhase = SylvarokPhase.None, GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None,
-        FrostWrymPhase frostWrymPhase = FrostWrymPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, FireWrymPhase fireWrymPhase = FireWrymPhase.None,
+        CryotharPhase frostWrymPhase = CryotharPhase.None, VenomancerPhase venomancerPhase = VenomancerPhase.None, PyrotharPhase fireWrymPhase = PyrotharPhase.None,
         MoldranPhase moldranPhase = MoldranPhase.None, bool isTripleThreat = false, bool isBindingArrow = false, bool isArrowOfTheSeven = false,
         ProjectileDetailsSO grappleDetails = null, ProjectileDetailsSO iceBreakerDetails = null, bool isFireBlast = false, ProjectileDetailsSO fireBlastDetails = null,
         bool isBlazingCyclone = false, ProjectileDetailsSO blazingCycloneDetails = null, bool isThrowingAxe = false, ProjectileDetailsSO throwingAxeDetails = null,
@@ -347,8 +345,8 @@ public class FireWeapon : MonoBehaviour
         int projectilePerShot = 1;
 
         // CENTAUR - SPREAD ARROW SHOT OR FROST WRYM - PROJECTILE
-        if (moravellePhase == MoravellePhase.SpreadArrowShot || frostWrymPhase == FrostWrymPhase.IceProjectile 
-            || fireWrymPhase == FireWrymPhase.FireProjectile)
+        if (moravellePhase == MoravellePhase.SpreadArrowShot || frostWrymPhase == CryotharPhase.IceProjectile 
+            || fireWrymPhase == PyrotharPhase.FireProjectile)
         {
             projectilePerShot = 10;
         }
@@ -367,7 +365,7 @@ public class FireWeapon : MonoBehaviour
             projectilePerShot = 2;
         }
         // VENOMANCER - STONE RAIN
-        else if (frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain || fireWrymPhase == FireWrymPhase.FirePillar ||
+        else if (frostWrymPhase == CryotharPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain || fireWrymPhase == PyrotharPhase.FirePillar ||
             moldranPhase == MoldranPhase.Spike)
         {
             projectilePerShot = 3;
@@ -398,14 +396,14 @@ public class FireWeapon : MonoBehaviour
 
         if (projectilePerShot > 1)
         {
-            if (moravellePhase == MoravellePhase.SpreadArrowShot || treantPhase == SylvarokPhase.RazorLeaf || frostWrymPhase == FrostWrymPhase.IceProjectile ||
-                venomancerPhase == VenomancerPhase.SludgeThrow || fireWrymPhase == FireWrymPhase.FireProjectile || moldranPhase == MoldranPhase.Projectile
+            if (moravellePhase == MoravellePhase.SpreadArrowShot || treantPhase == SylvarokPhase.RazorLeaf || frostWrymPhase == CryotharPhase.IceProjectile ||
+                venomancerPhase == VenomancerPhase.SludgeThrow || fireWrymPhase == PyrotharPhase.FireProjectile || moldranPhase == MoldranPhase.Projectile
                 || isTripleThreat)
             {
                 projectileSpawnInterval = 0;
             }
-            else if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain ||
-                fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
+            else if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == CryotharPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain ||
+                fireWrymPhase == PyrotharPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
             {
                 projectileSpawnInterval = 1f;
             }
@@ -559,8 +557,8 @@ public class FireWeapon : MonoBehaviour
             {
                 projectileSpeed = currentProjectile.projectileSpeed / 1.5f;
             }
-            else if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain ||
-                fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike || venomancerPhase == VenomancerPhase.ToxicPool)
+            else if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == CryotharPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain ||
+                fireWrymPhase == PyrotharPhase.FirePillar || moldranPhase == MoldranPhase.Spike || venomancerPhase == VenomancerPhase.ToxicPool)
             {
                 projectileSpeed = 0;
             }
@@ -568,8 +566,8 @@ public class FireWeapon : MonoBehaviour
             // Get Gameobject with IFireable component
             IFireable projectile;
 
-            if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == FrostWrymPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain || 
-                fireWrymPhase == FireWrymPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
+            if (galvanusPhase == GalvanusPhase.Lightning || frostWrymPhase == CryotharPhase.Icicle || venomancerPhase == VenomancerPhase.StoneRain || 
+                fireWrymPhase == PyrotharPhase.FirePillar || moldranPhase == MoldranPhase.Spike)
             {
                 // Get room bounds from template bounds
                 Vector2Int lowerBounds = currentRoom.templateLowerBounds;
@@ -713,7 +711,7 @@ public class FireWeapon : MonoBehaviour
             if (!player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
             {
                 fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration *
-                    (1 - player.additionalRangedAttackCoolDownModifier);
+                    (1 - player.additionalAttackCoolDownModifier);
             }
             else
             {

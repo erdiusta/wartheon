@@ -13,12 +13,43 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_VenomousIvy
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Venomous Ivy
-  activeUniqueSkillDetails: 
   activeSkill: 36
   activeUniqueSkillSprite: {fileID: 21300000, guid: 35c95a263fb88f74697d2289dd2e6eb1, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 3260cb66e2f6f36468b2beeba1c14620, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 14
-  activeUniqueSkillEffectiveDuration: 2
-  activeUniqueSkillManaCost: 16
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: "Applies Root and Poison to enemies around.\n\nBase
+      Status Effect Duration: 2\nBase Mana Cost: \t16\nBase Cooldown: 14"
+    cooldown: 14
+    effectiveDuration: 2
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 16
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: "Applies Root and Poison to enemies around.\n\nBase
+      Status Effect Duration: 3\nBase Mana Cost: \t18\nBase Cooldown: 13"
+    cooldown: 13
+    effectiveDuration: 3
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 18
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: "Applies Root and Poison to enemies around.\n\nBase
+      Status Effect Duration: 4\nBase Mana Cost: \t20\nBase Cooldown: 12"
+    cooldown: 12
+    effectiveDuration: 4
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

@@ -41,6 +41,9 @@ TagManager:
   - aoeSkill
   - originTag
   - whirlrend
+  - hoverableTag
+  - upgradeButton
+  - dissambleButton
   layers:
   - Default
   - TransparentFX

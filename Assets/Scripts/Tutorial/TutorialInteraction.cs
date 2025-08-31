@@ -256,7 +256,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 dropItem.gameObject.SetActive(true);
 
                 // Initialize drop
-                Weapon weapon = new Weapon();
+                Weapon weapon = new Weapon(player.playerDetails.startingWeapon.rarity);
                 weapon.weaponDetails = player.playerDetails.startingWeapon;
                 dropItem.hasWeaponDrop = true;
                 dropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, dropItem.transform.position, true);
@@ -272,37 +272,6 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
 
                 questText.text = "Aim your weapon with Mouse Cursor for mouse and Right Stick for gamepad.\n\nAim and use attack key for firing your weapon at Dummy. " +
                     "Based on your character, it can act as ranged or melee weapon.\n\nIt is " + keyboardBinding + " for mouse.\n\n" + gamepadBinding + " button for gamepad.";
-                break;
-            case TutorialPhase.PickUpActiveItem:
-                isCheckPlayed = false;
-
-                //keyboardBinding = InputManager.Instance.interaction.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
-                //gamepadBinding = InputManager.Instance.interaction.action.GetBindingDisplayString(InputBinding.MaskByGroup("Gamepad"));
-
-                //SoundAndImageTrigger(questImage);
-
-                //questText.text = "Use interaction key again for picking-up an active item. You can use one at the same time.\n\nIt is " + keyboardBinding + " for keyboard.\n\n" +
-                //    gamepadBinding + " button for gamepad.";
-
-                //DropItem secondDropItem = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<DropItem>(true);
-                //secondDropItem.gameObject.SetActive(true);
-
-                //// Initialize drop
-                //ActiveItem activeItem = new ActiveItem();
-                //activeItem.activeItemDetails = player.playerDetails.selectedActiveItem;
-
-                //secondDropItem.hasActiveDrop = true;
-                //secondDropItem.Initialize(activeItem, activeItem.activeItemDetails.activeItemSprite, secondDropItem.transform.position, true);
-                break;
-            case TutorialPhase.UseActiveItem:
-                isCheckPlayed = false;
-
-                keyboardBinding = InputManager.Instance.activeItem.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
-                gamepadBinding = InputManager.Instance.activeItem.action.GetBindingDisplayString(InputBinding.MaskByGroup("Gamepad"));
-
-                SoundAndImageTrigger(questImage);
-
-                questText.text = "Use active item key for activating it.\n\nIt is " + keyboardBinding + " for keyboard.\n\n" + gamepadBinding + " button for gamepad.";
                 break;
             case TutorialPhase.OpenGlossaryBook:
                 isCheckPlayed = false;
@@ -373,7 +342,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 dropItem.gameObject.SetActive(true);
 
                 // Initialize drop
-                PassiveItem passiveItem = new PassiveItem();
+                PassiveItem passiveItem = new PassiveItem(GameResources.Instance.healthPassiveItem.rarity);
                 passiveItem.passiveItemDetails = GameResources.Instance.healthPassiveItem;
 
                 dropItem.hasPrimaryPassiveDrop = true;
@@ -393,7 +362,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 dropItem.gameObject.SetActive(true);
 
                 // Initialize drop
-                PassiveItem secondPassiveItem = new PassiveItem();
+                PassiveItem secondPassiveItem = new PassiveItem(GameResources.Instance.coinPassiveItem.rarity);
                 secondPassiveItem.passiveItemDetails = GameResources.Instance.coinPassiveItem;
 
                 dropItem.hasPrimaryPassiveDrop = true;
@@ -478,7 +447,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 dropItem.gameObject.SetActive(true);
 
                 // Initialize drop
-                passiveItem = new PassiveItem();
+                passiveItem = new PassiveItem(GameResources.Instance.secondaryPassiveItem.rarity);
                 passiveItem.passiveItemDetails = GameResources.Instance.secondaryPassiveItem;
 
                 dropItem.hasSecondaryPassiveDrop = true;
@@ -580,18 +549,6 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 break;
             case TutorialPhase.AimAndFire:
                 // This phase is being handled at Decoy.cs
-                break;
-            case TutorialPhase.PickUpActiveItem:
-                if (player.selectedActiveItem.GetCurrentActiveItem() != null)
-                {
-                    PassTutorialProcess();
-                }
-                break;
-            case TutorialPhase.UseActiveItem:
-                if (InputManager.Instance.activeItem.action.WasPerformedThisFrame())
-                {
-                    PassTutorialProcess();
-                }
                 break;
             case TutorialPhase.OpenGlossaryBook:
                 if (InputManager.Instance.bookView.action.WasPerformedThisFrame())

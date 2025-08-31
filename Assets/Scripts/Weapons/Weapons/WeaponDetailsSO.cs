@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "WeaponDetails_", menuName = "Scriptable Objects/Weapons/Weapon Details")]
 public class WeaponDetailsSO : ScriptableObject
@@ -18,7 +19,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Weapon level")]
     #endregion Tooltip
-    public WeaponLevel weaponLevel;
+    public Rarity rarity;
     #region Tooltip
     [Tooltip("Required primary Stat for wielding")]
     #endregion Tooltip
@@ -63,7 +64,27 @@ public class WeaponDetailsSO : ScriptableObject
     [Tooltip("The animator controller fot hovering during the drop")]
     #endregion Tooltip
     public RuntimeAnimatorController weaponHoverAnimatorController;
+    #region Tooltip
+    [Tooltip("The ui sprite for the weapon")]
+    #endregion Tooltip
+    public Sprite weaponUISprite;
 
+    #region Header DROP MODIFIERS
+    [Space(10)]
+    [Header("DROP MODIFIERS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Weapon's base unique modifier")]
+    #endregion Tooltip
+    public BoostType baseUniqueModifier;
+    #region Tooltip
+    [Tooltip("Weapon's base type modifier")]
+    #endregion Tooltip
+    public BoostType baseTypeModifier;
+    #region Tooltip
+    [Tooltip("Weapon's additonal modifier type pool")]
+    #endregion Tooltip
+    public List<BoostType> additionalModifierPoolForType;
 
     #region Header PASSIVE
     [Space(10)]
@@ -76,7 +97,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("The chance of weapon's sudden death")]
     #endregion Tooltip
-    [Range(0f, 1f)] public float suddenKillChance = 0.1f;
+    [Range(0f, 1f)] public float suddenKillChance = 0f;
     #region Tooltip
     [Tooltip("Check if weapon has bleeding")]
     #endregion Tooltip
@@ -100,7 +121,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("The efficiency of weapon's acid")]
     #endregion Tooltip
-    [Range(0f, 1f)] public float acidEfficiency = 0.4f;
+    [Range(0f, 1f)] public float acidEfficiency = 0f;
     #region Tooltip
     [Tooltip("Check if weapon can warm")]
     #endregion Tooltip
@@ -148,7 +169,7 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("The chance of weapon's stun")]
     #endregion Tooltip
-    [Range(0f, 1f)] public float stunChance = 0.2f;
+    [Range(0f, 1f)] public float stunChance = 0f;
     #region Tooltip
     [Tooltip("Check if weapon has root damage")]
     #endregion Tooltip
@@ -276,7 +297,8 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Probability of deflecting projectiles")]
     #endregion Tooltip
-    [Range(0f, 1f)] public float blockRate = 0.4f;
+    [Range(0f, 1f)] public float blockChance = 0.4f;
+
 
     #region Header MELEE WEAPON OPERATING VALUES
     [Space(10)]
@@ -288,7 +310,7 @@ public class WeaponDetailsSO : ScriptableObject
     public float circleRadius = 0.8f;
     #region Tooltip
     [Tooltip("Select box length amount if weapon is a melee thrust weapon")]
-    #endregion Tooltip
+    #endregion Tooltipt
     public float boxLength = 1.2f;
     #region Tooltip
     [Tooltip("Select box height amount if weapon is a melee thrust weapon")]
@@ -309,11 +331,19 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Min melee damage of the weapon")]
     #endregion
-    public int meleeDamageMin = 4;
+    public int physicalDamageMin = 4;
     #region Tooltip
     [Tooltip("Max melee damage of the weapon")]
     #endregion
-    public int meleeDamageMax = 7;
+    public int physicalDamageMax = 7;
+    #region Tooltip
+    [Tooltip("Min magic damage of the weapon")]
+    #endregion
+    public int magicDamageMin = 0;
+    #region Tooltip
+    [Tooltip("Max magic damage of the weapon")]
+    #endregion
+    public int magicDamageMax = 0;
     #region Tooltip
     [Tooltip("Elemental bias of the melee damage")]
     #endregion
@@ -345,7 +375,12 @@ public class WeaponDetailsSO : ScriptableObject
     #region Tooltip
     [Tooltip("Weapon base handling rate to hit enemy successfully")]
     #endregion Tooltip
-    public float weaponBaseHandling = 0.8f;
+    public float weaponAttackRating = 0.8f;
+    #region Tooltip
+    [Tooltip("Probability of evading damages")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float dodgeChance = 0.4f;
+
     #region Tooltip
     [Tooltip("Check if melee weapon has slash fx")]
     #endregion
@@ -373,17 +408,6 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion Tooltip
     public float weaponPrechargeTime = 0f;
 
-    public Weapon GetWeapon()
-    {
-        Weapon weapon = new Weapon
-        {
-            weaponDetails = this,
-            weaponRemainingProjectile = weaponProjectileCapacity
-        };
-
-        return weapon;
-    }
-
     #region Validation
 #if UNITY_EDITOR
     private void OnValidate()
@@ -395,7 +419,7 @@ public class WeaponDetailsSO : ScriptableObject
         }
         else if (isShield)
         {
-            HelperUtilities.ValidateCheckPositiveValue(this, nameof(blockRate), blockRate, true);
+            HelperUtilities.ValidateCheckPositiveValue(this, nameof(blockChance), blockChance, true);
         }
         else
         {

@@ -17,7 +17,42 @@ MonoBehaviour:
   activeUniqueSkillSprite: {fileID: 21300000, guid: 3c392d8e188ea494cb243e92c6f041c2, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 0}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 8
-  activeUniqueSkillEffectiveDuration: 4
-  activeUniqueSkillManaCost: 15
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: "Applies Root to an enemy while active. \n\nBase Attack
+      Damage: 100%\nBase Mana Cost: 10\nBase Cooldown: 12\nBase Effective Duration:
+      3"
+    cooldown: 12
+    effectiveDuration: 3
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 10
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: "Applies Root to an enemy while active. \n\nBase Attack
+      Damage: 100%\nBase Mana Cost: 12\nBase Cooldown: 11\nBase Effective Duration:
+      4"
+    cooldown: 11
+    effectiveDuration: 4
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 12
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: "Applies Root to an enemy while active. \n\nBase Attack
+      Damage: 100%\nBase Mana Cost: 14\nBase Cooldown: 10\nBase Effective Duration:
+      5"
+    cooldown: 10
+    effectiveDuration: 5
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 14
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

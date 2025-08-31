@@ -261,7 +261,8 @@ public class OffHandWeaponStatusUI : MonoBehaviour
         while (currentWeapon.onCooldown)
         {
             // Update cooldown bar
-            float barFill = currentWeapon.weaponDetails.isMeleeWeapon ? cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalMeleeAttackCoolDownModifier)):
+            float barFill = currentWeapon.weaponDetails.isMeleeWeapon ? cooldownTimer / 
+                (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalAttackRatingModifier)):
                 cooldownTimer / currentWeapon.weaponDetails.weaponCooldownDuration;
 
             // Update bar fill
@@ -282,14 +283,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void ResetWeaponCooldownBar(Weapon currentWeapon)
     {
-        if (currentWeapon.weaponDetails.isMeleeWeapon)
-        {
-            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalMeleeAttackCoolDownModifier);
-        }
-        else
-        {
-            cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalRangedAttackCoolDownModifier); ;
-        }
+        cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalAttackRatingModifier);
 
         // Set bar scale to 1
         barImage.transform.localScale = new Vector3(1f, 1f, 1f);

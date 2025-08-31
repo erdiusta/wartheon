@@ -13,12 +13,73 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_FireBlast
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Fire Blast
-  activeUniqueSkillDetails: 
   activeSkill: 20
   activeUniqueSkillSprite: {fileID: 21300000, guid: a04e470720490cb43b804df55ab92adc, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 89d474062a7ee1b4fb825498858a73a5, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 12
-  activeUniqueSkillEffectiveDuration: 0
-  activeUniqueSkillManaCost: 15
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Fires projectile damage and explodes on-hit. Can burn.
+
+
+      Base
+      Attack Damage: 110%
+
+      Base Enemy Burn Chance: 25%
+
+      Base Mana Cost:
+      15
+
+      Base Cooldown: 12'
+    cooldown: 12
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 15
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Fires projectile damage and explodes on-hit. Can burn.
+
+
+      Base
+      Attack Damage: 120%
+
+      Base Enemy Burn Chance: 25%
+
+      Base Mana Cost:
+      17
+
+      Base Cooldown: 11'
+    cooldown: 11
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 17
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Fires projectile damage and explodes on-hit. Can burn.
+
+
+      Base
+      Attack Damage: 135%
+
+      Base Enemy Burn Chance: 25%
+
+      Base Mana Cost:
+      20
+
+      Base Cooldown: 10'
+    cooldown: 10
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

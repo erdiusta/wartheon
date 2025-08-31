@@ -13,15 +13,82 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_EyeOfTheStorm
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Eye Of The Storm
-  activeUniqueSkillDetails: 
   activeSkill: 33
   activeUniqueSkillSprite: {fileID: 21300000, guid: ce3f2032384542c4385a4f6eee26cc95, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 0cac6e3824f30a84c92a8d2dbe453260, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 25
-  activeUniqueSkillEffectiveDuration: 4
-  activeUniqueSkillRecastCooldown: 0
-  activeUniqueSkillRecastDuration: 0
-  activeUniqueSkillRecastRepeatCount: 0
-  activeUniqueSkillManaCost: 30
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Creates a storm which deal major damage to epicenter
+      and less damage more outer areas.
+
+
+      Base Attack Damage (E): 120%
+
+      Base
+      Attack Damage (O): 60%
+
+      Base Mana Cost: 30
+
+      Base Cooldown: 25
+
+      Base
+      Effective Duration: 4'
+    cooldown: 25
+    effectiveDuration: 4
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 30
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Creates a storm which deal major damage to epicenter
+      and less damage more outer areas.
+
+
+      Base Attack Damage (E): 135%
+
+      Base
+      Attack Damage (O): 70%
+
+      Base Mana Cost: 32
+
+      Base Cooldown: 23
+
+      Base
+      Effective Duration: 4'
+    cooldown: 23
+    effectiveDuration: 4
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 32
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Creates a storm which deal major damage to epicenter
+      and less damage more outer areas.
+
+
+      Base Attack Damage (E): 150%
+
+      Base
+      Attack Damage (O): 80%
+
+      Base Mana Cost: 35
+
+      Base Cooldown: 21
+
+      Base
+      Effective Duration: 4'
+    cooldown: 21
+    effectiveDuration: 4
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 35
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

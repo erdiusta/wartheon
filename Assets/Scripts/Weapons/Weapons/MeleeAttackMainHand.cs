@@ -124,7 +124,7 @@ public class MeleeAttackMainHand : MonoBehaviour
     private void DetectHandHit(Weapon weapon, AttackShape attackType, MeleeHand hand, bool isBloodDrain, bool shieldBash = false, bool isSheerCold = false,
         bool isDontBlink = false, bool isWhisperSlice = false)
     {
-        if(hand == MeleeHand.OffHand && player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon &&
+        if (hand == MeleeHand.OffHand && player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon &&
             player.isAxeThrowActive)
         {
             Vector3 weaponDirection;
@@ -226,14 +226,32 @@ public class MeleeAttackMainHand : MonoBehaviour
 
             if (attackHits)
             {
+                int inflictedDamage = 0;
+
                 Vector2 knockbackDir = Vector2.zero;
                 float knockbackForce = 0f;
                 float dealDamageMass = 0f;
 
+                float specialDamageModifier = 1f; // Default value
+
                 if (shieldBash)
                 {
                     CheckStunStatus(enemy, true);
-                    enemyHealth.TakeDamage(20, transform.position, enemy.transform.position, null, hand, true);
+
+                    Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+
+                    if (mainHandWeapon != null)
+                    {
+                        specialDamageModifier = 0.5f;
+
+                        inflictedDamage = player.meleeAttackMainHand.CalculateDamageAmount(enemy, mainHandWeapon, MeleeHand.MainHand, specialDamageModifier);
+
+                        if (enemy.health != null)
+                        {
+                            enemy.health.TakeDamage(inflictedDamage, transform.position, enemy.health.transform.position, null, MeleeHand.None);
+                        }
+                    }
+
                     if (player.isTriadExecutionActive) player.triadExecutionCounter++;
 
                     // Knockback
@@ -257,7 +275,31 @@ public class MeleeAttackMainHand : MonoBehaviour
                     continue;
                 }
 
-                int inflictedDamage = CalculateDamageAmount(enemy, weapon, hand);
+                // Special damage calculation
+                if (isSheerCold)
+                {
+                    specialDamageModifier = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch
+                    {
+                        1 => 1f,
+                        2 => 1.15f,
+                        3 => 1.35f,
+                        _ => 1f
+                    };
+                }
+
+                if (isDontBlink)
+                {
+                    specialDamageModifier = player.playerDetails.firstActiveSkillDetails.GetCurrentActiveLevel() switch
+                    {
+                        1 => 1.2f,
+                        2 => 1.3f,
+                        3 => 1.5f,
+                        _ => 1f
+                    };
+                }
+
+                // DAMAGE CALCULATION
+                inflictedDamage = CalculateDamageAmount(enemy, weapon, hand, specialDamageModifier);
 
                 bool bypass = hand == MeleeHand.OffHand; // only bypass for off-hand hits
                 enemyHealth.TakeDamage(inflictedDamage, transform.position, enemy.transform.position, null, hand, bypass);
@@ -274,7 +316,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                     CheckChillStatus(enemy);
                     CheckFrostStatus(enemy, isSheerCold);
                     CheckShatterStatus(enemy, ref inflictedDamage);
-                    CheckStaticStatus(enemy);
+                    CheckStaticStatus(enemy, false, player.isConductiveTouchActive);
                     CheckParalyzeStatus(enemy);
                     CheckRootStatus(enemy);
                     CheckWarmStatus(enemy);
@@ -317,7 +359,7 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <summary>
     /// Calculate damage amount
     /// </summary>
-    public int CalculateDamageAmount(Enemy enemy, Weapon weapon, MeleeHand hand)
+    public int CalculateDamageAmount(Enemy enemy, Weapon weapon, MeleeHand hand, float specialMoveDamageModifier = 1f)
     {
         int damageDone = player.isCursed
             ? (hand == MeleeHand.MainHand ? player.currentMainHandMinDamageValue : player.currentOffHandMinDamageValue)
@@ -325,6 +367,8 @@ public class MeleeAttackMainHand : MonoBehaviour
                 hand == MeleeHand.MainHand ? player.currentMainHandMinDamageValue : player.currentOffHandMinDamageValue,
                 hand == MeleeHand.MainHand ? player.currentMainHandMaxDamageValue : player.currentOffHandMaxDamageValue
             );
+
+        damageDone = (int)(damageDone * specialMoveDamageModifier);
 
         float playerCurrentHealth = player.health.GetCurrentHealth();
         float playerMaximumHealth = player.health.GetMaximumHealth();
@@ -366,13 +410,26 @@ public class MeleeAttackMainHand : MonoBehaviour
         damageDone = criticalHitHappened ? (int)(damageDone * critMultiplier) : damageDone;
 
         int baseElemental = (int)(weapon.weaponDetails.elementalForgeRate * damageDone);
-        int elementalDamage = (int)(baseElemental * (1 + player.additionalElementalDamageModifier));
+        int elementalDamage = (int)(baseElemental * (1 + player.additionalMagicDamageModifier));
         int nonElementalDamage = damageDone - baseElemental;
 
         // ARMOR DEDUCTIONS
         float effectiveArmor = enemy.currentArmor;
 
-        if (isBloodDrain) effectiveArmor *= 0.8f - player.additionalArmorPenetrationModifier; // 20% Armor Penetration
+        float armorPenetrationModifier = 0f;
+
+        if (isBloodDrain)
+        {
+            armorPenetrationModifier = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch
+            {
+                1 => 0.2f,
+                2 => 0.25f,
+                3 => 0.3f,
+                _ => 0f
+            };
+
+            effectiveArmor *= (1 - armorPenetrationModifier - player.additionalArmorPenetrationModifier);
+        }
 
         if (isDontBlink) effectiveArmor *= 0.7f - player.additionalArmorPenetrationModifier; // 30% Armor Penetration
 
@@ -387,7 +444,16 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (isCullTheMeek && weapon.weaponDetails.elementalBias == ElementalBias.Dark)
         {
             int enemyMissingHealth = enemy.health.GetMaximumHealth() - enemy.health.GetCurrentHealth();
-            elementalDamage = (int)(enemyMissingHealth * 0.3f + elementalDamage);
+
+            float elementalDamageModifier = player.playerDetails.fifthActiveSkillDetails.GetCurrentActiveLevel() switch
+            {
+                1 => 0.2f,
+                2 => 0.25f,
+                3 => 0.3f,
+                _ => 0f
+            };
+
+            elementalDamage = (int)(enemyMissingHealth * elementalDamageModifier + elementalDamage);
         }
 
         int inflictedElemental = 0;
@@ -413,14 +479,36 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (isBloodDrain)
         {
             // DRAIN HEALTH
-            float drainedHealth = totalInflictedDamage * 0.15f;
+            float drainedHealthPercentage = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch
+            {
+                1 => 0.15f,
+                2 => 0.18f,
+                3 => 0.23f,
+                _ => 0f
+            };
+
+            float drainedHealth = totalInflictedDamage * (drainedHealthPercentage + player.additionalLifeStealModifier);
             player.health.AddHealth((int)drainedHealth);
         }
         else if (player.isFeastOfWarActive)
         {
+            float feastOfWarDrainPercentage = player.playerDetails.fifthActiveSkillDetails.GetCurrentActiveLevel() switch
+            {
+                1 => 0.1f,
+                2 => 0.12f,
+                3 => 0.15f,
+                _ => 0
+            };
+
             // DRAIN HEALTH
-            float drainedHealth = totalInflictedDamage * player.feastOfWarDrainPercentage;
+            float drainedHealth = totalInflictedDamage * (feastOfWarDrainPercentage + player.additionalLifeStealModifier);
             player.health.AddHealth((int)drainedHealth);
+        }
+        else
+        {
+            // CHECK IF PLAYER HAS LIFE DRAIN
+            float drainedHealth = totalInflictedDamage * player.additionalLifeStealModifier;
+            if (drainedHealth > 0f + Mathf.Epsilon) player.health.AddHealth((int)drainedHealth);
         }
 
         return totalInflictedDamage;
@@ -433,6 +521,19 @@ public class MeleeAttackMainHand : MonoBehaviour
     private bool CriticalHitHappened(Enemy enemy)
     {
         bool criticalHitHappened = false;
+
+        float specialSkillCriticalChanceModifier = 0f;
+
+        if (isDontBlink)
+        {
+            specialSkillCriticalChanceModifier = player.playerDetails.firstActiveSkillDetails.GetCurrentActiveLevel() switch
+            {
+                1 => 0.1f,
+                2 => 0.15f,
+                3 => 0.2f,
+                _ => 0f
+            };
+        }
 
         if (player.isStealthActive)
         {
@@ -455,7 +556,7 @@ public class MeleeAttackMainHand : MonoBehaviour
             }
             else
             {
-                criticalHitHappened = randomCriticalDice < player.currentMainHandCriticalHitChance;
+                criticalHitHappened = randomCriticalDice < player.currentMainHandCriticalHitChance + specialSkillCriticalChanceModifier;
             }
         }
 
@@ -489,7 +590,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             // Check get bleeding
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.bleedingChance)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.bleedingChance + player.additionalStatusEffectInflictModifier)
             {
                 enemy.healthEvent.CallGetBleedingEvent();
                 enemy.healthStatus |= HealthStatus.Bleeding; // Add Bleeding status
@@ -509,7 +610,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.warmChance || isFlameLotus)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.warmChance + player.additionalStatusEffectInflictModifier || isFlameLotus)
             {
                 if (enemy.isWarmed && !isBurned)
                 {
@@ -534,7 +635,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             // Check get bleeding
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.burnChance)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.burnChance + player.additionalStatusEffectInflictModifier)
             {
                 enemy.healthEvent.CallGetBurnEvent();
                 enemy.healthStatus |= HealthStatus.Burned; // Add Burned status
@@ -549,9 +650,20 @@ public class MeleeAttackMainHand : MonoBehaviour
     {
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasPoisonDamage || isVenomousIvy)
         {
+            if (isVenomousIvy)
+            {
+                enemy.poisonDuration = player.playerDetails.secondActiveSkillDetails.GetCurrentActiveLevel() switch
+                {
+                    1 => 2,
+                    2 => 3,
+                    3 => 4,
+                    _ => 2
+                };
+            }
+
             // Check get bleeding
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.poisonChance || isVenomousIvy)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.poisonChance + player.additionalStatusEffectInflictModifier || isVenomousIvy)
             {
                 enemy.healthEvent.CallGetPoisonedEvent();
                 enemy.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
@@ -568,7 +680,7 @@ public class MeleeAttackMainHand : MonoBehaviour
             enemy.health.currentHealth > 0)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.acidEfficiency)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.acidEfficiency + player.additionalStatusEffectInflictModifier)
             {
                 enemy.armorStatus = ArmorStatus.Acid;
                 enemy.currentArmor = (float)Math.Round(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.acidEfficiency * enemy.currentArmor, 2);
@@ -589,7 +701,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.chillChance || isBlizzard)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.chillChance + player.additionalStatusEffectInflictModifier || isBlizzard)
             {
                 if (enemy.isChilled && !isFrozen && !isBlizzard)
                 {
@@ -598,6 +710,8 @@ public class MeleeAttackMainHand : MonoBehaviour
                 }
                 else if (!enemy.isChilled && !isFrozen)
                 {
+                    if (isBlizzard) player.chillDuration = 5;
+
                     enemy.isChilled = true;
                     enemy.healthEvent.CallGetChillEvent();
                 }
@@ -617,7 +731,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.frostChance || isSheerCold)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.frostChance + player.additionalStatusEffectInflictModifier || isSheerCold)
             {
                 enemy.enemyAI.moveStatus |= MoveStatus.Frozen;
             }
@@ -653,7 +767,7 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// <summary>
     /// Check static status
     /// </summary>
-    public void CheckStaticStatus(Enemy enemy, bool isNymarasWindveil = false)
+    public void CheckStaticStatus(Enemy enemy, bool isNymarasWindveil = false, bool isConductiveTouch = false)
     {
         EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
         bool isParalyzed = (enemyAI.moveStatus & MoveStatus.Paralyze) != 0;
@@ -662,11 +776,12 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.staticChance || isNymarasWindveil)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.staticChance + player.additionalStatusEffectInflictModifier 
+                || isNymarasWindveil || isConductiveTouch)
             {
                 if (enemy.isStatic && !isParalyzed && !isNymarasWindveil)
                 {
-                    enemy.enemyAI.moveStatus |= MoveStatus.Paralyze; // Second static 
+                    enemy.enemyAI.moveStatus |= MoveStatus.Paralyze; // Second static
                     enemy.healthEvent.CallStaticCuredEvent();
                 }
                 else if (!enemy.isChilled && !isParalyzed)
@@ -690,7 +805,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.paralyzeChance || isSheerCold)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.paralyzeChance + player.additionalStatusEffectInflictModifier || isSheerCold)
             {
                 enemy.enemyAI.moveStatus |= MoveStatus.Paralyze;
             }
@@ -706,7 +821,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.slowChance || isAbsoluteZero)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.slowChance + player.additionalStatusEffectInflictModifier || isAbsoluteZero)
             {
                 enemy.isSlowed = true;
                 enemy.healthEvent.CallGetSlowEvent();
@@ -725,6 +840,18 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (shieldBash)
         {
             enemy.enemyAI.moveStatus |= MoveStatus.Stun;
+
+            if (player != null)
+            {
+                enemy.stunDuration = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch
+                {
+                    1 => 2,
+                    2 => 3,
+                    3 => 4,
+                    _ => enemy.stunDuration
+                };
+            }
+
             enemy.healthEvent.CallGetStunEvent();
             return;
         }
@@ -732,7 +859,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasStunDamage && !isStunned || isGrapple)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.stunChance || isGrapple)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.stunChance + player.additionalStatusEffectInflictModifier || isGrapple)
             {
                 enemy.enemyAI.moveStatus |= MoveStatus.Stun;
                 enemy.healthEvent.CallGetStunEvent();
@@ -750,8 +877,19 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         if ((player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasRootDamage && !isRooted) || isVenomousIvy)
         {
+            if (isVenomousIvy)
+            {
+                enemy.rootDuration = player.playerDetails.secondActiveSkillDetails.GetCurrentActiveLevel() switch
+                {
+                    1 => 2,
+                    2 => 3,
+                    3 => 4,
+                    _ => 2
+                };
+            }
+
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.rootChance || isVenomousIvy)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.rootChance + player.additionalStatusEffectInflictModifier || isVenomousIvy)
             {
                 enemy.enemyAI.moveStatus |= MoveStatus.Root;
                 enemy.healthEvent.CallGetRootEvent();
@@ -774,7 +912,8 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             // Check get bleeding
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.blindChance + player.additionalBlindMakerModifier)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.blindChance + player.additionalBlindMakerModifier
+                + player.additionalStatusEffectInflictModifier)
             {
                 enemy.isBlind = true;
                 enemy.healthEvent.CallGetBlindEvent();
@@ -789,8 +928,19 @@ public class MeleeAttackMainHand : MonoBehaviour
     {
         if ((player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasFearDamage || isShatterCry) && !enemy.isFeared)
         {
+            if (isShatterCry)
+            {
+                enemy.fearDuration = player.playerDetails.secondActiveSkillDetails.GetCurrentActiveLevel() switch
+                {
+                    1 => 2,
+                    2 => 3,
+                    3 => 4,
+                    _ => 2
+                };
+            }
+
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.fearChance || isShatterCry)
+            if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.fearChance + player.additionalStatusEffectInflictModifier || isShatterCry)
             {
                 enemy.isFeared = true;
                 enemy.healthEvent.CallGetFearEvent();
@@ -1027,7 +1177,7 @@ public class MeleeAttackMainHand : MonoBehaviour
             : Random.Range(hand == MeleeHand.MainHand ? player.currentMainHandMinDamageValue : player.currentOffHandMinDamageValue,
                 hand == MeleeHand.MainHand ? player.currentMainHandMaxDamageValue : player.currentOffHandMaxDamageValue);
 
-        Weapon weapon = new Weapon();
+        Weapon weapon = new Weapon(Rarity.Basic);
 
         if (hand == MeleeHand.MainHand)
         {
@@ -1064,7 +1214,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         if (isSpecialMove) yield return new WaitForSeconds(1f);
 
-        else yield return new WaitForSeconds(weapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalMeleeAttackCoolDownModifier));
+        else yield return new WaitForSeconds(weapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalAttackCoolDownModifier));
 
         weapon.onCooldown = false;
 

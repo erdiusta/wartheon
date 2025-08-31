@@ -70,8 +70,24 @@ public class Blizzard : MonoBehaviour
             // Apply effects
             player.meleeAttackMainHand.CheckChillStatus(affectedEnemy, true);
 
-            affectedEnemy.health.TakeDamage(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileDamageMax,
-                Vector2.zero, Vector2.zero, affectedEnemy.GetComponent<PolygonCollider2D>(), MeleeHand.None);
+            Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+
+            float specialMoveDamageModifier = 1f;
+
+            if (player != null)
+            {
+                specialMoveDamageModifier = player.playerDetails.firstActiveSkillDetails.GetCurrentActiveLevel() switch
+                {
+                    1 => 0.7f,
+                    2 => 0.8f,
+                    3 => 1f,
+                    _ => 1f
+                };
+            }
+
+            int inflictedDamage = player.meleeAttackMainHand.CalculateDamageAmount(affectedEnemy, mainHandWeapon, MeleeHand.MainHand, specialMoveDamageModifier);
+
+            affectedEnemy.health.TakeDamage(inflictedDamage, Vector2.zero, Vector2.zero, affectedEnemy.GetComponent<PolygonCollider2D>(), MeleeHand.None);
 
             // Update last affected time
             affectedEnemies[affectedEnemy] = Time.time;

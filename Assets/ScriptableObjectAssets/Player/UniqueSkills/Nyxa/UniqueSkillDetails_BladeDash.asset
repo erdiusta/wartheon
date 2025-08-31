@@ -13,12 +13,82 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_BladeDash
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Blade Dash
-  activeUniqueSkillDetails: 
   activeSkill: 38
   activeUniqueSkillSprite: {fileID: 21300000, guid: 1de9bdb3504592b40a5c6a83af28a346, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 4afa543910a8112438b068d989f5ac05, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 8
-  activeUniqueSkillEffectiveDuration: 4
-  activeUniqueSkillManaCost: 20
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Dashes and pass through enemies in the way and deal
+      damage. Can be recast one time.
+
+
+      Base Attack Damage: 50%
+
+      Base
+      Attack Damage (Recast): 70%
+
+      Base Mana Cost: 20
+
+      Base Cooldown:
+      14
+
+      Base Recast Duration: 4'
+    cooldown: 14
+    effectiveDuration: 0
+    recastCooldown: 4
+    recastWindowDuration: 0
+    recastRepeatCount: 2
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Dashes and pass through enemies in the way and deal
+      damage. Can be recast one time.
+
+
+      Base Attack Damage: 65%
+
+      Base
+      Attack Damage (Recast): 80%
+
+      Base Mana Cost: 23
+
+      Base Cooldown:
+      13
+
+      Base Recast Duration: 4'
+    cooldown: 13
+    effectiveDuration: 4
+    recastCooldown: 4
+    recastWindowDuration: 0
+    recastRepeatCount: 2
+    manaCost: 23
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Dashes and pass through enemies in the way and deal
+      damage. Can be recast one time.
+
+
+      Base Attack Damage: 85%
+
+      Base
+      Attack Damage (Recast): 100%
+
+      Base Mana Cost: 26
+
+      Base Cooldown:
+      12
+
+      Base Recast Duration: 4'
+    cooldown: 12
+    effectiveDuration: 4
+    recastCooldown: 4
+    recastWindowDuration: 0
+    recastRepeatCount: 2
+    manaCost: 26
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

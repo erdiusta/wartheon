@@ -17,7 +17,78 @@ MonoBehaviour:
   activeUniqueSkillSprite: {fileID: 21300000, guid: 09a4385fa2ab98344960e57cd2c8e81e, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 65771ccd5a8ddb44bbeb1d4b0f60aeeb, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 0
-  activeUniqueSkillEffectiveDuration: 5
-  activeUniqueSkillManaCost: 5
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Removes shield for 5 seconds, increases speed and
+      dealt damage.
+
+
+      Base Attack Damage: 140%
+
+      Base Speed Boost: +2
+
+      Base
+      Mana Cost: 5
+
+      Base Cooldown: Instant
+
+      Base Effective Duration:
+      5'
+    cooldown: 0
+    effectiveDuration: 5
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 5
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Removes shield for 5 seconds, increases speed and
+      dealt damage.
+
+
+      Base Attack Damage: 150%
+
+      Base Speed Boost: +2
+
+      Base
+      Mana Cost: 5
+
+      Base Cooldown: Instant
+
+      Base Effective Duration:
+      5'
+    cooldown: 0
+    effectiveDuration: 5
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 5
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Removes shield for 5 seconds, increases speed and
+      dealt damage.
+
+
+      Base Attack Damage: 160%
+
+      Base Speed Boost: +2
+
+      Base
+      Mana Cost: 5
+
+      Base Cooldown: Instant
+
+      Base Effective Duration:
+      5'
+    cooldown: 0
+    effectiveDuration: 5
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 5
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

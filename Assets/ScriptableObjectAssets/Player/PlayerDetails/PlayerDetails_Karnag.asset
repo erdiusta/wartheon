@@ -41,26 +41,25 @@ MonoBehaviour:
   fourthActiveSkillDetails: {fileID: 11400000, guid: 68d53b2bc7ebeed468d0fea5eb22d598, type: 2}
   fifthActiveSkillDetails: {fileID: 11400000, guid: e7e8c07ac5b24f7478c5b80468af6791, type: 2}
   throwingAxeDetails: {fileID: 11400000, guid: d8c89ec0d39d32e40b4ac6fc2ef94711, type: 2}
+  shirukenDetails: {fileID: 0}
   grappleDetails: {fileID: 0}
   iceBreakerDetails: {fileID: 0}
   absoluteZeroDetails: {fileID: 0}
   fireBlastDetails: {fileID: 0}
   blazingCycloneDetails: {fileID: 0}
+  chainLightningDetails: {fileID: 0}
   standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   penetrateMaterial: {fileID: 0}
   applyScreenShake: 1
   shakeIntensity: 2
   shakeDuration: 1
-  selectedActiveItem: {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
-  activeItemsList:
-  - {fileID: 11400000, guid: bcef7e0fce981b349825b315000f8c33, type: 2}
   passiveItemsList: []
-  startingWeapon: {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
-  mainHandAnimatorController: {fileID: 9100000, guid: 763046c15b6ac0a4db7e14a096c4ace1, type: 2}
-  offHandAnimatorController: {fileID: 9100000, guid: 763046c15b6ac0a4db7e14a096c4ace1, type: 2}
+  startingWeapon: {fileID: 11400000, guid: b174e08d4e6d4ff448eb967efcc39eb2, type: 2}
+  mainHandAnimatorController: {fileID: 0}
+  offHandAnimatorController: {fileID: 0}
   startingWeaponList:
-  - {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
-  - {fileID: 11400000, guid: f5f2132b9d841f44498494bd1abae656, type: 2}
+  - {fileID: 11400000, guid: b174e08d4e6d4ff448eb967efcc39eb2, type: 2}
+  - {fileID: 11400000, guid: b174e08d4e6d4ff448eb967efcc39eb2, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: c22a207d7b1016146a09b867ea977093, type: 3}
   playerHandSprite: {fileID: 21300000, guid: 85ea6b76be3e57c4dba55cad2948dac3, type: 3}
   playerBookSprite: {fileID: -2003705495, guid: c69c189fcb74258469a0ebcdd39f6249, type: 3}

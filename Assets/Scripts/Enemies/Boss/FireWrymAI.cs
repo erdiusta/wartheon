@@ -13,8 +13,8 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
     [SerializeField] Transform swordHoldingTransform;
     [SerializeField] float smearCircleRadius = 0.5f;
 
-    FireWrymPhase currentFireWrymPhase;
-    FireWrymPhase previousFireWrymPhase;
+    PyrotharPhase currentFireWrymPhase;
+    PyrotharPhase previousFireWrymPhase;
     private float phaseTimer;  // Timer to control phase duration
     private float waitPhase = 0.2f;  // Adjust this to control how long each phase lasts
 
@@ -46,7 +46,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Start() 
     {
-        currentFireWrymPhase = FireWrymPhase.Wait;
+        currentFireWrymPhase = PyrotharPhase.Wait;
     }
     protected override void OnEnable() 
     {
@@ -103,7 +103,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
                 // Handle phases based on currentPhase
                 switch (currentFireWrymPhase)
                 {
-                    case FireWrymPhase.Wait:
+                    case PyrotharPhase.Wait:
                         PassedToWait = true;
 
                         // Reset timers
@@ -119,23 +119,23 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
                         }
                         break;
 
-                    case FireWrymPhase.FireProjectile:
-                        Debug.Log(FrostWrymPhase.IceProjectile.ToString());
+                    case PyrotharPhase.FireProjectile:
+                        Debug.Log(CryotharPhase.IceProjectile.ToString());
                         HandleIceProjectile();
                         break;
 
-                    case FireWrymPhase.TailAttack:
-                        Debug.Log(FrostWrymPhase.TailAttack.ToString());
+                    case PyrotharPhase.TailAttack:
+                        Debug.Log(CryotharPhase.TailAttack.ToString());
                         HandleTailAttack();
                         break;
 
-                    case FireWrymPhase.FirePillar:
-                        Debug.Log(FrostWrymPhase.Icicle.ToString());
+                    case PyrotharPhase.FirePillar:
+                        Debug.Log(CryotharPhase.Icicle.ToString());
                         HandleIcicle();
                         break;
 
-                    case FireWrymPhase.FireBreath:
-                        Debug.Log(FrostWrymPhase.FrostBreath.ToString());
+                    case PyrotharPhase.FireBreath:
+                        Debug.Log(CryotharPhase.FrostBreath.ToString());
                         HandleFrostBreath();
                         break;
 
@@ -158,7 +158,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
 
         if (fireWrymAttackMoveRoutine == null)
         {
-            fireWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(FireWrymPhase.FireProjectile));
+            fireWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(PyrotharPhase.FireProjectile));
         }
     }
 
@@ -168,7 +168,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
 
         if (fireWrymAttackMoveRoutine == null)
         {
-            fireWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(FireWrymPhase.TailAttack));
+            fireWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(PyrotharPhase.TailAttack));
         }
     }
 
@@ -178,7 +178,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
 
         if (fireWrymAttackMoveRoutine == null)
         {
-            fireWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(FireWrymPhase.FirePillar));
+            fireWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(PyrotharPhase.FirePillar));
         }
     }
 
@@ -188,7 +188,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
 
         if (fireWrymAttackMoveRoutine == null)
         {
-            fireWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(FireWrymPhase.FireBreath));
+            fireWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(PyrotharPhase.FireBreath));
         }
     }
 
@@ -206,34 +206,34 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
             if (Vector3.Distance(transform.position, player.GetPlayerPosition()) < 2f)
             {
                 // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
-                currentFireWrymPhase = (FireWrymPhase)Random.Range(4, Enum.GetValues(typeof(FrostWrymPhase)).Length);
+                currentFireWrymPhase = (PyrotharPhase)Random.Range(4, Enum.GetValues(typeof(CryotharPhase)).Length);
                 return;
             }
             else if (Vector3.Distance(transform.position, player.GetPlayerPosition()) > 10f)
             {
                 // If player is too far to boss, automatically next phase will be Fire Pillar,
-                currentFireWrymPhase = FireWrymPhase.FirePillar;
+                currentFireWrymPhase = PyrotharPhase.FirePillar;
                 return;
             }
         }
 
 
-        if (currentFireWrymPhase == FireWrymPhase.TailAttack || currentFireWrymPhase == FireWrymPhase.FirePillar ||
-            currentFireWrymPhase == FireWrymPhase.FireProjectile || currentFireWrymPhase == FireWrymPhase.FireBreath)
+        if (currentFireWrymPhase == PyrotharPhase.TailAttack || currentFireWrymPhase == PyrotharPhase.FirePillar ||
+            currentFireWrymPhase == PyrotharPhase.FireProjectile || currentFireWrymPhase == PyrotharPhase.FireBreath)
         {
             // If centaur made a move then next phase will be wait
-            currentFireWrymPhase = FireWrymPhase.Wait;
+            currentFireWrymPhase = PyrotharPhase.Wait;
         }
         else
         {
             // Example of conditional or random phase transitions
-            currentFireWrymPhase = (FireWrymPhase)Random.Range(2, Enum.GetValues(typeof(FireWrymPhase)).Length);
+            currentFireWrymPhase = (PyrotharPhase)Random.Range(2, Enum.GetValues(typeof(PyrotharPhase)).Length);
         }
     }
 
-    IEnumerator AttackRoutine(FireWrymPhase fireWrymPhase)
+    IEnumerator AttackRoutine(PyrotharPhase fireWrymPhase)
     {
-        if (fireWrymPhase == FireWrymPhase.FireProjectile)
+        if (fireWrymPhase == PyrotharPhase.FireProjectile)
         {
             if (enemy.health.hasDied) yield break;
 
@@ -282,7 +282,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
                     if (firingDurationTimer >= 0)
                     {
                         firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(false, 0, 0, 0, 0, 0, 0, FireWrymPhase.FireProjectile);
+                        FireWeapon(false, 0, 0, 0, 0, 0, 0, PyrotharPhase.FireProjectile);
                     }
                     else
                     {
@@ -298,10 +298,10 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
             yield return null;
 
             enemy.animateEnemy.SetIdleAnimationParameters();
-            previousFireWrymPhase = FireWrymPhase.FireProjectile;
+            previousFireWrymPhase = PyrotharPhase.FireProjectile;
 
         }
-        else if (fireWrymPhase == FireWrymPhase.TailAttack)
+        else if (fireWrymPhase == PyrotharPhase.TailAttack)
         {
             if (enemy.health.hasDied) yield break;
 
@@ -454,9 +454,9 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
 
             isAttacking = false;
 
-            previousFireWrymPhase = FireWrymPhase.TailAttack;
+            previousFireWrymPhase = PyrotharPhase.TailAttack;
         }
-        else if (fireWrymPhase == FireWrymPhase.FirePillar)
+        else if (fireWrymPhase == PyrotharPhase.FirePillar)
         {
             enemy.animator.SetFloat(Settings.motionType, -1f);
             enemy.animator.SetInteger(Settings.attackType, 1);
@@ -506,7 +506,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
                     if (firingDurationTimer >= 0)
                     {
                         firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(false, 0, 0, 0, 0, 0, 0, FireWrymPhase.FirePillar);
+                        FireWeapon(false, 0, 0, 0, 0, 0, 0, PyrotharPhase.FirePillar);
                     }
                     else
                     {
@@ -522,9 +522,9 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
 
             yield return null;
 
-            previousFireWrymPhase = FireWrymPhase.FirePillar;
+            previousFireWrymPhase = PyrotharPhase.FirePillar;
         }
-        else if (fireWrymPhase == FireWrymPhase.FireBreath)
+        else if (fireWrymPhase == PyrotharPhase.FireBreath)
         {
             if (enemy.health.hasDied) yield break;
 
@@ -666,7 +666,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
 
             isAttacking = false;
 
-            previousFireWrymPhase = FireWrymPhase.FireBreath;
+            previousFireWrymPhase = PyrotharPhase.FireBreath;
         }
 
         chargeProcessStarted = false;
@@ -677,7 +677,7 @@ public class FireWrymAI : EnemyAI, IMutualBossBehaviour
 
     public void PlayerStealthCheck()
     {
-        currentFireWrymPhase = FireWrymPhase.Wait;
+        currentFireWrymPhase = PyrotharPhase.Wait;
     }
 
     private void OnDrawGizmos()

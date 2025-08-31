@@ -13,12 +13,76 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_ArrowsOfTheSevenPlagues
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Arrows of the Seven Plagues
-  activeUniqueSkillDetails: 
   activeSkill: 13
   activeUniqueSkillSprite: {fileID: 21300000, guid: ec9d8ee50cc0b8046b0693c15c1b2c1f, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: b34eb8ca8a7a4fa4c970b107c280b330, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 14
-  activeUniqueSkillEffectiveDuration: 8
-  activeUniqueSkillManaCost: 30
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Applies enemy a status effect while active. Randomly
+      activates status effects as slow, bleeding, poison, burn, frozen, fear or blind.
+
+
+      Base
+      Attack Damage: 100%
+
+      Base Status Effect Duration : 6
+
+      Base Mana
+      Cost: 30
+
+      Base Cooldown: 14'
+    cooldown: 14
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 30
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Applies enemy a status effect while active. Randomly
+      activates status effects as slow, bleeding, poison, burn, frozen, fear or blind.
+
+
+      Base
+      Attack Damage: 100%
+
+      Base Status Effect Duration : 7
+
+      Base Mana
+      Cost: 35
+
+      Base Cooldown: 13'
+    cooldown: 13
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 35
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Applies enemy a status effect while active. Randomly
+      activates status effects as slow, bleeding, poison, burn, frozen, fear or blind.
+
+
+      Base
+      Attack Damage: 100%
+
+      Base Status Effect Duration : 8
+
+      Base Mana
+      Cost: 40
+
+      Base Cooldown: 11'
+    cooldown: 11
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 40
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

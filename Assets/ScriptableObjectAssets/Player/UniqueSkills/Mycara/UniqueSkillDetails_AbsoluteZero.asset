@@ -13,12 +13,82 @@ MonoBehaviour:
   m_Name: UniqueSkillDetails_AbsoluteZero
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Absolute Zero
-  activeUniqueSkillDetails: 
   activeSkill: 19
   activeUniqueSkillSprite: {fileID: 21300000, guid: f466a1fef209ded4a9835c3ccc583ecc, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 489257e78ddda45478802514f757f4f1, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
-  activeUniqueSkillCooldownDuration: 18
-  activeUniqueSkillEffectiveDuration: 5
-  activeUniqueSkillManaCost: 35
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: 'Creates AoE iced area. Applies chill and slow. Freezes
+      if already chill. Recovers health while in the zone when below 50% max health.
+
+
+      Base
+      Heath Regenation: 4
+
+      Base Mana Cost: 35
+
+      Base Cooldown: 18
+
+      Base
+      Effective Duration: 5
+
+      Base AoE Radius: 6'
+    cooldown: 18
+    effectiveDuration: 5
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 35
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Creates AoE iced area. Applies chill and slow. Freezes
+      if already chill. Recovers health while in the zone when below 50% max health.
+
+
+      Base
+      Heath Regenation: 4
+
+      Base Mana Cost: 40
+
+      Base Cooldown: 17
+
+      Base
+      Effective Duration: 6
+
+      Base AoE Radius: 6'
+    cooldown: 17
+    effectiveDuration: 6
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 40
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Creates AoE iced area. Applies chill and slow. Freezes
+      if already chill. Recovers health while in the zone when below 50% max health.
+
+
+      Base
+      Heath Regenation: 4
+
+      Base Mana Cost: 45
+
+      Base Cooldown: 15
+
+      Base
+      Effective Duration: 7
+
+      Base AoE Radius: 6'
+    cooldown: 15
+    effectiveDuration: 7
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 45
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

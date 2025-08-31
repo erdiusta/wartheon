@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_KiteShield
+  m_EditorClassIdentifier: 
+  weaponName: Kite Shield
+  weaponTitle: 13
+  rarity: 0
+  requiredPrimaryStats:
+    strength: 6
+    dexterity: 5
+    constitution: 0
+    intelligence: 0
+    agility: 0
+    willpower: 0
+    ferocity: 0
+    resolve: 0
+  weaponClass: 3
+  weaponHitSpeed: 0
+  wieldType: 0
+  elementalBias: 0
+  elementalForgeRate: 0
+  price: 30
+  weaponFrontSprite: {fileID: 181570013, guid: 735ef23cb3d3a1649b46d114ad9017d5, type: 3}
+  weaponRearSprite: {fileID: 681391542, guid: 735ef23cb3d3a1649b46d114ad9017d5, type: 3}
+  weaponAnimatorController: {fileID: 0}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 783b4d19ee9f4de409a5160d0d098980, type: 2}
+  weaponUISprite: {fileID: 2059519501, guid: 38ddd3144b5cac04da626c5377407511, type: 3}
+  baseUniqueModifier: 13
+  baseTypeModifier: 9
+  additionalModifierPoolForType: 0d0000000900000011000000070000000b0000000c000000
+  canKillSuddenly: 0
+  suddenKillChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
+  hasAcidDamage: 0
+  acidEfficiency: 0
+  hasWarmDamage: 0
+  warmChance: 0
+  hasBurnDamage: 0
+  burnChance: 0
+  hasPoisonDamage: 0
+  poisonChance: 0
+  hasStaticDamage: 0
+  staticChance: 0
+  hasParalyzeDamage: 0
+  paralyzeChance: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasRootDamage: 0
+  rootChance: 0
+  hasChillDamage: 0
+  chillChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  hasRevealDamage: 0
+  revealChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasFearDamage: 0
+  fearChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponSecondaryProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 15463428c5510ea4cbb0e99b16dbf4ae, type: 2}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: 6570c8ecce2e63942bc3102c6bd3d9d6, type: 2}
+  isMeleeWeapon: 0
+  isShield: 1
+  shieldArmorRate: 0.2
+  blockRate: 0.4
+  circleRadius: 0
+  boxLength: 1.2
+  boxHeight: 2.6
+  coneLength: 3
+  coneAngle: 60
+  hasPhysicalDamage: 0
+  meleeDamageMin: 0
+  meleeDamageMax: 0
+  meleeDamageElementalBias: 0
+  secondMeleeDamageMin: 4
+  secondMeleeDamageMax: 7
+  secondMeleeDamageElementalBias: 0
+  criticalHitChance: 0
+  criticalHitDamageMultiplier: 0
+  weaponCooldownDuration: 0.2
+  weaponBaseHandling: 0.8
+  hasSwing: 0
+  hasThrust: 0
+  hasInfiniteProjectile: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0

@@ -1,0 +1,111 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_BattleAxe
+  m_EditorClassIdentifier: 
+  weaponName: Battle Axe
+  weaponTitle: 10
+  rarity: 0
+  requiredPrimaryStats:
+    strength: 6
+    dexterity: 0
+    constitution: 0
+    intelligence: 0
+    agility: 0
+    willpower: 0
+    ferocity: 0
+    resolve: 0
+  weaponClass: 1
+  weaponHitSpeed: 3
+  wieldType: 0
+  elementalBias: 0
+  elementalForgeRate: 0
+  price: 35
+  weaponFrontSprite: {fileID: -1178472779, guid: 3d8144cdb4886b4448b2f91da4962d93, type: 3}
+  weaponRearSprite: {fileID: -1178472779, guid: 3d8144cdb4886b4448b2f91da4962d93, type: 3}
+  weaponAnimatorController: {fileID: 0}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: 1e3a84c8792928b4e89d8865c0f95b7e, type: 2}
+  weaponUISprite: {fileID: -665629709, guid: 4951bb0f91eb0cc46b180ead58c3e524, type: 3}
+  baseUniqueModifier: 14
+  baseTypeModifier: 20
+  additionalModifierPoolForType: 0100000002000000140000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e000000
+  canKillSuddenly: 0
+  suddenKillChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
+  hasAcidDamage: 0
+  acidEfficiency: 0
+  hasWarmDamage: 0
+  warmChance: 0
+  hasBurnDamage: 0
+  burnChance: 0
+  hasPoisonDamage: 0
+  poisonChance: 0
+  hasStaticDamage: 0
+  staticChance: 0
+  hasParalyzeDamage: 0
+  paralyzeChance: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasRootDamage: 0
+  rootChance: 0
+  hasChillDamage: 0
+  chillChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  hasRevealDamage: 0
+  revealChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasFearDamage: 0
+  fearChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponSecondaryProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 725854e135951404ba8a84c0a0ca4735, type: 2}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: 05f4834c93baa084aa8d96b1654caa0e, type: 2}
+  isMeleeWeapon: 1
+  isShield: 0
+  shieldArmorRate: 0
+  blockChance: 0
+  circleRadius: 1.5
+  boxLength: 1.2
+  boxHeight: 2.6
+  coneLength: 3
+  coneAngle: 35
+  hasPhysicalDamage: 1
+  meleeDamageMin: 4
+  meleeDamageMax: 8
+  meleeDamageElementalBias: 0
+  secondMeleeDamageMin: 4
+  secondMeleeDamageMax: 7
+  secondMeleeDamageElementalBias: 0
+  criticalHitChance: 0.1
+  criticalHitDamageMultiplier: 1.5
+  weaponCooldownDuration: 0.65
+  weaponAttackRating: 0.8
+  dodgeChance: 0.4
+  hasSwing: 1
+  hasThrust: 0
+  hasInfiniteProjectile: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0

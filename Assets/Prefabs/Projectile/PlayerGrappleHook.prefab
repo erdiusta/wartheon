@@ -142,10 +142,24 @@ MonoBehaviour:
   belongingParent: {fileID: 0}
   spriteRenderer: {fileID: 0}
   projectileDetails: {fileID: 0}
+  chainJumpRadius: 6
+  chainDelay: 0.05
+  chainDamageFalloff: 0.8
+  chainLightningPhase: 0
+  blastRadius: 5
   angleSpeed: 12
   ropeTransform: {fileID: 8433791728911655684}
   ropeSpriteRenderer: {fileID: 7636799489613035307}
   grappleHeadTransform: {fileID: 5583065934817906521}
+  solidLayers:
+    serializedVersion: 2
+    m_Bits: 1064960
+  pullAssistForce: 35
+  minPullSpeed: 7
+  stallTimeout: 0.35
+  stallProgressEpsilon: 0.06
+  grappleSlideMaterial: {fileID: 6200000, guid: 7d7c863eed111b44a9afd124ca0854f2, type: 2}
+  maxDamage: 0
   lockedTargetVector: {x: 0, y: 0, z: 0}
   lockedAngle: 0
 --- !u!1 &6179147766432826479
@@ -392,7 +406,7 @@ Rigidbody2D:
   m_LinearDamping: 100
   m_AngularDamping: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 7d7c863eed111b44a9afd124ca0854f2, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

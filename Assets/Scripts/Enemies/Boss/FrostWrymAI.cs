@@ -13,8 +13,8 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
     [SerializeField] Transform swordHoldingTransform;
     [SerializeField] float smearCircleRadius = 0.5f;
 
-    FrostWrymPhase currentFrostWrymPhase;
-    FrostWrymPhase previousFrostWrymPhase;
+    CryotharPhase currentFrostWrymPhase;
+    CryotharPhase previousFrostWrymPhase;
     private float phaseTimer;  // Timer to control phase duration
     private float waitPhase = 0.2f;  // Adjust this to control how long each phase lasts
 
@@ -46,7 +46,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Start() 
     {
-        currentFrostWrymPhase = FrostWrymPhase.Wait;
+        currentFrostWrymPhase = CryotharPhase.Wait;
     }
 
     protected override void OnEnable() 
@@ -104,7 +104,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
                 // Handle phases based on currentPhase
                 switch (currentFrostWrymPhase)
                 {
-                    case FrostWrymPhase.Wait:
+                    case CryotharPhase.Wait:
                         PassedToWait = true;
 
                         // Reset timers
@@ -120,19 +120,19 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
                         }
                         break;
 
-                    case FrostWrymPhase.IceProjectile:
+                    case CryotharPhase.IceProjectile:
                         HandleIceProjectile();
                         break;
 
-                    case FrostWrymPhase.TailAttack:
+                    case CryotharPhase.TailAttack:
                         HandleTailAttack();
                         break;
 
-                    case FrostWrymPhase.Icicle:
+                    case CryotharPhase.Icicle:
                         HandleIcicle();
                         break;
 
-                    case FrostWrymPhase.FrostBreath:
+                    case CryotharPhase.FrostBreath:
                         HandleFrostBreath();
                         break;
 
@@ -155,7 +155,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
         if (frostWrymAttackMoveRoutine == null)
         {
-            frostWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(FrostWrymPhase.IceProjectile));
+            frostWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(CryotharPhase.IceProjectile));
         }
     }
 
@@ -165,7 +165,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
         if (frostWrymAttackMoveRoutine == null)
         {
-            frostWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(FrostWrymPhase.TailAttack));
+            frostWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(CryotharPhase.TailAttack));
         }
     }
 
@@ -175,7 +175,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
         if (frostWrymAttackMoveRoutine == null)
         {
-            frostWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(FrostWrymPhase.Icicle));
+            frostWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(CryotharPhase.Icicle));
         }
     }
 
@@ -185,7 +185,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
         if (frostWrymAttackMoveRoutine == null)
         {
-            frostWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(FrostWrymPhase.FrostBreath));
+            frostWrymAttackMoveRoutine = StartCoroutine(AttackRoutine(CryotharPhase.FrostBreath));
         }
     }
 
@@ -204,33 +204,33 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
             if (Vector3.Distance(transform.position, player.GetPlayerPosition()) < 2f)
             {
                 // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
-                currentFrostWrymPhase = (FrostWrymPhase)Random.Range(4, Enum.GetValues(typeof(FrostWrymPhase)).Length);
+                currentFrostWrymPhase = (CryotharPhase)Random.Range(4, Enum.GetValues(typeof(CryotharPhase)).Length);
                 return;
             }
             else if (Vector3.Distance(transform.position, player.GetPlayerPosition()) > 10f)
             {
                 // If player is too far to boss, automatically next phase will be Icicle,
-                currentFrostWrymPhase = FrostWrymPhase.Icicle;
+                currentFrostWrymPhase = CryotharPhase.Icicle;
                 return;
             }
         }
 
-        if (currentFrostWrymPhase == FrostWrymPhase.TailAttack || currentFrostWrymPhase == FrostWrymPhase.Icicle ||
-            currentFrostWrymPhase == FrostWrymPhase.IceProjectile || currentFrostWrymPhase == FrostWrymPhase.FrostBreath)
+        if (currentFrostWrymPhase == CryotharPhase.TailAttack || currentFrostWrymPhase == CryotharPhase.Icicle ||
+            currentFrostWrymPhase == CryotharPhase.IceProjectile || currentFrostWrymPhase == CryotharPhase.FrostBreath)
         {
             // If centaur made a move then next phase will be wait
-            currentFrostWrymPhase = FrostWrymPhase.Wait;
+            currentFrostWrymPhase = CryotharPhase.Wait;
         }
         else
         {
             // Example of conditional or random phase transitions
-            currentFrostWrymPhase = (FrostWrymPhase)Random.Range(2, Enum.GetValues(typeof(FrostWrymPhase)).Length);
+            currentFrostWrymPhase = (CryotharPhase)Random.Range(2, Enum.GetValues(typeof(CryotharPhase)).Length);
         }
     }
 
-    IEnumerator AttackRoutine(FrostWrymPhase frostWrymPhase)
+    IEnumerator AttackRoutine(CryotharPhase frostWrymPhase)
     {
-        if (frostWrymPhase == FrostWrymPhase.IceProjectile)
+        if (frostWrymPhase == CryotharPhase.IceProjectile)
         {
             if (enemy.health.hasDied) yield break;
 
@@ -279,7 +279,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
                     if (firingDurationTimer >= 0)
                     {
                         firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(false, 0, 0, 0, 0, FrostWrymPhase.IceProjectile);
+                        FireWeapon(false, 0, 0, 0, 0, CryotharPhase.IceProjectile);
                     }
                     else
                     {
@@ -295,10 +295,10 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
             yield return null;
 
             enemy.animateEnemy.SetIdleAnimationParameters();
-            previousFrostWrymPhase = FrostWrymPhase.IceProjectile;
+            previousFrostWrymPhase = CryotharPhase.IceProjectile;
 
         }
-        else if (frostWrymPhase == FrostWrymPhase.TailAttack)
+        else if (frostWrymPhase == CryotharPhase.TailAttack)
         {
             if (enemy.health.hasDied) yield break;
 
@@ -451,9 +451,9 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             isAttacking = false;
 
-            previousFrostWrymPhase = FrostWrymPhase.TailAttack;
+            previousFrostWrymPhase = CryotharPhase.TailAttack;
         }
-        else if (frostWrymPhase == FrostWrymPhase.Icicle)
+        else if (frostWrymPhase == CryotharPhase.Icicle)
         {
             if (enemy.health.hasDied) yield break;
 
@@ -505,7 +505,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
                     if (firingDurationTimer >= 0)
                     {
                         firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(false, 0, 0, 0, 0, FrostWrymPhase.Icicle);
+                        FireWeapon(false, 0, 0, 0, 0, CryotharPhase.Icicle);
                     }
                     else
                     {
@@ -521,9 +521,9 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             yield return null;
 
-            previousFrostWrymPhase = FrostWrymPhase.Icicle;
+            previousFrostWrymPhase = CryotharPhase.Icicle;
         }
-        else if (frostWrymPhase == FrostWrymPhase.FrostBreath)
+        else if (frostWrymPhase == CryotharPhase.FrostBreath)
         {
             if (enemy.health.hasDied) yield break;
 
@@ -667,7 +667,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
             isAttacking = false;
 
-            previousFrostWrymPhase = FrostWrymPhase.FrostBreath;
+            previousFrostWrymPhase = CryotharPhase.FrostBreath;
         }
 
         chargeProcessStarted = false;
@@ -678,7 +678,7 @@ public class FrostWrymAI : EnemyAI, IMutualBossBehaviour
 
     public void PlayerStealthCheck()
     {
-        currentFrostWrymPhase = FrostWrymPhase.Wait;
+        currentFrostWrymPhase = CryotharPhase.Wait;
     }
 
     private void OnDrawGizmos()

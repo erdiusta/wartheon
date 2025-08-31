@@ -15,7 +15,6 @@ MonoBehaviour:
   playerCharacterName: Nyveran
   playerCharacterIndex: 2
   playerPrefab: {fileID: 38858171499291080, guid: 99e6d53686669c243b844a3ade267a1e, type: 3}
-  playerClonePrefab: {fileID: 38858171499291080, guid: 46f1237210b49064d9c8a4b11531fed5, type: 3}
   collectibleWeaponsArray: []
   bodyRuntimeAnimatorController: {fileID: 9100000, guid: 3cbcb1e9936af724d841b9df0fe0c7ae, type: 2}
   primaryStats:
@@ -41,25 +40,26 @@ MonoBehaviour:
   thirdActiveSkillDetails: {fileID: 11400000, guid: f8615a323a272e54e8a56900e56f44f8, type: 2}
   fourthActiveSkillDetails: {fileID: 11400000, guid: 53f0803c9bf5ce4409816ec6977489c8, type: 2}
   fifthActiveSkillDetails: {fileID: 11400000, guid: b6869cf832791a64f87abaa747a57564, type: 2}
-  cataclysmMeteor: {fileID: 0}
+  throwingAxeDetails: {fileID: 0}
+  shirukenDetails: {fileID: 0}
   grappleDetails: {fileID: 11400000, guid: 15d043c49f547eb4e9503a9429aafcdd, type: 2}
   iceBreakerDetails: {fileID: 0}
   absoluteZeroDetails: {fileID: 0}
+  fireBlastDetails: {fileID: 0}
+  blazingCycloneDetails: {fileID: 0}
+  chainLightningDetails: {fileID: 0}
   standardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   penetrateMaterial: {fileID: 2100000, guid: 7250dc13c7f24a4449c612f48de0589e, type: 2}
   applyScreenShake: 0
   shakeIntensity: 0
   shakeDuration: 0
-  selectedActiveItem: {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
-  activeItemsList:
-  - {fileID: 11400000, guid: 16e15ab3b467de9428633be104b46da9, type: 2}
   passiveItemsList: []
-  startingWeapon: {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
-  mainHandAnimatorController: {fileID: 9100000, guid: fdb61ba75457ab049a7d1bcf42030730, type: 2}
+  startingWeapon: {fileID: 11400000, guid: b18f4adebaefe3640b9c1727de9d934d, type: 2}
+  mainHandAnimatorController: {fileID: 9100000, guid: 9d2c0aa9c5289334f99cd403ac037d75, type: 2}
   offHandAnimatorController: {fileID: 0}
   startingWeaponList:
-  - {fileID: 11400000, guid: 664ab36f0b57db24db30c4ed1ec920ae, type: 2}
-  - {fileID: 11400000, guid: 03d870196fde152419afa4174f71403c, type: 2}
+  - {fileID: 11400000, guid: b18f4adebaefe3640b9c1727de9d934d, type: 2}
+  - {fileID: 11400000, guid: a180a18503c8871438259132c6706d84, type: 2}
   playerMiniMapIcon: {fileID: 21300000, guid: e5fcd79b7c5f3e945a6fc09e47d6b4f7, type: 3}
   playerHandSprite: {fileID: 21300000, guid: eb02467c70868144aa1dac1c48f1011a, type: 3}
   playerBookSprite: {fileID: 1335493817, guid: 3fc9faa41809d404fb662a58a359621d, type: 3}

@@ -195,18 +195,20 @@ public class Counter : MonoBehaviour
     /// <summary>
     /// Instantiate a weapon item for the player to collect
     /// </summary>
-    private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails, DropItem chestItem)
+    private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails, DropItem dropItem)
     {
-        if (chestItem == null) return;
+        if (dropItem == null) return;
 
-        chestItem.hasWeaponDrop = true;
-        Weapon weapon = new Weapon();
-        weapon.weaponDetails = weaponDetails;
+        dropItem.hasWeaponDrop = true;
+
+        // Create a weapon instance with rolled modifiers
+        Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails);
+
         weapon.activePrice = (int)(weaponDetails.price * (1 + player.additinalNPCCostModifier));
 
-        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, chestItem.transform.position);
+        dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, dropItem.transform.position);
 
-        chestItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + weapon.activePrice.ToString();
+        dropItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + weapon.activePrice.ToString();
     }
 
     /// <summary>
@@ -233,18 +235,18 @@ public class Counter : MonoBehaviour
     /// <summary>
     /// Instantiate a passive item for the player to collect
     /// </summary>
-    private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails, DropItem chestItem)
+    private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails, DropItem dropItem)
     {
-        if (chestItem == null) return;
+        if (dropItem == null) return;
 
-        chestItem.hasSecondaryPassiveDrop = true;
-        PassiveItem passiveItem = new PassiveItem();
-        passiveItem.passiveItemDetails = passiveItemDetails;
+        dropItem.hasSecondaryPassiveDrop = true;
+
+        PassiveItem passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails);
+
         passiveItem.activePrice = (int)(passiveItemDetails.price * (1 + player.additinalNPCCostModifier));
+        dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, dropItem.transform.position);
 
-        chestItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, chestItem.transform.position);
-
-        chestItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + passiveItem.activePrice.ToString();
+        dropItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + passiveItem.activePrice.ToString();
     }
 
     /// <summary>
@@ -271,21 +273,21 @@ public class Counter : MonoBehaviour
     /// <summary>
     /// Gamble reset
     /// </summary>
-    private void RetrieveGambleTableValue(ref DropItem chestItem, int gambleValue)
+    private void RetrieveGambleTableValue(ref DropItem dropItem, int gambleValue)
     {
-        if (chestItem == null) return;
+        if (dropItem == null) return;
 
-        ResetGambleTable(ref chestItem);
-        chestItem.gambleValue = gambleValue;
+        ResetGambleTable(ref dropItem);
+        dropItem.gambleValue = gambleValue;
     }
 
     /// <summary>
     /// Gamble reset
     /// </summary>
-    private void ResetGambleTable(ref DropItem chestItem)
+    private void ResetGambleTable(ref DropItem dropItem)
     {
-        chestItem.gambleValue = 0;
-        chestItem.isColliding = false;
-        chestItem.animator.runtimeAnimatorController = GameResources.Instance.gambleDiceAnimatorController;
+        dropItem.gambleValue = 0;
+        dropItem.isColliding = false;
+        dropItem.animator.runtimeAnimatorController = GameResources.Instance.gambleDiceAnimatorController;
     }
 }

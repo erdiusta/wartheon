@@ -9,42 +9,35 @@ public class MainUI : SingletonMonobehaviour<MainUI>
     [Space(10)]
     // Tooltip panel
     public GameObject tooltipPanel;
-    public TextMeshProUGUI headerText;
-    public TextMeshProUGUI levelText;
-    public TextMeshProUGUI requirementText;
-    public TextMeshProUGUI weaponClassText;
-    public TextMeshProUGUI hitSpeedText;
-    public TextMeshProUGUI weaponWieldText;
-    public TextMeshProUGUI damageText;
-    public TextMeshProUGUI baseHandlingText;
-    public TextMeshProUGUI crHitChanceText;
-    public TextMeshProUGUI crHitDamageText;
-    public TextMeshProUGUI elementalBiasText;
-    public TextMeshProUGUI elementText;
-    public TextMeshProUGUI elementalForgeRateText;
-    public TextMeshProUGUI masteryText1;
-    public TextMeshProUGUI masteryText2;
-    public TextMeshProUGUI masteryText3;
+    public TMP_Text headerText;
+    public TMP_Text levelText;
+    public TMP_Text requirementText;
+    public TMP_Text weaponClassText;
+    public TMP_Text hitSpeedText;
+    public TMP_Text weaponWieldText;
+    public TMP_Text physicalDamageText;
+    public TMP_Text magicDamageText;
+    public TMP_Text attackRatingText;
+    public TMP_Text crHitChanceText;
+    public TMP_Text crHitDamageText;
+    public TMP_Text enchantedBoostText;
 
     [Space(10)]
     // Tooltip panel equipped
     public GameObject tooltipPanelEquipped;
-    public TextMeshProUGUI headerTextEquipped;
-    public TextMeshProUGUI levelTextEquipped;
-    public TextMeshProUGUI equippedText;
-    public TextMeshProUGUI weaponClassTextEquipped;
-    public TextMeshProUGUI hitSpeedTextEquipped;
-    public TextMeshProUGUI weaponWieldTextEquipped;
-    public TextMeshProUGUI damageTextEquipped;
-    public TextMeshProUGUI baseHandlingTextEquipped;
-    public TextMeshProUGUI crHitChanceTextEquipped;
-    public TextMeshProUGUI crHitDamageTextEquipped;
-    public TextMeshProUGUI elementalBiasTextEquipped;
-    public TextMeshProUGUI elementTextEquipped;
-    public TextMeshProUGUI elementalForgeRateTextEquipped;
-    public TextMeshProUGUI masteryText1Equipped;
-    public TextMeshProUGUI masteryText2Equipped;
-    public TextMeshProUGUI masteryText3Equipped;
+    public TMP_Text headerTextEquipped;
+    public TMP_Text levelTextEquipped;
+    public TMP_Text equippedText;
+    public TMP_Text weaponClassTextEquipped;
+    public TMP_Text hitSpeedTextEquipped;
+    public TMP_Text weaponWieldTextEquipped;
+    public TMP_Text physicalDamageTextEquipped;
+    public TMP_Text magicDamageTextEquipped;
+    public TMP_Text attackRatingTextEquipped;
+    public TMP_Text crHitChanceTextEquipped;
+    public TMP_Text crHitDamageTextEquipped;
+    public TMP_Text enchantedBoostTextEquipped;
+
 
     // COLORS
     // Weapon Level 
@@ -125,28 +118,30 @@ public class MainUI : SingletonMonobehaviour<MainUI>
         }
     }
 
-    public void UpdateTooltipPanelInfo(ItemGeneric itemGeneric, bool hasWeaponDrop, bool hasActiveDrop, bool hasSecondaryPassiveDrop, TooltipSource source)
+    public void UpdateTooltipPanelInfo(ItemGeneric itemGeneric, bool hasWeaponDrop, bool hasSecondaryPassiveDrop, TooltipSource source)
     {
         if (currentTooltipSource == source) return;
 
         currentTooltipSource = source;
 
         tooltipPanel.SetActive(true);
-        if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
-        {
-            if (itemGeneric is Weapon)
-            {
-                Weapon weapon = (Weapon)itemGeneric;
 
-                if (weapon.weaponDetails.weaponClass != WeaponClass.Shield)
-                {
+        Weapon equippedWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+
+        if (itemGeneric != null)
+        {
+            if (equippedWeapon != null)
+            {
+                if (itemGeneric is Weapon w && w.weaponDetails.weaponClass != WeaponClass.Shield)
                     tooltipPanelEquipped.SetActive(true);
-                }
             }
         }
 
         ClearTooltipPanel();
         ClearTooltipEquippedPanel();
+
+        //// NEW: also clear modifier text blocks
+        //ClearModifierTexts();
 
         if (hasSecondaryPassiveDrop)
         {
@@ -161,38 +156,8 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 levelText.text = $"(Passive Item)";
 
                 // HEAD
-                if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WardenOfForest)
-                {
-                    weaponClassText.text = "+100% Accuracy for Bows";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HaloOfBlindingRadiance)
-                {
-                    weaponClassText.text = "+10% Light Resistance";
-                    hitSpeedText.text = "+10% Chance to Blind";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.HelmOfTheEternalVigil)
-                {
-                    weaponClassText.text = "+1 Dexterity";
-                    hitSpeedText.text = "+10% Physical Resistance";
-                    weaponWieldText.text = "+10% Evasiveness";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EnchantersSpire)
-                {
-                    weaponClassText.text = "+1 Intelligence";
-                    hitSpeedText.text = "+5% All Elemental Resistance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WhisperingHood)
-                {
-                    weaponClassText.text = "+1 Dexterity";
-                    hitSpeedText.text = "+15% Evasiveness";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GildedGuardian)
-                {
-                    weaponClassText.text = "+1 Constitution";
-                    hitSpeedText.text = "+20% Physical Resistance";
-                }
                 //NECK
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
+                if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
                 {
                     weaponClassText.text = "+20% Fire Resistance";
                 }
@@ -209,102 +174,8 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                     weaponClassText.text = "+20% Water Resistance";
                 }
                 // CHEST
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ChestplateOfTheLastLight)
-                {
-                    weaponClassText.text = "+1 Strength";
-                    hitSpeedText.text = "+30% Physical Resistance";
-                    weaponWieldText.text = "Absorbs +30% Physical Damage";
-                    damageText.text = "When Healt is below 50%";
-                    baseHandlingText.text = "";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BlazingHeartplate)
-                {
-                    weaponClassText.text = "+1 Strength";
-                    hitSpeedText.text = "+20% Physical Resistance";
-                    weaponWieldText.text = "+10% Fire Resistance";
-                    damageText.text = "-5% Attack Cooldown";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.FrostboundChainmail)
-                {
-                    weaponClassText.text = "+15% Physical Resistance";
-                    hitSpeedText.text = "+10% Water Resistance";
-                    weaponWieldText.text = "Immune to Frost";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomweaveVest)
-                {
-                    weaponClassText.text = "+10% Physical Resistance";
-                    hitSpeedText.text = "+10% Earth Resistance";
-                    weaponWieldText.text = "Immune to Poison";
-                }
-                // WAIST
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BeltOfSorcery)
-                {
-                    weaponClassText.text = "+1 Intelligence";
-                    hitSpeedText.text = "-20% Cast Duration";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.InfernoSash)
-                {
-                    weaponClassText.text = "+1 Constitution";
-                    hitSpeedText.text = "+5% Physical Resistance";
-                    weaponWieldText.text = "+15% Fire Resistance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GirdleOfFirmament)
-                {
-                    weaponClassText.text = "+10% Air Resistance";
-                    hitSpeedText.text = "+10% Light Resistance";
-                    weaponWieldText.text = "Immune to Blind";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BloodforgedGirdle)
-                {
-                    weaponClassText.text = "+1 Strength";
-                    hitSpeedText.text = "+1 Agility";
-                    weaponWieldText.text = "-5% Melee Attack Cooldown";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SandweaversSash)
-                {
-                    weaponClassText.text = "+1 Dexterity";
-                    hitSpeedText.text = "+10% Evasiveness";
-                    weaponWieldText.text = "+5% Cr.Hit Chance";
-                }
                 // FINGER
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfFortune)
-                {
-                    weaponClassText.text = "+15% Drop Chance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfTempestStrikes)
-                {
-                    weaponClassText.text = "-20% Attack Cooldown";
-                    hitSpeedText.text = "-10% Physical Resistance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfMight)
-                {
-                    weaponClassText.text = "+1 Strength";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfVitality)
-                {
-                    weaponClassText.text = "+1 Constitution";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RingOfSagacity)
-                {
-                    weaponClassText.text = "+1 Intelligence";
-                }
                 // ARM
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.OminousGripOfThunder)
-                {
-                    weaponClassText.text = "+5% Physical Resistance";
-                    hitSpeedText.text = "+10% Air Resistance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmbercladBracers)
-                {
-                    weaponClassText.text = "+10% Physical Resistance";
-                    hitSpeedText.text = "+8% Fire Resistance";
-                    weaponWieldText.text = "-5% Attack Cooldown";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.VenomTouchedGloves)
-                {
-                    weaponClassText.text = "+10% Earth Resistance";
-                    hitSpeedText.text = "Immunity to Poison";
-                }
                 // BACK
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                 {
@@ -312,381 +183,446 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                     hitSpeedText.text = "+10% Cr. Hit Chance When";
                     weaponWieldText.text = "Dual-Wield Dagger or Claw Equipped";
                 }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RecantersCloak)
-                {
-                    weaponClassText.text = "+1 Agility";
-                    hitSpeedText.text = "+10% Evasiveness";
-                }
                 else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
                 {
                     weaponClassText.text = "+5% Elemental Damage";
                     hitSpeedText.text = "+15% Elemental Resistance";
                 }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.CloakOfWindwalker)
-                {
-                    weaponClassText.text = "+2 Agility";
-                    hitSpeedText.text = "+30% Air Resistance";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldenCloak)
-                {
-                    weaponClassText.text = "+1 All Primary Stats";
-                }
                 // LEG
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.WingedSandals)
-                {
-                    weaponClassText.text = "+2 Agility";
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.BootsOfInfernalMarch)
-                {
-                    weaponClassText.text = "+1 Agility";
-                    hitSpeedText.text = "+15% Fire Resistance";
-                }
+
+                BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
+                BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
+                BoostForPassiveItem(passiveItem, passiveItem.enchantedBoostType, BoostPhase.Enchanted);
+                BoostForPassiveItem(passiveItem, passiveItem.mythicBoostType, BoostPhase.Mythic);
             }
         }
-        if (hasActiveDrop)
+        if (hasWeaponDrop && itemGeneric is Weapon weapon)
         {
-            if (itemGeneric is ActiveItem)
+            WeaponDetailsSO weaponDetails = weapon.weaponDetails;
+
+            // Populate text field based on the related weapon info
+            switch (weapon.rarity)
             {
-                headerText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
-                levelText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
-                ActiveItem activeItem = (ActiveItem)itemGeneric;
-                ActiveItemDetailsSO activeItemDetails = activeItem.activeItemDetails;
-
-                headerText.text = activeItemDetails.activeItemName;
-                levelText.text = $"(Active Item)";
-
-                if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Decoy)
-                {
-                    weaponClassText.text = "Distracts Enemies Until Being";
-                    hitSpeedText.text = "Destroyed";
-                }
-                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Potion)
-                {
-                    weaponClassText.text = "Slowly Regenerates Health";
-                }
-                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Bomb)
-                {
-                    weaponClassText.text = "Explodes and Gives AoE Damage";
-                    //hitSpeedText.text = "AoE Damage";
-                }
-                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Compass)
-                {
-                    weaponClassText.text = "Locates Boss Room's";
-                    hitSpeedText.text = "Direction";
-                }
-                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Boomerang)
-                {
-                    weaponClassText.text = "Strikes And Return, Useful";
-                    hitSpeedText.text = "For Stunning Enemies";
-                }
-                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Hourglass)
-                {
-                    weaponClassText.text = "Slows the Time Flow By";
-
-                }
-                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Shiruken)
-                {
-                    weaponClassText.text = "Several Quick Throwable Star";
-                    hitSpeedText.text = "Projectiles";
-                }
-                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Pentagram)
-                {
-                    weaponClassText.text = "Trap for Enemies To Step On";
-                }
-                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.Summoner)
-                {
-                    weaponClassText.text = "Summoning Ally Mobs as Companion";
-                    hitSpeedText.text = "For a Short Time";
-                }
-                else if (activeItem.activeItemDetails.activeItemType == ActiveItemType.BobbyPin)
-                {
-                    weaponClassText.text = "Chance to Crack The";
-                    hitSpeedText.text = "Chest Without a Key";
-                    weaponWieldText.text = "Only One Attempt Permitted";
-                }
+                case Rarity.Basic:
+                    headerText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                    levelText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                    break;
+                case Rarity.Enchanted:
+                    headerText.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                    levelText.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                    break;
+                case Rarity.Mythic:
+                    headerText.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                    levelText.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                    break;
+                case Rarity.Legendary:
+                    headerText.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
+                    levelText.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
+                    break;
+                default:
+                    break;
             }
-        }
 
-        if (hasWeaponDrop)
-        {
-            if (itemGeneric is Weapon)
+            // Equipped
+            if (equippedWeapon != null && weapon.weaponDetails.weaponClass != WeaponClass.Shield)
             {
-                Weapon weapon = (Weapon)itemGeneric;
-                WeaponDetailsSO weaponDetails = weapon.weaponDetails;
-
-                // Populate text field based on the related weapon info
-                switch (weaponDetails.weaponLevel)
+                switch (equippedWeapon.rarity)
                 {
-                    case WeaponLevel.Basic:
-                        headerText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
-                        levelText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                    case Rarity.Basic:
+                        headerTextEquipped.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                        levelTextEquipped.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
                         break;
-                    case WeaponLevel.Enchanted:
-                        headerText.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
-                        levelText.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                    case Rarity.Enchanted:
+                        headerTextEquipped.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                        levelTextEquipped.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
                         break;
-                    case WeaponLevel.Mythic:
-                        headerText.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
-                        levelText.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                    case Rarity.Mythic:
+                        headerTextEquipped.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                        levelTextEquipped.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
                         break;
-                    case WeaponLevel.Legendary:
-                        headerText.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
-                        levelText.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
+                    case Rarity.Legendary:
+                        headerTextEquipped.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
+                        levelTextEquipped.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
                         break;
                     default:
                         break;
                 }
 
-                Weapon equippedWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+                equippedText.text = "Equipped";
+                headerTextEquipped.text = equippedWeapon.weaponDetails.weaponName;
+                levelTextEquipped.text = $"({equippedWeapon.rarity.ToString()})";
+                weaponClassTextEquipped.text = $"Class: {equippedWeapon.weaponDetails.weaponClass.ToString()}";
+                hitSpeedTextEquipped.text = $"Speed: {equippedWeapon.attackCooldown.ToString()}";
+                weaponWieldTextEquipped.text = $"Wield Type: {equippedWeapon.weaponDetails.wieldType.ToString()}";
 
-                // Equipped
-                if (equippedWeapon != null && weapon.weaponDetails.weaponClass != WeaponClass.Shield)
+                if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
                 {
-                    switch (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponLevel)
-                    {
-                        case WeaponLevel.Basic:
-                            headerTextEquipped.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
-                            levelTextEquipped.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
-                            break;
-                        case WeaponLevel.Enchanted:
-                            headerTextEquipped.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
-                            levelTextEquipped.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
-                            break;
-                        case WeaponLevel.Mythic:
-                            headerTextEquipped.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
-                            levelTextEquipped.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
-                            break;
-                        case WeaponLevel.Legendary:
-                            headerTextEquipped.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
-                            levelTextEquipped.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
-                            break;
-                        default:
-                            break;
-                    }
-
-                    equippedText.text = "Equipped";
-                    headerTextEquipped.text = equippedWeapon.weaponDetails.weaponName;
-                    levelTextEquipped.text = $"({equippedWeapon.weaponDetails.weaponLevel.ToString()})";
-                    weaponClassTextEquipped.text = $"Class: {equippedWeapon.weaponDetails.weaponClass.ToString()}";
-                    hitSpeedTextEquipped.text = $"Speed: {equippedWeapon.weaponDetails.weaponHitSpeed.ToString()}";
-                    weaponWieldTextEquipped.text = $"Wield Type: {equippedWeapon.weaponDetails.wieldType.ToString()}";
-
-                    if (equippedWeapon.weaponDetails.isMeleeWeapon)
-                    {
-                        damageTextEquipped.text = $"Damage: {equippedWeapon.weaponDetails.meleeDamageMin}-{equippedWeapon.weaponDetails.meleeDamageMax}";
-                    }
-                    else
-                    {
-                        damageTextEquipped.text = $"Damage: {equippedWeapon.weaponDetails.weaponCurrentProjectile.projectileDamageMin}-" +
-                            $"{equippedWeapon.weaponDetails.weaponCurrentProjectile.projectileDamageMax}";
-                    }
-
-                    int dropWeaponDamageMax = weaponDetails.isMeleeWeapon ? weaponDetails.meleeDamageMax : weaponDetails.weaponCurrentProjectile.projectileDamageMax;
-                    int equippedWeaponDamageMax = equippedWeapon.weaponDetails.isMeleeWeapon ? equippedWeapon.weaponDetails.meleeDamageMax :
-                        equippedWeapon.weaponDetails.weaponCurrentProjectile.projectileDamageMax;
-
-                    if (equippedWeaponDamageMax > dropWeaponDamageMax)
-                    {
-                        damageTextEquipped.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
-                        damageText.colorGradient = new VertexGradient(Color.red, Color.red, Color.red, Color.red);
-                    }
-                    else if (equippedWeaponDamageMax == dropWeaponDamageMax)
-                    {
-                        damageTextEquipped.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
-                        damageText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
-                    }
-                    else
-                    {
-                        damageTextEquipped.colorGradient = new VertexGradient(Color.red, Color.red, Color.red, Color.red);
-                        damageText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
-                    }
-
-                    baseHandlingTextEquipped.text = $"Base Handling: {equippedWeapon.weaponDetails.weaponBaseHandling * 100}%";
-                    crHitChanceTextEquipped.text = $"Base Cr. Hit Chance: {equippedWeapon.weaponDetails.criticalHitChance * 100}%";
-
-                    if (equippedWeapon.weaponDetails.isMeleeWeapon)
-                    {
-                        crHitDamageTextEquipped.text = $"Base Cr. Hit Damage: {(equippedWeapon.weaponDetails.criticalHitDamageMultiplier + player.additionalCriticalMeleeDamageModifier) * 100}%";
-                    }
-                    else
-                    {
-                        crHitDamageTextEquipped.text = $"Base Cr. Hit Damage: {equippedWeapon.weaponDetails.criticalHitDamageMultiplier * 100}%";
-                    }
-
-                    elementalBiasTextEquipped.text = "Elemental Bias:";
-
-                    // Populate text field based on the related elemental info
-                    switch (equippedWeapon.weaponDetails.elementalBias)
-                    {
-                        case ElementalBias.None:
-                            elementTextEquipped.colorGradient = new VertexGradient(noneElementalColor1, noneElementalColor1, noneElementalColor2, noneElementalColor2);
-                            break;
-                        case ElementalBias.Fire:
-                            elementTextEquipped.colorGradient = new VertexGradient(fireColor1, fireColor1, fireColor2, fireColor2);
-                            break;
-                        case ElementalBias.Water:
-                            elementTextEquipped.colorGradient = new VertexGradient(waterColor1, waterColor1, waterColor2, waterColor2);
-                            break;
-                        case ElementalBias.Earth:
-                            elementTextEquipped.colorGradient = new VertexGradient(earthColor1, earthColor1, earthColor2, earthColor2);
-                            break;
-                        case ElementalBias.Air:
-                            elementTextEquipped.colorGradient = new VertexGradient(airColor1, airColor1, airColor2, airColor2);
-                            break;
-                        case ElementalBias.Dark:
-                            elementTextEquipped.colorGradient = new VertexGradient(darkColor1, darkColor1, darkColor2, darkColor2);
-                            break;
-                        case ElementalBias.Light:
-                            elementTextEquipped.colorGradient = new VertexGradient(lightColor1, lightColor1, lightColor2, lightColor2);
-                            break;
-                        default:
-                            break;
-                    }
-
-                    elementTextEquipped.text = equippedWeapon.weaponDetails.elementalBias.ToString();
-                    elementalForgeRateTextEquipped.text = $"El. Forge Rate: {equippedWeapon.weaponDetails.elementalForgeRate * 100}%";
-
-                    switch (equippedWeapon.weaponDetails.weaponLevel)
-                    {
-                        case WeaponLevel.Basic:
-                            masteryText1Equipped.gameObject.SetActive(false);
-                            masteryText2Equipped.gameObject.SetActive(false);
-                            masteryText3Equipped.gameObject.SetActive(false);
-                            break;
-                        case WeaponLevel.Enchanted:
-                            masteryText1Equipped.gameObject.SetActive(true);
-                            masteryText1Equipped.text = "Enchanted Mastery: Locked";
-                            masteryText2Equipped.gameObject.SetActive(false);
-                            masteryText3Equipped.gameObject.SetActive(false);
-                            break;
-                        case WeaponLevel.Mythic:
-                            masteryText1Equipped.gameObject.SetActive(true);
-                            masteryText1Equipped.text = "Enchanted Mastery: Locked";
-                            masteryText2Equipped.gameObject.SetActive(true);
-                            masteryText2Equipped.text = "Mythic Mastery: Locked";
-                            masteryText3Equipped.gameObject.SetActive(false);
-                            break;
-                        case WeaponLevel.Legendary:
-                            masteryText1Equipped.gameObject.SetActive(true);
-                            masteryText1Equipped.text = "Enchanted Mastery: Locked";
-                            masteryText2Equipped.gameObject.SetActive(true);
-                            masteryText2Equipped.text = "Mythic Mastery: Locked";
-                            masteryText3Equipped.gameObject.SetActive(true);
-                            masteryText3Equipped.text = "Legendary Mastery: Locked";
-                            break;
-                        default:
-                            break;
-
-                    }
-                }
-
-                headerText.text = weaponDetails.weaponName;
-                levelText.text = $"({weaponDetails.weaponLevel.ToString()})";
-
-                requirementText.text = UpdateRequirementText(weaponDetails);
-                weaponClassText.text = $"Class: {weaponDetails.weaponClass.ToString()}";
-
-                if (weaponDetails.weaponClass == WeaponClass.Shield)
-                {
-                    weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
-                    damageText.text = $"Deflect Rate: {weaponDetails.blockRate * 100}%";
+                    weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
+                    physicalDamageText.text = $"Block Rate: {weapon.weaponDetails.blockChance * 100}%";
                 }
                 else
                 {
-                    hitSpeedText.text = $"Speed: {weaponDetails.weaponHitSpeed.ToString()}";
-                    weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
+                    hitSpeedText.text = $"Speed: {weapon.weaponDetails.weaponHitSpeed.ToString()}";
+                    weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
 
-                    if (weaponDetails.isMeleeWeapon)
-                    {
-                        damageText.text = $"Damage: {weaponDetails.meleeDamageMin}-{weaponDetails.meleeDamageMax}";
-                    }
-                    else
-                    {
-                        damageText.text = $"Damage: {weaponDetails.weaponCurrentProjectile.projectileDamageMin}-{weaponDetails.weaponCurrentProjectile.projectileDamageMax}";
-                    }
+                    physicalDamageText.text = $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.physicalAttackDamageIncrease}-" +
+                        $"{weapon.weaponDetails.physicalDamageMax + weapon.physicalAttackDamageIncrease}";
+
+                    magicDamageText.text = $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.magicAttackDamageIncrease}-" +
+                        $"{weapon.weaponDetails.magicDamageMax + weapon.magicAttackDamageIncrease}";
                 }
 
-                baseHandlingText.text = $"Base Handling: {weaponDetails.weaponBaseHandling * 100}%";
-                crHitChanceText.text = $"Base Cr. Hit Chance: {weaponDetails.criticalHitChance * 100}%";
+                physicalDamageTextEquipped.text = $"Phy. Damage: {equippedWeapon.weaponDetails.physicalDamageMin + equippedWeapon.physicalAttackDamageIncrease}-" +
+                    $"{equippedWeapon.weaponDetails.physicalDamageMax + equippedWeapon.physicalAttackDamageIncrease}";
 
-                if (weaponDetails.isMeleeWeapon)
+                magicDamageTextEquipped.text = $"Phy. Damage: {equippedWeapon.weaponDetails.magicDamageMin + equippedWeapon.magicAttackDamageIncrease}-" +
+                    $"{equippedWeapon.weaponDetails.magicDamageMax + equippedWeapon.magicAttackDamageIncrease}";
+
+                int dropWeaponDamageMax = weaponDetails.isMeleeWeapon ? weaponDetails.physicalDamageMax : weaponDetails.weaponCurrentProjectile.projectilePhyDamageMax;
+                int equippedWeaponDamageMax = equippedWeapon.weaponDetails.isMeleeWeapon ? equippedWeapon.weaponDetails.physicalDamageMax :
+                    equippedWeapon.weaponDetails.weaponCurrentProjectile.projectilePhyDamageMax;
+
+                if (equippedWeaponDamageMax > dropWeaponDamageMax)
                 {
-                    crHitDamageText.text = $"Base Cr. Hit Damage: {(weaponDetails.criticalHitDamageMultiplier + player.additionalCriticalMeleeDamageModifier) * 100}%";
+                    physicalDamageTextEquipped.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
+                    physicalDamageText.colorGradient = new VertexGradient(Color.red, Color.red, Color.red, Color.red);
+                }
+                else if (equippedWeaponDamageMax == dropWeaponDamageMax)
+                {
+                    physicalDamageTextEquipped.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
+                    physicalDamageText.colorGradient = new VertexGradient(Color.yellow, Color.yellow, Color.yellow, Color.yellow);
                 }
                 else
                 {
-                    crHitDamageText.text = $"Base Cr. Hit Damage: {weaponDetails.criticalHitDamageMultiplier * 100}%";
+                    physicalDamageTextEquipped.colorGradient = new VertexGradient(Color.red, Color.red, Color.red, Color.red);
+                    physicalDamageText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
                 }
 
-                elementalBiasText.text = "Elemental Bias:";
+                attackRatingTextEquipped.text = $"Base Attack Rating: {equippedWeapon.attackRatingIncrease * 100}%";
+                crHitChanceTextEquipped.text = $"Base Cr. Hit Chance: {equippedWeapon.criticalHitChanceIncrease * 100}%";
+                crHitDamageTextEquipped.text = $"Base Cr. Hit Damage: {equippedWeapon.criticalHitDamageIncrease * 100}%";
+            }
 
+            headerText.text = weaponDetails.weaponName;
+            levelText.text = $"({weapon.rarity.ToString()})";
 
-                // Populate text field based on the related elemental info
-                switch (weaponDetails.elementalBias)
+            requirementText.text = UpdateRequirementText(weaponDetails);
+            weaponClassText.text = $"Class: {weaponDetails.weaponClass.ToString()}";
+
+            if (weaponDetails.weaponClass == WeaponClass.Shield)
+            {
+                weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
+                physicalDamageText.text = $"Block Rate: {weapon.blockChanceIncrease * 100}%";
+            }
+            else
+            {
+                hitSpeedText.text = $"Speed: {weapon.attackCooldown.ToString()}";
+                weaponWieldText.text = $"Wield Type: {weaponDetails.wieldType.ToString()}";
+
+                physicalDamageText.text = $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.physicalAttackDamageIncrease}-" +
+                    $"{weapon.weaponDetails.physicalDamageMax + weapon.physicalAttackDamageIncrease}";
+
+                magicDamageText.text = $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.magicAttackDamageIncrease}-" +
+                    $"{weapon.weaponDetails.magicDamageMax + weapon.magicAttackDamageIncrease}";
+            }
+
+            attackRatingText.text = $"Base Handling: {weapon.attackRatingIncrease * 100}%";
+            crHitChanceText.text = $"Base Cr. Hit Chance: {weapon.criticalHitChanceIncrease * 100}%";
+            crHitDamageText.text = $"Base Cr. Hit Damage: {weapon.criticalHitDamageIncrease * 100}%";
+
+            BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
+            BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
+            BoostForWeapon(weapon, weapon.enchantedBoostType, BoostPhase.Enchanted);
+            BoostForWeapon(weapon, weapon.mythicBoostType, BoostPhase.Mythic);
+
+            //// NEW: Modifiers for the DROP item
+            //SetModifierBlock(weapon, modifiersHeaderText, modifierBaseUniqueText, modifierBaseTypeText, modifierExtra1Text, modifierExtra2Text);
+
+            ////  NEW: Modifiers for the EQUIPPED item (if visible and not a shield)
+            //equippedWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+            //if (equippedWeapon != null && weaponDetails.weaponClass != WeaponClass.Shield)
+            //{
+            //    SetModifierBlock(equippedWeapon, modifiersHeaderTextEquipped, modifierBaseUniqueTextEquipped, modifierBaseTypeTextEquipped,
+            //        modifierExtra1TextEquipped,modifierExtra2TextEquipped);
+            //}
+        }
+    }
+
+    private void BoostForWeapon(Weapon weapon, BoostType boostType, BoostPhase boostPhase)
+    {
+        if (boostType != BoostType.None)
+        {
+            if (boostPhase == BoostPhase.Unique)
+            {
+                switch (boostType)
                 {
-                    case ElementalBias.None:
-                        elementText.colorGradient = new VertexGradient(noneElementalColor1, noneElementalColor1, noneElementalColor2, noneElementalColor2);
+                    case BoostType.AttackCooldown:
+                        enchantedBoostText.text = $"Attack Speed: + {weapon.attackCooldown * 100}%";
                         break;
-                    case ElementalBias.Fire:
-                        elementText.colorGradient = new VertexGradient(fireColor1, fireColor1, fireColor2, fireColor2);
+                    case BoostType.AttackDamage:
+                        enchantedBoostText.text = "Phy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
                         break;
-                    case ElementalBias.Water:
-                        elementText.colorGradient = new VertexGradient(waterColor1, waterColor1, waterColor2, waterColor2);
+                    case BoostType.AttackRating:
+                        enchantedBoostText.text = $"Attack Rating: + {weapon.attackRatingIncrease * 100}%";
                         break;
-                    case ElementalBias.Earth:
-                        elementText.colorGradient = new VertexGradient(earthColor1, earthColor1, earthColor2, earthColor2);
+                    case BoostType.MagicDamage:
+                        enchantedBoostText.text = "Magic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
                         break;
-                    case ElementalBias.Air:
-                        elementText.colorGradient = new VertexGradient(airColor1, airColor1, airColor2, airColor2);
+                    case BoostType.CritChance:
+                        enchantedBoostText.text = $"Cr. Hit Chance: + {weapon.criticalHitChanceIncrease * 100}%";
                         break;
-                    case ElementalBias.Dark:
-                        elementText.colorGradient = new VertexGradient(darkColor1, darkColor1, darkColor2, darkColor2);
+                    case BoostType.CritDamage:
+                        enchantedBoostText.text = $"Cr. Hit Damage: + {weapon.criticalHitDamageIncrease * 100}%";
                         break;
-                    case ElementalBias.Light:
-                        elementText.colorGradient = new VertexGradient(lightColor1, lightColor1, lightColor2, lightColor2);
+                    case BoostType.LifeSteal:
+                        enchantedBoostText.text = $"Life Steal: + {weapon.lifeStealAmount}";
+                        break;
+                    case BoostType.BlockChance:
+                        enchantedBoostText.text = $"Block Chance: + {weapon.blockChanceIncrease * 100}%";
+                        break;
+                    case BoostType.DodgeChance:
+                        enchantedBoostText.text = $"Dodge Chance: + {weapon.dodgeChanceIncrease * 100}%";
+                        break;
+                    case BoostType.HealthIncrease:
+                        enchantedBoostText.text = $"Health: + {weapon.increasedMaxHealth}";
+                        break;
+                    case BoostType.ManaIncrease:
+                        enchantedBoostText.text = $"Mana: + {weapon.increasedMaxMana}";
+                        break;
+                    case BoostType.StatusResistance:
+                        enchantedBoostText.text = $"Status Resistance: + {weapon.statusResistanceModifier * 100}%";
+                        break;
+                    case BoostType.AttackVsLowHealthEnemies:
+                        enchantedBoostText.text = $"Attack vs Low Health Enemies: + {weapon.attackRateVsLowHealthEnemies * 100}%";
+                        break;
+                    case BoostType.CritResistance:
+                        enchantedBoostText.text = $"Cr. Resistance: + {weapon.criticalResistance}%";
+                        break;
+                    case BoostType.ArmorIncrease:
+                        enchantedBoostText.text = $"Armor: + {weapon.armorIncrease * 100}%";
+                        break;
+                    case BoostType.MagicResistance:
+                        enchantedBoostText.text = $"Magic Resistance: + {weapon.magicResistance * 100}%";
+                        break;
+                    case BoostType.MoveSpeed:
+                        enchantedBoostText.text = $"Magic Resistance: + {weapon.speedIncreaseModifier}";
+                        break;
+                    case BoostType.DamageReduction:
+                        enchantedBoostText.text = $"Damage Reduction: + {weapon.damageReductionRate * 100}%";
+                        break;
+                    case BoostType.ArmorPenetration:
+                        enchantedBoostText.text = $"Armor Penetration: + {weapon.armorPenetration * 100}%";
                         break;
                     default:
                         break;
                 }
-
-                elementText.text = weaponDetails.elementalBias.ToString();
-                elementalForgeRateText.text = $"El. Forge Rate: {weaponDetails.elementalForgeRate * 100}%";
-
-                switch (weaponDetails.weaponLevel)
+            }
+            else
+            {
+                switch (boostType)
                 {
-                    case WeaponLevel.Basic:
-                        masteryText1.gameObject.SetActive(false);
-                        masteryText2.gameObject.SetActive(false);
-                        masteryText3.gameObject.SetActive(false);
+                    case BoostType.AttackCooldown:
+                        enchantedBoostText.text += $"\nAttack Speed: + {weapon.attackCooldown * 100}%";
                         break;
-                    case WeaponLevel.Enchanted:
-                        masteryText1.gameObject.SetActive(true);
-                        masteryText1.text = "Enchanted Mastery: Locked";
-                        masteryText2.gameObject.SetActive(false);
-                        masteryText3.gameObject.SetActive(false);
+                    case BoostType.AttackDamage:
+                        enchantedBoostText.text += "\nPhy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
                         break;
-                    case WeaponLevel.Mythic:
-                        masteryText1.gameObject.SetActive(true);
-                        masteryText1.text = "Enchanted Mastery: Locked";
-                        masteryText2.gameObject.SetActive(true);
-                        masteryText2.text = "Mythic Mastery: Locked";
-                        masteryText3.gameObject.SetActive(false);
+                    case BoostType.AttackRating:
+                        enchantedBoostText.text += $"\nAttack Rating: + {weapon.attackRatingIncrease * 100}%";
                         break;
-                    case WeaponLevel.Legendary:
-                        masteryText1.gameObject.SetActive(true);
-                        masteryText1.text = "Enchanted Mastery: Locked";
-                        masteryText2.gameObject.SetActive(true);
-                        masteryText2.text = "Mythic Mastery: Locked";
-                        masteryText3.gameObject.SetActive(true);
-                        masteryText3.text = "Legendary Mastery: Locked";
+                    case BoostType.MagicDamage:
+                        enchantedBoostText.text += "\nMagic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
+                        break;
+                    case BoostType.CritChance:
+                        enchantedBoostText.text += $"\nCr. Hit Chance: + {weapon.criticalHitChanceIncrease * 100}%";
+                        break;
+                    case BoostType.CritDamage:
+                        enchantedBoostText.text += $"\nCr. Hit Damage: + {weapon.criticalHitDamageIncrease * 100}%";
+                        break;
+                    case BoostType.LifeSteal:
+                        enchantedBoostText.text += $"\nLife Steal: + {weapon.lifeStealAmount}";
+                        break;
+                    case BoostType.BlockChance:
+                        enchantedBoostText.text += $"\nBlock Chance: + {weapon.blockChanceIncrease * 100}%";
+                        break;
+                    case BoostType.DodgeChance:
+                        enchantedBoostText.text += $"\nDodge Chance: + {weapon.dodgeChanceIncrease * 100}%";
+                        break;
+                    case BoostType.HealthIncrease:
+                        enchantedBoostText.text += $"\nHealth: + {weapon.increasedMaxHealth}";
+                        break;
+                    case BoostType.ManaIncrease:
+                        enchantedBoostText.text += $"\nMana: + {weapon.increasedMaxMana}";
+                        break;
+                    case BoostType.StatusResistance:
+                        enchantedBoostText.text += $"\nStatus Resistance: + {weapon.statusResistanceModifier * 100}%";
+                        break;
+                    case BoostType.AttackVsLowHealthEnemies:
+                        enchantedBoostText.text += $"\nAttack vs Low Health Enemies: + {weapon.attackRateVsLowHealthEnemies * 100}%";
+                        break;
+                    case BoostType.CritResistance:
+                        enchantedBoostText.text += $"\nCr. Resistance: + {weapon.criticalResistance}%";
+                        break;
+                    case BoostType.ArmorIncrease:
+                        enchantedBoostText.text += $"\nArmor: + {weapon.armorIncrease * 100}%";
+                        break;
+                    case BoostType.MagicResistance:
+                        enchantedBoostText.text += $"\nMagic Resistance: + {weapon.magicResistance * 100}%";
+                        break;
+                    case BoostType.MoveSpeed:
+                        enchantedBoostText.text += $"\nMagic Resistance: + {weapon.speedIncreaseModifier}";
+                        break;
+                    case BoostType.DamageReduction:
+                        enchantedBoostText.text += $"\nDamage Reduction: + {weapon.damageReductionRate * 100}%";
+                        break;
+                    case BoostType.ArmorPenetration:
+                        enchantedBoostText.text += $"\nArmor Penetration: + {weapon.armorPenetration * 100}%";
                         break;
                     default:
                         break;
-
                 }
             }
         }
     }
+
+
+    private void BoostForPassiveItem(PassiveItem passiveItem, BoostType boostType, BoostPhase boostPhase)
+    {
+        if (boostType != BoostType.None)
+        {
+            if (boostPhase == BoostPhase.Unique)
+            {
+                switch (boostType)
+                {
+                    case BoostType.AttackCooldown:
+                        hitSpeedText.text = $"Attack Speed: + {passiveItem.attackCooldown * 100}%";
+                        break;
+                    case BoostType.AttackDamage:
+                        hitSpeedText.text = "Phy. Attack Dmg.: + " + passiveItem.physicalAttackDamageIncrease;
+                        break;
+                    case BoostType.AttackRating:
+                        hitSpeedText.text = $"Attack Rating: + {passiveItem.attackRating * 100}%";
+                        break;
+                    case BoostType.MagicDamage:
+                        hitSpeedText.text = "Magic Attack Dmg.: + " + passiveItem.magicAttackDamageIncrease;
+                        break;
+                    case BoostType.CritChance:
+                        hitSpeedText.text = $"Cr. Hit Chance: + {passiveItem.criticalHitChance * 100}%";
+                        break;
+                    case BoostType.CritDamage:
+                        hitSpeedText.text = $"Cr. Hit Damage: + {passiveItem.criticalHitDamage * 100}%";
+                        break;
+                    case BoostType.LifeSteal:
+                        hitSpeedText.text = $"Life Steal: + {passiveItem.lifeStealAmount}";
+                        break;
+                    case BoostType.BlockChance:
+                        hitSpeedText.text = $"Block Chance: + {passiveItem.blockChance * 100}%";
+                        break;
+                    case BoostType.DodgeChance:
+                        hitSpeedText.text = $"Dodge Chance: + {passiveItem.dodgeChance * 100}%";
+                        break;
+                    case BoostType.HealthIncrease:
+                        hitSpeedText.text = $"Health: + {passiveItem.increasedMaxHealth}";
+                        break;
+                    case BoostType.ManaIncrease:
+                        hitSpeedText.text = $"Mana: + {passiveItem.increasedMaxMana}";
+                        break;
+                    case BoostType.StatusResistance:
+                        hitSpeedText.text = $"Status Resistance: + {passiveItem.statusResistanceModifier * 100}%";
+                        break;
+                    case BoostType.AttackVsLowHealthEnemies:
+                        hitSpeedText.text = $"Attack vs Low Health Enemies: + {passiveItem.attackRateVsLowHealthEnemies * 100}%";
+                        break;
+                    case BoostType.CritResistance:
+                        hitSpeedText.text = $"Cr. Resistance: + {passiveItem.criticalResistance}%";
+                        break;
+                    case BoostType.ArmorIncrease:
+                        hitSpeedText.text = $"Armor: + {passiveItem.armorIncrease * 100}%";
+                        break;
+                    case BoostType.MagicResistance:
+                        hitSpeedText.text = $"Magic Resistance: + {passiveItem.magicResistance * 100}%";
+                        break;
+                    case BoostType.MoveSpeed:
+                        hitSpeedText.text = $"Magic Resistance: + {passiveItem.speedIncreaseModifier}";
+                        break;
+                    case BoostType.DamageReduction:
+                        hitSpeedText.text = $"Damage Reduction: + {passiveItem.damageReductionRate * 100}%";
+                        break;
+                    case BoostType.ArmorPenetration:
+                        hitSpeedText.text = $"Armor Penetration: + {passiveItem.armorPenetration * 100}%";
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                switch (boostType)
+                {
+                    case BoostType.AttackCooldown:
+                        hitSpeedText.text += $"\nAttack Speed: + {passiveItem.attackCooldown * 100}%";
+                        break;
+                    case BoostType.AttackDamage:
+                        hitSpeedText.text += "\nPhy. Attack Dmg.: + " + passiveItem.physicalAttackDamageIncrease;
+                        break;
+                    case BoostType.AttackRating:
+                        hitSpeedText.text += $"\nAttack Rating: + {passiveItem.attackRating * 100}%";
+                        break;
+                    case BoostType.MagicDamage:
+                        hitSpeedText.text += "\nMagic Attack Dmg.: + " + passiveItem.magicAttackDamageIncrease;
+                        break;
+                    case BoostType.CritChance:
+                        hitSpeedText.text += $"\nCr. Hit Chance: + {passiveItem.criticalHitChance * 100}%";
+                        break;
+                    case BoostType.CritDamage:
+                        hitSpeedText.text += $"\nCr. Hit Damage: + {passiveItem.criticalHitDamage * 100}%";
+                        break;
+                    case BoostType.LifeSteal:
+                        hitSpeedText.text += $"\nLife Steal: + {passiveItem.lifeStealAmount}";
+                        break;
+                    case BoostType.BlockChance:
+                        hitSpeedText.text += $"\nBlock Chance: + {passiveItem.blockChance * 100}%";
+                        break;
+                    case BoostType.DodgeChance:
+                        hitSpeedText.text += $"\nDodge Chance: + {passiveItem.dodgeChance * 100}%";
+                        break;
+                    case BoostType.HealthIncrease:
+                        hitSpeedText.text += $"\nHealth: + {passiveItem.increasedMaxHealth}";
+                        break;
+                    case BoostType.ManaIncrease:
+                        hitSpeedText.text += $"\nMana: + {passiveItem.increasedMaxMana}";
+                        break;
+                    case BoostType.StatusResistance:
+                        hitSpeedText.text += $"\nStatus Resistance: + {passiveItem.statusResistanceModifier * 100}%";
+                        break;
+                    case BoostType.AttackVsLowHealthEnemies:
+                        hitSpeedText.text += $"\nAttack vs Low Health Enemies: + {passiveItem.attackRateVsLowHealthEnemies * 100}%";
+                        break;
+                    case BoostType.CritResistance:
+                        hitSpeedText.text += $"\nCr. Resistance: + {passiveItem.criticalResistance}%";
+                        break;
+                    case BoostType.ArmorIncrease:
+                        hitSpeedText.text += $"\nArmor: + {passiveItem.armorIncrease * 100}%";
+                        break;
+                    case BoostType.MagicResistance:
+                        hitSpeedText.text += $"\nMagic Resistance: + {passiveItem.magicResistance * 100}%";
+                        break;
+                    case BoostType.MoveSpeed:
+                        hitSpeedText.text += $"\nMagic Resistance: + {passiveItem.speedIncreaseModifier}";
+                        break;
+                    case BoostType.DamageReduction:
+                        hitSpeedText.text += $"\nDamage Reduction: + {passiveItem.damageReductionRate * 100}%";
+                        break;
+                    case BoostType.ArmorPenetration:
+                        hitSpeedText.text += $"\nArmor Penetration: + {passiveItem.armorPenetration * 100}%";
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
 
     /// <summary>
     /// Updates the requirement text based on the weapon's required stats.
@@ -696,13 +632,12 @@ public class MainUI : SingletonMonobehaviour<MainUI>
     {
         PrimaryStats requiredStats = weaponDetails.requiredPrimaryStats;
 
-        string requirementString = "Requirement: ";
+        string requirementString = "Required Char: ";
 
         if (requiredStats.strength > 0)
         {
             requirementString += $"STR: {requiredStats.strength} ";
-        }
-        ;
+        };
 
         if (requiredStats.dexterity > 0) requirementString += $"DEX: {requiredStats.dexterity} ";
 
@@ -727,6 +662,28 @@ public class MainUI : SingletonMonobehaviour<MainUI>
 
         return requirementString;
     }
+
+    //// Clear helper
+    //private void ClearModifierTexts()
+    //{
+    //    if (modifiersHeaderText != null)
+    //    {
+    //        modifiersHeaderText.gameObject.SetActive(false);
+    //        modifierBaseUniqueText.gameObject.SetActive(false);
+    //        modifierBaseTypeText.gameObject.SetActive(false);
+    //        modifierExtra1Text.gameObject.SetActive(false);
+    //        modifierExtra2Text.gameObject.SetActive(false);
+    //    }
+
+    //    if (modifiersHeaderTextEquipped != null)
+    //    {
+    //        modifiersHeaderTextEquipped.gameObject.SetActive(false);
+    //        modifierBaseUniqueTextEquipped.gameObject.SetActive(false);
+    //        modifierBaseTypeTextEquipped.gameObject.SetActive(false);
+    //        modifierExtra1TextEquipped.gameObject.SetActive(false);
+    //        modifierExtra2TextEquipped.gameObject.SetActive(false);
+    //    }
+    //}
 
     private void ClearTooltipPanel()
     {

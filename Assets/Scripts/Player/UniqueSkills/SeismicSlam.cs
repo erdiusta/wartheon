@@ -83,9 +83,32 @@ public class SeismicSlam : MonoBehaviour
                         enemy.movementToPosition.ApplyKnockbackToEnemy(knockbackDir, knockbackForce, dealDamageMass);
                     }
 
-                    if (enemy.health != null)
+                    Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
+                    int inflictedDamage = 0;
+
+                    if (mainHandWeapon != null)
                     {
-                        enemy.health.TakeDamage(player.seismicSlamDamage, transform.position, enemy.health.transform.position, null, MeleeHand.None);
+                        switch (player.playerDetails.firstActiveSkillDetails.GetCurrentActiveLevel())
+                        {
+                            case 1:
+                                inflictedDamage = player.meleeAttackMainHand.CalculateDamageAmount(enemy, mainHandWeapon, MeleeHand.MainHand, 1f);
+                                break;
+                            case 2:
+                                inflictedDamage = player.meleeAttackMainHand.CalculateDamageAmount(enemy, mainHandWeapon, MeleeHand.MainHand, 1.1f);
+                                break;
+                            case 3:
+                                inflictedDamage = player.meleeAttackMainHand.CalculateDamageAmount(enemy, mainHandWeapon, MeleeHand.MainHand, 1.25f);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        player.seismicSlamDamage = inflictedDamage;
+
+                        if (enemy.health != null)
+                        {
+                            enemy.health.TakeDamage(player.seismicSlamDamage, transform.position, enemy.health.transform.position, null, MeleeHand.None);
+                        }
                     }
                 }
             }

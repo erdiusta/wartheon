@@ -301,39 +301,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 break;
 
             default:
-
-                if (!visitedRooms.Contains(currentRoom))
-                {
-                    if (player.selectedActiveItem.GetCurrentActiveItem() == null) return;
-
-                    if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge ==
-                        player.selectedActiveItem.GetCurrentActiveItem().activeItemMaxCharge) return;
-
-                    int refreshedCharge = (int)(player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemChargeRegenerationPerSixRooms *
-                        ++exploredRoomCount / ROOM_CONST);
-
-                    if (refreshedCharge >= 1)
-                    {
-                        player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge += refreshedCharge;
-
-                        if (player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge >
-                            player.selectedActiveItem.GetCurrentActiveItem().activeItemMaxCharge)
-                        {
-                            player.selectedActiveItem.GetCurrentActiveItem().activeItemRemainingCharge =
-                                player.selectedActiveItem.GetCurrentActiveItem().activeItemMaxCharge;
-                        }
-
-                        if (player.selectedActiveItem.GetCurrentActiveItem().activeItemDetails.activeItemType == ActiveItemType.Decoy)
-                        {
-                            player.selectedActiveItem.GetCurrentActiveItem().decoyUsed = false;
-                        }
-
-                        player.weaponFiredEvent.CallActiveItemFiredEvent(player.selectedActiveItem.GetCurrentActiveItem());
-
-                        exploredRoomCount = 0;
-                    }
-                }
-
                 break;
         }
 
@@ -411,22 +378,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                 DropItem chestItem = chestItemContainerTransform.GetChild(0).GetChild(i).GetComponent<DropItem>();
 
                 chestItem.hasWeaponDrop = true;
-                Weapon weapon = new Weapon();
+                Weapon weapon = new Weapon(chestItemContainer.chestWeaponItems[i].rarity);
                 weapon.weaponDetails = chestItemContainer.chestWeaponItems[i];
 
                 chestItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, chestItem.transform.position);
-            }
-
-            // Active item populate loop
-            for (int i = 0; i < chestItemContainerTransform.GetChild(1).childCount; i++)
-            {
-                DropItem chestItem = chestItemContainerTransform.GetChild(1).GetChild(i).GetComponent<DropItem>();
-
-                chestItem.hasActiveDrop = true;
-                ActiveItem activeItem = new ActiveItem();
-                activeItem.activeItemDetails = chestItemContainer.chestActiveItems[i];
-
-                chestItem.Initialize(activeItem, activeItem.activeItemDetails.activeItemSprite, chestItem.transform.position);
             }
 
             // Passive item populate loop
@@ -443,7 +398,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                     chestItem.hasSecondaryPassiveDrop = true;
                 }
 
-                PassiveItem passiveItem = new PassiveItem();
+                PassiveItem passiveItem = new PassiveItem(chestItemContainer.chestPassiveItems[i].rarity);
                 passiveItem.passiveItemDetails = chestItemContainer.chestPassiveItems[i];
 
                 chestItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, chestItem.transform.position);

@@ -17,7 +17,69 @@ MonoBehaviour:
   activeUniqueSkillSprite: {fileID: 21300000, guid: db79b860e48b90343a17a8f75fbd2bc9, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 11400000, guid: 03826c86544c84b47938552393e9a08b, type: 2}
-  activeUniqueSkillCooldownDuration: 15
-  activeUniqueSkillEffectiveDuration: 0
-  activeUniqueSkillManaCost: 15
-  activeUniqueSkillManaReserveCost: 0
+  levels:
+  - activeUniqueSkillDetails: '5 unit AoE physical damage, knock back enemies for
+      1 second.
+
+
+      Base Attack Damage: 100%
+
+      Base Mana Cost: 15
+
+      Base
+      Cooldown: 12
+
+      Base AoE Radius: 5'
+    cooldown: 12
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 15
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: '5 unit AoE physical damage, knock back enemies for
+      1 second.
+
+
+      Base Attack Damage: 100%
+
+      Base Mana Cost: 20
+
+      Base
+      Cooldown: 11
+
+      Base AoE Radius: 5'
+    cooldown: 11
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: '5 unit AoE physical damage, knock back enemies for
+      1 second.
+
+
+      Base Attack Damage: 100%
+
+      Base Mana Cost: 25
+
+      Base
+      Cooldown: 9
+
+      Base AoE Radius: 5'
+    cooldown: 9
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 25
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1
