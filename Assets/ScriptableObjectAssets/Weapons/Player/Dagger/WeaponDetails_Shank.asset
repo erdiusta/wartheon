@@ -15,15 +15,6 @@ MonoBehaviour:
   weaponName: Shank
   weaponTitle: 28
   rarity: 0
-  requiredPrimaryStats:
-    strength: 0
-    dexterity: 7
-    constitution: 0
-    intelligence: 0
-    agility: 0
-    willpower: 0
-    ferocity: 0
-    resolve: 0
   weaponClass: 7
   weaponHitSpeed: 4
   wieldType: 0
@@ -35,44 +26,25 @@ MonoBehaviour:
   weaponAnimatorController: {fileID: 0}
   weaponHoverAnimatorController: {fileID: 9100000, guid: afc8c158675ba3646ab4d9b10b521886, type: 2}
   weaponUISprite: {fileID: -993529671, guid: 8122ee2f983310142988afe60bcdc015, type: 3}
-  baseUniqueModifier: 10
+  baseUniqueModifier: 9
   baseTypeModifier: 5
-  additionalModifierPoolForType: 010000000200000004000000050000000600000007000000080000000b0000000c0000000d0000000e000000
-  canKillSuddenly: 0
+  additionalModifierPoolForType: 010000000200000004000000050000000600000007000000080000000b0000000c0000000d0000000e000000150000001600000017000000
   suddenKillChance: 0
-  hasBleedingDamage: 0
   bleedingChance: 0
-  hasSlowDamage: 0
   slowChance: 0
-  hasAcidDamage: 0
-  acidEfficiency: 0
-  hasWarmDamage: 0
   warmChance: 0
-  hasBurnDamage: 0
   burnChance: 0
-  hasPoisonDamage: 0
   poisonChance: 0
-  hasStaticDamage: 0
   staticChance: 0
-  hasParalyzeDamage: 0
   paralyzeChance: 0
-  hasStunDamage: 0
   stunChance: 0
-  hasRootDamage: 0
   rootChance: 0
-  hasChillDamage: 0
   chillChance: 0
-  hasFrostDamage: 0
   frostChance: 0
-  hasBlindDamage: 0
   blindChance: 0
-  hasRevealDamage: 0
   revealChance: 0
-  hasCurseDamage: 0
   curseChance: 0
-  hasFearDamage: 0
   fearChance: 0
-  canDrainHealth: 0
   healthDrainChance: 0
   weaponRightShootPosition: {x: 0, y: 0, z: 0}
   weaponLeftShootPosition: {x: 0, y: 0, z: 0}
@@ -93,8 +65,10 @@ MonoBehaviour:
   coneLength: 3
   coneAngle: 35
   hasPhysicalDamage: 1
-  meleeDamageMin: 5
-  meleeDamageMax: 8
+  physicalDamageMin: 4
+  physicalDamageMax: 7
+  magicDamageMin: 0
+  magicDamageMax: 0
   meleeDamageElementalBias: 0
   secondMeleeDamageMin: 4
   secondMeleeDamageMax: 7

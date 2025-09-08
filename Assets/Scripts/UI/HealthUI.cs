@@ -66,9 +66,6 @@ public class HealthUI : MonoBehaviour
         {
             player.healthEvent.OnHealthChanged -= HealthEvent_OnHealthChanged; // prevent duplicates
             player.healthEvent.OnHealthChanged += HealthEvent_OnHealthChanged;
-
-            //// Optional: Update UI once on init
-            //UpdateHealth(new HealthEventArgs());
         }
     }
 

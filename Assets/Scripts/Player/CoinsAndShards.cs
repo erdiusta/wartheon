@@ -7,7 +7,7 @@ public class CoinsAndShards : MonoBehaviour
 
     private void Start()
     {
-        shardAmount = 5000;
+        shardAmount = 0;
     }
 
     public void AddCoin(int count)

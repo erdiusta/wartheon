@@ -1,6 +1,4 @@
 using UnityEngine;
-using System;
-using static UnityEngine.Rendering.GPUSort;
 
 public class SelectedPassiveItem : MonoBehaviour
 {
@@ -35,8 +33,6 @@ public class SelectedPassiveItem : MonoBehaviour
 
         // Update stats values after weapon switch
         player.RecalculateSecondaryStats();
-
-        // Update stat value displays on book ui
         StaticEventHandler.CallStatsChangedOnTheBookEvent();
     }
 
@@ -54,6 +50,7 @@ public class SelectedPassiveItem : MonoBehaviour
             InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(args.passiveItem); // Item added to inventory slot
         }
 
+        // Rebuild once and update stats/UI once
         player.RecalculateSecondaryStats();
         StaticEventHandler.CallStatsChangedOnTheBookEvent();
     }
@@ -89,52 +86,20 @@ public class SelectedPassiveItem : MonoBehaviour
 
     private void ApplyPassiveEffects(PassiveItem item)
     {
-        switch (item.passiveItemDetails.passiveItemSlotName)
-        {
-            case PassiveItemSlotName.Head:
-                break;
-            case PassiveItemSlotName.Chest:
-                break;
-            case PassiveItemSlotName.Neck:
-                break;
-            case PassiveItemSlotName.Finger:
-                break;
-            case PassiveItemSlotName.Back:
-                break;
-            case PassiveItemSlotName.Arm:
-                break;
-            case PassiveItemSlotName.Leg:
-                break;
-            default:
-                break;
-        }
+        if (item == null || item.passiveItemDetails == null) return;
+
+        // Optional gameplay flag (non-stat behavior)
+        if (item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak) player.shadowCloakEquipped = true;
     }
 
     private void RemovePassiveEffects(PassiveItem item)
     {
-        switch (item.passiveItemDetails.passiveItemSlotName)
+        if (item == null) return;
+
+        // Optional gameplay flag (non-stat behavior)
+        if (item.passiveItemDetails != null && item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
         {
-            case PassiveItemSlotName.Head:
-                break;
-            case PassiveItemSlotName.Chest:
-                break;
-            case PassiveItemSlotName.Neck:
-                break;
-            case PassiveItemSlotName.Finger:
-                break;
-            case PassiveItemSlotName.Back:
-                if (item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
-                {
-                    player.additionalCriticalHitChanceModifier = (float)Math.Round(player.additionalCriticalHitChanceModifier - 0.05f, 2);
-                    player.shadowCloakEquipped = false; // Put here at the end intentionally, because additional cr. should be nullified above first
-                }
-                break;
-            case PassiveItemSlotName.Arm:
-                break;
-            case PassiveItemSlotName.Leg:
-                break;
-            default:
-                break;
+            player.shadowCloakEquipped = false;
         }
     }
 }

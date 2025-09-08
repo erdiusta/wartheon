@@ -57,10 +57,24 @@ MonoBehaviour:
   belongingParent: {fileID: 0}
   spriteRenderer: {fileID: 6268444761175253759}
   projectileDetails: {fileID: 0}
+  chainJumpRadius: 6
+  chainDelay: 0.05
+  chainDamageFalloff: 0.8
+  chainLightningPhase: 0
+  blastRadius: 5
   angleSpeed: 10
   ropeTransform: {fileID: 0}
   ropeSpriteRenderer: {fileID: 0}
   grappleHeadTransform: {fileID: 0}
+  solidLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  pullAssistForce: 35
+  minPullSpeed: 7
+  stallTimeout: 0.35
+  stallProgressEpsilon: 0.06
+  grappleSlideMaterial: {fileID: 0}
+  maxDamage: 0
   lockedTargetVector: {x: 0, y: 0, z: 0}
   lockedAngle: 0
 --- !u!212 &6268444761175253759

@@ -17,7 +17,7 @@ public enum TutorialPhase
     SpecialSkill,
     KillEmAll,
     PickUpSecondaryPassive,
-    BuildsPage,
+    SkillsPage,
     WeaponSetSwitch,
     OtherCollectionsPage,
     FinishTutorial
@@ -120,7 +120,7 @@ public enum InnerPathName
     UnyieldingGuard,
     DieHard,
     StoneSkin,
-    BattleScars,
+    IronTenacity,
     FortifiedResolve,
     ArcaneFortitude,
     SecondBreath,
@@ -186,6 +186,13 @@ public enum PassiveItemType
     RingmailBoots
 }
 
+public enum StatOp
+{
+    Add,
+    Multiplier,
+    Override
+}
+
 public enum ProjectileType
 {
     Normal,
@@ -224,6 +231,22 @@ public enum HealthStatus
     Poisoned = 1 << 0, // 1 (binary 0001)
     Burned = 1 << 1, // 2 (binary 0010)
     Bleeding = 1 << 2  // 4 (binary 0100)
+}
+
+public enum StatusEffectType
+{
+    Poison,
+    Bleed,
+    Root,
+    Stun,
+    Curse,
+    Fear,
+    Reveal,
+    Paralyze,
+    Burn,
+    Freeze,
+    Blind,
+    Slow
 }
 
 public enum ArmorStatus
@@ -270,20 +293,6 @@ public enum Hand
     Off
 }
 
-public enum ModifierStat
-{
-    // Resistances
-    ArmorPct, MagicResistPct,
-
-    // Damage / handling
-    PhysicalDamagePct, MagicDamagePct, AttackCooldownPct, AttackRatingPct,
-    CritChancePct, CritDamagePct, CritMeleeDamagePct, CritRangedDamagePct,
-
-    // Defense / utility
-    BlockPct, EvasivenessPct, LifeStealPct, SkillCooldownPct, SpeedFlat,
-    ArmorPenetrationPct, StatusInflictPct, BlindMakePct,
-}
-
 public enum Rarity
 {
     Basic,
@@ -323,7 +332,10 @@ public enum BoostType
     MoveSpeed,
     DamageReduction,
     ArmorPenetration,
-    AttackRange
+    AttackRange,
+    SkillCooldown,
+    SkillDuration,
+    StatusInflict
 }
 
 public enum WeaponHitSpeed
@@ -599,12 +611,9 @@ public enum MoldranPhase
 public enum BookPage
 {
     Stats,
-    Weapons,
-    Passives,
-    Actives,
     Beastiary,
     Bosses,
-    Build
+    Skills
 }
 
 public enum ActiveSkill
@@ -690,7 +699,7 @@ public enum SlotType
     None,
     Drop,
     Upgrade,
-    Dissamble
+    Dismantle
 }
 
 public enum ItemSwapPos
@@ -722,7 +731,7 @@ public enum PopUpReason
     EquipMainHandFirst,
     CantMoveYourMainHandWithEmptyOffHand,
     YourHandsFull,
-    DontMeetRequiredPrimaryStats,
+    DontMeetRequiredChar,
     BobbyPinFailed,
     SummonerFailed
 }

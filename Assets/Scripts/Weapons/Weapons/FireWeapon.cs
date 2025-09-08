@@ -669,8 +669,11 @@ public class FireWeapon : MonoBehaviour
             yield return new WaitForSeconds(projectileSpawnInterval);
         }
 
+        bool isShotSpecialSkill = isIceBreaker || isFireBlast || isPenetrationArrow || isBindingArrow || isArrowOfTheSeven || grappleDetails != null || isBlazingCyclone || 
+            isThrowingAxe || isShiruken || isChainLightning;
+
         // Set weapon's onCooldown status to true for triggering Weapon status UI
-        activeWeapon.GetCurrentMainHandWeapon().onCooldown = !isLaser ? true : false;
+        activeWeapon.GetCurrentMainHandWeapon().onCooldown = !isLaser && !isShotSpecialSkill ? true : false;
 
         // Call weapon fired event
         weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentMainHandWeapon(), true);

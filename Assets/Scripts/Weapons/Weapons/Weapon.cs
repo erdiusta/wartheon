@@ -25,27 +25,43 @@ public class Weapon : ItemGeneric
     public BoostType mythicBoostType = BoostType.None;
 
     // Weapon stats
-    public float attackCooldown;
+    public float attackCooldownModifier;
     public int physicalAttackDamageIncrease;
     public float attackRatingIncrease;
     public int magicAttackDamageIncrease;
     public float criticalHitChanceIncrease;
     public float criticalHitDamageIncrease;
-    public float lifeStealAmount;
+    public int lifeStealAmount;
     public float statusInflictChance;
     public float dodgeChanceIncrease;
     public float blockChanceIncrease;
     public int increasedMaxHealth;
     public int increasedMaxMana;
     public float statusResistanceModifier;
-    public float attackRateVsLowHealthEnemies;
-    public float criticalResistance;
+    public int damageVsLowHealthEnemies;
+    public float criticalResistanceModifier;
     public float armorIncrease;
     public float magicResistance;
     public float speedIncreaseModifier;
     public float damageReductionRate;
     public float armorPenetration;
     public float attackRange;
+    public float skillCooldown;
+    public float skillDuration;
+
+    // CC
+    public float additionalPoisonChance = 0f;
+    public float additionalBleedChance = 0f;
+    public float additionalRootChance = 0f;
+    public float additionalStunChance = 0f;
+    public float additionalCurseChance = 0f;
+    public float additionalFearChance = 0f;
+    public float additionalRevealChance = 0f;
+    public float additionalParalyzeChance = 0f;
+    public float additionalBurnChance = 0f;
+    public float additionalFreezeChance = 0f;
+    public float additionalBlindChance = 0f;
+    public float additionalSlowChance = 0f;
 
     public Weapon(Rarity rarity) : base(rarity)
     {

@@ -7,8 +7,14 @@ public static class WeaponDropGenerator
 {
     public static Weapon CreateRolledInstance(WeaponDetailsSO weaponDetails)
     {
-        int choice = Random.Range(0, 100);
         Rarity weaponRarity = Rarity.Basic;
+        int choice = 0;
+
+        if (InputManager.TutorialEnabled) choice = 0;
+        else
+        {
+            choice = Random.Range(0, 100);
+        }
 
         if (choice >= 0 && choice <= 55) { weaponRarity = Rarity.Basic; }
         else if (choice > 55 && choice <= 85) { weaponRarity = Rarity.Enchanted; }
@@ -20,7 +26,7 @@ public static class WeaponDropGenerator
             weaponDetails = weaponDetails,
             baseUniqueRolled = weaponDetails.baseUniqueModifier,
             baseTypeRolled = weaponDetails.baseTypeModifier,
-            attackCooldown = weaponDetails.weaponCooldownDuration,
+            attackCooldownModifier = weaponDetails.weaponCooldownDuration,
             attackRatingIncrease = weaponDetails.weaponAttackRating,
 
             physicalAttackDamageIncrease = Mathf.RoundToInt((weaponDetails.isShield ? 0 : weaponDetails.isMeleeWeapon ? weaponDetails.physicalDamageMin
@@ -28,7 +34,6 @@ public static class WeaponDropGenerator
 
             magicAttackDamageIncrease = Mathf.RoundToInt((weaponDetails.isShield ? 0 : weaponDetails.isMeleeWeapon ? weaponDetails.physicalDamageMin
             : weaponDetails.weaponCurrentProjectile.projectilePhyDamageMin) * weaponDetails.elementalForgeRate),
-
 
             criticalHitChanceIncrease = weaponDetails.criticalHitChance,
             criticalHitDamageIncrease = weaponDetails.criticalHitDamageMultiplier
@@ -40,19 +45,10 @@ public static class WeaponDropGenerator
         if(pool != null && pool.Count > 0)
         {
             // Roll 1 for Enchanted+, roll 2 distinct for Mythic
+            SetWeaponModifier(ref weapon, weapon.baseUniqueRolled, weaponDetails);
+            SetWeaponModifier(ref weapon, weapon.baseTypeRolled, weaponDetails);
 
-            if (weaponRarity >= Rarity.Enchanted)
-            {
-                weapon.enchantedBoostType = RollOne(pool, exclude: new HashSet<BoostType>
-                {
-                    weaponDetails.baseUniqueModifier,
-                    weaponDetails.baseTypeModifier
-                });
-
-                SetWeaponModifier(ref weapon, weapon.enchantedBoostType, weaponDetails);
-            }
-
-            if(weaponRarity >= Rarity.Mythic)
+            if (weaponRarity == Rarity.Mythic)
             {
                 weapon.mythicBoostType = RollOne(pool, exclude: new HashSet<BoostType>
                 {
@@ -61,7 +57,18 @@ public static class WeaponDropGenerator
                     weapon.enchantedBoostType
                 });
 
+                SetWeaponModifier(ref weapon, weapon.enchantedBoostType, weaponDetails);
                 SetWeaponModifier(ref weapon, weapon.mythicBoostType, weaponDetails);
+            }
+            else if (weaponRarity == Rarity.Enchanted)
+            {
+                weapon.enchantedBoostType = RollOne(pool, exclude: new HashSet<BoostType>()
+                {
+                    weaponDetails.baseUniqueModifier,
+                    weaponDetails.baseTypeModifier
+                });
+
+                SetWeaponModifier(ref weapon, weapon.enchantedBoostType, weaponDetails);
             }
         }
 
@@ -84,7 +91,7 @@ public static class WeaponDropGenerator
         return candidates[idx];
     }
 
-    private static void SetWeaponModifier(ref Weapon weapon, BoostType boostType, WeaponDetailsSO weaponDetails)
+    public static void SetWeaponModifier(ref Weapon weapon, BoostType boostType, WeaponDetailsSO weaponDetails)
     {
         bool isMeleeWeapon = weaponDetails.isMeleeWeapon;
 
@@ -122,83 +129,138 @@ public static class WeaponDropGenerator
         switch (boostType)
         {
             case BoostType.AttackCooldown:
-                rng2 = Random.Range(0.05f, 0.25f);
-                weapon.attackCooldown = (float)Math.Round(rng2, 2);
+                rng2 = Random.Range(0.05f, 0.12f);
+                weapon.attackCooldownModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackDamage:
                 rng2 = Random.Range(1, 10);
-                weapon.physicalAttackDamageIncrease = Mathf.RoundToInt(rng2);
+                weapon.physicalAttackDamageIncrease += Mathf.RoundToInt(rng2);
                 break;
             case BoostType.AttackRating:
-                weapon.attackRatingIncrease = (float)Math.Round(rng - 1, 2);
+                weapon.attackRatingIncrease += (float)Math.Round(rng - 1, 2);
                 break;
             case BoostType.MagicDamage:
                 rng2 = Random.Range(1, 10);
-                weapon.magicAttackDamageIncrease = Mathf.RoundToInt(rng2);
+                weapon.magicAttackDamageIncrease += Mathf.RoundToInt(rng2);
                 break;
             case BoostType.CritChance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.criticalHitChanceIncrease = (float)Math.Round(rng2, 2);
+                weapon.criticalHitChanceIncrease += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.CritDamage:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.criticalHitDamageIncrease = (float)Math.Round(rng2, 2);
+                weapon.criticalHitDamageIncrease += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.LifeSteal:
-                rng2 = Random.Range(0.05f, 0.25f);
-                weapon.lifeStealAmount = Mathf.RoundToInt(basePhysMin * rng2);
+                rng2 = Random.Range(1, 11);
+                weapon.lifeStealAmount += Mathf.RoundToInt(rng2);
                 break;
             case BoostType.BlockChance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.blockChanceIncrease = (float)Math.Round(rng2, 2);
+                weapon.blockChanceIncrease += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.DodgeChance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.dodgeChanceIncrease = (float)Math.Round(rng2, 2);
+                weapon.dodgeChanceIncrease += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.HealthIncrease:
                 rng2 = Random.Range(-1f, 1f);
-                weapon.increasedMaxHealth = Mathf.RoundToInt(100 * rng * (1 + rng2));
+                weapon.increasedMaxHealth += Mathf.RoundToInt(100 * rng * (1 + rng2));
                 break;
             case BoostType.ManaIncrease:
                 rng2 = Random.Range(-1f, 1f);
-                weapon.increasedMaxMana = Mathf.RoundToInt(100 * rng * (1 + rng2));
+                weapon.increasedMaxMana += Mathf.RoundToInt(100 * rng * (1 + rng2));
                 break;
             case BoostType.StatusResistance:
                 rng2 = Random.Range(0.1f, 0.25f);
-                weapon.statusResistanceModifier = (float)Math.Round(rng2, 2);
+                weapon.statusResistanceModifier += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackVsLowHealthEnemies:
-                rng2 = Random.Range(0.1f, 0.25f);
-                weapon.attackRateVsLowHealthEnemies = (float)Math.Round(rng2, 2);
+                rng2 = Random.Range(1, 8);
+                weapon.damageVsLowHealthEnemies += Mathf.RoundToInt(rng2);
                 break;
             case BoostType.CritResistance:
                 rng2 = Random.Range(0.1f, 0.25f);
-                weapon.criticalResistance = (float)Math.Round(rng2, 2);
+                weapon.criticalResistanceModifier += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.ArmorIncrease:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.armorIncrease = (float)Math.Round(rng2, 2);
+                weapon.armorIncrease += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.MagicResistance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.magicResistance = (float)Math.Round(rng2, 2);
+                weapon.magicResistance += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.MoveSpeed:
                 rng2 = Random.Range(0.5f, 2f);
-                weapon.speedIncreaseModifier = (float)Math.Round(rng2, 2);
+                weapon.speedIncreaseModifier += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.DamageReduction:
                 rng2 = Random.Range(0.05f, 0.15f);
-                weapon.damageReductionRate = (float)Math.Round(rng2, 2);
+                weapon.damageReductionRate += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.ArmorPenetration:
                 rng2 = Random.Range(0.05f, 0.15f);
-                weapon.armorPenetration = (float)Math.Round(rng2, 2);
+                weapon.armorPenetration += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackRange:
-                rng2 = Random.Range(0.05f, 0.3f);
-                weapon.attackRange = (float)Math.Round(weaponDetails.weaponCurrentProjectile.projectileRange * rng2, 2);
+                rng2 = Random.Range(1f, 5f);
+                weapon.attackRange += (float)Math.Round(rng2, 2);
+                break;
+            case BoostType.SkillCooldown:
+                rng2 = Random.Range(0.05f, 0.13f);
+                weapon.skillCooldown += (float)Math.Round(rng2, 2);
+                break;
+            case BoostType.SkillDuration:
+                rng2 = Random.Range(0.05f, 0.4f);
+                weapon.skillDuration += (float)Math.Round(rng2, 2);
+                break;
+            case BoostType.StatusInflict:
+                rng2 = Random.Range(0.05f, 0.13f);
+                StatusEffectType statusEffectType = (StatusEffectType)Random.Range(1, Enum.GetValues(typeof(StatusEffectType)).Length);
+
+                switch (statusEffectType)
+                {
+                    case StatusEffectType.Poison:
+                        weapon.additionalPoisonChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Bleed:
+                        weapon.additionalBleedChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Root:
+                        weapon.additionalRootChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Stun:
+                        weapon.additionalStunChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Curse:
+                        weapon.additionalCurseChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Fear:
+                        weapon.additionalFearChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Reveal:
+                        weapon.additionalRevealChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Paralyze:
+                        weapon.additionalParalyzeChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Burn:
+                        weapon.additionalBurnChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Freeze:
+                        weapon.additionalFreezeChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Blind:
+                        weapon.additionalBlindChance += (float)Math.Round(rng2, 2);
+                        break;
+                    case StatusEffectType.Slow:
+                        weapon.additionalSlowChance += (float)Math.Round(rng2, 2);
+                        break;
+                    default:
+                        break;
+                }
+
                 break;
             default:
                 break;

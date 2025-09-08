@@ -25,15 +25,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     [Space(10)]
     [SerializeField] TMP_Text headerText;
     [SerializeField] TMP_Text levelText;
-    [SerializeField] TMP_Text weaponClassText;
-    [SerializeField] TMP_Text hitSpeedText;
-    [SerializeField] TMP_Text weaponWieldText;
-    [SerializeField] TMP_Text physicalDamageText;
-    [SerializeField] TMP_Text magicDamageText;
-    [SerializeField] TMP_Text attackRatingText;
-    [SerializeField] TMP_Text crHitChanceText;
-    [SerializeField] TMP_Text crHitDamageText;
-    [SerializeField] TMP_Text enchantedBoostText;
+    [SerializeField] TMP_Text contentText;
+    [SerializeField] TMP_Text bonusText;
 
     // Weapon Level 
     [Header("WEAPON LEVEL COLORS")]
@@ -69,7 +62,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     {
         player = GameManager.Instance.GetPlayer();
 
-        if (slotType != SlotType.Drop && slotType != SlotType.Upgrade && slotType != SlotType.Dissamble)
+        if (slotType != SlotType.Drop && slotType != SlotType.Upgrade && slotType != SlotType.Dismantle)
         {
             equippedTransform = transform.GetChild(1);
 
@@ -149,15 +142,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         {
             headerText.text = string.Empty;
             levelText.text = string.Empty;
-            weaponClassText.text = string.Empty;
-            hitSpeedText.text = string.Empty;
-            weaponWieldText.text = string.Empty;
-            physicalDamageText.text = string.Empty;
-            magicDamageText.text = string.Empty;
-            attackRatingText.text = string.Empty;
-            crHitChanceText.text = string.Empty;
-            crHitDamageText.text = string.Empty;
-            enchantedBoostText.text = string.Empty;
+            contentText.text = string.Empty;
+            bonusText.text = string.Empty;
 
             if(inventoryIndexNumber >= 0) // Inventory slot check
             {
@@ -208,34 +194,29 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     // NECK
                     if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
                     {
-                        weaponClassText.text = "+20% Fire Resistance";
+
                     }
                     else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmeraldPendant)
                     {
-                        weaponClassText.text = "+20% Earth Resistance";
+
                     }
                     else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.TopazPendant)
                     {
-                        weaponClassText.text = "+20% Air Resistance";
+
                     }
                     else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SapphirePendant)
                     {
-                        weaponClassText.text = "+20% Water Resistance";
+
                     }
                     // CHEST
                     // FINGER
                     // BACK
                     else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
                     {
-                        weaponClassText.text = "+5% Cr. Hit Chance";
-                        hitSpeedText.text = "+10% Cr. Hit Chance When";
-                        weaponWieldText.text = "Dual-Wield Dagger or";
-                        physicalDamageText.text = "Claw Equipped";
                     }
                     else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
                     {
-                        weaponClassText.text = "+5% Elemental Damage";
-                        hitSpeedText.text = "+15% Elemental Resistance";
+
                     }
                     // ARM
                     // LEG
@@ -243,25 +224,21 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     switch (passiveItem.rarity)
                     {
                         case Rarity.Basic:
-                            enchantedBoostText.gameObject.SetActive(false);
                             BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
                             BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
                             break;
                         case Rarity.Enchanted:
-                            enchantedBoostText.gameObject.SetActive(true);
                             BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
                             BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
                             BoostForPassiveItem(passiveItem, passiveItem.enchantedBoostType, BoostPhase.Enchanted);
                             break;
                         case Rarity.Mythic:
-                            enchantedBoostText.gameObject.SetActive(true);
                             BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
                             BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
                             BoostForPassiveItem(passiveItem, passiveItem.enchantedBoostType, BoostPhase.Enchanted);
                             BoostForPassiveItem(passiveItem, passiveItem.mythicBoostType, BoostPhase.Mythic);
                             break;
                         case Rarity.Legendary:
-                            enchantedBoostText.gameObject.SetActive(true);
                             break;
                         default:
                             break;
@@ -322,55 +299,50 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                     headerText.text = weapon.weaponDetails.weaponName;
                     levelText.text = $"({weapon.rarity.ToString()})";
-                    weaponClassText.text = $"Class: {weapon.weaponDetails.weaponClass.ToString()}";
+                    contentText.text = $"Class: {weapon.weaponDetails.weaponClass.ToString()}\n";
 
                     if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
                     {
-                        weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
-                        physicalDamageText.text = $"Block Rate: {weapon.blockChanceIncrease * 100}%";
+                        contentText.text = $"\nWield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
+                        contentText.text += $"Block Rate: {(weapon.weaponDetails.blockChance + weapon.blockChanceIncrease) * 100}%\n";
                     }
                     else
                     {
-                        hitSpeedText.text = $"Speed: {weapon.attackCooldown.ToString()}";
-                        weaponWieldText.text = $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}";
+                        float fireRate = (float)Math.Round(1 / (weapon.weaponDetails.weaponCooldownDuration - (weapon.attackCooldownModifier / 2)), 2);
+                        contentText.text += $"Attack Speed: {fireRate}\n";
+                        contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
 
-                        physicalDamageText.text = $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.physicalAttackDamageIncrease}-" +
-                            $"{weapon.weaponDetails.physicalDamageMax + weapon.physicalAttackDamageIncrease}";
+                        contentText.text += $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.physicalAttackDamageIncrease}-" +
+                            $"{weapon.weaponDetails.physicalDamageMax + weapon.physicalAttackDamageIncrease}\n";
 
-                        magicDamageText.text = $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.magicAttackDamageIncrease}-" +
-                            $"{weapon.weaponDetails.magicDamageMax + weapon.magicAttackDamageIncrease}";
+                        contentText.text += $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.magicAttackDamageIncrease}-" +
+                            $"{weapon.weaponDetails.magicDamageMax + weapon.magicAttackDamageIncrease}\n";
+
+                        float updatedAttackRating = (float)Math.Round(weapon.weaponDetails.weaponAttackRating * weapon.attackRatingIncrease, 2);
+                        contentText.text += $"Base Attack Rating: {updatedAttackRating * 100}%\n";
+
+                        contentText.text += $"Base Cr. Hit Chance: {weapon.criticalHitChanceIncrease * 100}%\n";
+                        contentText.text += $"Base Cr. Hit Damage: {weapon.criticalHitDamageIncrease * 100}%\n";
                     }
-
-                    attackRatingText.text = $"Base Attack Rating: {weapon.attackRatingIncrease * 100}%";
-                    crHitChanceText.text = $"Base Cr. Hit Chance: {weapon.criticalHitChanceIncrease * 100}%";
-                    crHitDamageText.text = $"Base Cr. Hit Damage: {weapon.criticalHitDamageIncrease * 100}%";
 
                     switch (weapon.rarity)
                     {
                         case Rarity.Basic:
-                            enchantedBoostText.gameObject.SetActive(false);
                             BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
                             BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
                             break;
                         case Rarity.Enchanted:
-                            enchantedBoostText.gameObject.SetActive(true);
-
-                            enchantedBoostText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
                             BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
                             BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
                             BoostForWeapon(weapon, weapon.enchantedBoostType, BoostPhase.Enchanted);
                             break;
                         case Rarity.Mythic:
-                            enchantedBoostText.gameObject.SetActive(true);
-
-                            enchantedBoostText.colorGradient = new VertexGradient(Color.green, Color.green, Color.green, Color.green);
                             BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
                             BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
                             BoostForWeapon(weapon, weapon.enchantedBoostType, BoostPhase.Enchanted);
                             BoostForWeapon(weapon, weapon.mythicBoostType, BoostPhase.Mythic);
                             break;
                         case Rarity.Legendary:
-                            enchantedBoostText.gameObject.SetActive(true);
                             break;
                         default:
                             break;
@@ -470,18 +442,18 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
             return;
         }
-        else if (slotType == SlotType.Dissamble)
+        else if (slotType == SlotType.Dismantle)
         {
             // If this was a click-based drop (not drag), ignore
             if (selectedSlot != null && eventData.pointerDrag == null) return;
 
-            bool dissambleFailed = false;
+            bool dissembleFailed = false;
 
             if (eventData.pointerDrag != null)
             {
                 draggableItem = eventData.pointerDrag?.GetComponentInParent<DraggableItem>() ?? eventData.pointerDrag?.GetComponent<DraggableItem>();
 
-                dissambleFailed = DissambleProcess(draggableItem);
+                dissembleFailed = DismantleProcess(draggableItem);
             }
 
             return;
@@ -1279,11 +1251,11 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         }
     }
 
-    public void DissambleSelectedItem()
+    public void DismantleSelectedItem()
     {
         if (selectedSlot != null && selectedSlot.selectedSlotDraggableItem != null)
         {
-            bool dissambleFailed = DissambleProcess(selectedSlot.selectedSlotDraggableItem);
+            bool dissambleFailed = DismantleProcess(selectedSlot.selectedSlotDraggableItem);
 
             if (!dissambleFailed)
             {
@@ -1468,16 +1440,17 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             if (!exclude.Contains(b)) candidates.Add(b);
 
         if (candidates.Count == 0) return BoostType.None;
+
         int idx = Random.Range(0, candidates.Count);
         return candidates[idx];
     }
 
-    private bool DissambleProcess(DraggableItem draggableItem)
+    private bool DismantleProcess(DraggableItem draggableItem)
     {
         if (draggableItem != null)
         {
             // Inventory Slot Check
-            if (slotType == SlotType.Dissamble && draggableItem.itemGeneric.itemSlotStatus == ItemSlotStatus.Inventory) 
+            if (slotType == SlotType.Dismantle && draggableItem.itemGeneric.itemSlotStatus == ItemSlotStatus.Inventory) 
             {
                 int shardGain = 0;
 
@@ -1544,8 +1517,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         switch (boost)
         {
             case BoostType.AttackCooldown:
-                rng2 = Random.Range(0.05f, 0.25f);
-                weapon.attackCooldown = (float)Math.Round(rng2, 2);
+                rng2 = Random.Range(0.05f, 0.12f);
+                weapon.attackCooldownModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackDamage:
                 // Affect PHYSICAL slice
@@ -1593,12 +1566,12 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 weapon.statusResistanceModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackVsLowHealthEnemies:
-                rng2 = Random.Range(0.1f, 0.25f);
-                weapon.attackRateVsLowHealthEnemies = (float)Math.Round(rng2, 2);
+                rng2 = Random.Range(1, 11);
+                weapon.damageVsLowHealthEnemies = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.CritResistance:
                 rng2 = Random.Range(0.1f, 0.25f);
-                weapon.criticalResistance = (float)Math.Round(rng2, 2);
+                weapon.criticalResistanceModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.ArmorIncrease:
                 rng2 = Random.Range(0.05f, 0.25f);
@@ -1625,6 +1598,14 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 if (weaponDetails.weaponCurrentProjectile != null)
                     weapon.attackRange = Mathf.Round(weaponDetails.weaponCurrentProjectile.projectileRange * rng2 * 100f) / 100f;
                 break;
+            case BoostType.SkillCooldown:
+                rng2 = Random.Range(0.05f, 0.13f);
+                weapon.skillCooldown = (float)Math.Round(rng2, 2);
+                break;
+            case BoostType.SkillDuration:
+                rng2 = Random.Range(0.05f, 0.4f);
+                weapon.skillDuration = (float)Math.Round(rng2, 2);
+                break;
 
             default: 
                 break;
@@ -1635,12 +1616,11 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     {
         float rng = Random.Range(1f, 1.5f);
         float rng2;
-        int margin = 0;
 
         switch (boost)
         {
             case BoostType.AttackCooldown:
-                rng2 = Random.Range(0.05f, 0.25f);
+                rng2 = Random.Range(0.05f, 0.12f);
                 passiveItem.attackCooldown = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackDamage:
@@ -1661,8 +1641,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 passiveItem.criticalHitChance = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.LifeSteal:
-                rng2 = Random.Range(0.05f, 0.25f);
-                passiveItem.lifeStealAmount = Mathf.RoundToInt(passiveItem.physicalAttackDamageIncrease * rng2);
+                rng2 = Random.Range(1, 8);
+                passiveItem.lifeStealAmount = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.CritDamage:
                 rng2 = Random.Range(0.05f, 0.25f);
@@ -1689,12 +1669,12 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 passiveItem.statusResistanceModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackVsLowHealthEnemies:
-                rng2 = Random.Range(0.1f, 0.25f);
-                passiveItem.attackRateVsLowHealthEnemies = (float)Math.Round(rng2, 2);
+                rng2 = Random.Range(1, 8);
+                passiveItem.damageVsLowHealthEnemies = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.CritResistance:
                 rng2 = Random.Range(0.1f, 0.25f);
-                passiveItem.criticalResistance = (float)Math.Round(rng2, 2);
+                passiveItem.criticalResistanceModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.ArmorIncrease:
                 rng2 = Random.Range(0.05f, 0.25f);
@@ -1702,7 +1682,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 break;
             case BoostType.MagicResistance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                passiveItem.magicResistance = (float)Math.Round(rng2, 2);
+                passiveItem.magicResistanceModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.MoveSpeed:
                 rng2 = Random.Range(0.5f, 2f);
@@ -1716,7 +1696,16 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 rng2 = Random.Range(0.05f, 0.15f);
                 passiveItem.armorPenetration = (float)Math.Round(rng2, 2);
                 break;
-            default: break;
+            case BoostType.SkillCooldown:
+                rng2 = Random.Range(0.05f, 0.13f);
+                passiveItem.skillCooldown = (float)Math.Round(rng2, 2);
+                break;
+            case BoostType.SkillDuration:
+                rng2 = Random.Range(0.05f, 0.4f);
+                passiveItem.skillDuration = (float)Math.Round(rng2, 2);
+                break;
+            default: 
+                break;
         }
     }
 
@@ -1779,61 +1768,81 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        enchantedBoostText.text = $"Attack Speed: + {weapon.attackCooldown * 100}%";
+                        bonusText.text = $"Attack Speed: + {weapon.attackCooldownModifier * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        enchantedBoostText.text = "Phy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
+                        bonusText.text = "Phy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        enchantedBoostText.text = $"Attack Rating: + {weapon.attackRatingIncrease * 100}%";
+                        bonusText.text = $"Attack Rating: + {weapon.attackRatingIncrease * 100}";
                         break;
                     case BoostType.MagicDamage:
-                        enchantedBoostText.text = "Magic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
+                        bonusText.text = "Magic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        enchantedBoostText.text = $"Cr. Hit Chance: + {weapon.criticalHitChanceIncrease * 100}%";
+                        bonusText.text = $"Cr. Hit Chance: + {weapon.criticalHitChanceIncrease * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        enchantedBoostText.text = $"Cr. Hit Damage: + {weapon.criticalHitDamageIncrease * 100}%";
+                        bonusText.text = $"Cr. Hit Damage: + {weapon.criticalHitDamageIncrease * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        enchantedBoostText.text = $"Life Steal: + {weapon.lifeStealAmount}";
+                        bonusText.text = $"Life Steal: + {weapon.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        enchantedBoostText.text = $"Block Chance: + {weapon.blockChanceIncrease * 100}%";
+                        bonusText.text = $"Block Chance: + {weapon.blockChanceIncrease * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        enchantedBoostText.text = $"Dodge Chance: + {weapon.dodgeChanceIncrease * 100}%";
+                        bonusText.text = $"Dodge Chance: + {weapon.dodgeChanceIncrease * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        enchantedBoostText.text = $"Health: + {weapon.increasedMaxHealth}";
+                        bonusText.text = $"Health: + {weapon.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        enchantedBoostText.text = $"Mana: + {weapon.increasedMaxMana}";
+                        bonusText.text = $"Mana: + {weapon.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        enchantedBoostText.text = $"Status Resistance: + {weapon.statusResistanceModifier * 100}%";
+                        bonusText.text = $"Status Resistance: + {weapon.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        enchantedBoostText.text = $"Attack vs Low Health Enemies: + {weapon.attackRateVsLowHealthEnemies * 100}%";
+                        bonusText.text = $"Damage vs Low Health: + {weapon.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        enchantedBoostText.text = $"Cr. Resistance: + {weapon.criticalResistance}%";
+                        bonusText.text = $"Cr. Resistance: + {weapon.criticalResistanceModifier}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        enchantedBoostText.text = $"Armor: + {weapon.armorIncrease * 100}%";
+                        bonusText.text = $"Armor: + {weapon.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        enchantedBoostText.text = $"Magic Resistance: + {weapon.magicResistance * 100}%";
+                        bonusText.text = $"Magic Resistance: + {weapon.magicResistance * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        enchantedBoostText.text = $"Magic Resistance: + {weapon.speedIncreaseModifier}";
+                        bonusText.text = $"Move Speed: + {weapon.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        enchantedBoostText.text = $"Damage Reduction: + {weapon.damageReductionRate * 100}%";
+                        bonusText.text = $"Damage Reduction: + {weapon.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        enchantedBoostText.text = $"Armor Penetration: + {weapon.armorPenetration * 100}%";
+                        bonusText.text = $"Armor Penetration: + {weapon.armorPenetration * 100}%";
+                        break;
+                    case BoostType.SkillCooldown:
+                        bonusText.text = $"Skill Cooldown: + {weapon.skillCooldown * 100}%";
+                        break;
+                    case BoostType.SkillDuration:
+                        bonusText.text = $"Skill Duration: + {weapon.skillDuration * 100}%";
+                        break;
+                    case BoostType.StatusInflict:
+                        if (weapon.additionalPoisonChance > 0) bonusText.text = $"Poison Chance: + {weapon.additionalPoisonChance * 100}%";
+                        else if (weapon.additionalBleedChance > 0) bonusText.text = $"Bleed Chance: + {weapon.additionalBleedChance * 100}%";
+                        else if (weapon.additionalRootChance > 0) bonusText.text = $"Root Chance: + {weapon.additionalRootChance * 100}%";
+                        else if (weapon.additionalStunChance > 0) bonusText.text = $"Stun Chance: + {weapon.additionalStunChance * 100}%";
+                        else if (weapon.additionalCurseChance > 0) bonusText.text = $"Curse Chance: + {weapon.additionalCurseChance * 100}%";
+                        else if (weapon.additionalFearChance > 0) bonusText.text = $"Fear Chance: + {weapon.additionalFearChance * 100}%";
+                        else if (weapon.additionalRevealChance > 0) bonusText.text = $"Reveal Chance: + {weapon.additionalRevealChance * 100}%";
+                        else if (weapon.additionalParalyzeChance > 0) bonusText.text = $"Paralyze Chance: + {weapon.additionalParalyzeChance * 100}%";
+                        else if (weapon.additionalBurnChance > 0) bonusText.text = $"Burn Chance: + {weapon.additionalBurnChance * 100}%";
+                        else if (weapon.additionalFreezeChance > 0) bonusText.text = $"Freeze Chance: + {weapon.additionalFreezeChance * 100}%";
+                        else if (weapon.additionalBlindChance > 0) bonusText.text = $"Blind Chance: + {weapon.additionalBlindChance * 100}%";
+                        else if (weapon.additionalSlowChance > 0) bonusText.text = $"Slow Chance: + {weapon.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;
@@ -1844,61 +1853,81 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        enchantedBoostText.text += $"\nAttack Speed: + {weapon.attackCooldown * 100}%";
+                        bonusText.text += $"\nAttack Speed: + {weapon.attackCooldownModifier * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        enchantedBoostText.text += "\nPhy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
+                        bonusText.text += "\nPhy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        enchantedBoostText.text += $"\nAttack Rating: + {weapon.attackRatingIncrease * 100}%";
+                        bonusText.text += $"\nAttack Rating: + {weapon.attackRatingIncrease * 100}";
                         break;
                     case BoostType.MagicDamage:
-                        enchantedBoostText.text += "\nMagic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
+                        bonusText.text += "\nMagic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        enchantedBoostText.text += $"\nCr. Hit Chance: + {weapon.criticalHitChanceIncrease * 100}%";
+                        bonusText.text += $"\nCr. Hit Chance: + {weapon.criticalHitChanceIncrease * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        enchantedBoostText.text += $"\nCr. Hit Damage: + {weapon.criticalHitDamageIncrease * 100}%";
+                        bonusText.text += $"\nCr. Hit Damage: + {weapon.criticalHitDamageIncrease * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        enchantedBoostText.text += $"\nLife Steal: + {weapon.lifeStealAmount}";
+                        bonusText.text += $"\nLife Steal: + {weapon.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        enchantedBoostText.text += $"\nBlock Chance: + {weapon.blockChanceIncrease * 100}%";
+                        bonusText.text += $"\nBlock Chance: + {weapon.blockChanceIncrease * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        enchantedBoostText.text += $"\nDodge Chance: + {weapon.dodgeChanceIncrease * 100}%";
+                        bonusText.text += $"\nDodge Chance: + {weapon.dodgeChanceIncrease * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        enchantedBoostText.text += $"\nHealth: + {weapon.increasedMaxHealth}";
+                        bonusText.text += $"\nHealth: + {weapon.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        enchantedBoostText.text += $"\nMana: + {weapon.increasedMaxMana}";
+                        bonusText.text += $"\nMana: + {weapon.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        enchantedBoostText.text += $"\nStatus Resistance: + {weapon.statusResistanceModifier * 100}%";
+                        bonusText.text += $"\nStatus Resistance: + {weapon.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        enchantedBoostText.text += $"\nAttack vs Low Health Enemies: + {weapon.attackRateVsLowHealthEnemies * 100}%";
+                        bonusText.text += $"\nDamage vs Low Health: + {weapon.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        enchantedBoostText.text += $"\nCr. Resistance: + {weapon.criticalResistance}%";
+                        bonusText.text += $"\nCr. Resistance: + {weapon.criticalResistanceModifier}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        enchantedBoostText.text += $"\nArmor: + {weapon.armorIncrease * 100}%";
+                        bonusText.text += $"\nArmor: + {weapon.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        enchantedBoostText.text += $"\nMagic Resistance: + {weapon.magicResistance * 100}%";
+                        bonusText.text += $"\nMagic Resistance: + {weapon.magicResistance * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        enchantedBoostText.text += $"\nMagic Resistance: + {weapon.speedIncreaseModifier}";
+                        bonusText.text += $"\nMove Speed: + {weapon.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        enchantedBoostText.text += $"\nDamage Reduction: + {weapon.damageReductionRate * 100}%";
+                        bonusText.text += $"\nDamage Reduction: + {weapon.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        enchantedBoostText.text += $"\nArmor Penetration: + {weapon.armorPenetration * 100}%";
+                        bonusText.text += $"\nArmor Penetration: + {weapon.armorPenetration * 100}%";
+                        break;
+                    case BoostType.SkillCooldown:
+                        bonusText.text += $"\nSkill Cooldown: + {weapon.skillCooldown * 100}%";
+                        break;
+                    case BoostType.SkillDuration:
+                        bonusText.text += $"\nSkill Duration: + {weapon.skillDuration * 100}%";
+                        break;
+                    case BoostType.StatusInflict:
+                        if (weapon.additionalPoisonChance > 0) bonusText.text += $"\nPoison Chance: + {weapon.additionalPoisonChance * 100}%";
+                        else if (weapon.additionalBleedChance > 0) bonusText.text += $"\nBleed Chance: + {weapon.additionalBleedChance * 100}%";
+                        else if (weapon.additionalRootChance > 0) bonusText.text += $"\nRoot Chance: + {weapon.additionalRootChance * 100}%";
+                        else if (weapon.additionalStunChance > 0) bonusText.text += $"\nStun Chance: + {weapon.additionalStunChance * 100}%";
+                        else if (weapon.additionalCurseChance > 0) bonusText.text += $"\nCurse Chance: + {weapon.additionalCurseChance * 100}%";
+                        else if (weapon.additionalFearChance > 0) bonusText.text += $"\nFear Chance: + {weapon.additionalFearChance * 100}%";
+                        else if (weapon.additionalRevealChance > 0) bonusText.text += $"\nReveal Chance: + {weapon.additionalRevealChance * 100}%";
+                        else if (weapon.additionalParalyzeChance > 0) bonusText.text += $"\nParalyze Chance: + {weapon.additionalParalyzeChance * 100}%";
+                        else if (weapon.additionalBurnChance > 0) bonusText.text += $"\nBurn Chance: + {weapon.additionalBurnChance * 100}%";
+                        else if (weapon.additionalFreezeChance > 0) bonusText.text += $"\nFreeze Chance: + {weapon.additionalFreezeChance * 100}%";
+                        else if (weapon.additionalBlindChance > 0) bonusText.text += $"\nBlind Chance: + {weapon.additionalBlindChance * 100}%";
+                        else if (weapon.additionalSlowChance > 0) bonusText.text += $"\nSlow Chance: + {weapon.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;
@@ -1917,61 +1946,81 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        hitSpeedText.text = $"Attack Speed: + {passiveItem.attackCooldown * 100}%";
+                        bonusText.text = $"Attack Speed: + {passiveItem.attackCooldown * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        hitSpeedText.text = "Phy. Attack Dmg.: + " + passiveItem.physicalAttackDamageIncrease;
+                        bonusText.text = "Phy. Attack Dmg.: + " + passiveItem.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        hitSpeedText.text = $"Attack Rating: + {passiveItem.attackRating * 100}%";
+                        bonusText.text = $"Attack Rating: + {passiveItem.attackRating * 100}";
                         break;
                     case BoostType.MagicDamage:
-                        hitSpeedText.text = "Magic Attack Dmg.: + " + passiveItem.magicAttackDamageIncrease;
+                        bonusText.text = "Magic Attack Dmg.: + " + passiveItem.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        hitSpeedText.text = $"Cr. Hit Chance: + {passiveItem.criticalHitChance * 100}%";
+                        bonusText.text = $"Cr. Hit Chance: + {passiveItem.criticalHitChance * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        hitSpeedText.text = $"Cr. Hit Damage: + {passiveItem.criticalHitDamage * 100}%";
+                        bonusText.text = $"Cr. Hit Damage: + {passiveItem.criticalHitDamage * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        hitSpeedText.text = $"Life Steal: + {passiveItem.lifeStealAmount}";
+                        bonusText.text = $"Life Steal: + {passiveItem.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        hitSpeedText.text = $"Block Chance: + {passiveItem.blockChance * 100}%";
+                        bonusText.text = $"Block Chance: + {passiveItem.blockChance * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        hitSpeedText.text = $"Dodge Chance: + {passiveItem.dodgeChance * 100}%";
+                        bonusText.text = $"Dodge Chance: + {passiveItem.dodgeChance * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        hitSpeedText.text = $"Health: + {passiveItem.increasedMaxHealth}";
+                        bonusText.text = $"Health: + {passiveItem.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        hitSpeedText.text = $"Mana: + {passiveItem.increasedMaxMana}";
+                        bonusText.text = $"Mana: + {passiveItem.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        hitSpeedText.text = $"Status Resistance: + {passiveItem.statusResistanceModifier * 100}%";
+                        bonusText.text = $"Status Resistance: + {passiveItem.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        hitSpeedText.text = $"Attack vs Low Health Enemies: + {passiveItem.attackRateVsLowHealthEnemies * 100}%";
+                        bonusText.text = $"Damage vs Low Health: + {passiveItem.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        hitSpeedText.text = $"Cr. Resistance: + {passiveItem.criticalResistance}%";
+                        bonusText.text = $"Cr. Resistance: + {passiveItem.criticalResistanceModifier}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        hitSpeedText.text = $"Armor: + {passiveItem.armorIncrease * 100}%";
+                        bonusText.text = $"Armor: + {passiveItem.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        hitSpeedText.text = $"Magic Resistance: + {passiveItem.magicResistance * 100}%";
+                        bonusText.text = $"Magic Resistance: + {passiveItem.magicResistanceModifier * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        hitSpeedText.text = $"Magic Resistance: + {passiveItem.speedIncreaseModifier}";
+                        bonusText.text = $"Move Speed: + {passiveItem.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        hitSpeedText.text = $"Damage Reduction: + {passiveItem.damageReductionRate * 100}%";
+                        bonusText.text = $"Damage Reduction: + {passiveItem.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        hitSpeedText.text = $"Armor Penetration: + {passiveItem.armorPenetration * 100}%";
+                        bonusText.text = $"Armor Penetration: + {passiveItem.armorPenetration * 100}%";
+                        break;
+                    case BoostType.SkillCooldown:
+                        bonusText.text += $"\nSkill Cooldown: + {passiveItem.skillCooldown * 100}%";
+                        break;
+                    case BoostType.SkillDuration:
+                        bonusText.text += $"\nSkill Duration: + {passiveItem.skillDuration * 100}%";
+                        break;
+                    case BoostType.StatusInflict:
+                        if (passiveItem.additionalPoisonChance > 0) bonusText.text = $"Poison Chance: + {passiveItem.additionalPoisonChance * 100}%";
+                        else if (passiveItem.additionalBleedChance > 0) bonusText.text = $"Bleed Chance: + {passiveItem.additionalBleedChance * 100}%";
+                        else if (passiveItem.additionalRootChance > 0) bonusText.text = $"Root Chance: + {passiveItem.additionalRootChance * 100}%";
+                        else if (passiveItem.additionalStunChance > 0) bonusText.text = $"Stun Chance: + {passiveItem.additionalStunChance * 100}%";
+                        else if (passiveItem.additionalCurseChance > 0) bonusText.text = $"Curse Chance: + {passiveItem.additionalCurseChance * 100}%";
+                        else if (passiveItem.additionalFearChance > 0) bonusText.text = $"Fear Chance: + {passiveItem.additionalFearChance * 100}%";
+                        else if (passiveItem.additionalRevealChance > 0) bonusText.text = $"Reveal Chance: + {passiveItem.additionalRevealChance * 100}%";
+                        else if (passiveItem.additionalParalyzeChance > 0) bonusText.text = $"Paralyze Chance: + {passiveItem.additionalParalyzeChance * 100}%";
+                        else if (passiveItem.additionalBurnChance > 0) bonusText.text = $"Burn Chance: + {passiveItem.additionalBurnChance * 100}%";
+                        else if (passiveItem.additionalFreezeChance > 0) bonusText.text = $"Freeze Chance: + {passiveItem.additionalFreezeChance * 100}%";
+                        else if (passiveItem.additionalBlindChance > 0) bonusText.text = $"Blind Chance: + {passiveItem.additionalBlindChance * 100}%";
+                        else if (passiveItem.additionalSlowChance > 0) bonusText.text = $"Slow Chance: + {passiveItem.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;
@@ -1982,61 +2031,81 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        hitSpeedText.text += $"\nAttack Speed: + {passiveItem.attackCooldown * 100}%";
+                        bonusText.text += $"\nAttack Speed: + {passiveItem.attackCooldown * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        hitSpeedText.text += "\nPhy. Attack Dmg.: + " + passiveItem.physicalAttackDamageIncrease;
+                        bonusText.text += "\nPhy. Attack Dmg.: + " + passiveItem.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        hitSpeedText.text += $"\nAttack Rating: + {passiveItem.attackRating * 100}%";
+                        bonusText.text += $"\nAttack Rating: + {passiveItem.attackRating * 100}";
                         break;
                     case BoostType.MagicDamage:
-                        hitSpeedText.text += "\nMagic Attack Dmg.: + " + passiveItem.magicAttackDamageIncrease;
+                        bonusText.text += "\nMagic Attack Dmg.: + " + passiveItem.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        hitSpeedText.text += $"\nCr. Hit Chance: + {passiveItem.criticalHitChance * 100}%";
+                        bonusText.text += $"\nCr. Hit Chance: + {passiveItem.criticalHitChance * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        hitSpeedText.text += $"\nCr. Hit Damage: + {passiveItem.criticalHitDamage * 100}%";
+                        bonusText.text += $"\nCr. Hit Damage: + {passiveItem.criticalHitDamage * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        hitSpeedText.text += $"\nLife Steal: + {passiveItem.lifeStealAmount}";
+                        bonusText.text += $"\nLife Steal: + {passiveItem.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        hitSpeedText.text += $"\nBlock Chance: + {passiveItem.blockChance * 100}%";
+                        bonusText.text += $"\nBlock Chance: + {passiveItem.blockChance * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        hitSpeedText.text += $"\nDodge Chance: + {passiveItem.dodgeChance * 100}%";
+                        bonusText.text += $"\nDodge Chance: + {passiveItem.dodgeChance * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        hitSpeedText.text += $"\nHealth: + {passiveItem.increasedMaxHealth}";
+                        bonusText.text += $"\nHealth: + {passiveItem.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        hitSpeedText.text += $"\nMana: + {passiveItem.increasedMaxMana}";
+                        bonusText.text += $"\nMana: + {passiveItem.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        hitSpeedText.text += $"\nStatus Resistance: + {passiveItem.statusResistanceModifier * 100}%";
+                        bonusText.text += $"\nStatus Resistance: + {passiveItem.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        hitSpeedText.text += $"\nAttack vs Low Health Enemies: + {passiveItem.attackRateVsLowHealthEnemies * 100}%";
+                        bonusText.text += $"\nDamage vs Low Health: + {passiveItem.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        hitSpeedText.text += $"\nCr. Resistance: + {passiveItem.criticalResistance}%";
+                        bonusText.text += $"\nCr. Resistance: + {passiveItem.criticalResistanceModifier}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        hitSpeedText.text += $"\nArmor: + {passiveItem.armorIncrease * 100}%";
+                        bonusText.text += $"\nArmor: + {passiveItem.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        hitSpeedText.text += $"\nMagic Resistance: + {passiveItem.magicResistance * 100}%";
+                        bonusText.text += $"\nMagic Resistance: + {passiveItem.magicResistanceModifier * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        hitSpeedText.text += $"\nMagic Resistance: + {passiveItem.speedIncreaseModifier}";
+                        bonusText.text += $"\nMove Speed: + {passiveItem.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        hitSpeedText.text += $"\nDamage Reduction: + {passiveItem.damageReductionRate * 100}%";
+                        bonusText.text += $"\nDamage Reduction: + {passiveItem.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        hitSpeedText.text += $"\nArmor Penetration: + {passiveItem.armorPenetration * 100}%";
+                        bonusText.text += $"\nArmor Penetration: + {passiveItem.armorPenetration * 100}%";
+                        break;
+                    case BoostType.SkillCooldown:
+                        bonusText.text += $"\nSkill Cooldown: + {passiveItem.skillCooldown * 100}%";
+                        break;
+                    case BoostType.SkillDuration:
+                        bonusText.text += $"\nSkill Duration: + {passiveItem.skillDuration * 100}%";
+                        break;
+                    case BoostType.StatusInflict:
+                        if (passiveItem.additionalPoisonChance > 0) bonusText.text += $"\nPoison Chance: + {passiveItem.additionalPoisonChance * 100}%";
+                        else if (passiveItem.additionalBleedChance > 0) bonusText.text += $"\nBleed Chance: + {passiveItem.additionalBleedChance * 100}%";
+                        else if (passiveItem.additionalRootChance > 0) bonusText.text += $"\nRoot Chance: + {passiveItem.additionalRootChance * 100}%";
+                        else if (passiveItem.additionalStunChance > 0) bonusText.text += $"\nStun Chance: + {passiveItem.additionalStunChance * 100}%";
+                        else if (passiveItem.additionalCurseChance > 0) bonusText.text += $"\nCurse Chance: + {passiveItem.additionalCurseChance * 100}%";
+                        else if (passiveItem.additionalFearChance > 0) bonusText.text += $"\nFear Chance: + {passiveItem.additionalFearChance * 100}%";
+                        else if (passiveItem.additionalRevealChance > 0) bonusText.text += $"\nReveal Chance: + {passiveItem.additionalRevealChance * 100}%";
+                        else if (passiveItem.additionalParalyzeChance > 0) bonusText.text += $"\nParalyze Chance: + {passiveItem.additionalParalyzeChance * 100}%";
+                        else if (passiveItem.additionalBurnChance > 0) bonusText.text += $"\nBurn Chance: + {passiveItem.additionalBurnChance * 100}%";
+                        else if (passiveItem.additionalFreezeChance > 0) bonusText.text += $"\nFreeze Chance: + {passiveItem.additionalFreezeChance * 100}%";
+                        else if (passiveItem.additionalBlindChance > 0) bonusText.text += $"\nBlind Chance: + {passiveItem.additionalBlindChance * 100}%";
+                        else if (passiveItem.additionalSlowChance > 0) bonusText.text += $"\nSlow Chance: + {passiveItem.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;

@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.GPUSort;
 
 public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 {
@@ -12,8 +11,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [Space(10)]
     public Transform skillPage;
     public Transform statsPage;
-    public Transform weaponsPage;
-    public Transform passivesPage;
     public Transform beastiaryPage;
     public Transform bossesPage;
 
@@ -22,58 +19,59 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     public Button weaponSetTwoButton;
     public Button weaponSetThreeButton;
 
-    [SerializeField] TextMeshProUGUI characterName;
+    [SerializeField] TMP_Text characterName;
     [SerializeField] Image characterImage;
     Image characterSeparatorImage;
 
     [Space(10)]
     [Header("PRIMARY STATS")]
-    [SerializeField] TextMeshProUGUI strengthValue;
-    [SerializeField] TextMeshProUGUI constitutionValue;
-    [SerializeField] TextMeshProUGUI dexterityValue;
-    [SerializeField] TextMeshProUGUI intelligenceValue;
-    [SerializeField] TextMeshProUGUI willpowerValue;
-    [SerializeField] TextMeshProUGUI agilityValue;
-    [SerializeField] TextMeshProUGUI resolveValue;
-    [SerializeField] TextMeshProUGUI ferocityValue;
+    [SerializeField] TMP_Text strengthValue;
+    [SerializeField] TMP_Text constitutionValue;
+    [SerializeField] TMP_Text dexterityValue;
+    [SerializeField] TMP_Text intelligenceValue;
+    [SerializeField] TMP_Text willpowerValue;
+    [SerializeField] TMP_Text agilityValue;
+    [SerializeField] TMP_Text resolveValue;
+    [SerializeField] TMP_Text ferocityValue;
 
     [Space(10)]
     [Header("PRIMARY STATS BUTTONS")]
     public Transform primaryStatsButtonContainer;
-    [SerializeField] TextMeshProUGUI currentAvailableStatPoints;
+    [SerializeField] TMP_Text currentAvailableStatPoints;
 
     [Space(10)]
     [Header("COINS AND SHARDS")]
-    [SerializeField] TextMeshProUGUI coinsText;
-    [SerializeField] TextMeshProUGUI shardText;
+    [SerializeField] TMP_Text coinsText;
+    [SerializeField] TMP_Text shardText;
 
     [Space(10)]
     [Header("SECONDARY STATS")]
-    [SerializeField] TextMeshProUGUI damageValue;
-    [SerializeField] TextMeshProUGUI healthValue;
-    [SerializeField] TextMeshProUGUI criticalHitChanceDamageValue;
-    [SerializeField] TextMeshProUGUI elementalDamageModifierValue;
-    [SerializeField] TextMeshProUGUI manaValue;
-    [SerializeField] TextMeshProUGUI speedValue;
-    [SerializeField] TextMeshProUGUI globalResistanceValue;
-    [SerializeField] TextMeshProUGUI criticalHitDamageAmountValue;
+    [SerializeField] TMP_Text damageValue;
+    [SerializeField] TMP_Text healthValue;
+    [SerializeField] TMP_Text manaValue;
+    [SerializeField] TMP_Text dodgeRateValue;
+    [SerializeField] TMP_Text blockRateValue;
+    [SerializeField] TMP_Text speedValue;
+    [SerializeField] TMP_Text criticalHitChanceDamageValue;
+    [SerializeField] TMP_Text criticalHitDamageAmountValue;
 
     [Space(10)]
     [Header("AUXILLARY STATS")]
-    [SerializeField] TextMeshProUGUI attackCooldownValue;
-    [SerializeField] TextMeshProUGUI attackRatingValue;
-    [SerializeField] TextMeshProUGUI blockRateValue;
-    [SerializeField] TextMeshProUGUI debuffDurationModifierValue;
-    [SerializeField] TextMeshProUGUI buffDurationModifierValue;
-    [SerializeField] TextMeshProUGUI manaRegenerationValue;
-    [SerializeField] TextMeshProUGUI eveasivenessRateValue;
-    [SerializeField] TextMeshProUGUI dotEffectsValue;
+    [SerializeField] TMP_Text attackCooldownValue;
+    [SerializeField] TMP_Text attackRatingValue;
+    [SerializeField] TMP_Text skillCooldownModifierValue;
+    [SerializeField] TMP_Text skillDurationModifierValue;
+    [SerializeField] TMP_Text lifeStealValue;
+    [SerializeField] TMP_Text damageReductionValue;
+    [SerializeField] TMP_Text damageVsLowHealthValue;
+    [SerializeField] TMP_Text armorPenetrationValue;
 
     [Space(10)]
     [Header("RESISTANCE STATS")]
-    [SerializeField] TextMeshProUGUI resistanceText;
-    [SerializeField] TextMeshProUGUI physicalResistanceText;
-    [SerializeField] TextMeshProUGUI magicResistanceText;
+    [SerializeField] TMP_Text armorText;
+    [SerializeField] TMP_Text magicResistanceText;
+    [SerializeField] TMP_Text statusResistanceText;
+    [SerializeField] TMP_Text criticalResistanceText;
 
     [Space(10)]
     [SerializeField] Animator bookAnimator;
@@ -99,8 +97,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] Transform skillDescriptonInnerPanel;
     [SerializeField] Transform skillPointsTransform;
     [SerializeField] Transform innerPathTextContainer;
-    [SerializeField] TextMeshProUGUI innerPathTitleText;
-    [SerializeField] TextMeshProUGUI innerPathDetailsText;
+    [SerializeField] TMP_Text innerPathTitleText;
+    [SerializeField] TMP_Text innerPathDetailsText;
 
     // SLOT TRANSFORMS
     Transform mainHandWeaponBackground;
@@ -110,25 +108,15 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     Player player;
 
-    // WEAPONS
-    [Space(10)]
-    [SerializeField] TextMeshProUGUI weaponTitleText;
-    [SerializeField] TextMeshProUGUI weaponDetailsText;
-    [SerializeField] Transform weaponImageContainer;
-
-    // PASSIVES
-    [SerializeField] TextMeshProUGUI passivesTitleText;
-    [SerializeField] TextMeshProUGUI passivesDetailsText;
-    [SerializeField] Transform passivesImageContainer;
-
     // BEASTIARY
-    [SerializeField] TextMeshProUGUI mobTitleText;
-    [SerializeField] TextMeshProUGUI mobDetailsText;
+    [Space(10)]
+    [SerializeField] TMP_Text mobTitleText;
+    [SerializeField] TMP_Text mobDetailsText;
     [SerializeField] Transform beastiaryImageContainer;
 
     // BOSSES
-    [SerializeField] TextMeshProUGUI bossTitleText;
-    [SerializeField] TextMeshProUGUI bossDetailsText;
+    [SerializeField] TMP_Text bossTitleText;
+    [SerializeField] TMP_Text bossDetailsText;
     [SerializeField] Transform bossImageContainer;
 
     private void Awake()
@@ -238,16 +226,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnMobHovered += StaticEventHandler_OnMobHovered;
         StaticEventHandler.OnMobUnhovered += StaticEventHandler_OnMobUnhovered;
 
-        // WEAPON EVENTS
-        StaticEventHandler.OnWeaponUnlocked += StaticEventHandler_OnWeaponUnlocked;
-        StaticEventHandler.OnWeaponHovered += StaticEventHandler_OnWeaponHovered;
-        StaticEventHandler.OnWeaponUnhovered += StaticEventHandler_OnWeaponUnhovered;
-
-        // PASSIVE EVENTS
-        StaticEventHandler.OnPassiveUnlocked += StaticEventHandler_OnPassiveUnlocked;
-        StaticEventHandler.OnPassiveHovered += StaticEventHandler_OnPassiveHovered;
-        StaticEventHandler.OnPassiveUnhovered += StaticEventHandler_OnPassiveUnhovered;
-
         StaticEventHandler.OnBookHealthChanged += StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnBookManaChanged += StaticEventHandler_OnBookManaChanged;
         StaticEventHandler.OnItemAddedToPassiveItemSlot += StaticEventHandler_OnItemAddedToPassiveItemSlot;
@@ -297,16 +275,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnMobHovered -= StaticEventHandler_OnMobHovered;
         StaticEventHandler.OnMobUnhovered -= StaticEventHandler_OnMobUnhovered;
 
-        // WEAPON EVENTS
-        StaticEventHandler.OnWeaponUnlocked -= StaticEventHandler_OnWeaponUnlocked;
-        StaticEventHandler.OnWeaponHovered -= StaticEventHandler_OnWeaponHovered;
-        StaticEventHandler.OnWeaponUnhovered -= StaticEventHandler_OnWeaponUnhovered;
-
-        // PASSIVE EVENTS
-        StaticEventHandler.OnPassiveUnlocked -= StaticEventHandler_OnPassiveUnlocked;
-        StaticEventHandler.OnPassiveHovered -= StaticEventHandler_OnPassiveHovered;
-        StaticEventHandler.OnPassiveUnhovered -= StaticEventHandler_OnPassiveUnhovered;
-
         StaticEventHandler.OnBookHealthChanged -= StaticEventHandler_OnBookHealthChanged;
         StaticEventHandler.OnBookManaChanged -= StaticEventHandler_OnBookManaChanged;
         StaticEventHandler.OnItemAddedToPassiveItemSlot -= StaticEventHandler_OnItemAddedToPassiveItemSlot;
@@ -333,15 +301,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     public void OnSelect(BaseEventData eventData)
     {
-        if (weaponsPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
-        else if (passivesPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
-        else if (beastiaryPage.GetChild(0).gameObject.activeSelf)
+        if (beastiaryPage.GetChild(0).gameObject.activeSelf)
         {
 
         }
@@ -354,14 +314,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     public void OnDeselect(BaseEventData eventData)
     {
         if (skillPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
-        else if (weaponsPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
-        else if (passivesPage.GetChild(0).gameObject.activeSelf)
         {
 
         }
@@ -505,7 +457,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
         // Set Draggable Item
         DraggableItem inventoryDraggableItem = inventoryItem.GetComponent<DraggableItem>();
-        inventoryDraggableItem.SetDraggableItem(passiveItem, equippedInventroySlot.GetComponent<Slot>(), passiveItem.passiveItemDetails.passiveItemSprite, ItemSlotStatus.Inventory);
+        inventoryDraggableItem.SetDraggableItem(passiveItem, equippedInventroySlot.GetComponent<Slot>(), passiveItem.passiveItemDetails.passiveItemSprite, 
+            ItemSlotStatus.Inventory);
     }
 
     private void StaticEventHandler_OnInventoryPassiveItemDropped(PassiveItemAddedToBookArgs passiveItemAddedToBookArgs)
@@ -589,7 +542,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void StaticEventHandler_OnPassiveItemsSwapped(PassiveItemAddedToBookArgs passiveItemAddedToBookArgs)
     {
-        StartCoroutine(PassiveItemSwapRoutine(passiveItemAddedToBookArgs.passiveItem, passiveItemAddedToBookArgs.inventoryPassiveItem, passiveItemAddedToBookArgs.inventoryIndexNumber));
+        StartCoroutine(PassiveItemSwapRoutine(passiveItemAddedToBookArgs.passiveItem, passiveItemAddedToBookArgs.inventoryPassiveItem, 
+            passiveItemAddedToBookArgs.inventoryIndexNumber));
     }
 
     IEnumerator PassiveItemSwapRoutine(PassiveItem slotPassiveItem, PassiveItem inventoryPassiveItem, int index)
@@ -922,25 +876,34 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         ferocityValue.text = player.CurrentFerocityValue.ToString();
 
         // SECONDARY STATS
-        healthValue.text = $"{player.health.GetCurrentHealth()} / {player.health.GetMaximumHealth()}";
-        manaValue.text = $"{player.mana.GetCurrentMana()} / {player.mana.GetMaximumMana()}";
         damageValue.text = $"{player.currentMainHandMinDamageValue}-{player.currentMainHandMaxDamageValue}({player.currentOffHandMinDamageValue}-" +
             $"{player.currentOffHandMaxDamageValue})";
-        criticalHitChanceDamageValue.text = $"{player.currentMainHandCriticalHitChance * 100}%({player.currentOffHandCriticalHitChance * 100}%)";
+        healthValue.text = $"{player.health.GetCurrentHealth()} / {player.health.GetMaximumHealth()}";
+        manaValue.text = $"{player.mana.GetCurrentMana()} / {player.mana.GetMaximumMana()}";
+        dodgeRateValue.text = $"{player.currentDodgeValue * 100}%";
+        blockRateValue.text = $"{player.currentBlockValue * 100}%";
         speedValue.text = $"{player.movementByForce.moveSpeed}";
+        criticalHitChanceDamageValue.text = $"{player.currentMainHandCriticalHitChance * 100}%({player.currentOffHandCriticalHitChance * 100}%)";
 
-        float deductedMainHandCriticalDamage = (float)Math.Round((double)((player.currentMainHandCriticalHitDamage * 100) - 100));
-        float deductedOffHandCriticalDamage = (float)Math.Round((double)((player.currentOffHandCriticalHitDamage * 100) - 100));
+        float deductedMainHandCriticalDamage = (float)Math.Round((double)((player.currentMainHandCriticalHitDamage * 100) - 100), 2);
+        float deductedOffHandCriticalDamage = (float)Math.Round((double)((player.currentOffHandCriticalHitDamage * 100) - 100), 2);
         criticalHitDamageAmountValue.text = $"+{Mathf.Max(0, deductedMainHandCriticalDamage)}%(+{Mathf.Max(0, deductedOffHandCriticalDamage)}%)";
 
         // AUXILLARY STATS
+        attackCooldownValue.text = $"{player.additionalAttackCoolDownModifier * 100}%";
         attackRatingValue.text = $"{player.currentAttackRatingValue * 100}";
-        blockRateValue.text = $"{player.currentBlockValue * 100}%";
-        eveasivenessRateValue.text = $"{player.currentEvasivenessValue * 100}%";
+        skillCooldownModifierValue.text = $"{player.currentSkillCooldownReducer * 100}%";
+        damageReductionValue.text = $"{player.currentDamageReductionValue * 100}%";
+        skillDurationModifierValue.text = $"{player.currentSkillDurationModifier * 100}%";
+        damageVsLowHealthValue.text = $"{player.currentDamageVsLowHealthModifierValue}";
+        lifeStealValue.text = $"{player.currentLifeStealValue}";
+        armorPenetrationValue.text = $"{player.currentArmorPenetrationValue * 100}%";
 
         // RESISTANCE STATS
-        physicalResistanceText.text = $"Armor : {player.currentArmorValue * 100} %";
-        magicResistanceText.text = $"Fire : {player.currentMagicResistanceValue * 100} %";
+        armorText.text = $"{player.currentArmorValue * 100}%";
+        magicResistanceText.text = $"{player.currentMagicResistanceValue * 100}%";
+        statusResistanceText.text = $"{player.currentStatusResistance * 100}%";
+        criticalResistanceText.text = $"{player.currentCriticalResistanceValue * 100}%";
     }
 
     public void OpenBuildPage()
@@ -948,7 +911,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         if (skillPage.GetChild(0).gameObject.activeSelf) return;
 
         StopAllCoroutines();
-        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Build));
+        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Skills));
     }
 
     public void OpenStatsPage()
@@ -959,21 +922,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Stats));
     }
 
-    public void OpenWeaponsPage()
-    {
-        if (weaponsPage.GetChild(0).gameObject.activeSelf) return;
 
-        StopAllCoroutines();
-        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Weapons));
-    }
-
-    public void OpenPassivesPage()
-    {
-        if (passivesPage.GetChild(0).gameObject.activeSelf) return;
-
-        StopAllCoroutines();
-        StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Passives));
-    }
 
     public void OpenBestiaryPage()
     {
@@ -1009,16 +958,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 case BookPage.Stats:
                     EnableStatPage();
                     break;
-                case BookPage.Weapons:
-                    weaponsPage.GetChild(0).gameObject.SetActive(true);
-                    EnableWeaponsPage();
-                    UpdateWeaponsPage();
-                    break;
-                case BookPage.Passives:
-                    passivesPage.GetChild(0).gameObject.SetActive(true);
-                    EnablePassivesPage();
-                    UpdatePassivesPage();
-                    break;
                 case BookPage.Beastiary:
                     beastiaryPage.GetChild(0).gameObject.SetActive(true);
                     EnableBeastiaryPage();
@@ -1029,7 +968,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                     EnableBossesPage();
                     UpdateBossesPage();
                     break;
-                case BookPage.Build:
+                case BookPage.Skills:
                     EnableBuildsPage();
                     skillPage.GetChild(0).gameObject.SetActive(true);
                     skillDescriptonInnerPanel.gameObject.SetActive(true);
@@ -1043,8 +982,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     private void TurnThePage()
     {
         if (statsPage.GetChild(0).gameObject.activeSelf) { ClearStatPage(); }
-        else if (weaponsPage.GetChild(0).gameObject.activeSelf) { ClearWeaponsPage(); }
-        else if (passivesPage.GetChild(0).gameObject.activeSelf) { ClearPassivesPage(); }
         else if (beastiaryPage.GetChild(0).gameObject.activeSelf) { ClearBeastiaryPage();  }
         else if (bossesPage.GetChild(0).gameObject.activeSelf) { ClearBossesPage(); }
         else if (skillPage.GetChild(0).gameObject.activeSelf) { ClearBuildsPage(); }
@@ -1066,66 +1003,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     private void EnableStatPage()
     {
         foreach (Transform child in statsPage)
-        {
-            child.gameObject.SetActive(true);
-        }
-    }
-
-    private void ClearWeaponsPage()
-    {
-        foreach (Transform child in weaponsPage)
-        {
-            child.gameObject.SetActive(false);
-        }
-    }
-
-    private void UpdateWeaponsPage()
-    {
-        for (int i = 0; i < weaponImageContainer.childCount; i++)
-        {
-            WeaponSlot weaponSlot = weaponImageContainer.GetChild(i).GetComponent<WeaponSlot>();
-
-            if (weaponSlot.weaponUnlocked)
-            {
-                weaponSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-                weaponSlot.GetComponent<Button>().interactable = true;
-            }
-        }
-    }
-
-    private void EnableWeaponsPage()
-    {
-        foreach (Transform child in weaponsPage)
-        {
-            child.gameObject.SetActive(true);
-        }
-    }
-
-    private void ClearPassivesPage()
-    {
-        foreach (Transform child in passivesPage)
-        {
-            child.gameObject.SetActive(false);
-        }
-    }
-
-    private void UpdatePassivesPage()
-    {
-        for (int i = 0; i < passivesImageContainer.childCount; i++)
-        {
-            PassiveSlot passiveSlot = passivesImageContainer.GetChild(i).GetComponent<PassiveSlot>();
-
-            if (passiveSlot.passiveUnlocked)
-            {
-                passiveSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-                passiveSlot.GetComponent<Button>().interactable = true;
-            }
-        }
-    }
-
-    private void EnablePassivesPage()
-    {
-        foreach (Transform child in passivesPage)
         {
             child.gameObject.SetActive(true);
         }
@@ -1292,80 +1169,6 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         }
     }
 
-    private void StaticEventHandler_OnWeaponUnlocked(WeaponUnlockArgs weaponUnlockArgs)
-    {
-        for (int i = 0; i < weaponImageContainer.childCount; i++)
-        {
-            WeaponSlot weaponSlot = weaponImageContainer.GetChild(i).GetComponent<WeaponSlot>();
-
-            if (weaponSlot.weaponUnlocked == true) continue;
-
-            if (weaponSlot.weaponDetails.weaponTitle == weaponUnlockArgs.weaponTitle)
-            {
-                weaponSlot.weaponUnlocked = true;
-                weaponSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-                weaponSlot.GetComponent<Button>().interactable = true;
-            }
-        }
-    }
-
-    private void StaticEventHandler_OnWeaponHovered(WeaponHoverArgs weaponHoverArgs)
-    {
-        for (int i = 0; i < weaponImageContainer.childCount; i++)
-        {
-            WeaponSlot weaponSlot = weaponImageContainer.GetChild(i).GetComponent<WeaponSlot>();
-
-            if (weaponSlot.weaponUnlocked == true && weaponSlot.weaponDetails.weaponTitle == weaponHoverArgs.weaponTitle)
-            {
-                weaponTitleText.text = weaponSlot.weaponDetails.weaponName;
-                weaponDetailsText.text = "";
-            }
-        }
-    }
-
-    private void StaticEventHandler_OnWeaponUnhovered()
-    {
-        weaponTitleText.text = string.Empty;
-        weaponDetailsText.text = string.Empty;
-    }
-
-    private void StaticEventHandler_OnPassiveUnlocked(PassiveUnlockArgs passiveUnlockArgs)
-    {
-        for (int i = 0; i < passivesImageContainer.childCount; i++)
-        {
-            PassiveSlot passiveSlot = passivesImageContainer.GetChild(i).GetComponent<PassiveSlot>();
-
-            if (passiveSlot.passiveUnlocked == true) continue;
-
-            if (passiveSlot.passiveItemDetails.passiveItemType == passiveUnlockArgs.passiveItemType)
-            {
-                passiveSlot.passiveUnlocked = true;
-                passiveSlot.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-                passiveSlot.GetComponent<Button>().interactable = true;
-            }
-        }
-    }
-
-    private void StaticEventHandler_OnPassiveHovered(PassiveHoverArgs passiveHoverArgs)
-    {
-        for (int i = 0; i < passivesImageContainer.childCount; i++)
-        {
-            PassiveSlot passiveSlot = passivesImageContainer.GetChild(i).GetComponent<PassiveSlot>();
-
-            if (passiveSlot.passiveUnlocked == true && passiveSlot.passiveItemDetails.passiveItemType == passiveHoverArgs.passiveItemType)
-            {
-                passivesTitleText.text = passiveSlot.passiveItemDetails.passiveItemName;
-                passivesDetailsText.text = "";
-            }
-        }
-    }
-
-    private void StaticEventHandler_OnPassiveUnhovered()
-    {
-        passivesTitleText.text = string.Empty;
-        passivesDetailsText.text = string.Empty;
-    }
-
     private void StaticEventHandler_OnPrimaryStatsChanged()
     {
         UpdatePlayerStatInfo(player);
@@ -1415,8 +1218,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             case InnerPathName.StoneSkin:
                 player.additionalArmorModifier = 0.1f;
                 break;
-            case InnerPathName.BattleScars:
-                player.isBattleScarsActive = true;
+            case InnerPathName.IronTenacity:
+                player.additionalStatusResistanceModifier += 0.1f;
                 break;
             case InnerPathName.FortifiedResolve:
                 player.isFortifiedResolveActive = true;
@@ -1431,7 +1234,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
                 player.additionalBlockModifier = 0.1f;
                 break;
             case InnerPathName.QuickReflexes:
-                player.additionalEvasivenessModifier = 0.05f;
+                player.additionalDodgeRateModifier = 0.05f;
                 break;
             case InnerPathName.WeaversTempo:
                 player.additionalSkillCoolDownModifier = 0.08f;

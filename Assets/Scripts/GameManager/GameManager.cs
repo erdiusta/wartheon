@@ -718,8 +718,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         if (InputManager.TutorialEnabled) bookView.GetComponent<Animator>().updateMode = AnimatorUpdateMode.Normal;
         else bookView.GetComponent<Animator>().updateMode = AnimatorUpdateMode.UnscaledTime;
 
-        Transform arrowTransform = bookView.transform.GetChild(7);
-        Transform secondArrowTransform = bookView.transform.GetChild(8);
+        Transform arrowTransform = bookView.transform.GetChild(5);
+        Transform secondArrowTransform = bookView.transform.GetChild(6);
 
         TutorialIndicatorArrowTransactions(arrowTransform, secondArrowTransform);
 
@@ -1991,8 +1991,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case PopUpReason.YourHandsFull:
                 warningText.text = "All sets in main hand is full. Drop one of your weapons first.";
                 break;
-            case PopUpReason.DontMeetRequiredPrimaryStats:
-                warningText.text = "You don't have required stat points to wield this weapon.";
+            case PopUpReason.DontMeetRequiredChar:
+                warningText.text = "You don't have required char to wield this weapon.";
                 break;
             case PopUpReason.BobbyPinFailed:
                 warningText.text = "Lockpick with Bobby Pin failed.";
@@ -2035,11 +2035,11 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         if (InputManager.TutorialEnabled)
         {
-            if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.BuildsPage)
+            if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.SkillsPage)
             {
                 arrowTransform.gameObject.SetActive(true);
             }
-            else if (TutorialInteraction.Instance.currentTutorialPhase >= TutorialPhase.BuildsPage)
+            else if (TutorialInteraction.Instance.currentTutorialPhase >= TutorialPhase.SkillsPage)
             {
                 arrowTransform.gameObject.SetActive(false);
             }

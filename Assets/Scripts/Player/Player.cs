@@ -90,6 +90,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public SpringJoint2D springJoint2D;
     [HideInInspector] public Projectile playersGrapple;
     [HideInInspector] public Projectile playerSkillProjectile;
+    [HideInInspector] public StatusEffectAnimators statusEffectAnimators;
 
     [HideInInspector] public int keyCount = 0;
     [HideInInspector] public int previousSetIndex = 1;
@@ -130,20 +131,18 @@ public class Player : MonoBehaviour
     [HideInInspector] public int currentMainHandMaxDamageValue;
     [HideInInspector] public int currentOffHandMinDamageValue;
     [HideInInspector] public int currentOffHandMaxDamageValue;
+    [HideInInspector] public int currentDamageVsLowHealthModifierValue;
 
-    // CRITICAL HIT AND WEAPON HANDLING VALUES
+    // CRITICAL HIT AND ATTACK RATING-- VALUES
     [HideInInspector] public float currentMainHandCriticalHitChance;
     [HideInInspector] public float currentOffHandCriticalHitChance;
     [HideInInspector] public float currentMainHandCriticalHitDamage;
     [HideInInspector] public float currentOffHandCriticalHitDamage;
     [HideInInspector] public float currentAttackRatingValue;
 
-    // AUXILLARY MODIFIERS
-    [HideInInspector] public float buffDurationModifier = 0f;
-
     // CURRENT BLOCK AND EVASIVENESS VALUES
     [HideInInspector] public float? currentBlockValue;
-    [HideInInspector] public float currentEvasivenessValue;
+    [HideInInspector] public float currentDodgeValue;
 
     // CURRENT TOTAL EXPERIENCE - LEVEL STATS
     [HideInInspector] public int currentLevel = 1;
@@ -154,7 +153,6 @@ public class Player : MonoBehaviour
     // --- EXTRA MODIFIERS ----
     // ARMOR
     [HideInInspector] public float additionalArmorModifier = 0f;
-    [HideInInspector] public float acidArmorDebuffModifier = 0f;
     [HideInInspector] public float additionalShieldArmorModifier = 0f;
     [HideInInspector] public float currentShieldArmor = 0f;
     [HideInInspector] public bool isShieldCalculated = false;
@@ -166,6 +164,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public float additionalAttackRangeModifier = 0f;
 
     // ARMOR PENETRATION
+    [HideInInspector] public float currentArmorPenetrationValue = 0f;
     [HideInInspector] public float additionalArmorPenetrationModifier = 0f;
 
     // ARMOR RATING
@@ -187,6 +186,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public float additionalCriticalRangedDamageModifier = 0f;
 
     // CRITICAL RESISTANCE
+    [HideInInspector] public float currentCriticalResistanceValue = 0f;
     [HideInInspector] public float additionalCriticalResistanceModifier = 0f;
 
     // DAMAGE
@@ -194,19 +194,29 @@ public class Player : MonoBehaviour
     [HideInInspector] public float additionalMagicDamageModifier = 0f;
 
     // DAMAGE REDUCTION
+    [HideInInspector] public float currentDamageReductionValue;
     [HideInInspector] public float additionalDamageReductionModifier = 0f;
 
     // DODGE
-    [HideInInspector] public float additionalEvasivenessModifier = 0f;
+    [HideInInspector] public float additionalDodgeRateModifier = 0f;
 
     // LIFE STEAL
-    [HideInInspector] public float additionalLifeStealModifier = 0f;
+    [HideInInspector] public int currentLifeStealValue = 0;
+    [HideInInspector] public int additionalLifeStealModifier = 0;
 
     // SKILL COOLDOWN
+    [HideInInspector] public float currentSkillCooldownReducer = 0f;
     [HideInInspector] public float additionalSkillCoolDownModifier = 0f;
+
+    // SKILL DURATION
+    [HideInInspector] public float currentSkillDurationModifier = 0f;
+    [HideInInspector] public float additionalSkillDurationModifier = 0f;
 
     // SPEED
     [HideInInspector] public float additionalSpeedModifier = 0f;
+
+    // STATUS RESISTANCE
+    [HideInInspector] public float additionalStatusResistanceModifier = 0f;
 
     // INNER PATH BOOLS
     // Attack
@@ -224,8 +234,6 @@ public class Player : MonoBehaviour
 
     // Defense
     [HideInInspector] public bool isDieHardActive = false;
-    [HideInInspector] public bool isBattleScarsActive = false;
-    [HideInInspector] public bool battleScarsArmorBoostActivated;
     [HideInInspector] public bool isSecondBreathActive = false;
     [HideInInspector] public bool secondBreathReset;
     [HideInInspector] public bool isFortifiedResolveActive = false;
@@ -251,7 +259,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public float additionalCastDurationModifier = 1f;
     [HideInInspector] public float additionalDropChanceModifier = 0f;
 
-    [HideInInspector] public float additionalStatusResistanceModifier = 0f;
+    [HideInInspector] public float currentStatusResistance = 0f;
     [HideInInspector] public float additinalNPCCostModifier = 0;
     [HideInInspector] public bool thirtyPercentDamageAbsorbIsActive = false;
     [HideInInspector] public float blindModifier = 0f;
@@ -360,7 +368,6 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool isConductiveTouchActive;
     [HideInInspector] public float nymaraSkillUsageTimer = 0f;
 
-
     [HideInInspector] public bool shadowCloakEquipped;
 
     // STATUS EFFECT DURATION
@@ -368,7 +375,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public float bleedDuration = 2;
     [HideInInspector] public float rootDuration = 2;
     [HideInInspector] public float stunDuration = 2;
-    [HideInInspector] public float curseDuration = 2;
+    [HideInInspector] public float curseDuration = 4;
     [HideInInspector] public float fearDuration = 2;
     [HideInInspector] public float revealDuration = 2;
     [HideInInspector] public float staticDuration = 2;
@@ -390,11 +397,25 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool isBlind;
     [HideInInspector] public bool isSlowed;
 
+    // STATUS INFLICT TYPES
+    [HideInInspector] public float additionalPoisonChance = 0f;
+    [HideInInspector] public float additionalBleedChance = 0f;
+    [HideInInspector] public float additionalRootChance = 0f;
+    [HideInInspector] public float additionalStunChance = 0f;
+    [HideInInspector] public float additionalCurseChance = 0f;
+    [HideInInspector] public float additionalFearChance = 0f;
+    [HideInInspector] public float additionalRevealChance = 0f;
+    [HideInInspector] public float additionalParalyzeChance = 0f;
+    [HideInInspector] public float additionalBurnChance = 0f;
+    [HideInInspector] public float additionalFreezeChance = 0f;
+    [HideInInspector] public float additionalBlindChance = 0f;
+    [HideInInspector] public float additionalSlowChance = 0f;
+
     float testAdditionArmor = 0.1f;
 
-    // Track which instances currently contribute to the player
-    Weapon _appliedMain;
-    Weapon _appliedOff;
+    // Tracks only the sum coming from equipped weapons so we can remove it cleanly on change
+    private float _weaponAttackCooldownContribution = 0f;
+    private float _passiveAttackCooldownContribution = 0f;
 
     public LayerMask layerMask;
     [HideInInspector] public ContactFilter2D filter = new ContactFilter2D();
@@ -436,6 +457,7 @@ public class Player : MonoBehaviour
         mainHandWeaponAnchorTransform = transform.GetChild(0);
         offHandWeaponAnchorTransform = transform.GetChild(1);
         springJoint2D = GetComponent<SpringJoint2D>();
+        statusEffectAnimators = GetComponentInChildren<StatusEffectAnimators>();
     }
     
     /// <summary>
@@ -571,7 +593,12 @@ public class Player : MonoBehaviour
                 dualWieldOnStart = true;
             }
 
-            AddNextWeaponToPlayer(playerDetails.startingWeaponList[i], pickingUp: false, onStart: true, onlySwitch: false, dualWieldOnStart: dualWieldOnStart,
+            Weapon startedWeapon = new Weapon(playerDetails.startingWeaponList[i].rarity)
+            {
+                weaponDetails = playerDetails.startingWeaponList[i]
+            };
+
+            AddNextWeaponToPlayer(ref startedWeapon, pickingUp: false, onStart: true, onlySwitch: false, dualWieldOnStart: dualWieldOnStart,
                 equipOffHand: equipOffHand);
         }
     }
@@ -589,106 +616,55 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void UpdateWieldedWeapons(Weapon weaponInstance, bool pickUp, bool onStart)
-    {
-        // Snapshot what's currently applied (before the equip)
-        Weapon prevMain = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon prevOff = activeWeapon.GetCurrentOffHandWeapon();
-
-        // Let your existing SO-based equip logic run
-        UpdateWieldedWeapons(weaponInstance.weaponDetails, pickUp, onStart, weaponInstance);
-
-        // Read the new equipped references
-        Weapon newMain = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon newOff = activeWeapon.GetCurrentOffHandWeapon();
-
-        //// Copy the rolls to whichever slot received this weapon (if your ActiveWeapon created a new object)
-        //void CopyRolls(Weapon src, Weapon dst)
-        //{
-        //    if (src == null || dst == null) return;
-
-        //    dst.baseUniqueRolled = src.baseUniqueRolled;
-        //    dst.baseTypeRolled = src.baseTypeRolled;
-        //    dst.enchantedBoostType = src.enchantedBoostType;
-        //    dst.mythicBoostType = src.mythicBoostType;
-        //}
-
-        //// Detect slot changes and update modifiers symmetrically
-        //if(!ReferenceEquals(prevMain, newMain))
-        //{
-        //    if (_appliedMain != null) { RemoveWeaponBoosts(_appliedMain); _appliedMain = null; }
-
-        //    if(newMain != null)
-        //    {
-        //        // if this equip was meant for main hand, ensure its rolls are on the newMain object
-        //        if (!ReferenceEquals(weaponInstance, newMain) && weaponInstance.weaponDetails == newMain.weaponDetails)
-        //            CopyRolls(weaponInstance, newMain);
-
-        //        ApplyWeaponBoosts(newMain);
-        //        _appliedMain = newMain;
-        //    }
-        //}
-
-        //if(!ReferenceEquals(prevOff, newOff))
-        //{
-        //    if(_appliedOff != null) { RemoveWeaponBoosts(_appliedOff); _appliedOff = null; }
-
-        //    if(newOff != null)
-        //    {
-        //        if(!ReferenceEquals(weaponInstance, newOff) && weaponInstance.weaponDetails == newOff.weaponDetails)
-        //            CopyRolls(weaponInstance, newOff);
-
-        //        ApplyWeaponBoosts(newOff);
-        //        _appliedOff = newOff;
-        //    }
-        //}
-    }
-
     /// <summary>
     /// Update weapons list if a new one acquired
     /// </summary>
-    public void UpdateWieldedWeapons(WeaponDetailsSO weaponDetails, bool pickingUp, bool onStart, Weapon weaponInstance)
+    public void UpdateWieldedWeapons(ref Weapon weapon, bool pickingUp, bool onStart, WeaponDetailsSO weaponDetails)
     {
         Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
         Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
 
         if (mainHandWeapon == null)
         {
-            AddNextWeaponToPlayer(weaponDetails, pickingUp, onStart, false, false, false, weaponInstance);
+            AddNextWeaponToPlayer(ref weapon, pickingUp, onStart, false, false, false);
 
             // Set player starting health
             UpdatePlayerHealth(0, false, false);
             UpdatePlayerMana(0, false, false);
-            UpdateArmorValues();
+
             UpdateDamageValues();
             UpdateAttackRatingAndCriticalValues();
-            UpdateBlockAndEvasivenessValues();
-            UpdateSpeedValue();
+            UpdateBlockAndDodgeValues();
+            UpdateSpeedAndAttackCooldownValues();
+            UpdateResistanceValues();
+            UpdateSecondaryDamageValues();
 
             StaticEventHandler.CallStatsChangedOnTheBookEvent();
         }
         // If inventory is full replace weapon
         else if (InventoryManager.Instance.IsInventoryFull())
         {
-            AddNextWeaponToPlayer(weaponDetails, pickingUp, onStart, false, false, false, weaponInstance);
+            AddNextWeaponToPlayer(ref weapon, pickingUp, onStart, false, false, false);
 
             // Set player starting health
             UpdatePlayerHealth(0, false, false);
             UpdatePlayerMana(0, false, false);
-            UpdateArmorValues();
             UpdateDamageValues();
             UpdateAttackRatingAndCriticalValues();
-            UpdateBlockAndEvasivenessValues();
-            UpdateSpeedValue();
+            UpdateBlockAndDodgeValues();
+            UpdateSpeedAndAttackCooldownValues();
+            UpdateResistanceValues();
+            UpdateSecondaryDamageValues();
 
             StaticEventHandler.CallStatsChangedOnTheBookEvent();
         }
         // If weapon is one-handed off hand weapon
-        else if (weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] == null && weaponDetails.wieldType == WieldType.OneHanded && weaponDetails.weaponClass != WeaponClass.Spear
-            && weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] != null && weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType == WieldType.OneHanded &&
+        else if (weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] == null && weapon.weaponDetails.wieldType == WieldType.OneHanded && 
+            weapon.weaponDetails.weaponClass != WeaponClass.Spear && weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] != null && 
+            weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType == WieldType.OneHanded && 
             weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0].weaponDetails.weaponClass != WeaponClass.Spear)
         {
-            AddNextWeaponToPlayer(weaponDetails, pickingUp, onStart, false, false, false, weaponInstance);
+            AddNextWeaponToPlayer(ref weapon, pickingUp, onStart, false, false, true);
 
             // Set player starting health
             UpdatePlayerHealth(0, false, false);
@@ -696,20 +672,18 @@ public class Player : MonoBehaviour
             UpdateArmorValues();
             UpdateDamageValues();
             UpdateAttackRatingAndCriticalValues();
-            UpdateBlockAndEvasivenessValues();
-            UpdateSpeedValue();
+            UpdateBlockAndDodgeValues();
+            UpdateSpeedAndAttackCooldownValues();
+            UpdateResistanceValues();
+            UpdateSecondaryDamageValues();
 
             StaticEventHandler.CallStatsChangedOnTheBookEvent();
         }
         else
         {
             // Add it to inventory slot
-            Weapon weapon = new Weapon(weaponDetails.rarity)
-            {
-                weaponDetails = weaponDetails,
-                weaponRemainingProjectile = weaponDetails.weaponProjectileCapacity,
-                itemSlotStatus = ItemSlotStatus.Inventory
-            };
+            weapon.weaponDetails = weaponDetails;
+            weapon.itemSlotStatus = ItemSlotStatus.Inventory;
 
             int retrievedInventoryIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(weapon);
 
@@ -729,8 +703,11 @@ public class Player : MonoBehaviour
         UpdateArmorValues(onStart: true);
         UpdateDamageValues();
         UpdateAttackRatingAndCriticalValues();
-        UpdateBlockAndEvasivenessValues();
-        UpdateSpeedValue();
+        UpdateBlockAndDodgeValues();
+        UpdateSpeedAndAttackCooldownValues();
+        UpdateResistanceValues();
+        UpdateSecondaryDamageValues();
+        UpdateSkillAndStatusModifierValues();
     }
 
     /// <summary>
@@ -759,37 +736,47 @@ public class Player : MonoBehaviour
 
     public void UpdateArmorValues(bool onStart = false)
     {
-        Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
-        float weaponPassiveIncrease = 0f;
+        // Base armor from weapons (non-shield offhand contributes normally
+        float mainArmor = main?.armorIncrease ?? 0f;
 
-        if (mainHandWeapon != null) weaponPassiveIncrease = mainHandWeapon.armorIncrease;
-        else weaponPassiveIncrease = 0;
+        float offHandNonShieldArmor = 0f;
+        float shieldArmor = 0f;
 
-        if (offHandWeapon != null) weaponPassiveIncrease += offHandWeapon.armorIncrease;
-        else weaponPassiveIncrease += 0;
-
-
-        if (mainHandWeapon != null && offHandWeapon != null && offHandWeapon.weaponDetails.weaponClass == WeaponClass.Shield)
+        if (off != null)
         {
-            if (!isShieldCalculated)
+            if (off.weaponDetails.weaponClass == WeaponClass.Shield)
             {
-                isShieldCalculated = true;
-                currentShieldArmor = offHandWeapon.armorIncrease * (1 + additionalShieldArmorModifier);
-                currentArmorValue += currentShieldArmor;
+                // Shield base armor, scaled by shield-specific modifier
+                shieldArmor = off.armorIncrease * (1f + additionalShieldArmorModifier);
             }
-        }
-        else
-        {
-            if (!isShieldCalculated)
+            else
             {
-                isShieldCalculated = true;
-                currentArmorValue -= currentShieldArmor;
+                offHandNonShieldArmor = off.armorIncrease;
             }
         }
 
-        currentArmorValue = (float)Math.Round(currentArmorValue + additionalArmorModifier + acidArmorDebuffModifier, 2);
+        // Armor from passives (sum each roll that is ArmorIncrease)
+        float passiveArmor = 0f;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+                if (HasBoostType(item, BoostType.ArmorIncrease, i)) passiveArmor += item.armorIncrease;
+        }
+
+        // Keep this in sync for any UI/other logic that reads it
+        currentShieldArmor = shieldArmor;
+
+        // Global modifiers
+        float total = mainArmor + offHandNonShieldArmor + passiveArmor + currentShieldArmor + additionalShieldArmorModifier;
+
+        currentArmorValue = (float)Math.Round(total, 2);
 
         if (playerDetails.playerCharacterIndex == Character.Nyxa && onStart) currentArmorValue = (float)Math.Round(currentArmorValue + testAdditionArmor, 2);
     }
@@ -801,6 +788,12 @@ public class Player : MonoBehaviour
 
         // OFF-HAND
         (currentOffHandMinDamageValue, currentOffHandMaxDamageValue) = ComputeEquippedDamage(activeWeapon.GetCurrentOffHandWeapon(), isOffHand: true);
+
+        // Armor Penetration
+        UpdateArmorPenetrationValue();
+
+        // Attack Range
+        UpdateAttackRange();
     }
 
     /// <summary>
@@ -820,90 +813,358 @@ public class Player : MonoBehaviour
         // Rolled base damage from the instance (NOT from ScriptableObject)
         int physMin = weaponDetails.physicalDamageMin + Mathf.Max(0, weapon.physicalAttackDamageIncrease);
         int physMax = weaponDetails.physicalDamageMax + Mathf.Max(0, weapon.physicalAttackDamageIncrease);
+
         int magMin = weaponDetails.magicDamageMin + Mathf.Max(0, weapon.magicAttackDamageIncrease);
         int magMax = weaponDetails.magicDamageMax + Mathf.Max(0, weapon.magicAttackDamageIncrease);
 
-        // ----- SCALING -----
-        // Physical scaling
+        // --- add PASSIVE FLATS (per equipped passive item) ---
+        // These are additive, not multiplicative.
+        var (passivePhysFlat, passiveMagFlat) = GetPassiveFlatDamageAdds();
+        physMin += passivePhysFlat; physMax += passivePhysFlat;
+        magMin += passiveMagFlat; magMax += passiveMagFlat;
+
+        // --- attribute scaling (unchanged) ---
         int physAdd = 0;
         if (physMin > 0 || physMax > 0)
         {
             if (weaponDetails.isMeleeWeapon)
             {
-                // Dagger/Claw scale with DEX, other melee scale with STR
-                if (weaponDetails.weaponClass == WeaponClass.Dagger) physAdd = Mathf.RoundToInt(currentDexterityValue * 0.7f);
-                else physAdd = Mathf.RoundToInt(currentStrengthValue * 1.5f);
+                if (weaponDetails.weaponClass == WeaponClass.Dagger || weaponDetails.weaponClass == WeaponClass.Claw)
+                    physAdd = Mathf.RoundToInt(currentDexterityValue * 0.7f);
+                else
+                    physAdd = Mathf.RoundToInt(currentStrengthValue * 1.5f);
             }
             else
             {
-                // Ranged physical (Bow/Crossbow) scale with DEX
                 physAdd = Mathf.RoundToInt(currentDexterityValue * 0.7f);
             }
         }
 
-        // Magic scaling
         int magAdd = 0;
         if (magMin > 0 || magMax > 0)
         {
-            // Keep legacy feel: melee-magic scales a bit harder than ranged-magic
             float intCoef = weaponDetails.isMeleeWeapon ? 2f : 1.5f;
             magAdd = Mathf.RoundToInt(currentIntelligenceValue * intCoef);
         }
 
-        // Combine, then apply global modifier(s)
-        int totalMin = physMin + magMin + physAdd + magAdd;
-        int totalMax = physMax + magMax + physAdd + magAdd;
+        int totalMin = physMin + physAdd + magMin + magAdd;
+        int totalMax = physMax + physAdd + magMax + magAdd;
 
-        // Historical behavior applied the same modifier broadly; preserve that
+        // global modifier you already had (physical); keep or split if you have magic too
         totalMin = Mathf.RoundToInt(totalMin * (1f + additionalPhysicalDamageModifer));
         totalMax = Mathf.RoundToInt(totalMax * (1f + additionalPhysicalDamageModifer));
 
-        // Off-hand penalty
         if (isOffHand)
         {
-            totalMin = Mathf.RoundToInt(totalMin * (1f + additionalPhysicalDamageModifer) * 0.6f);
-            totalMax = Mathf.RoundToInt(totalMax * (1f + additionalPhysicalDamageModifer) * 0.6f);
+            totalMin = Mathf.RoundToInt(totalMin * 0.6f);
+            totalMax = Mathf.RoundToInt(totalMax * 0.6f);
         }
 
+        totalMin = Mathf.Max(0, totalMin);
+        totalMax = Mathf.Max(totalMin, totalMax);
         return (totalMin, totalMax);
+    }
+
+    private (int physFlat, int magFlat) GetPassiveFlatDamageAdds()
+    {
+        int phys = 0, mag = 0;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            // Physical
+            if (HasBoostType(item, BoostType.AttackDamage, 1) ||
+                HasBoostType(item, BoostType.AttackDamage, 2) ||
+                HasBoostType(item, BoostType.AttackDamage, 3) ||
+                HasBoostType(item, BoostType.AttackDamage, 4))
+            {
+                phys += Mathf.Max(0, item.physicalAttackDamageIncrease);
+            }
+
+            // Magic
+            if (HasBoostType(item, BoostType.MagicDamage, 1) ||
+                HasBoostType(item, BoostType.MagicDamage, 2) ||
+                HasBoostType(item, BoostType.MagicDamage, 3) ||
+                HasBoostType(item, BoostType.MagicDamage, 4))
+            {
+                mag += Mathf.Max(0, item.magicAttackDamageIncrease);
+            }
+        }
+
+        return (phys, mag);
+    }
+
+    private void UpdateArmorPenetrationValue()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float armorPenIncrease = 0f;
+        if (main != null) armorPenIncrease += main.armorPenetration;
+        if (off != null) armorPenIncrease += off.armorPenetration;
+
+        float prePassive = additionalArmorPenetrationModifier + armorPenIncrease;
+
+        float withPassive = 0f;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.ArmorPenetration, i)) withPassive += item.armorPenetration;
+            }
+        }
+
+        currentArmorPenetrationValue = Mathf.Min((float)Math.Round(prePassive + withPassive, 2), 0.35f);
+    }
+
+    private void UpdateAttackRange()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float attackRangeIncrease = 0f;
+        if (main != null) attackRangeIncrease += main.attackRange;
+        if (off != null) attackRangeIncrease += off.attackRange;
+
+        float prePassive = attackRangeIncrease;
+
+        float withPassive = 0f;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.AttackRange, i)) withPassive += item.attackRange;
+            }
+        }
+
+        additionalAttackRangeModifier = Mathf.Min((float)Math.Round(prePassive + withPassive, 2), 0.35f);
     }
 
     public void UpdateAttackRatingAndCriticalValues()
     {
-        // Update attack rating value
         UpdateCurrentAttackRatingValues();
-
-        // Update equipped weapon critical hit chances
         UpdateCurrentCriticalHitChance();
-
-        // Update equipped weapon critical hit damage
         UpdateCurrentCriticalHitDamage();
     }
 
-    public void UpdateBlockAndEvasivenessValues()
+    public void UpdateBlockAndDodgeValues()
     {
-        // Update block value
         UpdateBlockValue();
+        UpdateDodgeValue();
+    }
 
-        // Update evasiveness value
-        UpdateEvasivenessValue();
+    public void UpdateSpeedAndAttackCooldownValues()
+    {
+        UpdateSpeedValue();
+        UpdateAttackCooldown();
+    }
+
+    public void UpdateResistanceValues()
+    {
+        UpdateArmorValues();
+        UpdateMagicResistance();
+        UpdateStatusResistance();
+        UpdateDamageReduction();
+        UpdateCriticalResistance();
+    }
+
+    private void UpdateMagicResistance()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float magicResistanceIncrease = 0f;
+
+        if (main != null) magicResistanceIncrease = main.magicResistance;
+        else magicResistanceIncrease = 0f;
+
+        if (off != null) magicResistanceIncrease += off.magicResistance;
+        else magicResistanceIncrease += 0f;
+
+        float withPassive = 0f;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.MagicResistance, i)) withPassive += item.magicResistanceModifier;
+            }
+        }
+
+        currentMagicResistanceValue = Mathf.Min((float)Math.Round(currentWillpowerValue * 0.01f + magicResistanceIncrease + withPassive, 2), 0.5f);
+    }
+
+    private void UpdateStatusResistance()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float statusResistanceIncrease = 0f;
+
+        if (main != null) statusResistanceIncrease = main.statusResistanceModifier;
+        else statusResistanceIncrease = 0f;
+
+        if (off != null) statusResistanceIncrease += off.statusResistanceModifier;
+        else statusResistanceIncrease += 0f;
+
+        float withPassive = 0f;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.StatusResistance, i)) withPassive += item.statusResistanceModifier;
+            }
+        }
+
+        currentStatusResistance = Mathf.Min((float)Math.Round(currentResolveValue * 0.01f + statusResistanceIncrease + withPassive + additionalStatusResistanceModifier, 2), 0.5f);
+    }
+
+    private void UpdateDamageReduction()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float damageReductionIncrease = 0f;
+
+        if (main != null) damageReductionIncrease = main.damageReductionRate;
+        else damageReductionIncrease = 0f;
+
+        if (off != null) damageReductionIncrease += off.damageReductionRate;
+        else damageReductionIncrease += 0f;
+
+        float withPassive = 0f;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.DamageReduction, i)) withPassive += item.damageReductionRate;
+            }
+        }
+
+        currentDamageReductionValue = Mathf.Min((float)Math.Round(currentStrengthValue * 0.005f + damageReductionIncrease + withPassive + 
+            additionalDamageReductionModifier, 2), 0.35f);
+    }
+
+    public void UpdateCriticalResistance()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float criticalResistanceIncrease = 0f;
+
+        if (main != null) criticalResistanceIncrease = main.criticalResistanceModifier;
+        else criticalResistanceIncrease = 0f;
+
+        if (off != null) criticalResistanceIncrease += off.criticalResistanceModifier;
+        else criticalResistanceIncrease += 0f;
+
+        float withPassive = 0f;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.CritResistance, i)) withPassive += item.criticalResistanceModifier;
+            }
+        }
+
+        currentCriticalResistanceValue = Mathf.Min((float)Math.Round(currentResolveValue * 0.01f + criticalResistanceIncrease + withPassive + 
+            additionalCriticalResistanceModifier, 2), 0.5f);
     }
 
     public void UpdateSpeedValue()
     {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float weaponSpeedIncrease = 0f;
+
+        if (main != null) weaponSpeedIncrease = main.speedIncreaseModifier;
+        else weaponSpeedIncrease = 0f;
+
+        if (off != null) weaponSpeedIncrease += off.speedIncreaseModifier;
+        else weaponSpeedIncrease += 0f;
+
+        float withPassive = 0f;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.MoveSpeed, i)) withPassive += item.speedIncreaseModifier;
+            }
+        }
+
+        movementByForce.moveSpeed = movementByForce.movementDetails.baseMaxMoveSpeed + currentAgilityValue * 0.25f +
+            additionalSpeedModifier + weaponSpeedIncrease + withPassive;
+    }
+
+    public void UpdateAttackCooldown()
+    {
         Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
         Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
 
-        float weaponPassiveIncrease = 0f;
+        // Recompute weapon contribution (seconds; >= 0)
+        float newWeaponContribution = 0f;
 
-        if (mainHandWeapon != null) weaponPassiveIncrease = mainHandWeapon.speedIncreaseModifier;
-        else weaponPassiveIncrease = 0f;
+        if (mainHandWeapon != null) newWeaponContribution += Mathf.Max(0f, mainHandWeapon.attackCooldownModifier);
 
-        if (offHandWeapon != null) weaponPassiveIncrease += offHandWeapon.speedIncreaseModifier;
-        else weaponPassiveIncrease += 0f;
+        // Ignore shields (or any off-hand that shouldn't affect cooldown)
+        if (offHandWeapon != null && offHandWeapon.weaponDetails.weaponClass != WeaponClass.Shield)
+            newWeaponContribution += Mathf.Max(0f, offHandWeapon.attackCooldownModifier);
 
-        movementByForce.moveSpeed = movementByForce.movementDetails.baseMaxMoveSpeed + currentAgilityValue * 0.25f + 
-            additionalSpeedModifier + weaponPassiveIncrease;
+        // --- 2) Recompute PASSIVE contribution (seconds; >= 0, summed per matching slot) ---
+        float newPassiveContribution = 0f;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            // Each matching slot adds item.attackCooldown (your roll is additive, not %)
+            if (HasBoostType(item, BoostType.AttackCooldown, 1)) newPassiveContribution += Mathf.Max(0f, item.attackCooldown);
+            if (HasBoostType(item, BoostType.AttackCooldown, 2)) newPassiveContribution += Mathf.Max(0f, item.attackCooldown);
+            if (HasBoostType(item, BoostType.AttackCooldown, 3)) newPassiveContribution += Mathf.Max(0f, item.attackCooldown);
+            if (HasBoostType(item, BoostType.AttackCooldown, 4)) newPassiveContribution += Mathf.Max(0f, item.attackCooldown);
+        }
+
+        // --- 3) Apply delta to the global modifier: remove old, add new ---
+        additionalAttackCoolDownModifier -= _weaponAttackCooldownContribution;
+        additionalAttackCoolDownModifier -= _passiveAttackCooldownContribution;
+
+        additionalAttackCoolDownModifier += newWeaponContribution;
+        additionalAttackCoolDownModifier += newPassiveContribution;
+
+        // Cache for next time
+        _weaponAttackCooldownContribution = newWeaponContribution;
+        _passiveAttackCooldownContribution = newPassiveContribution;
     }
 
     public PassiveItem AddPassiveItemToPlayer(ref PassiveItem passiveItem, DropItem dropItem = null)
@@ -925,76 +1186,26 @@ public class Player : MonoBehaviour
         return passiveItem;
     }
 
-    // Public helpers for other systems (Drop/Swap/Set change)
-    public void ApplyWeaponBoosts(Weapon w) => ModifyWeaponBoosts(w, +1);
-    public void RemoveWeaponBoosts(Weapon w) => ModifyWeaponBoosts(w, -1);
-
-    // Core modifier applier (sign = +1 apply, -1 remove)
-    private void ModifyWeaponBoosts(Weapon w, int sign)
-    {
-        if (w == null) return;
-
-        // Map each BoostType to your player fields — same numbers you use elsewhere
-        void Add(ref float field, float amount) => field += sign * amount;
-
-        foreach (var boost in w.GetAllBoosts())
-        {
-            switch (boost)
-            {
-                case BoostType.AttackCooldown: Add(ref additionalAttackCoolDownModifier, -0.05f); break;
-                case BoostType.AttackDamage: Add(ref additionalPhysicalDamageModifer, +0.10f); break;
-                case BoostType.MagicDamage: Add(ref additionalMagicDamageModifier, +0.10f); break;
-                case BoostType.AttackRating: Add(ref additionalAttackRatingModifier, +0.10f); break;
-                case BoostType.CritChance: Add(ref additionalCriticalHitChanceModifier, +0.05f); break;
-                case BoostType.CritDamage: Add(ref additionalCriticalDamageModifier, +0.30f); break;
-                case BoostType.LifeSteal: Add(ref additionalLifeStealModifier, +0.05f); break;
-                case BoostType.BlockChance: Add(ref additionalBlockModifier, +0.08f); break;
-                case BoostType.DodgeChance: Add(ref additionalEvasivenessModifier, +0.08f); break;
-                case BoostType.ArmorIncrease: Add(ref additionalArmorModifier, +0.10f); break;
-                case BoostType.MagicResistance: Add(ref currentMagicResistanceValue, +0.10f); break;
-                case BoostType.MoveSpeed: Add(ref additionalSpeedModifier, +0.05f); break;
-                case BoostType.DamageReduction: Add(ref additionalDamageReductionModifier, +0.05f); break; 
-                case BoostType.ArmorPenetration: Add(ref additionalArmorPenetrationModifier, +0.10f); break;
-                case BoostType.AttackRange: Add(ref additionalAttackRangeModifier, + 0.10f); break;
-
-                // If you later wire these:
-                case BoostType.HealthIncrease:     /* increase max HP via your recalculation */ break;
-                case BoostType.ManaIncrease:       /* increase max mana via your recalculation */ break;
-                case BoostType.StatusResistance: Add(ref additionalStatusResistanceModifier, +0.10f); break;
-                case BoostType.AttackVsLowHealthEnemies:
-                case BoostType.CritResistance:
-                default: break;
-            }
-        }
-
-        // If you have a derived-stats recompute, trigger it here.
-        // RecalculateStats();
-    }
-
     /// <summary>
     /// Add a weapon to the player weapon list
     /// </summary>
-    public void AddNextWeaponToPlayer(WeaponDetailsSO weaponDetails, bool pickingUp, bool onStart, bool onlySwitch, bool dualWieldOnStart = false, 
-        bool equipOffHand = false, Weapon weaponInstance = null) // <- pass the real instance for pickups/switches
+    public void AddNextWeaponToPlayer(ref Weapon weapon, bool pickingUp, bool onStart, bool onlySwitch, bool dualWieldOnStart = false, 
+        bool equipOffHand = false) // <- pass the real instance for pickups/switches
     {
-        // Guardrails: only create new instances on start.
-        Weapon weapon = null;
 
         if (onStart)
         {
             // Starting gear: create a fresh instance using SO.rarity
-            weapon = CreateStartingWeaponInstance(weaponDetails, equipOffHand ? ItemSlotStatus.OffHand : ItemSlotStatus.MainHand);
+            CreateStartingWeaponInstance(ref weapon, equipOffHand ? ItemSlotStatus.OffHand : ItemSlotStatus.MainHand);
         }
         else
         {
             // Non-start flows MUST provide the real rolled instance to prevent duplication.
-            if (weaponInstance == null)
+            if (weapon == null)
             {
                 Debug.LogError("AddNextWeaponToPlayer: Non-start flow requires a Weapon instance (weaponInstance != null) to avoid duplicates.");
                 return;
             }
-
-            weapon = weaponInstance;
 
             // Ensure slot is correct for equipOffHand requests
             if (equipOffHand) weapon.itemSlotStatus = ItemSlotStatus.OffHand;
@@ -1151,36 +1362,30 @@ public class Player : MonoBehaviour
         }
     }
 
-    private Weapon CreateStartingWeaponInstance(WeaponDetailsSO details, ItemSlotStatus slot)
+    private Weapon CreateStartingWeaponInstance(ref Weapon weapon, ItemSlotStatus slot)
     {
-        // Shields: keep the instance minimal; other runtime stats are irrelevant
-        if (details.weaponClass == WeaponClass.Shield)
+        // Create with so rarity only for start gear
+        if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
         {
-            return new Weapon(details.rarity)
-            {
-                weaponDetails = details,
-                itemSlotStatus = slot
-            };
+            // Shields: keep the instance minimal; other runtime stats are irrelevant
+            weapon.baseUniqueRolled = weapon.weaponDetails.baseUniqueModifier;
+            weapon.baseTypeRolled = weapon.weaponDetails.baseTypeModifier;
+
+            WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.baseUniqueRolled, weapon.weaponDetails);
+            WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.baseTypeRolled, weapon.weaponDetails);
+
+            return weapon;
         }
 
-        // Create with so rarity only for start gear
-        Weapon weapon = new Weapon(details.rarity)
-        {
-            weaponDetails = details, 
-            weaponRemainingProjectile = details.weaponProjectileCapacity, 
-            itemSlotStatus = slot,
+        weapon.itemSlotStatus = slot;
+        weapon.attackRatingIncrease = weapon.weaponDetails.weaponAttackRating;
+        weapon.criticalHitChanceIncrease = weapon.weaponDetails.criticalHitChance;
+        weapon.criticalHitDamageIncrease = weapon.weaponDetails.criticalHitDamageMultiplier;
+        weapon.baseUniqueRolled = weapon.weaponDetails.baseUniqueModifier;
+        weapon.baseTypeRolled = weapon.weaponDetails.baseTypeModifier;
 
-            attackCooldown = details.weaponCooldownDuration,
-            attackRatingIncrease = details.weaponAttackRating,
-            criticalHitChanceIncrease = details.criticalHitChance,
-            criticalHitDamageIncrease = details.criticalHitDamageMultiplier
-        };
-
-        // Split base damage into physical/magic by forge rate, rounded safely
-        int physMin = details.isMeleeWeapon ? details.physicalDamageMin : details.weaponCurrentProjectile.projectilePhyDamageMin;
-        int physMax = details.isMeleeWeapon ? details.physicalDamageMax : details.weaponCurrentProjectile.projectilePhyDamageMax;
-        int magicMin = details.isMeleeWeapon ? details.magicDamageMin : details.weaponCurrentProjectile.projectileMagicDamageMin;
-        int magicMax = details.isMeleeWeapon ? details.magicDamageMax : details.weaponCurrentProjectile.projectileMagicDamageMax;
+        WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.baseUniqueRolled, weapon.weaponDetails);
+        WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.baseTypeRolled, weapon.weaponDetails);
 
         return weapon;
     }
@@ -1217,201 +1422,593 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void UpdateCurrentAttackRatingValues()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float attackRatingModifier = 0f;
+
+        if (off != null)
+        {
+            if (main != null)
+            {
+                attackRatingModifier = ((main.weaponDetails.weaponAttackRating + off.weaponDetails.weaponAttackRating +
+                      main.attackRatingIncrease + off.attackRatingIncrease) / 2f + additionalAttackRatingModifier) * 0.7f;
+            }
+            else attackRatingModifier = 0f;
+        }
+        else
+        {
+            if (main != null) attackRatingModifier = main.weaponDetails.weaponAttackRating + additionalAttackRatingModifier + main.attackRatingIncrease;
+            else attackRatingModifier = 0f;
+        }
+
+        float baseFromStats = 0.2f + ((currentDexterityValue / 3f + currentFerocityValue / 3f + currentStrengthValue / 4f) / 100f);
+        float prePassive = baseFromStats + attackRatingModifier - blindModifier;
+
+        float withPassive = 0f;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.AttackRating, i)) withPassive += item.attackRating;
+            }
+        }
+
+        currentAttackRatingValue = (float)Math.Round(prePassive + withPassive, 2);
+    }
+
     public void UpdateCurrentCriticalHitChance()
     {
-        Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
-        if (mainHandWeapon != null)
-        {
-            if (mainHandWeapon.weaponDetails.isMeleeWeapon)
-            {
-                currentMainHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) +
-                    mainHandWeapon.weaponDetails.criticalHitChance + additionalCriticalHitChanceModifier + mainHandWeapon.criticalHitChanceIncrease;
-            }
-            else
-            {
-                currentMainHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) +
-                    mainHandWeapon.weaponDetails.weaponCurrentProjectile.criticalHitChance + additionalCriticalHitChanceModifier + mainHandWeapon.criticalHitChanceIncrease;
-            }
-        }
-        else
-        {
-            currentMainHandCriticalHitChance = 0;
-        }
+        float dexCrit = (float)Math.Round(currentDexterityValue * 0.75f / 100f, 2);
 
-        if (offHandWeapon != null)
+        // MAIN HAND
+        if(main != null)
         {
-            if (offHandWeapon.weaponDetails.isMeleeWeapon)
-            {
-                currentOffHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100 , 2) +
-                    offHandWeapon.weaponDetails.criticalHitChance + additionalCriticalHitChanceModifier + offHandWeapon.criticalHitChanceIncrease;
-            }
-            else if (offHandWeapon.weaponDetails.isShield)
-            {
-                currentOffHandCriticalHitChance = 0;
-            }
-            else
-            {
-                currentOffHandCriticalHitChance = (float)Math.Round((double)currentDexterityValue * 0.75f / 100, 2) +
-                    offHandWeapon.weaponDetails.weaponCurrentProjectile.criticalHitChance + additionalCriticalHitChanceModifier + offHandWeapon.criticalHitChanceIncrease;
-            }
-        }
-        else
-        {
-            currentOffHandCriticalHitChance = 0;
-        }
+            float baseFromWeapon = main.weaponDetails.isMeleeWeapon ? main.weaponDetails.criticalHitChance : main.weaponDetails.weaponCurrentProjectile.criticalHitChance;
+            float prePassive = dexCrit + baseFromWeapon + additionalCriticalHitChanceModifier + main.criticalHitChanceIncrease;
 
-        currentMainHandCriticalHitChance = Mathf.Clamp(currentMainHandCriticalHitChance, 0f, 0.5f);
-        currentOffHandCriticalHitChance = Mathf.Clamp(currentOffHandCriticalHitChance, 0f, 0.5f);
+            float withPassive = 0f;
 
-        // SHADOW CLOAK
-        if (shadowCloakEquipped)
-        {
-            if (mainHandWeapon != null && offHandWeapon != null)
+            foreach (var kvp in equippedPassiveItems)
             {
-                if (equippedPassiveItems.TryGetValue(PassiveItemSlotName.Back, out PassiveItem item) && item != null)
+                var item = kvp.Value;
+                if (item == null || item.passiveItemDetails == null) continue;
+
+                for (int i = 1; i <= 4; i++)
                 {
-                    if (item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
+                    if (HasBoostType(item, BoostType.CritChance, i)) withPassive += item.criticalHitChance;
+                }
+            }
+
+            currentMainHandCriticalHitChance = Mathf.Min((float)Math.Round(prePassive + withPassive, 2), 0.5f);
+
+        }
+        else currentMainHandCriticalHitChance = 0f;
+
+        // OFF HAND 
+        if (off != null)
+        {
+            if(off.weaponDetails.isShield) currentOffHandCriticalHitChance = 0f; // shields don’t crit
+            else
+            {
+                float baseFromWeapon = off.weaponDetails.isMeleeWeapon ? off.weaponDetails.criticalHitChance : off.weaponDetails.weaponCurrentProjectile.criticalHitChance;
+                float prePassive = dexCrit + baseFromWeapon + additionalCriticalHitChanceModifier + off.criticalHitChanceIncrease;
+
+                float withPassive = 0f;
+
+                foreach (var kvp in equippedPassiveItems)
+                {
+                    var item = kvp.Value;
+                    if (item == null || item.passiveItemDetails == null) continue;
+
+                    for (int i = 1; i <= 4; i++)
                     {
-                        if ((mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Dagger && offHandWeapon.weaponDetails.weaponClass
-                            == WeaponClass.Dagger) || (mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw &&
-                            offHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw)) // Grant extra cr. chance if dual-wield
-                        {
-                            currentMainHandCriticalHitChance += 0.05f;
-                            currentOffHandCriticalHitChance += 0.05f;
-                        }
-                        else // If cloak equipped but then dual set is broken, then cr.chance is reduced a bit
-                        {
-                            currentMainHandCriticalHitChance -= 0.05f;
-                            currentOffHandCriticalHitChance -= 0.05f;
-                        }
+                        if (HasBoostType(item, BoostType.CritChance, i)) withPassive += item.criticalHitChance;
                     }
                 }
 
+                currentOffHandCriticalHitChance = Mathf.Min((float)Math.Round(prePassive + withPassive, 2), 0.5f);
             }
         }
+        else currentOffHandCriticalHitChance = 0f;
+
+        // --- Shadow Cloak conditional tweak (after passives, before final clamp) ---
+        if (shadowCloakEquipped)
+        {
+            if (main != null && off != null &&
+                equippedPassiveItems.TryGetValue(PassiveItemSlotName.Back, out PassiveItem item) && item != null &&
+                item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
+            {
+                bool dualDaggers = main.weaponDetails.weaponClass == WeaponClass.Dagger && off.weaponDetails.weaponClass == WeaponClass.Dagger;
+                bool dualClaws = main.weaponDetails.weaponClass == WeaponClass.Claw && off.weaponDetails.weaponClass == WeaponClass.Claw;
+                bool isDualBonus = dualDaggers || dualClaws;
+
+                float tweak = isDualBonus ? +0.05f : -0.05f;
+                currentMainHandCriticalHitChance += tweak;
+                currentOffHandCriticalHitChance += tweak;
+            }
+        }
+
+        // Final clamp (design cap 50%)
+        currentMainHandCriticalHitChance = Mathf.Clamp((float)Math.Round(currentMainHandCriticalHitChance, 2), 0f, 0.5f);
+        currentOffHandCriticalHitChance = Mathf.Clamp((float)Math.Round(currentOffHandCriticalHitChance, 2), 0f, 0.5f);
     }
 
     private void UpdateCurrentCriticalHitDamage()
     {
-        Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
-        if (mainHandWeapon != null)
+        float feroBonus = currentFerocityValue * 0.02f;
+
+        // --- MAIN ---
+        if (main != null)
         {
-            if (mainHandWeapon.weaponDetails.isMeleeWeapon)
+            float baseFromWeapon = main.weaponDetails.isMeleeWeapon
+                ? main.weaponDetails.criticalHitDamageMultiplier
+                : main.weaponDetails.weaponCurrentProjectile.criticalHitDamageMultiplier;
+
+            float typeBonus = main.weaponDetails.isMeleeWeapon ? additionalCriticalMeleeDamageModifier : additionalCriticalRangedDamageModifier;
+
+            float prePassive = baseFromWeapon + feroBonus + additionalCriticalDamageModifier + typeBonus + main.criticalHitDamageIncrease;
+
+            float withPassive = 0f;
+
+            foreach (var kvp in equippedPassiveItems)
             {
-                currentMainHandCriticalHitDamage = mainHandWeapon.weaponDetails.criticalHitDamageMultiplier +
-                     currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalMeleeDamageModifier + mainHandWeapon.criticalHitDamageIncrease;
+                var item = kvp.Value;
+                if (item == null || item.passiveItemDetails == null) continue;
+
+                for (int i = 1; i <= 4; i++)
+                {
+                    if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.criticalHitDamage;
+                }
+            }
+
+            currentMainHandCriticalHitDamage = Mathf.Min((float)Math.Round(prePassive + withPassive, 2), 0.5f);
+
+        }
+        else currentMainHandCriticalHitDamage = 0f;
+
+        // --- OFF ---
+        if (off != null)
+        {
+            if (off.weaponDetails.isShield)
+            {
+                currentOffHandCriticalHitDamage = 0f;
             }
             else
             {
-                currentMainHandCriticalHitDamage = mainHandWeapon.weaponDetails.weaponCurrentProjectile.criticalHitDamageMultiplier +
-                    currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalRangedDamageModifier + mainHandWeapon.criticalHitDamageIncrease;
-            }
-        }
-        else
-        {
-            currentMainHandCriticalHitDamage = 0;
-        }
+                float baseFromWeapon = off.weaponDetails.isMeleeWeapon
+                    ? off.weaponDetails.criticalHitDamageMultiplier
+                    : off.weaponDetails.weaponCurrentProjectile.criticalHitDamageMultiplier;
 
-        if (offHandWeapon != null)
-        {
-            if (offHandWeapon.weaponDetails.isMeleeWeapon)
-            {
-                currentOffHandCriticalHitDamage = offHandWeapon.weaponDetails.criticalHitDamageMultiplier +
-                    currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalMeleeDamageModifier + offHandWeapon.criticalHitDamageIncrease;
-            }
-            else if (offHandWeapon.weaponDetails.isShield)
-            {
-                currentOffHandCriticalHitDamage = 0;
-            }
-            else
-            {
-                currentOffHandCriticalHitDamage = offHandWeapon.weaponDetails.weaponCurrentProjectile.criticalHitDamageMultiplier +
-                    currentFerocityValue * 0.02f + additionalCriticalDamageModifier + additionalCriticalRangedDamageModifier + offHandWeapon.criticalHitDamageIncrease;
+                float typeBonus = off.weaponDetails.isMeleeWeapon ? additionalCriticalMeleeDamageModifier : additionalCriticalRangedDamageModifier;
+
+                float prePassive = baseFromWeapon + feroBonus + additionalCriticalDamageModifier + typeBonus + off.criticalHitDamageIncrease;
+
+                float withPassive = 0f;
+
+                foreach (var kvp in equippedPassiveItems)
+                {
+                    var item = kvp.Value;
+                    if (item == null || item.passiveItemDetails == null) continue;
+
+                    for (int i = 1; i <= 4; i++)
+                    {
+                        if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.criticalHitDamage;
+                    }
+                }
+
+                currentOffHandCriticalHitDamage = Mathf.Min((float)Math.Round(prePassive + withPassive, 2), 0.5f);
             }
         }
-        else
-        {
-            currentOffHandCriticalHitDamage = 0;
-        }
+        else currentOffHandCriticalHitDamage = 0f;
 
         currentMainHandCriticalHitDamage = (float)Math.Round(currentMainHandCriticalHitDamage, 2);
         currentOffHandCriticalHitDamage = (float)Math.Round(currentOffHandCriticalHitDamage, 2);
     }
 
-    public void UpdateCurrentAttackRatingValues()
+    public void UpdateSecondaryDamageValues()
     {
-        Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+        UpdateDamageVsLowHealthValue();
+        UpdateLifeStealValue();
+    }
 
-        float weaponHandlingModifier = 0f;
+    public void UpdateDamageVsLowHealthValue()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
-        if (offHandWeapon != null)
+        int dmgVsLowIncrease = 0;
+        if (main != null) dmgVsLowIncrease += main.damageVsLowHealthEnemies;
+        if (off != null) dmgVsLowIncrease += off.damageVsLowHealthEnemies;
+
+        int baseFromStr = Mathf.RoundToInt(currentStrengthValue * 0.05f);
+        int prePassive = additionalLifeStealModifier + dmgVsLowIncrease + baseFromStr;
+
+        int withPassive = 0;
+
+        foreach (var kvp in equippedPassiveItems)
         {
-            if (mainHandWeapon != null)
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
             {
-                weaponHandlingModifier = ((mainHandWeapon.weaponDetails.weaponAttackRating + offHandWeapon.weaponDetails.weaponAttackRating + 
-                    mainHandWeapon.attackRatingIncrease + offHandWeapon.attackRatingIncrease) / 2
-                   + additionalAttackRatingModifier) * 0.7f;
-            }
-            else
-            {
-                weaponHandlingModifier = 0;
+                if (HasBoostType(item, BoostType.AttackVsLowHealthEnemies, i)) withPassive += item.damageVsLowHealthEnemies;
             }
         }
-        else
+
+        currentDamageVsLowHealthModifierValue = prePassive + withPassive;       
+    }
+
+    public void UpdateLifeStealValue()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        int lifeStealIncrease = 0;
+        if (main != null) lifeStealIncrease += main.lifeStealAmount;
+        if (off != null) lifeStealIncrease += off.lifeStealAmount;
+
+        int baseFromFer = Mathf.RoundToInt(currentFerocityValue * 0.5f / 100f);
+        int prePassive =  additionalLifeStealModifier + lifeStealIncrease + baseFromFer;
+
+        int withPassive = 0;
+
+        foreach (var kvp in equippedPassiveItems)
         {
-            if (mainHandWeapon != null)
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
             {
-                weaponHandlingModifier = mainHandWeapon.weaponDetails.weaponAttackRating + additionalAttackRatingModifier + mainHandWeapon.attackRatingIncrease;
-            }
-            else
-            {
-                weaponHandlingModifier = 0;
+                if (HasBoostType(item, BoostType.LifeSteal, i)) withPassive += item.lifeStealAmount;
             }
         }
 
-        currentAttackRatingValue =  0.2f + ((float)currentDexterityValue / 3 + currentFerocityValue / 3 + currentStrengthValue / 4) / 100 + weaponHandlingModifier - blindModifier;
-        currentAttackRatingValue = (float)Math.Round(currentAttackRatingValue, 2);
+        currentLifeStealValue = prePassive + withPassive;
+    }
+
+    public void UpdateSkillAndStatusModifierValues()
+    {
+        UpdateSkillCooldown();
+        UpdateSkillDuration();
+        UpdateStatusInflictValues();
+    }
+
+    private void UpdateSkillCooldown()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float skillCooldownIncrease = 0f;
+        if (main != null) skillCooldownIncrease += main.skillCooldown;
+        if (off != null) skillCooldownIncrease += off.skillCooldown;
+
+        float prePassive = additionalSkillCoolDownModifier + skillCooldownIncrease;
+
+        float withPassive = 0;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.SkillCooldown, i)) withPassive += item.skillCooldown;
+            }
+        }
+
+        currentSkillCooldownReducer = prePassive + withPassive;
+    }
+
+    private void UpdateSkillDuration()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float skillDurationIncrease = 0f;
+        if (main != null) skillDurationIncrease += main.skillCooldown;
+        if (off != null) skillDurationIncrease += off.skillCooldown;
+
+        float prePassive = additionalSkillCoolDownModifier + skillDurationIncrease;
+
+        float withPassive = 0;
+
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.SkillDuration, i)) withPassive += item.skillDuration;
+            }
+        }
+
+        currentSkillDurationModifier = prePassive + withPassive;
+    }
+
+    private void UpdateStatusInflictValues()
+    {
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
+
+        float poisonInflictValue = 0f, bleedInflictValue = 0f, rootInflictValue = 0f, stunInflictValue = 0f, curseInflictValue = 0f, fearInflictValue = 0f;
+        float revealInflictValue = 0f, paralyzeInflictValue = 0f, burnInflictValue = 0f, freezeInflictValue = 0f, blindInflictValue = 0f, slowInflictValue = 0f;
+
+        for (int i = 1; i < Enum.GetValues(typeof(StatusEffectType)).Length; i++)
+        {
+            StatusEffectType statusEffectType = (StatusEffectType)i;
+
+            switch (statusEffectType)
+            {
+                case StatusEffectType.Poison:
+                    if (main != null) poisonInflictValue += main.additionalPoisonChance;
+                    if (off != null) poisonInflictValue += off.additionalPoisonChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) poisonInflictValue += item.additionalPoisonChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Bleed:
+                    if (main != null) bleedInflictValue += main.additionalBleedChance;
+                    if (off != null) bleedInflictValue += off.additionalBleedChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) bleedInflictValue += item.additionalBleedChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Root:
+                    if (main != null) rootInflictValue += main.additionalRootChance;
+                    if (off != null) rootInflictValue += off.additionalRootChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) rootInflictValue += item.additionalRootChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Stun:
+                    if (main != null) stunInflictValue += main.additionalStunChance;
+                    if (off != null) stunInflictValue += off.additionalStunChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) stunInflictValue += item.additionalStunChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Curse:
+                    if (main != null) curseInflictValue += main.additionalCurseChance;
+                    if (off != null) curseInflictValue += off.additionalCurseChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) curseInflictValue += item.additionalCurseChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Fear:
+                    if (main != null) fearInflictValue += main.additionalFearChance;
+                    if (off != null) fearInflictValue += off.additionalFearChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) fearInflictValue += item.additionalFearChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Reveal:
+                    if (main != null) revealInflictValue += main.additionalRevealChance;
+                    if (off != null) revealInflictValue += off.additionalRevealChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) revealInflictValue += item.additionalRevealChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Paralyze:
+                    if (main != null) paralyzeInflictValue += main.additionalParalyzeChance;
+                    if (off != null) paralyzeInflictValue += off.additionalParalyzeChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) paralyzeInflictValue += item.additionalParalyzeChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Burn:
+                    if (main != null) burnInflictValue += main.additionalBurnChance;
+                    if (off != null) burnInflictValue += off.additionalBurnChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) burnInflictValue += item.additionalBurnChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Freeze:
+                    if (main != null) freezeInflictValue += main.additionalFreezeChance;
+                    if (off != null) freezeInflictValue += off.additionalFreezeChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) freezeInflictValue += item.additionalFreezeChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Blind:
+                    if (main != null) blindInflictValue += main.additionalBlindChance;
+                    if (off != null) blindInflictValue += off.additionalBlindChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) blindInflictValue += item.additionalBlindChance;
+                        }
+                    }
+                    break;
+                case StatusEffectType.Slow:
+                    if (main != null) slowInflictValue += main.additionalSlowChance;
+                    if (off != null) slowInflictValue += off.additionalSlowChance;
+
+                    foreach (var kvp in equippedPassiveItems)
+                    {
+                        var item = kvp.Value;
+                        if (item == null || item.passiveItemDetails == null) continue;
+
+                        for (int j = 1; j <= 4; j++)
+                        {
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) slowInflictValue += item.additionalSlowChance;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        additionalPoisonChance = poisonInflictValue;
+        additionalBleedChance = bleedInflictValue;
+        additionalRootChance = rootInflictValue;
+        additionalStunChance = stunInflictValue;
+        additionalCurseChance = curseInflictValue;
+        additionalFearChance = fearInflictValue;
+        additionalRevealChance = revealInflictValue;
+        additionalParalyzeChance = paralyzeInflictValue;
+        additionalBurnChance = burnInflictValue;
+        additionalFreezeChance = freezeInflictValue;
+        additionalBlindChance = blindInflictValue;
+        additionalSlowChance = slowInflictValue;
     }
 
     public void UpdateBlockValue()
     {
-        Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
-        float blockModifier = 0;
+        float baseShieldBlock = 0f;
+        if (off != null && off.weaponDetails.weaponClass == WeaponClass.Shield) baseShieldBlock = Mathf.Max(0f, off.weaponDetails.blockChance);
 
-        if (mainHandWeapon != null) blockModifier = mainHandWeapon.blockChanceIncrease;
-        else blockModifier = 0;
+        float weaponBlockMods = 0f;
+        if (main != null) weaponBlockMods += Mathf.Max(0f, main.blockChanceIncrease);
+        if (off != null) weaponBlockMods += Mathf.Max(0f, off.blockChanceIncrease);
 
-        if (offHandWeapon != null) blockModifier += offHandWeapon.blockChanceIncrease;
-        else blockModifier += 0;
+        float prePassive = baseShieldBlock + additionalBlockModifier + weaponBlockMods;
+        float withPassive = 0f;
 
-        float? blockValueIfHas = mainHandWeapon?.weaponDetails.weaponClass == WeaponClass.Shield ? offHandWeapon?.weaponDetails.blockChance + 
-            additionalBlockModifier : 0f;
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
 
-        currentBlockValue = Mathf.Min(0.5f, (float)Math.Round((double)(blockValueIfHas + blockModifier), 2)); //Clamp max block value
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.BlockChance, i)) withPassive += item.blockChance;
+            }
+        }
+
+        currentBlockValue = Mathf.Min((float)Math.Round(prePassive + withPassive, 2), 0.5f);
     }
 
-    public void UpdateEvasivenessValue()
+    public void UpdateDodgeValue()
     {
-        Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
-        float dodgeModifier = 0;
+        float weaponDodge = 0f;
+        if (main != null) weaponDodge += main.dodgeChanceIncrease;
+        if (off != null) weaponDodge += off.dodgeChanceIncrease;
 
-        if (mainHandWeapon != null) dodgeModifier = mainHandWeapon.dodgeChanceIncrease;
-        else dodgeModifier = 0;
+        float baseFromAgi = (float)Math.Round(currentAgilityValue * 0.5f / 100f, 2);
+        float prePassive = baseFromAgi + additionalDodgeRateModifier + weaponDodge;
 
-        if (offHandWeapon != null) dodgeModifier += offHandWeapon.dodgeChanceIncrease;
-        else dodgeModifier += 0;
+        float withPassive = 0f;
 
-        currentEvasivenessValue = Mathf.Min(0.5f, (float)Math.Round((double)(currentAgilityValue * 0.5f / 100 + 
-            additionalEvasivenessModifier + dodgeModifier), 2));
+        foreach (var kvp in equippedPassiveItems)
+        {
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.DodgeChance, i)) withPassive += item.dodgeChance;
+            }
+        }
+
+        currentDodgeValue = Mathf.Min((float)Math.Round(prePassive + withPassive, 2), 0.5f);
     }
 
     /// <summary>
@@ -1419,25 +2016,30 @@ public class Player : MonoBehaviour
     /// </summary>
     public void UpdatePlayerHealth(int healthIncrease, bool shouldHealthFilled, bool isMaxHealthChanged, bool onStart = false)
     {
-        Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
-        int weaponPassiveIncrease = 0;
+        int weaponAdd = 0;
+        if (main != null) weaponAdd += main.increasedMaxHealth;
+        if (off != null) weaponAdd += off.increasedMaxHealth;
 
-        if (mainHandWeapon != null) weaponPassiveIncrease = mainHandWeapon.increasedMaxHealth;
-        else weaponPassiveIncrease = 0;
+        int baseMax = 120 + currentConstitutionValue * 25 + weaponAdd;
 
-        if (offHandWeapon != null) weaponPassiveIncrease += offHandWeapon.increasedMaxHealth;
-        else weaponPassiveIncrease += 0;
+        int withPassive = 0;
 
-        int maxHealthValue = 120 + currentConstitutionValue * 25 + weaponPassiveIncrease;
-
-        if (isMaxHealthChanged)
+        foreach (var kvp in equippedPassiveItems)
         {
-            health.SetMaximumHealth(maxHealthValue, shouldHealthFilled, onStart);
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.HealthIncrease, i)) withPassive += item.increasedMaxHealth;
+            }
         }
 
-        health.AddHealth(healthIncrease);
+        int newMaxHealth = baseMax + withPassive;
+        health.SetMaximumHealth(newMaxHealth);
     }
 
     /// <summary>
@@ -1445,44 +2047,52 @@ public class Player : MonoBehaviour
     /// </summary>
     public void UpdatePlayerMana(int manaIncrease, bool shouldManaFilled, bool isMaxManaChanged, bool onStart = false)
     {
-        Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
+        Weapon main = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
-        int weaponPassiveIncrease = 0;
+        int weaponAdd = 0;
+        if (main != null) weaponAdd += main.increasedMaxMana;
+        if (off != null) weaponAdd += off.increasedMaxMana;
 
-        if (mainHandWeapon != null) weaponPassiveIncrease = mainHandWeapon.increasedMaxMana;
-        else weaponPassiveIncrease = 0;
+        int baseMax = 20 + currentWillpowerValue * 35 + weaponAdd;
 
-        if (offHandWeapon != null) weaponPassiveIncrease += offHandWeapon.increasedMaxMana;
-        else weaponPassiveIncrease += 0;
+        int withPassive = 0;
 
-        int maxManaValue = 20 + currentWillpowerValue * 35 + weaponPassiveIncrease;
-
-        if (isMaxManaChanged)
+        foreach (var kvp in equippedPassiveItems)
         {
-            mana.SetMaximumMana(maxManaValue, shouldManaFilled, onStart);
+            var item = kvp.Value;
+            if (item == null || item.passiveItemDetails == null) continue;
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (HasBoostType(item, BoostType.ManaIncrease, i)) withPassive += item.increasedMaxMana;
+            }
         }
 
-        mana.AddMana(manaIncrease);
+        int newMaxMana = baseMax + withPassive;
+        mana.SetMaximumMana(newMaxMana);
     }
 
-    public void RecalculateSecondaryStats()
+    public void RecalculateSecondaryStats(bool shouldHealthFilled = false)
     {
-        UpdatePlayerHealth(0, false, true);
-        UpdatePlayerMana(0, false, true);
+        UpdatePlayerHealth(0, false, shouldHealthFilled);
+        UpdatePlayerMana(0, false, shouldHealthFilled);
+        UpdateArmorValues();
         UpdateDamageValues();
         UpdateAttackRatingAndCriticalValues();
-        UpdateBlockAndEvasivenessValues();
-        UpdateSpeedValue();
+        UpdateBlockAndDodgeValues();
+        UpdateSpeedAndAttackCooldownValues();
+        UpdateResistanceValues();
+        UpdateSecondaryDamageValues();
+        UpdateSkillAndStatusModifierValues();
     }
 
     public bool HasPlayerStrongNegativeStatusEffectExcludingHealth()
     {
-        bool hasnegativeStatusEffect = isFeared || isChilled || isBlind || isSlowed || moveStatus != MoveStatus.Idle;
+        bool hasnegativeStatusEffect = isFeared || isChilled || isBlind ||  isSlowed || moveStatus != MoveStatus.Idle;
 
         return hasnegativeStatusEffect;
     }
-
 
     /// <summary>
     /// Returns the player position
@@ -1494,7 +2104,26 @@ public class Player : MonoBehaviour
         return rb2dPosition + new Vector3(0f, 0.7f, 0f);
     }
 
+    private bool HasBoostType(PassiveItem passiveItem, BoostType boostType, int boostIndex)
+    {
+        switch (boostIndex)
+        {
+            case 1: // Unique boost
+                if (passiveItem.baseUniqueRolled == boostType) return true;
+                break;
+            case 2: // Type boost
+                if (passiveItem.baseTypeRolled == boostType) return true;
+                break;
+            case 3: // Enchanted boost
+                if (passiveItem.enchantedBoostType == boostType) return true;
+                break;
+            case 4: // Mythic boost
+                if (passiveItem.mythicBoostType == boostType) return true;
+                break;
+        }
 
+        return false;
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -1512,3 +2141,5 @@ public class Player : MonoBehaviour
         Gizmos.DrawWireSphere(position, NymarasWindveilCircleRadius);
     }
 }
+
+

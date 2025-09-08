@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 
 public class PassiveItem : ItemGeneric
@@ -12,28 +11,44 @@ public class PassiveItem : ItemGeneric
     public BoostType enchantedBoostType = BoostType.None;
     public BoostType mythicBoostType = BoostType.None;
 
-    // Weapon stats
+    // Passive item stats
     public float attackCooldown;
     public int physicalAttackDamageIncrease;
     public float attackRating;
     public int magicAttackDamageIncrease;
     public float criticalHitChance;
     public float criticalHitDamage;
-    public float lifeStealAmount;
+    public int lifeStealAmount;
     public float statusInflictChance;
     public float dodgeChance;
     public float blockChance;
     public int increasedMaxHealth;
     public int increasedMaxMana;
     public float statusResistanceModifier;
-    public float attackRateVsLowHealthEnemies;
-    public float criticalResistance;
+    public int damageVsLowHealthEnemies;
+    public float criticalResistanceModifier;
     public float armorIncrease;
-    public float magicResistance;
+    public float magicResistanceModifier;
     public float speedIncreaseModifier;
     public float damageReductionRate;
     public float armorPenetration;
     public float attackRange;
+    public float skillCooldown;
+    public float skillDuration;
+
+    // CC
+    public float additionalPoisonChance = 0f;
+    public float additionalBleedChance = 0f;
+    public float additionalRootChance = 0f;
+    public float additionalStunChance = 0f;
+    public float additionalCurseChance = 0f;
+    public float additionalFearChance = 0f;
+    public float additionalRevealChance = 0f;
+    public float additionalParalyzeChance = 0f;
+    public float additionalBurnChance = 0f;
+    public float additionalFreezeChance = 0f;
+    public float additionalBlindChance = 0f;
+    public float additionalSlowChance = 0f;
 
     public PassiveItem(Rarity rarity) : base(rarity)
     {

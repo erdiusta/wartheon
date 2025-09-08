@@ -21,5 +21,6 @@ MonoBehaviour:
   passiveItemType: 4
   passiveItemSlotName: 1
   passiveItemAnimatorController: {fileID: 9100000, guid: b1cb8f3392430fa49a7517a89c32674b, type: 2}
-  baseUniqueModifier: 19
+  baseUniqueModifier: 18
+  baseTypeModifier: 14
   additionalModifierPoolForType: 10000000110000000f0000000d0000000b0000000c000000

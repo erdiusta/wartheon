@@ -72,23 +72,6 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     {
         if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
         {
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0)
-            {
-                if (player.activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged)
-                {
-                    ResetWeaponCooldownBar(player.activeWeapon.GetCurrentMainHandWeapon(), player.activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged);
-                    return;
-                }
-
-                if (player.activeWeapon.GetCurrentMainHandWeapon().onPrecharge)
-                {
-                    {
-                        ResetWeaponCooldownBar(player.activeWeapon.GetCurrentMainHandWeapon());
-                        return;
-                    }
-                }
-            }
-
             if (player.activeWeapon.GetCurrentMainHandWeapon().onCooldown)
             {
                 cooldownTimer -= Time.deltaTime;

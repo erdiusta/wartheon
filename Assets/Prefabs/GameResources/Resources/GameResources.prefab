@@ -92,7 +92,7 @@ MonoBehaviour:
   fearSoundEffect: {fileID: 0}
   healthPassiveItem: {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
   coinPassiveItem: {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
-  secondaryPassiveItem: {fileID: 11400000, guid: ce61e302d49e153479d6e82d40b1dbf8, type: 2}
+  secondaryPassiveItem: {fileID: 11400000, guid: 1b8f2ac00c1278a49868c7f1481510c5, type: 2}
   dimmedMaterial: {fileID: 2100000, guid: c20ce00ee50ed1740a3ef5b4102d3f68, type: 2}
   litMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   materializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}

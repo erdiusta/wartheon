@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -54,9 +55,14 @@ public class PassiveItemDetailsSO : ScriptableObject
     #endregion Tooltip
     public BoostType baseUniqueModifier;
     #region Tooltip
+    [Tooltip("Passive items's base type modifier")]
+    #endregion Tooltip
+    public BoostType baseTypeModifier;
+    #region Tooltip
     [Tooltip("Passive item's additonal modifier type pool")]
     #endregion Tooltip
     public List<BoostType> additionalModifierPoolForType;
+
 
     #region Validation
 #if UNITY_EDITOR

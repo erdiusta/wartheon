@@ -33,6 +33,7 @@ public class PlayerControl : MonoBehaviour
     Coroutine stunCoroutine;
     Coroutine rootCoroutine;
     Coroutine frostCoroutine;
+    Coroutine curseCoroutine;
     Coroutine healthPotionDrinkCoroutine;
     Coroutine playerRollCoroutine;
     WaitForFixedUpdate waitForFixedUpdate;
@@ -135,8 +136,8 @@ public class PlayerControl : MonoBehaviour
                     player.passiveTriggered = true;
 
                     player.healthEvent.CallNyxasReflexSpecialMoveEvent();
-                    player.additionalEvasivenessModifier += 0.2f;
-                    player.UpdateEvasivenessValue();
+                    player.additionalDodgeRateModifier += 0.2f;
+                    player.UpdateDodgeValue();
                     StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
             }
@@ -147,8 +148,8 @@ public class PlayerControl : MonoBehaviour
                     player.passiveTriggered = false;
 
                     player.healthEvent.CallNyxasReflexSpecialMoveEndEvent();
-                    player.additionalEvasivenessModifier -= 0.2f;
-                    player.UpdateEvasivenessValue();
+                    player.additionalDodgeRateModifier -= 0.2f;
+                    player.UpdateDodgeValue();
                     StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
             }
@@ -242,6 +243,14 @@ public class PlayerControl : MonoBehaviour
         if (isPlayerMovementDisabled) return;
 
         if (isPlayerRolling) return;
+
+        if (player.isCursed)
+        {
+            if (curseCoroutine == null)
+            {
+                curseCoroutine = StartCoroutine(CurseRoutine());
+            }
+        }
 
         // Frozen
         if ((player.moveStatus & MoveStatus.Frozen) != 0)
@@ -546,100 +555,66 @@ public class PlayerControl : MonoBehaviour
 
     private void FireWeaponInput(Vector3 weaponDirection, float weaponAngleDegrees, float playerAngleDegrees, AimDirection playerAimDirection)
     {
+        Weapon mainHand = player.activeWeapon.GetCurrentMainHandWeapon();
+        Weapon offHand = player.activeWeapon.GetCurrentOffHandWeapon();
+
         // If glossary book is open, disable attack
         if (GameManager.Instance.glossaryBookOpen) return;
 
         // If pop-up window is open, disable attack
         if (GameManager.Instance.popUpWindowOpen) return;
 
-        if (player.activeWeapon.GetCurrentMainHandWeapon() == null) return;
+        if (mainHand == null) return;
 
         if (InputManager.firingDisabled) return; // For tutorial issues
 
         // Fire when left mouse button is clicked - melee
-        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon && !GameManager.Instance.isOverviewCameraEnabled)
+        if (mainHand.weaponDetails.isMeleeWeapon && !GameManager.Instance.isOverviewCameraEnabled)
         {
             if (InputManager.Instance.attack.action.WasPressedThisFrame() && !IsClickingSpecificUILayer() && !isParrying)
             {
                 // MAIN-HAND
-                if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
+                if (mainHand?.weaponDetails.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
                 {
-                    AttackShape mainHandAttackType = DetermineAttackType(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails);
+                    AttackShape mainHandAttackType = DetermineAttackType(mainHand.weaponDetails);
 
-                    player.meleeAttackEvent.CallAttackEvent(aimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), mainHandAttackType, MeleeHand.MainHand);
+                    player.meleeAttackEvent.CallAttackEvent(aimDirection, mainHand, mainHandAttackType, MeleeHand.MainHand);
                 }
 
                 // OFF-HAND
-                if (player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
+                if (offHand?.weaponDetails.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
                 {
-                    AttackShape offHandAttackType = DetermineAttackType(player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails);
+                    AttackShape offHandAttackType = DetermineAttackType(offHand?.weaponDetails);
 
-                    player.meleeAttackEvent.CallAttackEvent(aimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), offHandAttackType, MeleeHand.OffHand);
+                    player.meleeAttackEvent.CallAttackEvent(aimDirection, offHand, offHandAttackType, MeleeHand.OffHand);
                 }
             }
 
             return;
         }
     
-        // Fire for precharge weapons (fire once after precharge)
-        if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
-        {
-            if (InputManager.Instance.attack.action.IsPressed() && !player.activeWeapon.GetCurrentMainHandWeapon().firingCompletedIfWeaponIsPrecharged 
-                && !IsClickingSpecificUILayer() && !GameManager.Instance.isOverviewCameraEnabled) // Only trigger once per hold
-            {
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
-                {
-                    if (!player.activeWeapon.GetCurrentMainHandWeapon().onCooldown || !player.activeWeapon.GetCurrentMainHandWeapon().onPrecharge)
-                    {
-                        player.meleeAttackMainHand.IsAttacking = true;
-                    }
-
-                    player.meleeAttackEvent.CallAttackEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), AttackShape.None, MeleeHand.None);
-                }
-
-                // Start precharge process (firePreviousFrame is false because firing hasn't happened yet)
-                player.fireWeaponEvent.CallFireWeaponEvent(true, true, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser, 
-                    playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
-            }
-        }
         // Fire for non-precharge weapons (fire once per press)
-        else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime == 0f && InputManager.Instance.attack.action.WasPressedThisFrame()
+        if (mainHand.weaponDetails.weaponPrechargeTime == 0f && InputManager.Instance.attack.action.WasPressedThisFrame()
             && !IsClickingSpecificUILayer() && !GameManager.Instance.isOverviewCameraEnabled)
         {
             isSoundPlayed = false;
 
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow || 
-                player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow)
+            if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow || mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow ||
+                mainHand.weaponDetails.weaponClass == WeaponClass.Staff)
             {
-                if (!player.activeWeapon.GetCurrentMainHandWeapon().onCooldown)
+                if (!mainHand.onCooldown)
                 {
-                    player.meleeAttackMainHand.IsAttacking = true;
+                    //player.meleeAttackMainHand.IsAttacking = true;
 
                     // Trigger fire weapon event
-                    player.meleeAttackEvent.CallAttackEvent(playerAimDirection, player.activeWeapon.GetCurrentMainHandWeapon(), AttackShape.None, MeleeHand.None);
+                    player.meleeAttackEvent.CallAttackEvent(playerAimDirection, mainHand, AttackShape.None, MeleeHand.None);
                 }
             }
 
             // Fire event (only once per press)
-            player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+            player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, mainHand.weaponDetails.weaponCurrentProjectile.isLaser,
                 playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, false, false, 0, 0, 0, 0, 0, 0, 0, 0, false, false,
                 player.isArrowOfTheSevenActive);
-        }
-
-        // Reset when fire button is released
-        if (InputManager.Instance.attack.action.WasReleasedThisFrame() && !GameManager.Instance.isOverviewCameraEnabled)
-        {
-            isSoundPlayed = false;
-
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime > 0f)
-            {
-                // Reset firing flag when releasing button for precharge weapons
-                player.activeWeapon.GetCurrentMainHandWeapon().firingCompletedIfWeaponIsPrecharged = false;
-            }
-
-            // Stop firing
-            player.fireWeaponEvent.CallFireWeaponEvent(false, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
-                playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false);
         }
     }
 
@@ -904,6 +879,18 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
+    /// Curse routine
+    /// </summary>
+    IEnumerator CurseRoutine()
+    {
+        yield return new WaitForSeconds(player.curseDuration);
+
+        player.isCursed = false;
+        player.healthEvent.CallCurseCuredEvent();
+        curseCoroutine = null;
+    }
+
+    /// <summary>
     /// Frost routine
     /// </summary>
     IEnumerator FrostRoutine()
@@ -918,7 +905,8 @@ public class PlayerControl : MonoBehaviour
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallFrostCuredEvent();
         player.animator.SetBool(Settings.isFrozen, false);
-        player.movementByForce.moveSpeed = player.movementByForce.movementDetails.GetBaseMaxMoveSpeed() + player.CurrentAgilityValue * 0.25f;
+        player.UpdateSpeedValue();
+
         frostCoroutine = null;
     }
 
@@ -935,7 +923,7 @@ public class PlayerControl : MonoBehaviour
         player.moveStatus &= ~MoveStatus.Root; // Remove root
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallRootCuredEvent();
-        player.movementByForce.moveSpeed = player.movementByForce.movementDetails.GetBaseMaxMoveSpeed() + player.CurrentAgilityValue * 0.25f;
+        player.UpdateSpeedValue();
         rootCoroutine = null;
     }
 
@@ -954,7 +942,7 @@ public class PlayerControl : MonoBehaviour
         player.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         player.healthEvent.CallStunCuredEvent();
         player.animator.SetBool(Settings.isStunned, false);
-        player.movementByForce.moveSpeed = player.movementByForce.movementDetails.GetBaseMaxMoveSpeed() + player.CurrentAgilityValue * 0.25f;
+        player.UpdateSpeedValue();
         stunCoroutine = null;
     }
 
@@ -1641,7 +1629,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void Valor(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             if (!player.isValorActive)
             {
@@ -1656,7 +1644,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator ValorRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isValorActive = false;
         player.healthEvent.CallValorWoreOffEvent();
@@ -1669,7 +1657,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void BreakTheLine(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
@@ -1718,7 +1706,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator BreakTheLineRoutine(int slotIndex, Weapon droppedShield, int originalMinDamage, int originalMaxDamage, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         // DISABLE SKILL EFFECTS
         player.additionalSpeedModifier -= 2; // Reset speed
@@ -1813,7 +1801,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void UmbralMist(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             player.healthEvent.CallUmbralMistSpecialMoveEvent(); // This is for displaying umbral mist icon
 
@@ -1832,7 +1820,7 @@ public class PlayerControl : MonoBehaviour
         umbralMistObject.GetComponent<Animator>().SetBool("umbralMist", true);
 
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isUmbralMistActive = false;
 
@@ -1848,7 +1836,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void Stealth(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             // EFFECTS
             player.health.isDamageable = false;
@@ -1878,7 +1866,7 @@ public class PlayerControl : MonoBehaviour
 
     IEnumerator StealthRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        float stealthDuration = activeSkillData.effectiveDuration * (1 + player.buffDurationModifier);
+        float stealthDuration = activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier);
 
         yield return new WaitForSeconds(stealthDuration);
 
@@ -1949,7 +1937,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void ShadowStep(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             if (!player.isShadowStepActive)
             {
@@ -1980,7 +1968,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator ShadowStepRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData, float modifier)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isShadowStepActive = false;
         activeSkillTypeThreeAnimator.SetBool("shadowStep", false);
@@ -2094,7 +2082,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator ArrowOfTheSevenPlaguesRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isArrowOfTheSevenActive = false;
         player.healthEvent.CallSevenArrowsWoreOffEvent();
@@ -2131,7 +2119,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void Blizzard(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             if (!player.isBlizzardActive)
             {
@@ -2151,7 +2139,7 @@ public class PlayerControl : MonoBehaviour
         blizzardObject.GetComponent<Animator>().SetBool("blizzard", true);
 
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isBlizzardActive = false;
@@ -2168,7 +2156,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void MycarasSeal(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             activeSkillTypeTwoAnimator.gameObject.SetActive(true);
 
@@ -2187,7 +2175,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator MycarasSealRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isMycarasSealActive = false;
@@ -2238,7 +2226,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void AbsoluteZero(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             if (!player.isAbsoluteZeroActive)
             {
@@ -2258,7 +2246,7 @@ public class PlayerControl : MonoBehaviour
         absoluteZeroObject.GetComponent<Animator>().SetBool("absoluteZero", true);
 
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isAbsoluteZeroActive = false;
@@ -2378,7 +2366,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void FlameLotus(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             if (!player.isFlameLotusActive)
             {
@@ -2398,7 +2386,7 @@ public class PlayerControl : MonoBehaviour
         flameLotusObject.GetComponent<Animator>().SetBool("flameLotus", true);
 
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isFlameLotusActive = false;
@@ -2415,7 +2403,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void KynarasEmbrace(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             activeSkillTypeTwoAnimator.gameObject.SetActive(true);
 
@@ -2434,7 +2422,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator KynarasEmbraceRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         if (!player.isKynarasEmbraceShieldExploding)
         {
@@ -2540,7 +2528,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void Rage(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             player.animator.SetTrigger("rage");
             SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
@@ -2580,7 +2568,7 @@ public class PlayerControl : MonoBehaviour
         StaticEventHandler.CallStatsChangedOnTheBookEvent();
 
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isRageActive = false;
 
@@ -2599,7 +2587,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void ShatterCry(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             player.animator.SetTrigger("shatterCry");
             activeSkillTypeOneAnimator.gameObject.SetActive(true);
@@ -2639,7 +2627,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator ShatterCryRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isShatterCryActive = false;
         activeSkillTypeOneAnimator.gameObject.SetActive(false);
@@ -2677,7 +2665,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void Whirlrend(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             if (!player.isWhirlrendActive)
             {
@@ -2694,7 +2682,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator WhirlrendRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isWhirlrendActive = false;
 
@@ -2709,7 +2697,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void FeastOfWar(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             if (!player.isFeastOfWarActive)
             {
@@ -2723,7 +2711,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator FeastOfWarRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isFeastOfWarActive = false;
         player.healthEvent.CallFeastOfWarWoreOffEvent();
@@ -2803,7 +2791,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void VenomousIvy(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             activeSkillTypeTwoAnimator.gameObject.SetActive(true);
             activeSkillTypeTwoAnimator.SetBool("venomousIvy", true);
@@ -2818,7 +2806,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator VenomousIvyRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isVenomousIvyActive = false;
         activeSkillTypeTwoAnimator.SetBool("venomousIvy", false);
@@ -2831,7 +2819,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void FadeAndFeed(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             activeSkillTypeThreeAnimator.gameObject.SetActive(true);
             activeSkillTypeThreeAnimator.SetBool("fadeAndFeed", true);
@@ -2867,7 +2855,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator FadeAndFeedRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         // ENABLE SKILL EFFECTS
         player.healthEvent.CallFadeAndFeedSpecialMoveEndEvent(); // This is for displaying fade and feed icon
@@ -2963,7 +2951,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void MistOfDisruption(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             if (!player.isMistOfDisruptionActive)
             {
@@ -2982,7 +2970,7 @@ public class PlayerControl : MonoBehaviour
         SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isMistOfDisruptionActive = false;
 
@@ -2997,7 +2985,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void NymarasWindveil(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             activeSkillTypeTwoAnimator.gameObject.SetActive(true);
 
@@ -3028,7 +3016,7 @@ public class PlayerControl : MonoBehaviour
 
     IEnumerator NymarasWindveilRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData, float speedIncrease)
     {
-        float duration = activeSkillData.effectiveDuration * (1 + player.buffDurationModifier); // Duration
+        float duration = activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier); // Duration
         float elapsed = 0f;
 
         while (elapsed < duration)
@@ -3123,7 +3111,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void EyeOfTheStorm(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             player.isEyeOfTheStormActive = true;
             SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
@@ -3140,7 +3128,7 @@ public class PlayerControl : MonoBehaviour
         eyeOfTheStormObject.GetComponent<Animator>().SetBool("eyeOfTheStorm", true);
 
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isEyeOfTheStormActive = false;
@@ -3157,7 +3145,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void IonicRejuvenation(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.buffDurationModifier))
+        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             activeSkillTypeThreeAnimator.gameObject.SetActive(true);
             activeSkillTypeThreeAnimator.SetBool("ionicRejuvenation", true);
@@ -3210,7 +3198,7 @@ public class PlayerControl : MonoBehaviour
     IEnumerator IonicRejuvenationRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         // Wait until effective duration of skill ended
-        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.buffDurationModifier));
+        yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         // ENABLE SKILL EFFECTS
         player.healthEvent.CallIonicRejuvenationWoreOffEvent(); // This is for displaying ionic rejuvenation icon
@@ -3634,7 +3622,7 @@ public class PlayerControl : MonoBehaviour
             // Stats + Book + flags
             player.UpdateDamageValues();
             player.UpdateAttackRatingAndCriticalValues();
-            player.UpdateBlockAndEvasivenessValues();
+            player.UpdateBlockAndDodgeValues();
 
             StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponMainHand);
             player.mainHandSlotFilled = false;
@@ -3698,7 +3686,7 @@ public class PlayerControl : MonoBehaviour
             player.UpdateDamageValues();
             player.UpdateArmorValues();
             player.UpdateAttackRatingAndCriticalValues();
-            player.UpdateBlockAndEvasivenessValues();
+            player.UpdateBlockAndDodgeValues();
 
             StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponOffHand);
             player.offHandSlotFilled = false;

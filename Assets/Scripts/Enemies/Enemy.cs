@@ -62,6 +62,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool rightHandWeaponDamageHappened;
     [HideInInspector] public bool leftHandWeaponDamageHappened;
     [HideInInspector] public float currentArmor;
+    [HideInInspector] public StatusEffectAnimators statusEffectAnimators;
 
     [HideInInspector] public bool isMaterializing;
     [HideInInspector] public float currentMoveSpeed;
@@ -84,7 +85,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public float bleedDuration = 2;
     [HideInInspector] public float rootDuration = 2;
     [HideInInspector] public float stunDuration = 2;
-    [HideInInspector] public float curseDuration = 2;
+    [HideInInspector] public float curseDuration = 4;
     [HideInInspector] public float fearDuration = 2;
     [HideInInspector] public float revealDuration = 2;
     [HideInInspector] public float staticDuration = 2;
@@ -139,6 +140,7 @@ public class Enemy : MonoBehaviour
         aiDestinationSetter = GetComponent<AIDestinationSetter>();
         patrol = GetComponent<PatrolRigidbody2D>();
         aiRigidbody2D = GetComponent<AIRigidbody2D>();
+        statusEffectAnimators = GetComponentInChildren<StatusEffectAnimators>();
     }
 
     private void OnEnable()

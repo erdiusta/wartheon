@@ -20,6 +20,6 @@ public class CoinsUI : MonoBehaviour
 
     private void StaticEventHandler_OnCoinAmountChanged(CoinAndShardArgs coinAndShardArgs)
     {
-        coinDisplayText.text = coinAndShardArgs.updatedCoinAmount.ToString();
+        coinDisplayText.text = "x" + coinAndShardArgs.updatedCoinAmount.ToString();
     }
 }

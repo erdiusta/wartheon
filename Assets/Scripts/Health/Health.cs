@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.XR;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(HealthEvent))]
@@ -117,15 +116,6 @@ public class Health : MonoBehaviour
                 else
                 {
                     isDamageable = false;
-                }
-            }
-
-            // Battle scars mechanism
-            if (player.isBattleScarsActive && player.damageTracker.GetRecentDamage() > 100 && !hasDied)
-            {
-                if (!player.battleScarsArmorBoostActivated)
-                {
-                    StartCoroutine(BattleScarsRoutine());
                 }
             }
 
@@ -257,23 +247,6 @@ public class Health : MonoBehaviour
         }
 
         DeathCheck();
-    }
-
-    IEnumerator BattleScarsRoutine()
-    {
-        player.battleScarsArmorBoostActivated = true;
-        player.additionalArmorModifier += 0.4f;
-        player.UpdateArmorValues();
-        player.healthEvent.CallBattleScarsEvent();
-        StaticEventHandler.CallStatsChangedOnTheBookEvent();
-
-        yield return new WaitForSeconds(3f);
-
-        player.battleScarsArmorBoostActivated = false;
-        player.additionalArmorModifier -= 0.4f;
-        player.UpdateArmorValues();
-        player.healthEvent.CallBattleScarsWoreOffEvent();
-        StaticEventHandler.CallStatsChangedOnTheBookEvent();
     }
 
     private void DeathCheck()
@@ -838,7 +811,6 @@ public class Health : MonoBehaviour
     {
         if (player != null)
         {
-            player.acidArmorDebuffModifier = 0f;
             player.UpdateArmorValues();
         }
     }

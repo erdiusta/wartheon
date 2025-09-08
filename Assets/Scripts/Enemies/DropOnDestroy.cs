@@ -164,16 +164,18 @@ public class DropOnDestroy : MonoBehaviour
     {
         if (dropItem == null) return;
 
+        PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
+
         if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
         {
             dropItem.hasPrimaryPassiveDrop = true;
+            passiveItem.passiveItemDetails = passiveItemDetails;
         }
         else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
         {
             dropItem.hasSecondaryPassiveDrop = true;
+            passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails);
         }
-
-        PassiveItem passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails);
 
         dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position);
     }

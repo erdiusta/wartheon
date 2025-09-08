@@ -5,7 +5,7 @@ public class DropOnAxeThrow : MonoBehaviour
 {
     [HideInInspector] public GameObject dropItemGameObject;
 
-    public WeaponDetailsSO throwingAxeDetails;
+    public Weapon throwingAxe;
 
     DropItem dropItem;
     Player player;
@@ -19,7 +19,7 @@ public class DropOnAxeThrow : MonoBehaviour
 
     public void DropProcess()
     {
-        throwingAxeDetails = DropItem.droppedThrowingAxe;
+        throwingAxe = DropItem.droppedThrowingAxe;
 
         // Instantiate item container
         InstantiateDropItem();
@@ -45,9 +45,9 @@ public class DropOnAxeThrow : MonoBehaviour
         Vector3 spawnPointDeviation = centerDirection * forwardOffset;
         dropItem.transform.position = dropPoint + spawnPointDeviation;       
 
-        if (throwingAxeDetails != null)
+        if (throwingAxe != null)
         {
-            InstantiateWeaponItem(throwingAxeDetails);
+            InstantiateWeaponItem(throwingAxe);
             dropItem.transform.SetParent(currentRoom.instantiatedRoom.transform);
         }
     }
@@ -68,14 +68,12 @@ public class DropOnAxeThrow : MonoBehaviour
     /// <summary>
     /// Instantiate a weapon item for the player to collect
     /// </summary>
-    private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails)
+    private void InstantiateWeaponItem(Weapon weapon)
     {
         if (dropItem == null) return;
 
         dropItem.hasWeaponDrop = true;
-        Weapon weapon = new Weapon(weaponDetails.rarity);
-        weapon.weaponDetails = weaponDetails;
 
-        dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position);
+        dropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
     }
 }

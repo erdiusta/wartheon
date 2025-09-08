@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -252,12 +253,12 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 questText.text = "Use interaction key for picking-up items & interacting with NPC.\n\nIt is " + keyboardBinding + " for keyboard.\n\n" +
                     gamepadBinding + " button for gamepad.";
 
+                // Initialize drop
+                Weapon weapon = WeaponDropGenerator.CreateRolledInstance(player.playerDetails.startingWeapon);
+
                 DropItem dropItem = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<DropItem>(true);
                 dropItem.gameObject.SetActive(true);
 
-                // Initialize drop
-                Weapon weapon = new Weapon(player.playerDetails.startingWeapon.rarity);
-                weapon.weaponDetails = player.playerDetails.startingWeapon;
                 dropItem.hasWeaponDrop = true;
                 dropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, dropItem.transform.position, true);
                 break;
@@ -447,14 +448,13 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 dropItem.gameObject.SetActive(true);
 
                 // Initialize drop
-                passiveItem = new PassiveItem(GameResources.Instance.secondaryPassiveItem.rarity);
-                passiveItem.passiveItemDetails = GameResources.Instance.secondaryPassiveItem;
+                passiveItem = PassiveDropGenerator.CreateRolledInstance(GameResources.Instance.secondaryPassiveItem);
 
                 dropItem.hasSecondaryPassiveDrop = true;
                 dropItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, dropItem.transform.position, true);
 
                 break;
-            case TutorialPhase.BuildsPage:
+            case TutorialPhase.SkillsPage:
                 isCheckPlayed = false;
 
                 keyboardBinding = InputManager.Instance.bookView.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
@@ -462,8 +462,8 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
 
                 SoundAndImageTrigger(questImage);
 
-                questText.text = "Now you have leveled-up. At every level-up, you will get one build points. Open glossary books build page to utilize it." +
-                    "\n\nIt is " + keyboardBinding + " for keyboard.\n\n" + gamepadBinding + " button for gamepad.";
+                questText.text = "Now you have leveled-up. At every level-up, you will get one skill points. Open glossary books skill page to utilize it by either improving " +
+                    "skill (one of 5 skills) or opening a inner-path \n\nIt is " + keyboardBinding + " for keyboard.\n\n" + gamepadBinding + " button for gamepad.";
                 break;
 
             case TutorialPhase.WeaponSetSwitch:
@@ -614,7 +614,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                     PassTutorialProcess();
                 }
                 break;
-            case TutorialPhase.BuildsPage:
+            case TutorialPhase.SkillsPage:
                 if (player.currentSkillPoints == 0)
                 {
                     PassTutorialProcess();
@@ -688,8 +688,9 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
         yield return StartCoroutine(Fade(0f, 1f, 2f, Color.black));
 
         // Tutorial finished
-        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + player.playerDetails.playerCharacterName.ToUpper() + "! YOU COMPLETED TUTORIAL.",
-            Color.green, 5f, true));
+        string upperName = player.playerDetails.playerCharacterName.ToUpper(CultureInfo.InvariantCulture);
+
+        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + upperName + "! YOU COMPLETED TUTORIAL.", Color.green, 5f, true));
 
         yield return StartCoroutine(DisplayMessageRoutine("NOW IT'S TIME TO BEGIN YOUR JOURNEY.", Color.green, 1.5f, true));
 

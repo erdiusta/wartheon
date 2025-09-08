@@ -64,10 +64,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Crate
       objectReference: {fileID: 0}
-    - target: {fileID: 5693136729584463025, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
-      propertyPath: m_TagString
-      value: Untagged
-      objectReference: {fileID: 0}
     - target: {fileID: 5800860785575665325, guid: acf4ac688b34ba14e946ca9f2774b23f, type: 3}
       propertyPath: destroySoundEffect
       value: 

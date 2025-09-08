@@ -485,7 +485,7 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
                             float blindPenalty = enemy.isBlind ? 0.5f : 0f;
 
                             // Evasiveness - dodge check
-                            if (100 - (player.currentEvasivenessValue + blindPenalty) * 100 > Random.Range(1, 101))
+                            if (100 - (player.currentDodgeValue + blindPenalty) * 100 > Random.Range(1, 101))
                             {
                                 playerHealth.TakeDamage(25, transform.position, player.transform.position);
 

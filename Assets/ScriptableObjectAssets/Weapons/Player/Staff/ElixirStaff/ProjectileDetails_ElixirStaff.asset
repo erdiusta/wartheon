@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad0d48074276e0640b14ec3640a668d8, type: 3}
+  m_Name: ProjectileDetails_ElixirStaff
+  m_EditorClassIdentifier: 
+  projectileName: Elder Staff Projectile
+  isPlayerProjectile: 1
+  projectilePrefabArray:
+  - {fileID: 3547249067481803369, guid: 13a20fa8a2a5e9041a5315a8bfc84ce9, type: 3}
+  projectileMaterial: {fileID: 2100000, guid: a561bba8f1360ee44898565d925c537c, type: 2}
+  projectileChargeTime: 0.1
+  projectileChargeMaterial: {fileID: 2100000, guid: 7250dc13c7f24a4449c612f48de0589e, type: 2}
+  belongingWeaponDetails: {fileID: 11400000, guid: 232bbd5aa0080684f9f5dde1a4d60722, type: 2}
+  projectileHitEffect: {fileID: 11400000, guid: f3e839fdd5b82b6439febb9cddb0aa3d, type: 2}
+  projectilePhyDamageMin: 0
+  projectilePhyDamageMax: 1
+  projectileMagicDamageMin: 0
+  projectileMagicDamageMax: 1
+  projectileSpeed: 16
+  projectileRange: 30
+  hasLifeTime: 0
+  lifeDuration: 1
+  projectileRotationSpeed: 1
+  isGuided: 0
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 0
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
+  hasWarmDamage: 0
+  warmChance: 0
+  hasBurnDamage: 0
+  burnChance: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasRootDamage: 0
+  rootChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
+  hasPoisonDamage: 0
+  poisonChance: 0
+  hasStaticDamage: 0
+  staticChance: 0
+  hasParalyzeDamage: 0
+  paralyzeChance: 0
+  hasAcidDamage: 0
+  acidEfficiency: 0
+  hasChillDamage: 0
+  chillChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  hasRevealDamage: 0
+  revealChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasFearDamage: 0
+  fearChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
+  projectileSpreadMin: 0.5
+  projectileSpreadMax: 1
+  criticalHitChance: 0.05
+  criticalHitDamageMultiplier: 1.5
+  projectileSpawnAmountMin: 1
+  projectileSpawnAmountMax: 1
+  projectileSpawnIntervalMin: 0
+  projectileSpawnIntervalMax: 0
+  projectileFireSoundEffect: {fileID: 0}
+  projectileImpactSoundEffect: {fileID: 0}
+  isProjectileTrail: 0
+  projectileTrailTime: 3
+  projectileTrailMaterial: {fileID: 0}
+  projectileTrailStartWidth: 0
+  projectileTrailEndWidth: 0
+  isLaser: 0

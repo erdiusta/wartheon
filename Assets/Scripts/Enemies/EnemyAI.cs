@@ -35,6 +35,7 @@ public class EnemyAI : MonoBehaviour
     protected Coroutine paralyzeEnemyRoutine;
     protected Coroutine rootEnemyRoutine;
     protected Coroutine chillEnemyRoutine;
+    protected Coroutine curseEnemyRoutine;
     protected Coroutine frostEnemyRoutine;
     protected Coroutine shatterEnemyRoutine;
     protected Coroutine slowEnemyRoutine;
@@ -312,6 +313,13 @@ public class EnemyAI : MonoBehaviour
             if (slowEnemyRoutine == null)
             {
                 slowEnemyRoutine = StartCoroutine(SlowRoutine(enemy.slowDuration));
+            }
+        }
+        if (enemy.isCursed)
+        {
+            if (curseEnemyRoutine == null)
+            {
+                curseEnemyRoutine = StartCoroutine(CurseRoutine(enemy.curseDuration));
             }
         }
     }
@@ -824,6 +832,16 @@ public class EnemyAI : MonoBehaviour
         enemy.isChilled = false;
         enemy.healthEvent.CallChillCuredEvent();
         chillEnemyRoutine = null;
+    }
+
+    public IEnumerator CurseRoutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        enemy.curseDuration = 4; // Reset to default value
+        enemy.isCursed = false;
+        enemy.healthEvent.CallCurseCuredEvent();
+        curseEnemyRoutine = null;
     }
 
     public IEnumerator SlowRoutine(float duration)

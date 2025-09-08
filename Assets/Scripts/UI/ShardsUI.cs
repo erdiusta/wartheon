@@ -20,6 +20,6 @@ public class ShardsUI : MonoBehaviour
 
     private void StaticEventHandler_OnShardAmountChanged(CoinAndShardArgs coinAndShardArgs)
     {
-        shardsDisplayText.text = coinAndShardArgs.updatedShardAmount.ToString();
+        shardsDisplayText.text = "x" + coinAndShardArgs.updatedShardAmount.ToString();
     }
 }

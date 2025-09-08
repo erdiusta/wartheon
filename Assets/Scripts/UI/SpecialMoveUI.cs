@@ -111,11 +111,11 @@ public class SpecialMoveUI : MonoBehaviour
 
             player.specialMoveRecastCooldownTimerArray[idx] += Time.deltaTime;
 
-            float recastDuration = activeSkillData.recastWindowDuration * (1 + player.buffDurationModifier);
+            float recastDuration = activeSkillData.recastWindowDuration * (1 + player.currentSkillDurationModifier);
 
             if (recastDuration > 0) player.specialMoveRecastDurationTimerArray[idx] += Time.deltaTime;
 
-            float recastCooldown = activeSkillData.recastCooldown * (1 - player.additionalSkillCoolDownModifier);
+            float recastCooldown = activeSkillData.recastCooldown * (1 - player.currentSkillCooldownReducer);
 
             // If recast is not triggered during recast duration time, reset cooldown
             if (player.specialMoveRecastCooldownTimerArray[idx] > recastCooldown && player.specialMoveRecastCountArray[idx] > 0)
@@ -129,11 +129,11 @@ public class SpecialMoveUI : MonoBehaviour
 
             player.specialMoveCooldownTimerArray[idx] += Time.deltaTime;
 
-            float duration = activeSkillData.effectiveDuration * (1 + player.buffDurationModifier);
+            float duration = activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier);
             if (duration > 0)
                 player.specialMoveDurationTimerArray[idx] += Time.deltaTime;
 
-            float cooldown = activeSkillData.cooldown * (1 - player.additionalSkillCoolDownModifier);
+            float cooldown = activeSkillData.cooldown * (1 - player.currentSkillCooldownReducer);
 
             if (player.specialMoveCooldownTimerArray[idx] > cooldown)
             {
@@ -246,7 +246,7 @@ public class SpecialMoveUI : MonoBehaviour
     {
         int index = specialMoveNumber - 1;
 
-        float activeRecastCooldownDuration = activeSkillData.recastCooldown * (1 - player.additionalSkillCoolDownModifier);
+        float activeRecastCooldownDuration = activeSkillData.recastCooldown * (1 - player.currentSkillCooldownReducer);
 
         // Ensure reset flag is false at start
         player.specialMoveRecastCooldownTimerArray[index] = 0f;
@@ -280,7 +280,7 @@ public class SpecialMoveUI : MonoBehaviour
         int activeSkillLevel = usedActiveUniqueSkillContainer.GetCurrentActiveLevel();
         var activeSkillData = usedActiveUniqueSkillContainer.levels[activeSkillLevel - 1];
 
-        float activeCooldownDuration = activeSkillData.cooldown * (1 - player.additionalSkillCoolDownModifier);
+        float activeCooldownDuration = activeSkillData.cooldown * (1 - player.currentSkillCooldownReducer);
 
         while (player.specialMoveCooldownTimerArray[index] < activeCooldownDuration)
         {

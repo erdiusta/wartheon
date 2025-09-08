@@ -212,6 +212,20 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public SoundEffectSO buildActivationSoundEffect;
 
+    [System.Serializable]
+    public class PrimaryStats
+    {
+        public int strength;
+        public int dexterity;
+        public int constitution;
+        public int intelligence;
+        public int agility;
+        public int willpower;
+        public int ferocity;
+        public int resolve;
+    }
+
+
     #region Validation
 #if UNITY_EDITOR
     private void OnValidate()

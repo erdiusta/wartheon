@@ -42,6 +42,9 @@ public class ManaUI : MonoBehaviour
 
         player.manaEvent.OnManaChanged += ManaEvent_OnManaChanged;
         player.manaEvent.OnReservedManaReset += ManaEvent_OnReservedManaReset;
+
+        // Force initial UI update (fix for missed first event)
+        UpdateManaText();
     }
 
     private void OnDisable()
@@ -79,7 +82,8 @@ public class ManaUI : MonoBehaviour
 
     private void UpdateManaText()
     {
-        manaText.text = $"{player.mana.GetCurrentMana()}/{player.mana.GetMaximumMana()}";
+        int mana = Mathf.Clamp(player.mana.GetCurrentMana(), 0, player.mana.GetMaximumMana());
+        manaText.text = $"{mana}/{player.mana.GetMaximumMana()}";
     }
 
     private void UpdateManaBar(bool manaReserved)

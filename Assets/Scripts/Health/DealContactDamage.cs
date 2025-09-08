@@ -103,7 +103,7 @@ public class DealContactDamage : MonoBehaviour
                 float blindPenalty = enemy.isBlind ? 0.5f : 0f;
 
                 int diceRoll = Random.Range(1, 101);
-                bool isAttackDodged = 100 - (player.currentEvasivenessValue + blindPenalty) * 100 < diceRoll ? true : false;
+                bool isAttackDodged = 100 - (player.currentDodgeValue + blindPenalty) * 100 < diceRoll ? true : false;
 
                 // Evasiveness - dodge check
                 if (!isAttackDodged && !player.playerControl.isPlayerRolling && !player.isWhirlrendActive)
@@ -168,7 +168,6 @@ public class DealContactDamage : MonoBehaviour
                                     CheckWarmStatus(player);
                                     CheckBurnStatus(player);
                                     CheckPoisonStatus(player);
-                                    CheckAcidStatus(player);
                                     CheckRootStatus(player);
                                     CheckChillStatus(player);
                                     CheckFrostStatus(player);
@@ -263,11 +262,11 @@ public class DealContactDamage : MonoBehaviour
             inflictedNonElementalDamage = (int)(nonElementalDamage * (1 - player.currentArmorValue));
         }
 
-        int inflictedMagicDamage = 0;
-        // Calculate inflicted elemental damage
-        inflictedMagicDamage = (int)(magicDamage * (1 - player.currentMagicResistanceValue));
+        int inflictedMagicDamage = (int)(magicDamage * (1 - player.currentMagicResistanceValue));
 
-        return inflictedMagicDamage + inflictedNonElementalDamage;
+        int inflictedDamage = Mathf.RoundToInt((inflictedMagicDamage + inflictedNonElementalDamage) * (1 - player.currentDamageReductionValue));
+
+        return inflictedDamage;
     }
 
     private void GetDamageFromSummonedEnemies(Collider2D collision)
@@ -315,8 +314,9 @@ public class DealContactDamage : MonoBehaviour
         {
             // Check get poisoned
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.bleedingChance - player.additionalStatusResistanceModifier)
+            if (randomDice < enemy.enemyDetails.bleedingChance - player.currentStatusResistance)
             {
+                player.statusEffectAnimators.bleedAnimator.SetTrigger(Settings.activateVFX);
                 player.healthEvent.CallGetBleedingEvent();
                 player.healthStatus |= HealthStatus.Bleeding; // Add Burned status
             }
@@ -365,8 +365,9 @@ public class DealContactDamage : MonoBehaviour
         {
             // Check get poisoned
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.burnChance - player.additionalStatusResistanceModifier)
+            if (randomDice < enemy.enemyDetails.burnChance - player.currentStatusResistance)
             {
+                player.statusEffectAnimators.burnAnimator.SetTrigger(Settings.activateVFX);
                 player.healthEvent.CallGetBurnEvent();
                 player.healthStatus |= HealthStatus.Burned; // Add Burned status
             }
@@ -384,34 +385,11 @@ public class DealContactDamage : MonoBehaviour
         {
             // Check get poisoned
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.poisonChance - player.additionalStatusResistanceModifier)
+            if (randomDice < enemy.enemyDetails.poisonChance - player.currentStatusResistance)
             {
+                player.statusEffectAnimators.poisonAnimator.SetTrigger(Settings.activateVFX);
                 player.healthEvent.CallGetPoisonedEvent();
                 player.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
-            }
-        }
-    }
-
-    /// <summary>
-    /// Check acid status
-    /// </summary>
-    private void CheckAcidStatus(Player player)
-    {
-        if (enemy.enemyDetails.hasAcid && player.armorStatus != ArmorStatus.Acid)
-        {
-            // Check get acid
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.acidEfficiency - player.additionalStatusResistanceModifier)
-            {
-                player.armorStatus = ArmorStatus.Acid;
-                player.acidArmorDebuffModifier = (float)Math.Round(enemy.enemyDetails.acidEfficiency, 2);
-
-                // Deduct armor from acid
-                player.currentArmorValue = Mathf.Clamp(player.currentArmorValue * (1 - player.acidArmorDebuffModifier), -0.5f, 
-                    player.currentArmorValue * (1 - player.acidArmorDebuffModifier));
-
-                // Call Acid Event
-                player.healthEvent.CallGetAcidEvent();
             }
         }
     }
@@ -426,8 +404,9 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasStunDamage && !isStunned)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.stunChance - player.additionalStatusResistanceModifier)
+            if (randomDice < enemy.enemyDetails.stunChance - player.currentStatusResistance)
             {
+                player.statusEffectAnimators.stunAnimator.SetTrigger(Settings.activateVFX);
                 player.playerControl.isPlayerRolling = false;
 
                 player.moveStatus |= MoveStatus.Stun;
@@ -444,8 +423,9 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasSlowDamage && !player.isSlowed)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.slowChance - player.additionalStatusResistanceModifier)
+            if (randomDice < enemy.enemyDetails.slowChance - player.currentStatusResistance)
             {
+                player.statusEffectAnimators.slowAnimator.SetTrigger(Settings.activateVFX);
                 player.playerControl.isPlayerRolling = false;
 
                 player.isSlowed = true;
@@ -464,8 +444,9 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasRootDamage && !isRooted)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.rootChance - player.additionalStatusResistanceModifier)
+            if (randomDice < enemy.enemyDetails.rootChance - player.currentStatusResistance)
             {
+                player.statusEffectAnimators.rootAnimator.SetTrigger(Settings.activateVFX);
                 player.playerControl.isPlayerRolling = false;
 
                 player.moveStatus |= MoveStatus.Root;
@@ -517,8 +498,9 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasFrostDamage && !isFrozen)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.frostChance - player.additionalStatusResistanceModifier)
+            if (randomDice < enemy.enemyDetails.frostChance - player.currentStatusResistance)
             {
+                player.statusEffectAnimators.frostAnimator.SetTrigger(Settings.activateVFX);
                 player.playerControl.isPlayerRolling = false;
 
                 player.moveStatus |= MoveStatus.Frozen;
@@ -570,8 +552,9 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasParalyzeDamage && !isParalyzed)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.paralyzeChance - player.additionalStatusResistanceModifier)
+            if (randomDice < enemy.enemyDetails.paralyzeChance - player.currentStatusResistance)
             {
+                player.statusEffectAnimators.paralyzeAnimator.SetTrigger(Settings.activateVFX);
                 player.playerControl.isPlayerRolling = false;
 
                 player.moveStatus |= MoveStatus.Paralyze;
@@ -588,8 +571,9 @@ public class DealContactDamage : MonoBehaviour
         if (enemy.enemyDetails.hasCurseDamage && !player.isCursed)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.curseChance - player.additionalStatusResistanceModifier)
+            if (randomDice < enemy.enemyDetails.curseChance - player.currentStatusResistance)
             {
+                player.statusEffectAnimators.curseAnimator.SetTrigger(Settings.activateVFX);
                 player.isCursed = true;
                 player.healthEvent.CallGetCurseEvent();
             }
@@ -605,8 +589,10 @@ public class DealContactDamage : MonoBehaviour
 
         if (enemy.enemyDetails.hasBlindDamage && !player.isBlind)
         {
+            player.statusEffectAnimators.blindAnimator.SetTrigger(Settings.activateVFX);
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.blindChance - player.additionalStatusResistanceModifier)
+
+            if (randomDice < enemy.enemyDetails.blindChance - player.currentStatusResistance)
             {
                 player.healthEvent.CallGetBlindEvent();
             }
@@ -622,8 +608,10 @@ public class DealContactDamage : MonoBehaviour
 
         if (enemy.enemyDetails.hasFearDamage && !player.isFeared)
         {
+            player.statusEffectAnimators.fearAnimator.SetTrigger(Settings.activateVFX);
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < enemy.enemyDetails.fearChance - player.additionalStatusResistanceModifier)
+
+            if (randomDice < enemy.enemyDetails.fearChance - player.currentStatusResistance)
             {
                 player.healthEvent.CallGetFearEvent();
             }

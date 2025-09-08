@@ -15,8 +15,12 @@ MonoBehaviour:
   passiveItemName: Golden Coin
   price: 0
   passiveItemSprite: {fileID: 21300000, guid: 8ec74d61b058faf418bff576c4072618, type: 3}
+  rarity: 0
   passiveItemCategory: 0
   primaryPassiveItemName: 3
   passiveItemType: 0
   passiveItemSlotName: 0
-  passiveItemAnimatorController: {fileID: 0}
+  passiveItemAnimatorController: {fileID: 9100000, guid: 734ee2a97bd933c4cb65c070ece3cfd7, type: 2}
+  baseUniqueModifier: 0
+  baseTypeModifier: 0
+  additionalModifierPoolForType: 

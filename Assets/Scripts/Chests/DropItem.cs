@@ -28,7 +28,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [HideInInspector] public int gambleValue;
     [HideInInspector] public static DropItem toBeDroppedDropItem;
     [HideInInspector] public static DropItem nearestDropItem = null;
-    [HideInInspector] public static WeaponDetailsSO droppedThrowingAxe = null;
+    [HideInInspector] public static Weapon droppedThrowingAxe = null;
     [HideInInspector] public bool isInitialized = false;
 
     bool isPurchasing;
@@ -298,13 +298,13 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                                     {
                                         if (!player.mainHandSlotFilled)
                                         {
-                                            if(!weaponDetails.requiredPrimaryStats.MeetsRequirements(player))
+                                            if(!MeetsRequirements())
                                             {
-                                                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
+                                                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredChar);
                                                 return;
                                             }
 
-                                            int currentPrice = (int)(weaponDetails.price * (1 + player.additinalNPCCostModifier));
+                                            int currentPrice = Mathf.RoundToInt(weaponDetails.price * (1 + player.additinalNPCCostModifier));
 
                                             if (GameManager.Instance.GetPlayer().coinsAndShards.coinAmount >= currentPrice && !isPurchasing)
                                             {
@@ -472,9 +472,9 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             if (nearestDropItem != this) return;
 
-            if (!weaponDetails.requiredPrimaryStats.MeetsRequirements(player))
+            if (!MeetsRequirements())
             {
-                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredPrimaryStats);
+                GameManager.Instance.OpenWarningPopUpMenu(PopUpReason.DontMeetRequiredChar);
                 return;
             }
 
@@ -627,7 +627,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
 
         // Check for animation - Passive Items
-        else if (hasPrimaryPassiveDrop || hasSecondaryPassiveDrop)
+        if (hasPrimaryPassiveDrop || hasSecondaryPassiveDrop)
         {
             PassiveItem passiveItem = (PassiveItem)itemGeneric;
             passiveItemDetails = passiveItem.passiveItemDetails;
@@ -708,7 +708,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
 
             // Pick up item and update equipped weapon list
-            player.UpdateWieldedWeapons(weapon, true, false);
+            player.UpdateWieldedWeapons(ref weapon, true, false, weaponDetails);
         }
         else
         {
@@ -858,5 +858,30 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         animator.runtimeAnimatorController = null;
         spriteRenderer.sprite = null;
         Destroy(gameObject, 1f);
+    }
+
+    private bool MeetsRequirements()
+    {
+        switch (player.playerDetails.playerCharacterIndex)
+        {
+            case Character.Caelion:
+                if (weaponDetails.weaponClass == WeaponClass.Sword || weaponDetails.weaponClass == WeaponClass.Shield) return true; break;
+            case Character.Morven:
+                if (weaponDetails.weaponClass == WeaponClass.Dagger) return true; break;
+            case Character.Nyveran:
+                if (weaponDetails.weaponClass == WeaponClass.Dagger || weaponDetails.weaponClass == WeaponClass.Bow ||
+                    weaponDetails.weaponClass == WeaponClass.Crossbow) return true; break;
+            case Character.Karnag:
+                if (weaponDetails.weaponClass == WeaponClass.Axe) return true; break;
+            case Character.Kynara:
+            case Character.Mycara:
+            case Character.Nymara:
+                if (weaponDetails.weaponClass == WeaponClass.Staff) return true; break;
+            case Character.Nyxa:
+                if (weaponDetails.weaponClass == WeaponClass.Dagger || weaponDetails.weaponClass == WeaponClass.Crossbow) return true; break;
+            default: break;
+        }
+
+        return false;
     }
 }
