@@ -86,9 +86,10 @@ public class PlayerDetailsSO : ScriptableObject
     #endregion
     public SoundEffectSO passiveSkillSoundEffect;
 
-    #region Active Skill One
+    #region Active Skill
     [Header("Active Skill Details")]
     #endregion
+    public ActiveUniqueSkillDetailsSO passiveSkillDetails;
     public ActiveUniqueSkillDetailsSO firstActiveSkillDetails;
     public ActiveUniqueSkillDetailsSO secondActiveSkillDetails;
     public ActiveUniqueSkillDetailsSO thirdActiveSkillDetails;

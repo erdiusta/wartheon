@@ -47,7 +47,7 @@ public class SelectedPassiveItem : MonoBehaviour
         if (!InventoryManager.Instance.IsInventoryFull() && !args.isSwap && !args.dropButton)
         {
             args.passiveItem.itemSlotStatus = ItemSlotStatus.Inventory;
-            InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(args.passiveItem); // Item added to inventory slot
+            InventoryManager.Instance.PlaceItemToInventoryndexSlot(args.passiveItem); // Item added to inventory slot
         }
 
         // Rebuild once and update stats/UI once
@@ -66,7 +66,7 @@ public class SelectedPassiveItem : MonoBehaviour
             if (!InventoryManager.Instance.IsInventoryFull())
             {
                 // Place current item to inventory
-                InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(player.equippedPassiveItems[slot]);
+                InventoryManager.Instance.PlaceItemToInventoryndexSlot(player.equippedPassiveItems[slot]);
             }
 
             // Remove old item effects

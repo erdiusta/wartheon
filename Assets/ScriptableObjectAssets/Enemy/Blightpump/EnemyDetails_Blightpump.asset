@@ -41,6 +41,17 @@ MonoBehaviour:
   darkResistance: 0
   hasShield: 0
   deflectChance: 0
+  isImmuneToBleeding: 0
+  isImmuneToStun: 0
+  isImmuneToSlow: 0
+  isImmuneToBurn: 0
+  isImmuneToPoison: 1
+  isImmuneToRoot: 0
+  isImmuneToFrost: 0
+  isImmuneToParalyze: 0
+  isImmuneToBlind: 0
+  isImmuneToCurse: 0
+  isImmuneToFear: 0
   dealtMeleeDamageMin: 12
   dealtMeleeDamageMax: 15
   canWarm: 0
@@ -98,11 +109,21 @@ MonoBehaviour:
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
-    enemyHealthAmount: 25
+    enemyHealthAmount: 60
   - dungeonLevel: {fileID: 11400000, guid: 2a9e0254a141aba41bdcd556b95beeb2, type: 2}
-    enemyHealthAmount: 25
+    enemyHealthAmount: 100
   - dungeonLevel: {fileID: 11400000, guid: 99c1ae446f4b95c4c9302a8443678c1d, type: 2}
-    enemyHealthAmount: 25
+    enemyHealthAmount: 140
+  enemyDamageDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
+    minDamageAmount: 13
+    maxDamageAmount: 17
+  - dungeonLevel: {fileID: 11400000, guid: 2a9e0254a141aba41bdcd556b95beeb2, type: 2}
+    minDamageAmount: 16
+    maxDamageAmount: 20
+  - dungeonLevel: {fileID: 11400000, guid: 99c1ae446f4b95c4c9302a8443678c1d, type: 2}
+    minDamageAmount: 23
+    maxDamageAmount: 27
   isImmuneAfterHit: 1
   hitImmunityTime: 0.4
   isHealthBarDisplayed: 0

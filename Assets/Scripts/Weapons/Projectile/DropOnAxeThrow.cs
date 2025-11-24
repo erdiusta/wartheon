@@ -1,9 +1,8 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class DropOnAxeThrow : MonoBehaviour
 {
-    [HideInInspector] public GameObject dropItemGameObject;
+    [HideInInspector] public static GameObject dropItemGameObject;
 
     public Weapon throwingAxe;
 
@@ -24,6 +23,7 @@ public class DropOnAxeThrow : MonoBehaviour
         // Instantiate item container
         InstantiateDropItem();
         dropItem.transform.SetParent(null);
+        dropItemGameObject = dropItem.gameObject;
 
         // Base drop point
         Vector3 dropPoint = transform.position;

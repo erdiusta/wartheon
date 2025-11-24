@@ -48,6 +48,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (isLockIcon) return;
+
         originalPosition = rectTransform.anchoredPosition;
         originalParent = transform.parent;  
         canvasGroup.alpha = 0.6f;
@@ -57,6 +59,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (isLockIcon) return;
+
         IsDragging = true;
 
         rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;  // HERE

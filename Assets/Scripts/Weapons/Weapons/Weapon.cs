@@ -17,6 +17,7 @@ public class Weapon : ItemGeneric
     public bool onPrecharge;
     public bool onCooldown;
     public int activePrice;
+    public bool isThrowingAxeWeapon;
 
     // Rolled modifiers
     public BoostType baseUniqueRolled;

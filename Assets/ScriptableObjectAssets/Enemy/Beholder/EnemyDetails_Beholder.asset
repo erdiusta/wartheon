@@ -99,11 +99,21 @@ MonoBehaviour:
   firingLineOfSightRequired: 1
   enemyHealthDetailsArray:
   - dungeonLevel: {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}
-    enemyHealthAmount: 30
+    enemyHealthAmount: 70
   - dungeonLevel: {fileID: 11400000, guid: c3413b0ad50f98a4ba7edfccd5230ccf, type: 2}
-    enemyHealthAmount: 30
+    enemyHealthAmount: 90
   - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
-    enemyHealthAmount: 30
+    enemyHealthAmount: 120
+  enemyDamageDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}
+    minDamageAmount: 15
+    maxDamageAmount: 20
+  - dungeonLevel: {fileID: 11400000, guid: c3413b0ad50f98a4ba7edfccd5230ccf, type: 2}
+    minDamageAmount: 18
+    maxDamageAmount: 24
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
+    minDamageAmount: 22
+    maxDamageAmount: 28
   isImmuneAfterHit: 1
   hitImmunityTime: 0.4
   isHealthBarDisplayed: 0

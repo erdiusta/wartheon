@@ -35,10 +35,11 @@ MonoBehaviour:
   parrySoundEffect: {fileID: 11400000, guid: 1f535785069b176429525f2fb0e96cc7, type: 2}
   passiveSkillImage: {fileID: 21300000, guid: be27e0fd2b84ae6458fe1ceddeb4f503, type: 3}
   passiveSkillSoundEffect: {fileID: 0}
+  passiveSkillDetails: {fileID: 11400000, guid: c7c39e0635d185345ad510d7074697e1, type: 2}
   firstActiveSkillDetails: {fileID: 11400000, guid: 5292331ba57ea1549bf7b688a96eb8eb, type: 2}
   secondActiveSkillDetails: {fileID: 11400000, guid: 09bf678d09742d945a82e7735873abbb, type: 2}
-  thirdActiveSkillDetails: {fileID: 11400000, guid: 47e4e888d5cdec045b88fdbeb1e3ebd7, type: 2}
-  fourthActiveSkillDetails: {fileID: 11400000, guid: 68d53b2bc7ebeed468d0fea5eb22d598, type: 2}
+  thirdActiveSkillDetails: {fileID: 11400000, guid: 68d53b2bc7ebeed468d0fea5eb22d598, type: 2}
+  fourthActiveSkillDetails: {fileID: 11400000, guid: 47e4e888d5cdec045b88fdbeb1e3ebd7, type: 2}
   fifthActiveSkillDetails: {fileID: 11400000, guid: e7e8c07ac5b24f7478c5b80468af6791, type: 2}
   throwingAxeDetails: {fileID: 11400000, guid: d8c89ec0d39d32e40b4ac6fc2ef94711, type: 2}
   shirukenDetails: {fileID: 0}

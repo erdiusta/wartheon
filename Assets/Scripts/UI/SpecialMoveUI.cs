@@ -39,18 +39,25 @@ public class SpecialMoveUI : MonoBehaviour
         activeSkillThreeContainer = transform.GetChild(3);
 
         player.specialMoveEvent.OnSpecialMoveUsed += SpecialMoveEvent_OnSpecialMoveUsed;
+        player.specialMoveEvent.OnSpecialMoveCooldownReset += SpecialMoveEvent_OnSpecialMoveCooldownReset;
         StaticEventHandler.OnActiveUniqueSkillPlaced += StaticEventHandler_OnActiveUniqueSkillPlaced;
     }
 
     private void OnDisable()
     {
         player.specialMoveEvent.OnSpecialMoveUsed -= SpecialMoveEvent_OnSpecialMoveUsed;
+        player.specialMoveEvent.OnSpecialMoveCooldownReset -= SpecialMoveEvent_OnSpecialMoveCooldownReset;
         StaticEventHandler.OnActiveUniqueSkillPlaced -= StaticEventHandler_OnActiveUniqueSkillPlaced;
     }
 
-    private void StaticEventHandler_OnActiveUniqueSkillPlaced(ActiveUniqueSkillPlacedArgs activeUniqueSkillPlacedArgs)
+    private void StaticEventHandler_OnActiveUniqueSkillPlaced(ActiveUniqueSkillPlacedArgs args)
     {
-        StartCoroutine(SkillIconPlacementRoutine(activeUniqueSkillPlacedArgs));
+        StartCoroutine(SkillIconPlacementRoutine(args));
+    }
+
+    private void SpecialMoveEvent_OnSpecialMoveCooldownReset(SpecialMoveEvent arg1, SpecialMoveEventArgs arg2)
+    {
+
     }
 
     IEnumerator SkillIconPlacementRoutine(ActiveUniqueSkillPlacedArgs activeUniqueSkillPlacedArgs)

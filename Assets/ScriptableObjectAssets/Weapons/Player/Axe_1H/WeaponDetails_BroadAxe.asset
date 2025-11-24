@@ -65,8 +65,8 @@ MonoBehaviour:
   coneLength: 3
   coneAngle: 35
   hasPhysicalDamage: 1
-  physicalDamageMin: 3
-  physicalDamageMax: 8
+  physicalDamageMin: 4
+  physicalDamageMax: 10
   magicDamageMin: 0
   magicDamageMax: 0
   meleeDamageElementalBias: 0

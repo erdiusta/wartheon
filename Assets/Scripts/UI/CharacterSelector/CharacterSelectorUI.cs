@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Collections;
@@ -13,14 +12,6 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
     #endregion
     [SerializeField] Canvas parentCanvas;
     [SerializeField] GameObject firstSelectedButton;
-
-    [Space(10)]
-    [Header("CHARACTER SPOTLIGHTS")]
-    [Space(10)]
-    [SerializeField] Light2D mycaraSpotlight;
-    [SerializeField] Light2D caelionSpotlight;
-    [SerializeField] Light2D nyveranSpotlight;
-    [SerializeField] Light2D morvenSpotlight;
 
     [Space(10)]
     [Header("CHARACTER DETAILS TOOLTIP")]
@@ -131,17 +122,8 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         // Initialize the current player
         currentPlayer.playerDetails = playerDetailsList[selectedPlayerIndex];
-        caelionSpotlight.gameObject.SetActive(true);
 
         OnTutorialToggleChanged(InputManager.TutorialEnabled);
-    }
-
-    private void Update()
-    {
-        if (InputManager.Instance.escapeButton.action.WasPressedThisFrame())
-        {
-            BackButton();
-        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -199,58 +181,47 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void HoverCaelion()
     {
-        StartCoroutine(SelectionRoutine(0, caelionSpotlight, caelionDetailsPopUp));
+        SelectionRoutine(0, caelionDetailsPopUp);
     }
 
     public void HoverMorven()
     {
-        StartCoroutine(SelectionRoutine(1, morvenSpotlight, morvenDetailsPopUp));
+        SelectionRoutine(1, morvenDetailsPopUp);
     }
 
     public void HoverNyveran()
     {
-        StartCoroutine(SelectionRoutine(2, nyveranSpotlight, nyveranDetailsPopUp));
+        SelectionRoutine(2, nyveranDetailsPopUp);
     }
 
     public void HoverMycara()
     {
-        StartCoroutine(SelectionRoutine(3, mycaraSpotlight, mycaraDetailsPopUp));
+        SelectionRoutine(3, mycaraDetailsPopUp);
     }
 
     public void HoverKynara()
     {
-        StartCoroutine(SelectionRoutine(4, nyveranSpotlight, kynaraDetailsPopUp));
+        SelectionRoutine(4, kynaraDetailsPopUp);
     }
 
     public void HoverKarnag()
     {
-        StartCoroutine(SelectionRoutine(5, nyveranSpotlight, karnagDetailsPopUp));
+        SelectionRoutine(5, karnagDetailsPopUp);
     }
 
     public void HoverNyxa()
     {
-        StartCoroutine(SelectionRoutine(6, nyveranSpotlight, nyxaDetailsPopUp));
+        SelectionRoutine(6, nyxaDetailsPopUp);
     }
 
     public void HoverNymara()
     {
-        StartCoroutine(SelectionRoutine(7, nyveranSpotlight, nymaraDetailsPopUp));
+        SelectionRoutine(7, nymaraDetailsPopUp);
     }
 
     private void DisableDetailsPopup(ref GameObject popupObject)
     {
         popupObject.SetActive(false);
-    }
-
-    public void BackButton()
-    {
-        // Set Play Button as selected
-        MainMenuUI.Instance.StartCoroutine(MainMenuUI.Instance.HandleReturnFromCharacterScene());
-
-        // Unload the current additive scene
-        StaticEventHandler.CallAdditiveSceneRemoveEvent();
-
-        SceneManager.UnloadSceneAsync(gameObject.scene);
     }
 
     public void OnTutorialToggleChanged(bool isOn)
@@ -279,7 +250,7 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         // Safe loading call
         if (LoadingManager.SafeInstance != null)
         {
-            LoadingManager.SafeInstance.StartCoroutine(LoadingManager.SafeInstance.LoadGameScene(3));
+            LoadingManager.SafeInstance.StartCoroutine(LoadingManager.SafeInstance.LoadGameScene(2));
         }
         else
         {
@@ -290,21 +261,15 @@ public class CharacterSelectorUI : MonoBehaviour, IPointerEnterHandler, IPointer
         }
     }
 
-    IEnumerator SelectionRoutine(int index, Light2D selectedCharSpotlight, GameObject selectedCharPopUp)
+    void SelectionRoutine(int index, GameObject selectedCharPopUp)
     {
         DisableAllPopUps();
 
-        mycaraSpotlight.gameObject.SetActive(false);
-        caelionSpotlight.gameObject.SetActive(false);
-        nyveranSpotlight.gameObject.SetActive(false);
-        morvenSpotlight.gameObject.SetActive(false);
-
         selectedPlayerIndex = index;
         currentPlayer.playerDetails = playerDetailsList[index];
-        selectedCharSpotlight.gameObject.SetActive(true);
         selectedCharPopUp.SetActive(true);
 
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
     }
 
     private void DisableAllPopUps()

@@ -79,7 +79,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionReference specialMoveTwo;
     public InputActionReference specialMoveThree;
     public InputActionReference bookView;
-    public InputActionReference activeItem;
+    public InputActionReference skillsInnerPathPage;
     public InputActionReference pause;
     public InputActionReference jumpButton;
     public InputActionReference invisibleButton;

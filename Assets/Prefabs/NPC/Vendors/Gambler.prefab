@@ -251,6 +251,9 @@ MonoBehaviour:
   - name: Dicehand Reno
     sentences:
     - Today you are lucky!
+  - name: Dicehand Reno
+    sentences:
+    - Sorry, you don't have enough coins to make a bet.
 --- !u!114 &7342244738458947609
 MonoBehaviour:
   m_ObjectHideFlags: 0

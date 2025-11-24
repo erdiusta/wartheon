@@ -125,7 +125,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         bool isDontBlink = false, bool isWhisperSlice = false)
     {
         if (hand == MeleeHand.OffHand && player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.isMeleeWeapon &&
-            player.isAxeThrowActive)
+            player.isAxeThrowActive && weapon.isThrowingAxeWeapon)
         {
             Vector3 weaponDirection;
             float weaponAngleDegrees, playerAngleDegrees;
@@ -372,12 +372,12 @@ public class MeleeAttackMainHand : MonoBehaviour
         float playerCurrentHealth = player.health.GetCurrentHealth();
         float playerMaximumHealth = player.health.GetMaximumHealth();
 
-        float enemyCurrrentHealth = enemy.health.GetCurrentHealth();
+        float enemyCurrentHealth = enemy.health.GetCurrentHealth();
         float enemyMaximumHealth = enemy.health.GetMaximumHealth();
 
         if(player.playerDetails.playerCharacterIndex == Character.Karnag)
         {
-            int missingHealthDamage = (int)((playerCurrentHealth - playerMaximumHealth) * 0.2f);
+            int missingHealthDamage = (int)((playerMaximumHealth - playerCurrentHealth) * 0.2f);
             damageDone += missingHealthDamage;
         }
 
@@ -390,7 +390,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (player.isFocusedAggressionActive && playerCurrentHealth / playerMaximumHealth > 0.8f) totalDamageModifiers += focusedAgrressionModifier;
 
         // Punisher's Will Check
-        if (player.isPunishersWillActive && enemyCurrrentHealth / enemyMaximumHealth < 0.5f) totalDamageModifiers += punishersWillModifier;
+        if (player.isPunishersWillActive && enemyCurrentHealth / enemyMaximumHealth < 0.5f) totalDamageModifiers += punishersWillModifier;
 
         damageDone = (int)(damageDone * (1 + totalDamageModifiers)); // Add additional damage modifiers
 
@@ -402,7 +402,10 @@ public class MeleeAttackMainHand : MonoBehaviour
             SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.criticalHitSoundEffect);
         }
 
-        float critMultiplier = weapon.weaponDetails.criticalHitDamageMultiplier + player.additionalCriticalMeleeDamageModifier;
+        float critMultiplier = 0f;
+
+        if (hand == MeleeHand.MainHand) critMultiplier = player.currentMainHandCriticalHitDamage;
+        else if(hand == MeleeHand.OffHand) critMultiplier = player.currentOffHandCriticalHitDamage;
 
         if ((enemy != null && enemy.isBlind) || player.isStealthActive) critMultiplier += player.additionalCriticalDamageOnCloakedPrecision;
 
@@ -585,6 +588,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     private void CheckBleedingStatus(Enemy enemy, bool isActiveItem = false)
     {
+        if (enemy.enemyDetails.isImmuneToBleeding) return;
+
         // Check get bleeding
         float randomDice = Random.Range(0f, 1f);
         if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.bleedingChance + player.additionalStatusEffectInflictModifier +
@@ -629,6 +634,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     private void CheckBurnStatus(Enemy enemy, bool isActiveItem = false)
     {
+        if (enemy.enemyDetails.isImmuneToBurn) return;
+
         // Check get bleeding
         float randomDice = Random.Range(0f, 1f);
         if (randomDice < player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.burnChance + player.additionalStatusEffectInflictModifier +
@@ -645,6 +652,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     public void CheckPoisonStatus(Enemy enemy, bool isActiveItem = false, bool isVenomousIvy = false)
     {
+        if (enemy.enemyDetails.isImmuneToPoison) return;
+
         if (isVenomousIvy)
         {
             enemy.poisonDuration = player.playerDetails.secondActiveSkillDetails.GetCurrentActiveLevel() switch
@@ -702,6 +711,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     private void CheckFrostStatus(Enemy enemy, bool isSheerCold = false)
     {
+        if (enemy.enemyDetails.isImmuneToFrost) return;
+
         EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
         bool isFrozen = (enemyAI.moveStatus & MoveStatus.Frozen) != 0;
 
@@ -742,8 +753,6 @@ public class MeleeAttackMainHand : MonoBehaviour
         }
     }
 
-
-
     /// <summary>
     /// Check static status
     /// </summary>
@@ -778,6 +787,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     private void CheckParalyzeStatus(Enemy enemy, bool isSheerCold = false)
     {
+        if (enemy.enemyDetails.isImmuneToParalyze) return;
+
         EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
         bool isParalyzed = (enemyAI.moveStatus & MoveStatus.Paralyze) != 0;
 
@@ -799,6 +810,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     public void CheckSlowStatus(Enemy enemy, bool isAbsoluteZero = false)
     {
+        if (enemy.enemyDetails.isImmuneToSlow) return;
+
         if (!enemy.isSlowed && isAbsoluteZero)
         {
             float randomDice = Random.Range(0f, 1f);
@@ -818,6 +831,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     public void CheckStunStatus(Enemy enemy, bool shieldBash = false, bool isGrapple = false)
     {
+        if (enemy.enemyDetails.isImmuneToStun) return;
+
         EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
         bool isStunned = (enemyAI.moveStatus & MoveStatus.Stun) != 0;
 
@@ -859,6 +874,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     public void CheckRootStatus(Enemy enemy, bool isVenomousIvy = false)
     {
+        if (enemy.enemyDetails.isImmuneToRoot) return;
+
         EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
         bool isRooted = (enemyAI.moveStatus & MoveStatus.Root) != 0;
 
@@ -891,6 +908,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     public void CheckBlindStatus(Enemy enemy, bool umbralMist = false)
     {
+        if (enemy.enemyDetails.isImmuneToBlind) return;
+
         if (umbralMist)
         {
             enemy.healthEvent.CallGetBlindEvent();
@@ -916,6 +935,8 @@ public class MeleeAttackMainHand : MonoBehaviour
     /// </summary>
     public void CheckFearStatus(Enemy enemy, bool isShatterCry = false)
     {
+        if (enemy.enemyDetails.isImmuneToFear) return;
+
         if (isShatterCry && !enemy.isFeared)
         {
             if (isShatterCry)

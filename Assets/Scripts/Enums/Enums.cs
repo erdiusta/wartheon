@@ -658,6 +658,7 @@ public enum ActiveSkill
     FadeAndFeed,
     BladeDash,
     Shiruken,
+    None
 }
 
 public enum ChainLightningPhase
@@ -696,7 +697,7 @@ public enum SlotType
     Active,
     WeaponMainHand,
     WeaponOffHand,
-    None,
+    Inventory,
     Drop,
     Upgrade,
     Dismantle
@@ -714,7 +715,8 @@ public enum ItemSwapPos
     DragMainSlotInventory,
     DragOffSlotInventory,
     DragInventorySlotMain,
-    DragInventorySlotOff
+    DragInventorySlotOff,
+    DragInventorySlotInventory
 }
 
 public enum PopUpReason
@@ -731,7 +733,7 @@ public enum PopUpReason
     EquipMainHandFirst,
     CantMoveYourMainHandWithEmptyOffHand,
     YourHandsFull,
-    DontMeetRequiredChar,
+    DontMeetRequiredCharacter,
     BobbyPinFailed,
     SummonerFailed
 }

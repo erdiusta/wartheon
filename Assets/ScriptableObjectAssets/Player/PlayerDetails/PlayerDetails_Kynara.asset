@@ -35,6 +35,7 @@ MonoBehaviour:
   parrySoundEffect: {fileID: 11400000, guid: 1f535785069b176429525f2fb0e96cc7, type: 2}
   passiveSkillImage: {fileID: 21300000, guid: 34e06e30c8c16bb4bb7c306acdac1ff4, type: 3}
   passiveSkillSoundEffect: {fileID: 11400000, guid: ef52fb3f41a513040b3eef27824287d4, type: 2}
+  passiveSkillDetails: {fileID: 11400000, guid: 878e90f5110896e419370c6574c3915b, type: 2}
   firstActiveSkillDetails: {fileID: 11400000, guid: 8db389186c5fa1a4fb6fce314110645f, type: 2}
   secondActiveSkillDetails: {fileID: 11400000, guid: 21e2c8898f64b15428965f181f739987, type: 2}
   thirdActiveSkillDetails: {fileID: 11400000, guid: b1f2719cea0f5a542974752b88ba5bda, type: 2}

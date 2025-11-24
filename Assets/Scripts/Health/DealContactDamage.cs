@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.XR;
 using Random = UnityEngine.Random;
 
 [DisallowMultipleComponent]
@@ -14,11 +12,11 @@ public class DealContactDamage : MonoBehaviour
     #region Tooltip
     [Tooltip("The min contact damage to deal (is overridden by the receiver)")]
     #endregion
-    [SerializeField] int contactDamageAmountMin;
+    public int contactDamageAmountMin;
     #region Tooltip
     [Tooltip("The max contact damage to deal (is overridden by the receiver)")]
     #endregion
-    [SerializeField] int contactDamageAmountMax;
+    public int contactDamageAmountMax;
     #region Tooltip
     [Tooltip("Specify what layers objects should be on to receive contact damage")]
     #endregion

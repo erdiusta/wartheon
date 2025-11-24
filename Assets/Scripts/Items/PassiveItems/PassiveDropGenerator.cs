@@ -72,16 +72,16 @@ public static class PassiveDropGenerator
         return candidates[idx];
     }
 
-    private static void SetPassiveItemModifier(ref PassiveItem passiveItem, BoostType boostType, PassiveItemDetailsSO passiveItemDetails)
+    public static void SetPassiveItemModifier(ref PassiveItem passiveItem, BoostType boostType, PassiveItemDetailsSO passiveItemDetails)
     {
         float rng = Random.Range(1f, 1.5f);
         float rng2 = 0f;
-
+            
         switch (boostType)
         {
             case BoostType.AttackCooldown:
                 rng2 = Random.Range(0.05f, 0.12f);
-                passiveItem.attackCooldown = (float)Math.Round(rng2, 2);
+                passiveItem.attackCooldown += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackDamage:
                 rng2 = Random.Range(1, 10);
@@ -111,7 +111,7 @@ public static class PassiveDropGenerator
                 passiveItem.blockChance += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.DodgeChance:
-                rng2 = Random.Range(0.05f, 0.25f);
+                rng2 = Random.Range(0.01f, 0.10f);
                 passiveItem.dodgeChance += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.HealthIncrease:

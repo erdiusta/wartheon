@@ -31,17 +31,24 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>
         return true;
     }
 
-    public int PlaceItemToLowestPossibleIndexSlot(ItemGeneric receivable)
+    public int PlaceItemToInventoryndexSlot(ItemGeneric itemGeneric, bool placeToLowestIndex = true, int specificIndex = -1)
     {
-        for (int i = 0; i < inventoryArray.Length; i++)
+        if (placeToLowestIndex)
         {
-            if (inventoryArray[i] == null)
+            for (int i = 0; i < inventoryArray.Length; i++)
             {
-                receivable.itemSlotStatus = ItemSlotStatus.Inventory;
-
-                inventoryArray[i] = receivable;
-                return i;
+                if (inventoryArray[i] == null)
+                {
+                    itemGeneric.itemSlotStatus = ItemSlotStatus.Inventory;
+                    inventoryArray[i] = itemGeneric;
+                    return i;
+                }
             }
+        }
+        else
+        {
+            itemGeneric.itemSlotStatus = ItemSlotStatus.Inventory;
+            inventoryArray[specificIndex] = itemGeneric;
         }
 
         return -1;

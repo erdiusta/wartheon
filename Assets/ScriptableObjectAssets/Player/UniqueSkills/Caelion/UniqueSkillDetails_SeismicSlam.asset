@@ -18,8 +18,8 @@ MonoBehaviour:
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 11400000, guid: 03826c86544c84b47938552393e9a08b, type: 2}
   levels:
-  - activeUniqueSkillDetails: '5 unit AoE physical damage, knock back enemies for
-      1 second.
+  - activeUniqueSkillDetails: 'Deals 5 units of AoE physical damage, knock back enemies
+      for 1 second.
 
 
       Base Attack Damage: 100%

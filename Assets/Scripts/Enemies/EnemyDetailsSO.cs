@@ -142,6 +142,23 @@ public class EnemyDetailsSO : ScriptableObject
 
     #region Header ATTACK
     [Space(10)]
+    [Header("IMMUNITY DETAILS")]
+    [Space(10)]
+    #endregion
+    public bool isImmuneToBleeding;
+    public bool isImmuneToStun;
+    public bool isImmuneToSlow;
+    public bool isImmuneToBurn;
+    public bool isImmuneToPoison;
+    public bool isImmuneToRoot;
+    public bool isImmuneToFrost;
+    public bool isImmuneToParalyze;
+    public bool isImmuneToBlind;
+    public bool isImmuneToCurse;
+    public bool isImmuneToFear;
+
+    #region Header ATTACK
+    [Space(10)]
     [Header("ATTACK DETAILS")]
     [Space(10)]
     #endregion
@@ -400,6 +417,10 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("The health of the enemy for each level")]
     #endregion
     public EnemyHealthDetails[] enemyHealthDetailsArray;
+    #region Tooltip
+    [Tooltip("The damage of the enemy for each level")]
+    #endregion
+    public EnemyDamageDetails[] enemyDamageDetailsArray;
     #region Tooltip
     [Tooltip("Select if has immunity period immediately after being hit.  If so specify the immunity time in seconds in the other field")]
     #endregion

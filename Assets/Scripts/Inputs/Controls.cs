@@ -218,7 +218,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Active Item"",
+                    ""name"": ""SkillsPage"",
                     ""type"": ""Button"",
                     ""id"": ""e519b454-f121-4a2a-83d1-e7e4bcf37a0a"",
                     ""expectedControlType"": """",
@@ -577,7 +577,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Active Item"",
+                    ""action"": ""SkillsPage"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -588,7 +588,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
-                    ""action"": ""Active Item"",
+                    ""action"": ""SkillsPage"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1000,7 +1000,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_PlayerInput_SpecialAttack2 = m_PlayerInput.FindAction("Special Attack2", throwIfNotFound: true);
         m_PlayerInput_SpecialAttack3 = m_PlayerInput.FindAction("Special Attack3", throwIfNotFound: true);
         m_PlayerInput_BookView = m_PlayerInput.FindAction("Book View", throwIfNotFound: true);
-        m_PlayerInput_ActiveItem = m_PlayerInput.FindAction("Active Item", throwIfNotFound: true);
+        m_PlayerInput_SkillsPage = m_PlayerInput.FindAction("SkillsPage", throwIfNotFound: true);
         m_PlayerInput_Pause = m_PlayerInput.FindAction("Pause", throwIfNotFound: true);
         m_PlayerInput_Roll = m_PlayerInput.FindAction("Roll", throwIfNotFound: true);
         m_PlayerInput_Invisibility = m_PlayerInput.FindAction("Invisibility", throwIfNotFound: true);
@@ -1109,7 +1109,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_SpecialAttack2;
     private readonly InputAction m_PlayerInput_SpecialAttack3;
     private readonly InputAction m_PlayerInput_BookView;
-    private readonly InputAction m_PlayerInput_ActiveItem;
+    private readonly InputAction m_PlayerInput_SkillsPage;
     private readonly InputAction m_PlayerInput_Pause;
     private readonly InputAction m_PlayerInput_Roll;
     private readonly InputAction m_PlayerInput_Invisibility;
@@ -1183,9 +1183,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @BookView => m_Wrapper.m_PlayerInput_BookView;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerInput/ActiveItem".
+        /// Provides access to the underlying input action "PlayerInput/SkillsPage".
         /// </summary>
-        public InputAction @ActiveItem => m_Wrapper.m_PlayerInput_ActiveItem;
+        public InputAction @SkillsPage => m_Wrapper.m_PlayerInput_SkillsPage;
         /// <summary>
         /// Provides access to the underlying input action "PlayerInput/Pause".
         /// </summary>
@@ -1274,9 +1274,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @BookView.started += instance.OnBookView;
             @BookView.performed += instance.OnBookView;
             @BookView.canceled += instance.OnBookView;
-            @ActiveItem.started += instance.OnActiveItem;
-            @ActiveItem.performed += instance.OnActiveItem;
-            @ActiveItem.canceled += instance.OnActiveItem;
+            @SkillsPage.started += instance.OnSkillsPage;
+            @SkillsPage.performed += instance.OnSkillsPage;
+            @SkillsPage.canceled += instance.OnSkillsPage;
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
@@ -1345,9 +1345,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @BookView.started -= instance.OnBookView;
             @BookView.performed -= instance.OnBookView;
             @BookView.canceled -= instance.OnBookView;
-            @ActiveItem.started -= instance.OnActiveItem;
-            @ActiveItem.performed -= instance.OnActiveItem;
-            @ActiveItem.canceled -= instance.OnActiveItem;
+            @SkillsPage.started -= instance.OnSkillsPage;
+            @SkillsPage.performed -= instance.OnSkillsPage;
+            @SkillsPage.canceled -= instance.OnSkillsPage;
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
@@ -1679,12 +1679,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnBookView(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Active Item" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "SkillsPage" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnActiveItem(InputAction.CallbackContext context);
+        void OnSkillsPage(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

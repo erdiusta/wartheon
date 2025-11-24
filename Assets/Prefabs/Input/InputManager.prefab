@@ -59,7 +59,7 @@ MonoBehaviour:
   specialMoveTwo: {fileID: 379595396295346839, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   specialMoveThree: {fileID: -3843887173384202594, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   bookView: {fileID: 1534269409563702162, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
-  activeItem: {fileID: 8120908705557231203, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
+  skillsInnerPathPage: {fileID: 8120908705557231203, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   pause: {fileID: 3463766678715258796, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   jumpButton: {fileID: 7022676829501651627, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}
   invisibleButton: {fileID: 543932677018655109, guid: 135adfbaed6c4154786b8ab9a6894c81, type: 3}

@@ -38,6 +38,13 @@ public class StatusManager : MonoBehaviour
 
     private void OnEnable()
     {
+        if (player != null)
+        {
+            player.healthEvent.OnDodged += HealthEvent_OnDodged;
+            player.healthEvent.OnBlocked += HealthEvent_OnBlocked;
+            player.healthEvent.OnParried += HealthEvent_OnParried;
+        }
+
         if (enemy != null)
         {
             enemy.healthEvent.GetBleeding += EnableBleedingImage;
@@ -57,7 +64,10 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetCursed += EnableCurseImage;
             enemy.healthEvent.GetFeared += EnableFearImage;
             enemy.healthEvent.GetDeath += EnableDeathImage;
+
             enemy.healthEvent.OnDodged += HealthEvent_OnDodged;
+            enemy.healthEvent.OnBlocked += HealthEvent_OnBlocked;
+            enemy.healthEvent.OnParried += HealthEvent_OnParried;
 
             enemy.healthEvent.BleedingCured += DisableBleedingImage;
             enemy.healthEvent.StunCured += DisableStunImage;
@@ -80,6 +90,13 @@ public class StatusManager : MonoBehaviour
 
     private void OnDisable()
     {
+        if(player != null)
+        {
+            player.healthEvent.OnDodged -= HealthEvent_OnDodged;
+            player.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
+            player.healthEvent.OnParried -= HealthEvent_OnParried;
+        }
+
         if (enemy != null)
         {
             enemy.healthEvent.GetBleeding -= EnableBleedingImage;
@@ -98,9 +115,11 @@ public class StatusManager : MonoBehaviour
             enemy.healthEvent.GetBlind -= EnableBlindImage;
             enemy.healthEvent.GetCursed -= EnableCurseImage;
             enemy.healthEvent.GetFeared -= EnableFearImage;
-
             enemy.healthEvent.GetDeath -= EnableDeathImage;
+
             enemy.healthEvent.OnDodged -= HealthEvent_OnDodged;
+            enemy.healthEvent.OnBlocked -= HealthEvent_OnBlocked;
+            enemy.healthEvent.OnParried -= HealthEvent_OnParried;
 
             enemy.healthEvent.BleedingCured -= DisableBleedingImage;
             enemy.healthEvent.StunCured -= DisableStunImage;

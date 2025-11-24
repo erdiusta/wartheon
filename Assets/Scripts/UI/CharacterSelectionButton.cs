@@ -11,7 +11,6 @@ public class CharacterSelectionButton : MonoBehaviour, ISelectHandler, IDeselect
     }
     public void OnDeselect(BaseEventData eventData)
     {
-
         StaticEventHandler.CallCharacterButtonDeselectedEvent();
     }
 }

@@ -24,7 +24,6 @@ public class MainUI : SingletonMonobehaviour<MainUI>
     public TMP_Text contentTextEquipped;
     public TMP_Text bonusTextEquipped;
 
-
     // COLORS
     // Weapon Level 
     [HideInInspector] public Color basicLevelColor1 = new Color(1, 1, 1);
@@ -133,43 +132,22 @@ public class MainUI : SingletonMonobehaviour<MainUI>
         {
             if (itemGeneric is PassiveItem)
             {
-                headerText.colorGradient = new VertexGradient(passiveItemColor, passiveItemColor, passiveItemColor, passiveItemColor);
-                levelText.colorGradient = new VertexGradient(passiveItemColor, passiveItemColor, passiveItemColor, passiveItemColor);
+                ReshapeTooltip(isWeapon: false);
+
+                BoostTypeColorUpdate(itemGeneric);
+
                 PassiveItem passiveItem = (PassiveItem)itemGeneric;
                 PassiveItemDetailsSO passiveItemDetails = passiveItem.passiveItemDetails;
 
                 headerText.text = passiveItemDetails.passiveItemName;
-                levelText.text = $"(Passive Item)";
+                levelText.text = $"({passiveItem.rarity.ToString()})";
 
                 // HEAD
                 //NECK
-                if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
-                {
-
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmeraldPendant)
-                {
-
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.TopazPendant)
-                {
-
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SapphirePendant)
-                {
-
-                }
                 // CHEST
                 // FINGER
                 // ARM
                 // BACK
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
-                {
-                }
-                else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
-                {
-
-                }
                 // LEG
 
                 BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
@@ -180,6 +158,10 @@ public class MainUI : SingletonMonobehaviour<MainUI>
         }
         if (hasWeaponDrop && itemGeneric is Weapon weapon)
         {
+            ReshapeTooltip(isWeapon: true);
+
+            BoostTypeColorUpdate(itemGeneric);
+
             WeaponDetailsSO weaponDetails = weapon.weaponDetails;
 
             // Populate text field based on the related weapon info
@@ -235,68 +217,48 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 levelTextEquipped.text = $"({equippedWeapon.rarity.ToString()})\n";
                 contentTextEquipped.text = $"Class: {equippedWeapon.weaponDetails.weaponClass.ToString()}\n";
 
-                float equippedFireRate = (float)Math.Round(1 / (equippedWeapon.weaponDetails.weaponCooldownDuration - equippedWeapon.attackCooldownModifier), 2);
+                float equippedFireRate = (float)Math.Round(1 / (equippedWeapon.weaponDetails.weaponCooldownDuration - (equippedWeapon.attackCooldownModifier / 2)), 2);
+
                 contentTextEquipped.text += $"Attack Speed: {equippedFireRate}\n";
-
                 contentTextEquipped.text += $"Wield Type: {equippedWeapon.weaponDetails.wieldType.ToString()}\n";
-
-                if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
-                {
-                    contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
-                    contentText.text += $"Block Rate: {weapon.weaponDetails.blockChance * 100}%\n";
-                }
-                else
-                {
-                    float fireRate = (float)Math.Round(1 / (weapon.weaponDetails.weaponCooldownDuration - weapon.attackCooldownModifier), 2);
-                    contentText.text += $"Attack Speed: {fireRate}\n";
-
-                    contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
-
-                    contentText.text += $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.physicalAttackDamageIncrease}-" +
-                        $"{weapon.weaponDetails.physicalDamageMax + weapon.physicalAttackDamageIncrease}\n";
-
-                    contentText.text += $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.magicAttackDamageIncrease}-" +
-                        $"{weapon.weaponDetails.magicDamageMax + weapon.magicAttackDamageIncrease}\n";
-                }
-
-                contentTextEquipped.text += $"Phy. Damage: {equippedWeapon.weaponDetails.physicalDamageMin + equippedWeapon.physicalAttackDamageIncrease}-" +
-                    $"{equippedWeapon.weaponDetails.physicalDamageMax + equippedWeapon.physicalAttackDamageIncrease}\n";
-
-                contentTextEquipped.text += $"Phy. Damage: {equippedWeapon.weaponDetails.magicDamageMin + equippedWeapon.magicAttackDamageIncrease}-" +
-                    $"{equippedWeapon.weaponDetails.magicDamageMax + equippedWeapon.magicAttackDamageIncrease}\n";
-
-                contentTextEquipped.text += $"Attack Rating: {equippedWeapon.attackRatingIncrease * 100}%\n";
-                contentTextEquipped.text += $"Cr. Hit Chance: {equippedWeapon.criticalHitChanceIncrease * 100}%\n";
-                contentTextEquipped.text += $"Cr. Hit Damage: {equippedWeapon.criticalHitDamageIncrease * 100}%\n";
             }
 
             headerText.text = weaponDetails.weaponName;
             levelText.text = $"({weapon.rarity.ToString()})";
+            contentText.text = $"Class: {weaponDetails.weaponClass.ToString()}\n";
 
-            contentText.text = $"Class: {weaponDetails.weaponClass.ToString()}";
-
-            if (weaponDetails.weaponClass == WeaponClass.Shield)
+            if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
             {
-                contentText.text += $"Wield Type: {weaponDetails.wieldType.ToString()}\n";
-                contentText.text += $"Block Rate: {(weapon.weaponDetails.blockChance + weapon.blockChanceIncrease) * 100}%\n";
+                contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
+                contentText.text += $"Block Rate: {weapon.weaponDetails.blockChance * 100}%\n";
             }
             else
             {
-                contentText.text += $"Speed: {weapon.attackCooldownModifier.ToString()}\n";
-                contentText.text += $"Wield Type: {weaponDetails.wieldType.ToString()}\n";
+                float fireRate = (float)Math.Round(1 / (weapon.weaponDetails.weaponCooldownDuration - (weapon.attackCooldownModifier / 2)), 2);
+                contentText.text += $"Attack Speed: {fireRate}\n";
+
+                contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
 
                 contentText.text += $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.physicalAttackDamageIncrease}-" +
                     $"{weapon.weaponDetails.physicalDamageMax + weapon.physicalAttackDamageIncrease}\n";
 
                 contentText.text += $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.magicAttackDamageIncrease}-" +
                     $"{weapon.weaponDetails.magicDamageMax + weapon.magicAttackDamageIncrease}\n";
+
+                contentText.text += $"Attack Rating: {weapon.attackRatingIncrease * 100}\n";
+                contentText.text += $"Cr. Hit Chance: {weapon.criticalHitChanceIncrease * 100}%\n";
+                contentText.text += $"Cr. Hit Damage: {weapon.criticalHitDamageIncrease * 100}%\n";
             }
 
-            float updatedAttackRating = (float)Math.Round(weapon.weaponDetails.weaponAttackRating * weapon.attackRatingIncrease, 2);
-            contentText.text += $"Attack Rating: {updatedAttackRating * 100}%\n";
+            contentTextEquipped.text += $"Phy. Damage: {equippedWeapon.weaponDetails.physicalDamageMin + equippedWeapon.physicalAttackDamageIncrease}-" +
+                $"{equippedWeapon.weaponDetails.physicalDamageMax + equippedWeapon.physicalAttackDamageIncrease}\n";
 
-            contentText.text += $"Cr. Hit Chance: {weapon.criticalHitChanceIncrease * 100}%\n";
-            contentText.text += $"Cr. Hit Damage: {weapon.criticalHitDamageIncrease * 100}%\n";
+            contentTextEquipped.text += $"Magic Damage: {equippedWeapon.weaponDetails.magicDamageMin + equippedWeapon.magicAttackDamageIncrease}-" +
+                $"{equippedWeapon.weaponDetails.magicDamageMax + equippedWeapon.magicAttackDamageIncrease}\n";
+
+            contentTextEquipped.text += $"Attack Rating: {equippedWeapon.attackRatingIncrease * 100}%\n";
+            contentTextEquipped.text += $"Cr. Hit Chance: {equippedWeapon.criticalHitChanceIncrease * 100}%\n";
+            contentTextEquipped.text += $"Cr. Hit Damage: {equippedWeapon.criticalHitDamageIncrease * 100}%\n";
 
             BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
             BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
@@ -316,6 +278,14 @@ public class MainUI : SingletonMonobehaviour<MainUI>
         }
     }
 
+    private void ReshapeTooltip(bool isWeapon)
+    {
+        RectTransform tooltipRect = tooltipPanel.GetComponent<RectTransform>();
+
+        if (isWeapon) tooltipRect.sizeDelta = new Vector2(tooltipRect.sizeDelta.x, 120);
+        else tooltipRect.sizeDelta = new Vector2(tooltipRect.sizeDelta.x, 60);
+    }
+
     private void BoostForWeapon(Weapon weapon, BoostType boostType, BoostPhase boostPhase)
     {
         if (boostType != BoostType.None)
@@ -331,7 +301,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                         bonusText.text = "Phy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        bonusText.text = $"Attack Rating: + {weapon.attackRatingIncrease * 100}%";
+                        bonusText.text = $"Attack Rating: + {weapon.attackRatingIncrease * 100}";
                         break;
                     case BoostType.MagicDamage:
                         bonusText.text = "Magic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
@@ -364,7 +334,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                         bonusText.text = $"Damage vs Low Health: + {weapon.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text = $"Cr. Resistance: + {weapon.criticalResistanceModifier}%";
+                        bonusText.text = $"Cr. Resistance: + {weapon.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
                         bonusText.text = $"Armor: + {weapon.armorIncrease * 100}%";
@@ -449,7 +419,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                         bonusText.text += $"\nDamage vs Low Health: + {weapon.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text += $"\nCr. Resistance: + {weapon.criticalResistanceModifier}%";
+                        bonusText.text += $"\nCr. Resistance: + {weapon.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
                         bonusText.text += $"\nArmor: + {weapon.armorIncrease * 100}%";
@@ -542,7 +512,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                         bonusText.text = $"Damage vs Low Health: + {passiveItem.damageVsLowHealthEnemies * 100}%";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text = $"Cr. Resistance: + {passiveItem.criticalResistanceModifier}%";
+                        bonusText.text = $"Cr. Resistance: + {passiveItem.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
                         bonusText.text = $"Armor: + {passiveItem.armorIncrease * 100}%";
@@ -627,7 +597,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                         bonusText.text += $"\nDamage vs Low Health: + {passiveItem.damageVsLowHealthEnemies * 100}%";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text += $"\nCr. Resistance: + {passiveItem.criticalResistanceModifier}%";
+                        bonusText.text += $"\nCr. Resistance: + {passiveItem.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
                         bonusText.text += $"\nArmor: + {passiveItem.armorIncrease * 100}%";
@@ -671,28 +641,30 @@ public class MainUI : SingletonMonobehaviour<MainUI>
         }
     }
 
-
-    //// Clear helper
-    //private void ClearModifierTexts()
-    //{
-    //    if (modifiersHeaderText != null)
-    //    {
-    //        modifiersHeaderText.gameObject.SetActive(false);
-    //        modifierBaseUniqueText.gameObject.SetActive(false);
-    //        modifierBaseTypeText.gameObject.SetActive(false);
-    //        modifierExtra1Text.gameObject.SetActive(false);
-    //        modifierExtra2Text.gameObject.SetActive(false);
-    //    }
-
-    //    if (modifiersHeaderTextEquipped != null)
-    //    {
-    //        modifiersHeaderTextEquipped.gameObject.SetActive(false);
-    //        modifierBaseUniqueTextEquipped.gameObject.SetActive(false);
-    //        modifierBaseTypeTextEquipped.gameObject.SetActive(false);
-    //        modifierExtra1TextEquipped.gameObject.SetActive(false);
-    //        modifierExtra2TextEquipped.gameObject.SetActive(false);
-    //    }
-    //}
+    private void BoostTypeColorUpdate(ItemGeneric itemGeneric)
+    {
+        switch (itemGeneric.rarity)
+        {
+            case Rarity.Basic:
+                headerText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                levelText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
+                break;
+            case Rarity.Enchanted:
+                headerText.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                levelText.colorGradient = new VertexGradient(enchantedLevelColor1, enchantedLevelColor1, enchantedLevelColor2, enchantedLevelColor2);
+                break;
+            case Rarity.Mythic:
+                headerText.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                levelText.colorGradient = new VertexGradient(mythicLevelColor1, mythicLevelColor1, mythicLevelColor2, mythicLevelColor2);
+                break;
+            case Rarity.Legendary:
+                headerText.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
+                levelText.colorGradient = new VertexGradient(legendaryLevelColor1, legendaryLevelColor1, legendaryLevelColor2, legendaryLevelColor2);
+                break;
+            default:
+                break;
+        }
+    }
 
     private void ClearTooltipPanel()
     {
@@ -700,7 +672,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
 
         foreach (Transform child in tooltipPanel.transform)
         {
-            child.GetComponent<TextMeshProUGUI>().text = string.Empty;
+            child.GetComponent<TMP_Text>().text = string.Empty;
         }
     }
 
@@ -708,7 +680,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
     {
         foreach (Transform child in tooltipPanelEquipped.transform)
         {
-            child.GetComponent<TextMeshProUGUI>().text = string.Empty;
+            child.GetComponent<TMP_Text>().text = string.Empty;
         }
     }
 
@@ -721,4 +693,6 @@ public class MainUI : SingletonMonobehaviour<MainUI>
     {
         tooltipPanelEquipped.SetActive(false);
     }
+
+    
 }

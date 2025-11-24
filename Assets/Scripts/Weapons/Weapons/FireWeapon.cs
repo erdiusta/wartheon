@@ -152,7 +152,7 @@ public class FireWeapon : MonoBehaviour
             }
 
             bool isShotSpecialSkill = fireWeaponEventArgs.isIceBreaker || fireWeaponEventArgs.isFireBlast || fireWeaponEventArgs.isPenetrationArrow ||
-                fireWeaponEventArgs.isBindingArrow || fireWeaponEventArgs.isArrowOfTheSeven || fireWeaponEventArgs.grappleDetails != null ||
+                fireWeaponEventArgs.isBindingArrow || fireWeaponEventArgs.isTripleThreat|| fireWeaponEventArgs.grappleDetails != null ||
                 fireWeaponEventArgs.isBlazingCyclone || fireWeaponEventArgs.isThrowingAxe || fireWeaponEventArgs.isShiruken || fireWeaponEventArgs.isChainLightning;
 
             // Test if weapon is ready to fire
@@ -414,12 +414,6 @@ public class FireWeapon : MonoBehaviour
             else
             {
                 projectileSpawnInterval = Random.Range(currentProjectile.projectileSpawnIntervalMin, currentProjectile.projectileSpawnIntervalMax);
-            }
-
-            // Reduce projectile clip count if not infinite clip capacity
-            if (!activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile)
-            {
-                activeWeapon.GetCurrentMainHandWeapon().weaponRemainingProjectile -= (int)projectileSpawnInterval;
             }
         }
         else

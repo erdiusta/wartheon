@@ -32,7 +32,7 @@ MonoBehaviour:
 
       Base Cooldown: 14'
     cooldown: 14
-    effectiveDuration: 0
+    effectiveDuration: 6
     recastCooldown: 0
     recastWindowDuration: 0
     recastRepeatCount: 0
@@ -54,7 +54,7 @@ MonoBehaviour:
 
       Base Cooldown: 13'
     cooldown: 13
-    effectiveDuration: 0
+    effectiveDuration: 7
     recastCooldown: 0
     recastWindowDuration: 0
     recastRepeatCount: 0
@@ -76,7 +76,7 @@ MonoBehaviour:
 
       Base Cooldown: 11'
     cooldown: 11
-    effectiveDuration: 0
+    effectiveDuration: 8
     recastCooldown: 0
     recastWindowDuration: 0
     recastRepeatCount: 0
@@ -84,5 +84,5 @@ MonoBehaviour:
     manaReserveCost: 0
     potency: 0
     notes: 
-  currentActiveLevel: 3
+  currentActiveLevel: 1
   startingLevel: 1

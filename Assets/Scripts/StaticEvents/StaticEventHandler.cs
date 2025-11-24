@@ -198,6 +198,14 @@ public static class StaticEventHandler
             slotDrop = slotDrop});
     }
 
+    // Open book's stat page
+    public static event Action OnStatPageOpened;
+
+    public static void CallOpenStatPageEvent()
+    {
+        OnStatPageOpened?.Invoke();
+    }
+
     // Open book's build page
     public static event Action OnBuildPageOpened;
 
@@ -334,6 +342,24 @@ public static class StaticEventHandler
     {
         OnWeaponsSwappedWithInventory?.Invoke(new WeaponAddedToBookArgs { weapon = slotWeapon, intentoryWeapon = inventoryWeapon, inventoryIndexNumber = inventoryIndexNumber,
             weaponSetNumber = weaponSetNumber, onMainHand = onMainHand, slotWeaponDraggableItem = slotWeaponDraggableItem, inventoryWeaponDraggableItem = inventoryWeaponDraggableItem});
+    }
+
+    // Items placed to another inventory slot
+    public static event Action<ItemGenericPlacedArgs> OnGenericItemPlacedToEmptyInventory;
+
+    public static void CallGenericItemPlacedToEmptyInInventory(DraggableItem draggableItem,int draggableItemInventoryIndex, int targetSlotIndex, Sprite sprite)
+    {
+        OnGenericItemPlacedToEmptyInventory?.Invoke(new ItemGenericPlacedArgs{ draggableItem = draggableItem, draggableItemInventoryIndex = draggableItemInventoryIndex,
+            targetSlotIndex = targetSlotIndex, sprite = sprite });
+    }
+
+    // Items swapped between inventory
+    public static event Action<ItemGenericSwappedArgs> OnGenericItemsSwappedInInventory;
+
+    public static void CallGenericItemsSwappedInInventory(DraggableItem draggableItem, DraggableItem targetItem, int draggableItemInventoryIndex, int targetItemInventoryIndex)
+    {
+        OnGenericItemsSwappedInInventory?.Invoke(new ItemGenericSwappedArgs { draggableItem = draggableItem, targetItem = targetItem, 
+            draggableItemInventoryIndex = draggableItemInventoryIndex, targetItemInventoryIndex = targetItemInventoryIndex});
     }
 
     // Health change on book event
@@ -557,6 +583,22 @@ public class StatChangedArgs : EventArgs
     public PrimaryStatName statName;
 }
 
+public class ItemGenericPlacedArgs : EventArgs
+{
+    public DraggableItem draggableItem;
+    public int draggableItemInventoryIndex;
+    public int targetSlotIndex;
+    public Sprite sprite;
+}
+
+public class ItemGenericSwappedArgs : EventArgs
+{
+    public DraggableItem draggableItem;
+    public DraggableItem targetItem;
+    public int draggableItemInventoryIndex;
+    public int targetItemInventoryIndex;
+}
+
 public class WeaponAddedToBookArgs : EventArgs
 {
     public Weapon weapon;
@@ -676,3 +718,4 @@ public class EnemyKilledArgs : EventArgs
 {
     public Enemy enemy;
 }
+

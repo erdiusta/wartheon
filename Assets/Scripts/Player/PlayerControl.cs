@@ -34,6 +34,7 @@ public class PlayerControl : MonoBehaviour
     Coroutine rootCoroutine;
     Coroutine frostCoroutine;
     Coroutine curseCoroutine;
+    Coroutine destroySlamObjectRoutine;
     Coroutine healthPotionDrinkCoroutine;
     Coroutine playerRollCoroutine;
     WaitForFixedUpdate waitForFixedUpdate;
@@ -977,13 +978,16 @@ public class PlayerControl : MonoBehaviour
                 int consumedMana = (int)(activeUniqueSkillManaCost * (1 - player.additionalManaReductionModifier));
                 int reservedMana = (int)(activeUniqueSkillManaReserveCost * (1 - player.additionalManaReductionModifier));
 
+                Weapon mainHand = player.activeWeapon.GetCurrentMainHandWeapon();
+                Weapon offHand = player.activeWeapon.GetCurrentOffHandWeapon();
+
                 switch (player.playerDetails.playerCharacterIndex)
                 {
                     case Character.Caelion:
                         switch (player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeSkill)
                         {
                             case ActiveSkill.SeismicSlam:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+                                if (mainHand != null)
                                 {
                                     player.mana.ConsumeMana(consumedMana);
 
@@ -1003,19 +1007,18 @@ public class PlayerControl : MonoBehaviour
                                 break;
                             case ActiveSkill.ShieldBash:
                                 // OFF-HAND
-                                if (player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
+                                if (offHand?.weaponDetails.weaponClass == WeaponClass.Shield)
                                 {
                                     player.mana.ConsumeMana(consumedMana);
 
                                     // Shield bash attack
                                     player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
-                                    player.meleeAttackEvent.CallAttackEvent(aimDirection, player.activeWeapon.GetCurrentOffHandWeapon(),
-                                        AttackShape.Cone, MeleeHand.OffHand, false, true);
+                                    player.meleeAttackEvent.CallAttackEvent(aimDirection, offHand, AttackShape.Cone, MeleeHand.OffHand, false, true);
                                     player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.ShieldBash, inputSlotNumber);
                                 }
                                 break;
                             case ActiveSkill.BreakTheLine:
-                                if (!player.isBreakTheLineActive && player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
+                                if (!player.isBreakTheLineActive && offHand?.weaponDetails.weaponClass == WeaponClass.Shield)
                                 {
                                     player.mana.ConsumeMana(consumedMana);
 
@@ -1028,7 +1031,7 @@ public class PlayerControl : MonoBehaviour
                                 {
                                     RemoveGuardedOathEffects(inputSlotNumber, ref activeSkillData);
                                 }
-                                else if (!player.isGuardedOathActive && player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails.weaponClass == WeaponClass.Shield)
+                                else if (!player.isGuardedOathActive && offHand?.weaponDetails.weaponClass == WeaponClass.Shield)
                                 {
                                     if (player.mana.GetCurrentMana() >= reservedMana)
                                     {
@@ -1068,10 +1071,10 @@ public class PlayerControl : MonoBehaviour
                                 break;
                             case ActiveSkill.BloodDrain:
                                 // DAGGER CHECK
-                                if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon() != null && !isParrying)
+                                if (offHand != null && mainHand != null && !isParrying)
                                 {
-                                    if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger &&
-                                        player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger && !player.meleeAttackMainHand.IsAttacking)
+                                    if (offHand.weaponDetails.weaponClass == WeaponClass.Dagger &&
+                                        mainHand.weaponDetails.weaponClass == WeaponClass.Dagger && !player.meleeAttackMainHand.IsAttacking)
                                     {
                                         player.mana.ConsumeMana(consumedMana);
 
@@ -1095,10 +1098,10 @@ public class PlayerControl : MonoBehaviour
                                 break;
                             case ActiveSkill.CullTheMeek:
                                 // DAGGER CHECK
-                                if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon() != null && !isParrying)
+                                if (offHand != null && mainHand != null && !isParrying)
                                 {
-                                    if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger &&
-                                        player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Dagger && !player.meleeAttackMainHand.IsAttacking)
+                                    if (offHand.weaponDetails.weaponClass == WeaponClass.Dagger &&
+                                        mainHand.weaponDetails.weaponClass == WeaponClass.Dagger && !player.meleeAttackMainHand.IsAttacking)
                                     {
                                         player.mana.ConsumeMana(consumedMana);
 
@@ -1119,8 +1122,8 @@ public class PlayerControl : MonoBehaviour
                         switch (player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeSkill)
                         {
                             case ActiveSkill.Penetrate:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow ||
-                                    player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow)
+                                if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow ||
+                                    mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow)
                                 {
                                     if (!player.isPenetrateActive)
                                     {
@@ -1134,8 +1137,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.TripleThreat:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow ||
-                                    player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow)
+                                if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow || mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow)
                                 {
                                     if (!player.isTripleThreatActive)
                                     {
@@ -1149,8 +1151,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.BindingArrow:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow ||
-                                    player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow)
+                                if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow || mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow)
                                 {
                                     if (!player.isBindingArrowActive)
                                     {
@@ -1164,8 +1165,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.ArrowsOfTheSevenPlagues:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Bow ||
-                                    player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Crossbow)
+                                if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow || mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow)
                                 {
                                     if (!player.isArrowOfTheSevenActive)
                                     {
@@ -1217,6 +1217,13 @@ public class PlayerControl : MonoBehaviour
                                 }
 
                                 break;
+                            case ActiveSkill.Whirlrend:
+                                player.mana.ConsumeMana(consumedMana);
+
+                                player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
+                                Whirlrend(inputSlotNumber, ref activeSkillData);
+                                player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.Whirlrend, inputSlotNumber);
+                                break;
                             case ActiveSkill.AxeThrow:
                                 // AXE CHECK
                                 if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon() != null 
@@ -1230,18 +1237,10 @@ public class PlayerControl : MonoBehaviour
 
                                         // Axe throw attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
-                                        AxeThrow(inputSlotNumber);
-                                        player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.AxeThrow, inputSlotNumber);
+                                        AxeThrow(inputSlotNumber, ref activeSkillData);
+
                                     }
                                 }
-
-                                break;
-                            case ActiveSkill.Whirlrend:
-                                player.mana.ConsumeMana(consumedMana);
-
-                                player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
-                                Whirlrend(inputSlotNumber, ref activeSkillData);
-                                player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.Whirlrend, inputSlotNumber);
                                 break;
                             case ActiveSkill.FeastOfWar:
                                 if (!player.isFeastOfWarActive)
@@ -1613,15 +1612,47 @@ public class PlayerControl : MonoBehaviour
     {
         SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.firstActiveSkillDetails.activeUniqueSkillSoundEffectTwo);
         player.animator.SetTrigger("seismicSlam");
+
+        // Make Caelion unpushable
+        SetUnpushable(true);
+
     }
 
     private void PerformSeismicSlam()
     {
-        GameObject slamEffectObject = Instantiate(activeSkillTypeThreeAnimator.gameObject, transform.position, Quaternion.identity);
+        if (destroySlamObjectRoutine == null)
+        {
+            destroySlamObjectRoutine = StartCoroutine(DestroySlamEffectObject(1f));
+        }
+    }
 
+    IEnumerator DestroySlamEffectObject(float duration)
+    {
+        GameObject slamEffectObject = Instantiate(activeSkillTypeThreeAnimator.gameObject, transform.position, Quaternion.identity);
         slamEffectObject.GetComponent<Animator>().SetTrigger("slam");
 
-        Destroy(slamEffectObject, 4f); // Destroy slam object after animation completed
+        yield return new WaitForSeconds(duration);
+
+        // Restore pushable state
+        SetUnpushable(false);
+
+        destroySlamObjectRoutine = null;
+        Destroy(slamEffectObject); // Destroy slam object after animation completed
+    }
+
+    private void SetUnpushable(bool state)
+    {
+        player.isSeismicSlamActive = state;
+
+        if (state)
+        {
+            player.rb2D.bodyType = RigidbodyType2D.Kinematic; // ignores external forces
+            player.rb2D.linearVelocity = Vector2.zero; // prevent sliding
+        }
+        else
+        {
+            player.rb2D.bodyType = RigidbodyType2D.Dynamic; // back to normal
+        }
     }
 
     /// <summary>
@@ -2039,7 +2070,7 @@ public class PlayerControl : MonoBehaviour
         // Trigger fire weapon event
         SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, null, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
-            playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, false, false, 0, 0, 0, 0, 0, 0, 0, 0, true);
+            playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, false, false, 0, 0, 0, 0, 0, 0, 0, 0, isTripleThreat: true);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isTripleThreatActive = false));
     }
@@ -2636,31 +2667,6 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
-    /// Execute Axe throw special move
-    /// </summary>
-    private void AxeThrow(int slotIndex)
-    {
-        //Reset precharge for loading again
-        isSoundPlayed = false;
-        player.isAxeThrowActive = true;
-
-        player.playerSkillProjectile = player.playerDetails.throwingAxeDetails.projectilePrefabArray[0].GetComponentInChildren<Projectile>();
-
-        // Modify throwing axe's damage
-        player.playerSkillProjectile.maxDamage = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch
-        {
-            1 => player.currentMainHandMaxDamageValue,
-            2 => player.currentMainHandMaxDamageValue * 1.2f,
-            3 => player.currentMainHandMaxDamageValue * 1.5f,
-            _ => player.currentMainHandMaxDamageValue
-        };
-
-        // OFF-HAND
-        AttackShape offHandAttackType = DetermineAttackType(player.activeWeapon.GetCurrentOffHandWeapon()?.weaponDetails);
-        player.meleeAttackEvent.CallAttackEvent(aimDirection, player.activeWeapon.GetCurrentOffHandWeapon(), offHandAttackType, MeleeHand.OffHand);
-    }
-
-    /// <summary>
     /// Execute Whirlrend special move
     /// </summary>
     private void Whirlrend(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
@@ -2690,6 +2696,45 @@ public class PlayerControl : MonoBehaviour
         activeSkillTypeTwoAnimator.gameObject.SetActive(false);
         player.healthEvent.CallWhirlrendWoreOffEvent();
         player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duration of aura skill ended
+    }
+
+    /// <summary>
+    /// Execute Axe throw special move
+    /// </summary>
+    private void AxeThrow(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
+    {
+        Weapon offhandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
+
+        //Reset precharge for loading again
+        isSoundPlayed = false;
+        player.isAxeThrowActive = true;
+
+        player.playerSkillProjectile = player.playerDetails.throwingAxeDetails.projectilePrefabArray[0].GetComponentInChildren<Projectile>();
+        offhandWeapon.isThrowingAxeWeapon = true;
+
+        // Modify throwing axe's damage
+        player.playerSkillProjectile.maxDamage = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch
+        {
+            1 => player.currentMainHandMaxDamageValue,
+            2 => player.currentMainHandMaxDamageValue * 2.5f,
+            3 => player.currentMainHandMaxDamageValue * 3.5f,
+            _ => player.currentMainHandMaxDamageValue
+        };
+
+        // OFF-HAND
+        AttackShape offHandAttackType = DetermineAttackType(offhandWeapon?.weaponDetails);
+        player.meleeAttackEvent.CallAttackEvent(aimDirection, offhandWeapon, offHandAttackType, MeleeHand.OffHand);
+
+        StartCoroutine(CloseThrowAxeState(activeSkillData));
+    }
+
+    IEnumerator CloseThrowAxeState(ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
+    {
+        yield return new WaitForSeconds(activeSkillData.cooldown * (1 - player.currentSkillCooldownReducer));
+
+        player.isAxeThrowActive = false;
+        player.AddNextWeaponToPlayer(ref DropItem.droppedThrowingAxe, true, false, false, false, equipOffHand: true);
+        Destroy(DropOnAxeThrow.dropItemGameObject, 0.2f);
     }
 
     /// <summary>
@@ -3498,12 +3543,12 @@ public class PlayerControl : MonoBehaviour
                 // Only interactable objects have capsule colliders. So if it's nut null, it means collider is an interactable (like NPC)
                 if (collider2D.GetComponent<CapsuleCollider2D>() != null && collider2D.tag != Settings.playerTag && collider2D.tag != Settings.enemyTag)
                 {
-                    Interaction interaction = collider2D.GetComponent<Interaction>();
-                    NPC npc = interaction.GetComponent<NPC>();
+                    DialogueManager dialogueManager = collider2D.GetComponent<DialogueManager>();
+                    NPC npc = dialogueManager.GetComponent<NPC>();
 
                     if (npc != null && npc.npcType == NpcType.Gambler) return;
 
-                    interaction.TriggerDialogue();
+                    dialogueManager.TriggerDialogue();
                 }
             }
         }
@@ -3614,7 +3659,7 @@ public class PlayerControl : MonoBehaviour
                 }
 
                 DeactivateMainHandWeapon();
-                int index = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(weapon);
+                int index = InventoryManager.Instance.PlaceItemToInventoryndexSlot(weapon);
                 weapon.itemSlotStatus = ItemSlotStatus.Inventory;
                 StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, index);
             }
@@ -3672,7 +3717,7 @@ public class PlayerControl : MonoBehaviour
                 }
 
                 DeactivateOffhandWeapon();
-                int index = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(weapon);
+                int index = InventoryManager.Instance.PlaceItemToInventoryndexSlot(weapon);
                 weapon.itemSlotStatus = ItemSlotStatus.Inventory;
                 StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, index);
             }

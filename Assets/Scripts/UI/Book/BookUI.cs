@@ -175,8 +175,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
                 // OFF HAND WEAPON EQUIP AT START - SLOT
                 DisableBackgroundEnableEquippedTransform(true);
-                offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
-                offHandWeaponAtSlot.GetComponent<Image>().sprite = GameResources.Instance.lockSlotIcon;
+                PlaceLockIcon();
                 break;
 
             default:
@@ -189,6 +188,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void OnEnable()
     {
+        StaticEventHandler.OnStatPageOpened += StaticEventHandler_OnStatPageOpened;
         StaticEventHandler.OnBuildPageOpened += StaticEventHandler_OnBuildPageOpened;
 
         // BOOK STAT POINTS
@@ -210,6 +210,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnInventoryPassiveItemDropped += StaticEventHandler_OnInventoryPassiveItemDropped;
         StaticEventHandler.OnPassiveItemsSwapped += StaticEventHandler_OnPassiveItemsSwapped;
         StaticEventHandler.OnWeaponsSwappedWithInventory += StaticEventHandler_OnWeaponsSwappedWithInventory;
+        StaticEventHandler.OnGenericItemsSwappedInInventory += StaticEventHandler_OnGenericItemsSwappedInInventory;
+        StaticEventHandler.OnGenericItemPlacedToEmptyInventory += StaticEventHandler_OnGenericItemPlacedToEmptyInventory;
 
         // WEAPON&PASSIVE UPGRADED
         StaticEventHandler.OnInventoryWeaponUpgraded += StaticEventHandler_OnInventoryWeaponUpgraded;
@@ -238,6 +240,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void OnDisable()
     {
+        StaticEventHandler.OnStatPageOpened -= StaticEventHandler_OnStatPageOpened;
         StaticEventHandler.OnBuildPageOpened -= StaticEventHandler_OnBuildPageOpened;
 
         // BOOK STAT POINTS
@@ -259,6 +262,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnInventoryPassiveItemDropped -= StaticEventHandler_OnInventoryPassiveItemDropped;
         StaticEventHandler.OnPassiveItemsSwapped -= StaticEventHandler_OnPassiveItemsSwapped;
         StaticEventHandler.OnWeaponsSwappedWithInventory -= StaticEventHandler_OnWeaponsSwappedWithInventory;
+        StaticEventHandler.OnGenericItemsSwappedInInventory -= StaticEventHandler_OnGenericItemsSwappedInInventory;
+        StaticEventHandler.OnGenericItemPlacedToEmptyInventory -= StaticEventHandler_OnGenericItemPlacedToEmptyInventory;
 
         // WEAPON&PASSIVE UPGRADED
         StaticEventHandler.OnInventoryWeaponUpgraded -= StaticEventHandler_OnInventoryWeaponUpgraded;
@@ -299,32 +304,13 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         else primaryStatsButtonContainer.gameObject.SetActive(false);
     }
 
-    public void OnSelect(BaseEventData eventData)
+    public void OnSelect(BaseEventData eventData) { }
+
+    public void OnDeselect(BaseEventData eventData) { }
+
+    private void StaticEventHandler_OnStatPageOpened()
     {
-        if (beastiaryPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
-        else if (bossesPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
-    }
-
-    public void OnDeselect(BaseEventData eventData)
-    {
-        if (skillPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
-        else if (beastiaryPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
-        else if (bossesPage.GetChild(0).gameObject.activeSelf)
-        {
-
-        }
+        OpenStatsPage();
     }
 
     private void StaticEventHandler_OnBuildPageOpened()
@@ -397,7 +383,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         yield return new WaitForEndOfFrame();
 
         Transform equippedInventroySlot = inventoryParent.GetChild(index);
-        equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.WeaponMainHand;
+        equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.Inventory;
 
         Transform inventoryItemBackground = equippedInventroySlot.GetChild(0);
         Transform inventoryItemEquipped = equippedInventroySlot.GetChild(1);
@@ -421,7 +407,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         yield return new WaitForEndOfFrame();
 
         Transform equippedInventroySlot = inventoryParent.GetChild(index);
-        equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.None; // Reset inventory slot
+        equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.Inventory; // Reset inventory slot
 
         Transform inventoryItemBackground = equippedInventroySlot.GetChild(0);
         Transform inventoryItemEquipped = equippedInventroySlot.GetChild(1);
@@ -445,7 +431,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         yield return new WaitForEndOfFrame();
 
         Transform equippedInventroySlot = inventoryParent.GetChild(index);
-        equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.Passive;
+        equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.Inventory;
         equippedInventroySlot.GetComponent<Slot>().passiveItemSlotName = passiveItem.passiveItemDetails.passiveItemSlotName;
 
         Transform inventoryItemBackground = equippedInventroySlot.GetChild(0);
@@ -471,7 +457,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         yield return new WaitForEndOfFrame();
 
         Transform equippedInventroySlot = inventoryParent.GetChild(index);
-        equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.None; // Reset inventory slot
+        equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.Inventory; // Reset inventory slot
         equippedInventroySlot.GetComponent<Slot>().passiveItemSlotName = PassiveItemSlotName.None;
 
         Transform inventoryItemBackground = equippedInventroySlot.GetChild(0);
@@ -539,11 +525,68 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         UpdatePlayerStatInfo(GameManager.Instance.GetPlayer());
     }
 
-
-    private void StaticEventHandler_OnPassiveItemsSwapped(PassiveItemAddedToBookArgs passiveItemAddedToBookArgs)
+    private void StaticEventHandler_OnGenericItemPlacedToEmptyInventory(ItemGenericPlacedArgs args)
     {
-        StartCoroutine(PassiveItemSwapRoutine(passiveItemAddedToBookArgs.passiveItem, passiveItemAddedToBookArgs.inventoryPassiveItem, 
-            passiveItemAddedToBookArgs.inventoryIndexNumber));
+        StartCoroutine(ItemGenericPlaceToEmptyInventorySlotRoutine(args.draggableItem, args.draggableItemInventoryIndex, args.targetSlotIndex, args.sprite));
+    }
+
+    IEnumerator ItemGenericPlaceToEmptyInventorySlotRoutine(DraggableItem draggableItem, int draggableItemInventoryIndex, int targetSlotIndex, Sprite sprite)
+    {
+        yield return new WaitUntil(() => !DraggableItem.IsDragging);
+        yield return new WaitForEndOfFrame(); // Also wait one frame for UI updates to settle
+
+        ItemGeneric item = draggableItem.itemGeneric;
+
+        Transform draggedItemsSlot = inventoryParent.GetChild(draggableItemInventoryIndex);
+        Transform draggedInventoryItemBackground = draggedItemsSlot.GetChild(0);
+        Transform draggedInventoryItemEquipped = draggedItemsSlot.GetChild(1);
+
+        Transform targetItemSlot = inventoryParent.GetChild(targetSlotIndex);
+        Transform targetItemBackground = targetItemSlot.GetChild(0);
+        Transform targetItemEquipped = targetItemSlot.GetChild(1);
+
+        draggedInventoryItemBackground.gameObject.SetActive(true);
+        draggedInventoryItemEquipped.gameObject.SetActive(false);
+
+        targetItemBackground.gameObject.SetActive(false);
+        targetItemEquipped.gameObject.SetActive(true);
+
+        GameObject inventoryItem = Instantiate(GameResources.Instance.bookWeaponSlot, targetItemEquipped);
+        DraggableItem placedDraggableItem = inventoryItem.GetComponent<DraggableItem>();
+
+        // Set Draggable Item
+        placedDraggableItem.SetDraggableItem(item, targetItemSlot.GetComponent<Slot>(), sprite, ItemSlotStatus.Inventory);
+    }
+
+    private void StaticEventHandler_OnGenericItemsSwappedInInventory(ItemGenericSwappedArgs args)
+    {
+        StartCoroutine(ItemGenericSwapRoutine(args.draggableItem, args.targetItem, args.draggableItemInventoryIndex, args.targetItemInventoryIndex));
+    }
+
+    IEnumerator ItemGenericSwapRoutine(DraggableItem draggableItem, DraggableItem targetItem, int draggableItemInventoryIndex, int targetItemInventoryIndex)
+    {
+        yield return new WaitUntil(() => !DraggableItem.IsDragging);
+        yield return new WaitForEndOfFrame(); // Also wait one frame for UI updates to settle
+
+        Transform draggedItemsSlot = inventoryParent.GetChild(draggableItemInventoryIndex);
+        Transform draggedInventoryItemEquipped = draggedItemsSlot.GetChild(1);
+        DraggableItem inventoryPassiveDraggableItem = draggedInventoryItemEquipped.GetComponentInChildren<DraggableItem>();
+
+        Transform targetSlot = inventoryParent.GetChild(targetItemInventoryIndex);
+        Transform targetInventoryItemEquipped = targetSlot.GetChild(1);
+        DraggableItem slotPassiveDraggableItem = targetInventoryItemEquipped.GetComponentInChildren<DraggableItem>();
+  
+        // Swap
+        if (slotPassiveDraggableItem != null && inventoryPassiveDraggableItem != null)
+        {
+            SafeReparentDraggableItem(slotPassiveDraggableItem, draggedInventoryItemEquipped);
+            SafeReparentDraggableItem(inventoryPassiveDraggableItem, targetInventoryItemEquipped);
+        }
+    }
+
+    private void StaticEventHandler_OnPassiveItemsSwapped(PassiveItemAddedToBookArgs args)
+    {
+        StartCoroutine(PassiveItemSwapRoutine(args.passiveItem, args.inventoryPassiveItem, args.inventoryIndexNumber));
     }
 
     IEnumerator PassiveItemSwapRoutine(PassiveItem slotPassiveItem, PassiveItem inventoryPassiveItem, int index)
@@ -603,6 +646,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             }
 
             item.originalParent = newParent;
+
+            item.belongingSlot = newParent.GetComponentInParent<Slot>();
         }
     }
 
@@ -885,8 +930,9 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         speedValue.text = $"{player.movementByForce.moveSpeed}";
         criticalHitChanceDamageValue.text = $"{player.currentMainHandCriticalHitChance * 100}%({player.currentOffHandCriticalHitChance * 100}%)";
 
-        float deductedMainHandCriticalDamage = (float)Math.Round((double)((player.currentMainHandCriticalHitDamage * 100) - 100), 2);
-        float deductedOffHandCriticalDamage = (float)Math.Round((double)((player.currentOffHandCriticalHitDamage * 100) - 100), 2);
+        float deductedMainHandCriticalDamage = (float)Math.Round((double)((player.currentMainHandCriticalHitDamage - 1) * 100), 2);
+        float deductedOffHandCriticalDamage = (float)Math.Round((double)((player.currentOffHandCriticalHitDamage - 1) * 100), 2);
+
         criticalHitDamageAmountValue.text = $"+{Mathf.Max(0, deductedMainHandCriticalDamage)}%(+{Mathf.Max(0, deductedOffHandCriticalDamage)}%)";
 
         // AUXILLARY STATS
@@ -916,13 +962,9 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     public void OpenStatsPage()
     {
-        if (statsPage.GetChild(0).gameObject.activeSelf) return;
-
         StopAllCoroutines();
         StartCoroutine(CompleteTurnPageThenDisplay(BookPage.Stats));
     }
-
-
 
     public void OpenBestiaryPage()
     {

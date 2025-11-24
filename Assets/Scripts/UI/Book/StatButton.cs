@@ -22,6 +22,7 @@ public class StatButton : MonoBehaviour
                     break;
                 case PrimaryStatName.Constitution:
                     player.CurrentConstitutionValue++;
+                    player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
                     break;
                 case PrimaryStatName.Dexterity:
                     player.CurrentDexterityValue++;
@@ -31,6 +32,7 @@ public class StatButton : MonoBehaviour
                     break;
                 case PrimaryStatName.Willpower:
                     player.CurrentWillpowerValue++;
+                    player.manaEvent.CallManaChangedEvent(player.mana.currentMana, false);
                     break;
                 case PrimaryStatName.Agility:
                     player.CurrentAgilityValue++;

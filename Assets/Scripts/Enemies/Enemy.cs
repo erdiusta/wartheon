@@ -245,6 +245,7 @@ public class Enemy : MonoBehaviour
         this.enemyDetails = enemyDetails;
         //SetEnemyMovementUpdateFrame(enemySpawnNumber);
         SetEnemyStartingHealth(dungeonLevel);
+        SetEnemyStartingDamage(dungeonLevel);
         SetEnemyStartingWeapon();
         SetEnemyAnimationSpeed();
         StartCoroutine(MaterializeEnemy());
@@ -278,6 +279,27 @@ public class Enemy : MonoBehaviour
         }
 
         health.SetMaximumHealth(Settings.defaultEnemyHealth);
+    }
+
+    /// <summary>
+    /// Set the starting damage for the enemy
+    /// </summary>
+    private void SetEnemyStartingDamage(DungeonLevelSO dungeonLevel)
+    {
+        // Get the enemy health for the dungeon level
+        foreach (EnemyDamageDetails enemyDamageDetails in enemyDetails.enemyDamageDetailsArray)
+        {
+            if (enemyDamageDetails.dungeonLevel == dungeonLevel)
+            {
+                dealContactDamage.contactDamageAmountMin = enemyDamageDetails.minDamageAmount;
+                dealContactDamage.contactDamageAmountMax = enemyDamageDetails.maxDamageAmount;
+                return;
+            }
+        }
+
+        // Default damage values
+        dealContactDamage.contactDamageAmountMin = 6;
+        dealContactDamage.contactDamageAmountMax = 10;
     }
 
     /// <summary>

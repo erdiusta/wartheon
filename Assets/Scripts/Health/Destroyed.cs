@@ -150,13 +150,13 @@ public class Destroyed : MonoBehaviour
                         enemy.GetComponent<SepharothAI>().StopAllCoroutines();
                         break;
                     case EnemyBehaviour.Cryothar:
-                        enemy.GetComponent<FrostWrymAI>().StopAllCoroutines();
+                        enemy.GetComponent<CryotharAI>().StopAllCoroutines();
                         break;
                     case EnemyBehaviour.Venomancer:
                         enemy.GetComponent<VenomancerAI>().StopAllCoroutines();
                         break;
                     case EnemyBehaviour.Pyrothar:
-                        enemy.GetComponent<FireWrymAI>().StopAllCoroutines();
+                        enemy.GetComponent<PyrotharAI>().StopAllCoroutines();
                         break;
                     case EnemyBehaviour.Moldran:
                         enemy.GetComponent<MoldranAI>().StopAllCoroutines();
@@ -271,7 +271,7 @@ public class Destroyed : MonoBehaviour
             player.levelUpAnimator.SetTrigger(Settings.levelUp);
             SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.levelUpSoundEffect);
             player.currentSkillPoints++;
-            player.currentStatPoints += 3;
+            player.currentStatPoints += 2;
             StaticEventHandler.CallStatPointChangedEvent();
             StaticEventHandler.CallLevelUp();
             player.health.SetMaximumHealth(player.health.maximumHealth, true);

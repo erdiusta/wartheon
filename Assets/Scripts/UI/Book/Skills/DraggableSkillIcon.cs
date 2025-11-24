@@ -8,6 +8,8 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
 {
     public static bool IsDragging = false;
 
+    bool isHighlighted;
+
     [Header("Binding")]
     public int skillIconIndexNumber = 0;
     public Image frameImage;
@@ -41,18 +43,26 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
         player = GameManager.Instance.GetPlayer();
 
         // Pull the SO by index (already prepared on Player)
-        activeUniqueSkillDetails = player.playersAllActiveUniqueSkills[skillIconIndexNumber];
+        if(skillIconIndexNumber > 0)
+        {
+            activeUniqueSkillDetails = player.playersAllActiveUniqueSkills[skillIconIndexNumber - 1];
 
-        // Set icon sprite
-        if (activeUniqueSkillDetails != null) image.sprite = activeUniqueSkillDetails.activeUniqueSkillSprite;
+            // Set icon sprite
+            if (activeUniqueSkillDetails != null) image.sprite = activeUniqueSkillDetails.activeUniqueSkillSprite;
 
-        // Sync local level from SO and update frame
-        int maxLevel = GetMaxLevel();
-        skillLevel = Mathf.Clamp(activeUniqueSkillDetails?.GetCurrentActiveLevel() ?? 1, 1, maxLevel);
-        UpdateFrameSprite();
+            // Sync local level from SO and update frame
+            int maxLevel = GetMaxLevel();
+            skillLevel = Mathf.Clamp(activeUniqueSkillDetails?.GetCurrentActiveLevel() ?? 1, 1, maxLevel);
+            UpdateFrameSprite();
 
-        // Avoid accidental clicks during enable
-        StartCoroutine(EnableClicksNextFrame());
+            // Avoid accidental clicks during enable
+            StartCoroutine(EnableClicksNextFrame());
+        }
+        else if (skillIconIndexNumber == 0)
+        {
+            activeUniqueSkillDetails = player.playerDetails.passiveSkillDetails;
+            image.sprite = player.playerDetails.passiveSkillDetails.activeUniqueSkillSprite;
+        }
     }
 
     private void OnDisable()
@@ -80,6 +90,8 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (skillIconIndexNumber == 0) return;
+
         originalPosition = rectTransform.anchoredPosition;
         originalParent = transform.parent;
         canvasGroup.alpha = 0.6f;
@@ -88,6 +100,8 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (skillIconIndexNumber == 0) return;
+
         IsDragging = true;
 
         float scale = canvas ? canvas.scaleFactor : 1f;
@@ -103,6 +117,16 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
 
         IsDragging = false;
     }
+
+    public void OnPickWithGamePad()
+    {
+        if (activeUniqueSkillDetails == null) return;
+
+        SkillSelectionManager.Pick(this);
+        PlayButtonClickSound();
+    }
+
+    public void Highlight(bool on) => isHighlighted = on;
 
     public void SkillBoost()
     {
@@ -136,15 +160,18 @@ public class DraggableSkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler
 
     private void UpdateFrameSprite()
     {
-        if (frameImage == null) return; 
+        if (frameImage == null) return;
 
         // Map 1..3 -> specific frames; >=3 uses level three frame
-        frameImage.sprite = skillLevel switch
+        if (skillIconIndexNumber > 0)
         {
-            1 => GameResources.Instance.levelOneFrameSprite,
-            2 => GameResources.Instance.levelTwoFrameSprite,
-            _ => GameResources.Instance.levelThreeFrameSprite
-        };
+            frameImage.sprite = skillLevel switch
+            {
+                1 => GameResources.Instance.levelOneFrameSprite,
+                2 => GameResources.Instance.levelTwoFrameSprite,
+                _ => GameResources.Instance.levelThreeFrameSprite
+            };
+        }
     }
 
     public void PlayButtonClickSound()

@@ -40,23 +40,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     Color legendaryLevelColor1 = new Color(1, 1, 1);
     Color legendaryLevelColor2 = new Color(1f, 0.09411765f, 0f);
 
-    // Weapon Level 
-    [Header("ELEMENTAL COLORS")]
-    [Space(10)]
-    Color noneElementalColor1 = new Color(1, 1, 1);
-    Color noneElementalColor2 = new Color(1, 1, 1);
-    Color fireColor1 = new Color(0.9686275f, 1, 0.2980392f);
-    Color fireColor2 = new Color(1f, 0.1921569f, 0.2431373f);
-    Color waterColor1 = new Color(0.8431373f, 0.9647059f, 1);
-    Color waterColor2 = new Color(0, 0.5882353f, 1);
-    Color airColor1 = new Color(1, 1, 1);
-    Color airColor2 = new Color(0.4235294f, 0.4235294f, 0.4235294f);
-    Color earthColor1 = new Color(0.5647059f, 1f, 0.2509804f);
-    Color earthColor2 = new Color(0.02352941f, 0.4352941f, 0.03529412f);
-    Color lightColor1 = new Color(1, 1, 1);
-    Color lightColor2 = new Color(0.9716981f, 0.8067644f, 0f);
-    Color darkColor1 = new Color(0.627451f, 0, 1);
-    Color darkColor2 = new Color(0.6784314f, 0.01568628f, 0.5607843f);
+    bool isClicked = false;
+    float clickSafetyDuration = 0.2f;
 
     private void OnEnable()
     {
@@ -66,8 +51,22 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         {
             equippedTransform = transform.GetChild(1);
 
-            tooltipPanel.transform.localPosition = new Vector3(60f, 20f, 0f);
+            tooltipPanel.transform.localPosition = new Vector3(60f, -30f, 0f);
             UpdateTooltipPanelInfo();
+        }
+    }
+
+    private void Update()
+    {
+        if (isClicked)
+        {
+            clickSafetyDuration -= Time.deltaTime;
+
+            if (clickSafetyDuration < 0f)
+            {
+                clickSafetyDuration = 0.2f;
+                isClicked = false;
+            }
         }
     }
 
@@ -138,214 +137,87 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     {
         Transform currentChild = null;
 
-        if (slotType == SlotType.Passive) 
+        // That means slot is occupied by a weapon or a passive item and occupied icon is not lock
+        if (equippedTransform.childCount > 0 && !equippedTransform.GetChild(0).GetComponent<DraggableItem>().isLockIcon) 
         {
-            headerText.text = string.Empty;
-            levelText.text = string.Empty;
-            contentText.text = string.Empty;
-            bonusText.text = string.Empty;
+            currentChild = equippedTransform.GetChild(0);
 
-            if(inventoryIndexNumber >= 0) // Inventory slot check
+            // Retrieve draggable item and weapon from current child
+            DraggableItem slotDragggableItem = currentChild?.GetComponent<DraggableItem>();
+
+            if (slotDragggableItem.itemGeneric != null)
             {
-                for (int i = 0; i < InventoryManager.Instance.inventoryArray.Length; i++)
+                // Passive item check
+                if (slotDragggableItem.itemGeneric is PassiveItem)
                 {
-                    if (inventoryIndexNumber == i && InventoryManager.Instance.inventoryArray[i] == null)
+                    ReshapeTooltip(isWeapon: false);
+
+                    PassiveItem passiveItem = slotDragggableItem?.GetDraggedPassiveItem();
+
+                    headerText.text = string.Empty;
+                    levelText.text = string.Empty;
+                    contentText.text = string.Empty;
+                    bonusText.text = string.Empty;
+
+                    if (inventoryIndexNumber >= 0) // Inventory slot check
                     {
-                        tooltipPanel.gameObject.SetActive(false);
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                if (player.equippedPassiveItems != null &&
-                    player.equippedPassiveItems.TryGetValue(passiveItemSlotName, out var passiveItem))
-                {
-                    if (passiveItem == null)
-                    {
-                        tooltipPanel.gameObject.SetActive(false);
-                    }
-                }
-                else
-                {
-                    // Key doesn't exist, treat as empty slot (safe fail)
-                    tooltipPanel.gameObject.SetActive(false);
-                }
-            }
-
-            // Check if the slot is occupied
-            if (equippedTransform.childCount > 0)
-            {
-                currentChild = equippedTransform.GetChild(0);
-
-                // Retrieve draggable item and weapon from current child
-                DraggableItem slotDragggableItem = currentChild?.GetComponent<DraggableItem>();
-                PassiveItem passiveItem = slotDragggableItem?.GetDraggedPassiveItem();
-
-                if (passiveItem != null)
-                {
-                    // Populate text field based on the related weapon info
-                    BoostTypeColorUpdate(passiveItem);
-
-                    headerText.text = passiveItem.passiveItemDetails.passiveItemName;
-                    levelText.text = $"(Passive Item)";
-
-                    // HEAD
-                    // NECK
-                    if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.RubyPendant)
-                    {
-
-                    }
-                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.EmeraldPendant)
-                    {
-
-                    }
-                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.TopazPendant)
-                    {
-
-                    }
-                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SapphirePendant)
-                    {
-
-                    }
-                    // CHEST
-                    // FINGER
-                    // BACK
-                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
-                    {
-                    }
-                    else if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.MantleOfStars)
-                    {
-
-                    }
-                    // ARM
-                    // LEG
-
-                    switch (passiveItem.rarity)
-                    {
-                        case Rarity.Basic:
-                            BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
-                            BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
-                            break;
-                        case Rarity.Enchanted:
-                            BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
-                            BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
-                            BoostForPassiveItem(passiveItem, passiveItem.enchantedBoostType, BoostPhase.Enchanted);
-                            break;
-                        case Rarity.Mythic:
-                            BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
-                            BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
-                            BoostForPassiveItem(passiveItem, passiveItem.enchantedBoostType, BoostPhase.Enchanted);
-                            BoostForPassiveItem(passiveItem, passiveItem.mythicBoostType, BoostPhase.Mythic);
-                            break;
-                        case Rarity.Legendary:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-        else if (slotType == SlotType.WeaponMainHand || slotType == SlotType.WeaponOffHand)
-        {
-            if (inventoryIndexNumber >= 0) // Inventory slot check
-            {
-                for (int i = 0; i < InventoryManager.Instance.inventoryArray.Length; i++)
-                {
-                    if (inventoryIndexNumber == i && InventoryManager.Instance.inventoryArray[i] == null)
-                    {
-                        tooltipPanel.gameObject.SetActive(false);
-                        return;
-                    }
-                }
-            }
-            else if (slotType == SlotType.WeaponMainHand)
-            {
-                if (player.activeWeapon.GetCurrentMainHandWeapon() == null)
-                {
-                    tooltipPanel.gameObject.SetActive(false);
-                    return;
-                }
-            }
-            else if (slotType == SlotType.WeaponOffHand)
-            {
-                // Cancel tooltip panel transaction if hovered image is lock image at off-hand
-                if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.wieldType == WieldType.TwoHanded)
-                {
-                    tooltipPanel.gameObject.SetActive(false);
-                    return;
-                }
-
-                if (player.activeWeapon.GetCurrentOffHandWeapon() == null)
-                {
-                    tooltipPanel.gameObject.SetActive(false);
-                    return;
-                }
-            }
-
-            // Check if the slot is occupied
-            if (equippedTransform.childCount > 0)
-            {
-                currentChild = equippedTransform.GetChild(0);
-
-                // Retrieve draggable item and weapon from current child
-                DraggableItem slotDragggableItem = currentChild.GetComponent<DraggableItem>();
-                Weapon weapon = slotDragggableItem.GetDraggedWeapon();
-
-                if (weapon != null)
-                {
-                    // Populate text field based on the related weapon info
-                    BoostTypeColorUpdate(weapon);
-
-                    headerText.text = weapon.weaponDetails.weaponName;
-                    levelText.text = $"({weapon.rarity.ToString()})";
-                    contentText.text = $"Class: {weapon.weaponDetails.weaponClass.ToString()}\n";
-
-                    if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
-                    {
-                        contentText.text = $"\nWield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
-                        contentText.text += $"Block Rate: {(weapon.weaponDetails.blockChance + weapon.blockChanceIncrease) * 100}%\n";
+                        for (int i = 0; i < InventoryManager.Instance.inventoryArray.Length; i++)
+                        {
+                            if (inventoryIndexNumber == i && InventoryManager.Instance.inventoryArray[i] == null)
+                            {
+                                tooltipPanel.gameObject.SetActive(false);
+                                return;
+                            }
+                        }
                     }
                     else
                     {
-                        float fireRate = (float)Math.Round(1 / (weapon.weaponDetails.weaponCooldownDuration - (weapon.attackCooldownModifier / 2)), 2);
-                        contentText.text += $"Attack Speed: {fireRate}\n";
-                        contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
-
-                        contentText.text += $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.physicalAttackDamageIncrease}-" +
-                            $"{weapon.weaponDetails.physicalDamageMax + weapon.physicalAttackDamageIncrease}\n";
-
-                        contentText.text += $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.magicAttackDamageIncrease}-" +
-                            $"{weapon.weaponDetails.magicDamageMax + weapon.magicAttackDamageIncrease}\n";
-
-                        float updatedAttackRating = (float)Math.Round(weapon.weaponDetails.weaponAttackRating * weapon.attackRatingIncrease, 2);
-                        contentText.text += $"Base Attack Rating: {updatedAttackRating * 100}%\n";
-
-                        contentText.text += $"Base Cr. Hit Chance: {weapon.criticalHitChanceIncrease * 100}%\n";
-                        contentText.text += $"Base Cr. Hit Damage: {weapon.criticalHitDamageIncrease * 100}%\n";
+                        if (player.equippedPassiveItems != null &&
+                            player.equippedPassiveItems.TryGetValue(passiveItemSlotName, out passiveItem))
+                        {
+                            if (passiveItem == null)
+                            {
+                                tooltipPanel.gameObject.SetActive(false);
+                            }
+                        }
+                        else
+                        {
+                            // Key doesn't exist, treat as empty slot (safe fail)
+                            tooltipPanel.gameObject.SetActive(false);
+                        }
                     }
 
-                    switch (weapon.rarity)
+                    // Text process for tooltip
+                    WriteTooltipTextForPassiveItem(passiveItem);
+                }
+                else if (slotDragggableItem.itemGeneric is Weapon)
+                {
+                    ReshapeTooltip(isWeapon: true);
+
+                    Weapon weapon = slotDragggableItem.GetDraggedWeapon();
+
+                    if (inventoryIndexNumber >= 0) // Inventory slot check
                     {
-                        case Rarity.Basic:
-                            BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
-                            BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
-                            break;
-                        case Rarity.Enchanted:
-                            BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
-                            BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
-                            BoostForWeapon(weapon, weapon.enchantedBoostType, BoostPhase.Enchanted);
-                            break;
-                        case Rarity.Mythic:
-                            BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
-                            BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
-                            BoostForWeapon(weapon, weapon.enchantedBoostType, BoostPhase.Enchanted);
-                            BoostForWeapon(weapon, weapon.mythicBoostType, BoostPhase.Mythic);
-                            break;
-                        case Rarity.Legendary:
-                            break;
-                        default:
-                            break;
+                        for (int i = 0; i < InventoryManager.Instance.inventoryArray.Length; i++)
+                        {
+                            if (inventoryIndexNumber == i && InventoryManager.Instance.inventoryArray[i] == null)
+                            {
+                                tooltipPanel.gameObject.SetActive(false);
+                                return;
+                            }
+                        }
+                    }
+
+                    // Text process for tooltip
+                    WriteToolTipTextForWeapon(weapon);
+                }
+                else if (slotType == SlotType.WeaponOffHand)
+                {
+                    // Cancel tooltip panel transaction if hovered image is lock image at off-hand
+                    if (player.activeWeapon.GetCurrentMainHandWeapon()?.weaponDetails.wieldType == WieldType.TwoHanded)
+                    {
+                        tooltipPanel.gameObject.SetActive(false);
+                        return;
                     }
                 }
             }
@@ -357,68 +229,167 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         }
     }
 
+    private void ReshapeTooltip(bool isWeapon)
+    {
+        if (isWeapon) tooltipPanel.sizeDelta = new Vector2(tooltipPanel.sizeDelta.x, 120);
+        else tooltipPanel.sizeDelta = new Vector2(tooltipPanel.sizeDelta.x, 60);
+    }
+
+    private void WriteTooltipTextForPassiveItem(PassiveItem passiveItem)
+    {
+        BoostTypeColorUpdate(passiveItem);
+
+        headerText.text = passiveItem.passiveItemDetails.passiveItemName;
+        levelText.text = $"({passiveItem.rarity.ToString()})";
+
+        switch (passiveItem.rarity)
+        {
+            case Rarity.Basic:
+                BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
+                BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
+                break;
+            case Rarity.Enchanted:
+                BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
+                BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
+                BoostForPassiveItem(passiveItem, passiveItem.enchantedBoostType, BoostPhase.Enchanted);
+                break;
+            case Rarity.Mythic:
+                BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
+                BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
+                BoostForPassiveItem(passiveItem, passiveItem.enchantedBoostType, BoostPhase.Enchanted);
+                BoostForPassiveItem(passiveItem, passiveItem.mythicBoostType, BoostPhase.Mythic);
+                break;
+            case Rarity.Legendary:
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void WriteToolTipTextForWeapon(Weapon weapon)
+    {
+        // Populate text field based on the related weapon info
+        BoostTypeColorUpdate(weapon);
+
+        headerText.text = weapon.weaponDetails.weaponName;
+        levelText.text = $"({weapon.rarity.ToString()})";
+        contentText.text = $"Class: {weapon.weaponDetails.weaponClass.ToString()}\n";
+
+        if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
+        {
+            contentText.text = $"\nWield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
+            contentText.text += $"Block Rate: {(weapon.weaponDetails.blockChance + weapon.blockChanceIncrease) * 100}%\n";
+        }
+        else
+        {
+            float fireRate = (float)Math.Round(1 / (weapon.weaponDetails.weaponCooldownDuration - (weapon.attackCooldownModifier / 2)), 2);
+            contentText.text += $"Attack Speed: {fireRate}\n";
+            contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
+
+            contentText.text += $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.physicalAttackDamageIncrease}-" +
+                $"{weapon.weaponDetails.physicalDamageMax + weapon.physicalAttackDamageIncrease}\n";
+
+            contentText.text += $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.magicAttackDamageIncrease}-" +
+                $"{weapon.weaponDetails.magicDamageMax + weapon.magicAttackDamageIncrease}\n";
+
+            float updatedAttackRating = (float)Math.Round(weapon.weaponDetails.weaponAttackRating * weapon.attackRatingIncrease, 2);
+            contentText.text += $"Attack Rating: {updatedAttackRating * 100}%\n";
+
+            contentText.text += $"Cr. Hit Chance: {weapon.criticalHitChanceIncrease * 100}%\n";
+            contentText.text += $"Cr. Hit Damage: {weapon.criticalHitDamageIncrease * 100}%\n";
+        }
+
+        switch (weapon.rarity)
+        {
+            case Rarity.Basic:
+                BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
+                BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
+                break;
+            case Rarity.Enchanted:
+                BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
+                BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
+                BoostForWeapon(weapon, weapon.enchantedBoostType, BoostPhase.Enchanted);
+                break;
+            case Rarity.Mythic:
+                BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
+                BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
+                BoostForWeapon(weapon, weapon.enchantedBoostType, BoostPhase.Enchanted);
+                BoostForWeapon(weapon, weapon.mythicBoostType, BoostPhase.Mythic);
+                break;
+            case Rarity.Legendary:
+                break;
+            default:
+                break;
+        }
+    }
+
     public void OnClick()
     {
-        if (selectedSlot == null)
+        if (!isClicked)
         {
-            if (equippedTransform.childCount > 0)
+            if (selectedSlot == null)
             {
-                DraggableItem draggableItem = equippedTransform.GetChild(0).GetComponent<DraggableItem>();
-
-                if (slotType == SlotType.WeaponMainHand || slotType == SlotType.WeaponOffHand || slotType == SlotType.Passive || slotType == SlotType.Active)
+                if (equippedTransform.childCount > 0)
                 {
+                    DraggableItem draggableItem = equippedTransform.GetChild(0).GetComponent<DraggableItem>();
+
+                    if (draggableItem.isLockIcon) return;
+
                     selectedSlot = this;
                     selectedSlot.selectedSlotDraggableItem = draggableItem;
                 }
             }
-        }
-        else if (selectedSlot == this)
-        {
-            if (slotType != SlotType.Drop) tooltipPanel.gameObject.SetActive(false); // Close tooltip
-
-            // Clicked same slot again - deselect
-            tooltipPanel.gameObject.SetActive(false); // Ensure this runs unconditionally
-            selectedSlot.selectedSlotDraggableItem = null;
-            selectedSlot = null;
-        }
-        else
-        {
-            // Validate placement rules
-            if (!SlotPlacementRules.IsPlacementAllowed(selectedSlot.selectedSlotDraggableItem.itemGeneric, slotType, player.activeWeapon.GetCurrentMainHandWeapon(), 
-                player.currentWeaponSlotSetIndex))
+            else if (selectedSlot == this)
             {
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
-                return;
+                if (slotType != SlotType.Drop) tooltipPanel.gameObject.SetActive(false); // Close tooltip
+
+                // Clicked same slot again - deselect
+                tooltipPanel.gameObject.SetActive(false); // Ensure this runs unconditionally
+                selectedSlot.selectedSlotDraggableItem = null;
+                selectedSlot = null;
             }
-
-            bool isSwap = (equippedTransform.childCount > 0);
-
-            if (isSwap) // SWAP ACTION
+            else
             {
-                DraggableItem targetDraggableItem = equippedTransform.GetChild(0).GetComponent<DraggableItem>();
-
-                SwapItems(selectedSlot.selectedSlotDraggableItem, targetDraggableItem, player.activeWeapon.GetCurrentMainHandWeapon(), 
-                    player.activeWeapon.GetCurrentOffHandWeapon());
-            }
-            else // SLOT MOVE ACTION
-            {
-                // Second click - perform item transfer or swap
-                MoveItemToSlot(selectedSlot.selectedSlotDraggableItem, true);
-
-                // BookUIWrapper
-                BookUIRefreshHelper.RefreshBookUIAfterItemPlacement(selectedSlot.selectedSlotDraggableItem.itemGeneric, selectedSlot, this);
-
-                // Clear old visual
-                if (selectedSlot.equippedTransform.childCount > 0)
+                // Validate placement rules
+                if (!SlotPlacementRules.IsPlacementAllowed(selectedSlot.selectedSlotDraggableItem.itemGeneric, slotType, player.activeWeapon.GetCurrentMainHandWeapon(),
+                    player.currentWeaponSlotSetIndex))
                 {
-                    Transform oldChild = selectedSlot.equippedTransform.GetChild(0);
-                    Destroy(oldChild.gameObject);
+                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                    return;
                 }
-            }
 
-            tooltipPanel.gameObject.SetActive(false);
-            selectedSlot.selectedSlotDraggableItem = null;
-            selectedSlot = null;
+                bool isSwap = (equippedTransform.childCount > 0);
+
+                if (isSwap) // SWAP ACTION
+                {
+                    DraggableItem targetDraggableItem = equippedTransform.GetChild(0).GetComponent<DraggableItem>();
+
+                    SwapItems(selectedSlot.selectedSlotDraggableItem, targetDraggableItem, player.activeWeapon.GetCurrentMainHandWeapon(),
+                        player.activeWeapon.GetCurrentOffHandWeapon());
+                }
+                else // SLOT MOVE ACTION
+                {
+                    // Second click - perform item transfer or swap
+                    MoveItemToSlot(selectedSlot.selectedSlotDraggableItem, clickTransport: true);
+
+                    if (slotType == SlotType.WeaponMainHand || slotType == SlotType.WeaponOffHand || slotType == SlotType.Passive)
+                    {
+                        // BookUIWrapper
+                        BookUIRefreshHelper.RefreshBookUIAfterItemPlacement(selectedSlot.selectedSlotDraggableItem.itemGeneric, selectedSlot, this);
+                    }
+
+                    // Clear old visual
+                    if (selectedSlot.equippedTransform.childCount > 0)
+                    {
+                        Transform oldChild = selectedSlot.equippedTransform.GetChild(0);
+                        Destroy(oldChild.gameObject);
+                    }
+                }
+
+                tooltipPanel.gameObject.SetActive(false);
+                selectedSlot.selectedSlotDraggableItem = null;
+                selectedSlot = null;
+            }
         }
     }
 
@@ -437,6 +408,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             if (eventData.pointerDrag != null)
             {
                 draggableItem = eventData.pointerDrag?.GetComponentInParent<DraggableItem>() ?? eventData.pointerDrag?.GetComponent<DraggableItem>();
+
                 dropFailed = DropProcess(dropFailed, draggableItem);
             }
 
@@ -447,13 +419,14 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             // If this was a click-based drop (not drag), ignore
             if (selectedSlot != null && eventData.pointerDrag == null) return;
 
-            bool dissembleFailed = false;
+            bool dismantleFailed = false;
 
             if (eventData.pointerDrag != null)
             {
                 draggableItem = eventData.pointerDrag?.GetComponentInParent<DraggableItem>() ?? eventData.pointerDrag?.GetComponent<DraggableItem>();
+                if (draggableItem.isLockIcon) return;
 
-                dissembleFailed = DismantleProcess(draggableItem);
+                dismantleFailed = DismantleProcess(draggableItem);
             }
 
             return;
@@ -481,13 +454,20 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
        draggableItem = draggedItem.GetComponent<DraggableItem>();
 
-        if (draggableItem != null)
+        if (draggableItem != null && !draggableItem.isLockIcon)
         {
-            // Only now is selectedSlot guaranteed to be non-null
-            if (!SlotPlacementRules.IsPlacementAllowed(draggableItem.itemGeneric, slotType, player.activeWeapon.GetCurrentMainHandWeapon(), player.currentWeaponSlotSetIndex))
+            if (inventoryIndexNumber >= 0)
             {
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
-                return;
+
+            }
+            else
+            {
+                // Only now is selectedSlot guaranteed to be non-null
+                if (!SlotPlacementRules.IsPlacementAllowed(draggableItem.itemGeneric, slotType, player.activeWeapon.GetCurrentMainHandWeapon(), player.currentWeaponSlotSetIndex))
+                {
+                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                    return;
+                }
             }
 
             Transform currentChild = null;
@@ -499,10 +479,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             if (equippedTransform != null)
             {
                 // Check if the slot is occupied
-                if (equippedTransform.childCount > 0)
-                {
-                    currentChild = equippedTransform.GetChild(0);
-                }
+                if (equippedTransform.childCount > 0) currentChild = equippedTransform.GetChild(0);
             }
 
             if (currentChild != null)
@@ -524,7 +501,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
     private void SwapItems(DraggableItem draggableItem, DraggableItem targetItem, Weapon playerMainHand, Weapon playerOffHand)
     {
-        if (targetItem.isLockIcon) return;
+        if (targetItem.isLockIcon || draggableItem.isLockIcon) return;
 
         ItemSwapPos itemSwapPos = ItemSwapPos.None;
 
@@ -534,9 +511,12 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
         if (!IsInventorySwap(draggableItem, targetItem))
         {
+            if ((draggableItem.belongingSlot.slotType == SlotType.WeaponMainHand && targetItem.belongingSlot.slotType == SlotType.WeaponMainHand) ||
+                (draggableItem.belongingSlot.slotType == SlotType.WeaponOffHand && targetItem.belongingSlot.slotType == SlotType.WeaponOffHand)) goto jump;
+
             if (playerMainHand.weaponBelongingToWhichMainHandSet != playerOffHand?.weaponBelongingToWhichOffHandSet)
             {
-                targetItemWeaponIfItIs = targetItem.itemGeneric as Weapon;
+                targetItemWeaponIfItIs = (Weapon)targetItem.itemGeneric;
 
                 // If it's a weapon, peek into the appropriate offhand slot
                 peekedWeaponSetsOffHandWeapon = null;
@@ -548,9 +528,11 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             }
         }
 
+    jump:
+
         if (peekedWeaponSetsOffHandWeapon is Weapon validWeapon)
         {
-            if (SlotPlacementRules.IsSwapAllowed(draggableItem, targetItem, draggableItem.itemGeneric, targetItem.itemGeneric, playerMainHand, playerOffHand, 
+            if (SlotPlacementRules.IsSwapAllowed(draggableItem, targetItem, draggableItem.itemGeneric, targetItem.itemGeneric, playerMainHand, playerOffHand,
                 validWeapon, out itemSwapPos))
             {
                 SwapProcess(draggableItem, targetItem, itemSwapPos);
@@ -563,7 +545,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         else
         {
             // If it's null or invalid, call IsSwapAllowed with null
-            if (SlotPlacementRules.IsSwapAllowed(draggableItem, targetItem, draggableItem.itemGeneric, targetItem.itemGeneric, 
+            if (SlotPlacementRules.IsSwapAllowed(draggableItem, targetItem, draggableItem.itemGeneric, targetItem.itemGeneric,
                 playerMainHand, playerOffHand, null, out itemSwapPos))
             {
                 SwapProcess(draggableItem, targetItem, itemSwapPos);
@@ -761,6 +743,15 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                     StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
+                else if (slotType == SlotType.Inventory)
+                {
+                    // Empty previous slot and fill target slot
+                    InventoryManager.Instance.PlaceItemToInventoryndexSlot(draggableItem.itemGeneric, placeToLowestIndex: false, inventoryIndexNumber);
+
+                    // Book update
+                    StaticEventHandler.CallGenericItemPlacedToEmptyInInventory(draggableItem, draggableItem.belongingSlot.inventoryIndexNumber, 
+                        inventoryIndexNumber, draggableItem.image.sprite);
+                }
             }
             // Passive item in the inventory moves to passive item slot
             else if (draggableItemGeneric is PassiveItem)
@@ -793,7 +784,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
 
                     // Place weapon into inventory
-                    int inventoryIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(draggableItemWeapon);
+                    int inventoryIndex = InventoryManager.Instance.PlaceItemToInventoryndexSlot(draggableItemWeapon);
 
                     draggableItemWeapon.itemSlotStatus = ItemSlotStatus.Inventory;
                     draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
@@ -864,7 +855,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = null;
 
                     // Place weapon into inventory
-                    int inventoryIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(draggableItemWeapon);
+                    int inventoryIndex = InventoryManager.Instance.PlaceItemToInventoryndexSlot(draggableItemWeapon);
 
                     draggableItemWeapon.itemSlotStatus = ItemSlotStatus.Inventory;
                     draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
@@ -948,8 +939,6 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         PassiveItem draggablePassiveItem = draggableItem.itemGeneric as PassiveItem;
         PassiveItem targetPassiveItem = targetItem.itemGeneric as PassiveItem;
 
-        EquipResult equipResult = new EquipResult();
-        Slot temporarySlot = new Slot();
         int index = 0;
         int setIndex = player.currentWeaponSlotSetIndex - 1;
 
@@ -977,11 +966,6 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 // Swap slots
                 SwapBelongingSlots(draggableItem, targetItem);
 
-                if (draggablePassiveItem == null || targetPassiveItem == null)
-                {
-                    Debug.LogWarning("SwapProcess aborted: One or both passive items were null.");
-                    return;
-                }
                 break;
 
             case ItemSwapPos.DragPassiveSlotPassiveInventory:
@@ -1004,13 +988,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 // Swap slots
                 SwapBelongingSlots(draggableItem, targetItem);
 
-                if (draggablePassiveItem == null || targetPassiveItem == null)
-                {
-                    Debug.LogWarning("SwapProcess aborted: One or both passive items were null.");
-                    return;
-                }
                 break;
-
 
             case ItemSwapPos.DragMainSlotInventory:
                 index = targetItem.belongingSlot.inventoryIndexNumber;
@@ -1033,12 +1011,6 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 // Swap belonging slots for drag-drop references
                 SwapBelongingSlots(draggableItem, targetItem);
-
-                if (draggableItemWeapon == null || targetWeapon == null)
-                {
-                    Debug.LogWarning("SwapProcess aborted: One or both weapons were null.");
-                    return;
-                }
 
                 break;
             case ItemSwapPos.DragOffSlotInventory:
@@ -1063,11 +1035,6 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 // Swap belonging slots for drag-drop references
                 SwapBelongingSlots(draggableItem, targetItem);
 
-                if (draggableItemWeapon == null || targetWeapon == null)
-                {
-                    Debug.LogWarning("SwapProcess aborted: One or both weapons were null.");
-                    return;
-                }
                 break;
             case ItemSwapPos.DragInventorySlotMain:
                 index = draggableItem.belongingSlot.inventoryIndexNumber;
@@ -1091,11 +1058,6 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 // Swap belonging slots for drag-drop references
                 SwapBelongingSlots(draggableItem, targetItem);
 
-                if (draggableItemWeapon == null || targetWeapon == null)
-                {
-                    Debug.LogWarning("SwapProcess aborted: One or both weapons were null.");
-                    return;
-                }
                 break;
             case ItemSwapPos.DragInventorySlotOff:
                 index = draggableItem.belongingSlot.inventoryIndexNumber;
@@ -1195,6 +1157,20 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 draggableItemWeapon.itemSlotStatus = ItemSlotStatus.OffHand;
                 targetWeapon.itemSlotStatus = ItemSlotStatus.OffHand;
                 player.playerControl.SetWeaponSetByIndex(true, false);
+
+                break;
+            case ItemSwapPos.DragInventorySlotInventory:
+                index = draggableItem.belongingSlot.inventoryIndexNumber;
+
+                // Swap generic items into inventory array
+                InventoryManager.Instance.inventoryArray[index] = targetItem.itemGeneric;
+                InventoryManager.Instance.inventoryArray[inventoryIndexNumber] = draggableItem.itemGeneric;
+
+                // Book update
+                StaticEventHandler.CallGenericItemsSwappedInInventory(draggableItem, targetItem, index, inventoryIndexNumber);
+
+                // Swap belonging slots for drag-drop references
+                SwapBelongingSlots(draggableItem, targetItem);
 
                 break;
             default:
@@ -1381,7 +1357,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 });
                     upgWeapon.enchantedBoostType = rolled;
-                    ApplyWeaponBoost(upgWeapon, rolled, upgWeapon.weaponDetails);
+                    WeaponDropGenerator.SetWeaponModifier(ref upgWeapon, rolled, upgWeapon.weaponDetails);
+                    //ApplyWeaponBoost(upgWeapon, rolled, upgWeapon.weaponDetails);
                 }
 
                 if (next >= Rarity.Mythic && upgWeapon.mythicBoostType == BoostType.None)
@@ -1392,7 +1369,8 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     upgWeapon.enchantedBoostType
                 });
                     upgWeapon.mythicBoostType = rolled;
-                    ApplyWeaponBoost(upgWeapon, rolled, upgWeapon.weaponDetails);
+                    WeaponDropGenerator.SetWeaponModifier(ref upgWeapon, rolled, upgWeapon.weaponDetails);
+                    //ApplyWeaponBoost(upgWeapon, rolled, upgWeapon.weaponDetails);
                 }
             }
 
@@ -1414,14 +1392,16 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 {
                     BoostType rolled = RollOne(pool, new HashSet<BoostType> { upgPassive.passiveItemDetails.baseUniqueModifier });
                     upgPassive.enchantedBoostType = rolled;
-                    ApplyPassiveBoost(upgPassive, rolled);
+                    PassiveDropGenerator.SetPassiveItemModifier(ref upgPassive, rolled, upgPassive.passiveItemDetails);
+                    //ApplyPassiveBoost(upgPassive, rolled);
                 }
 
                 if (next >= Rarity.Mythic && upgPassive.mythicBoostType == BoostType.None)
                 {
                     BoostType rolled = RollOne(pool, new HashSet<BoostType> { upgPassive.passiveItemDetails.baseUniqueModifier, upgPassive.enchantedBoostType });
                     upgPassive.mythicBoostType = rolled;
-                    ApplyPassiveBoost(upgPassive, rolled);
+                    PassiveDropGenerator.SetPassiveItemModifier(ref upgPassive, rolled, upgPassive.passiveItemDetails);
+                    //ApplyPassiveBoost(upgPassive, rolled);
                 }
             }
 
@@ -1456,10 +1436,10 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
                 switch (draggableItem.itemGeneric.rarity)
                 {
-                    case Rarity.Basic: return true; // Dissamble failed
-                    case Rarity.Enchanted: shardGain = 20; break;
-                    case Rarity.Mythic: shardGain = 70; break;
-                    case Rarity.Legendary: shardGain = 200; break;
+                    case Rarity.Basic: shardGain = 10; break;
+                    case Rarity.Enchanted: shardGain = 35; break;
+                    case Rarity.Mythic: shardGain = 100; break;
+                    case Rarity.Legendary: shardGain = 250; break;
                     default:
                         break;
                 }
@@ -1807,7 +1787,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                         bonusText.text = $"Damage vs Low Health: + {weapon.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text = $"Cr. Resistance: + {weapon.criticalResistanceModifier}%";
+                        bonusText.text = $"Cr. Resistance: + {weapon.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
                         bonusText.text = $"Armor: + {weapon.armorIncrease * 100}%";
@@ -1892,7 +1872,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                         bonusText.text += $"\nDamage vs Low Health: + {weapon.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text += $"\nCr. Resistance: + {weapon.criticalResistanceModifier}%";
+                        bonusText.text += $"\nCr. Resistance: + {weapon.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
                         bonusText.text += $"\nArmor: + {weapon.armorIncrease * 100}%";
@@ -1985,7 +1965,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                         bonusText.text = $"Damage vs Low Health: + {passiveItem.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text = $"Cr. Resistance: + {passiveItem.criticalResistanceModifier}%";
+                        bonusText.text = $"Cr. Resistance: + {passiveItem.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
                         bonusText.text = $"Armor: + {passiveItem.armorIncrease * 100}%";
@@ -2070,7 +2050,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                         bonusText.text += $"\nDamage vs Low Health: + {passiveItem.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text += $"\nCr. Resistance: + {passiveItem.criticalResistanceModifier}%";
+                        bonusText.text += $"\nCr. Resistance: + {passiveItem.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
                         bonusText.text += $"\nArmor: + {passiveItem.armorIncrease * 100}%";

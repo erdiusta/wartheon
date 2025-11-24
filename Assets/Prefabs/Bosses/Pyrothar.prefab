@@ -420,6 +420,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 504711778, guid: e5f2d9b1701a97544b8168cf18194f2a, type: 3}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_MaskInteraction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
@@ -594,6 +598,7 @@ PrefabInstance:
     - {fileID: 7400821728870662684, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     - {fileID: 0}
     - {fileID: 1280140502967062622, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4239920569477357429, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
@@ -602,7 +607,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7736189416814370986, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8562774439073668857}
+      addedObject: {fileID: 6920592293881624090}
   m_SourcePrefab: {fileID: 100100000, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
 --- !u!4 &3455516063969396250 stripped
 Transform:
@@ -619,7 +624,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7736189416814370986, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
   m_PrefabInstance: {fileID: 645003754541700470}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8562774439073668857
+--- !u!114 &6920592293881624090
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -628,7 +633,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7183228443647751644}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73f43e04ae9becc45ad9108fadd7dba3, type: 3}
+  m_Script: {fileID: 11500000, guid: c7183c313b6fdb04f9f294320ba0df81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   enemyDetails: {fileID: 11400000, guid: 363d80d5f66917743a0f86678469f1f6, type: 2}
@@ -639,7 +644,7 @@ MonoBehaviour:
   avoidLayerMask:
     serializedVersion: 2
     m_Bits: 0
-  moveStatus: 0
+  moveStatus: 1
   updateFrameNumber: 1
   enemyPhase: 0
   isAttacking: 0

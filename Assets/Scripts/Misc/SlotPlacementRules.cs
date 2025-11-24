@@ -9,7 +9,7 @@ public static class SlotPlacementRules
 
         if (NotPossibleToPlaceToOffHand(item, mainHandWeapon) && targetSlotType == SlotType.WeaponOffHand) return false; // Two-handed cant't be placed on off-hand
 
-        if (NotPossibleToPlaceMainHandWeaponToInventoryOrDrop(item, weaponSetIndexNumber) && (targetSlotType == SlotType.None || targetSlotType == SlotType.Drop)) return false;
+        if (NotPossibleToPlaceMainHandWeaponToInventoryOrDrop(item, weaponSetIndexNumber) && (targetSlotType == SlotType.Inventory || targetSlotType == SlotType.Drop)) return false;
 
         return true;
     }
@@ -51,7 +51,7 @@ public static class SlotPlacementRules
 
         if (draggingItem is Weapon && targetItem is not Weapon) return false;
 
-        if (draggingItem.itemSlotStatus == ItemSlotStatus.Inventory && targetItem.itemSlotStatus == ItemSlotStatus.Inventory) return false; 
+        //if (draggingItem.itemSlotStatus == ItemSlotStatus.Inventory && targetItem.itemSlotStatus == ItemSlotStatus.Inventory) return false; 
 
         if (draggingItem is PassiveItem && targetItem is PassiveItem)
         {
@@ -62,9 +62,11 @@ public static class SlotPlacementRules
             if (draggingPassiveItem.passiveItemDetails.passiveItemSlotName != targetPassiveItem.passiveItemDetails.passiveItemSlotName) return false;
 
             // SWAP TYPE
-            if (draggingPassiveItem.itemSlotStatus == ItemSlotStatus.Inventory && targetItem.itemSlotStatus != ItemSlotStatus.Inventory) itemSwapPos = ItemSwapPos.DragPassiveInventorySlotPassive;
+            if (draggingPassiveItem.itemSlotStatus == ItemSlotStatus.Inventory && targetItem.itemSlotStatus != ItemSlotStatus.Inventory) 
+                itemSwapPos = ItemSwapPos.DragPassiveInventorySlotPassive;
 
-            if (draggingPassiveItem.itemSlotStatus != ItemSlotStatus.Inventory && targetItem.itemSlotStatus == ItemSlotStatus.Inventory) itemSwapPos = ItemSwapPos.DragPassiveSlotPassiveInventory;
+            if (draggingPassiveItem.itemSlotStatus != ItemSlotStatus.Inventory && targetItem.itemSlotStatus == ItemSlotStatus.Inventory) 
+                itemSwapPos = ItemSwapPos.DragPassiveSlotPassiveInventory;
         }
 
         if (draggingItem is Weapon && targetItem is Weapon)

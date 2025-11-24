@@ -29,7 +29,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.6
-        value: {x: 0, y: 0.4375, z: 0}
+        value: {x: 0, y: -0.0625, z: 0}
         inSlope: {x: Infinity, y: Infinity, z: Infinity}
         outSlope: {x: Infinity, y: Infinity, z: Infinity}
         tangentMode: 0
@@ -38,7 +38,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.8
-        value: {x: 0, y: 0.4375, z: 0}
+        value: {x: 0, y: -0.125, z: 0}
         inSlope: {x: Infinity, y: Infinity, z: Infinity}
         outSlope: {x: Infinity, y: Infinity, z: Infinity}
         tangentMode: 0
@@ -47,7 +47,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 1.2
-        value: {x: 0, y: 1.9375, z: 0}
+        value: {x: 0, y: 0.5625, z: 0}
         inSlope: {x: Infinity, y: Infinity, z: Infinity}
         outSlope: {x: Infinity, y: Infinity, z: Infinity}
         tangentMode: 0
@@ -199,31 +199,13 @@ AnimationClip:
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 1.2
-        value: 1
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 1.4
-        value: 0.5
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: smearCircleRadius
     path: 
     classID: 114
-    script: {fileID: 11500000, guid: 73f43e04ae9becc45ad9108fadd7dba3, type: 3}
+    script: {fileID: 11500000, guid: c7183c313b6fdb04f9f294320ba0df81, type: 3}
     flags: 0
   m_PPtrCurves:
   - serializedVersion: 2
@@ -295,7 +277,7 @@ AnimationClip:
     - serializedVersion: 2
       path: 0
       attribute: 1558695532
-      script: {fileID: 11500000, guid: 73f43e04ae9becc45ad9108fadd7dba3, type: 3}
+      script: {fileID: 11500000, guid: c7183c313b6fdb04f9f294320ba0df81, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
@@ -520,7 +502,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.6
-        value: 0.4375
+        value: -0.0625
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -529,7 +511,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.8
-        value: 0.4375
+        value: -0.125
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -538,7 +520,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 1.2
-        value: 1.9375
+        value: 0.5625
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -641,31 +623,13 @@ AnimationClip:
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 1.2
-        value: 1
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 1.4
-        value: 0.5
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: smearCircleRadius
     path: 
     classID: 114
-    script: {fileID: 11500000, guid: 73f43e04ae9becc45ad9108fadd7dba3, type: 3}
+    script: {fileID: 11500000, guid: c7183c313b6fdb04f9f294320ba0df81, type: 3}
     flags: 0
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0

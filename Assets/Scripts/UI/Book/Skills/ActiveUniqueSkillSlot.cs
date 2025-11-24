@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ActiveUniqueSkillSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+public class ActiveUniqueSkillSlot : MonoBehaviour, IDropHandler, ISelectHandler, IDeselectHandler
 {
     public int slotIndex = 1;
 
@@ -12,6 +10,8 @@ public class ActiveUniqueSkillSlot : MonoBehaviour, IDropHandler, IPointerEnterH
 
     Image skillImage;
     Player player;
+
+    bool isSelected;
 
     private void Awake()
     {
@@ -21,53 +21,100 @@ public class ActiveUniqueSkillSlot : MonoBehaviour, IDropHandler, IPointerEnterH
     private void Start()
     {
         player = GameManager.Instance.GetPlayer();
-
         PopulateSkillIconToSlot();
+    }
+
+    private void Update()
+    {
+        if (!isSelected) return;
+
+        if (InputManager.Instance.click.action.WasPerformedThisFrame())
+        {
+            TryAssignPickedSkill();
+        }
     }
 
     private void PopulateSkillIconToSlot()
     {
-        activeUniqueSkillDetails = player.currentlyUsedActiveUniqueSkills[slotIndex];
-        skillImage.sprite = activeUniqueSkillDetails.activeUniqueSkillSprite;
+        if (player.currentlyUsedActiveUniqueSkills.TryGetValue(slotIndex, out ActiveUniqueSkillDetailsSO skill))
+        {
+            activeUniqueSkillDetails = skill;
+            skillImage.sprite = activeUniqueSkillDetails.activeUniqueSkillSprite;
+        }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-
-    }
-
+    // Drop via drag & drop
     public void OnDrop(PointerEventData eventData)
     {
-        if (eventData.pointerDrag != null && eventData.pointerDrag.TryGetComponent(out DraggableSkillIcon draggableSkillIcon))
+        if (eventData.pointerDrag != null &&
+            eventData.pointerDrag.TryGetComponent(out DraggableSkillIcon draggableSkillIcon))
         {
-            // Check if same skill is already occupied in another slot
-            foreach (KeyValuePair<int, ActiveUniqueSkillDetailsSO> item in player.currentlyUsedActiveUniqueSkills)
+            TryPlaceSkill(draggableSkillIcon.activeUniqueSkillDetails, draggableSkillIcon.image.sprite);
+        }
+    }
+
+    public void OnSelect(BaseEventData eventData)
+    {
+        isSelected = true;
+    }
+
+    public void OnDeselect(BaseEventData eventData)
+    {
+        isSelected = false;
+    }
+
+    public void PlacementForGamepad()
+    {
+        if (!isSelected) return;
+
+        // Act like "drop" instantly if something is picked
+        var picked = SkillSelectionManager.PickedSkill;
+
+        if (picked != null)
+        {
+            if (TryPlaceSkill(picked.activeUniqueSkillDetails, picked.image.sprite))
             {
-                if (item.Value == draggableSkillIcon.activeUniqueSkillDetails)
-                {
-                    Debug.Log("You are trying to place a skill already occupied.");
-                    return; // Already exists abort the placement transaction
-                }
+                SkillSelectionManager.Clear(); // clear buffer if placed successfully
             }
+        }
+    }
 
-            // Remove current slot's skill info if is occupied
-            if (player.currentlyUsedActiveUniqueSkills.ContainsKey(slotIndex))
+    // Shared placement logic
+    private bool TryPlaceSkill(ActiveUniqueSkillDetailsSO newSkill, Sprite newSprite)
+    {
+        // Prevent duplicates
+        foreach (var item in player.currentlyUsedActiveUniqueSkills)
+        {
+            if (item.Value == newSkill)
             {
-                player.currentlyUsedActiveUniqueSkills.Remove(slotIndex);
+                Debug.Log("You are trying to place a skill already occupied.");
+                return false;
             }
+        }
 
-            // Populate dragged skill 
-            player.currentlyUsedActiveUniqueSkills.Add(slotIndex, draggableSkillIcon.activeUniqueSkillDetails);
-            activeUniqueSkillDetails = draggableSkillIcon.activeUniqueSkillDetails;
-            skillImage.sprite = draggableSkillIcon.image.sprite;
+        // Replace if slot is already filled
+        if (player.currentlyUsedActiveUniqueSkills.ContainsKey(slotIndex))
+            player.currentlyUsedActiveUniqueSkills.Remove(slotIndex);
 
-            // Call event in order to update SkillUI in Gameplay HUD
-            StaticEventHandler.CallActiveUniqueSkillPlacedEvent(slotIndex, activeUniqueSkillDetails, true);
+        // Assign
+        player.currentlyUsedActiveUniqueSkills.Add(slotIndex, newSkill);
+        activeUniqueSkillDetails = newSkill;
+        skillImage.sprite = newSprite;
+
+        // Notify gameplay HUD
+        StaticEventHandler.CallActiveUniqueSkillPlacedEvent(slotIndex, activeUniqueSkillDetails, true);
+
+        return true;
+    }
+
+    private void TryAssignPickedSkill()
+    {
+        var picked = SkillSelectionManager.PickedSkill;
+        if (picked == null) return;
+
+        if (TryPlaceSkill(picked.activeUniqueSkillDetails, picked.image.sprite))
+        {
+            SkillSelectionManager.Clear();
         }
     }
 }

@@ -6,12 +6,14 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using System;
 
 public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 {
     public static int currentDungeonLevelListIndex = 0;
 
     public Button playButton;
+    [SerializeField] GameObject characterSelectorUI;
     [SerializeField] Button settingsButton;
     [SerializeField] Button controlsButton;
     [SerializeField] Button quitButton;
@@ -80,10 +82,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     private void StaticEventHandler_OnAdditiveSceneRemoved()
     {
-        CanvasGroup canvasGroup = playButton.GetComponentInParent<CanvasGroup>();
-        canvasGroup.interactable = true;
-        canvasGroup.blocksRaycasts = true;
-
         playButton.gameObject.SetActive(true);
         settingsButton.gameObject.SetActive(true);
         controlsButton.gameObject.SetActive(true);
@@ -229,7 +227,26 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
                     EventSystem.current.SetSelectedGameObject(playButton.gameObject);
                 }
             }
+
+            if (characterSelectorUI.activeSelf)
+            {
+                if (InputManager.Instance.escapeButton.action.WasPressedThisFrame())
+                {
+                    BackButtonForCharacterSelection();
+                }
+            }
         }
+    }
+
+    public void BackButtonForCharacterSelection()
+    {
+        // Set Play Button as selected
+        StartCoroutine(HandleReturnFromCharacterScene());
+
+        // Unload the current additive scene
+        StaticEventHandler.CallAdditiveSceneRemoveEvent();
+
+        characterSelectorUI.SetActive(false);
     }
 
     /// <summary>
@@ -237,10 +254,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     /// </summary>
     public void PlayGame()
     {
-        CanvasGroup canvasGroup = playButton.GetComponentInParent<CanvasGroup>();
-        canvasGroup.interactable = false;
-        canvasGroup.blocksRaycasts = false;
-
         playButton.interactable = false;
         settingsButton.interactable = false;
         controlsButton.interactable = false;
@@ -255,7 +268,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         SavePlayerPrefs();
 
         // Load character selector scene additively
-        SceneManager.LoadScene("CharacterSelectorScene", LoadSceneMode.Additive);
+        characterSelectorUI.SetActive(true);
     }
 
     /// <summary>
@@ -354,7 +367,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
         if (onStart)
         {
-            targetHzIndex = PlayerPrefs.HasKey("RefreshRateIndex")
+            targetHzIndex = PlayerPrefs.HasKey("RefreshRateIndex") 
                 ? Mathf.Clamp(PlayerPrefs.GetInt("RefreshRateIndex"), 0, hzOptions.Count - 1)
                 : hzOptions.Count - 1; // default to highest Hz
         }
@@ -423,8 +436,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     {
         QualitySettings.vSyncCount = isOn ? 1 : 0;
         UpdateVysncCheckmarkVisibility(isOn);
-
-
     }
 
     private void UpdateVysncCheckmarkVisibility(bool show)
@@ -627,12 +638,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     public IEnumerator HandleReturnFromCharacterScene()
     {
-        // Wait until the scene is actually unloaded
-        while (SceneManager.GetSceneByName("CharacterSelectorScene").isLoaded)
-        {
-            yield return null;
-        }
-
         // Set Play Button as selected
         yield return null; // Wait 1 more frame just to be sure
 

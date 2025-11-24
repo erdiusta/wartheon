@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_ConductiveTouch
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Conductive Touch
+  activeSkill: 40
+  activeUniqueSkillSprite: {fileID: 21300000, guid: e4b3ee019eca0de46ba36065015ccaa0, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 0}
+  activeUniqueSkillSoundEffectTwo: {fileID: 0}
+  levels:
+  - activeUniqueSkillDetails: Active after a skill used for 3 seconds, enemies having
+      Static status effect will be Paralyzed in case of atttack or skill.
+    cooldown: 0
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 0
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals wave electric attack with reducing damage by
+      each wave. Can apply Paralyze status on enemy.
+
+
+      Base Attack Damage:
+      100%
+
+      Base Attack Damage: (2nd Wave): 75%
+
+      Base Attack Damage:
+      (3rd Wave): 50%
+
+      Base Enemy Paralyze Chance: 20%
+
+      Base Mana Cost:
+      22
+
+      Base Cooldown: 14'
+    cooldown: 14
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 22
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals wave electric attack with reducing damage by
+      each wave. Can apply Paralyze status on enemy.
+
+
+      Base Attack Damage:
+      100%
+
+      Base Enemy Paralyze Chance: 20%
+
+      Base Mana Cost: 25
+
+      Base
+      Cooldown: 12'
+    cooldown: 12
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 25
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

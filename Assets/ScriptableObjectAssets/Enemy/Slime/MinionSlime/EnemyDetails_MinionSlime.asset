@@ -31,8 +31,6 @@ MonoBehaviour:
   isEnemyBoss: 0
   isSummonedMinion: 1
   isDecoy: 0
-  hasAnimator: 0
-  elementalBias: 3
   elementalForgeRate: 0.3
   enemyMinionDetails: {fileID: 0}
   physicalResistance: -0.3
@@ -66,6 +64,10 @@ MonoBehaviour:
   chillChance: 0
   hasFrostDamage: 0
   frostChance: 0
+  hasStaticDamage: 0
+  staticChance: 0
+  hasParalyzeDamage: 0
+  paralyzeChance: 0
   hasCurseDamage: 0
   curseChance: 0
   hasFearDamage: 0
@@ -102,6 +104,16 @@ MonoBehaviour:
     enemyHealthAmount: 10
   - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     enemyHealthAmount: 10
+  enemyDamageDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    minDamageAmount: 2
+    maxDamageAmount: 4
+  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
+    minDamageAmount: 3
+    maxDamageAmount: 5
+  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
+    minDamageAmount: 9
+    maxDamageAmount: 12
   isImmuneAfterHit: 1
   hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
@@ -121,13 +133,6 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     spawnableObjectRatioList: []
   secondaryPassiveItemsByLevelList:
-  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
-    spawnableObjectRatioList: []
-  - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
-    spawnableObjectRatioList: []
-  - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
-    spawnableObjectRatioList: []
-  activeItemsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     spawnableObjectRatioList: []
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}

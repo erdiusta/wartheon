@@ -3109,6 +3109,7 @@ MonoBehaviour:
   lastDamageHappenedTime: 0
   passiveTriggered: 0
   isGraceOfTheUnscarredPassiveOn: 0
+  isSeismicSlamActive: 0
   seismicSlamDamage: 10
   seismicSlamCircleRadius: 5
   isValorActive: 0

@@ -26,8 +26,6 @@ public static class WeaponDropGenerator
             weaponDetails = weaponDetails,
             baseUniqueRolled = weaponDetails.baseUniqueModifier,
             baseTypeRolled = weaponDetails.baseTypeModifier,
-            attackCooldownModifier = weaponDetails.weaponCooldownDuration,
-            attackRatingIncrease = weaponDetails.weaponAttackRating,
 
             physicalAttackDamageIncrease = Mathf.RoundToInt((weaponDetails.isShield ? 0 : weaponDetails.isMeleeWeapon ? weaponDetails.physicalDamageMin
             : weaponDetails.weaponCurrentProjectile.projectilePhyDamageMin) * (1 - weaponDetails.elementalForgeRate)),
@@ -130,7 +128,7 @@ public static class WeaponDropGenerator
         {
             case BoostType.AttackCooldown:
                 rng2 = Random.Range(0.05f, 0.12f);
-                weapon.attackCooldownModifier = (float)Math.Round(rng2, 2);
+                weapon.attackCooldownModifier += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackDamage:
                 rng2 = Random.Range(1, 10);
@@ -160,7 +158,7 @@ public static class WeaponDropGenerator
                 weapon.blockChanceIncrease += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.DodgeChance:
-                rng2 = Random.Range(0.05f, 0.25f);
+                rng2 = Random.Range(0.01f, 0.10f);
                 weapon.dodgeChanceIncrease += (float)Math.Round(rng2, 2);
                 break;
             case BoostType.HealthIncrease:

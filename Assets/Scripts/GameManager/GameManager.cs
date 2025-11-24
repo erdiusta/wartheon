@@ -1,21 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using UnityEngine.InputSystem;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.Rendering;
-using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
-using System.Globalization;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
 {
-    public static bool isDemo = true;
+    public static bool isDemo = false;
 
     #region Header GAMEOBJECT REFERENCES
     [Space(10)]
@@ -754,31 +754,65 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             turnPageCompleted = false;
         }
 
-        if (InputManager.Instance.bookView.action.WasPressedThisFrame() && !InputManager.glossaryDisabled)
+        if (!InputManager.glossaryDisabled)
         {
-            if (bookView.activeSelf)
+            if (InputManager.Instance.bookView.action.WasPressedThisFrame())
             {
-                if (!isBookClosing)
+                if (bookView.activeSelf)
                 {
-                    isBookClosing = true;
-                    BookCloseProcess();
+                    if (!isBookClosing)
+                    {
+                        isBookClosing = true;
+                        BookCloseProcess();
+                    }
+                }
+                else
+                {
+                    bookView.SetActive(true);
+                    bookCover.SetActive(true);
+                    glossaryBookOpen = true;
+
+                    StaticEventHandler.CallOpenStatPageEvent();
+
+                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+
+                    // First trigger the animation (it uses UnscaledTime, so it's safe to call here)
+                    bookView.GetComponent<Animator>().SetTrigger(Settings.zoomIn);
+
+                    if (!InputManager.TutorialEnabled) Time.timeScale = 0f;
+
+                    // Finally, hide gameplay UI
+                    gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 0f, 0.1f); // Transparent
                 }
             }
-            else
+            if (InputManager.Instance.skillsInnerPathPage.action.WasPressedThisFrame())
             {
-                bookView.SetActive(true);
-                bookCover.SetActive(true);
-                glossaryBookOpen = true;
+                if (bookView.activeSelf)
+                {
+                    if (!isBookClosing)
+                    {
+                        isBookClosing = true;
+                        BookCloseProcess();
+                    }
+                }
+                else
+                {
+                    bookView.SetActive(true);
+                    bookCover.SetActive(true);
+                    glossaryBookOpen = true;
 
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
+                    StaticEventHandler.CallOpenBuildPageEvent();
 
-                // First trigger the animation (it uses UnscaledTime, so it's safe to call here)
-                bookView.GetComponent<Animator>().SetTrigger(Settings.zoomIn);
+                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.closeBookSoundEffect);
 
-                if (!InputManager.TutorialEnabled) Time.timeScale = 0f;
+                    // First trigger the animation (it uses UnscaledTime, so it's safe to call here)
+                    bookView.GetComponent<Animator>().SetTrigger(Settings.zoomIn);
 
-                // Finally, hide gameplay UI
-                gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 0f, 0.1f); // Transparent
+                    if (!InputManager.TutorialEnabled) Time.timeScale = 0f;
+
+                    // Finally, hide gameplay UI
+                    gameplayUI.FadeGameplayUI(gameplayUI.canvasGroup, 0f, 0.1f); // Transparent
+                }
             }
         }
     }
@@ -1947,7 +1981,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         player.playerControl.NextWeaponSet(true, false, onStart, 3);
     }
 
-    public void OpenWarningPopUpMenu(PopUpReason popUpReason)
+    public void OpenWarningPopUpMenu(PopUpReason popUpReason, int shardGain = 0)
     {
         warningPopUp.SetActive(true);
         popUpWindowOpen = true; // It's used for disabling mouse fire button while window is open
@@ -1991,8 +2025,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             case PopUpReason.YourHandsFull:
                 warningText.text = "All sets in main hand is full. Drop one of your weapons first.";
                 break;
-            case PopUpReason.DontMeetRequiredChar:
-                warningText.text = "You don't have required char to wield this weapon.";
+            case PopUpReason.DontMeetRequiredCharacter:
+                warningText.text = "You don't have required character to wield this weapon. Instead you dismantled this item and obtained "
+                    + shardGain + " shards.";
                 break;
             case PopUpReason.BobbyPinFailed:
                 warningText.text = "Lockpick with Bobby Pin failed.";
@@ -2059,6 +2094,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             secondArrowTransform.gameObject.SetActive(false);
         }
     }
+
     public void CloseWarningPopUpMenu()
     {
         warningPopUp.SetActive(false);

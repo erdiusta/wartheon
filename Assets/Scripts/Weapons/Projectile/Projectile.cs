@@ -835,7 +835,14 @@ public class Projectile : MonoBehaviour, IFireable
             if (collision != null && projectileDetails.isPlayerProjectile)
             {
                 // Caster is player
-                damageDone = Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
+                if (isThrowingAxe)
+                {
+                    damageDone = Random.Range(player.currentMainHandMinDamageValue * 2, player.currentMainHandMaxDamageValue * 2);
+                }
+                else
+                {
+                    damageDone = Random.Range(player.currentMainHandMinDamageValue, player.currentMainHandMaxDamageValue);
+                }
             }
             else
             {
@@ -1698,7 +1705,7 @@ public class Projectile : MonoBehaviour, IFireable
 
                 isHookedToTheWall = true;
 
-                SoundEffectSO hookHangSound = player.playersAllActiveUniqueSkills[4].activeUniqueSkillSoundEffectTwo;
+                SoundEffectSO hookHangSound = player.playersAllActiveUniqueSkills[5].activeUniqueSkillSoundEffectTwo;
                 SoundEffectManager.Instance.PlaySoundEffect(hookHangSound);
             }
 
@@ -1964,6 +1971,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckBleedingStatus(Enemy enemy, bool arrowOfTheSeven = false, bool isThrowingAxe = false)
     {
+        if (enemy.enemyDetails.isImmuneToBleeding) return;
+
         if (arrowOfTheSeven)
         {
             if (player != null)
@@ -2089,6 +2098,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckBurnStatus(Enemy enemy, bool arrowOfTheSeven = false)
     {
+        if (enemy.enemyDetails.isImmuneToBurn) return;
+
         if (arrowOfTheSeven)
         {
             if (player != null)
@@ -2138,6 +2149,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckSlowStatus(Enemy enemy, bool arrowOfTheSeven = false)
     {
+        if (enemy.enemyDetails.isImmuneToSlow) return;
+
         if (!enemy.isSlowed)
         {
             if (arrowOfTheSeven)
@@ -2187,6 +2200,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckPoisonStatus(Enemy enemy, bool arrowOfTheSeven = false)
     {
+        if (enemy.enemyDetails.isImmuneToPoison) return;
+
         if (arrowOfTheSeven)
         {
             if (player != null)
@@ -2239,6 +2254,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckStunStatus(Enemy enemy)
     {
+        if (enemy.enemyDetails.isImmuneToStun) return;
+
         EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
 
         bool isStunned = (enemyAI.moveStatus & MoveStatus.Stun) != 0;
@@ -2280,6 +2297,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckRootStatus(Enemy enemy, bool isBindingArrow = false)
     {
+        if (enemy.enemyDetails.isImmuneToRoot) return;
+
         EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
 
         bool isRooted = (enemyAI.moveStatus & MoveStatus.Root) != 0;
@@ -2473,6 +2492,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckFrostStatus(Enemy enemy, bool arrowOfTheSeven = false)
     {
+        if (enemy.enemyDetails.isImmuneToFrost) return;
+
         EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
 
         bool isFrozen = (enemyAI.moveStatus & MoveStatus.Frozen) != 0;
@@ -2531,6 +2552,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckParalyzeStatus(Enemy enemy, bool arrowOfTheSeven = false)
     {
+        if (enemy.enemyDetails.isImmuneToParalyze) return;
+
         EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
 
         bool isParalyzed = (enemyAI.moveStatus & MoveStatus.Paralyze) != 0;
@@ -2615,6 +2638,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckBlindStatus(Enemy enemy, bool arrowOfTheSeven = false)
     {
+        if (enemy.enemyDetails.isImmuneToBlind) return;
+
         if (arrowOfTheSeven)
         {
             if (arrowOfTheSeven)
@@ -2664,6 +2689,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckCurseStatus(Enemy enemy)
     {
+        if (enemy.enemyDetails.isImmuneToCurse) return;
+
         if (!enemy.isCursed)
         {
             float randomDice = Random.Range(0f, 1f);
@@ -2698,6 +2725,8 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void CheckFearStatus(Enemy enemy, bool arrowOfTheSeven = false)
     {
+        if (enemy.enemyDetails.isImmuneToCurse) return;
+
         if (!enemy.isFeared || arrowOfTheSeven)
         {
             if (arrowOfTheSeven)

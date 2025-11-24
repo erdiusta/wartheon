@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
-using UnityEngine.PlayerLoop;
 
 [RequireComponent(typeof(Enemy))]
 [DisallowMultipleComponent]
@@ -326,6 +325,21 @@ public class EnemyAI : MonoBehaviour
 
     protected void UpdatePhaseStatus(bool isAimAttackBehaviour = false)
     {
+        // Ensure the aiDestinationSetter target is valid
+        if (enemy.aiDestinationSetter.enabled)
+        {
+            if (enemy.aiDestinationSetter.target == null ||  enemy.aiDestinationSetter.target.gameObject == null)
+            {
+                // Fallback to player if exists
+                if (player != null && !player.health.hasDied) enemy.aiDestinationSetter.target = player.transform;
+                else
+                {
+                    // Optional: fallback to first patrol point
+                    if (enemy.patrol.targets != null && enemy.patrol.targets.Length > 0) enemy.aiDestinationSetter.target = enemy.patrol.targets[0];
+                }
+            }
+        }
+
         if (enemy.isDisoriented)
         {
             SwitchToPatrol();
@@ -628,8 +642,8 @@ public class EnemyAI : MonoBehaviour
     /// Fire the weapon - ordinary aim
     /// </summary>
     protected void FireWeapon(bool isLaser = false, MoravellePhase moravellePhase = MoravellePhase.None, SylvarokPhase treantPhase = SylvarokPhase.None, 
-        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, CryotharPhase frostWrymPhase = CryotharPhase.None,
-        VenomancerPhase venomancerPhase = VenomancerPhase.None, PyrotharPhase fireWrymPhase = PyrotharPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
+        GalvanusPhase galvanusPhase = GalvanusPhase.None, SepharothPhase sepharothPhase = SepharothPhase.None, CryotharPhase cryotharPhase = CryotharPhase.None,
+        VenomancerPhase venomancerPhase = VenomancerPhase.None, PyrotharPhase pyrotharPhase = PyrotharPhase.None, MoldranPhase moldranPhase = MoldranPhase.None)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
@@ -663,7 +677,7 @@ public class EnemyAI : MonoBehaviour
                 //}
 
                 enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemy, isLaser, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection,
-                    false, false, false, moravellePhase, treantPhase, galvanusPhase, sepharothPhase, frostWrymPhase, venomancerPhase, fireWrymPhase, moldranPhase);
+                    false, false, false, moravellePhase, treantPhase, galvanusPhase, sepharothPhase, cryotharPhase, venomancerPhase, pyrotharPhase, moldranPhase);
             }
         }
     }

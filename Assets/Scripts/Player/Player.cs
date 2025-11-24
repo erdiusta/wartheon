@@ -1,8 +1,9 @@
-using UnityEngine;
-using UnityEngine.Rendering;
-using System.Collections.Generic;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Purchasing;
+using UnityEngine.Rendering;
 
 #region REQUIRE COMPONENTS
 [RequireComponent(typeof(HealthEvent))]
@@ -97,6 +98,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public BranchMastery branchMastery;
     [HideInInspector] public WeaponMastery weaponMastery;
     [HideInInspector] public DropItem activeDropItem;
+
     [HideInInspector] public ActiveUniqueSkillDetailsSO[] playersAllActiveUniqueSkills;
     [HideInInspector] public Dictionary<int, ActiveUniqueSkillDetailsSO> currentlyUsedActiveUniqueSkills = new Dictionary<int, ActiveUniqueSkillDetailsSO>();
 
@@ -300,6 +302,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public float lastDamageHappenedTime;
     [HideInInspector] public bool passiveTriggered;
     [HideInInspector] public bool isGraceOfTheUnscarredPassiveOn;
+    [HideInInspector] public bool isSeismicSlamActive;
     [HideInInspector] public int seismicSlamDamage = 10;
     [HideInInspector] public float seismicSlamCircleRadius = 5f;
     [HideInInspector] public bool isValorActive;
@@ -629,8 +632,8 @@ public class Player : MonoBehaviour
             AddNextWeaponToPlayer(ref weapon, pickingUp, onStart, false, false, false);
 
             // Set player starting health
-            UpdatePlayerHealth(0, false, false);
-            UpdatePlayerMana(0, false, false);
+            UpdatePlayerHealth(0, false, true);
+            UpdatePlayerMana(0, false, true);
 
             UpdateDamageValues();
             UpdateAttackRatingAndCriticalValues();
@@ -647,8 +650,8 @@ public class Player : MonoBehaviour
             AddNextWeaponToPlayer(ref weapon, pickingUp, onStart, false, false, false);
 
             // Set player starting health
-            UpdatePlayerHealth(0, false, false);
-            UpdatePlayerMana(0, false, false);
+            UpdatePlayerHealth(0, false, true);
+            UpdatePlayerMana(0, false, true);
             UpdateDamageValues();
             UpdateAttackRatingAndCriticalValues();
             UpdateBlockAndDodgeValues();
@@ -664,11 +667,24 @@ public class Player : MonoBehaviour
             weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType == WieldType.OneHanded && 
             weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0].weaponDetails.weaponClass != WeaponClass.Spear)
         {
+            if (weapon == DropItem.droppedThrowingAxe)
+            {
+                foreach (KeyValuePair<int, ActiveUniqueSkillDetailsSO> keyValuePair in currentlyUsedActiveUniqueSkills)
+                {
+                    if (keyValuePair.Value.activeSkill == ActiveSkill.AxeThrow)
+                    {
+                        specialMovesCooldownCheckArray[keyValuePair.Key - 1] = false;
+                        specialMoveRecastCountArray[keyValuePair.Key - 1] = 0;
+                        specialMoveEvent.CallSpecialMoveCooldownResetEvent(ActiveSkill.AxeThrow, keyValuePair.Key);
+                    }
+                }
+            }
+
             AddNextWeaponToPlayer(ref weapon, pickingUp, onStart, false, false, true);
 
             // Set player starting health
-            UpdatePlayerHealth(0, false, false);
-            UpdatePlayerMana(0, false, false);
+            UpdatePlayerHealth(0, false, true);
+            UpdatePlayerMana(0, false, true);
             UpdateArmorValues();
             UpdateDamageValues();
             UpdateAttackRatingAndCriticalValues();
@@ -685,7 +701,7 @@ public class Player : MonoBehaviour
             weapon.weaponDetails = weaponDetails;
             weapon.itemSlotStatus = ItemSlotStatus.Inventory;
 
-            int retrievedInventoryIndex = InventoryManager.Instance.PlaceItemToLowestPossibleIndexSlot(weapon);
+            int retrievedInventoryIndex = InventoryManager.Instance.PlaceItemToInventoryndexSlot(weapon);
 
             StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, retrievedInventoryIndex);
             StaticEventHandler.CallWeaponUnlockedEvent(weaponDetails.weaponTitle);
@@ -1201,7 +1217,7 @@ public class Player : MonoBehaviour
         else
         {
             // Non-start flows MUST provide the real rolled instance to prevent duplication.
-            if (weapon == null)
+            if (weapon == null && weapon == DropItem.droppedThrowingAxe)
             {
                 Debug.LogError("AddNextWeaponToPlayer: Non-start flow requires a Weapon instance (weaponInstance != null) to avoid duplicates.");
                 return;
@@ -1378,7 +1394,6 @@ public class Player : MonoBehaviour
         }
 
         weapon.itemSlotStatus = slot;
-        weapon.attackRatingIncrease = weapon.weaponDetails.weaponAttackRating;
         weapon.criticalHitChanceIncrease = weapon.weaponDetails.criticalHitChance;
         weapon.criticalHitDamageIncrease = weapon.weaponDetails.criticalHitDamageMultiplier;
         weapon.baseUniqueRolled = weapon.weaponDetails.baseUniqueModifier;
@@ -1434,7 +1449,7 @@ public class Player : MonoBehaviour
             if (main != null)
             {
                 attackRatingModifier = ((main.weaponDetails.weaponAttackRating + off.weaponDetails.weaponAttackRating +
-                      main.attackRatingIncrease + off.attackRatingIncrease) / 2f + additionalAttackRatingModifier) * 0.7f;
+                      main.attackRatingIncrease + off.attackRatingIncrease) / 2f + additionalAttackRatingModifier) * 0.85f;
             }
             else attackRatingModifier = 0f;
         }
@@ -1548,36 +1563,7 @@ public class Player : MonoBehaviour
         Weapon main = activeWeapon.GetCurrentMainHandWeapon();
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
-        float feroBonus = currentFerocityValue * 0.02f;
-
-        // --- MAIN ---
-        if (main != null)
-        {
-            float baseFromWeapon = main.weaponDetails.isMeleeWeapon
-                ? main.weaponDetails.criticalHitDamageMultiplier
-                : main.weaponDetails.weaponCurrentProjectile.criticalHitDamageMultiplier;
-
-            float typeBonus = main.weaponDetails.isMeleeWeapon ? additionalCriticalMeleeDamageModifier : additionalCriticalRangedDamageModifier;
-
-            float prePassive = baseFromWeapon + feroBonus + additionalCriticalDamageModifier + typeBonus + main.criticalHitDamageIncrease;
-
-            float withPassive = 0f;
-
-            foreach (var kvp in equippedPassiveItems)
-            {
-                var item = kvp.Value;
-                if (item == null || item.passiveItemDetails == null) continue;
-
-                for (int i = 1; i <= 4; i++)
-                {
-                    if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.criticalHitDamage;
-                }
-            }
-
-            currentMainHandCriticalHitDamage = Mathf.Min((float)Math.Round(prePassive + withPassive, 2), 0.5f);
-
-        }
-        else currentMainHandCriticalHitDamage = 0f;
+        float feroBonus = (float)Math.Round(currentFerocityValue * 0.02f, 2);
 
         // --- OFF ---
         if (off != null)
@@ -1594,7 +1580,7 @@ public class Player : MonoBehaviour
 
                 float typeBonus = off.weaponDetails.isMeleeWeapon ? additionalCriticalMeleeDamageModifier : additionalCriticalRangedDamageModifier;
 
-                float prePassive = baseFromWeapon + feroBonus + additionalCriticalDamageModifier + typeBonus + off.criticalHitDamageIncrease;
+                float prePassive = off.criticalHitDamageIncrease + feroBonus + additionalCriticalDamageModifier + typeBonus;
 
                 float withPassive = 0f;
 
@@ -1609,13 +1595,69 @@ public class Player : MonoBehaviour
                     }
                 }
 
-                currentOffHandCriticalHitDamage = Mathf.Min((float)Math.Round(prePassive + withPassive, 2), 0.5f);
+                currentOffHandCriticalHitDamage = Mathf.Max((float)Math.Round(prePassive + withPassive, 2), 0.5f);
             }
-        }
-        else currentOffHandCriticalHitDamage = 0f;
 
-        currentMainHandCriticalHitDamage = (float)Math.Round(currentMainHandCriticalHitDamage, 2);
-        currentOffHandCriticalHitDamage = (float)Math.Round(currentOffHandCriticalHitDamage, 2);
+            // --- MAIN ---
+            if (main != null)
+            {
+                float baseFromWeapon = main.weaponDetails.isMeleeWeapon
+                    ? main.weaponDetails.criticalHitDamageMultiplier
+                    : main.weaponDetails.weaponCurrentProjectile.criticalHitDamageMultiplier;
+
+                float typeBonus = main.weaponDetails.isMeleeWeapon ? additionalCriticalMeleeDamageModifier : additionalCriticalRangedDamageModifier;
+
+                float prePassive = main.criticalHitDamageIncrease + feroBonus + additionalCriticalDamageModifier + typeBonus;
+
+                float withPassive = 0f;
+
+                foreach (var kvp in equippedPassiveItems)
+                {
+                    var item = kvp.Value;
+                    if (item == null || item.passiveItemDetails == null) continue;
+
+                    for (int i = 1; i <= 4; i++)
+                    {
+                        if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.criticalHitDamage;
+                    }
+                }
+
+                currentMainHandCriticalHitDamage = Mathf.Max((float)Math.Round(prePassive + withPassive, 2), 0.5f);
+            }
+            else currentMainHandCriticalHitDamage = 0f;
+        }
+        else
+        {
+            // --- MAIN ---
+            if (main != null)
+            {
+                float baseFromWeapon = main.weaponDetails.isMeleeWeapon
+                    ? main.weaponDetails.criticalHitDamageMultiplier
+                    : main.weaponDetails.weaponCurrentProjectile.criticalHitDamageMultiplier;
+
+                float typeBonus = main.weaponDetails.isMeleeWeapon ? additionalCriticalMeleeDamageModifier : additionalCriticalRangedDamageModifier;
+
+                float prePassive = main.criticalHitDamageIncrease + feroBonus + additionalCriticalDamageModifier + typeBonus;
+
+                float withPassive = 0f;
+
+                foreach (var kvp in equippedPassiveItems)
+                {
+                    var item = kvp.Value;
+                    if (item == null || item.passiveItemDetails == null) continue;
+
+                    for (int i = 1; i <= 4; i++)
+                    {
+                        if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.criticalHitDamage;
+                    }
+                }
+
+                currentMainHandCriticalHitDamage = Mathf.Max((float)Math.Round(prePassive + withPassive, 2), 0.5f);
+            }
+            else currentMainHandCriticalHitDamage = 0f;
+
+            currentOffHandCriticalHitDamage = 0f;
+        }
     }
 
     public void UpdateSecondaryDamageValues()
@@ -1992,7 +2034,7 @@ public class Player : MonoBehaviour
         if (main != null) weaponDodge += main.dodgeChanceIncrease;
         if (off != null) weaponDodge += off.dodgeChanceIncrease;
 
-        float baseFromAgi = (float)Math.Round(currentAgilityValue * 0.5f / 100f, 2);
+        float baseFromAgi = (float)Math.Round(currentAgilityValue * 0.15f / 100f, 2);
         float prePassive = baseFromAgi + additionalDodgeRateModifier + weaponDodge;
 
         float withPassive = 0f;
@@ -2023,7 +2065,7 @@ public class Player : MonoBehaviour
         if (main != null) weaponAdd += main.increasedMaxHealth;
         if (off != null) weaponAdd += off.increasedMaxHealth;
 
-        int baseMax = 120 + currentConstitutionValue * 25 + weaponAdd;
+        int baseMax = 120 + currentConstitutionValue * 15 + weaponAdd;
 
         int withPassive = 0;
 
@@ -2039,7 +2081,7 @@ public class Player : MonoBehaviour
         }
 
         int newMaxHealth = baseMax + withPassive;
-        health.SetMaximumHealth(newMaxHealth);
+        health.SetMaximumHealth(newMaxHealth, shouldHealthFilled);
     }
 
     /// <summary>
@@ -2054,7 +2096,7 @@ public class Player : MonoBehaviour
         if (main != null) weaponAdd += main.increasedMaxMana;
         if (off != null) weaponAdd += off.increasedMaxMana;
 
-        int baseMax = 20 + currentWillpowerValue * 35 + weaponAdd;
+        int baseMax = 20 + currentWillpowerValue * 20 + weaponAdd;
 
         int withPassive = 0;
 
@@ -2070,7 +2112,7 @@ public class Player : MonoBehaviour
         }
 
         int newMaxMana = baseMax + withPassive;
-        mana.SetMaximumMana(newMaxMana);
+        mana.SetMaximumMana(newMaxMana, shouldManaFilled);
     }
 
     public void RecalculateSecondaryStats(bool shouldHealthFilled = false)
