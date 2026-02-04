@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad0d48074276e0640b14ec3640a668d8, type: 3}
+  m_Name: ProjectileDetails_SepharothPentagram
+  m_EditorClassIdentifier: 
+  projectileName: Sepharoth Pentagram
+  isPlayerProjectile: 0
+  projectilePrefabArray:
+  - {fileID: 3547249067481803369, guid: 2a901185a617a1b4d9e7c61b34f557e3, type: 3}
+  projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  projectileChargeTime: 0
+  projectileChargeMaterial: {fileID: 0}
+  belongingWeaponDetails: {fileID: 11400000, guid: 5e26935bd513f1b4e9b0ae2bedc3cf02, type: 2}
+  projectileHitEffect: {fileID: 11400000, guid: 9e888f32de5d60a429c75fb52a068ded, type: 2}
+  projectileDamageMin: 20
+  projectileDamageMax: 30
+  projectileSpeed: 0
+  projectileRange: 50
+  hasLifeTime: 1
+  lifeDuration: 15
+  projectileRotationSpeed: 1
+  isGuided: 0
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 1
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 20
+  burstDamageMax: 30
+  hasBurnDamage: 0
+  burnChance: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  projectileSpreadMin: 0
+  projectileSpreadMax: 0
+  projectileSpawnAmountMin: 1
+  projectileSpawnAmountMax: 1
+  projectileSpawnIntervalMin: 0
+  projectileSpawnIntervalMax: 0
+  projectileImpactSoundEffect: {fileID: 11400000, guid: 558c5eabf9f97a64bb29e76ec881722e, type: 2}
+  isProjectileTrail: 0
+  projectileTrailTime: 0
+  projectileTrailMaterial: {fileID: 0}
+  projectileTrailStartWidth: 0
+  projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

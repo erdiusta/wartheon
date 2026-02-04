@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soundEffectName: Coin Pick Up
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
-  soundEffectClip: {fileID: 8300000, guid: 12e6cd8d63e98ce438ac6b31bc88247b, type: 3}
+  soundEffectClips:
+  - {fileID: 8300000, guid: 1d01a2a2ba019c9429c25fb5a04bc8bb, type: 3}
   soundEffectPitchRandomVariationMin: 0.85
   soundEffectPitchRandomVariationMax: 1.25
-  soundEffectVolume: 1
+  soundEffectVolume: 0.8

@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_MoltenRift
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Molten Rift
+  activeSkill: 21
+  activeUniqueSkillSprite: {fileID: 21300000, guid: 9c185053167680c4d9df4f6cd907504a, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 34f8e2cdca30ac34ba736472fa3c0311, type: 2}
+  activeUniqueSkillSoundEffectTwo: {fileID: 0}
+  levels:
+  - activeUniqueSkillDetails: 'Teleports another location in the room.
+
+
+      Base
+      Mana Cost: 15
+
+      Base Cooldown: 10'
+    cooldown: 10
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 15
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Teleports another location in the room.
+
+
+      Base
+      Mana Cost: 13
+
+      Base Cooldown: 8'
+    cooldown: 8
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 13
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Teleports another location in the room.
+
+
+      Base
+      Mana Cost: 11
+
+      Base Cooldown: 6'
+    cooldown: 6
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 11
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

@@ -41,14 +41,14 @@ public class RoomNodeGraphEditor : EditorWindow
 
         // Define node layout style
         roomNodeStyle = new GUIStyle();
-        roomNodeStyle.normal.background = EditorGUIUtility.Load("node1") as Texture2D;
+        roomNodeStyle.normal.background = EditorGUIUtility.Load("node3") as Texture2D;
         roomNodeStyle.normal.textColor = Color.white;
         roomNodeStyle.padding = new RectOffset(nodePadding, nodePadding, nodePadding, nodePadding);
         roomNodeStyle.border = new RectOffset(nodeBorder, nodeBorder, nodeBorder, nodeBorder);
 
         // Define selected node style
         roomNodeSelectedStyle = new GUIStyle();
-        roomNodeSelectedStyle.normal.background = EditorGUIUtility.Load("node1 on") as Texture2D;
+        roomNodeSelectedStyle.normal.background = EditorGUIUtility.Load("node3 on") as Texture2D;
         roomNodeSelectedStyle.normal.textColor = Color.white;
         roomNodeSelectedStyle.padding = new RectOffset(nodePadding, nodePadding, nodePadding, nodePadding);
         roomNodeSelectedStyle.border = new RectOffset(nodeBorder, nodeBorder, nodeBorder, nodeBorder);
@@ -107,8 +107,7 @@ public class RoomNodeGraphEditor : EditorWindow
             DrawRoomNodes();
         }
 
-        if (GUI.changed)
-            Repaint();
+        if (GUI.changed) Repaint();
     }
 
     /// <summary>
@@ -116,11 +115,14 @@ public class RoomNodeGraphEditor : EditorWindow
     /// </summary>
     private void DrawBackgroundGrid(float gridSize, float gridOpacity, Color gridColor)
     {
+        // Detect vertical and horizontal line counts in the graph window
         int verticalLineCount = Mathf.CeilToInt((position.width + gridSize) / gridSize);
         int horizontalLineCount = Mathf.CeilToInt((position.height + gridSize) / gridSize);
 
+        // Color and opacity of graph grid lines
         Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
 
+        // Update grid offset based on drag input (smoother movement)
         graphOffset += graphDrag * 0.5f;
 
         Vector3 gridOffset = new Vector3(graphOffset.x % gridSize, graphOffset.y % gridSize, 0);
@@ -136,7 +138,6 @@ public class RoomNodeGraphEditor : EditorWindow
         }
 
         Handles.color = Color.white;
-
     }
 
     private void DrawDraggedLine()
@@ -468,7 +469,7 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Process left mouse drag event - drag room node graph
+    /// Process left mouse drag event - drag both background and nodes feeling panning effect
     /// </summary>
     private void ProcessLeftMouseDragEvent(Vector2 dragDelta)
     {

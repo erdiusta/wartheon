@@ -1,6 +1,7 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Room
 {
@@ -8,6 +9,8 @@ public class Room
     public string templateID;
     public GameObject prefab;
     public RoomNodeTypeSO roomNodeType;
+    public MusicTrackSO battleMusic;
+    public MusicTrackSO ambientMusic;
     public Vector2Int lowerBounds;
     public Vector2Int upperBounds;
     public Vector2Int templateLowerBounds;
@@ -23,6 +26,9 @@ public class Room
     public bool isLit = false;
     public bool isClearedOfEnemies = false;
     public bool isPreviouslyVisited = false;
+    public bool shopRoomGoodsCreated = false;
+
+    public Vector2 Center { get { return ((Vector2)lowerBounds + (Vector2)upperBounds) * 0.5f; } } 
 
     public Room()
     {
@@ -35,11 +41,11 @@ public class Room
     /// </summary>
     public int GetNumberOfEnemiesToSpawn(DungeonLevelSO dungeonLevel)
     {
-        foreach (RoomEnemySpawnParameters roomEnemySpawnParameters in roomLevelEnemySpawnParametersList)
+        for (int i = 0; i < roomLevelEnemySpawnParametersList.Count; i++)
         {
-            if (roomEnemySpawnParameters.dungeonLevel == dungeonLevel)
+            if (roomLevelEnemySpawnParametersList[i].dungeonLevel == dungeonLevel)
             {
-                return Random.Range(roomEnemySpawnParameters.minTotalEnemiesToSpawn, roomEnemySpawnParameters.maxTotalEnemiesToSpawn);
+                return Random.Range(roomLevelEnemySpawnParametersList[i].minTotalEnemiesToSpawn, roomLevelEnemySpawnParametersList[i].maxTotalEnemiesToSpawn);
             }
         }
 
@@ -51,13 +57,37 @@ public class Room
     /// </summary>
     public RoomEnemySpawnParameters GetRoomEnemySpawnParameters(DungeonLevelSO dungeonLevel)
     {
-        foreach (RoomEnemySpawnParameters roomEnemySpawnParameters in roomLevelEnemySpawnParametersList)
+        for (int i = 0; i < roomLevelEnemySpawnParametersList.Count; i++)
         {
-            if (roomEnemySpawnParameters.dungeonLevel == dungeonLevel)
+            if (roomLevelEnemySpawnParametersList[i].dungeonLevel == dungeonLevel)
             {
-                return roomEnemySpawnParameters;
+                return roomLevelEnemySpawnParametersList[i];
             }
         }
+
         return null;
     }
+
+    /// <summary>
+    /// Crated patrol targets in transfrom to be populated by Patrol script
+    /// </summary>
+    public Transform[] GetPatrolTargets(Vector2Int[] spawnPositions, Grid grid, Transform parent = null)
+    {
+        Transform[] patrolTargets = new Transform[spawnPositions.Length];
+
+        for (int i = 0; i < spawnPositions.Length; i++)
+        {
+            // Detect world pos of spawn array
+            Vector3Int spawnPosVector3 = new Vector3Int(spawnPositions[i].x, spawnPositions[i].y, 0);
+            Vector3 worldPos = grid.CellToWorld(spawnPosVector3) + grid.cellSize / 2f;
+
+            // Create game objects where spawn arroy points exist
+            PatrolPoint pointObj = (PatrolPoint)PoolManager.Instance.ReuseComponent(GameResources.Instance.enemyPatrolPointsParent.gameObject, worldPos, Quaternion.identity);
+
+            patrolTargets[i] = pointObj.transform;
+        }
+
+        return patrolTargets;
+    }
 }
+

@@ -52,15 +52,15 @@ public class RoomNodeSO : ScriptableObject
         else
         {
             // Display a popup using the RoomNodeType name values that can be selected from (default to the currently set roomNodeType)
-            int selected = roomNodeTypeList.list.FindIndex(x => x == roomNodeType);
+            int preSelected = roomNodeTypeList.list.FindIndex(x => x == roomNodeType);
 
-            int selection = EditorGUILayout.Popup("", selected, GetRoomNodeTypesToDisplay());
+            int selection = EditorGUILayout.Popup("", preSelected, GetRoomNodeTypesToDisplay());
             roomNodeType = roomNodeTypeList.list[selection];
 
             // If the room type selection has changed, making child connections potentially invalid
-            if (roomNodeTypeList.list[selected].isCorridor && !roomNodeTypeList.list[selection].isCorridor || 
-                !roomNodeTypeList.list[selected].isCorridor && roomNodeTypeList.list[selection].isCorridor || 
-                !roomNodeTypeList.list[selected].isBossRoom && roomNodeTypeList.list[selection].isBossRoom)
+            if (roomNodeTypeList.list[preSelected].isCorridor && !roomNodeTypeList.list[selection].isCorridor || 
+                !roomNodeTypeList.list[preSelected].isCorridor && roomNodeTypeList.list[selection].isCorridor || 
+                !roomNodeTypeList.list[preSelected].isBossRoom && roomNodeTypeList.list[selection].isBossRoom)
             {
                 // If a room node type has been changed and it already has children then delete the parent child links since we need to revalidate any
                 if (childRoomNodeIDList.Count > 0)
@@ -84,8 +84,7 @@ public class RoomNodeSO : ScriptableObject
             }
         }
 
-        if (EditorGUI.EndChangeCheck())
-            EditorUtility.SetDirty(this);
+        if (EditorGUI.EndChangeCheck()) EditorUtility.SetDirty(this);
 
         GUILayout.EndArea();
     }

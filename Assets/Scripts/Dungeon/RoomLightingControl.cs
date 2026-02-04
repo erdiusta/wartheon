@@ -1,5 +1,7 @@
+using Mirror;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(InstantiatedRoom))]
@@ -7,6 +9,8 @@ using UnityEngine.Tilemaps;
 public class RoomLightingControl : MonoBehaviour
 {
     InstantiatedRoom instantiatedRoom;
+
+    Player player;
 
     private void Awake()
     {
@@ -28,23 +32,54 @@ public class RoomLightingControl : MonoBehaviour
     /// </summary>
     private void StaticEventHandler_OnRoomChanged(RoomChangedEventArgs roomChangedEventArgs)
     {
-        // If this is the room entered and the room isn't already lit, then fade in the room lighting
-        if (roomChangedEventArgs.room == instantiatedRoom.room && !instantiatedRoom.room.isLit)
+        if (roomChangedEventArgs.room != null)
         {
-            // Fade in room
-            FadeInRoomLighting();
+            // If this is the room entered and the room isn't already lit, then fade in the room lighting
+            if (roomChangedEventArgs.room == instantiatedRoom.room && !instantiatedRoom.room.isLit)
+            {
+                if (!roomChangedEventArgs.room.roomNodeType.isEntrance)
+                {
+                    Lighting(instantiatedRoom);
+                }
+                else
+                {
+                    // Ensure room environment decoration game objects are activated
+                    instantiatedRoom.ActivateEnvironmentGameObjects();
+                }
 
-            // Ensure room environment decoration game objects are activated
-            instantiatedRoom.ActivateEnvironmentGameObjects();
-
-            // Fade in the environment decoration gameobjects lighting
-            FadeInEnvironmentLighting();
-
-            // Fade in the room doors lighting
-            FadeInDoors();
-
-            instantiatedRoom.room.isLit = true;
+                instantiatedRoom.room.isLit = true;
+            }
+            return;
         }
+
+        if (roomChangedEventArgs.roomNetData == instantiatedRoom.roomNetData && !instantiatedRoom.roomNetData.isLit)
+        {
+            if (!roomChangedEventArgs.roomNetData.isEntrance)
+            {
+                Lighting(instantiatedRoom);
+            }
+            else
+            {
+                instantiatedRoom.ActivateEnvironmentGameObjects();
+            }
+
+            instantiatedRoom.roomNetData.isLit = true;
+        }
+    }
+
+    private void Lighting(InstantiatedRoom instantiatedRoom)
+    {
+        // Fade in room
+        FadeInRoomLighting();
+
+        // Ensure room environment decoration game objects are activated
+        instantiatedRoom.ActivateEnvironmentGameObjects();
+
+        // Fade in the environment decoration gameobjects lighting
+        FadeInEnvironmentLighting();
+
+        // Fade in the room doors lighting
+        FadeInDoors();
     }
 
     /// <summary>
@@ -62,11 +97,12 @@ public class RoomLightingControl : MonoBehaviour
     IEnumerator FadeInRoomLightingRoutine(InstantiatedRoom instantiatedRoom)
     {
         // Create new material to fade in
-        Material material = new Material(GameResources.Instance.variableLitShader);
+        Material material = new Material(GameResources.Instance.dimmedMaterial);
 
         instantiatedRoom.groundTilemap.GetComponent<TilemapRenderer>().material = material;
         instantiatedRoom.decoration1Tilemap.GetComponent<TilemapRenderer>().material = material;
         instantiatedRoom.decoration2Tilemap.GetComponent<TilemapRenderer>().material = material;
+        instantiatedRoom.sideTilemap.GetComponent<TilemapRenderer>().material = material;
         instantiatedRoom.frontTilemap.GetComponent<TilemapRenderer>().material = material;
         instantiatedRoom.minimapTilemap.GetComponent<TilemapRenderer>().material = material;
 
@@ -76,12 +112,19 @@ public class RoomLightingControl : MonoBehaviour
             yield return null;
         }
 
-        // Set material back to lit material
+        // Set material back to lit material - ROOM TILEMAPS
         instantiatedRoom.groundTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.decoration1Tilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.decoration2Tilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
+        instantiatedRoom.sideTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.frontTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
         instantiatedRoom.minimapTilemap.GetComponent<TilemapRenderer>().material = GameResources.Instance.litMaterial;
+
+        // Set material back to lit material - ROOM PROPS & LIGHTS
+        foreach (Transform item in instantiatedRoom.environmentGameObject.transform)
+        {
+            item.GetComponentInChildren<SpriteRenderer>().material = GameResources.Instance.litMaterial;
+        }
     }
 
     /// <summary>
@@ -90,7 +133,7 @@ public class RoomLightingControl : MonoBehaviour
     private void FadeInEnvironmentLighting()
     {
         // Create new material to fade in
-        Material material = new Material(GameResources.Instance.variableLitShader);
+        Material material = new Material(GameResources.Instance.dimmedMaterial);
 
         // Get all environment components in room
         Environment[] environmentComponents = GetComponentsInChildren<Environment>();

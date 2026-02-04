@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Enemy))]
 [DisallowMultipleComponent]
 public class AnimateEnemy : MonoBehaviour
 {
@@ -14,108 +13,181 @@ public class AnimateEnemy : MonoBehaviour
 
     private void OnEnable()
     {
-        enemy.movementToPositionEvent.OnMovementToPosition += MovementToPositionEvent_OnMovementToPosition;
-        enemy.idleEvent.OnIdle += IdleEvent_OnIdle;
-        enemy.aimWeaponEvent.OnWeaponAim += AimWeaponEvent_OnWeaponAim;
+        enemy.destroyedEvent.OnDestroyed += DestroyedEvent_OnDestroyed;
     }
 
     private void OnDisable()
     {
-        enemy.movementToPositionEvent.OnMovementToPosition -= MovementToPositionEvent_OnMovementToPosition;
-        enemy.idleEvent.OnIdle -= IdleEvent_OnIdle;
-        enemy.aimWeaponEvent.OnWeaponAim -= AimWeaponEvent_OnWeaponAim;
+        enemy.destroyedEvent.OnDestroyed -= DestroyedEvent_OnDestroyed;
     }
 
     /// <summary>
-    /// On weapon aim event handler
+    /// OnDestryed event handler
     /// </summary>
-    private void AimWeaponEvent_OnWeaponAim(AimWeaponEvent aimWeaponEvent, AimWeaponEventArgs aimWeaponEventArgs)
+    private void DestroyedEvent_OnDestroyed(DestroyedEvent destroyedEvent, DestroyedEventArgs destroyedEventArgs)
     {
-        InitializeAimAnimationParameters();
-        SetAimWeaponAnimationParameters(aimWeaponEventArgs.aimDirection);
-    }
-
-    /// <summary>
-    /// On movement event handler
-    /// </summary>
-    private void MovementToPositionEvent_OnMovementToPosition(MovementToPositionEvent movementToPositionEvent, 
-        MovementToPositionArgs movementToPositionArgs)
-    {
-        SetMovementAnimationParameters();
-    }
-
-    /// <summary>
-    /// On idle event handler
-    /// </summary>
-    private void IdleEvent_OnIdle(IdleEvent idleEvent)
-    {
-        SetIdleAnimationParameters();
+        SetDeathAnimationParameters();
     }
 
     /// <summary>
     /// Initialise aim animation parameters
     /// </summary>
-    private void InitializeAimAnimationParameters()
+    public void ResetAimAnimationParameters()
     {
+        //enemy.animator.SetFloat(Settings.axisX, -1f);
+        //enemy.animator.SetFloat(Settings.axisY, -1f);
+
         enemy.animator.SetBool(Settings.aimUp, false);
         enemy.animator.SetBool(Settings.aimUpRight, false);
-        enemy.animator.SetBool(Settings.aimUpLeft, false);
         enemy.animator.SetBool(Settings.aimRight, false);
-        enemy.animator.SetBool(Settings.aimLeft, false);
+        enemy.animator.SetBool(Settings.aimDownRight, false);
         enemy.animator.SetBool(Settings.aimDown, false);
-    }
-
-    /// <summary>
-    /// Set movement animation parameters
-    /// </summary>
-    private void SetMovementAnimationParameters()
-    {
-        // Set Moving
-        enemy.animator.SetBool(Settings.isIdle, false);
-        enemy.animator.SetBool(Settings.isMoving, true);
+        enemy.animator.SetBool(Settings.aimDownLeft, false);
+        enemy.animator.SetBool(Settings.aimLeft, false);
+        enemy.animator.SetBool(Settings.aimUpLeft, false);
     }
 
     /// <summary>
     /// Set idle animation parameters
     /// </summary>
-    private void SetIdleAnimationParameters()
+    public void SetIdleAnimationParameters()
     {
+        enemy.animator.SetFloat(Settings.motionType, 0f);
+
         // Set idle
         enemy.animator.SetBool(Settings.isMoving, false);
         enemy.animator.SetBool(Settings.isIdle, true);
+        enemy.animator.SetBool(Settings.isAttack, false);
+        enemy.animator.SetBool(Settings.block, false);
+    }
+
+    /// <summary>
+    /// Set movement animation parameters
+    /// </summary>
+    public void SetMovementAnimationParameters()
+    {
+        enemy.animator.SetFloat(Settings.motionType, 1f);
+
+        // Set Moving
+        enemy.animator.SetBool(Settings.isIdle, false);
+        enemy.animator.SetBool(Settings.isMoving, true);
+        enemy.animator.SetBool(Settings.isAttack, false);
+        enemy.animator.SetBool(Settings.death, false);
+    }
+
+    /// <summary>
+    /// Set attack animation parameters
+    /// </summary>
+    public void SetAttackAnimationParameters()
+    {
+        enemy.animator.SetFloat(Settings.motionType, 2f);
+
+        // Set Moving
+        enemy.animator.SetBool(Settings.isIdle, false);
+        enemy.animator.SetBool(Settings.isMoving, false);
+        enemy.animator.SetBool(Settings.isAttack, true);
+        enemy.animator.SetBool(Settings.death, false);
+    }
+
+    /// <summary>
+    /// Play death animation
+    /// </summary>
+    public void SetDeathAnimationParameters()
+    {
+        enemy.animator.SetBool(Settings.isAttack, false);
+        enemy.animator.SetBool(Settings.isMoving, false);
+        enemy.animator.SetBool(Settings.isIdle, false);
+        enemy.animator.SetBool(Settings.death, true);
+    }
+
+    /// <summary>
+    /// Reset all animation parameters
+    /// </summary>
+    public void ResetAnimatonParameters()
+    {
+        enemy.animator.SetBool(Settings.isAttack, false);
+        enemy.animator.SetBool(Settings.isMoving, false);
+        enemy.animator.SetBool(Settings.isIdle, false);
+        enemy.animator.SetBool(Settings.isFrozen, false);
+
+        enemy.animator.SetBool(Settings.dash, false);
+
+        if (HasParameter(enemy.animator, Settings.block))
+        {
+            enemy.animator.SetBool(Settings.block, false);
+        }
+
+        enemy.animator.SetBool(Settings.death, false);
     }
 
     /// <summary>
     /// Set aim animation parameters
     /// </summary>
-    private void SetAimWeaponAnimationParameters(AimDirection aimDirection)
+    public void SetAimWeaponAnimationParameters(AimDirection aimDirection)
     {
         // Set aim direction
         switch (aimDirection)
         {
             case AimDirection.Up:
                 enemy.animator.SetBool(Settings.aimUp, true);
+                enemy.animator.SetFloat(Settings.axisX, 0f);
+                enemy.animator.SetFloat(Settings.axisY, 1f);
                 break;
 
             case AimDirection.UpRight:
                 enemy.animator.SetBool(Settings.aimUpRight, true);
-                break;
-
-            case AimDirection.UpLeft:
-                enemy.animator.SetBool(Settings.aimUpLeft, true);
+                enemy.animator.SetFloat(Settings.axisX, 0.5f);
+                enemy.animator.SetFloat(Settings.axisY, 0.5f);
                 break;
 
             case AimDirection.Right:
                 enemy.animator.SetBool(Settings.aimRight, true);
+                enemy.animator.SetFloat(Settings.axisX, 1f);
+                enemy.animator.SetFloat(Settings.axisY, 0f);
                 break;
 
-            case AimDirection.Left:
-                enemy.animator.SetBool(Settings.aimLeft, true);
+            case AimDirection.DownRight:
+                enemy.animator.SetBool(Settings.aimDownRight, true);
+                enemy.animator.SetFloat(Settings.axisX, 0.5f);
+                enemy.animator.SetFloat(Settings.axisY, -0.5f);
                 break;
 
             case AimDirection.Down:
                 enemy.animator.SetBool(Settings.aimDown, true);
+                enemy.animator.SetFloat(Settings.axisX, 0f);
+                enemy.animator.SetFloat(Settings.axisY, -1f);
+                break;
+
+            case AimDirection.DownLeft:
+                enemy.animator.SetBool(Settings.aimDownLeft, true);
+                enemy.animator.SetFloat(Settings.axisX, -0.5f);
+                enemy.animator.SetFloat(Settings.axisY, -0.5f);
+                break;
+
+            case AimDirection.Left:
+                enemy.animator.SetBool(Settings.aimLeft, true);
+                enemy.animator.SetFloat(Settings.axisX, -1f);
+                enemy.animator.SetFloat(Settings.axisY, 0f);
+                break;
+
+            case AimDirection.UpLeft:
+                enemy.animator.SetBool(Settings.aimUpLeft, true);
+                enemy.animator.SetFloat(Settings.axisX, -0.5f);
+                enemy.animator.SetFloat(Settings.axisY, 0.5f);
                 break;
         }
+    }
+
+    // Method to check if the Animator contains the specified parameter
+    bool HasParameter(Animator animator, int paramHashCode)
+    {
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.GetHashCode() == paramHashCode)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

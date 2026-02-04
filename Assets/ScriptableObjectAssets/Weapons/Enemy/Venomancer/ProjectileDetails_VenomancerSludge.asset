@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad0d48074276e0640b14ec3640a668d8, type: 3}
+  m_Name: ProjectileDetails_VenomancerSludge
+  m_EditorClassIdentifier: 
+  projectileName: Venomancer Sludge
+  isPlayerProjectile: 0
+  projectilePrefabArray:
+  - {fileID: 2585463276777236944, guid: 34d9254a31186964b972ba00f92adf09, type: 3}
+  - {fileID: 2585463276777236944, guid: adda8cef16320134cb6b6f7e2a5e59c2, type: 3}
+  projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  projectileChargeTime: 0
+  projectileChargeMaterial: {fileID: 0}
+  belongingWeaponDetails: {fileID: 11400000, guid: 036dbff4e71d0234f87e0791dfec6ba7, type: 2}
+  projectileHitEffect: {fileID: 11400000, guid: 9e888f32de5d60a429c75fb52a068ded, type: 2}
+  projectileDamageMin: 12
+  projectileDamageMax: 18
+  projectileSpeed: 6
+  projectileRange: 50
+  hasLifeTime: 0
+  lifeDuration: 5
+  projectileRotationSpeed: 1
+  isGuided: 0
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 0
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
+  hasBurnDamage: 0
+  burnChance: 0
+  isPoisonous: 1
+  poisonChance: 0.3
+  hasAcid: 1
+  acidEfficiency: 0.2
+  hasStunDamage: 0
+  stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  projectileSpreadMin: 0
+  projectileSpreadMax: 0
+  projectileSpawnAmountMin: 1
+  projectileSpawnAmountMax: 1
+  projectileSpawnIntervalMin: 1
+  projectileSpawnIntervalMax: 1
+  projectileImpactSoundEffect: {fileID: 11400000, guid: e7ee590b34f839b468f542fd2ff197bf, type: 2}
+  isProjectileTrail: 0
+  projectileTrailTime: 0
+  projectileTrailMaterial: {fileID: 0}
+  projectileTrailStartWidth: 0
+  projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

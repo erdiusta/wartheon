@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad0d48074276e0640b14ec3640a668d8, type: 3}
+  m_Name: ProjectileDetails_GalvanusLightning
+  m_EditorClassIdentifier: 
+  projectileName: Galvanus Lightning
+  isPlayerProjectile: 0
+  projectilePrefabArray:
+  - {fileID: 2585463276777236944, guid: bef3bdc1fa588824489d8381a1e979ca, type: 3}
+  projectileMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  projectileChargeTime: 0
+  projectileChargeMaterial: {fileID: 0}
+  belongingWeaponDetails: {fileID: 11400000, guid: 6f0f5b12fca4e634b9893d0588ea158d, type: 2}
+  projectileHitEffect: {fileID: 11400000, guid: 9e888f32de5d60a429c75fb52a068ded, type: 2}
+  projectileDamageMin: 12
+  projectileDamageMax: 18
+  projectileSpeed: 14
+  projectileRange: 50
+  hasLifeTime: 1
+  lifeDuration: 10
+  projectileRotationSpeed: 1
+  isGuided: 0
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 0
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
+  hasWarmDamage: 0
+  warmChance: 0
+  hasBurnDamage: 0
+  burnChance: 0
+  hasStunDamage: 1
+  stunChance: 0.15
+  hasRootDamage: 0
+  rootChance: 0
+  hasBleedingDamage: 0
+  bleedingChance: 0
+  hasSlowDamage: 0
+  slowChance: 0
+  hasPoisonDamage: 0
+  poisonChance: 0
+  hasStaticDamage: 0
+  staticChance: 0
+  hasParalyzeDamage: 0
+  paralyzeChance: 0
+  hasAcidDamage: 0
+  acidEfficiency: 0
+  hasChillDamage: 0
+  chillChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  hasRevealDamage: 0
+  revealChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasFearDamage: 0
+  fearChance: 0
+  canDrainHealth: 0
+  healthDrainChance: 0
+  projectileSpreadMin: 0
+  projectileSpreadMax: 0
+  criticalHitChance: 0
+  criticalHitDamageMultiplier: 1.5
+  projectileSpawnAmountMin: 1
+  projectileSpawnAmountMax: 1
+  projectileSpawnIntervalMin: 1
+  projectileSpawnIntervalMax: 1
+  projectileFireSoundEffect: {fileID: 0}
+  projectileImpactSoundEffect: {fileID: 11400000, guid: 9e542a5e72bb37e42bcdc07dc47e4943, type: 2}
+  isProjectileTrail: 0
+  projectileTrailTime: 0
+  projectileTrailMaterial: {fileID: 0}
+  projectileTrailStartWidth: 0
+  projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

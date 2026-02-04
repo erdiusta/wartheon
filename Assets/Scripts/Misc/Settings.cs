@@ -21,20 +21,77 @@ public static class Settings
     public const float doorUnlockDelay = 1f;
     #endregion
 
+    #region AUDIO
+    public const float musicFadeOutTime = 0.5f; // Default music fade out transition
+    public const float musicFadeInTime = 0.5f; // Default music fade in transition
+    #endregion
+
     #region ANIMATOR PARAMETERS
     // Animator parameters - Player
     public static int aimUp = Animator.StringToHash("aimUp");
-    public static int aimDown = Animator.StringToHash("aimDown");
     public static int aimUpRight = Animator.StringToHash("aimUpRight");
-    public static int aimUpLeft = Animator.StringToHash("aimUpLeft");
     public static int aimRight = Animator.StringToHash("aimRight");
+    public static int aimDownRight = Animator.StringToHash("aimDownRight");
+    public static int aimDown = Animator.StringToHash("aimDown");
+    public static int aimDownLeft = Animator.StringToHash("aimDownLeft");
     public static int aimLeft = Animator.StringToHash("aimLeft");
+    public static int aimUpLeft = Animator.StringToHash("aimUpLeft");
+
+    public static int attackUp = Animator.StringToHash("attackUp");
+    public static int attackUpRight = Animator.StringToHash("attackUpRight");
+    public static int attackRight = Animator.StringToHash("attackRight");
+    public static int attackDownRight = Animator.StringToHash("attackDownRight");
+    public static int attackDown = Animator.StringToHash("attackDown");
+    public static int attackDownLeft = Animator.StringToHash("attackDownLeft");
+    public static int attackLeft = Animator.StringToHash("attackLeft");
+    public static int attackUpLeft = Animator.StringToHash("attackUpLeft");
+
+    public static int mainPosture = Animator.StringToHash("mainPosture");
     public static int isIdle = Animator.StringToHash("isIdle");
     public static int isMoving = Animator.StringToHash("isMoving");
+    public static int isRoll = Animator.StringToHash("roll");
+    public static int rollUp = Animator.StringToHash("rollUp");
+    public static int rollDown = Animator.StringToHash("rollDown");
+    public static int rollRight = Animator.StringToHash("rollRight");
+    public static int rollLeft = Animator.StringToHash("rollLeft");
     public static int use = Animator.StringToHash("use");
-    public const float baseSpeedForPlayerAnimations = 8f;
+    public static int isAttack = Animator.StringToHash("attack");
+    public static int isMeleeWeapon = Animator.StringToHash("isMeleeWeapon");
+    public static int smearSize = Animator.StringToHash("smearSize");
+    public static int thrustSize = Animator.StringToHash("thrustSize");
+    public static int isDualWield = Animator.StringToHash("isDualWield");
+    public static int isShielded = Animator.StringToHash("isShielded");
 
-    // Animator parameters - Enemy
+    public static int motionType = Animator.StringToHash("motionType");
+    public static int axisX = Animator.StringToHash("axisX");
+    public static int axisY = Animator.StringToHash("axisY");
+    public static int cast = Animator.StringToHash("cast");
+    public static int charge = Animator.StringToHash("charge");
+    public static int dash = Animator.StringToHash("dash");
+    public static int focused = Animator.StringToHash("focused");
+    public static int attackType = Animator.StringToHash("attackType");
+
+
+    // Animator parameters - Status
+    public static int isStunned = Animator.StringToHash("isStunned");
+    public static int isFrozen = Animator.StringToHash("isFrozen");
+
+    // Animator parameters - Damage
+    public static int death = Animator.StringToHash("death");
+
+    // Animator parameters - Ranged Attack
+    public static int rangedWeaponAttack = Animator.StringToHash("rangedWeaponAttack");
+    public static int meleeAttackAtLeftHand = Animator.StringToHash("AttackAtLeftHand");
+    public static int isLeft = Animator.StringToHash("isLeft");
+
+    // Animator parameters - Shield
+    public static int block = Animator.StringToHash("block");
+
+    // Animator parameters - Parry
+    public static int isParry = Animator.StringToHash("parry");
+
+    // Animator speed parameters
+    public const float baseSpeedForPlayerAnimations = 12f;
     public const float baseSpeedForEnemyAnimations = 3f;
 
     // Animator parameters - Door
@@ -43,11 +100,43 @@ public static class Settings
     // Animator parameters - DamageableDecoration
     public static int destroy = Animator.StringToHash("destroy");
     public static string stateDestroyed = "Destroyed";
+
+    // Animator parameters - DropItem
+    public static int hovered = Animator.StringToHash("hovered");
+
+    // Animator parameters -  VFX
+    public static int levelUp = Animator.StringToHash("levelUp");
+    public static int impactNumber = Animator.StringToHash("impactNumber");
+    public static int activateVFX = Animator.StringToHash("activateVFX");
+
+    // Animator parameters - Book
+    public static int turnPage = Animator.StringToHash("turnPage");
+    public static int zoomIn = Animator.StringToHash("zoomIn");
+    public static int zoomOut = Animator.StringToHash("zoomOut");
     #endregion
 
     #region GAMEOBJECT TAGS
     public const string playerTag = "Player";
     public const string playerWeapon = "playerWeapon";
+    public const string enemyTag = "Enemy";
+    public const string decoyTag = "Decoy";
+    public const string summonedEnemyTag = "summonedEnemy";
+    public const string chestItemTag = "Chest Item";
+    public const string mainHandSlot = "mainHandSlot";
+    public const string offHandSlot = "offHandSlot";
+    public const string bookCover = "bookCover";
+    public const string weaponSetButton = "weaponSetButton";
+    public const string dropButton = "dropButton";
+    public const string playerProjectile = "playerProjectile";
+    public const string aoeSkill = "aoeSkill";
+    public const string enemyProjectile = "enemyProjectile";
+    public const string practiceDummy = "PracticeDummy";
+    public const string environment = "environment";
+    public const string caelionTag = "caelionTag";
+    public const string mycaraTag = "mycaraTag";
+    public const string nyveranTag = "nyveranTag";
+    public const string morvenTag = "morvenTag";
+    public const string karnagTag = "karnagTag";
     #endregion
 
     #region FIRING CONTROL
@@ -57,11 +146,23 @@ public static class Settings
     #endregion
 
     #region ASTAR PATHFINDING PARAMETERS
-    public const int defaultAStarMovementPenalty = 40;
+    public const int defaultAStarMovementPenalty = 30;
     public const int preferredPathAStarMovementPenalty = 1;
-    public const int targetFrameRateToSpreadPathfindingOver = 60;
+    public const int targetFrameRateToSpreadPathfindingOver = 40;
     public const float playerMoveDistanceToRebuildPath = 3f;
-    public const float enemyPathRebuildCooldown = 2f;
+    public const float enemyPatrolPathRebuildCooldown = 1.5f;
+    public const float enemyChasePathRebuildCooldown = 0.3f;
+    #endregion
+
+    #region TILEMAP PARAMETERS
+    public const string groundTilemap = "groundTilemap";
+    public const string decoration1Tilemap = "decoration1Tilemap";
+    public const string decoration2Tilemap = "decoration2Tilemap";
+    public const string sideTilemap = "sideTilemap";
+    public const string frontTilemap = "frontTilemap";
+    public const string collisionTilemap = "collisionTilemap";
+    public const string poolTilemap = "poolTilemap";
+    public const string minimapTilemap = "minimapTilemap";
     #endregion
 
     #region ENEMY PARAMETERS
@@ -74,6 +175,6 @@ public static class Settings
     #endregion
 
     #region CONTACT DAMAGE PARAMETERS
-    public const float contactDamageCollisionResetDelay = 0.5f;
+    public const float contactDamageCollisionResetDelay = 0.2f;
     #endregion
 }

@@ -1,10 +1,15 @@
-    using System.Collections.Generic;
+using Mirror;
+using NUnit.Framework.Constraints;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [DisallowMultipleComponent]
 public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
 {
+    public bool IsDungeonReady { get; private set; }
+
     public Dictionary<string, Room> dungeonBuilderRoomDictionary = new Dictionary<string, Room>();
 
     Dictionary<string, RoomTemplateSO> roomTemplateDictionary = new Dictionary<string, RoomTemplateSO>();
@@ -43,8 +48,11 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     /// <summary>
     /// Generate random dungeon, returns true if dungeon built, false if failed
     /// </summary>
-    public bool GenerateDungeon(DungeonLevelSO currentDungeonLevel)
+    public bool GenerateDungeon(DungeonLevelSO currentDungeonLevel, bool tutorialEnabled)
     {
+        IsDungeonReady = false;
+
+#region Generation Attempts (Only Server)
         roomTemplateList = currentDungeonLevel.roomTemplateList;
 
         // Load the scriptable object room templates into the dictionary
@@ -63,6 +71,17 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             int dungeonRebuildAttemptsForNodeGraph = 0;
             dungeonBuildSuccessful = false;
 
+            int currentLevel = 0;
+
+            if (NetworkServer.active) currentLevel = GameManager.Instance.currentDungeonLevelListIndex + 1;
+            else currentLevel = GameManager.Instance.currentDungeonLevelListIndex;
+
+            // Clear previous level items before generating next level
+            if (currentLevel > 1)
+            {
+                DestroyAllDroppedItems();
+            }
+
             // Loop until dungeon successfully built or more than max attempts for node graph
             while (!dungeonBuildSuccessful && dungeonRebuildAttemptsForNodeGraph <= Settings.maxDungeonRebuildAttemptsForRoomGraph)
             {
@@ -73,6 +92,8 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 // Attempt To Build A Random Dungeon For The Selected room node graph
                 dungeonBuildSuccessful = AttemptToBuildRandomDungeon(roomNodeGraph);
             }
+#endregion
+#region Instantiate Prepared Rooms For Each Clients 
 
             if (dungeonBuildSuccessful)
             {
@@ -80,6 +101,9 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 InstantiateRoomGameObjects();
             }
         }
+#endregion
+
+        IsDungeonReady = true;
 
         return dungeonBuildSuccessful;
     }
@@ -169,6 +193,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 RoomTemplateSO roomTemplate = GetRandomRoomTemplate(roomNode.roomNodeType);
 
                 Room room = CreateRoomFromRoomTemplate(roomTemplate, roomNode);
+
                 room.isPositioned = true;
 
                 // Add room to room dictionary
@@ -209,7 +234,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 return false;
             }
 
-            Doorway doorwayParent = unconnectedAvailableParentDoorways[UnityEngine.Random.Range(0, unconnectedAvailableParentDoorways.Count)];
+            Doorway doorwayParent = unconnectedAvailableParentDoorways[Random.Range(0, unconnectedAvailableParentDoorways.Count)];
 
             // Get a random room template for room node that is consistent with the parent door orientation
             RoomTemplateSO roomTemplate = GetRandomTemplateForRoomConsistentWithParent(roomNode, doorwayParent);
@@ -459,7 +484,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             return null;
 
         // Select random room template from list and return
-        return matchingRoomTemplateList[UnityEngine.Random.Range(0, matchingRoomTemplateList.Count)];
+        return matchingRoomTemplateList[Random.Range(0, matchingRoomTemplateList.Count)];
     }
 
     /// <summary>
@@ -486,6 +511,8 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
         room.templateID = roomTemplate.guid;
         room.id = roomNode.id;
         room.prefab = roomTemplate.prefab;
+        room.battleMusic = roomTemplate.battleMusic;
+        room.ambientMusic = roomTemplate.ambientMusic;
         room.roomNodeType = roomTemplate.roomNodeType;
         room.lowerBounds = roomTemplate.lowerBounds;
         room.upperBounds = roomTemplate.upperBounds;
@@ -504,7 +531,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             room.isPreviouslyVisited = true;
 
             // Set entrance in game manager
-            GameManager.Instance.SetCurrentRoom(room);
+            if (!NetworkServer.active && !NetworkClient.active) GameManager.Instance.SetCurrentRoom(room);
         }
         else
         {
@@ -521,7 +548,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     {
         if (roomNodeGraphList.Count > 0)
         {
-            return roomNodeGraphList[UnityEngine.Random.Range(0, roomNodeGraphList.Count)];
+            return roomNodeGraphList[Random.Range(0, roomNodeGraphList.Count)];
         }
         else
         {
@@ -574,31 +601,80 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     /// <summary>
     /// Instantiate the dungeon room gameobjects from the prefabs
     /// </summary>
-    private void InstantiateRoomGameObjects()
+    private void InstantiateRoomGameObjects() 
     {
-        // Iterate through all dungeon rooms
-        foreach (KeyValuePair<string, Room> keyvaluepair in dungeonBuilderRoomDictionary)
+        // Single Player Only
+        if (!NetworkServer.active && !NetworkClient.active)
         {
-            Room room = keyvaluepair.Value;
+            // Iterate through all dungeon rooms
+            foreach (KeyValuePair<string, Room> keyvaluepair in dungeonBuilderRoomDictionary)
+            {
+                Room room = keyvaluepair.Value;
 
-            // Calculate room position (remember the room instantiatation position needs to be adjusted by the room template lower bounds)
-            Vector3 roomPosition = new Vector3(room.lowerBounds.x - room.templateLowerBounds.x, room.lowerBounds.y - room.templateLowerBounds.y, 0f);
+                // Calculate room position (remember the room instantiatation position needs to be adjusted by the room template lower bounds)
+                Vector3 roomPosition = new Vector3(room.lowerBounds.x - room.templateLowerBounds.x, room.lowerBounds.y - room.templateLowerBounds.y, 0f);
 
-            // Instantiate room
-            GameObject roomGameobject = Instantiate(room.prefab, roomPosition, Quaternion.identity, transform);
+                // Instantiate room
+                GameObject roomGameObject = Instantiate(room.prefab, roomPosition, Quaternion.identity, transform);
 
-            // Get instantiated room component from instantiated prefab
-            InstantiatedRoom instantiatedRoom = roomGameobject.GetComponentInChildren<InstantiatedRoom>();
+                // Get instantiated room component from instantiated prefab
+                InstantiatedRoom instantiatedRoom = roomGameObject.GetComponent<InstantiatedRoom>();
 
-            instantiatedRoom.room = room;
+                instantiatedRoom.room = room;
 
-            // Initialize The Instantiated Room
-            instantiatedRoom.Initialize(roomGameobject);
+                // Initialize The Instantiated Room
+                instantiatedRoom.InitializeSinglePlayer(roomGameObject);
 
-            // Save gameobject reference.
-            room.instantiatedRoom = instantiatedRoom;
+                // Save gameobject reference.
+                room.instantiatedRoom = instantiatedRoom;
+
+                // Instantiate npc object to the shop room
+                if (room.roomNodeType.isShopRoom)
+                {
+                    int npcIndex = 0;
+                    int randomNum = Random.Range(1, 101);
+
+                    if (randomNum < 60)
+                    {
+                        npcIndex = 0;
+                    }
+                    else if (randomNum < 80)
+                    {
+                        npcIndex = 1;
+                    }
+                    else
+                    {
+                        npcIndex = 2;
+                    }
+
+                    // Instantiate NPC into the shop room
+                    GameObject npcGameObject = Instantiate(GameResources.Instance.npcPrefabs[npcIndex], instantiatedRoom.transform.position,
+                        Quaternion.identity, instantiatedRoom.transform);
+                    npcGameObject.transform.localPosition = new Vector3(4f, 9f, 0f);
+                }
+            }
+
+            return;
+        }
+
+        if (NetworkServer.active)
+        {
+            DungeonRuntime.RoomNetDataDict = BuildRoomNetDataDictionary();
         }
     }
+
+    private Dictionary<string, RoomNetData> BuildRoomNetDataDictionary()
+    {
+        var dict = new Dictionary<string, RoomNetData>();
+
+        foreach (Room room in dungeonBuilderRoomDictionary.Values)
+        {
+            RoomNetData data = DungeonRuntime.ConvertRoomToRoomNetData(room);
+            dict[data.roomId] = data;
+        }
+
+        return dict;
+    }    
 
     /// <summary>
     /// Get a room template by room template ID, returns null if ID doesn't exist
@@ -630,6 +706,27 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
         }
     }
 
+    public InstantiatedRoom GetInstantiatedRoom(Room room)
+    {
+        return room.instantiatedRoom; // SP
+    }
+
+    public void DestroyAllDroppedItems()
+    {
+        DropItem[] dropItems = GetComponentsInChildren<DropItem>(true);
+
+        if (dropItems != null)
+        {
+            foreach (DropItem item in dropItems)
+            {
+                if (item.GetComponentInParent<Player>() != null) continue;
+                if (item.GetComponentInParent<Counter>() != null) continue;
+
+                Destroy(item.gameObject);
+            }
+        }
+    }
+
     /// <summary>
     /// Clear dungeon room gameobjects and dungeon room dictionary
     /// </summary>
@@ -649,6 +746,28 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             }
 
             dungeonBuilderRoomDictionary.Clear();
+        }
+
+        // Destroy remaining projectile type items such as mines which didn't explode
+        Projectile[] existingProjectiles = FindObjectsByType<Projectile>(FindObjectsSortMode.None);
+
+        if (existingProjectiles != null && existingProjectiles.Length > 0)
+        {
+            for (int i = 0; i < existingProjectiles.Length; i++)
+            {
+                Destroy(existingProjectiles[i].gameObject);
+            }
+        }
+
+        // Destroy stuck enemies which death animation couldn't complete
+        Enemy[] stuckEnemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+
+        if (stuckEnemies != null && stuckEnemies.Length > 0)
+        {
+            for (int i = 0; i < stuckEnemies.Length; i++)
+            {
+                Destroy(stuckEnemies[i].gameObject);
+            }
         }
     }
 }

@@ -1,30 +1,32 @@
+using Mirror;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class HelperUtilities
 {
-    public static Camera mainCamera;
-
     /// <summary>
     /// Get the mouse world position.
     /// </summary>
-    public static Vector3 GetMouseWorldPosition()
+    public static Vector3 GetMouseWorldPosition(Player player)
     {
-        if (mainCamera == null)
-            mainCamera = Camera.main;
+        if (player == null || !player.IsLocal || player.cameraManager == null) return Vector3.zero;
 
-        Vector3 mouseScreenPosition = Input.mousePosition;
+        Camera cam = player.cameraManager.GetGameplayCamera();
 
-        // Clamp mouse position to screen size
-        mouseScreenPosition.x = Mathf.Clamp(mouseScreenPosition.x, 0f, Screen.width);
-        mouseScreenPosition.y = Mathf.Clamp(mouseScreenPosition.y, 0f, Screen.height);
+        if (cam == null) return Vector3.zero;
 
-        Vector3 worldPosition = mainCamera.ScreenToWorldPoint(mouseScreenPosition);
+        Vector2 mouse = InputManager.Instance.pointerPosition.action.ReadValue<Vector2>();
 
-        worldPosition.z = 0f;
+        // Clamp to camera pixel rect (Not screen!)
+        Rect rect = cam.pixelRect; // Prevents frustum error
 
-        return worldPosition;
+        if (!rect.Contains(mouse)) return Vector3.zero;
+
+        Vector3 worldPos = cam.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, cam.nearClipPlane));
+
+        worldPos.z = 0f;
+
+        return worldPos;
     }
 
     /// <summary>
@@ -67,35 +69,45 @@ public static class HelperUtilities
         AimDirection aimDirection;
 
         // Set player direction
-        //Up Right
-        if (angleDegrees >= 22f && angleDegrees <= 67f)
-        {
-            aimDirection = AimDirection.UpRight;
-        }
         // Up
-        else if (angleDegrees > 67f && angleDegrees <= 112f)
+        if (angleDegrees > 67f && angleDegrees <= 112f)
         {
             aimDirection = AimDirection.Up;
         }
-        // Up Left
-        else if (angleDegrees > 112f && angleDegrees <= 158f)
+        // UpRight
+        else if (angleDegrees >= 22f && angleDegrees <= 67f)
         {
-            aimDirection = AimDirection.UpLeft;
+            aimDirection = AimDirection.UpRight;
         }
-        // Left
-        else if ((angleDegrees <= 180f && angleDegrees > 158f) || (angleDegrees > -180 && angleDegrees <= -135f))
+        // Right
+        else if ((angleDegrees >= -22f && angleDegrees <= 0f) || (angleDegrees > 0 && angleDegrees < 22f))
         {
-            aimDirection = AimDirection.Left;
+            aimDirection = AimDirection.Right;
+        }
+        // DownRight
+        else if (angleDegrees > -67f && angleDegrees < -22f)
+        {
+            aimDirection = AimDirection.DownRight;
         }
         // Down
-        else if ((angleDegrees > -135f && angleDegrees <= -45f))
+        else if (angleDegrees > -112f && angleDegrees <= -67f)
         {
             aimDirection = AimDirection.Down;
         }
-        // Right
-        else if ((angleDegrees > -45f && angleDegrees <= 0f) || (angleDegrees > 0 && angleDegrees < 22f))
+        // DownLeft
+        else if (angleDegrees > -158f && angleDegrees <= -112f)
         {
-            aimDirection = AimDirection.Right;
+            aimDirection = AimDirection.DownLeft;
+        }
+        // Left
+        else if ((angleDegrees >= 158f && angleDegrees < 180f) || (angleDegrees <= -158f && angleDegrees >= -180f))
+        {
+            aimDirection = AimDirection.Left;
+        }
+        // UpLeft
+        else if ((angleDegrees > 112f && angleDegrees < 158f))
+        {
+            aimDirection = AimDirection.UpLeft;
         }
         else
         {
@@ -103,7 +115,68 @@ public static class HelperUtilities
         }
 
         return aimDirection;
+    }
 
+    /// <summary>
+    /// Get AttackDirection enum value from the pased in angleDegrees
+    /// </summary>
+    public static AttackDirection GetAttackDirection(float angleDegrees)
+    {
+        AttackDirection attackDirection;
+
+        // Set player direction
+        // Up
+        if (angleDegrees > 67f && angleDegrees <= 112f)
+        {
+            attackDirection = AttackDirection.Up;
+        }
+        // Up Right
+        else if (angleDegrees >= 22f && angleDegrees <= 67f)
+        {
+            attackDirection = AttackDirection.UpRight;
+        }
+        // Right
+        else if ((angleDegrees >= -22f && angleDegrees <= 0f) || (angleDegrees > 0 && angleDegrees < 22f))
+        {
+            attackDirection = AttackDirection.Right;
+        }
+        // Down Right
+        else if (angleDegrees > -67f && angleDegrees < -22f)
+        {
+            attackDirection = AttackDirection.DownRight;
+        }
+        // Down
+        else if (angleDegrees > -112f && angleDegrees <= -67f)
+        {
+            attackDirection = AttackDirection.Down;
+        }
+        // Down Left
+        else if (angleDegrees > -158f && angleDegrees <= -112f)
+        {
+            attackDirection = AttackDirection.DownLeft;
+        }
+        // Left
+        else if ((angleDegrees >= 158f && angleDegrees < 180f) || (angleDegrees <= -158f && angleDegrees >= -180f))
+        {
+            attackDirection = AttackDirection.Left;
+        }
+        // Up Left
+        else if ((angleDegrees > 112f && angleDegrees < 158f))
+        {
+            attackDirection = AttackDirection.UpLeft;
+        }
+        else
+        {
+            attackDirection = AttackDirection.Right;
+        }
+
+        return attackDirection;
+    }
+
+    public static RollDirection GetRollDirection(Vector3 dir)
+    {
+        if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y)) return dir.x > 0 ? RollDirection.Right : RollDirection.Left;
+        else return dir.y > 0 ? RollDirection.Up : RollDirection.Down;
     }
 
     /// <summary>
@@ -279,21 +352,46 @@ public static class HelperUtilities
     /// <summary>
     /// Get the nearest spawn position to the player
     /// </summary>
-    public static Vector3 GetSpawnPositionNearestToPlayer(Vector3 playerpPosition)
+    public static Vector3 GetSpawnPositionNearestToPlayer(Vector3 playerPosition)
     {
-        Room currentRoom = GameManager.Instance.GetCurrentRoom();
+        Grid grid;
+        Vector2Int[] spawnPositions;
 
-        Grid grid = currentRoom.instantiatedRoom.grid;
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            // Single Player
+            Room currentRoom = GameManager.Instance.GetCurrentRoom();
+
+            grid = currentRoom.instantiatedRoom.grid;
+            spawnPositions = currentRoom.spawnPositionArray;
+        }
+        else
+        {
+            // Multiplayer
+            RoomNetData currentRoomNetData = GameSessionManager.Instance.GetCurrentRoomNetData();
+
+            InstantiatedRoom instantiatedRoom = DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId);
+
+            if (instantiatedRoom == null)
+            {
+                Debug.LogError($"Instantiated room not ready for room Id {currentRoomNetData.roomId}");
+                return playerPosition;
+            }
+
+            grid = instantiatedRoom.grid;
+            spawnPositions = instantiatedRoom.roomNetData.spawnPositions;
+        }
 
         Vector3 nearestSpawnPosition = new Vector3(10000f, 10000f, 0f);
 
+
         // Loop through room spawn positions
-        foreach (Vector2Int spawnPositionGrid in currentRoom.spawnPositionArray)
+        foreach (Vector2Int spawnPositionGrid in spawnPositions)
         {
             // Convert the spawn grid positions to world positions
             Vector3 spawnPositionWorld = grid.CellToWorld((Vector3Int)spawnPositionGrid);
 
-            if (Vector3.Distance(spawnPositionWorld, playerpPosition) < Vector3.Distance(nearestSpawnPosition, playerpPosition))
+            if (Vector3.Distance(spawnPositionWorld, playerPosition) < Vector3.Distance(nearestSpawnPosition, playerPosition))
             {
                 nearestSpawnPosition = spawnPositionWorld;
             }

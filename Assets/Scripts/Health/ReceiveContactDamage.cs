@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(Health))]
@@ -16,12 +17,12 @@ public class ReceiveContactDamage : MonoBehaviour
         health = GetComponent<Health>();
     }
 
-    public void TakeContactDamage(int damageAmount = 0)
+    public void TakeContactDamage(int damageAmount, DamageContext ctx)
     {
-        if (contactDamageAmount > 0)
-            damageAmount = contactDamageAmount;
+        if (GetComponent<Enemy>() == null && contactDamageAmount > 0) damageAmount = contactDamageAmount;
 
-        health.TakeDamage(damageAmount);
+        GameObject target = TryGetComponent(out RoomProp prop) ? prop.gameObject : null;
+        HealthAuthorityResolver.GetAuthority(health.gameObject).ApplyDamage(damageAmount, ctx, target);
     }
 
     #region Validation

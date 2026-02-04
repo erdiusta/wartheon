@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e767738e70a8b4386de512a7ff92be, type: 3}
+  m_Name: PassiveItem_MantleOfStars
+  m_EditorClassIdentifier: 
+  passiveItemName: Mantle Of Stars
+  price: 60
+  passiveItemSprite: {fileID: -1400286305, guid: 44c646e4452540c45bf47999d19c382a, type: 3}
+  rarity: 0
+  passiveItemCategory: 1
+  primaryPassiveItemName: 0
+  passiveItemType: 19
+  passiveItemSlotName: 5
+  passiveItemAnimatorController: {fileID: 9100000, guid: 1c0a33d61ef921e478fb4af0da59d4c9, type: 2}
+  baseUniqueModifier: 11
+  baseTypeModifier: 16
+  additionalModifierPoolForType: 11000000080000000d000000040000000a000000

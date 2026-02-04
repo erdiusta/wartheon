@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal; // keep this namespace in for when 2D lights become non experimental;
-using UnityEngine.Experimental.Rendering.Universal;
+
 
 [DisallowMultipleComponent]
 public class LightFlicker : MonoBehaviour

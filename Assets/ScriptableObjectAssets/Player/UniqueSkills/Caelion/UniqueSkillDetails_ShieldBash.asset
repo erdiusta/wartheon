@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_ShieldBash
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Shield Bash
+  activeSkill: 2
+  activeUniqueSkillSprite: {fileID: 21300000, guid: 87a48b509fa0e5144bbed0d15af5ba25, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 2efaec4acc943a84e83af928efd003ce, type: 2}
+  activeUniqueSkillSoundEffectTwo: {fileID: 0}
+  levels:
+  - activeUniqueSkillDetails: 'Deals small damage and stun enemies while active.
+
+
+      Base
+      Attack Damage: 50%
+
+      Base Mana Cost: 8
+
+      Base Cooldown: 6
+
+      Base
+      Stun Duration: 1'
+    cooldown: 6
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 8
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals small damage and stun enemies while active.
+
+
+      Base
+      Attack Damage: 50%
+
+      Base Mana Cost: 8
+
+      Base Cooldown: 5
+
+      Base
+      Stun Duration: 2'
+    cooldown: 5
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 8
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals small damage and stun enemies while active.
+
+
+      Base
+      Attack Damage: 50%
+
+      Base Mana Cost: 8
+
+      Base Cooldown: 4
+
+      Base
+      Stun Duration: 3'
+    cooldown: 4
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 8
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +12,8 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
 
     Transform objectPoolTransform;
     Dictionary<int, Queue<Component>> poolDictionary = new Dictionary<int, Queue<Component>>();
+
+    Dictionary<int, Transform> poolAnchorDictionary = new Dictionary<int, Transform>();
 
     [System.Serializable]
     public struct Pool
@@ -46,6 +47,8 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
         GameObject parentGameObject = new GameObject(prefabName + "Anchor");
         parentGameObject.transform.SetParent(objectPoolTransform);
 
+        if (!poolAnchorDictionary.ContainsKey(poolKey)) poolAnchorDictionary.Add(poolKey, parentGameObject.transform);
+
         if (!poolDictionary.ContainsKey(poolKey))
         {
             poolDictionary.Add(poolKey, new Queue<Component>());
@@ -63,7 +66,7 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
     /// Reuse a gameobject component in the pool.  'prefab' is the prefab gameobject containing the component. 'position' is the world position for the 
     /// gameobject where it should appear when enabled. 'rotation' should be set if the gameobject needs to be rotated.
     /// </summary>
-    public Component ReuseComponent(GameObject prefab, Vector3 position, Quaternion rotation)
+    public Component ReuseComponent(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent = null)
     {
         int poolKey = prefab.GetInstanceID();
 
@@ -73,6 +76,8 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
             Component componentToReuse = GetComponentFromPool(poolKey);
 
             ResetObject(position, rotation, componentToReuse, prefab);
+
+            if (parent != null) componentToReuse.transform.SetParent(parent);
 
             return componentToReuse;
         }
@@ -96,16 +101,30 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
             componentToReuse.gameObject.SetActive(false);
         }
 
+        if (componentToReuse.tag == Settings.enemyTag)
+        {
+            componentToReuse.gameObject.SetActive(true);
+        }
+
         return componentToReuse;
     }
 
     /// <summary>
     /// Reset the gameobject
     /// </summary>
-    private void ResetObject(Vector3 position, Quaternion rotation, Component componentToReuse, GameObject prefab)
+    public void ResetObject(Vector3 position, Quaternion rotation, Component componentToReuse, GameObject prefab)
     {
         componentToReuse.transform.position = position;
         componentToReuse.transform.rotation = rotation;
         componentToReuse.transform.localScale = prefab.transform.localScale;
+    }
+
+    public Transform GetAnchorParent(GameObject prefab)
+    {
+        int key = prefab.GetInstanceID();
+
+        if (poolAnchorDictionary.TryGetValue(key, out Transform anchor)) return anchor;
+
+        return objectPoolTransform; // fallback
     }
 }
