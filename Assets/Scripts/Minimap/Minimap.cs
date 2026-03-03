@@ -1,47 +1,103 @@
-using Cinemachine;
+using Unity.Cinemachine;
 using UnityEngine;
+using System.Collections;
+using UnityEngine.Rendering.Universal;
+using System.Collections.Generic;
+using Mirror;
 
 [DisallowMultipleComponent]
 public class Minimap : MonoBehaviour
 {
     #region Tooltip
-    [Tooltip("Populate with the child MinimapPlayer gameobject")]
+    [Tooltip("Populate with the child minimap icon container gameobject")]
     #endregion Tooltip
-    [SerializeField] GameObject minimapPlayer;
+    [SerializeField] Transform iconContainer;
+    #region Tooltip
+    [Tooltip("Populate with the child icon prefab gameobject")]
+    #endregion Tooltip
+    [SerializeField] MinimapIcon iconPrefab;
+    #region Tooltip
+    [Tooltip("Populate with the minimapCinemachine gameobject")]
+    #endregion
+    [SerializeField] CinemachineCamera minimapCinemachine;
+    #region Tooltip
+    [Tooltip("Populate with the light2d gameobject")]
+    #endregion
+    [SerializeField] Light2D minimapLight2D;
 
-    Transform playerTransform;
+    Player player;
+    Dictionary<Player, MinimapIcon> icons = new Dictionary<Player, MinimapIcon>();
 
-    private void Start()
+    private void Awake()
     {
-        playerTransform = GameManager.Instance.GetPlayer().transform;
+        minimapCinemachine = GetComponentInChildren<CinemachineCamera>(true);
+    }
 
-        // Populate player as cinemachine camera target
-        CinemachineVirtualCamera cinemachineVirtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
-        cinemachineVirtualCamera.Follow = playerTransform;
+    private void OnEnable()
+    {
+        StartCoroutine(WaitForPlayerInitialization());
+    }
 
-        // Set minimap player icon
-        SpriteRenderer spriteRenderer = minimapPlayer.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
+    IEnumerator WaitForPlayerInitialization()
+    {
+        bool isMultiplayer = NetworkServer.active || NetworkClient.active;
+
+        while (player == null || !player.IsLocal)
         {
-            spriteRenderer.sprite = GameManager.Instance.GetPlayerMinimapIcon();
+            if (isMultiplayer && FindObjectsByType<Player>(FindObjectsSortMode.None).Length != NetworkServer.connections.Count)
+            {
+                yield return null;
+            }
+
+            player = GameManager.Instance.GetLocalPlayer();
+            yield return null;
+        }
+
+        InitializeMinimap(isMultiplayer);
+    }
+
+    private void InitializeMinimap(bool isMultiplayer)
+    {
+        MinimapIcon localPlayerIcon = new MinimapIcon();
+        MinimapIcon remotePlayerIcon;
+
+        if (isMultiplayer)
+        {
+            foreach (Player player in FindObjectsByType<Player>(FindObjectsSortMode.None))
+            {
+                if (player.IsLocal)
+                {
+                    localPlayerIcon = Instantiate(iconPrefab, iconContainer);
+                    PopulatePlayerIcon(localPlayerIcon, player);
+                }
+                else
+                {
+                    remotePlayerIcon = Instantiate(iconPrefab, iconContainer);
+                    PopulatePlayerIcon(remotePlayerIcon, player);
+                }
+            }
+        }
+        else
+        {
+            // Create for SP
+            localPlayerIcon = Instantiate(iconPrefab, iconContainer);
+            PopulatePlayerIcon(localPlayerIcon, player);
+        }
+
+        if (player.IsLocal && icons.TryGetValue(player, out MinimapIcon localIcon))
+        {
+            // Follow local player
+            minimapCinemachine.Follow = player.transform;
+
+            // Anchor
+            localPlayerIcon.transform.position = player.transform.position;
         }
     }
 
-    private void Update()
+    private void PopulatePlayerIcon(MinimapIcon icon, Player player)
     {
-        // Move the minimap player to follow the player
-        if (playerTransform != null && minimapPlayer != null)
-        {
-            minimapPlayer.transform.position = playerTransform.position;
-        }
+        icon.target = player.transform;
+        icon.GetComponent<SpriteRenderer>().sprite = player.playerDetails.playerMiniMapIcon;
+        icons.Add(player, icon);
     }
-
-    #region Validation
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(minimapPlayer), minimapPlayer);
-    }
-#endif
-    #endregion Validation
 }

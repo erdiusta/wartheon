@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a2e6ca99f86a0147a8446de6ef68490, type: 3}
+  m_Name: ProjectileHitEffect_PixieProjectile
+  m_EditorClassIdentifier: 
+  colorGradient:
+    serializedVersion: 2
+    key0: {r: 0.87347364, g: 0.8962264, b: 0.23921569, a: 1}
+    key1: {r: 0.8754245, g: 0.8962264, b: 0.24096651, a: 1}
+    key2: {r: 1, g: 1, b: 1, a: 0}
+    key3: {r: 0.90588236, g: 0.9017466, b: 0.31764713, a: 0}
+    key4: {r: 0.9811321, g: 0.9718229, b: 0.17123532, a: 0}
+    key5: {r: 1, g: 1, b: 1, a: 0}
+    key6: {r: 1, g: 0.972549, b: 0.17254902, a: 0}
+    key7: {r: 1, g: 0.972549, b: 0.17254902, a: 0}
+    ctime0: 0
+    ctime1: 16962
+    ctime2: 21588
+    ctime3: 27178
+    ctime4: 40670
+    ctime5: 46646
+    ctime6: 51850
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
+  duration: 0.5
+  startParticleSize: 0.25
+  startParticleSpeed: 3
+  startLifetime: 0.5
+  maxParticleNumber: 100
+  emissionRate: 100
+  burstParticleNumber: 20
+  effectGravity: 0
+  sprite: {fileID: 21300000, guid: 913939d3305163b42af7ac7d37218381, type: 3}
+  velocityOverLifetimeMin: {x: 0, y: 0, z: 0}
+  velocityOverLifetimeMax: {x: 0, y: 0, z: 0}
+  projectileHitEffectPrefab: {fileID: 9017448095421764182, guid: 90ae5878019657a44914bc14f3991fb8, type: 3}
+  projectileHitEffectPrefabMP: {fileID: 9017448095421764182, guid: 055e28420a8f5eb43a1b487efdbc69ce, type: 3}

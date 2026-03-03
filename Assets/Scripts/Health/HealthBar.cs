@@ -11,7 +11,6 @@ public class HealthBar : MonoBehaviour
     #endregion Tooltip
     [SerializeField] GameObject healthBar;
 
-    /// <summary>
     /// Enable the health bar
     /// </summary>
     public void EnableHealthBar()

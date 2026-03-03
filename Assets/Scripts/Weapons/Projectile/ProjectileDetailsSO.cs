@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ProjectileDetails_", menuName = "Scriptable Objects/Weapons/Projectile Details")]
@@ -20,10 +18,6 @@ public class ProjectileDetailsSO : ScriptableObject
     [Header("PROJECTILE SPRITE, PREFAB & MATERIALS")]
     #endregion
     #region Tooltip
-    [Tooltip("Sprite to be used for the projectile")]
-    #endregion
-    public Sprite projectileSprite;
-    #region Tooltip
     [Tooltip("Populate with the prefab to be used for the projectile.  If multiple prefabs are specified then a random prefab from the array will be selecetd.  " +
         "The prefab can be an projectile pattern - as long as it conforms to the IFireable interface.")]
     #endregion
@@ -40,6 +34,10 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip("If the projectile has a charge time then specify what material should be used to render the projectile while charging")]
     #endregion
     public Material projectileChargeMaterial;
+    #region Tooltip
+    [Tooltip("If have, belonging weapon details")]
+    #endregion
+    public WeaponDetailsSO belongingWeaponDetails;
 
     #region Header PROJECTILE HIT EFFECT
     [Space(10)]
@@ -55,25 +53,147 @@ public class ProjectileDetailsSO : ScriptableObject
     [Header("PROJECTILE BASE PARAMETERS")]
     #endregion
     #region Tooltip
-    [Tooltip("The damage each projectile deals")]
+    [Tooltip("The min damage each projectile deals")]
     #endregion
-    public int projectileDamage = 1;
+    public int projectilePhyDamageMin = 0;
     #region Tooltip
-    [Tooltip("The minimum speed of the projectile - the speed will be a random value between the min and max")]
+    [Tooltip("The max damage each projectile deals")]
     #endregion
-    public float projectileSpeedMin = 20f;
+    public int projectilePhyDamageMax = 1;
     #region Tooltip
-    [Tooltip("The maximum speed of the projectile - the speed will be a random value between the min and max")]
+    [Tooltip("The min magic damage each projectile deals")]
     #endregion
-    public float projectileSpeedMax = 20f;
+    public int projectileMagicDamageMin = 0;
+    #region Tooltip
+    [Tooltip("The max magic damage each projectile deals")]
+    #endregion
+    public int projectileMagicDamageMax = 1;
+    #region Tooltip
+    [Tooltip("The speed of the projectile")]
+    #endregion
+    public float projectileSpeed = 20f;
     #region Tooltip
     [Tooltip("The range of the projectile (or projectile pattern) in unity units")]
     #endregion
     public float projectileRange = 20f;
     #region Tooltip
+    [Tooltip("Check if has a lifetime")]
+    #endregion
+    public bool hasLifeTime = false;
+    #region Tooltip
+    [Tooltip("The blast radius of the item")]
+    #endregion
+    public float lifeDuration = 1;
+    #region Tooltip
     [Tooltip("The rotation speed in degrees per second of the projectile pattern")]
     #endregion
     public float projectileRotationSpeed = 1f;
+
+    #region Header PROJECTILE - BOMB & TRAP
+    [Space(10)]
+    [Header("PROJECTILE BOMB&TRAP PARAMETERS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The guided missle check")]
+    #endregion
+    public bool isGuided = false;
+    #region Tooltip
+    [Tooltip("The bouncing projectile check")]
+    #endregion
+    public bool isBouncing = false;
+    #region Tooltip
+    [Tooltip("The bomb check")]
+    #endregion
+    public bool isBomb = false;
+    #region Tooltip
+    [Tooltip("The trap check")]
+    #endregion
+    public bool isTrap = false;
+    #region Tooltip
+    [Tooltip("The blast radius of the item")]
+    #endregion
+    public float blastRadius = 1f;
+    #region Tooltip
+    [Tooltip("The countdown until the item burst")]
+    #endregion
+    public float countDown = 3f;
+    #region Tooltip
+    [Tooltip("The min burst damage each projectile deals")]
+    #endregion
+    public int burstDamageMin = 15;
+    #region Tooltip
+    [Tooltip("The max burst damage each projectile deals")]
+    #endregion
+    public int burstDamageMax = 25;
+
+    #region Header PASSIVE
+    [Space(10)]
+    [Header("PROJECTILE PASSIVE EFFECT")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The chance of projetile's warm effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float warmChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's burn")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float burnChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's stun")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float stunChance = 0.2f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's root")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float rootChance = 0f;
+    #region Tooltip
+    [Tooltip("The efficiency of projectile's bleeding")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float bleedingChance = 0f;
+    #region Tooltip
+    [Tooltip("The efficiency of projectile's slow")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float slowChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's poison damage")]
+    #endregion
+    [Range(0f, 1f)] public float poisonChance = 0.2f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's static effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float staticChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's paralyze effect")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float paralyzeChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's chill")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float chillChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's frost")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float frostChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's blind")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float blindChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's reveal")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float revealChance = 0f;
+    #region Tooltip
+    [Tooltip("Check enemy's curse chance")]
+    #endregion
+    [Range(0f, 1f)] public float curseChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of projectile's fear")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float fearChance = 0f;
+    #region Tooltip
+    [Tooltip("The chance of health drained")]
+    #endregion Tooltip
+    [Range(0f, 1f)] public float healthDrainChance = 0f;
 
     #region Header PROJECTILE SPREAD DETAILS
     [Space(10)]
@@ -87,6 +207,19 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip(" This is the maximum spread angle of the projectile.  A higher spread means less accuracy. A random spread is calculated between the min and max values")]
     #endregion
     public float projectileSpreadMax = 0f;
+
+    #region Header PROJECTILE SPREAD DETAILS
+    [Space(10)]
+    [Header("PROJECTILE CRITICAL DETAILS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Critical hit chance of the projectile")]
+    #endregion
+    public float criticalHitChance = 0f;
+    #region Tooltip
+    [Tooltip("Critical hit damage multiplier")]
+    #endregion
+    public float criticalHitDamageMultiplier = 1.5f;
 
     #region Header PROJECTILE SPAWN DETAILS
     [Space(10)]
@@ -108,6 +241,19 @@ public class ProjectileDetailsSO : ScriptableObject
     [Tooltip("Maximum spawn interval time. The time interval in seconds between spawned projectile is a random value between the minimum and maximum values specified.")]
     #endregion
     public float projectileSpawnIntervalMax = 0f;
+
+    #region Header PROJECTILE SOUND
+    [Space(10)]
+    [Header("PROJECTILE SOUND EFFECT DETAILS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The fire sound effect SO for the projectile")]
+    #endregion Tooltip
+    public SoundEffectSO projectileFireSoundEffect;
+    #region Tooltip
+    [Tooltip("The impact sound effect SO for the projectile")]
+    #endregion Tooltip
+    public SoundEffectSO projectileImpactSoundEffect;
 
     #region Header PROJECTILE TRAIL DETAILS
     [Space(10)]
@@ -134,31 +280,39 @@ public class ProjectileDetailsSO : ScriptableObject
     #endregion
     [Range(0f, 1f)] public float projectileTrailEndWidth;
 
-    #region Validation
-#if UNITY_EDITOR
-    // Validate the scriptable object details entered
-    private void OnValidate()
-    {
-        HelperUtilities.ValidateCheckEmptyString(this, nameof(projectileName), projectileName);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(projectileSprite), projectileSprite);
-        HelperUtilities.ValidateCheckEnumerableValues(this, nameof(projectilePrefabArray), projectilePrefabArray);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(projectileMaterial), projectileMaterial);
-        if (projectileChargeTime > 0)
-            HelperUtilities.ValidateCheckNullValue(this, nameof(projectileChargeMaterial), projectileChargeMaterial);
-        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileDamage), projectileDamage, false);
-        HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpeedMin), projectileSpeedMin, nameof(projectileSpeedMax), projectileSpeedMax, false);
-        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileRange), projectileRange, false);
-        HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpreadMin), projectileSpreadMin, nameof(projectileSpreadMax), projectileSpreadMax, true);
-        HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpawnAmountMin), projectileSpawnAmountMin, nameof(projectileSpawnAmountMax), projectileSpawnAmountMax, false);
-        HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpawnIntervalMin), projectileSpawnIntervalMin, nameof(projectileSpawnIntervalMax), projectileSpawnIntervalMax, true);
-        if (isProjectileTrail)
-        {
-            HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileTrailTime), projectileTrailTime, false);
-            HelperUtilities.ValidateCheckNullValue(this, nameof(projectileTrailMaterial), projectileTrailMaterial);
-            HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileTrailStartWidth), projectileTrailStartWidth, false);
-            HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileTrailEndWidth), projectileTrailEndWidth, false);
-        }
-    }
-#endif
+    #region Header MISC
+    [Space(10)]
+    [Header("PROJECTILE MISC")]
     #endregion
+    #region Tooltip
+    [Tooltip("The laser check for projectile")]
+    #endregion Tooltip
+    public bool isLaser = false;
+
+//    #region Validation
+//#if UNITY_EDITOR
+//    // Validate the scriptable object details entered
+//    private void OnValidate()
+//    {
+//        HelperUtilities.ValidateCheckEmptyString(this, nameof(projectileName), projectileName);
+//        HelperUtilities.ValidateCheckEnumerableValues(this, nameof(projectilePrefabArray), projectilePrefabArray);
+//        HelperUtilities.ValidateCheckNullValue(this, nameof(projectileMaterial), projectileMaterial);
+//        if (projectileChargeTime > 0)
+//            HelperUtilities.ValidateCheckNullValue(this, nameof(projectileChargeMaterial), projectileChargeMaterial);
+//        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectilePhyDamageMin), projectilePhyDamageMin, false);
+//        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectilePhyDamageMax), projectilePhyDamageMax, false);
+//        HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileRange), projectileRange, false);
+//        HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpreadMin), projectileSpreadMin, nameof(projectileSpreadMax), projectileSpreadMax, true);
+//        HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpawnAmountMin), projectileSpawnAmountMin, nameof(projectileSpawnAmountMax), projectileSpawnAmountMax, false);
+//        HelperUtilities.ValidateCheckPositiveRange(this, nameof(projectileSpawnIntervalMin), projectileSpawnIntervalMin, nameof(projectileSpawnIntervalMax), projectileSpawnIntervalMax, true);
+//        if (isProjectileTrail)
+//        {
+//            HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileTrailTime), projectileTrailTime, false);
+//            HelperUtilities.ValidateCheckNullValue(this, nameof(projectileTrailMaterial), projectileTrailMaterial);
+//            HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileTrailStartWidth), projectileTrailStartWidth, false);
+//            HelperUtilities.ValidateCheckPositiveValue(this, nameof(projectileTrailEndWidth), projectileTrailEndWidth, false);
+//        }
+//    }
+//#endif
+//    #endregion
 }

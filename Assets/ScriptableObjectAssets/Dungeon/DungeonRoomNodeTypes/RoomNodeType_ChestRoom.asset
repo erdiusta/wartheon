@@ -18,5 +18,9 @@ MonoBehaviour:
   isCorridorNS: 0
   isCorridorEW: 0
   isEntrance: 0
+  isCombatRoom: 0
+  isChestRoom: 1
+  isShopRoom: 0
+  isBossFoyer: 0
   isBossRoom: 0
   isNone: 0

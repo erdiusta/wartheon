@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965f447dae7ed8b47a481dd20019d57c, type: 3}
+  m_Name: WeaponDetails_Dirk
+  m_EditorClassIdentifier: 
+  weaponName: Dirk
+  weaponTitle: 26
+  rarity: 0
+  weaponClass: 7
+  weaponHitSpeed: 4
+  wieldType: 0
+  elementalBias: 0
+  elementalForgeRate: 0
+  price: 30
+  weaponFrontSprite: {fileID: -30670535, guid: 2d15cad350036944992dcd5507ecf8ed, type: 3}
+  weaponRearSprite: {fileID: -30670535, guid: 2d15cad350036944992dcd5507ecf8ed, type: 3}
+  weaponAnimatorController: {fileID: 0}
+  weaponHoverAnimatorController: {fileID: 9100000, guid: cc0e2805a5ced69459513075701eb172, type: 2}
+  weaponUISprite: {fileID: -1379406190, guid: 86fe51f996acdc240a2fedec74afced2, type: 3}
+  baseUniqueModifier: 17
+  baseTypeModifier: 5
+  additionalModifierPoolForType: 010000000200000004000000050000000600000007000000080000000b0000000c0000000d0000000e000000150000001600000017000000
+  suddenKillChance: 0
+  bleedingChance: 0
+  slowChance: 0
+  warmChance: 0
+  burnChance: 0
+  poisonChance: 0
+  staticChance: 0
+  paralyzeChance: 0
+  stunChance: 0
+  rootChance: 0
+  chillChance: 0
+  frostChance: 0
+  blindChance: 0
+  revealChance: 0
+  curseChance: 0
+  fearChance: 0
+  healthDrainChance: 0
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
+  weaponCurrentProjectile: {fileID: 0}
+  weaponSecondaryProjectile: {fileID: 0}
+  weaponShootEffect: {fileID: 0}
+  weaponSwingSoundEffect: {fileID: 11400000, guid: 725854e135951404ba8a84c0a0ca4735, type: 2}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: 05f4834c93baa084aa8d96b1654caa0e, type: 2}
+  isMeleeWeapon: 1
+  isShield: 0
+  shieldArmorRate: 0.1
+  blockChance: 0
+  circleRadius: 1.2
+  boxLength: 1.2
+  boxHeight: 2.6
+  coneLength: 3
+  coneAngle: 35
+  hasPhysicalDamage: 1
+  physicalDamageMin: 4
+  physicalDamageMax: 7
+  magicDamageMin: 0
+  magicDamageMax: 0
+  meleeDamageElementalBias: 0
+  secondMeleeDamageMin: 4
+  secondMeleeDamageMax: 7
+  secondMeleeDamageElementalBias: 0
+  criticalHitChance: 0.15
+  criticalHitDamageMultiplier: 1.5
+  weaponCooldownDuration: 0.55
+  weaponAttackRating: 0.8
+  dodgeChance: 0.4
+  hasSwing: 1
+  hasThrust: 0
+  hasInfiniteProjectile: 0
+  weaponProjectileCapacity: 0
+  weaponPrechargeTime: 0

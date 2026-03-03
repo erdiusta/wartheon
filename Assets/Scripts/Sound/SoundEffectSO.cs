@@ -18,9 +18,13 @@ public class SoundEffectSO : ScriptableObject
     #endregion
     public GameObject soundPrefab;
     #region Tooltip
+    [Tooltip("The prefab for the sound effect - MP")]
+    #endregion
+    public GameObject soundPrefabMP;
+    #region Tooltip
     [Tooltip("The audio clip for the sound effect")]
     #endregion
-    public AudioClip soundEffectClip;
+    public AudioClip[] soundEffectClips;
     #region Tooltip
     [Tooltip("The minimum pitch variation for the sound effect.  A random pitch variation will be generated between the minimum and maximum values.  " +
         "A random pitch variation makes sound effects sound more natural.")]
@@ -45,7 +49,7 @@ public class SoundEffectSO : ScriptableObject
     {
         HelperUtilities.ValidateCheckEmptyString(this, nameof(soundEffectName), soundEffectName);
         HelperUtilities.ValidateCheckNullValue(this, nameof(soundPrefab), soundPrefab);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(soundEffectClip), soundEffectClip);
+        HelperUtilities.ValidateCheckEnumerableValues(this, nameof(soundEffectClips), soundEffectClips);
         HelperUtilities.ValidateCheckPositiveRange(this, nameof(soundEffectPitchRandomVariationMin), soundEffectPitchRandomVariationMin, 
             nameof(soundEffectPitchRandomVariationMax), soundEffectPitchRandomVariationMax, false);
         HelperUtilities.ValidateCheckPositiveValue(this, nameof(soundEffectVolume), soundEffectVolume, true);

@@ -1,70 +1,105 @@
+using Mirror;
 using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
 public class ActivateRooms : MonoBehaviour
 {
-    #region Header POPULATE WITH MINIMAP CAMERA
-    [Header("POPULATE WITH MINIMAP CAMERA")]
-    #endregion Header
-    [SerializeField] Camera miniMapCamera;
+    protected IDungeonAccess dungeon;
 
-    Camera cameraMain;
+    Player player;
+    Camera mainCamera;
+    Camera minimapCamera;
 
-    private void Start()
+    private void OnEnable()
     {
-        cameraMain = Camera.main;
+        StartCoroutine(PlayerReadyUtility.WaitForLocalPlayer(OnLocalPlayerReady));
+    }
 
-        InvokeRepeating("EnableRooms", 0.5f, 0.75f);
+    private void OnLocalPlayerReady(Player player)
+    {
+        this.player = player;
+
+        dungeon = new SinglePlayerDungeonAccess();
+        StaticEventHandler.OnDungeonBuilt += OnDungeonBuilt;
+    }
+
+    private void OnDisable()
+    {
+        StaticEventHandler.OnDungeonBuilt -= OnDungeonBuilt;
+    }
+
+    private void OnDungeonBuilt()
+    {
+        InvokeRepeating(nameof(EnableRooms), 0.5f, 0.75f);
     }
 
     private void EnableRooms()
     {
-        // If currently showing the dungeon map UI don't process
-        if (GameManager.Instance.gameState == GameState.dungeonOverviewMap)
-            return;
+        if (player == null || !player.IsLocal) return;
 
-        HelperUtilities.CameraWorldPositionBounds(out Vector2Int miniMapCameraWorldPositionLowerBounds, out Vector2Int miniMapCameraWorldPositionUpperBounds, 
-            miniMapCamera);
+        mainCamera = player.cameraManager.GetGameplayCamera();
+        minimapCamera = player.cameraManager.GetMinimapCamera();
 
-        HelperUtilities.CameraWorldPositionBounds(out Vector2Int mainCameraWorldPositionLowerBounds, out Vector2Int mainCameraWorldPositionUpperBounds, 
-            cameraMain);
+        if (GameManager.Instance.isOverviewCameraClicked) return;
+
+        HelperUtilities.CameraWorldPositionBounds(out Vector2Int miniLow, out Vector2Int miniHigh, minimapCamera);
+        HelperUtilities.CameraWorldPositionBounds(out Vector2Int camLow, out Vector2Int camHigh, mainCamera);
 
         // Iterate through dungeon rooms
-        foreach (KeyValuePair<string, Room> keyValuePair in DungeonBuilder.Instance.dungeonBuilderRoomDictionary)
+        foreach (RoomActivationData room in GetRoomsForActivation())
         {
-            Room room = keyValuePair.Value;
+            bool inMinimap = room.lower.x <= miniHigh.x && room.lower.y <= miniHigh.y &&
+                room.upper.x >= miniLow.x && room.upper.y >= miniLow.y;
 
-            // If room is within miniMap camera viewport then activate room game object
-            if ((room.lowerBounds.x <= miniMapCameraWorldPositionUpperBounds.x && room.lowerBounds.y <= miniMapCameraWorldPositionUpperBounds.y) && 
-                (room.upperBounds.x >= miniMapCameraWorldPositionLowerBounds.x && room.upperBounds.y >= miniMapCameraWorldPositionLowerBounds.y))
+            if (!inMinimap)
             {
-                room.instantiatedRoom.gameObject.SetActive(true);
+                room.instance.gameObject.SetActive(false);
+                continue;
+            }
 
-                // If room is within main camera viewport then activate environment game objects
-                if ((room.lowerBounds.x <= mainCameraWorldPositionUpperBounds.x && room.lowerBounds.y <= mainCameraWorldPositionUpperBounds.y) && 
-                    (room.upperBounds.x >= mainCameraWorldPositionLowerBounds.x && room.upperBounds.y >= mainCameraWorldPositionLowerBounds.y))
-                {
-                    room.instantiatedRoom.ActivateEnvironmentGameObjects();
-                }
-                else
-                {
-                    room.instantiatedRoom.DeactivateEnvironmentGameObjects();
-                }
-            }
-            else
-            {
-                room.instantiatedRoom.gameObject.SetActive(false);
-            }
+            room.instance.gameObject.SetActive(true);
+
+            bool inMainCamera = room.lower.x <= camHigh.x && room.lower.y <= camHigh.y && 
+                room.upper.x >= camLow.x && room.upper.y >= camLow.y;
+
+            if (inMainCamera) room.instance.ActivateEnvironmentGameObjects();
+            else room.instance.DeactivateEnvironmentGameObjects();
         }
     }
 
-    #region Validation
-#if UNITY_EDITOR
-    private void OnValidate()
+    IEnumerable<RoomActivationData> GetRoomsForActivation()
     {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(miniMapCamera), miniMapCamera);
+        // Single player
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            foreach (Room room in dungeon.GetRooms())
+            {
+                if (room == null || room.instantiatedRoom == null) continue;
+
+                yield return new RoomActivationData
+                {
+                    lower = room.lowerBounds,
+                    upper = room.upperBounds,
+                    instance = room.instantiatedRoom
+                };
+            }
+
+            yield break;
+        }
+
+        // Multiplayer
+        foreach (RoomNetData roomNet in DungeonRuntime.RoomNetDataDict.Values)
+        {
+            InstantiatedRoom instantiatedRoom = DungeonRuntime.GetInstantiatedRoom(roomNet.roomId);
+            if (instantiatedRoom == null) continue;
+
+            yield return new RoomActivationData
+            {
+                lower = roomNet.lowerBounds,
+                upper = roomNet.upperBounds,
+                instance = instantiatedRoom
+            };
+        }
     }
-#endif
-    #endregion
 }

@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soundEffectName: Projectile Pick Up
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
-  soundEffectClip: {fileID: 8300000, guid: 61a871eaea53302498007d799b49a8d5, type: 3}
+  soundPrefabMP: {fileID: 5744890745976271322, guid: e2969d6382294e24c89e231883f8a14b, type: 3}
+  soundEffectClips:
+  - {fileID: 8300000, guid: e643fae3462837f44be474b272e05cb0, type: 3}
   soundEffectPitchRandomVariationMin: 0.75
   soundEffectPitchRandomVariationMax: 1.1
   soundEffectVolume: 1

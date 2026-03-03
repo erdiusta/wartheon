@@ -4,7 +4,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class SoundEffect : MonoBehaviour
 {
-    AudioSource audioSource;
+    [HideInInspector] public AudioSource audioSource;
 
     private void Awake()
     {
@@ -31,6 +31,8 @@ public class SoundEffect : MonoBehaviour
     {
         audioSource.pitch = Random.Range(soundEffect.soundEffectPitchRandomVariationMin, soundEffect.soundEffectPitchRandomVariationMax);
         audioSource.volume = soundEffect.soundEffectVolume;
-        audioSource.clip = soundEffect.soundEffectClip;
+
+        AudioClip selectedClip = soundEffect.soundEffectClips[Random.Range(0, soundEffect.soundEffectClips.Length)];
+        audioSource.clip = selectedClip;
     }
 }

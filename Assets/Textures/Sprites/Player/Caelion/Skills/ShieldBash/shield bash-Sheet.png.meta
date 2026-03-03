@@ -1,0 +1,591 @@
+fileFormatVersion: 2
+guid: ae7c12ea7224a5a4aaf9fe4b6f9fc90c
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: shield bash-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 40
+        width: 52
+        height: 65
+      alignment: 9
+      pivot: {x: 0.5, y: 0.425}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 35767ad5329fe604eb086a0f96bfc870
+      internalID: -2059995237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 40
+        width: 52
+        height: 65
+      alignment: 9
+      pivot: {x: 0.5, y: 0.425}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c52ba56a4d67024384c316308e82a65
+      internalID: 230441648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 42
+        width: 52
+        height: 65
+      alignment: 9
+      pivot: {x: 0.5, y: 0.425}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8892492ce4bb0a14d91a9b8a81bd4d78
+      internalID: -305836081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 41
+        width: 52
+        height: 65
+      alignment: 9
+      pivot: {x: 0.5, y: 0.425}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52a6f8e55100b564ea9dcee5f2d2cfe3
+      internalID: -1369150227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 14
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.5, y: 0.425}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fda0f2642dd960e40926b6169fe907e5
+      internalID: 2019371776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 14
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.5, y: 0.425}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b62370d6cc7758b4a84c8f2f0d6310c3
+      internalID: -600790727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 14
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.5, y: 0.425}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d658fddace5989e44a9fa44d6c1335c0
+      internalID: 1496187015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 14
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.5, y: 0.425}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 37b378abb73bcd342baf146fb578b0b0
+      internalID: -1722402963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 110
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.465, y: 0.165}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95bce032dc4f4304d955df7d4e83f682
+      internalID: 1458963029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 110
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.465, y: 0.165}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc258746086965749825e953e2dfb5e2
+      internalID: 417634255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 110
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.465, y: 0.165}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e998abdc8e00a1419d0da62e5c873f5
+      internalID: 1405383770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 110
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.465, y: 0.165}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8133d2db548da244bf1f4585428ec97
+      internalID: 2003494950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 138
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.423, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e87029c35df196438c23c3cc1a59b05
+      internalID: 2009712130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 138
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.423, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15ae061c30f664f4486a3b7efd404722
+      internalID: -1564593083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 138
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.38, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef36d8eb32fdb9f40b5a5b0015e5c040
+      internalID: 302872236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 578
+        y: 138
+        width: 52
+        height: 61
+      alignment: 9
+      pivot: {x: 0.405, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e673b198762489d4c86b40115c948825
+      internalID: -21069768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 76
+        width: 55
+        height: 61
+      alignment: 9
+      pivot: {x: 0.38, y: 0.308}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5428c69b7ad1714095567dc94b60164
+      internalID: 561540849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 76
+        width: 55
+        height: 61
+      alignment: 9
+      pivot: {x: 0.26, y: 0.308}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2252f926d9ee9f44b887fd93d043683e
+      internalID: 767209277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_19
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 76
+        width: 55
+        height: 61
+      alignment: 9
+      pivot: {x: 0.29, y: 0.308}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a177693bd0fcc3540814885b133c6c37
+      internalID: -1939960314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield bash-Sheet_20
+      rect:
+        serializedVersion: 2
+        x: 602
+        y: 76
+        width: 55
+        height: 61
+      alignment: 9
+      pivot: {x: 0.26, y: 0.3085}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 917d72bffbea981498c6d749bfba8640
+      internalID: -448911868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: d857fdb2963b5d2418fce4bc3aeec8d0
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      shield bash-Sheet_0: -2059995237
+      shield bash-Sheet_1: 230441648
+      shield bash-Sheet_10: 417634255
+      shield bash-Sheet_11: 1405383770
+      shield bash-Sheet_12: 2003494950
+      shield bash-Sheet_13: 2009712130
+      shield bash-Sheet_14: -1564593083
+      shield bash-Sheet_15: 302872236
+      shield bash-Sheet_16: -21069768
+      shield bash-Sheet_17: 561540849
+      shield bash-Sheet_18: 767209277
+      shield bash-Sheet_19: -1939960314
+      shield bash-Sheet_2: -305836081
+      shield bash-Sheet_20: -448911868
+      shield bash-Sheet_3: -1369150227
+      shield bash-Sheet_4: 1915671407
+      shield bash-Sheet_5: 2019371776
+      shield bash-Sheet_6: -600790727
+      shield bash-Sheet_7: 1496187015
+      shield bash-Sheet_8: -1722402963
+      shield bash-Sheet_9: 1458963029
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

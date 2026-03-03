@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(Health))]
@@ -9,19 +10,11 @@ public class ReceiveContactDamage : MonoBehaviour
     #endregion
     [SerializeField] int contactDamageAmount;
 
-    Health health;
-
-    private void Awake()
+    public void TakeContactDamage(int damageAmount, DamageContext ctx, Player player = null)
     {
-        health = GetComponent<Health>();
-    }
+        if (GetComponent<Enemy>() == null && contactDamageAmount > 0) damageAmount = contactDamageAmount;
 
-    public void TakeContactDamage(int damageAmount = 0)
-    {
-        if (contactDamageAmount > 0)
-            damageAmount = contactDamageAmount;
-
-        health.TakeDamage(damageAmount);
+        HealthAuthorityResolver.GetAuthority(gameObject).ApplyDamage(damageAmount, ctx);
     }
 
     #region Validation

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 [DisallowMultipleComponent]
 public class DoorLightingControl : MonoBehaviour
@@ -15,12 +14,13 @@ public class DoorLightingControl : MonoBehaviour
     }
 
     /// <summary>
-    /// Fade in door
+    /// 
+    /// in door
     /// </summary>
     public void FadeInDoor(Door door)
     {
         // Create new material to fade in
-        Material material = new Material(GameResources.Instance.variableLitShader);
+        Material material = new Material(GameResources.Instance.dimmedMaterial);
 
         if (!isLit)
         {

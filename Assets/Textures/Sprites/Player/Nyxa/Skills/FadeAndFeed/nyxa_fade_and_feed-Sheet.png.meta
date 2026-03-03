@@ -1,0 +1,590 @@
+fileFormatVersion: 2
+guid: 9b205d307bd6e2b40929ec59c070e572
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 069b4dfa31797c541b3acf463e56b2e1
+      internalID: 479396557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f82b0804a1aca841b0501ace98df5a7
+      internalID: -1608441255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 484
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 217645675aa6e894c91579c5f55215fe
+      internalID: 682114636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 454a2250bb25b3b4f901fbe57b20d771
+      internalID: -227454389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 726
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7deb783c6c2ad247a544045f21e0e00
+      internalID: -340271221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fbff27296efc97c47ae2ad7945c9aba3
+      internalID: -1606483670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 968
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd8cd530ff21a074dbe962f9bf6045b2
+      internalID: 1979882946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 1089
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8321c1d380ce6da43a279e426a12aa2f
+      internalID: -1592046927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 1210
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4533fa599a6185741b2c2200b7a7d99f
+      internalID: -1226376029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 1331
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be0f1f93b4a38ee4b86cdcbda97f0af8
+      internalID: 155250121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 1452
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 306907f797596e3439672baf0dc41fa3
+      internalID: -1997482111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 1573
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81ebd193f9d13ac48b35c102e0198b3f
+      internalID: 1873899497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e1ef070cad5732542bb44c2cc22ec80b
+      internalID: 908655786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 1815
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 90d1ba8f65b612348a700825a8519366
+      internalID: -57420887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 1936
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44dc96a8e5e36e94a9fb03c05d6643d8
+      internalID: -155692659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 2057
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81c05068a7879de4a8c92a19b11bb8a5
+      internalID: -1317135221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 2178
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 10c061efda8afc54ca71d8d9dbbfbc6a
+      internalID: -476678111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 2299
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c495285330c4ad2498d81db66e013fdf
+      internalID: 1646415220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 2420
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 430f64ea05eec794aadcf43af8aa0261
+      internalID: -1850715399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nyxa_fade_and_feed-Sheet_19
+      rect:
+        serializedVersion: 2
+        x: 2541
+        y: 0
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.51, y: 0.34}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 55aaa88bcbe34744dac86dae975f070f
+      internalID: 350603053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: f0668c3615f3362478b8ff3721f82fc9
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      nyxa_fade_and_feed-Sheet_0: 479396557
+      nyxa_fade_and_feed-Sheet_1: -1608441255
+      nyxa_fade_and_feed-Sheet_10: -1997482111
+      nyxa_fade_and_feed-Sheet_11: 1873899497
+      nyxa_fade_and_feed-Sheet_12: 908655786
+      nyxa_fade_and_feed-Sheet_13: -57420887
+      nyxa_fade_and_feed-Sheet_14: -155692659
+      nyxa_fade_and_feed-Sheet_15: -1317135221
+      nyxa_fade_and_feed-Sheet_16: -476678111
+      nyxa_fade_and_feed-Sheet_17: 1646415220
+      nyxa_fade_and_feed-Sheet_18: -1850715399
+      nyxa_fade_and_feed-Sheet_19: 350603053
+      nyxa_fade_and_feed-Sheet_2: 682114636
+      nyxa_fade_and_feed-Sheet_3: -227454389
+      nyxa_fade_and_feed-Sheet_4: -340271221
+      nyxa_fade_and_feed-Sheet_5: -1606483670
+      nyxa_fade_and_feed-Sheet_6: 1979882946
+      nyxa_fade_and_feed-Sheet_7: -1592046927
+      nyxa_fade_and_feed-Sheet_8: -1226376029
+      nyxa_fade_and_feed-Sheet_9: 155250121
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags:
   - decoration1Tilemap
   - frontTilemap
@@ -11,14 +11,48 @@ TagManager:
   - groundTilemap
   - collisionTilemap
   - playerWeapon
+  - Enemy
+  - Chest Item
+  - poolTilemap
+  - playerProjectile
+  - sideTilemap
+  - roomBounds
+  - summonedEnemy
+  - Cursor
+  - mainHandSlot
+  - offHandSlot
+  - weaponSetButton
+  - bookCover
+  - dropButton
+  - forceField
+  - enemyProjectile
+  - PracticeDummy
+  - environment
+  - trailerOnly
+  - trailerBoss
+  - Decoy
+  - Dummy
+  - skillIcon
+  - caelionTag
+  - mycaraTag
+  - nyveranTag
+  - morvenTag
+  - karnagTag
+  - aoeSkill
+  - originTag
+  - whirlrend
+  - hoverableTag
+  - upgradeButton
+  - dissambleButton
+  - roomRoot
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Post-Process
   - Water
   - UI
-  - 
+  - Pool
   - Ignore Ammo
   - Camera1
   - Camera2
@@ -33,14 +67,14 @@ TagManager:
   - PlayerWeapon
   - EnemyWeapon
   - Environment
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Shield
+  - NPC
+  - Drop
+  - SummonedEnemy
+  - ForceField
+  - Meteor
+  - SpecialUI
+  - AttackShape
   - 
   - 
   - 
@@ -57,6 +91,9 @@ TagManager:
   - name: Instances
     uniqueID: 4037827425
     locked: 0
+  - name: Side
+    uniqueID: 1033995267
+    locked: 0
   - name: Front
     uniqueID: 2431738279
     locked: 0
@@ -69,3 +106,5 @@ TagManager:
   - name: Minimap
     uniqueID: 2456054633
     locked: 0
+  m_RenderingLayers:
+  - Default

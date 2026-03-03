@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e767738e70a8b4386de512a7ff92be, type: 3}
+  m_Name: PassiveItem_IronBracers
+  m_EditorClassIdentifier: 
+  passiveItemName: Iron Bracers
+  price: 60
+  passiveItemSprite: {fileID: 1327925473, guid: 13b990ebfba61e84e8dee2079939cd84, type: 3}
+  rarity: 0
+  passiveItemCategory: 1
+  primaryPassiveItemName: 0
+  passiveItemType: 21
+  passiveItemSlotName: 6
+  passiveItemAnimatorController: {fileID: 9100000, guid: f3fa1766d8cb9704eaffa3347f53d521, type: 2}
+  baseUniqueModifier: 8
+  baseTypeModifier: 3
+  additionalModifierPoolForType: 1000000011000000080000000d0000000b0000000c000000

@@ -4,10 +4,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "DungeonLevel_", menuName = "Scriptable Objects/Dungeon/Dungeon Level")]
 public class DungeonLevelSO : ScriptableObject
 {
-    #region Header BASIC LEVEL DETAILS
+    #region Header
     [Space(10)]
     [Header("BASIC LEVEL DETAILS")]
-    #endregion Header BASIC LEVEL DETAILS
+    #endregion Header
+    #region Tooltip
+    [Tooltip("The level number for the level")]
+    #endregion Tooltip
+    public int levelNumber;
     #region Tooltip
     [Tooltip("The name for the level")]
     #endregion Tooltip
@@ -38,6 +42,7 @@ public class DungeonLevelSO : ScriptableObject
     private void OnValidate()
     {
         HelperUtilities.ValidateCheckEmptyString(this, nameof(levelName), levelName);
+        HelperUtilities.ValidateCheckPositiveRange(this, nameof(levelNumber), levelNumber, nameof(levelNumber), levelNumber, true);
         if (HelperUtilities.ValidateCheckEnumerableValues(this, nameof(roomTemplateList), roomTemplateList))
             return;
         if (HelperUtilities.ValidateCheckEnumerableValues(this, nameof(roomNodeGraphList), roomNodeGraphList))

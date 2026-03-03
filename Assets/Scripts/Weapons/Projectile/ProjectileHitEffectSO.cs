@@ -8,10 +8,6 @@ public class ProjectileHitEffectSO : ScriptableObject
     [Header("PROJECTILE HIT EFFECT DETAILS")]
     #endregion
     #region Tooltip
-    [Tooltip("The color gradient for the hit effect.  This gradient show the color of particles during their lifetime - from left to right ")]
-    #endregion
-    public Gradient colorGradient;
-    #region Tooltip
     [Tooltip("The length of time the particle system is emitting particles")]
     #endregion
     public float duration = 0.50f;
@@ -44,10 +40,6 @@ public class ProjectileHitEffectSO : ScriptableObject
     #endregion
     public float effectGravity = -0.01f;
     #region Tooltip
-    [Tooltip("The sprite for the particle effect.  If none is specified then the default particle sprite will be used")]
-    #endregion
-    public Sprite sprite;
-    #region Tooltip
     [Tooltip("The min velocity for the particle over its lifetime. A random value between min and max will be generated.")]
     #endregion
     public Vector3 velocityOverLifetimeMin;
@@ -59,6 +51,10 @@ public class ProjectileHitEffectSO : ScriptableObject
     [Tooltip("The prefab containing the hit effect particle system - requires a corresponding ammoHitEffectSO to be defined")]
     #endregion
     public GameObject projectileHitEffectPrefab;
+    #region Tooltip
+    [Tooltip("The prefab containing the hit effect particle system - requires a corresponding ammoHitEffectSO to be defined - For Multiplayer")]
+    #endregion
+    public GameObject projectileHitEffectPrefabMP;
 
     #region Validation
 #if UNITY_EDITOR

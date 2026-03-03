@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad0d48074276e0640b14ec3640a668d8, type: 3}
+  m_Name: ProjectileDetails_HeavensGale
+  m_EditorClassIdentifier: 
+  projectileName: Heavens Gale Projectile
+  isPlayerProjectile: 1
+  projectilePrefabArray:
+  - {fileID: 5263536334675765252, guid: de090ebe75096d14698c8aaff77bf6e6, type: 3}
+  projectileMaterial: {fileID: 2100000, guid: 2bc0522d0a099134bb6f19866e5185b7, type: 2}
+  projectileChargeTime: 0.1
+  projectileChargeMaterial: {fileID: 2100000, guid: 7250dc13c7f24a4449c612f48de0589e, type: 2}
+  belongingWeaponDetails: {fileID: 11400000, guid: 9926f985354b71a4690cb034e554c091, type: 2}
+  projectileHitEffect: {fileID: 11400000, guid: af4a837004140514b9edf080243afdbe, type: 2}
+  projectileDamageMin: 2
+  projectileDamageMax: 2
+  projectileSpeed: 4
+  projectileRange: 22
+  hasLifeTime: 0
+  lifeDuration: 15
+  projectileRotationSpeed: 90
+  isGuided: 0
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 0
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
+  hasBurnDamage: 0
+  burnChance: 0
+  isPoisonous: 0
+  poisonChance: 0
+  hasAcid: 0
+  acidEfficiency: 0
+  hasStunDamage: 0
+  stunChance: 0
+  hasFrostDamage: 0
+  frostChance: 0
+  hasCurseDamage: 0
+  curseChance: 0
+  hasBlindDamage: 0
+  blindChance: 0
+  projectileSpreadMin: 0
+  projectileSpreadMax: 0
+  projectileSpawnAmountMin: 1
+  projectileSpawnAmountMax: 1
+  projectileSpawnIntervalMin: 0
+  projectileSpawnIntervalMax: 0
+  projectileImpactSoundEffect: {fileID: 0}
+  isProjectileTrail: 0
+  projectileTrailTime: 3
+  projectileTrailMaterial: {fileID: 0}
+  projectileTrailStartWidth: 0
+  projectileTrailEndWidth: 0
+  isCataclysmProjectile: 0
+  isLaser: 0

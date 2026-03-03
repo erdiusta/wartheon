@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_Shiruken
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Shiruken
+  activeSkill: 39
+  activeUniqueSkillSprite: {fileID: 21300000, guid: 33cdaf20f8e8f2340a8ffe94961f3fdc, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 0}
+  activeUniqueSkillSoundEffectTwo: {fileID: 0}
+  levels:
+  - activeUniqueSkillDetails: 'Flips shirukens which bounces from walls. Can recast
+      2 times more.
+
+
+      Base Attack Damage: 50%
+
+      Base Mana Cost: 24
+
+      Base
+      Cooldown: 12
+
+      Base Recast Cooldown: 4
+
+      Base Recast Repeat Count:
+      2'
+    cooldown: 12
+    effectiveDuration: 0
+    recastCooldown: 4
+    recastWindowDuration: 0
+    recastRepeatCount: 3
+    manaCost: 24
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Flips shirukens which bounces from walls. Can recast
+      2 times more.
+
+
+      Base Attack Damage: 60%
+
+      Base Mana Cost: 24
+
+      Base
+      Cooldown: 11
+
+      Base Recast Cooldown: 4
+
+      Base Recast Repeat Count:
+      2'
+    cooldown: 11
+    effectiveDuration: 0
+    recastCooldown: 4
+    recastWindowDuration: 0
+    recastRepeatCount: 3
+    manaCost: 24
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Flips shiruken. Can recast 2 times more.
+
+
+      Base
+      Attack Damage: 75%
+
+      Base Mana Cost: 24
+
+      Base Cooldown: 10
+
+      Base
+      Recast Cooldown: 4
+
+      Base Recast Repeat Count: 2'
+    cooldown: 10
+    effectiveDuration: 0
+    recastCooldown: 4
+    recastWindowDuration: 0
+    recastRepeatCount: 3
+    manaCost: 24
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 2
+  startingLevel: 1

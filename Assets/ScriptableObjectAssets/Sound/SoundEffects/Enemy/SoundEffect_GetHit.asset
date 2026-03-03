@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d6199204684cd648b889173cefd23c8, type: 3}
+  m_Name: SoundEffect_GetHit
+  m_EditorClassIdentifier: 
+  soundEffectName: Get Hit
+  soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
+  soundPrefabMP: {fileID: 5744890745976271322, guid: e2969d6382294e24c89e231883f8a14b, type: 3}
+  soundEffectClips:
+  - {fileID: 8300000, guid: 53fd0bddcdd56f6429952476342705c4, type: 3}
+  - {fileID: 8300000, guid: 2dbf9d86b323733469b8d8a025c3fba2, type: 3}
+  - {fileID: 8300000, guid: 0a130ee9721e9e5478a3732d226907b7, type: 3}
+  - {fileID: 8300000, guid: 20696611a1442e540a933920e4f3cf92, type: 3}
+  - {fileID: 8300000, guid: 38fb777fe09812149a7c983fbb4497b8, type: 3}
+  - {fileID: 8300000, guid: aa8d787871faf4a4d92e6e0ebd9acf68, type: 3}
+  - {fileID: 8300000, guid: b5722f825b6250844ae2c82142046bb8, type: 3}
+  - {fileID: 8300000, guid: 0795349829e830047a31a33a10916e54, type: 3}
+  soundEffectPitchRandomVariationMin: 0.8
+  soundEffectPitchRandomVariationMax: 1.2
+  soundEffectVolume: 0.35

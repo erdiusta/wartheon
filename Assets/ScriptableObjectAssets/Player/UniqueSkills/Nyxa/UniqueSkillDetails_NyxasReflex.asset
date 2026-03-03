@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_NyxasReflex
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Nyxa's Reflex
+  activeSkill: 40
+  activeUniqueSkillSprite: {fileID: 21300000, guid: 65ec2ccfefdde2a488e46d0f7725417e, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 0}
+  activeUniqueSkillSoundEffectTwo: {fileID: 0}
+  levels:
+  - activeUniqueSkillDetails: After dash/teleport  gain +20% dodge for 3 seconds.
+    cooldown: 0
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 0
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals damage inflicting armor penetration with teleport
+      then return with more critical hit chance.
+
+
+      Base Attack Damage: 130%
+
+      Base
+      Critical Hit Chance Increase: +15%
+
+      Base Attack Penetration: 30%
+
+      Base
+      Mana Cost: 18
+
+      Base Cooldown: 11'
+    cooldown: 11
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 18
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Deals damage inflicting armor penetration with teleport
+      then return with more critical hit chance.
+
+
+      Base Attack Damage: 150%
+
+      Base
+      Critical Hit Chance Increase: +20%
+
+      Base Attack Penetration: 30%
+
+      Base
+      Mana Cost: 20
+
+      Base Cooldown: 10'
+    cooldown: 10
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 20
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1

@@ -1,43 +1,52 @@
-using Cinemachine;
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class DungeonMap : SingletonMonobehaviour<DungeonMap>
+public class DungeonMap : MonoBehaviour
 {
-    #region Header GameObject References
-    [Space(10)]
-    [Header("GameObject References")]
-    #endregion
-    #region Tooltip
-    [Tooltip("Populate with the MinimapUI gameobject")]
-    #endregion
-    [SerializeField] GameObject minimapUI;
-
+    Player player;
     Camera dungeonMapCamera;
-    Camera cameraMain;
+    CinemachineCamera dungeonMapCinemachine;
 
-    private void Start()
+    private void Awake()
     {
-        // Cache main camera
-        cameraMain = Camera.main;
+        dungeonMapCamera = GetComponentInChildren<Camera>(true);
+        dungeonMapCinemachine = GetComponentInChildren<CinemachineCamera>(true);
+    }
 
-        // Get player transform
-        Transform playerTransform = GameManager.Instance.GetPlayer().transform;
+    private void OnEnable()
+    {
+        StartCoroutine(WaitForPlayerInitialization());
+    }
 
-        // Populate player as cinemachine camera target
-        CinemachineVirtualCamera cinemachineVirtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
-        cinemachineVirtualCamera.Follow = playerTransform;
+    IEnumerator WaitForPlayerInitialization()
+    {
+        while (player == null || !player.IsLocal)
+        {
+            player = GameManager.Instance.GetLocalPlayer();
+            yield return null;
+        }
 
-        // get dungeonmap camera
-        dungeonMapCamera = GetComponentInChildren<Camera>();
-        dungeonMapCamera.gameObject.SetActive(false);
+        InitializeDungeonMapCamera();
+    }
+
+    private void InitializeDungeonMapCamera()
+    {
+        dungeonMapCinemachine.Follow = player.transform;
+
+        // Register camera to CameraManager (Local only)
+        StaticEventHandler.CallOverviewCameraToggled(false);
     }
 
     private void Update()
     {
+        if (player == null || !player.IsLocal) return;
+
         // If mouse button pressed and gamestate is dungeon overview map then get the room clicked
-        if (Input.GetMouseButtonDown(0) && GameManager.Instance.gameState == GameState.dungeonOverviewMap)
+        if (InputManager.Instance.click.action.WasPerformedThisFrame() && GameManager.Instance.isOverviewCameraClicked)
         {
             GetRoomClicked();
         }
@@ -49,11 +58,12 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
     private void GetRoomClicked()
     {
         // Convert screen position to world position
-        Vector3 worldPosition = dungeonMapCamera.ScreenToWorldPoint(Input.mousePosition);
-        worldPosition = new Vector3(worldPosition.x, worldPosition.y, 0f);
+        Vector3 worldPosition = dungeonMapCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 
         // Check for collisions at cursor position
         Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(new Vector2(worldPosition.x, worldPosition.y), 1f);
+
+        if (collider2DArray == null || collider2DArray.Length == 0) return;
 
         // Check if any of the colliders are a room
         foreach (Collider2D collider2D in collider2DArray)
@@ -67,10 +77,12 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
                 {
                     // Move player to room
                     StartCoroutine(MovePlayerToRoom(worldPosition, instantiatedRoom.room));
+                    break;
                 }
             }
         }
 
+        player.meleeAttackMainHand.IsAttacking = false;
     }
 
     /// <summary>
@@ -88,19 +100,19 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
         ClearDungeonOverViewMap();
 
         // Disable player during the fade
-        GameManager.Instance.GetPlayer().playerControl.DisablePlayer();
+        player.DisablePlayer();
 
         // Get nearest spawn point in room nearest to player
         Vector3 spawnPosition = HelperUtilities.GetSpawnPositionNearestToPlayer(worldPosition);
 
         // Move player to new location - spawning them at the closest spawn point
-        GameManager.Instance.GetPlayer().transform.position = spawnPosition;
+        player.transform.position = spawnPosition;
 
         // Fade the screen back in
         yield return StartCoroutine(GameManager.Instance.Fade(1f, 0f, 1f, Color.black));
 
         // Enable player
-        GameManager.Instance.GetPlayer().playerControl.EnablePlayer();
+        player.EnablePlayer();
     }
 
     /// <summary>
@@ -108,22 +120,12 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
     /// </summary>
     public void DisplayDungeonOverViewMap()
     {
-        // Set game state
-        GameManager.Instance.previousGameState = GameManager.Instance.gameState;
-        GameManager.Instance.gameState = GameState.dungeonOverviewMap;
+        player.cameraManager.ShowDungeonOverview();
 
-        // Disable player
-        GameManager.Instance.GetPlayer().playerControl.DisablePlayer();
-
-        // Disable main camera and enable dungeon overview camera
-        cameraMain.gameObject.SetActive(false);
-        dungeonMapCamera.gameObject.SetActive(true);
+        StaticEventHandler.CallOverviewCameraToggled(true);
 
         // Ensure all rooms are active so they can be displayed
         ActivateRoomsForDisplay();
-
-        // Disable Small Minimap UI
-        minimapUI.SetActive(false);
     }
 
     /// <summary>
@@ -131,19 +133,13 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
     /// </summary>
     public void ClearDungeonOverViewMap()
     {
-        // Set game state
-        GameManager.Instance.gameState = GameManager.Instance.previousGameState;
-        GameManager.Instance.previousGameState = GameState.dungeonOverviewMap;
-
         // Enable player
-        GameManager.Instance.GetPlayer().playerControl.EnablePlayer();
+        player.EnablePlayer();
+
+        player.cameraManager.ShowGameplay();
 
         // Enable main camera and disable dungeon overview camera
-        cameraMain.gameObject.SetActive(true);
-        dungeonMapCamera.gameObject.SetActive(false);
-
-        // Enable Small Minimap UI
-        minimapUI.SetActive(true);
+        StaticEventHandler.CallOverviewCameraToggled(false);
     }
 
     /// <summary>
@@ -152,11 +148,44 @@ public class DungeonMap : SingletonMonobehaviour<DungeonMap>
     private void ActivateRoomsForDisplay()
     {
         // Iterate through dungeon rooms
-        foreach (KeyValuePair<string, Room> keyValuePair in DungeonBuilder.Instance.dungeonBuilderRoomDictionary)
+        foreach (RoomActivationData data in GetRoomsForActivation())
         {
-            Room room = keyValuePair.Value;
+            data.instance.gameObject.SetActive(true);
+        }
+    }
 
-            room.instantiatedRoom.gameObject.SetActive(true);
+    IEnumerable<RoomActivationData> GetRoomsForActivation()
+    {
+        // Single player
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            foreach (Room room in DungeonBuilder.Instance.dungeonBuilderRoomDictionary.Values)
+            {
+                if (room == null || room.instantiatedRoom == null) continue;
+
+                yield return new RoomActivationData
+                {
+                    lower = room.lowerBounds,
+                    upper = room.upperBounds,
+                    instance = room.instantiatedRoom
+                };
+            }
+
+            yield break;
+        }
+
+        // Multiplayer
+        foreach (RoomNetData roomNet in DungeonRuntime.RoomNetDataDict.Values)
+        {
+            InstantiatedRoom instantiatedRoom = DungeonRuntime.GetInstantiatedRoom(roomNet.roomId);
+            if (instantiatedRoom == null) continue;
+
+            yield return new RoomActivationData
+            {
+                lower = roomNet.lowerBounds,
+                upper = roomNet.upperBounds,
+                instance = instantiatedRoom
+            };
         }
     }
 }

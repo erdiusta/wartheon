@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soundEffectName: Health Pick Up
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
-  soundEffectClip: {fileID: 8300000, guid: b814a7cc86a2c944cbf1016aa9c0f839, type: 3}
+  soundPrefabMP: {fileID: 5744890745976271322, guid: e2969d6382294e24c89e231883f8a14b, type: 3}
+  soundEffectClips:
+  - {fileID: 8300000, guid: 8c04b5a5b7854984bb503f366abd87dd, type: 3}
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
-  soundEffectVolume: 0.9
+  soundEffectVolume: 0.5

@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_AxeThrow
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Axe Throw
+  activeSkill: 27
+  activeUniqueSkillSprite: {fileID: 21300000, guid: 7b2dbf72ad6f25344ad135f7f179d1e3, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 65771ccd5a8ddb44bbeb1d4b0f60aeeb, type: 2}
+  activeUniqueSkillSoundEffectTwo: {fileID: 0}
+  levels:
+  - activeUniqueSkillDetails: 'Throw''s off-hand axe then it can be picked-up again.
+      Chance to apply Bleeding to enemies.
+
+
+      Base Attack Damage: 100%
+
+      Base
+      Enemy Bleeding Chance: 20%
+
+      Base Mana Cost: 8
+
+      Base Cooldown: 6'
+    cooldown: 6
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 8
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Throw''s off-hand axe then it can be picked-up again.
+      Chance to apply Bleeding to enemies.
+
+
+      Base Attack Damage: 120%
+
+      Base
+      Enemy Bleeding Chance:  30%
+
+      Base Mana Cost: 9
+
+      Base Cooldown:
+      5'
+    cooldown: 5
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 9
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Throw''s off-hand axe then it can be picked-up again.
+      Chance to apply Bleeding to enemies.
+
+
+      Base Attack Damage: 150%
+
+      Base
+      Enemy Bleeding Chance:  45%
+
+      Base Mana Cost: 11
+
+      Base Cooldown:
+      4'
+    cooldown: 4
+    effectiveDuration: 0
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 11
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

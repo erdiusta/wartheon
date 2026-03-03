@@ -4,13 +4,7 @@ public abstract class SingletonMonobehaviour<T> : MonoBehaviour where T : MonoBe
 {
     static T instance;
 
-    public static T Instance 
-    { 
-        get 
-        { 
-            return instance; 
-        } 
-    }
+    public static T Instance { get { return instance; } private set { instance = value; } }
 
     protected virtual void Awake()
     {
@@ -22,5 +16,10 @@ public abstract class SingletonMonobehaviour<T> : MonoBehaviour where T : MonoBe
         {
             Destroy(gameObject);
         }
+    }
+
+    protected virtual void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 }

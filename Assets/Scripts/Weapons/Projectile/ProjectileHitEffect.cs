@@ -3,7 +3,22 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class ProjectileHitEffect : MonoBehaviour
 {
+    public Gradient colorGradient;
+    public Sprite sprite;
+
+    [HideInInspector] public float duration = 0f;
+    [HideInInspector] public float startParticleSize = 0f;
+    [HideInInspector] public float startParticleSpeed = 0f;
+    [HideInInspector] public float startLifeTime = 0f;
+    [HideInInspector] public float effectGravity = 0f;
+    [HideInInspector] public int maxParticleNumber = 1;
+    [HideInInspector] public int emissionRate = 0;
+    [HideInInspector] public int burstParticleNumber = 1;
+    [HideInInspector] public Vector3 velocityOverLifetimeMin;
+    [HideInInspector] public Vector3 velocityOverLifetimeMax;
+
     ParticleSystem projectileHitEffectParticleSystem;
+    ProjectileDetailsSO projectileDetails;
 
     private void Awake()
     {
@@ -13,23 +28,27 @@ public class ProjectileHitEffect : MonoBehaviour
     /// <summary>
     /// Set Projectile Hit Effect from passed in ProjectileHitEffectSO details
     /// </summary>
-    public void SetHitEffect(ProjectileHitEffectSO ammoHitEffect)
+    public void SetHitEffect(float duration, float startParticleSize, float startParticleSpeed, float startLifeTime, float effectGravity, int maxParticleNumber, int emissionRate, int burstParticleNumber,
+        Vector3 velocityOverLifetimeMin, Vector3 velocityOverLifetimeMax)
     {
+        // Stop First
+        projectileHitEffectParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
         // Set hit effect color gradient
-        SetHitEffectColorGradient(ammoHitEffect.colorGradient);
+        SetHitEffectColorGradient(colorGradient);
 
         // Set hit effect particle system starting values
-        SetHitEffectParticleStartingValues(ammoHitEffect.duration, ammoHitEffect.startParticleSize, ammoHitEffect.startParticleSpeed, 
-            ammoHitEffect.startLifetime, ammoHitEffect.effectGravity, ammoHitEffect.maxParticleNumber);
+        SetHitEffectParticleStartingValues(duration, startParticleSize, startParticleSpeed,
+            startLifeTime, effectGravity, maxParticleNumber);
 
         // Set hit effect particle system particle burst particle number
-        SetHitEffectParticleEmission(ammoHitEffect.emissionRate, ammoHitEffect.burstParticleNumber);
+        SetHitEffectParticleEmission(emissionRate, burstParticleNumber);
 
         // Set hit effect particle sprite
-        SetHitEffectParticleSprite(ammoHitEffect.sprite);
+        SetHitEffectParticleSprite(sprite);
 
         // Set hit effect lifetime min and max velocities
-        SetHitEffectVelocityOverLifeTime(ammoHitEffect.velocityOverLifetimeMin, ammoHitEffect.velocityOverLifetimeMax);
+        SetHitEffectVelocityOverLifeTime(velocityOverLifetimeMin, velocityOverLifetimeMax);
     }
 
     /// <summary>

@@ -26,6 +26,7 @@ public class DestroyableItem : MonoBehaviour
     HealthEvent healthEvent;
     Health health;
     ReceiveContactDamage receiveContactDamage;
+    bool destroyAnimationPlayed;
 
     private void Awake()
     {
@@ -33,7 +34,7 @@ public class DestroyableItem : MonoBehaviour
         boxCollider2D = GetComponent<BoxCollider2D>();
         healthEvent = GetComponent<HealthEvent>();
         health = GetComponent<Health>();
-        health.SetStartingHealth(startingHealthAmount);
+        health.SetMaximumHealth(startingHealthAmount);
         receiveContactDamage = GetComponent<ReceiveContactDamage>();
     }
 
@@ -51,8 +52,26 @@ public class DestroyableItem : MonoBehaviour
     {
         if (healthEventArgs.healthAmount <= 0f)
         {
-            StartCoroutine(PlayAnimation());
+            var propNetwork = GetComponent<PropNetwork>();
+
+            if (propNetwork != null && propNetwork.isServer)
+            {
+                // MP
+                propNetwork.NotifyDestroyed();
+            }
+            else
+            {
+                // SP
+                StartCoroutine(PlayAnimation());
+            }
         }
+    }
+
+    public void PlayDestroyAnimationClient()
+    {
+        if (destroyAnimationPlayed) return;
+        destroyAnimationPlayed = true;
+        StartCoroutine(PlayAnimation());
     }
 
     private IEnumerator PlayAnimation()

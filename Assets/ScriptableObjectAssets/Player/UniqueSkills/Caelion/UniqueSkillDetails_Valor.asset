@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_Valor
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Valor
+  activeSkill: 1
+  activeUniqueSkillSprite: {fileID: 21300000, guid: 0ecf52fd62ab1354590324dbb4f70243, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 0}
+  activeUniqueSkillSoundEffectTwo: {fileID: 0}
+  levels:
+  - activeUniqueSkillDetails: 'Blocks all damage while active.
+
+
+      Base Mana
+      Cost: 10
+
+      Base Cooldown: 15
+
+      Base Effective Duration: 2'
+    cooldown: 15
+    effectiveDuration: 2
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 10
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Blocks all damage while active.
+
+
+      Base Mana
+      Cost: 12
+
+      Base Cooldown: 14
+
+      Base Effective Duration: 3'
+    cooldown: 14
+    effectiveDuration: 3
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 12
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Blocks all damage while active.
+
+
+      Base Mana
+      Cost: 15
+
+      Base Cooldown: 12
+
+      Base Effective Duration: 4'
+    cooldown: 12
+    effectiveDuration: 4
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 15
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 1
+  startingLevel: 1

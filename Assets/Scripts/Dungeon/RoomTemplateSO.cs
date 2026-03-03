@@ -1,4 +1,4 @@
-    using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
@@ -16,6 +16,19 @@ public class RoomTemplateSO : ScriptableObject
     #endregion Tooltip
     public GameObject prefab;
     [HideInInspector] public GameObject previousPrefab; // This is used to regenerate the guid if the so is copied and the prefab is changed
+
+    #region Header ROOM MUSIC
+    [Space(10)]
+    [Header("ROOM MUSIC")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The battle music SO when the room hasn't been cleared of enemies")]
+    #endregion
+    public MusicTrackSO battleMusic;
+    #region Tooltip
+    [Tooltip("Ambient music SO for when the room has been cleared of enemies")]
+    #endregion
+    public MusicTrackSO ambientMusic;
 
     #region Header ROOM CONFIGURATION
     [Space(10)]
@@ -49,9 +62,9 @@ public class RoomTemplateSO : ScriptableObject
     #endregion Tooltip
     public Vector2Int[] spawnPositionArray;
 
-    #region Header ENEMY DETAILS
+    #region Header SPAWN DETAILS
     [Space(10)]
-    [Header("ENEMY DETAILS")]
+    [Header("SPAWN DETAILS")]
     #endregion
     #region Tooltip
     [Tooltip("Populate the list with all the enemies that can be spawned in this room by dungeon level, including the ratio " +
@@ -75,7 +88,10 @@ public class RoomTemplateSO : ScriptableObject
             previousPrefab = prefab;
             EditorUtility.SetDirty(this);
         }
+
         HelperUtilities.ValidateCheckNullValue(this, nameof(prefab), prefab);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(battleMusic), battleMusic);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(ambientMusic), ambientMusic);
         HelperUtilities.ValidateCheckNullValue(this, nameof(roomNodeType), roomNodeType);
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(doorwayList), doorwayList);
 
@@ -95,29 +111,20 @@ public class RoomTemplateSO : ScriptableObject
                     nameof(roomEnemySpawnParameters.maxSpawnInterval), roomEnemySpawnParameters.maxSpawnInterval, true);
                 HelperUtilities.ValidateCheckPositiveRange(this, nameof(roomEnemySpawnParameters.minConcurrentEnemies), 
                     roomEnemySpawnParameters.minConcurrentEnemies, nameof(roomEnemySpawnParameters.maxConcurrentEnemies), 
-                    roomEnemySpawnParameters.maxConcurrentEnemies, false);
-
-                bool isEnemyTypesListForDungeonLevel = false;
+                    roomEnemySpawnParameters.maxConcurrentEnemies, true);
 
                 // Validate enemy types list
                 foreach (SpawnableObjectsByLevel<EnemyDetailsSO> dungeonObjectsByLevel in enemiesByLevelList)
                 {
                     if (dungeonObjectsByLevel.dungeonLevel == roomEnemySpawnParameters.dungeonLevel && dungeonObjectsByLevel.spawnableObjectRatioList.Count > 0)
-                        isEnemyTypesListForDungeonLevel = true;
 
                     HelperUtilities.ValidateCheckNullValue(this, nameof(dungeonObjectsByLevel.dungeonLevel), dungeonObjectsByLevel.dungeonLevel);
 
                     foreach (SpawnableObjectRatio<EnemyDetailsSO> dungeonObjectRatio in dungeonObjectsByLevel.spawnableObjectRatioList)
                     {
                         HelperUtilities.ValidateCheckNullValue(this, nameof(dungeonObjectRatio.dungeonObject), dungeonObjectRatio.dungeonObject);
-                        HelperUtilities.ValidateCheckPositiveValue(this, nameof(dungeonObjectRatio.ratio), dungeonObjectRatio.ratio, false);
+                        HelperUtilities.ValidateCheckPositiveValue(this, nameof(dungeonObjectRatio.ratio), dungeonObjectRatio.ratio, true);
                     }
-                }
-
-                if (isEnemyTypesListForDungeonLevel == false && roomEnemySpawnParameters.dungeonLevel != null)
-                {
-                    Debug.Log("No enemy types specified in for dungeon level " + roomEnemySpawnParameters.dungeonLevel.levelName + " in gameobject " + 
-                        this.name.ToString());
                 }
             }
         }
