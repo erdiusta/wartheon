@@ -15,8 +15,11 @@ MonoBehaviour:
   passiveItemName: Cure
   price: 0
   passiveItemSprite: {fileID: 1262957724, guid: 02f0616564d134f42baa863a0083e092, type: 3}
+  rarity: 0
   passiveItemCategory: 0
-  primaryPassiveItemName: 5
-  passiveItemType: 0
+  passiveItemType: 5
   passiveItemSlotName: 0
   passiveItemAnimatorController: {fileID: 9100000, guid: 8fc45ad79b3fec842be4a21f677a7778, type: 2}
+  baseUniqueModifier: 0
+  baseTypeModifier: 0
+  additionalModifierPoolForType: 

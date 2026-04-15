@@ -125,6 +125,7 @@ MonoBehaviour:
   - {fileID: 2991652199720112011, guid: fd9901590f9ad504d92eafef7ab82247, type: 3}
   gambleDiceAnimatorController: {fileID: 9100000, guid: a1b7a3235a181c241a1f3e0d3b090bc3, type: 2}
   chestItemPrefab: {fileID: 6166831115549756087, guid: 7d264213b9d17694aad14e9c9b844695, type: 3}
+  chestItemNetworkPrefab: {fileID: 6166831115549756087, guid: 5d620610076c04f428311c6ed3b4f447, type: 3}
   heartIcon: {fileID: -1216308913, guid: f9ee2bab07942d7449d2d3b8d49d5d85, type: 3}
   ammoHoverAnimatorController: {fileID: 9100000, guid: 2e47b120b7574f54da4bcd574ae4fa24, type: 2}
   lockIcon: {fileID: 21300000, guid: 75be281a614718c4b89d49a81d864e9d, type: 3}

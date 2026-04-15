@@ -19,7 +19,7 @@ public class RandomSpawnableObject<T>
         this.spawnableObjectsByLevelList = spawnableObjectsByLevelList;
     }
 
-    public T GetItem()
+    public T GetItem(WartheonRNG rng)
     {   
         int upperBoundary = -1;
         ratioValueTotal = 0;
@@ -47,7 +47,7 @@ public class RandomSpawnableObject<T>
         if (chanceBoundariesList.Count == 0)
             return default(T);
 
-        int lookUpValue = Random.Range(0, ratioValueTotal);
+        int lookUpValue = rng.Range(0, ratioValueTotal);
 
         if (InputManager.TutorialEnabled)
         {

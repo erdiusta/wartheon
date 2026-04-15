@@ -149,7 +149,7 @@ public enum PassiveItemCategory
     Secondary
 }
 
-public enum PrimaryPassiveItemName
+public enum PassiveItemType
 {
     None,
     Health,
@@ -158,12 +158,7 @@ public enum PrimaryPassiveItemName
     Key,
     Cure,
     HolyWater,
-    Mana
-}
-
-public enum PassiveItemType
-{
-    Generic,
+    Mana,
     GallantHelm,
     MysticCirclet,
     HunterHood,

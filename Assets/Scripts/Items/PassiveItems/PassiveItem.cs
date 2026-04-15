@@ -3,13 +3,34 @@ using System.Collections.Generic;
 public class PassiveItem : ItemGeneric
 {
     public PassiveItemDetailsSO passiveItemDetails;
+    public PassiveItemStats passiveStats;
+
+    public PassiveItem(Rarity rarity) : base(rarity)
+    {
+        this.rarity = rarity;
+    }
+
+    // Convenience helpers
+    public IEnumerable<BoostType> GetAllBoosts()
+    {
+        if (passiveStats.baseUniqueRolled != BoostType.None) yield return passiveStats.baseUniqueRolled;
+        if (passiveStats.baseTypeRolled != BoostType.None) yield return passiveStats.baseTypeRolled;
+        if (passiveStats.enchantedBoostType != BoostType.None) yield return passiveStats.enchantedBoostType;
+        if (passiveStats.mythicBoostType != BoostType.None) yield return passiveStats.mythicBoostType;
+    }
+}
+
+public struct PassiveItemStats
+{
+    public PassiveItemType passiveItemType;
+    public PassiveItemSlotName passiveItemSlotName;
     public int activePrice;
 
     // Rolled modifiers
     public BoostType baseUniqueRolled;
     public BoostType baseTypeRolled;
-    public BoostType enchantedBoostType = BoostType.None;
-    public BoostType mythicBoostType = BoostType.None;
+    public BoostType enchantedBoostType;
+    public BoostType mythicBoostType;
 
     // Passive item stats
     public float attackCooldown;
@@ -37,30 +58,16 @@ public class PassiveItem : ItemGeneric
     public float skillDuration;
 
     // CC
-    public float additionalPoisonChance = 0f;
-    public float additionalBleedChance = 0f;
-    public float additionalRootChance = 0f;
-    public float additionalStunChance = 0f;
-    public float additionalCurseChance = 0f;
-    public float additionalFearChance = 0f;
-    public float additionalRevealChance = 0f;
-    public float additionalParalyzeChance = 0f;
-    public float additionalBurnChance = 0f;
-    public float additionalFreezeChance = 0f;
-    public float additionalBlindChance = 0f;
-    public float additionalSlowChance = 0f;
-
-    public PassiveItem(Rarity rarity) : base(rarity)
-    {
-        this.rarity = rarity;
-    }
-
-    // Convenience helpers
-    public IEnumerable<BoostType> GetAllBoosts()
-    {
-        if (baseUniqueRolled != BoostType.None) yield return baseUniqueRolled;
-        if (baseTypeRolled != BoostType.None) yield return baseTypeRolled;
-        if (enchantedBoostType != BoostType.None) yield return enchantedBoostType;
-        if (mythicBoostType != BoostType.None) yield return mythicBoostType;
-    }
+    public float additionalPoisonChance;
+    public float additionalBleedChance;
+    public float additionalRootChance;
+    public float additionalStunChance;
+    public float additionalCurseChance;
+    public float additionalFearChance;
+    public float additionalRevealChance;
+    public float additionalParalyzeChance;
+    public float additionalBurnChance;
+    public float additionalFreezeChance;
+    public float additionalBlindChance;
+    public float additionalSlowChance;
 }

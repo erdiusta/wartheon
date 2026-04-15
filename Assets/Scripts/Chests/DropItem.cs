@@ -782,7 +782,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             passiveItem = (PassiveItem)itemGeneric;
 
-            if (passiveItem.passiveItemDetails.primaryPassiveItemName == PrimaryPassiveItemName.Key)
+            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.Key)
             {
                 player.consumableEvent.CallKeyCountChangedEvent(++player.keyCount);
 
@@ -790,7 +790,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.itemPickup);
             }
 
-            if (passiveItem.passiveItemDetails.primaryPassiveItemName == PrimaryPassiveItemName.SilverCoin)
+            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SilverCoin)
             {
                 int coinAmount = 1;
 
@@ -805,7 +805,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.coinPickup);
             }
 
-            if (passiveItem.passiveItemDetails.primaryPassiveItemName == PrimaryPassiveItemName.GoldCoin)
+            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldCoin)
             {
                 player.coinsAndShards.AddCoin(5);
 
@@ -813,7 +813,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.coinPickup);
             }
 
-            if (passiveItem.passiveItemDetails.primaryPassiveItemName == PrimaryPassiveItemName.Health)
+            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.Health)
             {
                 player.UpdatePlayerHealth(20, false, false);
 
@@ -826,7 +826,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
             }
 
-            if (passiveItem.passiveItemDetails.primaryPassiveItemName == PrimaryPassiveItemName.Mana)
+            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.Mana)
             {
                 player.UpdatePlayerMana(20, false, false);
 
@@ -834,7 +834,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
             }
 
-            if (passiveItem.passiveItemDetails.primaryPassiveItemName == PrimaryPassiveItemName.Cure)
+            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.Cure)
             {
                 // HEALTH STATUS CHECKS
                 if ((player.healthStatus & HealthStatus.Poisoned) != 0)
@@ -872,7 +872,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             }
 
             passiveItem = (PassiveItem)itemGeneric;
-            player.AddPassiveItemToPlayer(ref passiveItem);
+            player.AddPassiveItemToPlayer(ref passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
 
             isPickedUp = true;
 

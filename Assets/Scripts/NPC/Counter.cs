@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -57,91 +58,94 @@ public class Counter : MonoBehaviour
 
         InstantiatedRoom instantiatedRoom = isMultiplayer ? DungeonRuntime.GetInstantiatedRoom(roomChangedEventArgs.roomNetData.roomId) : roomChangedEventArgs.room.instantiatedRoom;
 
+        int seed = Random.Range(int.MinValue, int.MaxValue);
+        WartheonRNG rng = new WartheonRNG(seed);
+
         // If the room is shop room then start spawning chest items
         if (isMultiplayer)
         {
-            IntantiateCounterItems(roomChangedEventArgs.roomNetData.isShopRoom, roomChangedEventArgs.roomNetData.shopRoomGoodsCreated, instantiatedRoom);
+            IntantiateCounterItems(roomChangedEventArgs.roomNetData.isShopRoom, roomChangedEventArgs.roomNetData.shopRoomGoodsCreated, instantiatedRoom, rng);
             roomChangedEventArgs.roomNetData.shopRoomGoodsCreated = true;
         }
         else
         {
-            IntantiateCounterItems(roomChangedEventArgs.room.roomNodeType.isShopRoom, roomChangedEventArgs.room.shopRoomGoodsCreated, instantiatedRoom);
+            IntantiateCounterItems(roomChangedEventArgs.room.roomNodeType.isShopRoom, roomChangedEventArgs.room.shopRoomGoodsCreated, instantiatedRoom, rng);
             roomChangedEventArgs.room.shopRoomGoodsCreated = true;
         }
     }
 
-    private void IntantiateCounterItems(bool isShopRoom, bool shopRoomGoodsCreated, InstantiatedRoom ir)
+    private void IntantiateCounterItems(bool isShopRoom, bool shopRoomGoodsCreated, InstantiatedRoom ir, WartheonRNG rng)
     {
         if (isShopRoom && !shopRoomGoodsCreated)
         {
            // Get npc type of the shop room
            NpcType npcType = ir.GetComponentInChildren<NPC>().npcType;
 
-            int firstRandomNum = Random.Range(1, 3);
-            int secondRandomNum = Random.Range(1, 3);
-            int thirdRandomNum = Random.Range(1, 3);
+            int firstRandomNum = rng.Range(1, 3);
+            int secondRandomNum = rng.Range(1, 3);
+            int thirdRandomNum = rng.Range(1, 3);
 
             switch (npcType)
             {
                 case NpcType.Vendor:
                     if (firstRandomNum == 1)
                     {
-                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(), firstChestItem);
+                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(false, rng), firstChestItem, rng);
                     }
                     else if (firstRandomNum == 2)
                     {
-                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(), firstChestItem);
+                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(false, rng), firstChestItem, rng);
                     }
 
                     if (secondRandomNum == 1)
                     {
-                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(), secondChestItem);
+                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(false, rng), secondChestItem, rng);
                     }
                     else if (secondRandomNum == 2)
                     {
-                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(), secondChestItem);
+                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(false, rng), secondChestItem, rng);
                     }
 
                     if (thirdRandomNum == 1)
                     {
-                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(), thirdChestItem);
+                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(false, rng), thirdChestItem, rng);
                     }
                     else if (thirdRandomNum == 2)
                     {
-                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(), thirdChestItem);
+                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(false, rng), thirdChestItem, rng);
                     }
 
                     break;
                 case NpcType.BlackMarketSeller:
                     if (firstRandomNum == 1)
                     {
-                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(true), firstChestItem);
+                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(true, rng), firstChestItem, rng);
                     }
                     else if (firstRandomNum == 2)
                     {
-                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(true), firstChestItem);
+                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(true, rng), firstChestItem, rng);
                     }
 
                     if (secondRandomNum == 1)
                     {
-                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(true), secondChestItem);
+                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(true, rng), secondChestItem, rng);
                     }
                     else if (secondRandomNum == 2)
                     {
-                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(true), secondChestItem);
+                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(true, rng), secondChestItem, rng);
                     }
 
                     if (thirdRandomNum == 1)
                     {
-                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(true), thirdChestItem);
+                        InstantiateWeaponItem(GetWeaponDetailsToSpawn(true, rng), thirdChestItem, rng);
                     }
                     else if (thirdRandomNum == 2)
                     {
-                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(true), thirdChestItem);
+                        InstantiatePassiveItem(GetPassiveItemDetailsToSpawn(true, rng), thirdChestItem, rng);
                     }
                     break;
                 case NpcType.Gambler:
-                    GambleTransaction();
+                    GambleTransaction(rng);
 
                     break;
                 default:
@@ -152,7 +156,10 @@ public class Counter : MonoBehaviour
 
     private void StaticEventHandler_OnGambleCompleted()
     {
-        GambleTransaction();
+        int seed = Random.Range(int.MinValue, int.MaxValue);
+        WartheonRNG rng = new WartheonRNG(seed);
+
+        GambleTransaction(rng);
     }
 
     private void StaticDialogueHandler_OnGambleWon()
@@ -169,11 +176,11 @@ public class Counter : MonoBehaviour
         thirdChestItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + gambleValuesList[2];
     }
 
-    private void GambleTransaction()
+    private void GambleTransaction(WartheonRNG rng)
     {
         gambleValuesList.Clear();
 
-        int variationNumber = Random.Range(1, 3);
+        int variationNumber = rng.Range(1, 3);
 
         firstChestItem.isGambleDropItem = true;
         secondChestItem.isGambleDropItem = true;
@@ -211,26 +218,26 @@ public class Counter : MonoBehaviour
     /// <summary>
     /// Instantiate a weapon item for the player to collect
     /// </summary>
-    private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails, DropItem dropItem)
+    private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails, DropItem dropItem, WartheonRNG rng)
     {
         if (dropItem == null) return;
 
         dropItem.hasWeaponDrop = true;
 
         // Create a weapon instance with rolled modifiers
-        Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails);
+        Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails, rng);
 
-        weapon.activePrice = (int)(weaponDetails.price * (1 + player.additinalNPCCostModifier));
+        weapon.weaponStats.activePrice = (int)(weaponDetails.price * (1 + player.additinalNPCCostModifier));
 
         dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, dropItem.transform.position);
 
-        dropItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + weapon.activePrice.ToString();
+        dropItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + weapon.weaponStats.activePrice.ToString();
     }
 
     /// <summary>
     /// Get the weapon details to spawn - return null if no weapon is to be spawned or the player already has the weapon
     /// </summary>
-    private WeaponDetailsSO GetWeaponDetailsToSpawn(bool isBlackMarket = false)
+    private WeaponDetailsSO GetWeaponDetailsToSpawn(bool isBlackMarket, WartheonRNG rng)
     {
         RandomSpawnableObject<WeaponDetailsSO> weaponRandom;
 
@@ -243,7 +250,7 @@ public class Counter : MonoBehaviour
             weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(vendorWeaponSpawnByLevelList);
         }
 
-        WeaponDetailsSO weaponDetails = weaponRandom.GetItem();
+        WeaponDetailsSO weaponDetails = weaponRandom.GetItem(rng);
 
         return weaponDetails;
     }
@@ -251,24 +258,24 @@ public class Counter : MonoBehaviour
     /// <summary>
     /// Instantiate a passive item for the player to collect
     /// </summary>
-    private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails, DropItem dropItem)
+    private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails, DropItem dropItem, WartheonRNG rng)
     {
         if (dropItem == null) return;
 
         dropItem.hasSecondaryPassiveDrop = true;
 
-        PassiveItem passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails);
+        PassiveItem passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
 
-        passiveItem.activePrice = (int)(passiveItemDetails.price * (1 + player.additinalNPCCostModifier));
+        passiveItem.passiveStats.activePrice = (int)(passiveItemDetails.price * (1 + player.additinalNPCCostModifier));
         dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, dropItem.transform.position);
 
-        dropItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + passiveItem.activePrice.ToString();
+        dropItem.transform.GetChild(3).GetComponentInChildren<TextMeshPro>().text = "x " + passiveItem.passiveStats.activePrice.ToString();
     }
 
     /// <summary>
     /// Get the passive item details to spawn - return null if no weapon is to be spawned or the player already has the weapon
     /// </summary>
-    private PassiveItemDetailsSO GetPassiveItemDetailsToSpawn(bool isBlackMarket = false)
+    private PassiveItemDetailsSO GetPassiveItemDetailsToSpawn(bool isBlackMarket, WartheonRNG rng)
     {
         RandomSpawnableObject<PassiveItemDetailsSO> passiveItemRandom;
 
@@ -281,7 +288,7 @@ public class Counter : MonoBehaviour
             passiveItemRandom = new RandomSpawnableObject<PassiveItemDetailsSO>(vendorPassiveItemSpawnByLevelList);
         }
 
-        PassiveItemDetailsSO passiveItemDetails = passiveItemRandom.GetItem();
+        PassiveItemDetailsSO passiveItemDetails = passiveItemRandom.GetItem(rng);
 
         return passiveItemDetails;
     }

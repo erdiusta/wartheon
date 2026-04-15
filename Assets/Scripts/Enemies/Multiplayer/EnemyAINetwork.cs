@@ -3,7 +3,6 @@ using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Enemy))]
 [DisallowMultipleComponent]
@@ -147,8 +146,6 @@ public class EnemyAINetwork : NetworkBehaviour
 
         // Safe to initialize
         enemy.patrol.targets = enemy.enemyNetwork.InstantiatedRoom.CreatePatrolTargets(enemy.enemyNetwork.SpawnPositions, patrolPointsParentContainer, true);
-
-        Debug.Log("Enemy patrol target count: " + enemy.patrol.targets.Length);
 
         PatrolRigidbody2D.OnRequestSpawnPositions += Patrol_OnRequestSpawnPositions;
         StartCoroutine(WaitForInitialization());

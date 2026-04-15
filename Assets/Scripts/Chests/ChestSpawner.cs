@@ -114,13 +114,16 @@ public class ChestSpawner : MonoBehaviour
     {
         chestSpawned = true;
 
+        int seed = Random.Range(int.MinValue, int.MaxValue);
+        WartheonRNG rng = new WartheonRNG(seed);
+
         // Should chest be spawned based on specified chance? If not return.
-        if (!RandomSpawnChest()) return;
+        if (!RandomSpawnChest(rng)) return;
 
         // Get Weapon Item To Spawn
-        GetItemsToSpawn(out int passiveItemNum, out int weaponNum);
+        GetItemsToSpawn(out int passiveItemNum, out int weaponNum, rng);
 
-        int randomNumberForChest = Random.Range(0, 100);
+        int randomNumberForChest = rng.Range(0, 100);
 
         // Instantiate chest
         if (randomNumberForChest < 70 - (rareChestLocateModifier * 100))
@@ -146,29 +149,29 @@ public class ChestSpawner : MonoBehaviour
         Chest chest = chestGameObject.GetComponent<Chest>();
 
         // Initialize items
-        chest.Initialize(GetWeaponDetailsToSpawn(weaponNum));
-        chest.Initialize(GetPassiveItemDetailsToSpawn(passiveItemNum));
+        chest.Initialize(GetWeaponDetailsToSpawn(weaponNum, rng), rng);
+        chest.Initialize(GetPassiveItemDetailsToSpawn(passiveItemNum, rng), rng);
     }
 
     /// <summary>
     /// Check if a chest should be spawned based on the chest spawn chance - returns true if chest should be spawned false otherwise
     /// </summary>
-    private bool RandomSpawnChest()
+    private bool RandomSpawnChest(WartheonRNG rng)
     {
-        int chancePercent = Random.Range(chestSpawnChanceMin, chestSpawnChanceMax + 1);
+        int chancePercent = rng.Range(chestSpawnChanceMin, chestSpawnChanceMax + 1);
 
         // Check if an override chance percent has been set for the current level
         foreach (RangeByLevel rangeByLevel in chestSpawnChanceByLevelList)
         {
             if (rangeByLevel.dungeonLevel == GameManager.Instance.GetCurrentDungeonLevel())
             {
-                chancePercent = Random.Range(rangeByLevel.min, rangeByLevel.max + 1);
+                chancePercent = rng.Range(rangeByLevel.min, rangeByLevel.max + 1);
                 break;
             }
         }
 
         // get random value between 1 and 100
-        int randomPercent = Random.Range(1, 100 + 1);
+        int randomPercent = rng.Range(1, 100 + 1);
 
         if (randomPercent <= chancePercent)
         {
@@ -183,12 +186,12 @@ public class ChestSpawner : MonoBehaviour
     /// <summary>
     /// Get the number of items to spawn - max 1 of each - max 3 in total
     /// </summary>
-    private void GetItemsToSpawn(out int passiveItems, out int weapons)
+    private void GetItemsToSpawn(out int passiveItems, out int weapons, WartheonRNG rng)
     {
         passiveItems = 0;
         weapons = 0;
 
-        int choice = Random.Range(0, 50);
+        int choice = rng.Range(0, 50);
 
         if (choice >= 0 && choice <= 25) { weapons++; return; }
         if (choice > 25 && choice <= 50) { passiveItems++; return; }
@@ -197,7 +200,7 @@ public class ChestSpawner : MonoBehaviour
     /// <summary>
     /// Get the weapon details to spawn - return null if no weapon is to be spawned or the player already has the weapon
     /// </summary>
-    private WeaponDetailsSO GetWeaponDetailsToSpawn(int weaponNumber)
+    private WeaponDetailsSO GetWeaponDetailsToSpawn(int weaponNumber, WartheonRNG rng)
     {
         if (weaponNumber == 0) return null;
 
@@ -218,7 +221,7 @@ public class ChestSpawner : MonoBehaviour
             weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(weaponSpawnByChestBasedOnLevelList[2].spawnableObjectByLevelList);
         }
 
-        WeaponDetailsSO weaponDetails = weaponRandom.GetItem();
+        WeaponDetailsSO weaponDetails = weaponRandom.GetItem(rng);
 
         return weaponDetails;
     }
@@ -226,7 +229,7 @@ public class ChestSpawner : MonoBehaviour
     /// <summary>
     /// Get the passive item details to spawn - return null if no item is to be spawned or the player already has the weapon
     /// </summary>
-    private PassiveItemDetailsSO GetPassiveItemDetailsToSpawn(int itemNumber)
+    private PassiveItemDetailsSO GetPassiveItemDetailsToSpawn(int itemNumber, WartheonRNG rng)
     {
         if (itemNumber == 0) return null;
 
@@ -247,7 +250,7 @@ public class ChestSpawner : MonoBehaviour
             passiveItemRandom = new RandomSpawnableObject<PassiveItemDetailsSO>(passiveItemsSpawnByChestBasedOnLevelList[2].spawnableObjectByLevelList);
         }
 
-        PassiveItemDetailsSO passiveItemDetails = passiveItemRandom.GetItem();
+        PassiveItemDetailsSO passiveItemDetails = passiveItemRandom.GetItem(rng);
 
         return passiveItemDetails;
     }

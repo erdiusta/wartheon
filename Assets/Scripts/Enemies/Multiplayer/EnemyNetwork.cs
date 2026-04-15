@@ -1,5 +1,4 @@
 using Mirror;
-using Pathfinding;
 using UnityEngine;
 
 [RequireComponent(typeof(Enemy))]

@@ -739,7 +739,7 @@ public class PlayerSkillController : MonoBehaviour
         player.isAxeThrowActive = true;
 
         player.playerSkillProjectile = player.playerDetails.throwingAxeDetails.projectilePrefabArray[0].GetComponentInChildren<Projectile>();
-        offhandWeapon.isThrowingAxeWeapon = true;
+        offhandWeapon.weaponStats.isThrowingAxeWeapon = true;
 
         // Modify throwing axe's damage
         player.playerSkillProjectile.maxDamage = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch

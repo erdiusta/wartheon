@@ -5,6 +5,8 @@ public class WartheonDatabase : SingletonMonobehaviour<WartheonDatabase>
     [SerializeField] EnemyDatabaseSO mobDatabase;
     [SerializeField] ProjectileDatabaseSO projectileDatabase;
     [SerializeField] ProjectileHitEffectDatabaseSO projectileHitFxDatabase;
+    [SerializeField] WeaponDatabaseSO weaponDatabase;
+    [SerializeField] PassiveItemDatabaseSO passiveItemDatabase;
 
     protected override void Awake()
     {
@@ -13,6 +15,28 @@ public class WartheonDatabase : SingletonMonobehaviour<WartheonDatabase>
         mobDatabase.Initialize();
         projectileDatabase.Initialize();
         projectileHitFxDatabase.Initialize();
+        weaponDatabase.Initialize();
+        passiveItemDatabase.Initialize();
+    }
+
+    public WeaponDetailsSO GetWeaponDetails(WeaponTitle title)
+    {
+        return weaponDatabase.GetWeapon(title);
+    }
+
+    public WeaponTitle GetWeaponDetailsTitle(WeaponDetailsSO weaponDetails)
+    {
+        return weaponDatabase.GetWeaponTitle(weaponDetails);
+    }
+
+    public PassiveItemDetailsSO GetPassiveItemDetails(PassiveItemType type)
+    {
+        return passiveItemDatabase.GetPassiveItem(type);
+    }
+
+    public PassiveItemType GetPassiveItemDetailsType(PassiveItemDetailsSO passiveItemDetails)
+    {
+        return passiveItemDatabase.GetPassiveItemType(passiveItemDetails);
     }
 
     public EnemyDetailsSO GetEnemy(EnemyCategory category)

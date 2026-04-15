@@ -315,19 +315,19 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         switch (passiveItem.rarity)
         {
             case Rarity.Basic:
-                BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
-                BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseUniqueRolled, BoostPhase.Unique);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseTypeRolled, BoostPhase.Type);
                 break;
             case Rarity.Enchanted:
-                BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
-                BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
-                BoostForPassiveItem(passiveItem, passiveItem.enchantedBoostType, BoostPhase.Enchanted);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseUniqueRolled, BoostPhase.Unique);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseTypeRolled, BoostPhase.Type);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.enchantedBoostType, BoostPhase.Enchanted);
                 break;
             case Rarity.Mythic:
-                BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
-                BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
-                BoostForPassiveItem(passiveItem, passiveItem.enchantedBoostType, BoostPhase.Enchanted);
-                BoostForPassiveItem(passiveItem, passiveItem.mythicBoostType, BoostPhase.Mythic);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseUniqueRolled, BoostPhase.Unique);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseTypeRolled, BoostPhase.Type);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.enchantedBoostType, BoostPhase.Enchanted);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.mythicBoostType, BoostPhase.Mythic);
                 break;
             case Rarity.Legendary:
                 break;
@@ -348,43 +348,43 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
         {
             contentText.text = $"\nWield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
-            contentText.text += $"Block Rate: {(weapon.weaponDetails.blockChance + weapon.blockChanceIncrease) * 100}%\n";
+            contentText.text += $"Block Rate: {(weapon.weaponDetails.blockChance + weapon.weaponStats.blockChanceIncrease) * 100}%\n";
         }
         else
         {
-            float fireRate = (float)Math.Round(1 / (weapon.weaponDetails.weaponCooldownDuration - (weapon.attackCooldownModifier / 2)), 2);
+            float fireRate = (float)Math.Round(1 / (weapon.weaponDetails.weaponCooldownDuration - (weapon.weaponStats.attackCooldownModifier / 2)), 2);
             contentText.text += $"Attack Speed: {fireRate}\n";
             contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
 
-            contentText.text += $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.physicalAttackDamageIncrease}-" +
-                $"{weapon.weaponDetails.physicalDamageMax + weapon.physicalAttackDamageIncrease}\n";
+            contentText.text += $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.weaponStats.physicalAttackDamageIncrease}-" +
+                $"{weapon.weaponDetails.physicalDamageMax + weapon.weaponStats.physicalAttackDamageIncrease}\n";
 
-            contentText.text += $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.magicAttackDamageIncrease}-" +
-                $"{weapon.weaponDetails.magicDamageMax + weapon.magicAttackDamageIncrease}\n";
+            contentText.text += $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.weaponStats.magicAttackDamageIncrease}-" +
+                $"{weapon.weaponDetails.magicDamageMax + weapon.weaponStats.magicAttackDamageIncrease}\n";
 
-            float updatedAttackRating = (float)Math.Round(weapon.weaponDetails.weaponAttackRating * weapon.attackRatingIncrease, 2);
+            float updatedAttackRating = (float)Math.Round(weapon.weaponDetails.weaponAttackRating * weapon.weaponStats.attackRatingIncrease, 2);
             contentText.text += $"Attack Rating: {updatedAttackRating * 100}%\n";
 
-            contentText.text += $"Cr. Hit Chance: {weapon.criticalHitChanceIncrease * 100}%\n";
-            contentText.text += $"Cr. Hit Damage: {weapon.criticalHitDamageIncrease * 100}%\n";
+            contentText.text += $"Cr. Hit Chance: {weapon.weaponStats.criticalHitChanceIncrease * 100}%\n";
+            contentText.text += $"Cr. Hit Damage: {weapon.weaponStats.criticalHitDamageIncrease * 100}%\n";
         }
 
         switch (weapon.rarity)
         {
             case Rarity.Basic:
-                BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
-                BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
+                BoostForWeapon(weapon, weapon.weaponStats.baseUniqueRolled, BoostPhase.Unique);
+                BoostForWeapon(weapon, weapon.weaponStats.baseTypeRolled, BoostPhase.Type);
                 break;
             case Rarity.Enchanted:
-                BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
-                BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
-                BoostForWeapon(weapon, weapon.enchantedBoostType, BoostPhase.Enchanted);
+                BoostForWeapon(weapon, weapon.weaponStats.baseUniqueRolled, BoostPhase.Unique);
+                BoostForWeapon(weapon, weapon.weaponStats.baseTypeRolled, BoostPhase.Type);
+                BoostForWeapon(weapon, weapon.weaponStats.enchantedBoostType, BoostPhase.Enchanted);
                 break;
             case Rarity.Mythic:
-                BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
-                BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
-                BoostForWeapon(weapon, weapon.enchantedBoostType, BoostPhase.Enchanted);
-                BoostForWeapon(weapon, weapon.mythicBoostType, BoostPhase.Mythic);
+                BoostForWeapon(weapon, weapon.weaponStats.baseUniqueRolled, BoostPhase.Unique);
+                BoostForWeapon(weapon, weapon.weaponStats.baseTypeRolled, BoostPhase.Type);
+                BoostForWeapon(weapon, weapon.weaponStats.enchantedBoostType, BoostPhase.Enchanted);
+                BoostForWeapon(weapon, weapon.weaponStats.mythicBoostType, BoostPhase.Mythic);
                 break;
             case Rarity.Legendary:
                 break;
@@ -595,7 +595,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             if ((draggableItem.belongingSlot.slotType == SlotType.WeaponMainHand && targetItem.belongingSlot.slotType == SlotType.WeaponMainHand) ||
                 (draggableItem.belongingSlot.slotType == SlotType.WeaponOffHand && targetItem.belongingSlot.slotType == SlotType.WeaponOffHand)) goto jump;
 
-            if (playerMainHand.weaponBelongingToWhichMainHandSet != playerOffHand?.weaponBelongingToWhichOffHandSet)
+            if (playerMainHand.weaponStats.weaponBelongingToWhichMainHandSet != playerOffHand?.weaponStats.weaponBelongingToWhichOffHandSet)
             {
                 targetItemWeaponIfItIs = (Weapon)targetItem.itemGeneric;
 
@@ -603,7 +603,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 peekedWeaponSetsOffHandWeapon = null;
                 if (targetItemWeaponIfItIs != null)
                 {
-                    int index = targetItemWeaponIfItIs.weaponBelongingToWhichOffHandSet - 1;
+                    int index = targetItemWeaponIfItIs.weaponStats.weaponBelongingToWhichOffHandSet - 1;
                     peekedWeaponSetsOffHandWeapon = player.weaponSlotSetArray[index][1];
                 }
             }
@@ -796,7 +796,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 {
                     // Put draggable item to current slot
                     player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableInventoryWeapon;
-                    draggableInventoryWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                    draggableInventoryWeapon.weaponStats.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
                     draggableInventoryWeapon.itemSlotStatus = ItemSlotStatus.MainHand;
                     player.mainHandSlotFilled = false;
 
@@ -812,7 +812,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 {
                     // Put draggable item to current slot
                     player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableInventoryWeapon;
-                    draggableInventoryWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                    draggableInventoryWeapon.weaponStats.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
                     draggableInventoryWeapon.itemSlotStatus = ItemSlotStatus.OffHand;
                     player.offHandSlotFilled = false;
 
@@ -849,7 +849,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     PassiveItem draggableInventoryPassiveItem = (PassiveItem)draggableItemGeneric;
 
                     // Equip event and update stats
-                    player.setPassiveItemEvent.CallEquipPassiveItem(draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
+                    player.setPassiveItemEvent.CallEquipPassiveItem(player, draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
                     draggableInventoryPassiveItem.itemSlotStatus = ItemSlotStatus.None;
 
                     // Book update for passive slot addition and inventory slot drop
@@ -872,13 +872,13 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 if (inventoryIndexNumber >= 0 && !InventoryManager.Instance.IsInventoryFull()) // IT MEANS, DRAGGED SLOT IS AN INVENTORY SLOT AND INVENTORY IS NOT FULL
                 {
                     // Empty weapon on hand
-                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet - 1][0] = null;
 
                     // Place weapon into inventory
                     InventoryManager.Instance.PlaceItemToInventoryIndexSlot(draggableItemWeapon, placeToLowestIndex: false, inventoryIndexNumber);
 
                     draggableItemWeapon.itemSlotStatus = ItemSlotStatus.Inventory;
-                    draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
+                    draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet = 0;
 
                     player.playerControl.SetWeaponSetByIndex(true, false, false, true);
 
@@ -888,19 +888,19 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 }
                 else if (slotType == SlotType.WeaponMainHand)
                 {
-                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet - 1][0] = null;
 
                     // Put draggable item to current slot
                     player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
 
-                    draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                    draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
                     player.playerControl.SetWeaponSetByIndex(true, false);
 
                     StaticEventHandler.CallStatsChangedOnTheBookEvent();
                 }
                 else
                 {
-                    if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][1] != null)
+                    if (player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet - 1][1] != null)
                     {
                         GameManager.Instance.OpenPopUpLog(PopUpReason.EmptyOffHandFirst);
                         draggableItem.swapCancelled = true;
@@ -908,7 +908,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     }
                     else
                     {
-                        if (draggableItemWeapon.weaponBelongingToWhichMainHandSet == player.currentWeaponSlotSetIndex)
+                        if (draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet == player.currentWeaponSlotSetIndex)
                         {
                             GameManager.Instance.OpenPopUpLog(PopUpReason.CantMoveYourMainHandWithEmptyOffHand);
                             draggableItem.swapCancelled = true;
@@ -923,15 +923,15 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                         return;
                     }
 
-                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = null;
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet - 1][0] = null;
                     player.mainHandSlotFilled = false; // Change flag so this empty slot can be used for future pick-ups
 
                     // Put draggable item to current slot
                     player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
                     draggableItemWeapon.itemSlotStatus = ItemSlotStatus.OffHand;
 
-                    draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
-                    draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                    draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet = 0;
+                    draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
                     draggableItem.dragMainSlotOff = true;
                     player.playerControl.SetWeaponSetByIndex(true, false);
 
@@ -949,7 +949,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     InventoryManager.Instance.PlaceItemToInventoryIndexSlot(draggableItemWeapon, placeToLowestIndex: false, inventoryIndexNumber);
 
                     draggableItemWeapon.itemSlotStatus = ItemSlotStatus.Inventory;
-                    draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
+                    draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet = 0;
 
                     player.playerControl.SetWeaponSetByIndex(true, false, false, true);
 
@@ -960,21 +960,21 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 }
                 else if (slotType == SlotType.WeaponMainHand)
                 {
-                    if (player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
+                    if (player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet - 1][1].weaponDetails.weaponClass == WeaponClass.Shield)
                     {
                         GameManager.Instance.OpenPopUpLog(PopUpReason.ShieldCantBePutOnMainHand);
                         draggableItem.swapCancelled = true;
                         return;
                     }
 
-                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet - 1][1] = null;
 
                     // Put draggable item to current slot
                     player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
                     draggableItemWeapon.itemSlotStatus = ItemSlotStatus.MainHand;
 
-                    draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
-                    draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                    draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet = 0;
+                    draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
                     player.playerControl.SetWeaponSetByIndex(true, false);
 
                     StaticEventHandler.CallStatsChangedOnTheBookEvent();
@@ -988,13 +988,13 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                         return;
                     }
 
-                    player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = null;
+                    player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet - 1][1] = null;
                     player.offHandSlotFilled = false; // Change flag so this empty slot can be used for future pick-ups
 
                     // Put draggable item to current slot
                     player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
 
-                    draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                    draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
                     player.playerControl.SetWeaponSetByIndex(true, false);
 
                     StaticEventHandler.CallStatsChangedOnTheBookEvent();
@@ -1008,7 +1008,7 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 // Passive item in the slot moves to inventory slot
                 PassiveItem draggableInventoryPassiveItem = (PassiveItem)draggableItemGeneric;
 
-                player.setPassiveItemEvent.CallRemovePassiveItem(draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
+                player.setPassiveItemEvent.CallRemovePassiveItem(player, draggableInventoryPassiveItem, draggableInventoryPassiveItem.passiveItemDetails.passiveItemSlotName);
 
                 InventoryManager.Instance.PlaceItemToInventoryIndexSlot(draggableInventoryPassiveItem, placeToLowestIndex: false, inventoryIndexNumber);
 
@@ -1038,13 +1038,13 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 break;
             case ItemSwapPos.DragPassiveInventorySlotPassive:
                 // Dragged item to equipped passive item slot - Stat Update
-                player.setPassiveItemEvent.CallRemovePassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
-                player.setPassiveItemEvent.CallEquipPassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallRemovePassiveItem(player, draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallEquipPassiveItem(player, targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
                 draggableItem.itemGeneric.itemSlotStatus = ItemSlotStatus.None;
 
                 // Target item to inventory slot - Stat Update
-                player.setPassiveItemEvent.CallRemovePassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
-                player.setPassiveItemEvent.CallEquipPassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallRemovePassiveItem(player, targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallEquipPassiveItem(player, draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
                 targetItem.itemGeneric.itemSlotStatus = ItemSlotStatus.Inventory;
 
                 // Inventory update
@@ -1060,13 +1060,13 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
             case ItemSwapPos.DragPassiveSlotPassiveInventory:
                 // Dragged item to inventory slot - Stat Update
-                player.setPassiveItemEvent.CallRemovePassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
-                player.setPassiveItemEvent.CallEquipPassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallRemovePassiveItem(player, targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallEquipPassiveItem(player, draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
                 draggableItem.itemGeneric.itemSlotStatus = ItemSlotStatus.Inventory;
 
                 // Target item to equipped passive item slot - Stat Update
-                player.setPassiveItemEvent.CallRemovePassiveItem(draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
-                player.setPassiveItemEvent.CallEquipPassiveItem(targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallRemovePassiveItem(player, draggablePassiveItem, draggablePassiveItem.passiveItemDetails.passiveItemSlotName, true);
+                player.setPassiveItemEvent.CallEquipPassiveItem(player, targetPassiveItem, targetPassiveItem.passiveItemDetails.passiveItemSlotName, true);
                 targetItem.itemGeneric.itemSlotStatus = ItemSlotStatus.None;
 
                 // Inventory update
@@ -1180,28 +1180,28 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 break;
             case ItemSwapPos.DragMainSlotMain:
                 // Put current slots child to draggable item slot
-                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = targetWeapon;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet - 1][0] = targetWeapon;
 
                 // Put draggable item to current slot
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
-                targetWeapon.weaponBelongingToWhichMainHandSet = draggableItemWeapon.weaponBelongingToWhichMainHandSet;
+                targetWeapon.weaponStats.weaponBelongingToWhichMainHandSet = draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet;
                 targetWeapon.itemSlotStatus = ItemSlotStatus.MainHand;
-                draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
                 draggableItemWeapon.itemSlotStatus = ItemSlotStatus.MainHand;
                 player.playerControl.SetWeaponSetByIndex(true, false);
                 StaticEventHandler.CallWeaponSwitchedEventForBook();
                 break;
             case ItemSwapPos.DragMainSlotOff:
                 // Put current slots child to draggable item slot
-                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichMainHandSet - 1][0] = targetWeapon;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet - 1][0] = targetWeapon;
 
                 // Put draggable item to current slot
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
-                targetWeapon.weaponBelongingToWhichOffHandSet = 0;
-                targetWeapon.weaponBelongingToWhichMainHandSet = draggableItemWeapon.weaponBelongingToWhichMainHandSet;
+                targetWeapon.weaponStats.weaponBelongingToWhichOffHandSet = 0;
+                targetWeapon.weaponStats.weaponBelongingToWhichMainHandSet = draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet;
                 targetWeapon.itemSlotStatus = ItemSlotStatus.MainHand;
-                draggableItemWeapon.weaponBelongingToWhichMainHandSet = 0;
-                draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet = 0;
+                draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
                 draggableItemWeapon.itemSlotStatus = ItemSlotStatus.OffHand;
 
                 if (draggableItem.transactionOnTheSameSet)
@@ -1215,15 +1215,15 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 break;
             case ItemSwapPos.DragOffSlotMain:
                 // Put current slots child to draggable item slot
-                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = targetWeapon;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet - 1][1] = targetWeapon;
 
                 // Put draggable item to current slot
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = draggableItemWeapon;
-                targetWeapon.weaponBelongingToWhichMainHandSet = 0;
-                targetWeapon.weaponBelongingToWhichOffHandSet = draggableItemWeapon.weaponBelongingToWhichOffHandSet;
+                targetWeapon.weaponStats.weaponBelongingToWhichMainHandSet = 0;
+                targetWeapon.weaponStats.weaponBelongingToWhichOffHandSet = draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet;
                 targetWeapon.itemSlotStatus = ItemSlotStatus.OffHand;
-                draggableItemWeapon.weaponBelongingToWhichOffHandSet = 0;
-                draggableItemWeapon.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
+                draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet = 0;
+                draggableItemWeapon.weaponStats.weaponBelongingToWhichMainHandSet = player.currentWeaponSlotSetIndex;
                 draggableItemWeapon.itemSlotStatus = ItemSlotStatus.MainHand;
 
                 if (draggableItem.transactionOnTheSameSet)
@@ -1238,12 +1238,12 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 break;
             case ItemSwapPos.DragOffSlotOff:
                 // Put current slots child to draggable item slot
-                player.weaponSlotSetArray[draggableItemWeapon.weaponBelongingToWhichOffHandSet - 1][1] = targetWeapon;
+                player.weaponSlotSetArray[draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet - 1][1] = targetWeapon;
 
                 // Put draggable item to current slot
                 player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = draggableItemWeapon;
-                targetWeapon.weaponBelongingToWhichOffHandSet = draggableItemWeapon.weaponBelongingToWhichOffHandSet;
-                draggableItemWeapon.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
+                targetWeapon.weaponStats.weaponBelongingToWhichOffHandSet = draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet;
+                draggableItemWeapon.weaponStats.weaponBelongingToWhichOffHandSet = player.currentWeaponSlotSetIndex;
                 draggableItemWeapon.itemSlotStatus = ItemSlotStatus.OffHand;
                 targetWeapon.itemSlotStatus = ItemSlotStatus.OffHand;
                 player.playerControl.SetWeaponSetByIndex(true, false);
@@ -1271,12 +1271,12 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     void UpdateWeaponSlotStatus(Weapon weapon, int setIndex, ItemSlotStatus status)
     {
         weapon.itemSlotStatus = status;
-        if (status == ItemSlotStatus.MainHand) weapon.weaponBelongingToWhichMainHandSet = setIndex;
-        else if (status == ItemSlotStatus.OffHand) weapon.weaponBelongingToWhichOffHandSet = setIndex;
+        if (status == ItemSlotStatus.MainHand) weapon.weaponStats.weaponBelongingToWhichMainHandSet = setIndex;
+        else if (status == ItemSlotStatus.OffHand) weapon.weaponStats.weaponBelongingToWhichOffHandSet = setIndex;
         else
         {
-            weapon.weaponBelongingToWhichMainHandSet = 0;
-            weapon.weaponBelongingToWhichOffHandSet = 0;
+            weapon.weaponStats.weaponBelongingToWhichMainHandSet = 0;
+            weapon.weaponStats.weaponBelongingToWhichOffHandSet = 0;
         }
     }
 
@@ -1430,6 +1430,10 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
         ItemGeneric item = draggableItem.itemGeneric;
 
+        // Generate seed
+        int seed = Random.Range(int.MinValue, int.MaxValue);
+        WartheonRNG rng = new WartheonRNG(seed);
+
         // Promote rarity
         Rarity next = item.rarity switch
         {
@@ -1448,15 +1452,15 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             if (upgWeapon.weaponDetails == null) return false;
 
             upgWeapon.rarity = next;
-            upgWeapon.baseTypeRolled = upgWeapon.weaponDetails.baseTypeModifier;
-            upgWeapon.baseUniqueRolled = upgWeapon.weaponDetails.baseUniqueModifier;
+            upgWeapon.weaponStats.baseTypeRolled = upgWeapon.weaponDetails.baseTypeModifier;
+            upgWeapon.weaponStats.baseUniqueRolled = upgWeapon.weaponDetails.baseUniqueModifier;
 
             // Add new rolls when crossing thresholds
             List<BoostType> pool = upgWeapon.weaponDetails.additionalModifierPoolForType;
 
             if (pool != null && pool.Count > 0)
             {
-                if (next >= Rarity.Enchanted && upgWeapon.enchantedBoostType == BoostType.None)
+                if (next >= Rarity.Enchanted && upgWeapon.weaponStats.enchantedBoostType == BoostType.None)
                 {
                     BoostType rolled = RollOne(pool, new HashSet<BoostType>
                 {
@@ -1464,20 +1468,20 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                     upgWeapon.weaponDetails.baseTypeModifier
 
                 });
-                    upgWeapon.enchantedBoostType = rolled;
-                    WeaponDropGenerator.SetWeaponModifier(ref upgWeapon, rolled, upgWeapon.weaponDetails);
+                    upgWeapon.weaponStats.enchantedBoostType = rolled;
+                    WeaponDropGenerator.SetWeaponModifier(ref upgWeapon, rolled, upgWeapon.weaponDetails, rng);
                     //ApplyWeaponBoost(upgWeapon, rolled, upgWeapon.weaponDetails);
                 }
 
-                if (next >= Rarity.Mythic && upgWeapon.mythicBoostType == BoostType.None)
+                if (next >= Rarity.Mythic && upgWeapon.weaponStats.mythicBoostType == BoostType.None)
                 {
                     BoostType rolled = RollOne(pool, new HashSet<BoostType> {
                     upgWeapon.weaponDetails.baseUniqueModifier,
                     upgWeapon.weaponDetails.baseTypeModifier,
-                    upgWeapon.enchantedBoostType
+                    upgWeapon.weaponStats.enchantedBoostType
                 });
-                    upgWeapon.mythicBoostType = rolled;
-                    WeaponDropGenerator.SetWeaponModifier(ref upgWeapon, rolled, upgWeapon.weaponDetails);
+                    upgWeapon.weaponStats.mythicBoostType = rolled;
+                    WeaponDropGenerator.SetWeaponModifier(ref upgWeapon, rolled, upgWeapon.weaponDetails, rng);
                     //ApplyWeaponBoost(upgWeapon, rolled, upgWeapon.weaponDetails);
                 }
             }
@@ -1490,25 +1494,25 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
             if (upgPassive.passiveItemDetails == null) return false;
 
             upgPassive.rarity = next;
-            upgPassive.baseUniqueRolled = upgPassive.passiveItemDetails.baseUniqueModifier;
+            upgPassive.passiveStats.baseUniqueRolled = upgPassive.passiveItemDetails.baseUniqueModifier;
 
             List<BoostType> pool = upgPassive.passiveItemDetails.additionalModifierPoolForType;
 
             if (pool != null && pool.Count > 0)
             {
-                if (next >= Rarity.Enchanted && upgPassive.enchantedBoostType == BoostType.None)
+                if (next >= Rarity.Enchanted && upgPassive.passiveStats.enchantedBoostType == BoostType.None)
                 {
                     BoostType rolled = RollOne(pool, new HashSet<BoostType> { upgPassive.passiveItemDetails.baseUniqueModifier });
-                    upgPassive.enchantedBoostType = rolled;
-                    PassiveDropGenerator.SetPassiveItemModifier(ref upgPassive, rolled, upgPassive.passiveItemDetails);
+                    upgPassive.passiveStats.enchantedBoostType = rolled;
+                    PassiveDropGenerator.SetPassiveItemModifier(ref upgPassive, rolled, upgPassive.passiveItemDetails, rng);
                     //ApplyPassiveBoost(upgPassive, rolled);
                 }
 
-                if (next >= Rarity.Mythic && upgPassive.mythicBoostType == BoostType.None)
+                if (next >= Rarity.Mythic && upgPassive.passiveStats.mythicBoostType == BoostType.None)
                 {
-                    BoostType rolled = RollOne(pool, new HashSet<BoostType> { upgPassive.passiveItemDetails.baseUniqueModifier, upgPassive.enchantedBoostType });
-                    upgPassive.mythicBoostType = rolled;
-                    PassiveDropGenerator.SetPassiveItemModifier(ref upgPassive, rolled, upgPassive.passiveItemDetails);
+                    BoostType rolled = RollOne(pool, new HashSet<BoostType> { upgPassive.passiveItemDetails.baseUniqueModifier, upgPassive.passiveStats.enchantedBoostType });
+                    upgPassive.passiveStats.mythicBoostType = rolled;
+                    PassiveDropGenerator.SetPassiveItemModifier(ref upgPassive, rolled, upgPassive.passiveItemDetails, rng);
                     //ApplyPassiveBoost(upgPassive, rolled);
                 }
             }
@@ -1608,93 +1612,93 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         {
             case BoostType.AttackCooldown:
                 rng2 = Random.Range(0.05f, 0.12f);
-                weapon.attackCooldownModifier = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.attackCooldownModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackDamage:
                 // Affect PHYSICAL slice
                 rng2 = Random.Range(1, 16);
-                weapon.physicalAttackDamageIncrease = Mathf.RoundToInt(rng2);
+                weapon.weaponStats.physicalAttackDamageIncrease = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.AttackRating:
-                weapon.attackRatingIncrease = (float)Math.Round(rng - 1, 2);
+                weapon.weaponStats.attackRatingIncrease = (float)Math.Round(rng - 1, 2);
                 break;
             case BoostType.MagicDamage:
                 // Affect MAGIC slice
                 rng2 = Random.Range(1, 11);
-                weapon.magicAttackDamageIncrease = Mathf.RoundToInt(rng2);
+                weapon.weaponStats.magicAttackDamageIncrease = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.CritChance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.criticalHitChanceIncrease = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.criticalHitChanceIncrease = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.CritDamage:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.criticalHitDamageIncrease = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.criticalHitDamageIncrease = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.LifeSteal:
                 rng2 = Random.Range(1, 11);
-                weapon.lifeStealAmount = Mathf.RoundToInt(rng2);
+                weapon.weaponStats.lifeStealAmount = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.BlockChance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.blockChanceIncrease = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.blockChanceIncrease = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.DodgeChance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.dodgeChanceIncrease = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.dodgeChanceIncrease = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.HealthIncrease:
                 rng2 = Random.Range(-1f, 1f);
-                weapon.increasedMaxHealth = Mathf.RoundToInt(100 * rng * (1 + rng2));
+                weapon.weaponStats.increasedMaxHealth = Mathf.RoundToInt(100 * rng * (1 + rng2));
                 break;
             case BoostType.ManaIncrease:
                 rng2 = Random.Range(-1f, 1f);
-                weapon.increasedMaxMana = Mathf.RoundToInt(100 * rng * (1 + rng2));
+                weapon.weaponStats.increasedMaxMana = Mathf.RoundToInt(100 * rng * (1 + rng2));
                 break;
             case BoostType.StatusResistance:
                 rng2 = Random.Range(0.1f, 0.25f);
-                weapon.statusResistanceModifier = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.statusResistanceModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackVsLowHealthEnemies:
                 rng2 = Random.Range(1, 11);
-                weapon.damageVsLowHealthEnemies = Mathf.RoundToInt(rng2);
+                weapon.weaponStats.damageVsLowHealthEnemies = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.CritResistance:
                 rng2 = Random.Range(0.1f, 0.25f);
-                weapon.criticalResistanceModifier = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.criticalResistanceModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.ArmorIncrease:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.armorIncrease = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.armorIncrease = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.MagicResistance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                weapon.magicResistance = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.magicResistance = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.MoveSpeed:
                 rng2 = Random.Range(0.5f, 2f);
-                weapon.speedIncreaseModifier = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.speedIncreaseModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.DamageReduction:
                 rng2 = Random.Range(0.05f, 0.15f);
-                weapon.damageReductionRate = Mathf.Round(rng2 * 100f) / 100f;
+                weapon.weaponStats.damageReductionRate = Mathf.Round(rng2 * 100f) / 100f;
                 break;
             case BoostType.ArmorPenetration:
                 rng2 = Random.Range(0.05f, 0.15f);
-                weapon.armorPenetration = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.armorPenetration = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackRange:
                 rng2 = Random.Range(0.05f, 0.30f);
                 if (weaponDetails.weaponCurrentProjectile != null)
-                    weapon.attackRange = Mathf.Round(weaponDetails.weaponCurrentProjectile.projectileRange * rng2 * 100f) / 100f;
+                    weapon.weaponStats.attackRange = Mathf.Round(weaponDetails.weaponCurrentProjectile.projectileRange * rng2 * 100f) / 100f;
                 break;
             case BoostType.SkillCooldown:
                 rng2 = Random.Range(0.05f, 0.13f);
-                weapon.skillCooldown = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.skillCooldown = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.SkillDuration:
                 rng2 = Random.Range(0.05f, 0.4f);
-                weapon.skillDuration = (float)Math.Round(rng2, 2);
+                weapon.weaponStats.skillDuration = (float)Math.Round(rng2, 2);
                 break;
 
             default: 
@@ -1711,88 +1715,88 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         {
             case BoostType.AttackCooldown:
                 rng2 = Random.Range(0.05f, 0.12f);
-                passiveItem.attackCooldown = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.attackCooldown = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackDamage:
                 // Affect PHYSICAL slice
                 rng2 = Random.Range(1, 16);
-                passiveItem.physicalAttackDamageIncrease = Mathf.RoundToInt(rng2);
+                passiveItem.passiveStats.physicalAttackDamageIncrease = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.AttackRating:
-                passiveItem.attackRating = (float)Math.Round(rng - 1, 2);
+                passiveItem.passiveStats.attackRating = (float)Math.Round(rng - 1, 2);
                 break;
             case BoostType.MagicDamage:
                 // Affect MAGIC slice
                 rng2 = Random.Range(1, 16);
-                passiveItem.magicAttackDamageIncrease = Mathf.RoundToInt(rng2);
+                passiveItem.passiveStats.magicAttackDamageIncrease = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.CritChance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                passiveItem.criticalHitChance = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.criticalHitChance = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.LifeSteal:
                 rng2 = Random.Range(1, 8);
-                passiveItem.lifeStealAmount = Mathf.RoundToInt(rng2);
+                passiveItem.passiveStats.lifeStealAmount = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.CritDamage:
                 rng2 = Random.Range(0.05f, 0.25f);
-                passiveItem.criticalHitDamage = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.criticalHitDamage = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.BlockChance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                passiveItem.blockChance = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.blockChance = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.DodgeChance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                passiveItem.dodgeChance = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.dodgeChance = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.HealthIncrease:
                 rng2 = Random.Range(-1f, 1f);
-                passiveItem.increasedMaxHealth = Mathf.RoundToInt(100 * rng * (1 + rng2));
+                passiveItem.passiveStats.increasedMaxHealth = Mathf.RoundToInt(100 * rng * (1 + rng2));
                 break;
             case BoostType.ManaIncrease:
                 rng2 = Random.Range(-1f, 1f);
-                passiveItem.increasedMaxMana = Mathf.RoundToInt(100 * rng * (1 + rng2));
+                passiveItem.passiveStats.increasedMaxMana = Mathf.RoundToInt(100 * rng * (1 + rng2));
                 break;
             case BoostType.StatusResistance:
                 rng2 = Random.Range(0.1f, 0.25f);
-                passiveItem.statusResistanceModifier = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.statusResistanceModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.AttackVsLowHealthEnemies:
                 rng2 = Random.Range(1, 8);
-                passiveItem.damageVsLowHealthEnemies = Mathf.RoundToInt(rng2);
+                passiveItem.passiveStats.damageVsLowHealthEnemies = Mathf.RoundToInt(rng2);
                 break;
             case BoostType.CritResistance:
                 rng2 = Random.Range(0.1f, 0.25f);
-                passiveItem.criticalResistanceModifier = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.criticalResistanceModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.ArmorIncrease:
                 rng2 = Random.Range(0.05f, 0.25f);
-                passiveItem.armorIncrease = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.armorIncrease = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.MagicResistance:
                 rng2 = Random.Range(0.05f, 0.25f);
-                passiveItem.magicResistanceModifier = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.magicResistanceModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.MoveSpeed:
                 rng2 = Random.Range(0.5f, 2f);
-                passiveItem.speedIncreaseModifier = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.speedIncreaseModifier = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.DamageReduction:
                 rng2 = Random.Range(0.05f, 0.15f);
-                passiveItem.damageReductionRate = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.damageReductionRate = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.ArmorPenetration:
                 rng2 = Random.Range(0.05f, 0.15f);
-                passiveItem.armorPenetration = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.armorPenetration = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.SkillCooldown:
                 rng2 = Random.Range(0.05f, 0.13f);
-                passiveItem.skillCooldown = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.skillCooldown = (float)Math.Round(rng2, 2);
                 break;
             case BoostType.SkillDuration:
                 rng2 = Random.Range(0.05f, 0.4f);
-                passiveItem.skillDuration = (float)Math.Round(rng2, 2);
+                passiveItem.passiveStats.skillDuration = (float)Math.Round(rng2, 2);
                 break;
             default: 
                 break;
@@ -1858,81 +1862,81 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        bonusText.text = $"Attack Speed: + {weapon.attackCooldownModifier * 100}%";
+                        bonusText.text = $"Attack Speed: + {weapon.weaponStats.attackCooldownModifier * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        bonusText.text = "Phy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
+                        bonusText.text = "Phy. Attack Dmg.: + " + weapon.weaponStats.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        bonusText.text = $"Attack Rating: + {weapon.attackRatingIncrease * 100}";
+                        bonusText.text = $"Attack Rating: + {weapon.weaponStats.attackRatingIncrease * 100}";
                         break;
                     case BoostType.MagicDamage:
-                        bonusText.text = "Magic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
+                        bonusText.text = "Magic Attack Dmg.: + " + weapon.weaponStats.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        bonusText.text = $"Cr. Hit Chance: + {weapon.criticalHitChanceIncrease * 100}%";
+                        bonusText.text = $"Cr. Hit Chance: + {weapon.weaponStats.criticalHitChanceIncrease * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        bonusText.text = $"Cr. Hit Damage: + {weapon.criticalHitDamageIncrease * 100}%";
+                        bonusText.text = $"Cr. Hit Damage: + {weapon.weaponStats.criticalHitDamageIncrease * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        bonusText.text = $"Life Steal: + {weapon.lifeStealAmount}";
+                        bonusText.text = $"Life Steal: + {weapon.weaponStats.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        bonusText.text = $"Block Chance: + {weapon.blockChanceIncrease * 100}%";
+                        bonusText.text = $"Block Chance: + {weapon.weaponStats.blockChanceIncrease * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        bonusText.text = $"Dodge Chance: + {weapon.dodgeChanceIncrease * 100}%";
+                        bonusText.text = $"Dodge Chance: + {weapon.weaponStats.dodgeChanceIncrease * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        bonusText.text = $"Health: + {weapon.increasedMaxHealth}";
+                        bonusText.text = $"Health: + {weapon.weaponStats.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        bonusText.text = $"Mana: + {weapon.increasedMaxMana}";
+                        bonusText.text = $"Mana: + {weapon.weaponStats.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        bonusText.text = $"Status Resistance: + {weapon.statusResistanceModifier * 100}%";
+                        bonusText.text = $"Status Resistance: + {weapon.weaponStats.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        bonusText.text = $"Damage vs Low Health: + {weapon.damageVsLowHealthEnemies}";
+                        bonusText.text = $"Damage vs Low Health: + {weapon.weaponStats.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text = $"Cr. Resistance: + {weapon.criticalResistanceModifier * 100}%";
+                        bonusText.text = $"Cr. Resistance: + {weapon.weaponStats.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        bonusText.text = $"Armor: + {weapon.armorIncrease * 100}%";
+                        bonusText.text = $"Armor: + {weapon.weaponStats.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        bonusText.text = $"Magic Resistance: + {weapon.magicResistance * 100}%";
+                        bonusText.text = $"Magic Resistance: + {weapon.weaponStats.magicResistance * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        bonusText.text = $"Move Speed: + {weapon.speedIncreaseModifier}";
+                        bonusText.text = $"Move Speed: + {weapon.weaponStats.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        bonusText.text = $"Damage Reduction: + {weapon.damageReductionRate * 100}%";
+                        bonusText.text = $"Damage Reduction: + {weapon.weaponStats.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        bonusText.text = $"Armor Penetration: + {weapon.armorPenetration * 100}%";
+                        bonusText.text = $"Armor Penetration: + {weapon.weaponStats.armorPenetration * 100}%";
                         break;
                     case BoostType.SkillCooldown:
-                        bonusText.text = $"Skill Cooldown: + {weapon.skillCooldown * 100}%";
+                        bonusText.text = $"Skill Cooldown: + {weapon.weaponStats.skillCooldown * 100}%";
                         break;
                     case BoostType.SkillDuration:
-                        bonusText.text = $"Skill Duration: + {weapon.skillDuration * 100}%";
+                        bonusText.text = $"Skill Duration: + {weapon.weaponStats.skillDuration * 100}%";
                         break;
                     case BoostType.StatusInflict:
-                        if (weapon.additionalPoisonChance > 0) bonusText.text = $"Poison Chance: + {weapon.additionalPoisonChance * 100}%";
-                        else if (weapon.additionalBleedChance > 0) bonusText.text = $"Bleed Chance: + {weapon.additionalBleedChance * 100}%";
-                        else if (weapon.additionalRootChance > 0) bonusText.text = $"Root Chance: + {weapon.additionalRootChance * 100}%";
-                        else if (weapon.additionalStunChance > 0) bonusText.text = $"Stun Chance: + {weapon.additionalStunChance * 100}%";
-                        else if (weapon.additionalCurseChance > 0) bonusText.text = $"Curse Chance: + {weapon.additionalCurseChance * 100}%";
-                        else if (weapon.additionalFearChance > 0) bonusText.text = $"Fear Chance: + {weapon.additionalFearChance * 100}%";
-                        else if (weapon.additionalRevealChance > 0) bonusText.text = $"Reveal Chance: + {weapon.additionalRevealChance * 100}%";
-                        else if (weapon.additionalParalyzeChance > 0) bonusText.text = $"Paralyze Chance: + {weapon.additionalParalyzeChance * 100}%";
-                        else if (weapon.additionalBurnChance > 0) bonusText.text = $"Burn Chance: + {weapon.additionalBurnChance * 100}%";
-                        else if (weapon.additionalFreezeChance > 0) bonusText.text = $"Freeze Chance: + {weapon.additionalFreezeChance * 100}%";
-                        else if (weapon.additionalBlindChance > 0) bonusText.text = $"Blind Chance: + {weapon.additionalBlindChance * 100}%";
-                        else if (weapon.additionalSlowChance > 0) bonusText.text = $"Slow Chance: + {weapon.additionalSlowChance * 100}%";
+                        if (weapon.weaponStats.additionalPoisonChance > 0) bonusText.text = $"Poison Chance: + {weapon.weaponStats.additionalPoisonChance * 100}%";
+                        else if (weapon.weaponStats.additionalBleedChance > 0) bonusText.text = $"Bleed Chance: + {weapon.weaponStats.additionalBleedChance * 100}%";
+                        else if (weapon.weaponStats.additionalRootChance > 0) bonusText.text = $"Root Chance: + {weapon.weaponStats.additionalRootChance * 100}%";
+                        else if (weapon.weaponStats.additionalStunChance > 0) bonusText.text = $"Stun Chance: + {weapon.weaponStats.additionalStunChance * 100}%";
+                        else if (weapon.weaponStats.additionalCurseChance > 0) bonusText.text = $"Curse Chance: + {weapon.weaponStats.additionalCurseChance * 100}%";
+                        else if (weapon.weaponStats.additionalFearChance > 0) bonusText.text = $"Fear Chance: + {weapon.weaponStats.additionalFearChance * 100}%";
+                        else if (weapon.weaponStats.additionalRevealChance > 0) bonusText.text = $"Reveal Chance: + {weapon.weaponStats.additionalRevealChance * 100}%";
+                        else if (weapon.weaponStats.additionalParalyzeChance > 0) bonusText.text = $"Paralyze Chance: + {weapon.weaponStats.additionalParalyzeChance * 100}%";
+                        else if (weapon.weaponStats.additionalBurnChance > 0) bonusText.text = $"Burn Chance: + {weapon.weaponStats.additionalBurnChance * 100}%";
+                        else if (weapon.weaponStats.additionalFreezeChance > 0) bonusText.text = $"Freeze Chance: + {weapon.weaponStats.additionalFreezeChance * 100}%";
+                        else if (weapon.weaponStats.additionalBlindChance > 0) bonusText.text = $"Blind Chance: + {weapon.weaponStats.additionalBlindChance * 100}%";
+                        else if (weapon.weaponStats.additionalSlowChance > 0) bonusText.text = $"Slow Chance: + {weapon.weaponStats.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;
@@ -1943,81 +1947,81 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        bonusText.text += $"\nAttack Speed: + {weapon.attackCooldownModifier * 100}%";
+                        bonusText.text += $"\nAttack Speed: + {weapon.weaponStats.attackCooldownModifier * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        bonusText.text += "\nPhy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
+                        bonusText.text += "\nPhy. Attack Dmg.: + " + weapon.weaponStats.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        bonusText.text += $"\nAttack Rating: + {weapon.attackRatingIncrease * 100}";
+                        bonusText.text += $"\nAttack Rating: + {weapon.weaponStats.attackRatingIncrease * 100}";
                         break;
                     case BoostType.MagicDamage:
-                        bonusText.text += "\nMagic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
+                        bonusText.text += "\nMagic Attack Dmg.: + " + weapon.weaponStats.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        bonusText.text += $"\nCr. Hit Chance: + {weapon.criticalHitChanceIncrease * 100}%";
+                        bonusText.text += $"\nCr. Hit Chance: + {weapon.weaponStats.criticalHitChanceIncrease * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        bonusText.text += $"\nCr. Hit Damage: + {weapon.criticalHitDamageIncrease * 100}%";
+                        bonusText.text += $"\nCr. Hit Damage: + {weapon.weaponStats.criticalHitDamageIncrease * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        bonusText.text += $"\nLife Steal: + {weapon.lifeStealAmount}";
+                        bonusText.text += $"\nLife Steal: + {weapon.weaponStats.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        bonusText.text += $"\nBlock Chance: + {weapon.blockChanceIncrease * 100}%";
+                        bonusText.text += $"\nBlock Chance: + {weapon.weaponStats.blockChanceIncrease * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        bonusText.text += $"\nDodge Chance: + {weapon.dodgeChanceIncrease * 100}%";
+                        bonusText.text += $"\nDodge Chance: + {weapon.weaponStats.dodgeChanceIncrease * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        bonusText.text += $"\nHealth: + {weapon.increasedMaxHealth}";
+                        bonusText.text += $"\nHealth: + {weapon.weaponStats.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        bonusText.text += $"\nMana: + {weapon.increasedMaxMana}";
+                        bonusText.text += $"\nMana: + {weapon.weaponStats.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        bonusText.text += $"\nStatus Resistance: + {weapon.statusResistanceModifier * 100}%";
+                        bonusText.text += $"\nStatus Resistance: + {weapon.weaponStats.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        bonusText.text += $"\nDamage vs Low Health: + {weapon.damageVsLowHealthEnemies}";
+                        bonusText.text += $"\nDamage vs Low Health: + {weapon.weaponStats.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text += $"\nCr. Resistance: + {weapon.criticalResistanceModifier * 100}%";
+                        bonusText.text += $"\nCr. Resistance: + {weapon.weaponStats.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        bonusText.text += $"\nArmor: + {weapon.armorIncrease * 100}%";
+                        bonusText.text += $"\nArmor: + {weapon.weaponStats.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        bonusText.text += $"\nMagic Resistance: + {weapon.magicResistance * 100}%";
+                        bonusText.text += $"\nMagic Resistance: + {weapon.weaponStats.magicResistance * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        bonusText.text += $"\nMove Speed: + {weapon.speedIncreaseModifier}";
+                        bonusText.text += $"\nMove Speed: + {weapon.weaponStats.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        bonusText.text += $"\nDamage Reduction: + {weapon.damageReductionRate * 100}%";
+                        bonusText.text += $"\nDamage Reduction: + {weapon.weaponStats.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        bonusText.text += $"\nArmor Penetration: + {weapon.armorPenetration * 100}%";
+                        bonusText.text += $"\nArmor Penetration: + {weapon.weaponStats.armorPenetration * 100}%";
                         break;
                     case BoostType.SkillCooldown:
-                        bonusText.text += $"\nSkill Cooldown: + {weapon.skillCooldown * 100}%";
+                        bonusText.text += $"\nSkill Cooldown: + {weapon.weaponStats.skillCooldown * 100}%";
                         break;
                     case BoostType.SkillDuration:
-                        bonusText.text += $"\nSkill Duration: + {weapon.skillDuration * 100}%";
+                        bonusText.text += $"\nSkill Duration: + {weapon.weaponStats.skillDuration * 100}%";
                         break;
                     case BoostType.StatusInflict:
-                        if (weapon.additionalPoisonChance > 0) bonusText.text += $"\nPoison Chance: + {weapon.additionalPoisonChance * 100}%";
-                        else if (weapon.additionalBleedChance > 0) bonusText.text += $"\nBleed Chance: + {weapon.additionalBleedChance * 100}%";
-                        else if (weapon.additionalRootChance > 0) bonusText.text += $"\nRoot Chance: + {weapon.additionalRootChance * 100}%";
-                        else if (weapon.additionalStunChance > 0) bonusText.text += $"\nStun Chance: + {weapon.additionalStunChance * 100}%";
-                        else if (weapon.additionalCurseChance > 0) bonusText.text += $"\nCurse Chance: + {weapon.additionalCurseChance * 100}%";
-                        else if (weapon.additionalFearChance > 0) bonusText.text += $"\nFear Chance: + {weapon.additionalFearChance * 100}%";
-                        else if (weapon.additionalRevealChance > 0) bonusText.text += $"\nReveal Chance: + {weapon.additionalRevealChance * 100}%";
-                        else if (weapon.additionalParalyzeChance > 0) bonusText.text += $"\nParalyze Chance: + {weapon.additionalParalyzeChance * 100}%";
-                        else if (weapon.additionalBurnChance > 0) bonusText.text += $"\nBurn Chance: + {weapon.additionalBurnChance * 100}%";
-                        else if (weapon.additionalFreezeChance > 0) bonusText.text += $"\nFreeze Chance: + {weapon.additionalFreezeChance * 100}%";
-                        else if (weapon.additionalBlindChance > 0) bonusText.text += $"\nBlind Chance: + {weapon.additionalBlindChance * 100}%";
-                        else if (weapon.additionalSlowChance > 0) bonusText.text += $"\nSlow Chance: + {weapon.additionalSlowChance * 100}%";
+                        if (weapon.weaponStats.additionalPoisonChance > 0) bonusText.text += $"\nPoison Chance: + {weapon.weaponStats.additionalPoisonChance * 100}%";
+                        else if (weapon.weaponStats.additionalBleedChance > 0) bonusText.text += $"\nBleed Chance: + {weapon.weaponStats.additionalBleedChance * 100}%";
+                        else if (weapon.weaponStats.additionalRootChance > 0) bonusText.text += $"\nRoot Chance: + {weapon.weaponStats.additionalRootChance * 100}%";
+                        else if (weapon.weaponStats.additionalStunChance > 0) bonusText.text += $"\nStun Chance: + {weapon.weaponStats.additionalStunChance * 100}%";
+                        else if (weapon.weaponStats.additionalCurseChance > 0) bonusText.text += $"\nCurse Chance: + {weapon.weaponStats.additionalCurseChance * 100}%";
+                        else if (weapon.weaponStats.additionalFearChance > 0) bonusText.text += $"\nFear Chance: + {weapon.weaponStats.additionalFearChance * 100}%";
+                        else if (weapon.weaponStats.additionalRevealChance > 0) bonusText.text += $"\nReveal Chance: + {weapon.weaponStats.additionalRevealChance * 100}%";
+                        else if (weapon.weaponStats.additionalParalyzeChance > 0) bonusText.text += $"\nParalyze Chance: + {weapon.weaponStats.additionalParalyzeChance * 100}%";
+                        else if (weapon.weaponStats.additionalBurnChance > 0) bonusText.text += $"\nBurn Chance: + {weapon.weaponStats.additionalBurnChance * 100}%";
+                        else if (weapon.weaponStats.additionalFreezeChance > 0) bonusText.text += $"\nFreeze Chance: + {weapon.weaponStats.additionalFreezeChance * 100}%";
+                        else if (weapon.weaponStats.additionalBlindChance > 0) bonusText.text += $"\nBlind Chance: + {weapon.weaponStats.additionalBlindChance * 100}%";
+                        else if (weapon.weaponStats.additionalSlowChance > 0) bonusText.text += $"\nSlow Chance: + {weapon.weaponStats.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;
@@ -2036,81 +2040,81 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        bonusText.text = $"Attack Speed: + {passiveItem.attackCooldown * 100}%";
+                        bonusText.text = $"Attack Speed: + {passiveItem.passiveStats.attackCooldown * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        bonusText.text = "Phy. Attack Dmg.: + " + passiveItem.physicalAttackDamageIncrease;
+                        bonusText.text = "Phy. Attack Dmg.: + " + passiveItem.passiveStats.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        bonusText.text = $"Attack Rating: + {passiveItem.attackRating * 100}";
+                        bonusText.text = $"Attack Rating: + {passiveItem.passiveStats.attackRating * 100}";
                         break;
                     case BoostType.MagicDamage:
-                        bonusText.text = "Magic Attack Dmg.: + " + passiveItem.magicAttackDamageIncrease;
+                        bonusText.text = "Magic Attack Dmg.: + " + passiveItem.passiveStats.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        bonusText.text = $"Cr. Hit Chance: + {passiveItem.criticalHitChance * 100}%";
+                        bonusText.text = $"Cr. Hit Chance: + {passiveItem.passiveStats.criticalHitChance * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        bonusText.text = $"Cr. Hit Damage: + {passiveItem.criticalHitDamage * 100}%";
+                        bonusText.text = $"Cr. Hit Damage: + {passiveItem.passiveStats.criticalHitDamage * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        bonusText.text = $"Life Steal: + {passiveItem.lifeStealAmount}";
+                        bonusText.text = $"Life Steal: + {passiveItem.passiveStats.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        bonusText.text = $"Block Chance: + {passiveItem.blockChance * 100}%";
+                        bonusText.text = $"Block Chance: + {passiveItem.passiveStats.blockChance * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        bonusText.text = $"Dodge Chance: + {passiveItem.dodgeChance * 100}%";
+                        bonusText.text = $"Dodge Chance: + {passiveItem.passiveStats.dodgeChance * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        bonusText.text = $"Health: + {passiveItem.increasedMaxHealth}";
+                        bonusText.text = $"Health: + {passiveItem.passiveStats.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        bonusText.text = $"Mana: + {passiveItem.increasedMaxMana}";
+                        bonusText.text = $"Mana: + {passiveItem.passiveStats.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        bonusText.text = $"Status Resistance: + {passiveItem.statusResistanceModifier * 100}%";
+                        bonusText.text = $"Status Resistance: + {passiveItem.passiveStats.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        bonusText.text = $"Damage vs Low Health: + {passiveItem.damageVsLowHealthEnemies}";
+                        bonusText.text = $"Damage vs Low Health: + {passiveItem.passiveStats.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text = $"Cr. Resistance: + {passiveItem.criticalResistanceModifier * 100}%";
+                        bonusText.text = $"Cr. Resistance: + {passiveItem.passiveStats.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        bonusText.text = $"Armor: + {passiveItem.armorIncrease * 100}%";
+                        bonusText.text = $"Armor: + {passiveItem.passiveStats.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        bonusText.text = $"Magic Resistance: + {passiveItem.magicResistanceModifier * 100}%";
+                        bonusText.text = $"Magic Resistance: + {passiveItem.passiveStats.magicResistanceModifier * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        bonusText.text = $"Move Speed: + {passiveItem.speedIncreaseModifier}";
+                        bonusText.text = $"Move Speed: + {passiveItem.passiveStats.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        bonusText.text = $"Damage Reduction: + {passiveItem.damageReductionRate * 100}%";
+                        bonusText.text = $"Damage Reduction: + {passiveItem.passiveStats.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        bonusText.text = $"Armor Penetration: + {passiveItem.armorPenetration * 100}%";
+                        bonusText.text = $"Armor Penetration: + {passiveItem.passiveStats.armorPenetration * 100}%";
                         break;
                     case BoostType.SkillCooldown:
-                        bonusText.text += $"\nSkill Cooldown: + {passiveItem.skillCooldown * 100}%";
+                        bonusText.text += $"\nSkill Cooldown: + {passiveItem.passiveStats.skillCooldown * 100}%";
                         break;
                     case BoostType.SkillDuration:
-                        bonusText.text += $"\nSkill Duration: + {passiveItem.skillDuration * 100}%";
+                        bonusText.text += $"\nSkill Duration: + {passiveItem.passiveStats.skillDuration * 100}%";
                         break;
                     case BoostType.StatusInflict:
-                        if (passiveItem.additionalPoisonChance > 0) bonusText.text = $"Poison Chance: + {passiveItem.additionalPoisonChance * 100}%";
-                        else if (passiveItem.additionalBleedChance > 0) bonusText.text = $"Bleed Chance: + {passiveItem.additionalBleedChance * 100}%";
-                        else if (passiveItem.additionalRootChance > 0) bonusText.text = $"Root Chance: + {passiveItem.additionalRootChance * 100}%";
-                        else if (passiveItem.additionalStunChance > 0) bonusText.text = $"Stun Chance: + {passiveItem.additionalStunChance * 100}%";
-                        else if (passiveItem.additionalCurseChance > 0) bonusText.text = $"Curse Chance: + {passiveItem.additionalCurseChance * 100}%";
-                        else if (passiveItem.additionalFearChance > 0) bonusText.text = $"Fear Chance: + {passiveItem.additionalFearChance * 100}%";
-                        else if (passiveItem.additionalRevealChance > 0) bonusText.text = $"Reveal Chance: + {passiveItem.additionalRevealChance * 100}%";
-                        else if (passiveItem.additionalParalyzeChance > 0) bonusText.text = $"Paralyze Chance: + {passiveItem.additionalParalyzeChance * 100}%";
-                        else if (passiveItem.additionalBurnChance > 0) bonusText.text = $"Burn Chance: + {passiveItem.additionalBurnChance * 100}%";
-                        else if (passiveItem.additionalFreezeChance > 0) bonusText.text = $"Freeze Chance: + {passiveItem.additionalFreezeChance * 100}%";
-                        else if (passiveItem.additionalBlindChance > 0) bonusText.text = $"Blind Chance: + {passiveItem.additionalBlindChance * 100}%";
-                        else if (passiveItem.additionalSlowChance > 0) bonusText.text = $"Slow Chance: + {passiveItem.additionalSlowChance * 100}%";
+                        if (passiveItem.passiveStats.additionalPoisonChance > 0) bonusText.text = $"Poison Chance: + {passiveItem.passiveStats.additionalPoisonChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBleedChance > 0) bonusText.text = $"Bleed Chance: + {passiveItem.passiveStats.additionalBleedChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalRootChance > 0) bonusText.text = $"Root Chance: + {passiveItem.passiveStats.additionalRootChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalStunChance > 0) bonusText.text = $"Stun Chance: + {passiveItem.passiveStats.additionalStunChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalCurseChance > 0) bonusText.text = $"Curse Chance: + {passiveItem.passiveStats.additionalCurseChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalFearChance > 0) bonusText.text = $"Fear Chance: + {passiveItem.passiveStats.additionalFearChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalRevealChance > 0) bonusText.text = $"Reveal Chance: + {passiveItem.passiveStats.additionalRevealChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalParalyzeChance > 0) bonusText.text = $"Paralyze Chance: + {passiveItem.passiveStats.additionalParalyzeChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBurnChance > 0) bonusText.text = $"Burn Chance: + {passiveItem.passiveStats.additionalBurnChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalFreezeChance > 0) bonusText.text = $"Freeze Chance: + {passiveItem.passiveStats.additionalFreezeChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBlindChance > 0) bonusText.text = $"Blind Chance: + {passiveItem.passiveStats.additionalBlindChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalSlowChance > 0) bonusText.text = $"Slow Chance: + {passiveItem.passiveStats.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;
@@ -2121,81 +2125,81 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        bonusText.text += $"\nAttack Speed: + {passiveItem.attackCooldown * 100}%";
+                        bonusText.text += $"\nAttack Speed: + {passiveItem.passiveStats.attackCooldown * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        bonusText.text += "\nPhy. Attack Dmg.: + " + passiveItem.physicalAttackDamageIncrease;
+                        bonusText.text += "\nPhy. Attack Dmg.: + " + passiveItem.passiveStats.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        bonusText.text += $"\nAttack Rating: + {passiveItem.attackRating * 100}";
+                        bonusText.text += $"\nAttack Rating: + {passiveItem.passiveStats.attackRating * 100}";
                         break;
                     case BoostType.MagicDamage:
-                        bonusText.text += "\nMagic Attack Dmg.: + " + passiveItem.magicAttackDamageIncrease;
+                        bonusText.text += "\nMagic Attack Dmg.: + " + passiveItem.passiveStats.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        bonusText.text += $"\nCr. Hit Chance: + {passiveItem.criticalHitChance * 100}%";
+                        bonusText.text += $"\nCr. Hit Chance: + {passiveItem.passiveStats.criticalHitChance * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        bonusText.text += $"\nCr. Hit Damage: + {passiveItem.criticalHitDamage * 100}%";
+                        bonusText.text += $"\nCr. Hit Damage: + {passiveItem.passiveStats.criticalHitDamage * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        bonusText.text += $"\nLife Steal: + {passiveItem.lifeStealAmount}";
+                        bonusText.text += $"\nLife Steal: + {passiveItem.passiveStats.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        bonusText.text += $"\nBlock Chance: + {passiveItem.blockChance * 100}%";
+                        bonusText.text += $"\nBlock Chance: + {passiveItem.passiveStats.blockChance * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        bonusText.text += $"\nDodge Chance: + {passiveItem.dodgeChance * 100}%";
+                        bonusText.text += $"\nDodge Chance: + {passiveItem.passiveStats.dodgeChance * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        bonusText.text += $"\nHealth: + {passiveItem.increasedMaxHealth}";
+                        bonusText.text += $"\nHealth: + {passiveItem.passiveStats.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        bonusText.text += $"\nMana: + {passiveItem.increasedMaxMana}";
+                        bonusText.text += $"\nMana: + {passiveItem.passiveStats.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        bonusText.text += $"\nStatus Resistance: + {passiveItem.statusResistanceModifier * 100}%";
+                        bonusText.text += $"\nStatus Resistance: + {passiveItem.passiveStats.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        bonusText.text += $"\nDamage vs Low Health: + {passiveItem.damageVsLowHealthEnemies}";
+                        bonusText.text += $"\nDamage vs Low Health: + {passiveItem.passiveStats.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text += $"\nCr. Resistance: + {passiveItem.criticalResistanceModifier * 100}%";
+                        bonusText.text += $"\nCr. Resistance: + {passiveItem.passiveStats.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        bonusText.text += $"\nArmor: + {passiveItem.armorIncrease * 100}%";
+                        bonusText.text += $"\nArmor: + {passiveItem.passiveStats.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        bonusText.text += $"\nMagic Resistance: + {passiveItem.magicResistanceModifier * 100}%";
+                        bonusText.text += $"\nMagic Resistance: + {passiveItem.passiveStats.magicResistanceModifier * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        bonusText.text += $"\nMove Speed: + {passiveItem.speedIncreaseModifier}";
+                        bonusText.text += $"\nMove Speed: + {passiveItem.passiveStats.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        bonusText.text += $"\nDamage Reduction: + {passiveItem.damageReductionRate * 100}%";
+                        bonusText.text += $"\nDamage Reduction: + {passiveItem.passiveStats.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        bonusText.text += $"\nArmor Penetration: + {passiveItem.armorPenetration * 100}%";
+                        bonusText.text += $"\nArmor Penetration: + {passiveItem.passiveStats.armorPenetration * 100}%";
                         break;
                     case BoostType.SkillCooldown:
-                        bonusText.text += $"\nSkill Cooldown: + {passiveItem.skillCooldown * 100}%";
+                        bonusText.text += $"\nSkill Cooldown: + {passiveItem.passiveStats.skillCooldown * 100}%";
                         break;
                     case BoostType.SkillDuration:
-                        bonusText.text += $"\nSkill Duration: + {passiveItem.skillDuration * 100}%";
+                        bonusText.text += $"\nSkill Duration: + {passiveItem.passiveStats.skillDuration * 100}%";
                         break;
                     case BoostType.StatusInflict:
-                        if (passiveItem.additionalPoisonChance > 0) bonusText.text += $"\nPoison Chance: + {passiveItem.additionalPoisonChance * 100}%";
-                        else if (passiveItem.additionalBleedChance > 0) bonusText.text += $"\nBleed Chance: + {passiveItem.additionalBleedChance * 100}%";
-                        else if (passiveItem.additionalRootChance > 0) bonusText.text += $"\nRoot Chance: + {passiveItem.additionalRootChance * 100}%";
-                        else if (passiveItem.additionalStunChance > 0) bonusText.text += $"\nStun Chance: + {passiveItem.additionalStunChance * 100}%";
-                        else if (passiveItem.additionalCurseChance > 0) bonusText.text += $"\nCurse Chance: + {passiveItem.additionalCurseChance * 100}%";
-                        else if (passiveItem.additionalFearChance > 0) bonusText.text += $"\nFear Chance: + {passiveItem.additionalFearChance * 100}%";
-                        else if (passiveItem.additionalRevealChance > 0) bonusText.text += $"\nReveal Chance: + {passiveItem.additionalRevealChance * 100}%";
-                        else if (passiveItem.additionalParalyzeChance > 0) bonusText.text += $"\nParalyze Chance: + {passiveItem.additionalParalyzeChance * 100}%";
-                        else if (passiveItem.additionalBurnChance > 0) bonusText.text += $"\nBurn Chance: + {passiveItem.additionalBurnChance * 100}%";
-                        else if (passiveItem.additionalFreezeChance > 0) bonusText.text += $"\nFreeze Chance: + {passiveItem.additionalFreezeChance * 100}%";
-                        else if (passiveItem.additionalBlindChance > 0) bonusText.text += $"\nBlind Chance: + {passiveItem.additionalBlindChance * 100}%";
-                        else if (passiveItem.additionalSlowChance > 0) bonusText.text += $"\nSlow Chance: + {passiveItem.additionalSlowChance * 100}%";
+                        if (passiveItem.passiveStats.additionalPoisonChance > 0) bonusText.text += $"\nPoison Chance: + {passiveItem.passiveStats.additionalPoisonChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBleedChance > 0) bonusText.text += $"\nBleed Chance: + {passiveItem.passiveStats.additionalBleedChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalRootChance > 0) bonusText.text += $"\nRoot Chance: + {passiveItem.passiveStats.additionalRootChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalStunChance > 0) bonusText.text += $"\nStun Chance: + {passiveItem.passiveStats.additionalStunChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalCurseChance > 0) bonusText.text += $"\nCurse Chance: + {passiveItem.passiveStats.additionalCurseChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalFearChance > 0) bonusText.text += $"\nFear Chance: + {passiveItem.passiveStats.additionalFearChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalRevealChance > 0) bonusText.text += $"\nReveal Chance: + {passiveItem.passiveStats.additionalRevealChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalParalyzeChance > 0) bonusText.text += $"\nParalyze Chance: + {passiveItem.passiveStats.additionalParalyzeChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBurnChance > 0) bonusText.text += $"\nBurn Chance: + {passiveItem.passiveStats.additionalBurnChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalFreezeChance > 0) bonusText.text += $"\nFreeze Chance: + {passiveItem.passiveStats.additionalFreezeChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBlindChance > 0) bonusText.text += $"\nBlind Chance: + {passiveItem.passiveStats.additionalBlindChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalSlowChance > 0) bonusText.text += $"\nSlow Chance: + {passiveItem.passiveStats.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;

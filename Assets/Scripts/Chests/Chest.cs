@@ -19,8 +19,12 @@ public class Chest : MonoBehaviour, IUsable
     Animator animator;
     bool isEnabled = false;
 
-    GameObject chestItemGameObject;
-    DropItem chestItem;
+    GameObject dropItemGameObject;
+    DropItem dropItem;
+    DropItemNetwork dropItemNetwork;
+
+    WartheonRNG rng;
+    bool isMultiplayer = false;
 
     private void Awake()
     {
@@ -30,16 +34,17 @@ public class Chest : MonoBehaviour, IUsable
     /// <summary>
     /// Initialize Chest and either make it visible immediately or materialize it
     /// </summary>
-    public void Initialize(WeaponDetailsSO weaponDetails)
+    public void Initialize(WeaponDetailsSO weaponDetails, WartheonRNG rng)
     {
         this.weaponDetails = weaponDetails;
+        this.rng = rng;
         EnableChest();
     }
 
     /// <summary>
     /// Initialize overload for passive item
     /// </summary>
-    public void Initialize(PassiveItemDetailsSO passiveItemDetails)
+    public void Initialize(PassiveItemDetailsSO passiveItemDetails, WartheonRNG rng)
     {
         this.passiveItemDetails = passiveItemDetails;
         EnableChest();
@@ -67,7 +72,7 @@ public class Chest : MonoBehaviour, IUsable
                 if (GameManager.Instance.GetLocalPlayer().keyCount > 0)
                 {
                     OpenChest();
-                    StartCoroutine(MoveItemDown(chestItem.transform, 1.5f));
+                    StartCoroutine(MoveItemDown(dropItem.transform, 1.5f));
                 }
                 else
                 {
@@ -132,13 +137,13 @@ public class Chest : MonoBehaviour, IUsable
     private void InstantiateWeaponItem()
     {
         InstantiateItem();
-        chestItem.hasWeaponDrop = true;
-        chestItem.hasSecondaryPassiveDrop = false;
+        dropItem.hasWeaponDrop = true;
+        dropItem.hasSecondaryPassiveDrop = false;
 
         // Create a weapon instance with rolled modifiers
-        Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails);
+        Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails, rng);
 
-        chestItem.Initialize(weapon, weaponDetails.weaponFrontSprite, itemSpawnPoint.position);
+        dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, itemSpawnPoint.position);
     }
 
     /// <summary>
@@ -147,13 +152,13 @@ public class Chest : MonoBehaviour, IUsable
     private void InstantiatePassiveItem()
     {
         InstantiateItem();
-        chestItem.hasWeaponDrop = false;
-        chestItem.hasSecondaryPassiveDrop = true;
+        dropItem.hasWeaponDrop = false;
+        dropItem.hasSecondaryPassiveDrop = true;
 
         // Create a passive item instance with rolled modifiers
-        PassiveItem passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails);
+        PassiveItem passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
 
-        chestItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, itemSpawnPoint.position);
+        dropItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, itemSpawnPoint.position);
     }
 
     /// <summary>
@@ -161,8 +166,8 @@ public class Chest : MonoBehaviour, IUsable
     /// </summary>
     private void InstantiateItem()
     {
-        chestItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        chestItem = chestItemGameObject.GetComponent<DropItem>();
+        dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+        dropItem = dropItemGameObject.GetComponent<DropItem>();
     }
 
     public void PlayLock()

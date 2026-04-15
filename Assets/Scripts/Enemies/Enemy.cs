@@ -61,6 +61,7 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
     [HideInInspector] public Health health;
     [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public DropOnDestroy dropOnDestroy;
+    [HideInInspector] public DropOnDestroyNetwork dropOnDestroyNetwork;
     [HideInInspector] public MoveStatus moveStatus = MoveStatus.Idle;
     [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
     [HideInInspector] public ArmorStatus armorStatus = ArmorStatus.Normal;
@@ -121,6 +122,8 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
     MaterializeEffect materializeEffect;
     PolygonCollider2D polygonCollider2D;
 
+    public bool isMinion = false;
+
     // MULTIPLAYER
     [HideInInspector] public bool initializationCompleted = false;
     [HideInInspector] public AimDirection LastAim { get; set; }
@@ -155,6 +158,7 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
         movementToPosition = GetComponent<MovementToPosition>();
         knockback = GetComponent<Knockback>();
         dropOnDestroy = GetComponent<DropOnDestroy>();
+        dropOnDestroyNetwork = GetComponent<DropOnDestroyNetwork>();
         statusManager = GetComponent<StatusManager>();
         damageDisplay = GetComponent<DamageDisplay>();
         aiDestinationSetter = GetComponent<AIDestinationSetter>();
@@ -346,8 +350,9 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
         // Process if enemy has a weapon
         if (enemyDetails.enemyWeapon != null)
         {
-            Weapon weapon = new Weapon (enemyDetails.enemyWeapon.rarity)
-            { weaponDetails = enemyDetails.enemyWeapon, weaponRemainingProjectile = enemyDetails.enemyWeapon.weaponProjectileCapacity };
+            Weapon weapon = new Weapon (enemyDetails.enemyWeapon.rarity) { weaponDetails = enemyDetails.enemyWeapon };
+
+            weapon.weaponStats.weaponRemainingProjectile = enemyDetails.enemyWeapon.weaponProjectileCapacity;
 
             //Set weapon for enemy
             setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, 1, false, false);

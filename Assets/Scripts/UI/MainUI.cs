@@ -175,10 +175,10 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 // BACK
                 // LEG
 
-                BoostForPassiveItem(passiveItem, passiveItem.baseUniqueRolled, BoostPhase.Unique);
-                BoostForPassiveItem(passiveItem, passiveItem.baseTypeRolled, BoostPhase.Type);
-                BoostForPassiveItem(passiveItem, passiveItem.enchantedBoostType, BoostPhase.Enchanted);
-                BoostForPassiveItem(passiveItem, passiveItem.mythicBoostType, BoostPhase.Mythic);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseUniqueRolled, BoostPhase.Unique);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseTypeRolled, BoostPhase.Type);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.enchantedBoostType, BoostPhase.Enchanted);
+                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.mythicBoostType, BoostPhase.Mythic);
             }
         }
         if (hasWeaponDrop && itemGeneric is Weapon weapon)
@@ -242,7 +242,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 levelTextEquipped.text = $"({equippedWeapon.rarity.ToString()})\n";
                 contentTextEquipped.text = $"Class: {equippedWeapon.weaponDetails.weaponClass.ToString()}\n";
 
-                float equippedFireRate = (float)Math.Round(1 / (equippedWeapon.weaponDetails.weaponCooldownDuration - (equippedWeapon.attackCooldownModifier / 2)), 2);
+                float equippedFireRate = (float)Math.Round(1 / (equippedWeapon.weaponDetails.weaponCooldownDuration - (equippedWeapon.weaponStats.attackCooldownModifier / 2)), 2);
 
                 contentTextEquipped.text += $"Attack Speed: {equippedFireRate}\n";
                 contentTextEquipped.text += $"Wield Type: {equippedWeapon.weaponDetails.wieldType.ToString()}\n";
@@ -259,36 +259,36 @@ public class MainUI : SingletonMonobehaviour<MainUI>
             }
             else
             {
-                float fireRate = (float)Math.Round(1 / (weapon.weaponDetails.weaponCooldownDuration - (weapon.attackCooldownModifier / 2)), 2);
+                float fireRate = (float)Math.Round(1 / (weapon.weaponDetails.weaponCooldownDuration - (weapon.weaponStats.attackCooldownModifier / 2)), 2);
                 contentText.text += $"Attack Speed: {fireRate}\n";
 
                 contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
 
-                contentText.text += $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.physicalAttackDamageIncrease}-" +
-                    $"{weapon.weaponDetails.physicalDamageMax + weapon.physicalAttackDamageIncrease}\n";
+                contentText.text += $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.weaponStats.physicalAttackDamageIncrease}-" +
+                    $"{weapon.weaponDetails.physicalDamageMax + weapon.weaponStats.physicalAttackDamageIncrease}\n";
 
-                contentText.text += $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.magicAttackDamageIncrease}-" +
-                    $"{weapon.weaponDetails.magicDamageMax + weapon.magicAttackDamageIncrease}\n";
+                contentText.text += $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.weaponStats.magicAttackDamageIncrease}-" +
+                    $"{weapon.weaponDetails.magicDamageMax + weapon.weaponStats.magicAttackDamageIncrease}\n";
 
-                contentText.text += $"Attack Rating: {weapon.attackRatingIncrease * 100}\n";
-                contentText.text += $"Cr. Hit Chance: {weapon.criticalHitChanceIncrease * 100}%\n";
-                contentText.text += $"Cr. Hit Damage: {weapon.criticalHitDamageIncrease * 100}%\n";
+                contentText.text += $"Attack Rating: {weapon.weaponStats.attackRatingIncrease * 100}\n";
+                contentText.text += $"Cr. Hit Chance: {weapon.weaponStats.criticalHitChanceIncrease * 100}%\n";
+                contentText.text += $"Cr. Hit Damage: {weapon.weaponStats.criticalHitDamageIncrease * 100}%\n";
             }
 
-            contentTextEquipped.text += $"Phy. Damage: {equippedWeapon.weaponDetails.physicalDamageMin + equippedWeapon.physicalAttackDamageIncrease}-" +
-                $"{equippedWeapon.weaponDetails.physicalDamageMax + equippedWeapon.physicalAttackDamageIncrease}\n";
+            contentTextEquipped.text += $"Phy. Damage: {equippedWeapon.weaponDetails.physicalDamageMin + equippedWeapon.weaponStats.physicalAttackDamageIncrease}-" +
+                $"{equippedWeapon.weaponDetails.physicalDamageMax + equippedWeapon.weaponStats.physicalAttackDamageIncrease}\n";
 
-            contentTextEquipped.text += $"Magic Damage: {equippedWeapon.weaponDetails.magicDamageMin + equippedWeapon.magicAttackDamageIncrease}-" +
-                $"{equippedWeapon.weaponDetails.magicDamageMax + equippedWeapon.magicAttackDamageIncrease}\n";
+            contentTextEquipped.text += $"Magic Damage: {equippedWeapon.weaponDetails.magicDamageMin + equippedWeapon.weaponStats.magicAttackDamageIncrease}-" +
+                $"{equippedWeapon.weaponDetails.magicDamageMax + equippedWeapon.weaponStats.magicAttackDamageIncrease}\n";
 
-            contentTextEquipped.text += $"Attack Rating: {equippedWeapon.attackRatingIncrease * 100}%\n";
-            contentTextEquipped.text += $"Cr. Hit Chance: {equippedWeapon.criticalHitChanceIncrease * 100}%\n";
-            contentTextEquipped.text += $"Cr. Hit Damage: {equippedWeapon.criticalHitDamageIncrease * 100}%\n";
+            contentTextEquipped.text += $"Attack Rating: {equippedWeapon.weaponStats.attackRatingIncrease * 100}%\n";
+            contentTextEquipped.text += $"Cr. Hit Chance: {equippedWeapon.weaponStats.criticalHitChanceIncrease * 100}%\n";
+            contentTextEquipped.text += $"Cr. Hit Damage: {equippedWeapon.weaponStats.criticalHitDamageIncrease * 100}%\n";
 
-            BoostForWeapon(weapon, weapon.baseUniqueRolled, BoostPhase.Unique);
-            BoostForWeapon(weapon, weapon.baseTypeRolled, BoostPhase.Type);
-            BoostForWeapon(weapon, weapon.enchantedBoostType, BoostPhase.Enchanted);
-            BoostForWeapon(weapon, weapon.mythicBoostType, BoostPhase.Mythic);
+            BoostForWeapon(weapon, weapon.weaponStats.baseUniqueRolled, BoostPhase.Unique);
+            BoostForWeapon(weapon, weapon.weaponStats.baseTypeRolled, BoostPhase.Type);
+            BoostForWeapon(weapon, weapon.weaponStats.enchantedBoostType, BoostPhase.Enchanted);
+            BoostForWeapon(weapon, weapon.weaponStats.mythicBoostType, BoostPhase.Mythic);
 
             //// NEW: Modifiers for the DROP item
             //SetModifierBlock(weapon, modifiersHeaderText, modifierBaseUniqueText, modifierBaseTypeText, modifierExtra1Text, modifierExtra2Text);
@@ -320,81 +320,81 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        bonusText.text = $"Attack Speed: + {weapon.attackCooldownModifier * 100}%";
+                        bonusText.text = $"Attack Speed: + {weapon.weaponStats.attackCooldownModifier * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        bonusText.text = "Phy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
+                        bonusText.text = "Phy. Attack Dmg.: + " + weapon.weaponStats.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        bonusText.text = $"Attack Rating: + {weapon.attackRatingIncrease * 100}";
+                        bonusText.text = $"Attack Rating: + {weapon.weaponStats.attackRatingIncrease * 100}";
                         break;
                     case BoostType.MagicDamage:
-                        bonusText.text = "Magic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
+                        bonusText.text = "Magic Attack Dmg.: + " + weapon.weaponStats.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        bonusText.text = $"Cr. Hit Chance: + {weapon.criticalHitChanceIncrease * 100}%";
+                        bonusText.text = $"Cr. Hit Chance: + {weapon.weaponStats.criticalHitChanceIncrease * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        bonusText.text = $"Cr. Hit Damage: + {weapon.criticalHitDamageIncrease * 100}%";
+                        bonusText.text = $"Cr. Hit Damage: + {weapon.weaponStats.criticalHitDamageIncrease * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        bonusText.text = $"Life Steal: + {weapon.lifeStealAmount}";
+                        bonusText.text = $"Life Steal: + {weapon.weaponStats.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        bonusText.text = $"Block Chance: + {weapon.blockChanceIncrease * 100}%";
+                        bonusText.text = $"Block Chance: + {weapon.weaponStats.blockChanceIncrease * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        bonusText.text = $"Dodge Chance: + {weapon.dodgeChanceIncrease * 100}%";
+                        bonusText.text = $"Dodge Chance: + {weapon.weaponStats.dodgeChanceIncrease * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        bonusText.text = $"Health: + {weapon.increasedMaxHealth}";
+                        bonusText.text = $"Health: + {weapon.weaponStats.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        bonusText.text = $"Mana: + {weapon.increasedMaxMana}";
+                        bonusText.text = $"Mana: + {weapon.weaponStats.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        bonusText.text = $"Status Resistance: + {weapon.statusResistanceModifier * 100}%";
+                        bonusText.text = $"Status Resistance: + {weapon.weaponStats.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        bonusText.text = $"Damage vs Low Health: + {weapon.damageVsLowHealthEnemies}";
+                        bonusText.text = $"Damage vs Low Health: + {weapon.weaponStats.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text = $"Cr. Resistance: + {weapon.criticalResistanceModifier * 100}%";
+                        bonusText.text = $"Cr. Resistance: + {weapon.weaponStats.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        bonusText.text = $"Armor: + {weapon.armorIncrease * 100}%";
+                        bonusText.text = $"Armor: + {weapon.weaponStats.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        bonusText.text = $"Magic Resistance: + {weapon.magicResistance * 100}%";
+                        bonusText.text = $"Magic Resistance: + {weapon.weaponStats.magicResistance * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        bonusText.text = $"Move Speed: + {weapon.speedIncreaseModifier}";
+                        bonusText.text = $"Move Speed: + {weapon.weaponStats.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        bonusText.text = $"Damage Reduction: + {weapon.damageReductionRate * 100}%";
+                        bonusText.text = $"Damage Reduction: + {weapon.weaponStats.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        bonusText.text = $"Armor Penetration: + {weapon.armorPenetration * 100}%";
+                        bonusText.text = $"Armor Penetration: + {weapon.weaponStats.armorPenetration * 100}%";
                         break;
                     case BoostType.SkillCooldown:
-                        bonusText.text = $"Skill Cooldown: + {weapon.skillCooldown * 100}%";
+                        bonusText.text = $"Skill Cooldown: + {weapon.weaponStats.skillCooldown * 100}%";
                         break;
                     case BoostType.SkillDuration:
-                        bonusText.text = $"Skill Duration: + {weapon.skillDuration * 100}%";
+                        bonusText.text = $"Skill Duration: + {weapon.weaponStats.skillDuration * 100}%";
                         break;
                     case BoostType.StatusInflict:
-                        if(weapon.additionalPoisonChance > 0) bonusText.text = $"Poison Chance: + {weapon.additionalPoisonChance * 100}%";
-                        else if (weapon.additionalBleedChance > 0) bonusText.text = $"Bleed Chance: + {weapon.additionalBleedChance * 100}%";
-                        else if (weapon.additionalRootChance > 0) bonusText.text = $"Root Chance: + {weapon.additionalRootChance * 100}%";
-                        else if (weapon.additionalStunChance > 0) bonusText.text = $"Stun Chance: + {weapon.additionalStunChance * 100}%";
-                        else if (weapon.additionalCurseChance > 0) bonusText.text = $"Curse Chance: + {weapon.additionalCurseChance * 100}%";
-                        else if (weapon.additionalFearChance > 0) bonusText.text = $"Fear Chance: + {weapon.additionalFearChance * 100}%";
-                        else if (weapon.additionalRevealChance > 0) bonusText.text = $"Reveal Chance: + {weapon.additionalRevealChance * 100}%";
-                        else if (weapon.additionalParalyzeChance > 0) bonusText.text = $"Paralyze Chance: + {weapon.additionalParalyzeChance * 100}%";
-                        else if (weapon.additionalBurnChance > 0) bonusText.text = $"Burn Chance: + {weapon.additionalBurnChance * 100}%";
-                        else if (weapon.additionalFreezeChance > 0) bonusText.text = $"Freeze Chance: + {weapon.additionalFreezeChance * 100}%";
-                        else if (weapon.additionalBlindChance > 0) bonusText.text = $"Blind Chance: + {weapon.additionalBlindChance * 100}%";
-                        else if (weapon.additionalSlowChance > 0) bonusText.text = $"Slow Chance: + {weapon.additionalSlowChance * 100}%";
+                        if(weapon.weaponStats.additionalPoisonChance > 0) bonusText.text = $"Poison Chance: + {weapon.weaponStats.additionalPoisonChance * 100}%";
+                        else if (weapon.weaponStats.additionalBleedChance > 0) bonusText.text = $"Bleed Chance: + {weapon.weaponStats.additionalBleedChance * 100}%";
+                        else if (weapon.weaponStats.additionalRootChance > 0) bonusText.text = $"Root Chance: + {weapon.weaponStats.additionalRootChance * 100}%";
+                        else if (weapon.weaponStats.additionalStunChance > 0) bonusText.text = $"Stun Chance: + {weapon.weaponStats.additionalStunChance * 100}%";
+                        else if (weapon.weaponStats.additionalCurseChance > 0) bonusText.text = $"Curse Chance: + {weapon.weaponStats.additionalCurseChance * 100}%";
+                        else if (weapon.weaponStats.additionalFearChance > 0) bonusText.text = $"Fear Chance: + {weapon.weaponStats.additionalFearChance * 100}%";
+                        else if (weapon.weaponStats.additionalRevealChance > 0) bonusText.text = $"Reveal Chance: + {weapon.weaponStats.additionalRevealChance * 100}%";
+                        else if (weapon.weaponStats.additionalParalyzeChance > 0) bonusText.text = $"Paralyze Chance: + {weapon.weaponStats.additionalParalyzeChance * 100}%";
+                        else if (weapon.weaponStats.additionalBurnChance > 0) bonusText.text = $"Burn Chance: + {weapon.weaponStats.additionalBurnChance * 100}%";
+                        else if (weapon.weaponStats.additionalFreezeChance > 0) bonusText.text = $"Freeze Chance: + {weapon.weaponStats.additionalFreezeChance * 100}%";
+                        else if (weapon.weaponStats.additionalBlindChance > 0) bonusText.text = $"Blind Chance: + {weapon.weaponStats.additionalBlindChance * 100}%";
+                        else if (weapon.weaponStats.additionalSlowChance > 0) bonusText.text = $"Slow Chance: + {weapon.weaponStats.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;
@@ -405,81 +405,81 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        bonusText.text += $"\nAttack Speed: + {weapon.attackCooldownModifier * 100}%";
+                        bonusText.text += $"\nAttack Speed: + {weapon.weaponStats.attackCooldownModifier * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        bonusText.text += "\nPhy. Attack Dmg.: + " + weapon.physicalAttackDamageIncrease;
+                        bonusText.text += "\nPhy. Attack Dmg.: + " + weapon.weaponStats.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        bonusText.text += $"\nAttack Rating: + {weapon.attackRatingIncrease * 100}%";
+                        bonusText.text += $"\nAttack Rating: + {weapon.weaponStats.attackRatingIncrease * 100}%";
                         break;
                     case BoostType.MagicDamage:
-                        bonusText.text += "\nMagic Attack Dmg.: + " + weapon.magicAttackDamageIncrease;
+                        bonusText.text += "\nMagic Attack Dmg.: + " + weapon.weaponStats.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        bonusText.text += $"\nCr. Hit Chance: + {weapon.criticalHitChanceIncrease * 100}%";
+                        bonusText.text += $"\nCr. Hit Chance: + {weapon.weaponStats.criticalHitChanceIncrease * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        bonusText.text += $"\nCr. Hit Damage: + {weapon.criticalHitDamageIncrease * 100}%";
+                        bonusText.text += $"\nCr. Hit Damage: + {weapon.weaponStats.criticalHitDamageIncrease * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        bonusText.text += $"\nLife Steal: + {weapon.lifeStealAmount}";
+                        bonusText.text += $"\nLife Steal: + {weapon.weaponStats.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        bonusText.text += $"\nBlock Chance: + {weapon.blockChanceIncrease * 100}%";
+                        bonusText.text += $"\nBlock Chance: + {weapon.weaponStats.blockChanceIncrease * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        bonusText.text += $"\nDodge Chance: + {weapon.dodgeChanceIncrease * 100}%";
+                        bonusText.text += $"\nDodge Chance: + {weapon.weaponStats.dodgeChanceIncrease * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        bonusText.text += $"\nHealth: + {weapon.increasedMaxHealth}";
+                        bonusText.text += $"\nHealth: + {weapon.weaponStats.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        bonusText.text += $"\nMana: + {weapon.increasedMaxMana}";
+                        bonusText.text += $"\nMana: + {weapon.weaponStats.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        bonusText.text += $"\nStatus Resistance: + {weapon.statusResistanceModifier * 100}%";
+                        bonusText.text += $"\nStatus Resistance: + {weapon.weaponStats.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        bonusText.text += $"\nDamage vs Low Health: + {weapon.damageVsLowHealthEnemies}";
+                        bonusText.text += $"\nDamage vs Low Health: + {weapon.weaponStats.damageVsLowHealthEnemies}";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text += $"\nCr. Resistance: + {weapon.criticalResistanceModifier * 100}%";
+                        bonusText.text += $"\nCr. Resistance: + {weapon.weaponStats.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        bonusText.text += $"\nArmor: + {weapon.armorIncrease * 100}%";
+                        bonusText.text += $"\nArmor: + {weapon.weaponStats.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        bonusText.text += $"\nMagic Resistance: + {weapon.magicResistance * 100}%";
+                        bonusText.text += $"\nMagic Resistance: + {weapon.weaponStats.magicResistance * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        bonusText.text += $"\nMove Speed: + {weapon.speedIncreaseModifier}";
+                        bonusText.text += $"\nMove Speed: + {weapon.weaponStats.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        bonusText.text += $"\nDamage Reduction: + {weapon.damageReductionRate * 100}%";
+                        bonusText.text += $"\nDamage Reduction: + {weapon.weaponStats.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        bonusText.text += $"\nArmor Penetration: + {weapon.armorPenetration * 100}%";
+                        bonusText.text += $"\nArmor Penetration: + {weapon.weaponStats.armorPenetration * 100}%";
                         break;
                     case BoostType.SkillCooldown:
-                        bonusText.text += $"\nSkill Cooldown: + {weapon.skillCooldown * 100}%";
+                        bonusText.text += $"\nSkill Cooldown: + {weapon.weaponStats.skillCooldown * 100}%";
                         break;
                     case BoostType.SkillDuration:
-                        bonusText.text += $"\nSkill Duration: + {weapon.skillDuration * 100}%";
+                        bonusText.text += $"\nSkill Duration: + {weapon.weaponStats.skillDuration * 100}%";
                         break;
                     case BoostType.StatusInflict:
-                        if (weapon.additionalPoisonChance > 0) bonusText.text += $"\nPoison Chance: + {weapon.additionalPoisonChance * 100}%";
-                        else if (weapon.additionalBleedChance > 0) bonusText.text += $"\nBleed Chance: + {weapon.additionalBleedChance * 100}%";
-                        else if (weapon.additionalRootChance > 0) bonusText.text += $"\nRoot Chance: + {weapon.additionalRootChance * 100}%";
-                        else if (weapon.additionalStunChance > 0) bonusText.text += $"\nStun Chance: + {weapon.additionalStunChance * 100}%";
-                        else if (weapon.additionalCurseChance > 0) bonusText.text += $"\nCurse Chance: + {weapon.additionalCurseChance * 100}%";
-                        else if (weapon.additionalFearChance > 0) bonusText.text += $"\nFear Chance: + {weapon.additionalFearChance * 100}%";
-                        else if (weapon.additionalRevealChance > 0) bonusText.text += $"\nReveal Chance: + {weapon.additionalRevealChance * 100}%";
-                        else if (weapon.additionalParalyzeChance > 0) bonusText.text += $"\nParalyze Chance: + {weapon.additionalParalyzeChance * 100}%";
-                        else if (weapon.additionalBurnChance > 0) bonusText.text += $"\nBurn Chance: + {weapon.additionalBurnChance * 100}%";
-                        else if (weapon.additionalFreezeChance > 0) bonusText.text += $"\nFreeze Chance: + {weapon.additionalFreezeChance * 100}%";
-                        else if (weapon.additionalBlindChance > 0) bonusText.text += $"\nBlind Chance: + {weapon.additionalBlindChance * 100}%";
-                        else if (weapon.additionalSlowChance > 0) bonusText.text += $"\nSlow Chance: + {weapon.additionalSlowChance * 100}%";
+                        if (weapon.weaponStats.additionalPoisonChance > 0) bonusText.text += $"\nPoison Chance: + {weapon.weaponStats.additionalPoisonChance * 100}%";
+                        else if (weapon.weaponStats.additionalBleedChance > 0) bonusText.text += $"\nBleed Chance: + {weapon.weaponStats.additionalBleedChance * 100}%";
+                        else if (weapon.weaponStats.additionalRootChance > 0) bonusText.text += $"\nRoot Chance: + {weapon.weaponStats.additionalRootChance * 100}%";
+                        else if (weapon.weaponStats.additionalStunChance > 0) bonusText.text += $"\nStun Chance: + {weapon.weaponStats.additionalStunChance * 100}%";
+                        else if (weapon.weaponStats.additionalCurseChance > 0) bonusText.text += $"\nCurse Chance: + {weapon.weaponStats.additionalCurseChance * 100}%";
+                        else if (weapon.weaponStats.additionalFearChance > 0) bonusText.text += $"\nFear Chance: + {weapon.weaponStats.additionalFearChance * 100}%";
+                        else if (weapon.weaponStats.additionalRevealChance > 0) bonusText.text += $"\nReveal Chance: + {weapon.weaponStats.additionalRevealChance * 100}%";
+                        else if (weapon.weaponStats.additionalParalyzeChance > 0) bonusText.text += $"\nParalyze Chance: + {weapon.weaponStats.additionalParalyzeChance * 100}%";
+                        else if (weapon.weaponStats.additionalBurnChance > 0) bonusText.text += $"\nBurn Chance: + {weapon.weaponStats.additionalBurnChance * 100}%";
+                        else if (weapon.weaponStats.additionalFreezeChance > 0) bonusText.text += $"\nFreeze Chance: + {weapon.weaponStats.additionalFreezeChance * 100}%";
+                        else if (weapon.weaponStats.additionalBlindChance > 0) bonusText.text += $"\nBlind Chance: + {weapon.weaponStats.additionalBlindChance * 100}%";
+                        else if (weapon.weaponStats.additionalSlowChance > 0) bonusText.text += $"\nSlow Chance: + {weapon.weaponStats.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;
@@ -498,81 +498,81 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        bonusText.text = $"Attack Speed: + {passiveItem.attackCooldown * 100}%";
+                        bonusText.text = $"Attack Speed: + {passiveItem.passiveStats.attackCooldown * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        bonusText.text = "Phy. Attack Dmg.: + " + passiveItem.physicalAttackDamageIncrease;
+                        bonusText.text = "Phy. Attack Dmg.: + " + passiveItem.passiveStats.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        bonusText.text = $"Attack Rating: + {passiveItem.attackRating * 100}%";
+                        bonusText.text = $"Attack Rating: + {passiveItem.passiveStats.attackRating * 100}%";
                         break;
                     case BoostType.MagicDamage:
-                        bonusText.text = "Magic Attack Dmg.: + " + passiveItem.magicAttackDamageIncrease;
+                        bonusText.text = "Magic Attack Dmg.: + " + passiveItem.passiveStats.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        bonusText.text = $"Cr. Hit Chance: + {passiveItem.criticalHitChance * 100}%";
+                        bonusText.text = $"Cr. Hit Chance: + {passiveItem.passiveStats.criticalHitChance * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        bonusText.text = $"Cr. Hit Damage: + {passiveItem.criticalHitDamage * 100}%";
+                        bonusText.text = $"Cr. Hit Damage: + {passiveItem.passiveStats.criticalHitDamage * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        bonusText.text = $"Life Steal: + {passiveItem.lifeStealAmount}";
+                        bonusText.text = $"Life Steal: + {passiveItem.passiveStats.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        bonusText.text = $"Block Chance: + {passiveItem.blockChance * 100}%";
+                        bonusText.text = $"Block Chance: + {passiveItem.passiveStats.blockChance * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        bonusText.text = $"Dodge Chance: + {passiveItem.dodgeChance * 100}%";
+                        bonusText.text = $"Dodge Chance: + {passiveItem.passiveStats.dodgeChance * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        bonusText.text = $"Health: + {passiveItem.increasedMaxHealth}";
+                        bonusText.text = $"Health: + {passiveItem.passiveStats.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        bonusText.text = $"Mana: + {passiveItem.increasedMaxMana}";
+                        bonusText.text = $"Mana: + {passiveItem.passiveStats.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        bonusText.text = $"Status Resistance: + {passiveItem.statusResistanceModifier * 100}%";
+                        bonusText.text = $"Status Resistance: + {passiveItem.passiveStats.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        bonusText.text = $"Damage vs Low Health: + {passiveItem.damageVsLowHealthEnemies * 100}%";
+                        bonusText.text = $"Damage vs Low Health: + {passiveItem.passiveStats.damageVsLowHealthEnemies * 100}%";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text = $"Cr. Resistance: + {passiveItem.criticalResistanceModifier * 100}%";
+                        bonusText.text = $"Cr. Resistance: + {passiveItem.passiveStats.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        bonusText.text = $"Armor: + {passiveItem.armorIncrease * 100}%";
+                        bonusText.text = $"Armor: + {passiveItem.passiveStats.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        bonusText.text = $"Magic Resistance: + {passiveItem.magicResistanceModifier * 100}%";
+                        bonusText.text = $"Magic Resistance: + {passiveItem.passiveStats.magicResistanceModifier * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        bonusText.text = $"Move Speed: + {passiveItem.speedIncreaseModifier}";
+                        bonusText.text = $"Move Speed: + {passiveItem.passiveStats.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        bonusText.text = $"Damage Reduction: + {passiveItem.damageReductionRate * 100}%";
+                        bonusText.text = $"Damage Reduction: + {passiveItem.passiveStats.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        bonusText.text = $"Armor Penetration: + {passiveItem.armorPenetration * 100}%";
+                        bonusText.text = $"Armor Penetration: + {passiveItem.passiveStats.armorPenetration * 100}%";
                         break;
                     case BoostType.SkillCooldown:
-                        bonusText.text = $"Skill Cooldown: + {passiveItem.skillCooldown * 100}%";
+                        bonusText.text = $"Skill Cooldown: + {passiveItem.passiveStats.skillCooldown * 100}%";
                         break;
                     case BoostType.SkillDuration:
-                        bonusText.text = $"Skill Duration: + {passiveItem.skillDuration * 100}%";
+                        bonusText.text = $"Skill Duration: + {passiveItem.passiveStats.skillDuration * 100}%";
                         break;
                     case BoostType.StatusInflict:
-                        if (passiveItem.additionalPoisonChance > 0) bonusText.text = $"Poison Chance: + {passiveItem.additionalPoisonChance * 100}%";
-                        else if (passiveItem.additionalBleedChance > 0) bonusText.text = $"Bleed Chance: + {passiveItem.additionalBleedChance * 100}%";
-                        else if (passiveItem.additionalRootChance > 0) bonusText.text = $"Root Chance: + {passiveItem.additionalRootChance * 100}%";
-                        else if (passiveItem.additionalStunChance > 0) bonusText.text = $"Stun Chance: + {passiveItem.additionalStunChance * 100}%";
-                        else if (passiveItem.additionalCurseChance > 0) bonusText.text = $"Curse Chance: + {passiveItem.additionalCurseChance * 100}%";
-                        else if (passiveItem.additionalFearChance > 0) bonusText.text = $"Fear Chance: + {passiveItem.additionalFearChance * 100}%";
-                        else if (passiveItem.additionalRevealChance > 0) bonusText.text = $"Reveal Chance: + {passiveItem.additionalRevealChance * 100}%";
-                        else if (passiveItem.additionalParalyzeChance > 0) bonusText.text = $"Paralyze Chance: + {passiveItem.additionalParalyzeChance * 100}%";
-                        else if (passiveItem.additionalBurnChance > 0) bonusText.text = $"Burn Chance: + {passiveItem.additionalBurnChance * 100}%";
-                        else if (passiveItem.additionalFreezeChance > 0) bonusText.text = $"Freeze Chance: + {passiveItem.additionalFreezeChance * 100}%";
-                        else if (passiveItem.additionalBlindChance > 0) bonusText.text = $"Blind Chance: + {passiveItem.additionalBlindChance * 100}%";
-                        else if (passiveItem.additionalSlowChance > 0) bonusText.text = $"Slow Chance: + {passiveItem.additionalSlowChance * 100}%";
+                        if (passiveItem.passiveStats.additionalPoisonChance > 0) bonusText.text = $"Poison Chance: + {passiveItem.passiveStats.additionalPoisonChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBleedChance > 0) bonusText.text = $"Bleed Chance: + {passiveItem.passiveStats.additionalBleedChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalRootChance > 0) bonusText.text = $"Root Chance: + {passiveItem.passiveStats.additionalRootChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalStunChance > 0) bonusText.text = $"Stun Chance: + {passiveItem.passiveStats.additionalStunChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalCurseChance > 0) bonusText.text = $"Curse Chance: + {passiveItem.passiveStats.additionalCurseChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalFearChance > 0) bonusText.text = $"Fear Chance: + {passiveItem.passiveStats.additionalFearChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalRevealChance > 0) bonusText.text = $"Reveal Chance: + {passiveItem.passiveStats.additionalRevealChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalParalyzeChance > 0) bonusText.text = $"Paralyze Chance: + {passiveItem.passiveStats.additionalParalyzeChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBurnChance > 0) bonusText.text = $"Burn Chance: + {passiveItem.passiveStats.additionalBurnChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalFreezeChance > 0) bonusText.text = $"Freeze Chance: + {passiveItem.passiveStats.additionalFreezeChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBlindChance > 0) bonusText.text = $"Blind Chance: + {passiveItem.passiveStats.additionalBlindChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalSlowChance > 0) bonusText.text = $"Slow Chance: + {passiveItem.passiveStats.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;
@@ -583,81 +583,81 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 switch (boostType)
                 {
                     case BoostType.AttackCooldown:
-                        bonusText.text += $"\nAttack Speed: + {passiveItem.attackCooldown * 100}%";
+                        bonusText.text += $"\nAttack Speed: + {passiveItem.passiveStats.attackCooldown * 100}%";
                         break;
                     case BoostType.AttackDamage:
-                        bonusText.text += "\nPhy. Attack Dmg.: + " + passiveItem.physicalAttackDamageIncrease;
+                        bonusText.text += "\nPhy. Attack Dmg.: + " + passiveItem.passiveStats.physicalAttackDamageIncrease;
                         break;
                     case BoostType.AttackRating:
-                        bonusText.text += $"\nAttack Rating: + {passiveItem.attackRating * 100}%";
+                        bonusText.text += $"\nAttack Rating: + {passiveItem.passiveStats.attackRating * 100}%";
                         break;
                     case BoostType.MagicDamage:
-                        bonusText.text += "\nMagic Attack Dmg.: + " + passiveItem.magicAttackDamageIncrease;
+                        bonusText.text += "\nMagic Attack Dmg.: + " + passiveItem.passiveStats.magicAttackDamageIncrease;
                         break;
                     case BoostType.CritChance:
-                        bonusText.text += $"\nCr. Hit Chance: + {passiveItem.criticalHitChance * 100}%";
+                        bonusText.text += $"\nCr. Hit Chance: + {passiveItem.passiveStats.criticalHitChance * 100}%";
                         break;
                     case BoostType.CritDamage:
-                        bonusText.text += $"\nCr. Hit Damage: + {passiveItem.criticalHitDamage * 100}%";
+                        bonusText.text += $"\nCr. Hit Damage: + {passiveItem.passiveStats.criticalHitDamage * 100}%";
                         break;
                     case BoostType.LifeSteal:
-                        bonusText.text += $"\nLife Steal: + {passiveItem.lifeStealAmount}";
+                        bonusText.text += $"\nLife Steal: + {passiveItem.passiveStats.lifeStealAmount}";
                         break;
                     case BoostType.BlockChance:
-                        bonusText.text += $"\nBlock Chance: + {passiveItem.blockChance * 100}%";
+                        bonusText.text += $"\nBlock Chance: + {passiveItem.passiveStats.blockChance * 100}%";
                         break;
                     case BoostType.DodgeChance:
-                        bonusText.text += $"\nDodge Chance: + {passiveItem.dodgeChance * 100}%";
+                        bonusText.text += $"\nDodge Chance: + {passiveItem.passiveStats.dodgeChance * 100}%";
                         break;
                     case BoostType.HealthIncrease:
-                        bonusText.text += $"\nHealth: + {passiveItem.increasedMaxHealth}";
+                        bonusText.text += $"\nHealth: + {passiveItem.passiveStats.increasedMaxHealth}";
                         break;
                     case BoostType.ManaIncrease:
-                        bonusText.text += $"\nMana: + {passiveItem.increasedMaxMana}";
+                        bonusText.text += $"\nMana: + {passiveItem.passiveStats.increasedMaxMana}";
                         break;
                     case BoostType.StatusResistance:
-                        bonusText.text += $"\nStatus Resistance: + {passiveItem.statusResistanceModifier * 100}%";
+                        bonusText.text += $"\nStatus Resistance: + {passiveItem.passiveStats.statusResistanceModifier * 100}%";
                         break;
                     case BoostType.AttackVsLowHealthEnemies:
-                        bonusText.text += $"\nDamage vs Low Health: + {passiveItem.damageVsLowHealthEnemies * 100}%";
+                        bonusText.text += $"\nDamage vs Low Health: + {passiveItem.passiveStats.damageVsLowHealthEnemies * 100}%";
                         break;
                     case BoostType.CritResistance:
-                        bonusText.text += $"\nCr. Resistance: + {passiveItem.criticalResistanceModifier * 100}%";
+                        bonusText.text += $"\nCr. Resistance: + {passiveItem.passiveStats.criticalResistanceModifier * 100}%";
                         break;
                     case BoostType.ArmorIncrease:
-                        bonusText.text += $"\nArmor: + {passiveItem.armorIncrease * 100}%";
+                        bonusText.text += $"\nArmor: + {passiveItem.passiveStats.armorIncrease * 100}%";
                         break;
                     case BoostType.MagicResistance:
-                        bonusText.text += $"\nMagic Resistance: + {passiveItem.magicResistanceModifier * 100}%";
+                        bonusText.text += $"\nMagic Resistance: + {passiveItem.passiveStats.magicResistanceModifier * 100}%";
                         break;
                     case BoostType.MoveSpeed:
-                        bonusText.text += $"\nMove Speed: + {passiveItem.speedIncreaseModifier}";
+                        bonusText.text += $"\nMove Speed: + {passiveItem.passiveStats.speedIncreaseModifier}";
                         break;
                     case BoostType.DamageReduction:
-                        bonusText.text += $"\nDamage Reduction: + {passiveItem.damageReductionRate * 100}%";
+                        bonusText.text += $"\nDamage Reduction: + {passiveItem.passiveStats.damageReductionRate * 100}%";
                         break;
                     case BoostType.ArmorPenetration:
-                        bonusText.text += $"\nArmor Penetration: + {passiveItem.armorPenetration * 100}%";
+                        bonusText.text += $"\nArmor Penetration: + {passiveItem.passiveStats.armorPenetration * 100}%";
                         break;
                     case BoostType.SkillCooldown:
-                        bonusText.text += $"\nSkill Cooldown: + {passiveItem.skillCooldown * 100}%";
+                        bonusText.text += $"\nSkill Cooldown: + {passiveItem.passiveStats.skillCooldown * 100}%";
                         break;
                     case BoostType.SkillDuration:
-                        bonusText.text += $"\nSkill Duration: + {passiveItem.skillDuration * 100}%";
+                        bonusText.text += $"\nSkill Duration: + {passiveItem.passiveStats.skillDuration * 100}%";
                         break;
                     case BoostType.StatusInflict:
-                        if (passiveItem.additionalPoisonChance > 0) bonusText.text += $"\nPoison Chance: + {passiveItem.additionalPoisonChance * 100}%";
-                        else if (passiveItem.additionalBleedChance > 0) bonusText.text += $"\nBleed Chance: + {passiveItem.additionalBleedChance * 100}%";
-                        else if (passiveItem.additionalRootChance > 0) bonusText.text += $"\nRoot Chance: + {passiveItem.additionalRootChance * 100}%";
-                        else if (passiveItem.additionalStunChance > 0) bonusText.text += $"\nStun Chance: + {passiveItem.additionalStunChance * 100}%";
-                        else if (passiveItem.additionalCurseChance > 0) bonusText.text += $"\nCurse Chance: + {passiveItem.additionalCurseChance * 100}%";
-                        else if (passiveItem.additionalFearChance > 0) bonusText.text += $"\nFear Chance: + {passiveItem.additionalFearChance * 100}%";
-                        else if (passiveItem.additionalRevealChance > 0) bonusText.text += $"\nReveal Chance: + {passiveItem.additionalRevealChance * 100}%";
-                        else if (passiveItem.additionalParalyzeChance > 0) bonusText.text += $"\nParalyze Chance: + {passiveItem.additionalParalyzeChance * 100}%";
-                        else if (passiveItem.additionalBurnChance > 0) bonusText.text += $"\nBurn Chance: + {passiveItem.additionalBurnChance * 100}%";
-                        else if (passiveItem.additionalFreezeChance > 0) bonusText.text += $"\nFreeze Chance: + {passiveItem.additionalFreezeChance * 100}%";
-                        else if (passiveItem.additionalBlindChance > 0) bonusText.text += $"\nBlind Chance: + {passiveItem.additionalBlindChance * 100}%";
-                        else if (passiveItem.additionalSlowChance > 0) bonusText.text += $"\nSlow Chance: + {passiveItem.additionalSlowChance * 100}%";
+                        if (passiveItem.passiveStats.additionalPoisonChance > 0) bonusText.text += $"\nPoison Chance: + {passiveItem.passiveStats.additionalPoisonChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBleedChance > 0) bonusText.text += $"\nBleed Chance: + {passiveItem.passiveStats.additionalBleedChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalRootChance > 0) bonusText.text += $"\nRoot Chance: + {passiveItem.passiveStats.additionalRootChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalStunChance > 0) bonusText.text += $"\nStun Chance: + {passiveItem.passiveStats.additionalStunChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalCurseChance > 0) bonusText.text += $"\nCurse Chance: + {passiveItem.passiveStats.additionalCurseChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalFearChance > 0) bonusText.text += $"\nFear Chance: + {passiveItem.passiveStats.additionalFearChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalRevealChance > 0) bonusText.text += $"\nReveal Chance: + {passiveItem.passiveStats.additionalRevealChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalParalyzeChance > 0) bonusText.text += $"\nParalyze Chance: + {passiveItem.passiveStats.additionalParalyzeChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBurnChance > 0) bonusText.text += $"\nBurn Chance: + {passiveItem.passiveStats.additionalBurnChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalFreezeChance > 0) bonusText.text += $"\nFreeze Chance: + {passiveItem.passiveStats.additionalFreezeChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalBlindChance > 0) bonusText.text += $"\nBlind Chance: + {passiveItem.passiveStats.additionalBlindChance * 100}%";
+                        else if (passiveItem.passiveStats.additionalSlowChance > 0) bonusText.text += $"\nSlow Chance: + {passiveItem.passiveStats.additionalSlowChance * 100}%";
                         break;
                     default:
                         break;

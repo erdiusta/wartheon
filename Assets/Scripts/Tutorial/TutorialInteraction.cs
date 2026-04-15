@@ -227,6 +227,9 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
         string keyboardBinding = string.Empty;
         string gamepadBinding = string.Empty;
 
+        int seed = Random.Range(int.MinValue, int.MaxValue);
+        WartheonRNG rng = new WartheonRNG(seed);
+
         switch (currentTutorialPhase)
         {
             case TutorialPhase.TutorialIntro:
@@ -254,7 +257,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                     gamepadBinding + " button for gamepad.";
 
                 // Initialize drop
-                Weapon weapon = WeaponDropGenerator.CreateRolledInstance(player.playerDetails.startingWeapon);
+                Weapon weapon = WeaponDropGenerator.CreateRolledInstance(player.playerDetails.startingWeapon, rng);
 
                 DropItem dropItem = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<DropItem>(true);
                 dropItem.gameObject.SetActive(true);
@@ -383,7 +386,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                     " you. Parry only works at melee weapons. Timing is very important. Maybe needs a little practice to master it.\n\nUse" + keyboardBinding + " for keyboard.\n\nUse " +
                     gamepadBinding + " for gampepad.";
 
-                StartCoroutine(EnemySpawner.Instance.SpawnEnemiesRoutine());
+                StartCoroutine(EnemySpawner.Instance.SpawnEnemiesRoutine(rng));
 
                 MusicManager.Instance.PlayMusic(GameResources.Instance.combatMusic);
 
@@ -400,7 +403,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 questText.text = "Now another mob spawns. This one can fire projectiles. Parry doesn't work on projectiles but you can dodge from it by rolling." +
                     "\n\nUse " + keyboardBinding + " for keyboard.\n\nUse " + gamepadBinding + " for gampepad.";
 
-                StartCoroutine(EnemySpawner.Instance.SpawnEnemiesRoutine());
+                StartCoroutine(EnemySpawner.Instance.SpawnEnemiesRoutine(rng));
 
                 break;
             case TutorialPhase.SpecialSkill:
@@ -424,7 +427,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                     "so you won't be able to use it again for a while." +"\n\nUse " + keyboardBinding + ", " + keyboardBindingTwo + ", " + keyboardBindingThree +" for keyboard.\n\nUse " 
                     + gamepadBinding + ", " + gamepadBindingTwo + ", " + gamepadBindingThree + " for gampepad.";
 
-                StartCoroutine(EnemySpawner.Instance.SpawnEnemiesRoutine());
+                StartCoroutine(EnemySpawner.Instance.SpawnEnemiesRoutine(rng));
                 break;
             case TutorialPhase.KillEmAll:
                 isCheckPlayed = false;
@@ -448,7 +451,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 dropItem.gameObject.SetActive(true);
 
                 // Initialize drop
-                passiveItem = PassiveDropGenerator.CreateRolledInstance(GameResources.Instance.secondaryPassiveItem);
+                passiveItem = PassiveDropGenerator.CreateRolledInstance(GameResources.Instance.secondaryPassiveItem, rng);
 
                 dropItem.hasSecondaryPassiveDrop = true;
                 dropItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, dropItem.transform.position, true);

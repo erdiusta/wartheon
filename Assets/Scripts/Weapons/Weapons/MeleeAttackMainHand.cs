@@ -1059,7 +1059,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         if (!shieldBash && !isBloodDrain && !isCullTheMeek && !isSheerCold && !isDontBlink)
         {
-            weapon.onCooldown = true;
+            weapon.weaponStats.onCooldown = true;
 
             player.animatePlayer.SetAttackAnimationParameters();
             player.animSync?.CmdPlayAttack(player.LastAim, player.LastAttackdir);
@@ -1260,7 +1260,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (isSpecialMove) yield return new WaitForSeconds(1f);
         else yield return new WaitForSeconds(weapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalAttackCoolDownModifier));
 
-        weapon.onCooldown = false;
+        weapon.weaponStats.onCooldown = false;
 
         if (hand == MeleeHand.MainHand) mainHandAttackBlocked = false;
         else if (hand == MeleeHand.OffHand) offHandAttackBlocked = false;

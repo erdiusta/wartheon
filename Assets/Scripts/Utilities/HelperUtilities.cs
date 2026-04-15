@@ -424,8 +424,6 @@ public static class HelperUtilities
             }
         }
 
-        Debug.Log("Closest player is " + closestPlayer.name + ".");
-
         return closestPlayer;
     }
 }

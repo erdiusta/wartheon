@@ -15,8 +15,11 @@ MonoBehaviour:
   passiveItemName: Health
   price: 0
   passiveItemSprite: {fileID: 503904884, guid: a7b9de76c750aaf4299623fbf8a60e5d, type: 3}
+  rarity: 0
   passiveItemCategory: 0
-  primaryPassiveItemName: 1
-  passiveItemType: 0
+  passiveItemType: 1
   passiveItemSlotName: 0
   passiveItemAnimatorController: {fileID: 9100000, guid: 9d6ce20b5187d904dbcb76cd6b3cd7f0, type: 2}
+  baseUniqueModifier: 0
+  baseTypeModifier: 0
+  additionalModifierPoolForType: 

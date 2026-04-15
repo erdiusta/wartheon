@@ -180,6 +180,10 @@ PrefabInstance:
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[17].y
       value: 1.7343162
       objectReference: {fileID: 0}
+    - target: {fileID: -3786187665166726224, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: isMinion
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 573751883470857211, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Layer
       value: 16
@@ -493,3 +497,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd08ad531cbb69c489f06d9a25ba0b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: {fileID: 0}

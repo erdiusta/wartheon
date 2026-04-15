@@ -132,12 +132,12 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
                 if (belongingSlot.slotType == SlotType.WeaponMainHand && belongingSlot.inventoryIndexNumber == -1)
                 {
                     Weapon weapon = (Weapon)itemGeneric;
-                    player.weaponSlotSetArray[weapon.weaponBelongingToWhichMainHandSet - 1][0] = weapon;
+                    player.weaponSlotSetArray[weapon.weaponStats.weaponBelongingToWhichMainHandSet - 1][0] = weapon;
                 }
                 else if (belongingSlot.slotType == SlotType.WeaponOffHand && belongingSlot.inventoryIndexNumber == -1)
                 {
                     Weapon weapon = (Weapon)itemGeneric;
-                    player.weaponSlotSetArray[weapon.weaponBelongingToWhichOffHandSet - 1][1] = weapon;
+                    player.weaponSlotSetArray[weapon.weaponStats.weaponBelongingToWhichOffHandSet - 1][1] = weapon;
                 }
             }
 
@@ -264,12 +264,12 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
             if (belongingSlot.slotType == SlotType.WeaponMainHand && belongingSlot.inventoryIndexNumber == -1)
             {
                 Weapon weapon = itemGeneric as Weapon;
-                return weapon.weaponBelongingToWhichMainHandSet;
+                return weapon.weaponStats.weaponBelongingToWhichMainHandSet;
             }
             else if (belongingSlot.slotType == SlotType.WeaponOffHand && belongingSlot.inventoryIndexNumber == -1)
             {
                 Weapon weapon = itemGeneric as Weapon;
-                return weapon.weaponBelongingToWhichOffHandSet;
+                return weapon.weaponStats.weaponBelongingToWhichOffHandSet;
             }
         }
 
@@ -283,12 +283,12 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
             if (belongingSlot.slotType == SlotType.WeaponMainHand && belongingSlot.inventoryIndexNumber == -1)
             {
                 Weapon weapon = itemGeneric as Weapon;
-                weapon.weaponBelongingToWhichMainHandSet = newSetIndex;
+                weapon.weaponStats.weaponBelongingToWhichMainHandSet = newSetIndex;
             }
             else if (belongingSlot.slotType == SlotType.WeaponOffHand && belongingSlot.inventoryIndexNumber == -1)
             {
                 Weapon weapon = itemGeneric as Weapon;
-                weapon.weaponBelongingToWhichOffHandSet = newSetIndex;
+                weapon.weaponStats.weaponBelongingToWhichOffHandSet = newSetIndex;
             }
         }
     }

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 #region REQUIRE COMPONENTS
 [RequireComponent(typeof(HealthEvent))]
@@ -835,7 +836,7 @@ public class Player : MonoBehaviour
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
         // Base armor from weapons (non-shield offhand contributes normally
-        float mainArmor = main?.armorIncrease ?? 0f;
+        float mainArmor = main?.weaponStats.armorIncrease ?? 0f;
 
         float offHandNonShieldArmor = 0f;
         float shieldArmor = 0f;
@@ -845,11 +846,11 @@ public class Player : MonoBehaviour
             if (off.weaponDetails.weaponClass == WeaponClass.Shield)
             {
                 // Shield base armor, scaled by shield-specific modifier
-                shieldArmor = off.armorIncrease * (1f + additionalShieldArmorModifier);
+                shieldArmor = off.weaponStats.armorIncrease * (1f + additionalShieldArmorModifier);
             }
             else
             {
-                offHandNonShieldArmor = off.armorIncrease;
+                offHandNonShieldArmor = off.weaponStats.armorIncrease;
             }
         }
 
@@ -862,7 +863,7 @@ public class Player : MonoBehaviour
             if (item == null || item.passiveItemDetails == null) continue;
 
             for (int i = 1; i <= 4; i++)
-                if (HasBoostType(item, BoostType.ArmorIncrease, i)) passiveArmor += item.armorIncrease;
+                if (HasBoostType(item, BoostType.ArmorIncrease, i)) passiveArmor += item.passiveStats.armorIncrease;
         }
 
         // Keep this in sync for any UI/other logic that reads it
@@ -906,11 +907,11 @@ public class Player : MonoBehaviour
         WeaponDetailsSO weaponDetails = weapon.weaponDetails;
 
         // Rolled base damage from the instance (NOT from ScriptableObject)
-        int physMin = weaponDetails.physicalDamageMin + Mathf.Max(0, weapon.physicalAttackDamageIncrease);
-        int physMax = weaponDetails.physicalDamageMax + Mathf.Max(0, weapon.physicalAttackDamageIncrease);
+        int physMin = weaponDetails.physicalDamageMin + Mathf.Max(0, weapon.weaponStats.physicalAttackDamageIncrease);
+        int physMax = weaponDetails.physicalDamageMax + Mathf.Max(0, weapon.weaponStats.physicalAttackDamageIncrease);
 
-        int magMin = weaponDetails.magicDamageMin + Mathf.Max(0, weapon.magicAttackDamageIncrease);
-        int magMax = weaponDetails.magicDamageMax + Mathf.Max(0, weapon.magicAttackDamageIncrease);
+        int magMin = weaponDetails.magicDamageMin + Mathf.Max(0, weapon.weaponStats.magicAttackDamageIncrease);
+        int magMax = weaponDetails.magicDamageMax + Mathf.Max(0, weapon.weaponStats.magicAttackDamageIncrease);
 
         // --- add PASSIVE FLATS (per equipped passive item) ---
         // These are additive, not multiplicative.
@@ -975,7 +976,7 @@ public class Player : MonoBehaviour
                 HasBoostType(item, BoostType.AttackDamage, 3) ||
                 HasBoostType(item, BoostType.AttackDamage, 4))
             {
-                phys += Mathf.Max(0, item.physicalAttackDamageIncrease);
+                phys += Mathf.Max(0, item.passiveStats.physicalAttackDamageIncrease);
             }
 
             // Magic
@@ -984,7 +985,7 @@ public class Player : MonoBehaviour
                 HasBoostType(item, BoostType.MagicDamage, 3) ||
                 HasBoostType(item, BoostType.MagicDamage, 4))
             {
-                mag += Mathf.Max(0, item.magicAttackDamageIncrease);
+                mag += Mathf.Max(0, item.passiveStats.magicAttackDamageIncrease);
             }
         }
 
@@ -997,8 +998,8 @@ public class Player : MonoBehaviour
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
         float armorPenIncrease = 0f;
-        if (main != null) armorPenIncrease += main.armorPenetration;
-        if (off != null) armorPenIncrease += off.armorPenetration;
+        if (main != null) armorPenIncrease += main.weaponStats.armorPenetration;
+        if (off != null) armorPenIncrease += off.weaponStats.armorPenetration;
 
         float prePassive = additionalArmorPenetrationModifier + armorPenIncrease;
 
@@ -1011,7 +1012,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.ArmorPenetration, i)) withPassive += item.armorPenetration;
+                if (HasBoostType(item, BoostType.ArmorPenetration, i)) withPassive += item.passiveStats.armorPenetration;
             }
         }
 
@@ -1024,8 +1025,8 @@ public class Player : MonoBehaviour
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
         float attackRangeIncrease = 0f;
-        if (main != null) attackRangeIncrease += main.attackRange;
-        if (off != null) attackRangeIncrease += off.attackRange;
+        if (main != null) attackRangeIncrease += main.weaponStats.attackRange;
+        if (off != null) attackRangeIncrease += off.weaponStats.attackRange;
 
         float prePassive = attackRangeIncrease;
 
@@ -1038,7 +1039,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.AttackRange, i)) withPassive += item.attackRange;
+                if (HasBoostType(item, BoostType.AttackRange, i)) withPassive += item.passiveStats.attackRange;
             }
         }
 
@@ -1080,10 +1081,10 @@ public class Player : MonoBehaviour
 
         float magicResistanceIncrease = 0f;
 
-        if (main != null) magicResistanceIncrease = main.magicResistance;
+        if (main != null) magicResistanceIncrease = main.weaponStats.magicResistance;
         else magicResistanceIncrease = 0f;
 
-        if (off != null) magicResistanceIncrease += off.magicResistance;
+        if (off != null) magicResistanceIncrease += off.weaponStats.magicResistance;
         else magicResistanceIncrease += 0f;
 
         float withPassive = 0f;
@@ -1095,7 +1096,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.MagicResistance, i)) withPassive += item.magicResistanceModifier;
+                if (HasBoostType(item, BoostType.MagicResistance, i)) withPassive += item.passiveStats.magicResistanceModifier;
             }
         }
 
@@ -1109,10 +1110,10 @@ public class Player : MonoBehaviour
 
         float statusResistanceIncrease = 0f;
 
-        if (main != null) statusResistanceIncrease = main.statusResistanceModifier;
+        if (main != null) statusResistanceIncrease = main.weaponStats.statusResistanceModifier;
         else statusResistanceIncrease = 0f;
 
-        if (off != null) statusResistanceIncrease += off.statusResistanceModifier;
+        if (off != null) statusResistanceIncrease += off.weaponStats.statusResistanceModifier;
         else statusResistanceIncrease += 0f;
 
         float withPassive = 0f;
@@ -1124,7 +1125,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.StatusResistance, i)) withPassive += item.statusResistanceModifier;
+                if (HasBoostType(item, BoostType.StatusResistance, i)) withPassive += item.passiveStats.statusResistanceModifier;
             }
         }
 
@@ -1138,10 +1139,10 @@ public class Player : MonoBehaviour
 
         float damageReductionIncrease = 0f;
 
-        if (main != null) damageReductionIncrease = main.damageReductionRate;
+        if (main != null) damageReductionIncrease = main.weaponStats.damageReductionRate;
         else damageReductionIncrease = 0f;
 
-        if (off != null) damageReductionIncrease += off.damageReductionRate;
+        if (off != null) damageReductionIncrease += off.weaponStats.damageReductionRate;
         else damageReductionIncrease += 0f;
 
         float withPassive = 0f;
@@ -1153,7 +1154,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.DamageReduction, i)) withPassive += item.damageReductionRate;
+                if (HasBoostType(item, BoostType.DamageReduction, i)) withPassive += item.passiveStats.damageReductionRate;
             }
         }
 
@@ -1168,10 +1169,10 @@ public class Player : MonoBehaviour
 
         float criticalResistanceIncrease = 0f;
 
-        if (main != null) criticalResistanceIncrease = main.criticalResistanceModifier;
+        if (main != null) criticalResistanceIncrease = main.weaponStats.criticalResistanceModifier;
         else criticalResistanceIncrease = 0f;
 
-        if (off != null) criticalResistanceIncrease += off.criticalResistanceModifier;
+        if (off != null) criticalResistanceIncrease += off.weaponStats.criticalResistanceModifier;
         else criticalResistanceIncrease += 0f;
 
         float withPassive = 0f;
@@ -1183,7 +1184,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.CritResistance, i)) withPassive += item.criticalResistanceModifier;
+                if (HasBoostType(item, BoostType.CritResistance, i)) withPassive += item.passiveStats.criticalResistanceModifier;
             }
         }
 
@@ -1198,10 +1199,10 @@ public class Player : MonoBehaviour
 
         float weaponSpeedIncrease = 0f;
 
-        if (main != null) weaponSpeedIncrease = main.speedIncreaseModifier;
+        if (main != null) weaponSpeedIncrease = main.weaponStats.speedIncreaseModifier;
         else weaponSpeedIncrease = 0f;
 
-        if (off != null) weaponSpeedIncrease += off.speedIncreaseModifier;
+        if (off != null) weaponSpeedIncrease += off.weaponStats.speedIncreaseModifier;
         else weaponSpeedIncrease += 0f;
 
         float withPassive = 0f;
@@ -1213,7 +1214,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.MoveSpeed, i)) withPassive += item.speedIncreaseModifier;
+                if (HasBoostType(item, BoostType.MoveSpeed, i)) withPassive += item.passiveStats.speedIncreaseModifier;
             }
         }
 
@@ -1229,11 +1230,11 @@ public class Player : MonoBehaviour
         // Recompute weapon contribution (seconds; >= 0)
         float newWeaponContribution = 0f;
 
-        if (mainHandWeapon != null) newWeaponContribution += Mathf.Max(0f, mainHandWeapon.attackCooldownModifier);
+        if (mainHandWeapon != null) newWeaponContribution += Mathf.Max(0f, mainHandWeapon.weaponStats.attackCooldownModifier);
 
         // Ignore shields (or any off-hand that shouldn't affect cooldown)
         if (offHandWeapon != null && offHandWeapon.weaponDetails.weaponClass != WeaponClass.Shield)
-            newWeaponContribution += Mathf.Max(0f, offHandWeapon.attackCooldownModifier);
+            newWeaponContribution += Mathf.Max(0f, offHandWeapon.weaponStats.attackCooldownModifier);
 
         // --- 2) Recompute PASSIVE contribution (seconds; >= 0, summed per matching slot) ---
         float newPassiveContribution = 0f;
@@ -1244,10 +1245,10 @@ public class Player : MonoBehaviour
             if (item == null || item.passiveItemDetails == null) continue;
 
             // Each matching slot adds item.attackCooldown (your roll is additive, not %)
-            if (HasBoostType(item, BoostType.AttackCooldown, 1)) newPassiveContribution += Mathf.Max(0f, item.attackCooldown);
-            if (HasBoostType(item, BoostType.AttackCooldown, 2)) newPassiveContribution += Mathf.Max(0f, item.attackCooldown);
-            if (HasBoostType(item, BoostType.AttackCooldown, 3)) newPassiveContribution += Mathf.Max(0f, item.attackCooldown);
-            if (HasBoostType(item, BoostType.AttackCooldown, 4)) newPassiveContribution += Mathf.Max(0f, item.attackCooldown);
+            if (HasBoostType(item, BoostType.AttackCooldown, 1)) newPassiveContribution += Mathf.Max(0f, item.passiveStats.attackCooldown);
+            if (HasBoostType(item, BoostType.AttackCooldown, 2)) newPassiveContribution += Mathf.Max(0f, item.passiveStats.attackCooldown);
+            if (HasBoostType(item, BoostType.AttackCooldown, 3)) newPassiveContribution += Mathf.Max(0f, item.passiveStats.attackCooldown);
+            if (HasBoostType(item, BoostType.AttackCooldown, 4)) newPassiveContribution += Mathf.Max(0f, item.passiveStats.attackCooldown);
         }
 
         // --- 3) Apply delta to the global modifier: remove old, add new ---
@@ -1262,11 +1263,11 @@ public class Player : MonoBehaviour
         _passiveAttackCooldownContribution = newPassiveContribution;
     }
 
-    public PassiveItem AddPassiveItemToPlayer(ref PassiveItem passiveItem, DropItem dropItem = null)
+    public PassiveItem AddPassiveItemToPlayer(ref PassiveItem passiveItem, PassiveItemSlotName passiveItemSlotName, DropItem dropItem = null)
     {
-        setPassiveItemEvent.CallEquipPassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
+        setPassiveItemEvent.CallEquipPassiveItem(this, passiveItem, passiveItemSlotName);
 
-        if (equippedPassiveItems[passiveItem.passiveItemDetails.passiveItemSlotName].itemSlotStatus == ItemSlotStatus.Inventory)
+        if (equippedPassiveItems[passiveItemSlotName].itemSlotStatus == ItemSlotStatus.Inventory)
         {
             // Place it inventory
             int inventoryItemIndex = InventoryManager.Instance.FindIndexOfItem(passiveItem);
@@ -1275,7 +1276,7 @@ public class Player : MonoBehaviour
         else
         {
             // Equip to inventory
-            StaticEventHandler.CallItemAddedToPassiveItemSlot(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
+            StaticEventHandler.CallItemAddedToPassiveItemSlot(passiveItem, passiveItemSlotName);
         }
 
         return passiveItem;
@@ -1328,7 +1329,7 @@ public class Player : MonoBehaviour
                 weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] = weapon;
                 ActivateWeapon(weapon, weapon.itemSlotStatus, currentWeaponSlotSetIndex, onStart, onlySwitch);
                 StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
-                weapon.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;
+                weapon.weaponStats.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;
 
                 if (weaponSlotSetArray[0][1] != null && weaponSlotSetArray[1][1] != null && weaponSlotSetArray[2][1] != null)
                     offHandSlotFilled = true;
@@ -1343,7 +1344,7 @@ public class Player : MonoBehaviour
                 weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] = weapon;
                 ActivateWeapon(weapon, weapon.itemSlotStatus, currentWeaponSlotSetIndex, onStart, onlySwitch);
                 StaticEventHandler.CallWeaponPickedUpEventForBook(weapon, true);
-                weapon.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;
+                weapon.weaponStats.weaponBelongingToWhichOffHandSet = currentWeaponSlotSetIndex;
 
                 if (weaponSlotSetArray[0][1] != null && weaponSlotSetArray[1][1] != null && weaponSlotSetArray[2][1] != null)
                     offHandSlotFilled = true;
@@ -1367,7 +1368,7 @@ public class Player : MonoBehaviour
                 // Place to off-hand
                 weapon.itemSlotStatus = ItemSlotStatus.OffHand;
                 weaponSlotSetArray[setIdx][1] = weapon;
-                weapon.weaponBelongingToWhichOffHandSet = setIdx + 1;
+                weapon.weaponStats.weaponBelongingToWhichOffHandSet = setIdx + 1;
 
                 if (currentWeaponSlotSetIndex - 1 == setIdx)
                     ActivateWeapon(weapon, weapon.itemSlotStatus, setIdx + 1, onStart, onlySwitch);
@@ -1392,7 +1393,7 @@ public class Player : MonoBehaviour
                 {
                     weapon.itemSlotStatus = ItemSlotStatus.MainHand;
                     weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] = weapon;
-                    weapon.weaponBelongingToWhichMainHandSet = currentWeaponSlotSetIndex;
+                    weapon.weaponStats.weaponBelongingToWhichMainHandSet = currentWeaponSlotSetIndex;
 
                     ActivateWeapon(weapon, weapon.itemSlotStatus, currentWeaponSlotSetIndex, onStart, onlySwitch);
                     StaticEventHandler.CallWeaponUnlockedEvent(details.weaponTitle);
@@ -1413,7 +1414,7 @@ public class Player : MonoBehaviour
 
                     weapon.itemSlotStatus = ItemSlotStatus.MainHand;
                     weaponSlotSetArray[setIdx][0] = weapon;
-                    weapon.weaponBelongingToWhichMainHandSet = setIdx + 1;
+                    weapon.weaponStats.weaponBelongingToWhichMainHandSet = setIdx + 1;
 
                     if (currentWeaponSlotSetIndex - 1 == setIdx)
                         ActivateWeapon(weapon, weapon.itemSlotStatus, setIdx + 1, onStart, onlySwitch);
@@ -1438,7 +1439,7 @@ public class Player : MonoBehaviour
 
                     weapon.itemSlotStatus = ItemSlotStatus.OffHand;
                     weaponSlotSetArray[setIdx][1] = weapon;
-                    weapon.weaponBelongingToWhichOffHandSet = setIdx + 1;
+                    weapon.weaponStats.weaponBelongingToWhichOffHandSet = setIdx + 1;
 
                     if (currentWeaponSlotSetIndex - 1 == setIdx)
                         ActivateWeapon(weapon, weapon.itemSlotStatus, setIdx + 1, onStart, onlySwitch);
@@ -1458,27 +1459,31 @@ public class Player : MonoBehaviour
 
     private Weapon CreateStartingWeaponInstance(ref Weapon weapon, ItemSlotStatus slot)
     {
+        // Generate seed
+        int seed = Random.Range(int.MinValue, int.MaxValue);
+        WartheonRNG rng = new WartheonRNG(seed);
+
         // Create with so rarity only for start gear
         if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
         {
             // Shields: keep the instance minimal; other runtime stats are irrelevant
-            weapon.baseUniqueRolled = weapon.weaponDetails.baseUniqueModifier;
-            weapon.baseTypeRolled = weapon.weaponDetails.baseTypeModifier;
+            weapon.weaponStats.baseUniqueRolled = weapon.weaponDetails.baseUniqueModifier;
+            weapon.weaponStats.baseTypeRolled = weapon.weaponDetails.baseTypeModifier;
 
-            WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.baseUniqueRolled, weapon.weaponDetails);
-            WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.baseTypeRolled, weapon.weaponDetails);
+            WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.weaponStats.baseUniqueRolled, weapon.weaponDetails, rng);
+            WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.weaponStats.baseTypeRolled, weapon.weaponDetails, rng);
 
             return weapon;
         }
 
         weapon.itemSlotStatus = slot;
-        weapon.criticalHitChanceIncrease = weapon.weaponDetails.criticalHitChance;
-        weapon.criticalHitDamageIncrease = weapon.weaponDetails.criticalHitDamageMultiplier;
-        weapon.baseUniqueRolled = weapon.weaponDetails.baseUniqueModifier;
-        weapon.baseTypeRolled = weapon.weaponDetails.baseTypeModifier;
+        weapon.weaponStats.criticalHitChanceIncrease = weapon.weaponDetails.criticalHitChance;
+        weapon.weaponStats.criticalHitDamageIncrease = weapon.weaponDetails.criticalHitDamageMultiplier;
+        weapon.weaponStats.baseUniqueRolled = weapon.weaponDetails.baseUniqueModifier;
+        weapon.weaponStats.baseTypeRolled = weapon.weaponDetails.baseTypeModifier;
 
-        WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.baseUniqueRolled, weapon.weaponDetails);
-        WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.baseTypeRolled, weapon.weaponDetails);
+        WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.weaponStats.baseUniqueRolled, weapon.weaponDetails, rng);
+        WeaponDropGenerator.SetWeaponModifier(ref weapon, weapon.weaponStats.baseTypeRolled, weapon.weaponDetails, rng);
 
         return weapon;
     }
@@ -1527,13 +1532,13 @@ public class Player : MonoBehaviour
             if (main != null)
             {
                 attackRatingModifier = ((main.weaponDetails.weaponAttackRating + off.weaponDetails.weaponAttackRating +
-                      main.attackRatingIncrease + off.attackRatingIncrease) / 2f + additionalAttackRatingModifier) * 0.85f;
+                      main.weaponStats.attackRatingIncrease + off.weaponStats.attackRatingIncrease) / 2f + additionalAttackRatingModifier) * 0.85f;
             }
             else attackRatingModifier = 0f;
         }
         else
         {
-            if (main != null) attackRatingModifier = main.weaponDetails.weaponAttackRating + additionalAttackRatingModifier + main.attackRatingIncrease;
+            if (main != null) attackRatingModifier = main.weaponDetails.weaponAttackRating + additionalAttackRatingModifier + main.weaponStats.attackRatingIncrease;
             else attackRatingModifier = 0f;
         }
 
@@ -1549,7 +1554,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.AttackRating, i)) withPassive += item.attackRating;
+                if (HasBoostType(item, BoostType.AttackRating, i)) withPassive += item.passiveStats.attackRating;
             }
         }
 
@@ -1567,7 +1572,7 @@ public class Player : MonoBehaviour
         if(main != null)
         {
             float baseFromWeapon = main.weaponDetails.isMeleeWeapon ? main.weaponDetails.criticalHitChance : main.weaponDetails.weaponCurrentProjectile.criticalHitChance;
-            float prePassive = dexCrit + baseFromWeapon + additionalCriticalHitChanceModifier + main.criticalHitChanceIncrease;
+            float prePassive = dexCrit + baseFromWeapon + additionalCriticalHitChanceModifier + main.weaponStats.criticalHitChanceIncrease;
 
             float withPassive = 0f;
 
@@ -1578,7 +1583,7 @@ public class Player : MonoBehaviour
 
                 for (int i = 1; i <= 4; i++)
                 {
-                    if (HasBoostType(item, BoostType.CritChance, i)) withPassive += item.criticalHitChance;
+                    if (HasBoostType(item, BoostType.CritChance, i)) withPassive += item.passiveStats.criticalHitChance;
                 }
             }
 
@@ -1594,7 +1599,7 @@ public class Player : MonoBehaviour
             else
             {
                 float baseFromWeapon = off.weaponDetails.isMeleeWeapon ? off.weaponDetails.criticalHitChance : off.weaponDetails.weaponCurrentProjectile.criticalHitChance;
-                float prePassive = dexCrit + baseFromWeapon + additionalCriticalHitChanceModifier + off.criticalHitChanceIncrease;
+                float prePassive = dexCrit + baseFromWeapon + additionalCriticalHitChanceModifier + off.weaponStats.criticalHitChanceIncrease;
 
                 float withPassive = 0f;
 
@@ -1605,7 +1610,7 @@ public class Player : MonoBehaviour
 
                     for (int i = 1; i <= 4; i++)
                     {
-                        if (HasBoostType(item, BoostType.CritChance, i)) withPassive += item.criticalHitChance;
+                        if (HasBoostType(item, BoostType.CritChance, i)) withPassive += item.passiveStats.criticalHitChance;
                     }
                 }
 
@@ -1658,7 +1663,7 @@ public class Player : MonoBehaviour
 
                 float typeBonus = off.weaponDetails.isMeleeWeapon ? additionalCriticalMeleeDamageModifier : additionalCriticalRangedDamageModifier;
 
-                float prePassive = off.criticalHitDamageIncrease + feroBonus + additionalCriticalDamageModifier + typeBonus;
+                float prePassive = off.weaponStats.criticalHitDamageIncrease + feroBonus + additionalCriticalDamageModifier + typeBonus;
 
                 float withPassive = 0f;
 
@@ -1669,7 +1674,7 @@ public class Player : MonoBehaviour
 
                     for (int i = 1; i <= 4; i++)
                     {
-                        if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.criticalHitDamage;
+                        if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.passiveStats.criticalHitDamage;
                     }
                 }
 
@@ -1685,7 +1690,7 @@ public class Player : MonoBehaviour
 
                 float typeBonus = main.weaponDetails.isMeleeWeapon ? additionalCriticalMeleeDamageModifier : additionalCriticalRangedDamageModifier;
 
-                float prePassive = main.criticalHitDamageIncrease + feroBonus + additionalCriticalDamageModifier + typeBonus;
+                float prePassive = main.weaponStats.criticalHitDamageIncrease + feroBonus + additionalCriticalDamageModifier + typeBonus;
 
                 float withPassive = 0f;
 
@@ -1696,7 +1701,7 @@ public class Player : MonoBehaviour
 
                     for (int i = 1; i <= 4; i++)
                     {
-                        if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.criticalHitDamage;
+                        if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.passiveStats.criticalHitDamage;
                     }
                 }
 
@@ -1709,13 +1714,12 @@ public class Player : MonoBehaviour
             // --- MAIN ---
             if (main != null)
             {
-                float baseFromWeapon = main.weaponDetails.isMeleeWeapon
-                    ? main.weaponDetails.criticalHitDamageMultiplier
+                float baseFromWeapon = main.weaponDetails.isMeleeWeapon ? main.weaponDetails.criticalHitDamageMultiplier
                     : main.weaponDetails.weaponCurrentProjectile.criticalHitDamageMultiplier;
 
                 float typeBonus = main.weaponDetails.isMeleeWeapon ? additionalCriticalMeleeDamageModifier : additionalCriticalRangedDamageModifier;
 
-                float prePassive = main.criticalHitDamageIncrease + feroBonus + additionalCriticalDamageModifier + typeBonus;
+                float prePassive = main.weaponStats.criticalHitDamageIncrease + feroBonus + additionalCriticalDamageModifier + typeBonus;
 
                 float withPassive = 0f;
 
@@ -1726,7 +1730,7 @@ public class Player : MonoBehaviour
 
                     for (int i = 1; i <= 4; i++)
                     {
-                        if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.criticalHitDamage;
+                        if (HasBoostType(item, BoostType.CritDamage, i)) withPassive += item.passiveStats.criticalHitDamage;
                     }
                 }
 
@@ -1750,8 +1754,8 @@ public class Player : MonoBehaviour
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
         int dmgVsLowIncrease = 0;
-        if (main != null) dmgVsLowIncrease += main.damageVsLowHealthEnemies;
-        if (off != null) dmgVsLowIncrease += off.damageVsLowHealthEnemies;
+        if (main != null) dmgVsLowIncrease += main.weaponStats.damageVsLowHealthEnemies;
+        if (off != null) dmgVsLowIncrease += off.weaponStats.damageVsLowHealthEnemies;
 
         int baseFromStr = Mathf.RoundToInt(currentStrengthValue * 0.05f);
         int prePassive = additionalLifeStealModifier + dmgVsLowIncrease + baseFromStr;
@@ -1765,7 +1769,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.AttackVsLowHealthEnemies, i)) withPassive += item.damageVsLowHealthEnemies;
+                if (HasBoostType(item, BoostType.AttackVsLowHealthEnemies, i)) withPassive += item.passiveStats.damageVsLowHealthEnemies;
             }
         }
 
@@ -1778,8 +1782,8 @@ public class Player : MonoBehaviour
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
         int lifeStealIncrease = 0;
-        if (main != null) lifeStealIncrease += main.lifeStealAmount;
-        if (off != null) lifeStealIncrease += off.lifeStealAmount;
+        if (main != null) lifeStealIncrease += main.weaponStats.lifeStealAmount;
+        if (off != null) lifeStealIncrease += off.weaponStats.lifeStealAmount;
 
         int baseFromFer = Mathf.RoundToInt(currentFerocityValue * 0.5f / 100f);
         int prePassive =  additionalLifeStealModifier + lifeStealIncrease + baseFromFer;
@@ -1793,7 +1797,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.LifeSteal, i)) withPassive += item.lifeStealAmount;
+                if (HasBoostType(item, BoostType.LifeSteal, i)) withPassive += item.passiveStats.lifeStealAmount;
             }
         }
 
@@ -1813,8 +1817,8 @@ public class Player : MonoBehaviour
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
         float skillCooldownIncrease = 0f;
-        if (main != null) skillCooldownIncrease += main.skillCooldown;
-        if (off != null) skillCooldownIncrease += off.skillCooldown;
+        if (main != null) skillCooldownIncrease += main.weaponStats.skillCooldown;
+        if (off != null) skillCooldownIncrease += off.weaponStats.skillCooldown;
 
         float prePassive = additionalSkillCoolDownModifier + skillCooldownIncrease;
 
@@ -1827,7 +1831,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.SkillCooldown, i)) withPassive += item.skillCooldown;
+                if (HasBoostType(item, BoostType.SkillCooldown, i)) withPassive += item.passiveStats.skillCooldown;
             }
         }
 
@@ -1840,8 +1844,8 @@ public class Player : MonoBehaviour
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
         float skillDurationIncrease = 0f;
-        if (main != null) skillDurationIncrease += main.skillCooldown;
-        if (off != null) skillDurationIncrease += off.skillCooldown;
+        if (main != null) skillDurationIncrease += main.weaponStats.skillCooldown;
+        if (off != null) skillDurationIncrease += off.weaponStats.skillCooldown;
 
         float prePassive = additionalSkillCoolDownModifier + skillDurationIncrease;
 
@@ -1854,7 +1858,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.SkillDuration, i)) withPassive += item.skillDuration;
+                if (HasBoostType(item, BoostType.SkillDuration, i)) withPassive += item.passiveStats.skillDuration;
             }
         }
 
@@ -1876,8 +1880,8 @@ public class Player : MonoBehaviour
             switch (statusEffectType)
             {
                 case StatusEffectType.Poison:
-                    if (main != null) poisonInflictValue += main.additionalPoisonChance;
-                    if (off != null) poisonInflictValue += off.additionalPoisonChance;
+                    if (main != null) poisonInflictValue += main.weaponStats.additionalPoisonChance;
+                    if (off != null) poisonInflictValue += off.weaponStats.additionalPoisonChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -1886,13 +1890,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) poisonInflictValue += item.additionalPoisonChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) poisonInflictValue += item.passiveStats.additionalPoisonChance;
                         }
                     }
                     break;
                 case StatusEffectType.Bleed:
-                    if (main != null) bleedInflictValue += main.additionalBleedChance;
-                    if (off != null) bleedInflictValue += off.additionalBleedChance;
+                    if (main != null) bleedInflictValue += main.weaponStats.additionalBleedChance;
+                    if (off != null) bleedInflictValue += off.weaponStats.additionalBleedChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -1901,13 +1905,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) bleedInflictValue += item.additionalBleedChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) bleedInflictValue += item.passiveStats.additionalBleedChance;
                         }
                     }
                     break;
                 case StatusEffectType.Root:
-                    if (main != null) rootInflictValue += main.additionalRootChance;
-                    if (off != null) rootInflictValue += off.additionalRootChance;
+                    if (main != null) rootInflictValue += main.weaponStats.additionalRootChance;
+                    if (off != null) rootInflictValue += off.weaponStats.additionalRootChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -1916,13 +1920,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) rootInflictValue += item.additionalRootChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) rootInflictValue += item.passiveStats.additionalRootChance;
                         }
                     }
                     break;
                 case StatusEffectType.Stun:
-                    if (main != null) stunInflictValue += main.additionalStunChance;
-                    if (off != null) stunInflictValue += off.additionalStunChance;
+                    if (main != null) stunInflictValue += main.weaponStats.additionalStunChance;
+                    if (off != null) stunInflictValue += off.weaponStats.additionalStunChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -1931,13 +1935,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) stunInflictValue += item.additionalStunChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) stunInflictValue += item.passiveStats.additionalStunChance;
                         }
                     }
                     break;
                 case StatusEffectType.Curse:
-                    if (main != null) curseInflictValue += main.additionalCurseChance;
-                    if (off != null) curseInflictValue += off.additionalCurseChance;
+                    if (main != null) curseInflictValue += main.weaponStats.additionalCurseChance;
+                    if (off != null) curseInflictValue += off.weaponStats.additionalCurseChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -1946,13 +1950,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) curseInflictValue += item.additionalCurseChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) curseInflictValue += item.passiveStats.additionalCurseChance;
                         }
                     }
                     break;
                 case StatusEffectType.Fear:
-                    if (main != null) fearInflictValue += main.additionalFearChance;
-                    if (off != null) fearInflictValue += off.additionalFearChance;
+                    if (main != null) fearInflictValue += main.weaponStats.additionalFearChance;
+                    if (off != null) fearInflictValue += off.weaponStats.additionalFearChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -1961,13 +1965,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) fearInflictValue += item.additionalFearChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) fearInflictValue += item.passiveStats.additionalFearChance;
                         }
                     }
                     break;
                 case StatusEffectType.Reveal:
-                    if (main != null) revealInflictValue += main.additionalRevealChance;
-                    if (off != null) revealInflictValue += off.additionalRevealChance;
+                    if (main != null) revealInflictValue += main.weaponStats.additionalRevealChance;
+                    if (off != null) revealInflictValue += off.weaponStats.additionalRevealChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -1976,13 +1980,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) revealInflictValue += item.additionalRevealChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) revealInflictValue += item.passiveStats.additionalRevealChance;
                         }
                     }
                     break;
                 case StatusEffectType.Paralyze:
-                    if (main != null) paralyzeInflictValue += main.additionalParalyzeChance;
-                    if (off != null) paralyzeInflictValue += off.additionalParalyzeChance;
+                    if (main != null) paralyzeInflictValue += main.weaponStats.additionalParalyzeChance;
+                    if (off != null) paralyzeInflictValue += off.weaponStats.additionalParalyzeChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -1991,13 +1995,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) paralyzeInflictValue += item.additionalParalyzeChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) paralyzeInflictValue += item.passiveStats.additionalParalyzeChance;
                         }
                     }
                     break;
                 case StatusEffectType.Burn:
-                    if (main != null) burnInflictValue += main.additionalBurnChance;
-                    if (off != null) burnInflictValue += off.additionalBurnChance;
+                    if (main != null) burnInflictValue += main.weaponStats.additionalBurnChance;
+                    if (off != null) burnInflictValue += off.weaponStats.additionalBurnChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -2006,13 +2010,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) burnInflictValue += item.additionalBurnChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) burnInflictValue += item.passiveStats.additionalBurnChance;
                         }
                     }
                     break;
                 case StatusEffectType.Freeze:
-                    if (main != null) freezeInflictValue += main.additionalFreezeChance;
-                    if (off != null) freezeInflictValue += off.additionalFreezeChance;
+                    if (main != null) freezeInflictValue += main.weaponStats.additionalFreezeChance;
+                    if (off != null) freezeInflictValue += off.weaponStats.additionalFreezeChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -2021,13 +2025,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) freezeInflictValue += item.additionalFreezeChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) freezeInflictValue += item.passiveStats.additionalFreezeChance;
                         }
                     }
                     break;
                 case StatusEffectType.Blind:
-                    if (main != null) blindInflictValue += main.additionalBlindChance;
-                    if (off != null) blindInflictValue += off.additionalBlindChance;
+                    if (main != null) blindInflictValue += main.weaponStats.additionalBlindChance;
+                    if (off != null) blindInflictValue += off.weaponStats.additionalBlindChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -2036,13 +2040,13 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) blindInflictValue += item.additionalBlindChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) blindInflictValue += item.passiveStats.additionalBlindChance;
                         }
                     }
                     break;
                 case StatusEffectType.Slow:
-                    if (main != null) slowInflictValue += main.additionalSlowChance;
-                    if (off != null) slowInflictValue += off.additionalSlowChance;
+                    if (main != null) slowInflictValue += main.weaponStats.additionalSlowChance;
+                    if (off != null) slowInflictValue += off.weaponStats.additionalSlowChance;
 
                     foreach (var kvp in equippedPassiveItems)
                     {
@@ -2051,7 +2055,7 @@ public class Player : MonoBehaviour
 
                         for (int j = 1; j <= 4; j++)
                         {
-                            if (HasBoostType(item, BoostType.StatusInflict, i)) slowInflictValue += item.additionalSlowChance;
+                            if (HasBoostType(item, BoostType.StatusInflict, i)) slowInflictValue += item.passiveStats.additionalSlowChance;
                         }
                     }
                     break;
@@ -2083,8 +2087,8 @@ public class Player : MonoBehaviour
         if (off != null && off.weaponDetails.weaponClass == WeaponClass.Shield) baseShieldBlock = Mathf.Max(0f, off.weaponDetails.blockChance);
 
         float weaponBlockMods = 0f;
-        if (main != null) weaponBlockMods += Mathf.Max(0f, main.blockChanceIncrease);
-        if (off != null) weaponBlockMods += Mathf.Max(0f, off.blockChanceIncrease);
+        if (main != null) weaponBlockMods += Mathf.Max(0f, main.weaponStats.blockChanceIncrease);
+        if (off != null) weaponBlockMods += Mathf.Max(0f, off.weaponStats.blockChanceIncrease);
 
         float prePassive = baseShieldBlock + additionalBlockModifier + weaponBlockMods;
         float withPassive = 0f;
@@ -2096,7 +2100,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.BlockChance, i)) withPassive += item.blockChance;
+                if (HasBoostType(item, BoostType.BlockChance, i)) withPassive += item.passiveStats.blockChance;
             }
         }
 
@@ -2109,8 +2113,8 @@ public class Player : MonoBehaviour
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
         float weaponDodge = 0f;
-        if (main != null) weaponDodge += main.dodgeChanceIncrease;
-        if (off != null) weaponDodge += off.dodgeChanceIncrease;
+        if (main != null) weaponDodge += main.weaponStats.dodgeChanceIncrease;
+        if (off != null) weaponDodge += off.weaponStats.dodgeChanceIncrease;
 
         float baseFromAgi = (float)Math.Round(currentAgilityValue * 0.15f / 100f, 2);
         float prePassive = baseFromAgi + additionalDodgeRateModifier + weaponDodge;
@@ -2124,7 +2128,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.DodgeChance, i)) withPassive += item.dodgeChance;
+                if (HasBoostType(item, BoostType.DodgeChance, i)) withPassive += item.passiveStats.dodgeChance;
             }
         }
 
@@ -2140,8 +2144,8 @@ public class Player : MonoBehaviour
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
         int weaponAdd = 0;
-        if (main != null) weaponAdd += main.increasedMaxHealth;
-        if (off != null) weaponAdd += off.increasedMaxHealth;
+        if (main != null) weaponAdd += main.weaponStats.increasedMaxHealth;
+        if (off != null) weaponAdd += off.weaponStats.increasedMaxHealth;
 
         int baseMax = 120 + currentConstitutionValue * 15 + weaponAdd;
 
@@ -2154,7 +2158,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.HealthIncrease, i)) withPassive += item.increasedMaxHealth;
+                if (HasBoostType(item, BoostType.HealthIncrease, i)) withPassive += item.passiveStats.increasedMaxHealth;
             }
         }
 
@@ -2171,8 +2175,8 @@ public class Player : MonoBehaviour
         Weapon off = activeWeapon.GetCurrentOffHandWeapon();
 
         int weaponAdd = 0;
-        if (main != null) weaponAdd += main.increasedMaxMana;
-        if (off != null) weaponAdd += off.increasedMaxMana;
+        if (main != null) weaponAdd += main.weaponStats.increasedMaxMana;
+        if (off != null) weaponAdd += off.weaponStats.increasedMaxMana;
 
         int baseMax = 20 + currentWillpowerValue * 20 + weaponAdd;
 
@@ -2185,7 +2189,7 @@ public class Player : MonoBehaviour
 
             for (int i = 1; i <= 4; i++)
             {
-                if (HasBoostType(item, BoostType.ManaIncrease, i)) withPassive += item.increasedMaxMana;
+                if (HasBoostType(item, BoostType.ManaIncrease, i)) withPassive += item.passiveStats.increasedMaxMana;
             }
         }
 
@@ -2248,16 +2252,16 @@ public class Player : MonoBehaviour
         switch (boostIndex)
         {
             case 1: // Unique boost
-                if (passiveItem.baseUniqueRolled == boostType) return true;
+                if (passiveItem.passiveStats.baseUniqueRolled == boostType) return true;
                 break;
             case 2: // Type boost
-                if (passiveItem.baseTypeRolled == boostType) return true;
+                if (passiveItem.passiveStats.baseTypeRolled == boostType) return true;
                 break;
             case 3: // Enchanted boost
-                if (passiveItem.enchantedBoostType == boostType) return true;
+                if (passiveItem.passiveStats.enchantedBoostType == boostType) return true;
                 break;
             case 4: // Mythic boost
-                if (passiveItem.mythicBoostType == boostType) return true;
+                if (passiveItem.passiveStats.mythicBoostType == boostType) return true;
                 break;
         }
 

@@ -47,6 +47,8 @@ public class Health : MonoBehaviour
     // Inner Path
     float secondBreathHealTimer = 0f;
 
+    bool isMultiplayer = false;
+
     private void Awake()
     {
 #if UNITY_EDITOR
@@ -251,7 +253,7 @@ public class Health : MonoBehaviour
         }
         else
         {
-            if (NetworkClient.active & playerReady)
+            if (NetworkClient.active && (playerReady || enemy != null))
             {
                 DeathCheck();
             }
@@ -273,12 +275,13 @@ public class Health : MonoBehaviour
                 // Player death
                 DestroyUtility.Destroy(player.gameObject, playerDied: true, 0);
             }
-            else if (enemy != null)
+            else if (enemy != null && enemy.initializationCompleted)
             {
                 if (player != null && player.resourcefulActive) player.mana.AddMana(4); // Add mana on kill
 
                 // Enemy death
                 enemy.dropOnDestroy.DropProcess();
+
                 DestroyUtility.Destroy(enemy.gameObject, playerDied: false, enemy.health.LastDamageDealerNetId);
             }
             else if (dummy != null)
@@ -339,8 +342,6 @@ public class Health : MonoBehaviour
                         StaticEventHandler.CallBookHealthChangedEvent(currentHealth);
                     }
                 }
-                
-                Debug.Log(damageAmount + " damage is dealt and " + currentHealth + " has remained!");
             }
             else
             {
@@ -409,16 +410,12 @@ public class Health : MonoBehaviour
             // Decoy logic
             else if (dummy != null)
             {
-                Debug.Log("Hit happens.");
-
                 DecoyGetHitRoutine();
                 PostHitImmunity();
             }
             // Enemy logic
             else if (enemy != null)
             {
-                Debug.Log("Hit happens.");
-
                 // Update enemy health bar
                 if (GameManager.Instance.healthBarContainer.activeSelf)
                 {

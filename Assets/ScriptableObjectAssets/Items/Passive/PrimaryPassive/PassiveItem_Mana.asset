@@ -15,8 +15,11 @@ MonoBehaviour:
   passiveItemName: Mana
   price: 0
   passiveItemSprite: {fileID: 1262957724, guid: 02f0616564d134f42baa863a0083e092, type: 3}
+  rarity: 0
   passiveItemCategory: 0
-  primaryPassiveItemName: 7
-  passiveItemType: 0
+  passiveItemType: 7
   passiveItemSlotName: 0
   passiveItemAnimatorController: {fileID: 9100000, guid: 00b0b994e9990d141b3e7a2c085e7ed3, type: 2}
+  baseUniqueModifier: 0
+  baseTypeModifier: 0
+  additionalModifierPoolForType: 

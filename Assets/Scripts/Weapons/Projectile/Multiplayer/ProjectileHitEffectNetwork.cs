@@ -18,8 +18,6 @@ public class ProjectileHitEffectNetwork : NetworkBehaviour
         // Host already initialized
         if (isServer) return;
 
-        Debug.Log("Data replicated.");
-
         projectileHitFx.SetHitEffect(duration, startParticleSize, startParticleSpeed, startLifeTime, effectGravity, maxParticleNumber, emissionRate, burstParticleNumber, 
             velocityOverLifetimeMin, velocityOverLifetimeMax);
     }

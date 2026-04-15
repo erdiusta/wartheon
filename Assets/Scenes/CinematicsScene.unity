@@ -254,6 +254,7 @@ MonoBehaviour:
   - {fileID: 7183228443647751644, guid: c79ed5e064d38654994105362aada71b, type: 3}
   - {fileID: 7183228443647751644, guid: 2f8bdb320912c5e4baed7a917937b878, type: 3}
   - {fileID: 7183228443647751644, guid: 1cd0575fc7243d444b1837a4650f2560, type: 3}
+  - {fileID: 6166831115549756087, guid: 5d620610076c04f428311c6ed3b4f447, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -1273,8 +1274,8 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0.99957216
-    height: 0.99999994
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60

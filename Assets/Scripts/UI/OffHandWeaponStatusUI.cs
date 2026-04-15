@@ -90,7 +90,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
 
         if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
         {
-            if (player.activeWeapon.GetCurrentOffHandWeapon().onCooldown)
+            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponStats.onCooldown)
             {
                 cooldownTimer -= Time.deltaTime;
             }
@@ -275,7 +275,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
             cooldownBarParent.gameObject.SetActive(true);
         }
 
-        while (currentWeapon.onCooldown)
+        while (currentWeapon.weaponStats.onCooldown)
         {
             // Update cooldown bar
             float barFill = currentWeapon.weaponDetails.isMeleeWeapon ? cooldownTimer / 

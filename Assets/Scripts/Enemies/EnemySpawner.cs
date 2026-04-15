@@ -36,8 +36,6 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         {
             StaticEventHandler.OnRoomChanged += StaticEventHandler_OnRoomChanged;
             StaticEventHandler.OnEnemyKilled += StaticEventHandler_OnEnemyKilled;
-
-            Debug.Log("LEAAK!!!");
         }
     }
 
@@ -86,6 +84,10 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         // Update music for room
         MusicManager.Instance.PlayMusic(currentRoom.ambientMusic, 0.2f, 2f);
 
+        // Create seed
+        int seed = Random.Range(int.MinValue, int.MaxValue);
+        WartheonRNG rng = new WartheonRNG(seed);
+
         // Tutorial check - Lock door for a while
         if (InputManager.TutorialEnabled && currentRoom.roomNodeType.isEntrance) goto tutorialEntranceRoomCheck;
 
@@ -110,7 +112,7 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         }
 
         // Get concurrent number of enemies to spawn
-        enemyMaxConcurrentSpawnNumber = GetConcurrentEnemies();
+        enemyMaxConcurrentSpawnNumber = GetConcurrentEnemies(rng);
 
         // Update music for room
         MusicManager.Instance.PlayMusic(currentRoom.battleMusic, 0.2f, 0.5f);
@@ -121,13 +123,13 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
         currentRoom.instantiatedRoom.LockDoors();
 
         // Spawn enemies
-        SpawnEnemies(roomChangedEventArgs.room);
+        SpawnEnemies(roomChangedEventArgs.room, rng);
     }
 
     /// <summary>
     /// Spawn the enemies
     /// </summary>
-    private void SpawnEnemies(Room room)
+    private void SpawnEnemies(Room room, WartheonRNG rng)
     {
         // Set gamestate engaging enemies
         if (GameManager.Instance.gameState == GameState.playingLevel)
@@ -144,13 +146,13 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
             }
         }
 
-        StartCoroutine(SpawnEnemiesRoutine());
+        StartCoroutine(SpawnEnemiesRoutine(rng));
     }
 
     /// <summary>
     /// Spawn the enemies coroutine
     /// </summary>
-    public IEnumerator SpawnEnemiesRoutine()
+    public IEnumerator SpawnEnemiesRoutine(WartheonRNG rng)
     {
         Grid grid = currentRoom.instantiatedRoom.grid;
 
@@ -170,19 +172,19 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
 
                 if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Combat)
                 {
-                    CreateEnemy(randomEnemyHelperClass.GetItem(), grid.CellToWorld(cellPosition), out enemy);
+                    CreateEnemy(randomEnemyHelperClass.GetItem(rng), grid.CellToWorld(cellPosition), out enemy);
                     yield break;
                 }
 
                 if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Parry)
                 {
-                    CreateEnemy(randomEnemyHelperClass.GetItem(), grid.CellToWorld(cellPosition), out enemy);
+                    CreateEnemy(randomEnemyHelperClass.GetItem(rng), grid.CellToWorld(cellPosition), out enemy);
                     yield break;
                 }
 
                 if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.DodgeRoll)
                 {
-                    CreateEnemy(randomEnemyHelperClass.GetItem(), grid.CellToWorld(cellPosition - new Vector3Int(4, 4, 0)), out enemy);
+                    CreateEnemy(randomEnemyHelperClass.GetItem(rng), grid.CellToWorld(cellPosition - new Vector3Int(4, 4, 0)), out enemy);
                     yield break;
                 }
             }
@@ -198,7 +200,7 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
 
                 Vector3Int cellPosition;
 
-                if (randomEnemyHelperClass.GetItem().isEnemyBoss)
+                if (randomEnemyHelperClass.GetItem(rng).isEnemyBoss)
                 {
                     cellPosition = (Vector3Int)currentRoom.spawnPositionArray[0];
                 }
@@ -208,11 +210,11 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
                     spawnPositionIndex %= currentRoom.spawnPositionArray.Length;
                 }
 
-                CreateEnemy(randomEnemyHelperClass.GetItem(), grid.CellToWorld(cellPosition), out enemy);
+                CreateEnemy(randomEnemyHelperClass.GetItem(rng), grid.CellToWorld(cellPosition), out enemy);
 
 
 
-                yield return new WaitForSeconds(GetEnemySpawnInterval());
+                yield return new WaitForSeconds(GetEnemySpawnInterval(rng));
             }
         }
     }
@@ -220,17 +222,17 @@ public class EnemySpawner : SingletonMonobehaviour<EnemySpawner>
     /// <summary>
     /// Get a random spawn interval between the minimum and maximum values
     /// </summary>
-    private float GetEnemySpawnInterval()
+    private float GetEnemySpawnInterval(WartheonRNG rng)
     {
-        return Random.Range(roomEnemySpawnParameters.minSpawnInterval, roomEnemySpawnParameters.maxSpawnInterval);
+        return rng.Range(roomEnemySpawnParameters.minSpawnInterval, roomEnemySpawnParameters.maxSpawnInterval);
     }
 
     /// <summary>
     /// Get a random number of concurrent enemies between the minimum and maximum values
     /// </summary>
-    private int GetConcurrentEnemies()
+    private int GetConcurrentEnemies(WartheonRNG rng)
     {
-        return (Random.Range(roomEnemySpawnParameters.minConcurrentEnemies, roomEnemySpawnParameters.maxConcurrentEnemies));
+        return rng.Range(roomEnemySpawnParameters.minConcurrentEnemies, roomEnemySpawnParameters.maxConcurrentEnemies);
     }
 
     /// <summary>

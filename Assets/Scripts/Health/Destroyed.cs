@@ -63,7 +63,8 @@ public class Destroyed : MonoBehaviour
                 GetComponent<PolygonCollider2D>().enabled = false;
                 player.idle.StopVelocity();
                 player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
-                InputManager.glossaryDisabled = true; // Disable glossary
+
+                if(!NetworkServer.active && !NetworkClient.active) InputManager.glossaryDisabled = true; // Disable glossary
 
                 SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.deathSoundEffect);
                 deathSoundPlayed = true;

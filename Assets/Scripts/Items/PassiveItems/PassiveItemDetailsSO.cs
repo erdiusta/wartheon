@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PassiveItem_", menuName = "Scriptable Objects/Passive Items")]
+[CreateAssetMenu(fileName = "PassiveItem_", menuName = "Scriptable Objects/Passive Items/Passive Item Details")]
 public class PassiveItemDetailsSO : ScriptableObject
 {
     #region Header PASSIVE BASE DETAILS
@@ -29,10 +29,6 @@ public class PassiveItemDetailsSO : ScriptableObject
     [Tooltip("The passive item category for the item")]
     #endregion Tooltip
     public PassiveItemCategory passiveItemCategory;
-    #region Tooltip
-    [Tooltip("Passive name if passive is primary")]
-    #endregion Tooltip
-    public PrimaryPassiveItemName primaryPassiveItemName;
     #region Tooltip
     [Tooltip("The passive item type for the item")]
     #endregion Tooltip

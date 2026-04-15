@@ -71,9 +71,9 @@ public class FireWeapon : MonoBehaviour
         {
             if (activeWeapon.GetCurrentMainHandWeapon() != null)
             {
-                if (fireRateCooldownTimer < 0 && activeWeapon.GetCurrentMainHandWeapon().onCooldown && !activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+                if (fireRateCooldownTimer < 0 && activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown && !activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
                 {
-                    activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+                    activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = false;
                 }
             }
         }
@@ -81,9 +81,9 @@ public class FireWeapon : MonoBehaviour
         {
             if (activeWeapon.GetCurrentMainHandWeapon() != null)
             {
-                if (fireRateCooldownTimer < 0 && activeWeapon.GetCurrentMainHandWeapon().onCooldown)
+                if (fireRateCooldownTimer < 0 && activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown)
                 {
-                    activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+                    activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = false;
                 }
             }
         }
@@ -224,7 +224,7 @@ public class FireWeapon : MonoBehaviour
                 }
 
                 // Set precharging flag to true
-                activeWeapon.GetCurrentMainHandWeapon().onPrecharge = true;
+                activeWeapon.GetCurrentMainHandWeapon().weaponStats.onPrecharge = true;
 
                 // Decrease precharge timer if fire button held previous frame
                 firePrechargeTimer -= Time.deltaTime;
@@ -242,8 +242,8 @@ public class FireWeapon : MonoBehaviour
 
                 if (activeWeapon.GetCurrentMainHandWeapon() != null)
                 {
-                    activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged = true;
-                    activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+                    activeWeapon.GetCurrentMainHandWeapon().weaponStats.firingStoppedPrematurelyIfWeaponIsPrecharged = true;
+                    activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = false;
                 }
             }
             //else
@@ -260,7 +260,7 @@ public class FireWeapon : MonoBehaviour
     private bool IsWeaponReadyToFire()
     {
         // If there is no projectile and weapon doesn't have infinite projectile then return false
-        if (!activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile && activeWeapon.GetCurrentMainHandWeapon().weaponRemainingProjectile <= 0)
+        if (!activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile && activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponRemainingProjectile <= 0)
             return false;
 
         // If the weapon isn't precharged or is cooling down then return false.
@@ -285,7 +285,7 @@ public class FireWeapon : MonoBehaviour
         if (!playerGrapple)
         {
             ResetCooldownTimer();
-            activeWeapon.GetCurrentMainHandWeapon().onCooldown = true;
+            activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = true;
             enemy.isFiring = false; // Allow firing again only after the laser ends
         }
     }
@@ -407,7 +407,7 @@ public class FireWeapon : MonoBehaviour
             // Reduce projectile clip count if not infinite clip capacity
             if (!activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile)
             {
-                activeWeapon.GetCurrentMainHandWeapon().weaponRemainingProjectile--;
+                activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponRemainingProjectile--;
             }
         }
 
@@ -693,7 +693,7 @@ public class FireWeapon : MonoBehaviour
         }
 
         // Set weapon's onCooldown status to true for triggering Weapon status UI
-        activeWeapon.GetCurrentMainHandWeapon().onCooldown = !isLaser && !IsShotASpecialSkill(projectileKind, ctx);
+        activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = !isLaser && !IsShotASpecialSkill(projectileKind, ctx);
 
         // Call weapon fired event
         weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentMainHandWeapon(), true);
@@ -754,7 +754,7 @@ public class FireWeapon : MonoBehaviour
         // Reset cooldown timer
         if (player != null)
         {
-            player.activeWeapon.GetCurrentMainHandWeapon().onCooldown = false;
+            player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = false;
 
             if (!player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
             {
@@ -803,11 +803,11 @@ public class FireWeapon : MonoBehaviour
                 firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime * player.additionalCastDurationModifier;
 
                 // Set weapon's precharge flag to false
-                activeWeapon.GetCurrentMainHandWeapon().onPrecharge = false;
+                activeWeapon.GetCurrentMainHandWeapon().weaponStats.onPrecharge = false;
 
                 if (firePreviousFrame)
                 {
-                    activeWeapon.GetCurrentMainHandWeapon().firingCompletedIfWeaponIsPrecharged = true;
+                    activeWeapon.GetCurrentMainHandWeapon().weaponStats.firingCompletedIfWeaponIsPrecharged = true;
                 }
             }
         }

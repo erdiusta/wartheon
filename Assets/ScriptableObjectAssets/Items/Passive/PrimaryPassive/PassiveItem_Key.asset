@@ -15,8 +15,11 @@ MonoBehaviour:
   passiveItemName: Key
   price: 0
   passiveItemSprite: {fileID: 21300000, guid: b5d6fe69b85b8dd41b38b8b943522bbb, type: 3}
+  rarity: 0
   passiveItemCategory: 0
-  primaryPassiveItemName: 4
-  passiveItemType: 0
+  passiveItemType: 4
   passiveItemSlotName: 0
-  passiveItemAnimatorController: {fileID: 0}
+  passiveItemAnimatorController: {fileID: 9100000, guid: b82618ea05b186c43bafa59dc6134318, type: 2}
+  baseUniqueModifier: 0
+  baseTypeModifier: 0
+  additionalModifierPoolForType: 

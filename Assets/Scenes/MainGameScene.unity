@@ -20597,6 +20597,8 @@ MonoBehaviour:
   mobDatabase: {fileID: 11400000, guid: e1371ae7a6bea874a8a5415f8958f706, type: 2}
   projectileDatabase: {fileID: 11400000, guid: a9216658d29af014888f14801f212232, type: 2}
   projectileHitFxDatabase: {fileID: 11400000, guid: 671024eef734cfc46bd1d6d14ea0bc8c, type: 2}
+  weaponDatabase: {fileID: 11400000, guid: aabb0eefc8aefdc419cf8f1da97b6abe, type: 2}
+  passiveItemDatabase: {fileID: 11400000, guid: 9243019a8c7035b4b94efe1d263c139a, type: 2}
 --- !u!1 &573077865
 GameObject:
   m_ObjectHideFlags: 0

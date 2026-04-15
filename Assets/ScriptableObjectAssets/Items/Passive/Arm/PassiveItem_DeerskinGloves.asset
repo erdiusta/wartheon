@@ -17,8 +17,7 @@ MonoBehaviour:
   passiveItemSprite: {fileID: 7750042, guid: e523fb13d3861de4e9a7c9e18c16fea9, type: 3}
   rarity: 0
   passiveItemCategory: 1
-  primaryPassiveItemName: 0
-  passiveItemType: 23
+  passiveItemType: 30
   passiveItemSlotName: 6
   passiveItemAnimatorController: {fileID: 9100000, guid: ca75329af4ffa614491eda54445bdf67, type: 2}
   baseUniqueModifier: 1

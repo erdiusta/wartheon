@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class SelectedPassiveItem : MonoBehaviour
 {
-    Player player;
     SetPassiveItemEvent setPassiveItemEvent;
 
     private void Awake()
@@ -22,26 +21,21 @@ public class SelectedPassiveItem : MonoBehaviour
         setPassiveItemEvent.OnRemovedPassiveItem -= SetPassiveItemEvent_OnRemovedPassiveItem;
     }
 
-    private void Start()
-    {
-        player = GameManager.Instance.GetLocalPlayer();
-    }
-
     private void SetPassiveItemEvent_OnEquippedPassiveItem(SetPassiveItemEvent _, SetPassiveItemEventArgs args)
     {
-        TryEquipPassiveItem(args.passiveItem, args.isSwap);
+        TryEquipPassiveItem(args.player, args.passiveItem, args.passiveItemSlotName, args.isSwap);
 
         // Update stats values after weapon switch
-        player.RecalculateSecondaryStats();
+        args.player.RecalculateSecondaryStats();
         StaticEventHandler.CallStatsChangedOnTheBookEvent();
     }
 
     private void SetPassiveItemEvent_OnRemovedPassiveItem(SetPassiveItemEvent _, SetPassiveItemEventArgs args)
     {
-        if (player.equippedPassiveItems.TryGetValue(args.passiveItemSlotName, out PassiveItem equippedItem) && equippedItem != null)
+        if (args.player.equippedPassiveItems.TryGetValue(args.passiveItemSlotName, out PassiveItem equippedItem) && equippedItem != null)
         {
-            RemovePassiveEffects(equippedItem);
-            player.equippedPassiveItems[args.passiveItemSlotName] = null; // Item removed from passive slot
+            RemovePassiveEffects(args.player, equippedItem);
+            args.player.equippedPassiveItems[args.passiveItemSlotName] = null; // Item removed from passive slot
         }
 
         if (!InventoryManager.Instance.IsInventoryFull() && !args.isSwap && !args.dropButton)
@@ -51,13 +45,13 @@ public class SelectedPassiveItem : MonoBehaviour
         }
 
         // Rebuild once and update stats/UI once
-        player.RecalculateSecondaryStats();
+        args.player.RecalculateSecondaryStats();
         StaticEventHandler.CallStatsChangedOnTheBookEvent();
     }
 
-    private void TryEquipPassiveItem(PassiveItem newItem, bool isSwap)
+    private void TryEquipPassiveItem(Player player, PassiveItem newItem, PassiveItemSlotName passiveItemSlotName, bool isSwap)
     {
-        PassiveItemSlotName slot = newItem.passiveItemDetails.passiveItemSlotName;
+        PassiveItemSlotName slot = passiveItemSlotName;
 
         // If already equipped and not a swap, move to inventory
         if (player.equippedPassiveItems[slot] != null && !isSwap)
@@ -70,21 +64,15 @@ public class SelectedPassiveItem : MonoBehaviour
             }
 
             // Remove old item effects
-            RemovePassiveEffects(player.equippedPassiveItems[slot]);
+            RemovePassiveEffects(player, player.equippedPassiveItems[slot]);
         }
 
         // Equip new item and apply effects
         player.equippedPassiveItems[slot] = newItem;
-        ApplyPassiveEffects(newItem);
+        ApplyPassiveEffects(player, newItem);
     }
 
-    public PassiveItem GetCurrentPassiveItem(PassiveItemSlotName slot)
-    {
-        player.equippedPassiveItems.TryGetValue(slot, out PassiveItem item);
-        return item;
-    }
-
-    private void ApplyPassiveEffects(PassiveItem item)
+    private void ApplyPassiveEffects(Player player, PassiveItem item)
     {
         if (item == null || item.passiveItemDetails == null) return;
 
@@ -92,7 +80,7 @@ public class SelectedPassiveItem : MonoBehaviour
         if (item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak) player.shadowCloakEquipped = true;
     }
 
-    private void RemovePassiveEffects(PassiveItem item)
+    private void RemovePassiveEffects(Player player, PassiveItem item)
     {
         if (item == null) return;
 

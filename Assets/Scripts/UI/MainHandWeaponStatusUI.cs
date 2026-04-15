@@ -86,7 +86,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
 
         if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
         {
-            if (player.activeWeapon.GetCurrentMainHandWeapon().onCooldown)
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown)
             {
                 cooldownTimer -= Time.deltaTime;
             }
@@ -191,7 +191,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
             }
             else
             {
-                player.activeWeapon.GetCurrentMainHandWeapon().firingStoppedPrematurelyIfWeaponIsPrecharged = false;
+                player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.firingStoppedPrematurelyIfWeaponIsPrecharged = false;
             }
         }
     }
@@ -215,7 +215,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
             cooldownBarParent.gameObject.SetActive(true);
         }
 
-        while (currentWeapon.onCooldown)
+        while (currentWeapon.weaponStats.onCooldown)
         {
             float barFill = 0f;
 

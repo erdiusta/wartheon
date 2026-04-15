@@ -137,6 +137,7 @@ public class Projectile : MonoBehaviour, IFireable
     Vector2 straightDirection; // Cache this once
     bool directionInitialized = false;
 
+    ProjectileNetwork projectileNetwork;
     bool isMultiplayer = false;
     bool initializationCompleted = false;
     float additionalBowAccuracyModifier = 0f;
@@ -150,6 +151,7 @@ public class Projectile : MonoBehaviour, IFireable
         belongingParent = transform.parent;
 
         polygonCollider2D = GetComponent<PolygonCollider2D>();
+        projectileNetwork = GetComponent<ProjectileNetwork>();
 
         if(polygonCollider2D == null) polygonCollider2D = GetComponentInChildren<PolygonCollider2D>(); // Grapple head
     }
@@ -1920,7 +1922,7 @@ public class Projectile : MonoBehaviour, IFireable
 
         isHittingWall = false;
 
-        if (NetworkServer.active) NetworkServer.UnSpawn(gameObject);
+        if (NetworkServer.active && projectileNetwork != null) NetworkServer.UnSpawn(gameObject);
 
         gameObject.SetActive(false);
     }
@@ -1964,7 +1966,7 @@ public class Projectile : MonoBehaviour, IFireable
     {
         yield return new WaitForSeconds(0.6f);
 
-        if (NetworkServer.active) NetworkServer.UnSpawn(projectileEffectPrefab.gameObject);
+        if (NetworkServer.active && projectileNetwork != null) NetworkServer.UnSpawn(projectileEffectPrefab.gameObject);
     }
 
     /// <summary>

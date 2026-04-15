@@ -772,7 +772,7 @@ public class PlayerControl : MonoBehaviour
             if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow || mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow ||
                 mainHand.weaponDetails.weaponClass == WeaponClass.Staff)
             {
-                if (!mainHand.onCooldown)
+                if (!mainHand.weaponStats.onCooldown)
                 {
                     //player.meleeAttackMainHand.IsAttacking = true;
 
@@ -2016,18 +2016,18 @@ public class PlayerControl : MonoBehaviour
             {
                 // Manual drop by clicking drop button
                 SpawnDroppedPassiveItem(passiveItem);
-                player.setPassiveItemEvent.CallRemovePassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName, isSwap: false, dropButton: true);
+                player.setPassiveItemEvent.CallRemovePassiveItem(player, passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName, isSwap: false, dropButton: true);
             }
             else if (InventoryManager.Instance.IsInventoryFull())
             {
                 // Forced drop due to full inventory during item pickup
                 SpawnDroppedPassiveItem(passiveItem);
-                player.setPassiveItemEvent.CallRemovePassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
+                player.setPassiveItemEvent.CallRemovePassiveItem(player, passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
             }
             else
             {
                 // Regular swap -> previous goes to inventory
-                player.setPassiveItemEvent.CallRemovePassiveItem(passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
+                player.setPassiveItemEvent.CallRemovePassiveItem(player, passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
 
                 int index = InventoryManager.Instance.FindIndexOfItem(passiveItem);
                 passiveItem.itemSlotStatus = ItemSlotStatus.Inventory;

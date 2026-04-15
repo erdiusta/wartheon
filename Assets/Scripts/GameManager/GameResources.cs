@@ -348,6 +348,10 @@ public class GameResources : MonoBehaviour
     #endregion
     public GameObject chestItemPrefab;
     #region Tooltip
+    [Tooltip("Chest item prefab - Multiplayer")]
+    #endregion
+    public GameObject chestItemNetworkPrefab;
+    #region Tooltip
     [Tooltip("Populate with heart icon sprite")]
     #endregion
     public Sprite heartIcon;

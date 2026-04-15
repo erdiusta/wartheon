@@ -21,17 +21,22 @@ public class DropOnDestroy : MonoBehaviour
     PassiveItemDetailsSO primaryPassiveItemDetails;
     PassiveItemDetailsSO secondaryPassiveItemDetails;
     DropItem dropItem;
+    DropItemNetwork dropItemNetwork;
     Enemy enemy;
     InstantiatedRoom instantiatedRoom;
+
+    bool isMultiplayer = false;
 
     private void Awake()
     {
         enemy = GetComponent<Enemy>();
+
+        isMultiplayer = NetworkServer.active || NetworkClient.active;
     }
 
     public void InitializeDropList()
     {
-        if (!NetworkServer.active && !NetworkClient.active)
+        if (!isMultiplayer)
         {
             Room currentRoom = GameManager.Instance.GetCurrentRoom();
             instantiatedRoom = currentRoom.instantiatedRoom;
@@ -53,28 +58,31 @@ public class DropOnDestroy : MonoBehaviour
     {
         // PRIMARY PASSIVE DROP PHASE
         // Get primary passive items
-        if (enemy.enemyDetails.enemyType == EnemyType.Minion) return; // If it is a minion, no drop happens
+        if (enemy.isMinion) return; // If it is a minion, no drop happens
 
-        int primaryPassiveItemNum = Random.Range(0, enemy.enemyDetails.primaryPassiveDropChanceMax + 1);
+        if (isMultiplayer && !NetworkServer.active) return;
 
-        for (int i = 0; i < primaryPassiveItemNum; i++)
+        int seed = Random.Range(int.MinValue, int.MaxValue);
+
+        EnemyDropData dropData = new EnemyDropData
         {
-            // Instantiate item container
-            InstantiateDropItem();
+            primaryPassiveDropChanceMax = enemy.enemyDetails.primaryPassiveDropChanceMax
+        };
 
-            // Retrieve item details
-            primaryPassiveItemDetails = GetPrimaryPassiveItemDetailsToSpawn(primaryPassiveItemNum);
+        ExecuteDropProcess(seed, dropData);
+    }
 
-            InstantiatePassiveItem(primaryPassiveItemDetails);
-            dropItem.transform.SetParent(null);
+    public void ExecuteDropProcess(int seed, EnemyDropData dropData)
+    {
+        WartheonRNG rng = new WartheonRNG(seed);
 
-            Vector3 spawnPointDeviation = new Vector3(Random.Range(-2, 2), Random.Range(-2, 2), 0);
-            dropItem.transform.position += spawnPointDeviation;
-        }
+        int primaryPassiveItemNum = rng.Range(0, dropData.primaryPassiveDropChanceMax + 1);
+
+        CreatePrimaryPassiveItems(seed, primaryPassiveItemNum);
 
         // OTHER DROPS PHASE IF HAS
         // Should drop be spawned based on specified chance? If not return.
-        if (!RandomDropCheck())
+        if (!RandomDropCheck(out int chancePercent, out int randomPercent, rng))
         {
             Destroy(dropItemGameObject);
             return;
@@ -82,40 +90,73 @@ public class DropOnDestroy : MonoBehaviour
 
         // Instantiate container
         InstantiateDropItem();
-        
+
         // Get number of Passive & Weapon Items To Spawn (max 2 of each)
-        GetItemsToSpawn(out int secondaryPassiveItemNum, out int weaponNum);
+        GetItemsToSpawn(out int secondaryPassiveItemNum, out int weaponNum, out int choice, rng);
 
         // Initialize drops
-        weaponDetails = GetWeaponDetailsToSpawn(weaponNum);
-        secondaryPassiveItemDetails = GetSecondaryPassiveItemDetailsToSpawn(secondaryPassiveItemNum);
+        weaponDetails = GetWeaponDetailsToSpawn(weaponNum, rng);
+        secondaryPassiveItemDetails = GetSecondaryPassiveItemDetailsToSpawn(secondaryPassiveItemNum, rng);
 
+        InstantiateWeaponAndPassiveItems(seed);
+    }
+
+    private void InstantiateWeaponAndPassiveItems(int seed)
+    {
         if (weaponDetails != null)
         {
-            InstantiateWeaponItem(weaponDetails);
-            dropItem.transform.SetParent(instantiatedRoom.transform);
+            InstantiateWeaponItem(weaponDetails, seed);
+
+            if (isMultiplayer) dropItemNetwork.transform.SetParent(instantiatedRoom.transform);
+            else dropItem.transform.SetParent(instantiatedRoom.transform);
         }
 
         if (secondaryPassiveItemDetails != null)
         {
-            InstantiatePassiveItem(secondaryPassiveItemDetails);
-            dropItem.transform.SetParent(instantiatedRoom.transform);
+            InstantiatePassiveItem(secondaryPassiveItemDetails, seed);
+
+            if (isMultiplayer) dropItemNetwork.transform.SetParent(instantiatedRoom.transform);
+            else dropItem.transform.SetParent(instantiatedRoom.transform);
         }
     }
 
+    private void CreatePrimaryPassiveItems(int seed, int primaryPassiveItemNum)
+    {
+        for (int i = 0; i < primaryPassiveItemNum; i++)
+        {
+            WartheonRNG rng = new WartheonRNG(seed);
 
+            // Instantiate item container
+            InstantiateDropItem();
+
+            // Retrieve item details
+            primaryPassiveItemDetails = GetPrimaryPassiveItemDetailsToSpawn(primaryPassiveItemNum, rng);
+
+            InstantiatePassiveItem(primaryPassiveItemDetails, seed);
+
+            if (isMultiplayer) dropItemNetwork.transform.SetParent(null);
+            else dropItem.transform.SetParent(null);
+
+            Vector3 spawnPointDeviation = new Vector3(rng.Range(-2, 2), rng.Range(-2, 2), 0);
+
+            if (isMultiplayer) dropItemNetwork.transform.position += spawnPointDeviation;
+            else dropItem.transform.position += spawnPointDeviation;
+
+            if (isMultiplayer) dropItemNetwork.passiveStats.passiveItemType = primaryPassiveItemDetails.passiveItemType;
+        }
+    }
 
     /// <summary>
     /// Check if a drop should be spawned based on the drop spawn chance - returns true if drop should be spawned false otherwise
     /// </summary>
-    private bool RandomDropCheck()
+    private bool RandomDropCheck(out int chancePercent, out int randomPercent, WartheonRNG rng)
     {
-        int chancePercent = 100 - Random.Range(dropSpawnChanceMin, dropSpawnChanceMax + 1);
+        chancePercent = 100 - rng.Range(dropSpawnChanceMin, dropSpawnChanceMax + 1);
 
         //int passiveItemModifier = (int)(player.additionalDropChanceModifier * 100);
 
         // get random value between 1 and 100
-        int randomPercent = Random.Range(1, 101);
+        randomPercent = rng.Range(1, 101);
 
         //randomPercent += passiveItemModifier;
         randomPercent = randomPercent >= 100 ? 100 : randomPercent;
@@ -127,12 +168,12 @@ public class DropOnDestroy : MonoBehaviour
     /// <summary>
     /// Get the number of items to spawn - max 1 of each - max 2 in total
     /// </summary>
-    private void GetItemsToSpawn(out int secondaryPassives, out int weapons)
+    private void GetItemsToSpawn(out int secondaryPassives, out int weapons, out int choice, WartheonRNG rng)
     {
         secondaryPassives = 0;
         weapons = 0;
 
-        int choice = Random.Range(0, 50);
+        choice = rng.Range(0, 50);
 
         if (choice >= 0 && choice <= 25) { weapons++; return; }
         if (choice > 25 && choice <= 50) { secondaryPassives++; return; }
@@ -143,63 +184,130 @@ public class DropOnDestroy : MonoBehaviour
     /// </summary>
     private void InstantiateDropItem()
     {
-        dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        dropItem = dropItemGameObject.GetComponent<DropItem>();
-        dropItem.droppedByPlayer = false;
+        if (!isMultiplayer)
+        {
+            dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
 
-        // Set collider to true
-        dropItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
+            dropItem = dropItemGameObject.GetComponent<DropItem>();
+            dropItem.droppedByPlayer = false;
+
+            // Set collider to true
+            dropItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
+        }        
+        else
+        {
+            if (NetworkServer.active)
+            {
+                dropItemGameObject = Instantiate(GameResources.Instance.chestItemNetworkPrefab, transform);
+                NetworkServer.Spawn(dropItemGameObject);
+
+                dropItemNetwork = dropItemGameObject.GetComponent<DropItemNetwork>();
+                dropItemNetwork.droppedByPlayer = false;
+
+                // Set collider to true
+                dropItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
+            }
+        }
     }
 
     /// <summary>
     /// Instantiate a weapon item for the player to collect
     /// </summary>
-    private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails)
+    private void InstantiateWeaponItem(WeaponDetailsSO weaponDetails, int seed)
     {
-        if (dropItem == null) return;
+        WartheonRNG rng = new WartheonRNG(seed);
 
-        dropItem.hasWeaponDrop = true;
+        if (isMultiplayer)
+        {
+            if (dropItemNetwork == null) return;
 
-        // Create a weapon instance with rolled modifiers
-        Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails);
+            Weapon weapon = new Weapon(Rarity.Basic);
 
-        dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position);
+            dropItemNetwork.hasWeaponDrop = true;
+            weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails, rng);
+
+            NetworkTransformUnreliable nt = dropItemNetwork.GetComponent<NetworkTransformUnreliable>();
+            nt.ServerTeleport(transform.position, Quaternion.identity);
+
+            dropItemNetwork.weaponTitle = weapon.weaponStats.weaponTitle;
+            dropItemNetwork.weaponStats = weapon.weaponStats;
+        }
+        else
+        {
+            if (dropItem == null) return;
+
+            dropItem.hasWeaponDrop = true;
+
+            // Create a weapon instance with rolled modifiers
+            Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails, rng);
+
+            dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position);
+        }
     }
 
     /// <summary>
     /// Instantiate a passive item for the player to collect
     /// </summary>
-    private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails)
+    private void InstantiatePassiveItem(PassiveItemDetailsSO passiveItemDetails, int seed)
     {
-        if (dropItem == null) return;
+        WartheonRNG rng = new WartheonRNG(seed);
 
-        PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
-
-        if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
+        if (isMultiplayer)
         {
-            dropItem.hasPrimaryPassiveDrop = true;
-            passiveItem.passiveItemDetails = passiveItemDetails;
-        }
-        else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
-        {
-            dropItem.hasSecondaryPassiveDrop = true;
-            passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails);
-        }
+            if (dropItemNetwork == null) return;
 
-        dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position);
+            PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
+
+            if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
+            {
+                dropItemNetwork.hasPrimaryPassiveDrop = true;
+                passiveItem.passiveItemDetails = passiveItemDetails;
+            }
+            else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
+            {
+                dropItemNetwork.hasSecondaryPassiveDrop = true;
+                passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
+            }
+
+            NetworkTransformUnreliable nt = dropItemNetwork.GetComponent<NetworkTransformUnreliable>();
+            nt.ServerTeleport(transform.position, Quaternion.identity);
+
+            dropItemNetwork.passiveItemType = passiveItem.passiveStats.passiveItemType;
+            dropItemNetwork.passiveItemSlotName = passiveItem.passiveStats.passiveItemSlotName;
+            dropItemNetwork.passiveStats = passiveItem.passiveStats; // Here initialization starts in DropItemNetwork
+        }
+        else
+        {
+            if (dropItem == null) return;
+
+            PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
+
+            if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
+            {
+                dropItem.hasPrimaryPassiveDrop = true;
+                passiveItem.passiveItemDetails = passiveItemDetails;
+            }
+            else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
+            {
+                dropItem.hasSecondaryPassiveDrop = true;
+                passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
+            }
+
+            dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position);
+        }
     }
 
     /// <summary>
     /// Get the weapon details to spawn - return null if no weapon is to be spawned or the player already has the weapon
     /// </summary>
-    private WeaponDetailsSO GetWeaponDetailsToSpawn(int weaponNumber)
+    private WeaponDetailsSO GetWeaponDetailsToSpawn(int weaponNumber, WartheonRNG rng)
     {
         if (weaponNumber == 0) return null;
 
         // Create an instance of the class used to select a random item from a list based on the relative 'ratios' of the items specified
         RandomSpawnableObject<WeaponDetailsSO> weaponRandom = new RandomSpawnableObject<WeaponDetailsSO>(enemyWeaponDropList);
 
-        WeaponDetailsSO weaponDetails = weaponRandom.GetItem();
+        WeaponDetailsSO weaponDetails = weaponRandom.GetItem(rng);
 
         return weaponDetails;
     }
@@ -207,14 +315,14 @@ public class DropOnDestroy : MonoBehaviour
     /// <summary>
     /// Get the secondary passive item details to spawn - return null if no passive item is to be spawned
     /// </summary>
-    private PassiveItemDetailsSO GetSecondaryPassiveItemDetailsToSpawn(int passiveItemNumber)
+    private PassiveItemDetailsSO GetSecondaryPassiveItemDetailsToSpawn(int passiveItemNumber, WartheonRNG rng)
     {
         if (passiveItemNumber == 0) return null;
 
         // Create an instance of the class used to select a random item from a list based on the relative 'ratios' of the items specified
         RandomSpawnableObject<PassiveItemDetailsSO> secondaryPassiveItemRandom = new RandomSpawnableObject<PassiveItemDetailsSO>(enemySecondaryPassiveItemDropList);
 
-        PassiveItemDetailsSO passiveItemDetails = secondaryPassiveItemRandom.GetItem();
+        PassiveItemDetailsSO passiveItemDetails = secondaryPassiveItemRandom.GetItem(rng);
 
         return passiveItemDetails;
     }
@@ -222,14 +330,14 @@ public class DropOnDestroy : MonoBehaviour
     /// <summary>
     /// Get the primary passive item details to spawn - return null if no passive item is to be spawned
     /// </summary>
-    private PassiveItemDetailsSO GetPrimaryPassiveItemDetailsToSpawn(int passiveItemNumber)
+    private PassiveItemDetailsSO GetPrimaryPassiveItemDetailsToSpawn(int passiveItemNumber, WartheonRNG rng)
     {
         if (passiveItemNumber == 0) return null;
 
         // Create an instance of the class used to select a random item from a list based on the relative 'ratios' of the items specified
         RandomSpawnableObject<PassiveItemDetailsSO> primaryPassiveItemRandom = new RandomSpawnableObject<PassiveItemDetailsSO>(enemyPrimaryPassiveItemDropList);
 
-        PassiveItemDetailsSO passiveItemDetails = primaryPassiveItemRandom.GetItem();
+        PassiveItemDetailsSO passiveItemDetails = primaryPassiveItemRandom.GetItem(rng);
 
         return passiveItemDetails;
     }
