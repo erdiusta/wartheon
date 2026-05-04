@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad0d48074276e0640b14ec3640a668d8, type: 3}
+  m_Name: ProjectileDetails_MoldranProjectile
+  m_EditorClassIdentifier: 
+  projectileName: Molldran Projectile
+  isPlayerProjectile: 0
+  projectilePrefabArray:
+  - {fileID: 2585463276777236944, guid: 0ce913dd6a41ffe429970ac109a211a5, type: 3}
+  - {fileID: 2585463276777236944, guid: 0c87187a322196942a428c3d3f34bb9c, type: 3}
+  projectileMaterial: {fileID: 2100000, guid: 18b84b9cc8c777e4ea0d2d443fcf7a92, type: 2}
+  projectileChargeTime: 0
+  projectileChargeMaterial: {fileID: 0}
+  belongingWeaponDetails: {fileID: 11400000, guid: 354d5c159e0c0b6478249f11db90407f, type: 2}
+  projectileHitEffect: {fileID: 11400000, guid: 9e888f32de5d60a429c75fb52a068ded, type: 2}
+  projectilePhyDamageMin: 0
+  projectilePhyDamageMax: 1
+  projectileMagicDamageMin: 0
+  projectileMagicDamageMax: 1
+  projectileSpeed: 20
+  projectileRange: 50
+  hasLifeTime: 0
+  lifeDuration: 15
+  projectileRotationSpeed: 1
+  isGuided: 0
+  isBouncing: 0
+  isBomb: 0
+  isTrap: 0
+  blastRadius: 1
+  countDown: 3
+  burstDamageMin: 15
+  burstDamageMax: 25
+  warmChance: 0
+  burnChance: 0.1
+  stunChance: 0.1
+  rootChance: 0
+  bleedingChance: 0
+  slowChance: 0
+  poisonChance: 0.1
+  staticChance: 0
+  paralyzeChance: 0
+  chillChance: 0
+  frostChance: 0.1
+  blindChance: 0.1
+  revealChance: 0
+  curseChance: 0.1
+  fearChance: 0
+  healthDrainChance: 0
+  projectileSpreadMin: 0
+  projectileSpreadMax: 0
+  criticalHitChance: 0
+  criticalHitDamageMultiplier: 1.5
+  projectileSpawnAmountMin: 1
+  projectileSpawnAmountMax: 1
+  projectileSpawnIntervalMin: 1
+  projectileSpawnIntervalMax: 1
+  projectileFireSoundEffect: {fileID: 0}
+  projectileImpactSoundEffect: {fileID: 0}
+  isProjectileTrail: 0
+  projectileTrailTime: 0
+  projectileTrailMaterial: {fileID: 0}
+  projectileTrailStartWidth: 0
+  projectileTrailEndWidth: 0
+  isLaser: 0

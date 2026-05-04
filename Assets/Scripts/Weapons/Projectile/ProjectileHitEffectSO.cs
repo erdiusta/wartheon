@@ -1,0 +1,74 @@
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "ProjectileHitEffect_", menuName = "Scriptable Objects/Weapons/Projectile Hit Effect")]
+public class ProjectileHitEffectSO : ScriptableObject
+{
+    #region Header PROJECTILE HIT EFFECT DETAILS
+    [Space(10)]
+    [Header("PROJECTILE HIT EFFECT DETAILS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("The length of time the particle system is emitting particles")]
+    #endregion
+    public float duration = 0.50f;
+    #region Tooltip
+    [Tooltip("The start particle size for the particle effect")]
+    #endregion
+    public float startParticleSize = 0.25f;
+    #region Tooltip
+    [Tooltip("The start particle speed for the particle effect")]
+    #endregion
+    public float startParticleSpeed = 3f;
+    #region Tooltip
+    [Tooltip("The particle lifetime for the particle effect")]
+    #endregion
+    public float startLifetime = 0.5f;
+    #region Tooltip
+    [Tooltip("The maximum number of particles to be emitted")]
+    #endregion
+    public int maxParticleNumber = 100;
+    #region Tooltip
+    [Tooltip("The number of particles emitted per second. If zero it will just be the burst number")]
+    #endregion
+    public int emissionRate = 100;
+    #region Tooltip
+    [Tooltip("How many particles should be emmitted in the particle effect burst")]
+    #endregion
+    public int burstParticleNumber = 20;
+    #region Tooltip
+    [Tooltip("The gravity on the particles - a small negative number will make them float up")]
+    #endregion
+    public float effectGravity = -0.01f;
+    #region Tooltip
+    [Tooltip("The min velocity for the particle over its lifetime. A random value between min and max will be generated.")]
+    #endregion
+    public Vector3 velocityOverLifetimeMin;
+    #region Tooltip
+    [Tooltip("The max velocity for the particle over its lifetime. A random value between min and max will be generated.")]
+    #endregion
+    public Vector3 velocityOverLifetimeMax;
+    #region Tooltip
+    [Tooltip("The prefab containing the hit effect particle system - requires a corresponding ammoHitEffectSO to be defined")]
+    #endregion
+    public GameObject projectileHitEffectPrefab;
+    #region Tooltip
+    [Tooltip("The prefab containing the hit effect particle system - requires a corresponding ammoHitEffectSO to be defined - For Multiplayer")]
+    #endregion
+    public GameObject projectileHitEffectPrefabMP;
+
+    #region Validation
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(duration), duration, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(startParticleSize), startParticleSize, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(startParticleSpeed), startParticleSpeed, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(startLifetime), startLifetime, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(maxParticleNumber), maxParticleNumber, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(emissionRate), emissionRate, true);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(burstParticleNumber), burstParticleNumber, true);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(projectileHitEffectPrefab), projectileHitEffectPrefab);
+    }
+#endif
+    #endregion Validation
+}

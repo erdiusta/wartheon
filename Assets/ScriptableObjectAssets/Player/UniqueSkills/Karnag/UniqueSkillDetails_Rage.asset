@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7826a8cd1db53f04881d49b472d6c931, type: 3}
+  m_Name: UniqueSkillDetails_Rage
+  m_EditorClassIdentifier: 
+  activeUniqueSkillName: Rage
+  activeSkill: 25
+  activeUniqueSkillSprite: {fileID: 21300000, guid: 9c7d9981d92962240b8b43a40f1ecc27, type: 3}
+  activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 3b76c3d17ac68484ca5710be04c5d02e, type: 2}
+  activeUniqueSkillSoundEffectTwo: {fileID: 0}
+  levels:
+  - activeUniqueSkillDetails: 'Gives damage boost while active but also increases
+      damage taken.
+
+
+      Base Attack Damage Increase: +50%
+
+      Base Damage
+      Taken Increase: +25%
+
+      Base Mana Cost: 12
+
+      Base Cooldown: 15
+
+      Base
+      Effective Duration: 6'
+    cooldown: 15
+    effectiveDuration: 6
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 12
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Gives damage boost while active but also increases
+      damage taken.
+
+
+      Base Attack Damage Increase: +60%
+
+      Base Damage
+      Taken Increase: +20%
+
+      Base Mana Cost: 14
+
+      Base Cooldown: 14
+
+      Base
+      Effective Duration: 6'
+    cooldown: 14
+    effectiveDuration: 6
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 14
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  - activeUniqueSkillDetails: 'Gives damage boost while active but also increases
+      damage taken.
+
+
+      Base Attack Damage Increase: +75%
+
+      Base Damage
+      Taken Increase: +15%
+
+      Base Mana Cost: 17
+
+      Base Cooldown: 12
+
+      Base
+      Effective Duration: 6'
+    cooldown: 12
+    effectiveDuration: 6
+    recastCooldown: 0
+    recastWindowDuration: 0
+    recastRepeatCount: 0
+    manaCost: 17
+    manaReserveCost: 0
+    potency: 0
+    notes: 
+  currentActiveLevel: 3
+  startingLevel: 1
