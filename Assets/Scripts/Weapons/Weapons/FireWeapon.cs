@@ -25,6 +25,8 @@ public class FireWeapon : MonoBehaviour
     Room currentRoom;
     RoomNetData currentRoomNetData;
 
+    WeaponDetailsSO currentWeaponDetails;
+
     private void Awake()
     {
         player = GetComponent<Player>();
@@ -71,7 +73,7 @@ public class FireWeapon : MonoBehaviour
         {
             if (activeWeapon.GetCurrentMainHandWeapon() != null)
             {
-                if (fireRateCooldownTimer < 0 && activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown && !activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+                if (fireRateCooldownTimer < 0 && activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown && !activeWeapon.GetCurrentMainHandWeapon().weaponStats.isMeleeWeapon)
                 {
                     activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = false;
                 }
@@ -99,37 +101,40 @@ public class FireWeapon : MonoBehaviour
 
     public void ClientFireWeapon(FireWeaponEventArgs args)
     {
+        Vector3 shootPos = activeWeapon.GetMainHandShootPositionUp();
+
         // Single player
         if (!NetworkServer.active && !NetworkClient.active)
         {
             WeaponFire(args.fire, args.firePreviousFrame, args.aimAngle, args.weaponAimAngle, args.weaponAimDirectionVector, args.isLaser, args.projectileKind, args.attackContext,
-                args.enemyNetId);
+                activeWeapon.GetMainHandShootPositionUp(), args.enemyNetId);
             return;
         }
 
         // Client - ask server
         if (player != null)
         {
-            GetComponent<FireWeaponNetwork>().RequestFireWeapon(args.fire, args.firePreviousFrame, args.aimAngle, args.weaponAimAngle, args.weaponAimDirectionVector, args.isLaser, args.projectileKind, args.attackContext);
+            GetComponent<FireWeaponNetwork>().RequestFireWeapon(args.fire, args.firePreviousFrame, args.aimAngle, args.weaponAimAngle, args.weaponAimDirectionVector, args.isLaser, args.projectileKind, 
+                args.attackContext, shootPos);
         }
         else if (enemy != null)
         {
-            ServerFireWeapon(args.fire, args.firePreviousFrame, args.aimAngle, args.weaponAimAngle, args.weaponAimDirectionVector, args.isLaser, args.projectileKind, args.attackContext);
+            ServerFireWeapon(args.fire, args.firePreviousFrame, args.aimAngle, args.weaponAimAngle, args.weaponAimDirectionVector, args.isLaser, args.projectileKind, args.attackContext, shootPos);
         }
     }
 
     [Server]
     public void ServerFireWeapon(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, AttackContext attackContext)
+        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos)
     {
-        WeaponFire(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext);
+        WeaponFire(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos);
     }
 
     /// <summary>
     /// Fire weapon
     /// </summary>
     private void WeaponFire(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, AttackContext attackContext, uint netId = 0)
+        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos, uint netId = 0)
     {
         // Laser beam check
         if (isLaser)
@@ -145,7 +150,7 @@ public class FireWeapon : MonoBehaviour
                     enemy.isFiring = true;
 
                     // Fire Laser Beam Projectile (only once)
-                    FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, netId);
+                    FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, netId, shootPos);
 
                     // Keep laser active for its full duration
                     StartCoroutine(LaserDurationCoroutine(false));                 
@@ -158,7 +163,7 @@ public class FireWeapon : MonoBehaviour
                 if (projectileKind == ProjectileKind.Grapple && player.isHuntersReachActive)
                 {
                     // Fire Laser Beam Projectile (only once)
-                    FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, netId);
+                    FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, netId, shootPos);
 
                     // Keep laser active for its full duration
                     StartCoroutine(LaserDurationCoroutine(true));
@@ -189,7 +194,7 @@ public class FireWeapon : MonoBehaviour
             // Test if weapon is ready to fire
             if (IsWeaponReadyToFire() || IsShotASpecialSkill(projectileKind, attackContext))
             {
-                FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser: false, projectileKind, attackContext, netId);
+                FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser: false, projectileKind, attackContext, netId, shootPos);
                 ResetCooldownTimer(attackContext.moravellePhase);
                 ResetPrechargeTimer(firePreviousFrame);
             }
@@ -213,11 +218,11 @@ public class FireWeapon : MonoBehaviour
                     // Activate precharge bar container
                     if (player != null)
                     {
-                        firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime * player.additionalCastDurationModifier;
+                        firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponPrechargeTime * player.additionalCastDurationModifier;
                     }
                     else
                     {
-                        firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime;
+                        firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponPrechargeTime;
                     }
 
                     prechargeBarContainer.gameObject.SetActive(true);
@@ -230,7 +235,7 @@ public class FireWeapon : MonoBehaviour
                 firePrechargeTimer -= Time.deltaTime;
 
                 // Update precharge bar
-                float barFill = firePrechargeTimer / (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime * player.additionalCastDurationModifier);
+                float barFill = firePrechargeTimer / (activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponPrechargeTime * player.additionalCastDurationModifier);
 
                 // Update bar fill
                 prechargeBar.transform.localScale = barFill > 0 ? new Vector3(barFill, 1f, 1f) : new Vector3(0f, 1f, 1f);
@@ -259,10 +264,6 @@ public class FireWeapon : MonoBehaviour
     /// </summary>
     private bool IsWeaponReadyToFire()
     {
-        // If there is no projectile and weapon doesn't have infinite projectile then return false
-        if (!activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile && activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponRemainingProjectile <= 0)
-            return false;
-
         // If the weapon isn't precharged or is cooling down then return false.
         if (firePrechargeTimer > 0f || fireRateCooldownTimer > 0f) return false;
 
@@ -294,14 +295,15 @@ public class FireWeapon : MonoBehaviour
     /// Set up ammo using an ammo gameObject and component from the object pool.
     /// </summary>
     private void FireProjectile(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, AttackContext ctx, uint netId, Enemy belongingEnemy = null)
+        ProjectileKind projectileKind, AttackContext ctx, uint netId, Vector3 shootPos, Enemy belongingEnemy = null)
     {
         ProjectileDetailsSO currentProjectile;
 
         if (ctx.galvanusPhase == GalvanusPhase.LightningBolt || ctx.sepharothPhase == SepharothPhase.InvisibleAndMine || ctx.cryotharPhase == CryotharPhase.Icicle ||
             ctx.venomancerPhase == VenomancerPhase.StoneRain || ctx.pyrotharPhase == PyrotharPhase.FirePillar || ctx.moldranPhase == MoldranPhase.Spike)
         {
-            currentProjectile = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSecondaryProjectile;
+            WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+            currentProjectile = weaponDetails.weaponSecondaryProjectile;
         }
         else
         {
@@ -311,7 +313,7 @@ public class FireWeapon : MonoBehaviour
         if (currentProjectile != null && !isFiringCoroutineRunning)
         {
             // Fire projectile routine
-            StartCoroutine(FireProjectileRoutine(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, currentProjectile, ctx, netId, belongingEnemy));
+            StartCoroutine(FireProjectileRoutine(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, currentProjectile, ctx, netId, shootPos, belongingEnemy));
         }
     }
 
@@ -319,7 +321,7 @@ public class FireWeapon : MonoBehaviour
     /// Coroutine to spawn multiple ammo per shot if specified in the projectile details - PROJECTILE
     /// </summary>
     IEnumerator FireProjectileRoutine(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, ProjectileDetailsSO currentProjectile, AttackContext ctx, uint netId, Enemy belongingEnemy = null)
+        ProjectileKind projectileKind, ProjectileDetailsSO currentProjectile, AttackContext ctx, uint netId, Vector3 shootPos, Enemy belongingEnemy = null)
     {
         // MP client must never spawn projectiles
         if (NetworkClient.active && !NetworkServer.active) yield break;
@@ -403,12 +405,6 @@ public class FireWeapon : MonoBehaviour
         else
         {
             projectileSpawnInterval = 0f;
-
-            // Reduce projectile clip count if not infinite clip capacity
-            if (!activeWeapon.GetCurrentMainHandWeapon().weaponDetails.hasInfiniteProjectile)
-            {
-                activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponRemainingProjectile--;
-            }
         }
 
         AimDirection aimDirection = HelperUtilities.GetAimDirection(weaponAimAngle);
@@ -443,7 +439,7 @@ public class FireWeapon : MonoBehaviour
         {
             if (projectileKind == ProjectileKind.IceBreaker)
             {
-                weaponShootPosition = player.transform.position;
+                weaponShootPosition = activeWeapon.GetMainHandShootPositionUp() - new Vector3(0f, 0.7f, 0f);
             }
             else
             {
@@ -469,7 +465,7 @@ public class FireWeapon : MonoBehaviour
         }
         else if (NetworkServer.active)
         {
-            grid = enemy != null ? DungeonRuntime.GetInstantiatedRoom(enemy.belongingRoomData.roomId).grid : instantiatedRoom.grid;
+            grid = enemy != null ? DungeonRuntime.GetInstantiatedRoom(enemy.belongingRoomData.roomId).grid : DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId).grid;
             spawnPositionArray = enemy != null ? enemy.belongingRoomData.spawnPositions : currentRoomNetData.spawnPositions;
             lowerBounds = enemy != null ? enemy.belongingRoomData.templateLowerBounds : currentRoomNetData.templateLowerBounds;
             upperBounds = enemy != null ? enemy.belongingRoomData.templateUpperBounds : currentRoomNetData.templateUpperBounds;
@@ -628,16 +624,15 @@ public class FireWeapon : MonoBehaviour
                 }
                 else if (projectileKind == ProjectileKind.Grapple || projectileKind == ProjectileKind.IceBreaker)
                 {
-                    projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, player.GetPlayerPosition(), Quaternion.identity, transform);
+                    projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, player.GetPlayerPosition(), Quaternion.identity);
                 }
                 else if (projectileKind == ProjectileKind.ThrowingAxe || projectileKind == ProjectileKind.Shiruken)
                 {
-                    projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, player.GetPlayerPosition() + new Vector3(0f, 0.6f, 0f),
-                        Quaternion.identity, transform);
+                    projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, player.GetPlayerPosition() + new Vector3(0f, 0.6f, 0f),Quaternion.identity);
                 }
                 else
                 {
-                    projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, activeWeapon.GetMainHandShootPositionUp(), Quaternion.identity);
+                    projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, shootPos, Quaternion.identity);
                 }
             }
 
@@ -756,25 +751,26 @@ public class FireWeapon : MonoBehaviour
         {
             player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = false;
 
-            if (!player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.isMeleeWeapon)
+            if (!player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.isMeleeWeapon)
             {
-                fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration *
+                fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponCooldownDuration *
                     (1 - player.additionalAttackCoolDownModifier);
             }
             else
             {
-                fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration * coolDownTimerModifier;
+                fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponCooldownDuration * coolDownTimerModifier;
             }
         }
         else
         {
-            fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration * coolDownTimerModifier;
+            fireRateCooldownTimer = activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponCooldownDuration * coolDownTimerModifier;
         }
     }
 
     private ProjectileDetailsSO ResolveProjectile(ProjectileKind kind)
     {
-        var weapon = activeWeapon.GetCurrentMainHandWeapon();
+        Weapon weapon = activeWeapon.GetCurrentMainHandWeapon();
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
 
         return kind switch
         {
@@ -785,7 +781,7 @@ public class FireWeapon : MonoBehaviour
             ProjectileKind.ThrowingAxe => player.playerDetails.throwingAxeDetails,
             ProjectileKind.Shiruken => player.playerDetails.shirukenDetails,
             ProjectileKind.ChainLightning => player.playerDetails.chainLightningDetails,
-            _ => weapon.weaponDetails.weaponCurrentProjectile
+            _ => weaponDetails.weaponCurrentProjectile
         };
     }
 
@@ -800,7 +796,7 @@ public class FireWeapon : MonoBehaviour
             if (activeWeapon.GetCurrentMainHandWeapon() != null)
             {
                 // Reset precharge timer
-                firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponPrechargeTime * player.additionalCastDurationModifier;
+                firePrechargeTimer = activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponPrechargeTime * player.additionalCastDurationModifier;
 
                 // Set weapon's precharge flag to false
                 activeWeapon.GetCurrentMainHandWeapon().weaponStats.onPrecharge = false;
@@ -818,27 +814,6 @@ public class FireWeapon : MonoBehaviour
     }
 
     /// <summary>
-    /// Display the weapon shoot effect
-    /// </summary>
-    private void WeaponShootEffect(float aimAngle)
-    {
-        // Process if there is a shoot effect & prefab
-        if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponShootEffect != null && activeWeapon?.GetCurrentMainHandWeapon().
-            weaponDetails.weaponShootEffect.weaponShootEffectPrefab != null)
-        {
-            // Get weapon shoot effect gameobject from the pool with particle system component
-            WeaponShootEffect weaponShootEffect = (WeaponShootEffect)PoolManager.Instance.Reuse(activeWeapon.GetCurrentMainHandWeapon().
-                weaponDetails.weaponShootEffect.weaponShootEffectPrefab, activeWeapon.GetRightHandShootEffectPosition(), Quaternion.identity);
-
-            // Set shoot effect
-            weaponShootEffect.SetShootEffect(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponShootEffect, aimAngle);
-
-            // Set gameobject active (the particle system is set to automatically disable the gameobject once finished)
-            weaponShootEffect.gameObject.SetActive(true);
-        }
-    }
-
-    /// <summary>
     /// Play weapon shooting sound effect
     /// </summary>
     private void WeaponSoundEffect(bool isGrapple, ProjectileKind kind, AttackContext ctx)
@@ -847,13 +822,15 @@ public class FireWeapon : MonoBehaviour
 
         if (enemy != null)
         {
-            if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect != null)
-            {
-                SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
-            }
+            //if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect != null)
+            //{
+            //    SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
+            //}
         }
         else
         {
+            WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
             if (kind == ProjectileKind.IceBreaker) 
             {
                 SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.iceBreakerDetails.projectileFireSoundEffect);
@@ -875,11 +852,11 @@ public class FireWeapon : MonoBehaviour
                 return;
             }
 
-            if (activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect != null &&
+            if (weaponDetails.weaponSwingSoundEffect != null &&
                 GetComponent<PlayerControl>().isSoundPlayed == false)
             {
                 GetComponent<PlayerControl>().isSoundPlayed = true;
-                SoundEffectManager.Instance.PlaySoundEffect(activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponSwingSoundEffect);
+                SoundEffectManager.Instance.PlaySoundEffect(weaponDetails.weaponSwingSoundEffect);
             }
         }
     }

@@ -1,8 +1,8 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.XR;
 
 public class PlayerSkillController : MonoBehaviour
 {
@@ -18,9 +18,12 @@ public class PlayerSkillController : MonoBehaviour
     Coroutine teleportParticleRoutine;
 
     float unstealthImmunityTime = 2f;
-    bool particlePlayed;
+    [HideInInspector] public bool particlePlayed;
 
     AnimationEventHelperMainHand animationEventHelperMainHand;
+
+    WeaponTitle lastWeaponTitle;
+    WeaponDetailsSO currentWeaponDetails;
 
     private void Awake()
     {
@@ -46,11 +49,13 @@ public class PlayerSkillController : MonoBehaviour
     public void SeismicSlamProcess()
     {
         SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.firstActiveSkillDetails.activeUniqueSkillSoundEffectTwo);
-        player.animator.SetTrigger("seismicSlam");
+
+        player.animatePlayer.ApplySeismicSlam();
+
+        player.animSync?.CmdPlaySeismicSlam();
 
         // Make Caelion unpushable
         SetUnpushable(true);
-
     }
 
     private void PerformSeismicSlam()
@@ -100,6 +105,8 @@ public class PlayerSkillController : MonoBehaviour
             if (!player.isValorActive)
             {
                 activeSkillTypeOneAnimator.SetBool("valor", true);
+                player.animSync?.CmdPlayValor(undo: false); // FOR MP
+
                 player.healthEvent.CallValorSpecialMoveEvent(); // This is for displaying valor icon
                 player.isValorActive = true;
                 StartCoroutine(ValorRoutine(slotIndex, activeSkillData));
@@ -114,7 +121,10 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isValorActive = false;
         player.healthEvent.CallValorWoreOffEvent();
+
         activeSkillTypeOneAnimator.SetBool("valor", false);
+        player.animSync?.CmdPlayValor(undo: true);
+
         player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duratin of aura skill ended
     }
 
@@ -157,9 +167,10 @@ public class PlayerSkillController : MonoBehaviour
 
             StaticEventHandler.CallStatsChangedOnTheBookEvent(); // Book UI
 
-            player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent(isStatUpdateAllowed: true);
+            player.weaponState?.CmdSetOffHandVisual(active: false, droppedShield.weaponStats, droppedShield.Rarity, player.currentWeaponSlotSetIndex, onStart: false);
 
-            player.healthEvent.CallBreakTheLineSpecialMoveEvent(); // This is for displaying valor icon
+            player.healthEvent.CallBreakTheLineSpecialMoveEvent();
 
             if (!player.isBreakTheLineActive)
             {
@@ -178,7 +189,10 @@ public class PlayerSkillController : MonoBehaviour
         player.additionalSpeedModifier -= 2; // Reset speed
         player.currentMainHandMinDamageValue = originalMinDamage;
         player.currentMainHandMinDamageValue = originalMaxDamage;
-        player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(droppedShield, player.currentWeaponSlotSetIndex, false, false);
+
+        player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(droppedShield.weaponStats, droppedShield.Rarity , player.currentWeaponSlotSetIndex, false, isStatUpdateAllowed: true);
+        player.weaponState?.CmdSetOffHandVisual(active: true, droppedShield.weaponStats, droppedShield.Rarity, player.currentWeaponSlotSetIndex, false);
+
         player.UpdateDamageValues();
         player.UpdateSpeedValue();
         StaticEventHandler.CallStatsChangedOnTheBookEvent();
@@ -198,6 +212,7 @@ public class PlayerSkillController : MonoBehaviour
         SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
         activeSkillTypeTwoAnimator.SetBool("oath", true);
+        player.animSync?.CmdPlayGuardedOath(undo: false); // FOR MP
 
         player.originalShieldArmorModifier = player.additionalShieldArmorModifier;
         player.originalBlockModifier = player.additionalBlockModifier;
@@ -242,6 +257,7 @@ public class PlayerSkillController : MonoBehaviour
         player.isGuardedOathActive = false;
 
         activeSkillTypeTwoAnimator.SetBool("oath", false);
+        player.animSync?.CmdPlayGuardedOath(undo: true); // FOR MP
 
         // EFFECTS WORE OFF
         player.additionalShieldArmorModifier = player.originalShieldArmorModifier;
@@ -274,7 +290,9 @@ public class PlayerSkillController : MonoBehaviour
             if (!player.isUmbralMistActive)
             {
                 player.isUmbralMistActive = true;
-                StartCoroutine(UmbralMistRoutine(slotIndex, activeSkillData));
+
+                if (!NetworkServer.active && !NetworkClient.active) StartCoroutine(UmbralMistRoutine(slotIndex, activeSkillData));
+                else player.animSync.CmdPlayUmbralMist(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier), slotIndex, player.NetAuth.netId);
             }
         }
     }
@@ -282,7 +300,6 @@ public class PlayerSkillController : MonoBehaviour
     IEnumerator UmbralMistRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         GameObject umbralMistObject = Instantiate(activeSkillTypeTwoAnimator.gameObject, transform.position, Quaternion.identity);
-
         umbralMistObject.GetComponent<Animator>().SetBool("umbralMist", true);
 
         // Wait until effective duration of skill ended
@@ -302,32 +319,48 @@ public class PlayerSkillController : MonoBehaviour
     /// </summary>
     public void Stealth(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
-        if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
+        if (!NetworkServer.active && !NetworkClient.active)
         {
-            // EFFECTS
-            player.health.isDamageable = false;
-
-            player.healthEvent.CallStealthSpecialMoveEvent(); // This is for displaying stealth icon
-
-            // Set player's stealth status to true
-            if (!player.isStealthActive)
+            if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
             {
-                player.isStealthActive = true;
+                // EFFECTS
+                player.health.isDamageable = false;
+
+                player.healthEvent.CallStealthSpecialMoveEvent(); // This is for displaying stealth icon
+
+                // Set player's stealth status to true
+                if (!player.isStealthActive)
+                {
+                    player.isStealthActive = true;
+                }
+            }
+
+            // Get the current color of the sprite renderer
+            Color currentColor = player.spriteRenderer.color;
+            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+            // Set the alpha value to 0.3 (30% opacity)
+            currentColor.a = 0.3f;
+
+            // Apply the modified color back to the sprite renderer
+            player.spriteRenderer.color = currentColor;
+
+            // Start the coroutine to maintain the alpha value during stealth
+            StartCoroutine(StealthRoutine(slotIndex, activeSkillData));
+        }
+        else
+        {
+            if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
+            {
+                player.health.isDamageable = false;
+                player.healthEvent.CallStealthSpecialMoveEvent();
+
+                if (!player.isStealthActive)
+                {
+                    player.NetAuth.CmdStartStealth(slotIndex, activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
+                }
             }
         }
-
-        // Get the current color of the sprite renderer
-        Color currentColor = player.spriteRenderer.color;
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
-
-        // Set the alpha value to 0.3 (30% opacity)
-        currentColor.a = 0.3f;
-
-        // Apply the modified color back to the sprite renderer
-        player.spriteRenderer.color = currentColor;
-
-        // Start the coroutine to maintain the alpha value during stealth
-        StartCoroutine(StealthRoutine(slotIndex, activeSkillData));
     }
 
     IEnumerator StealthRoutine(int slotIndex, ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
@@ -408,7 +441,10 @@ public class PlayerSkillController : MonoBehaviour
             if (!player.isShadowStepActive)
             {
                 player.isShadowStepActive = true;
+
                 activeSkillTypeThreeAnimator.SetBool("shadowStep", true);
+                player.animSync?.CmdPlayShadowStep(undo: false);
+
                 player.healthEvent.CallShadowStepSpecialMoveEvent(); // This is for displaying shadow step icon
                 SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
@@ -438,6 +474,7 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isShadowStepActive = false;
         activeSkillTypeThreeAnimator.SetBool("shadowStep", false);
+        player.animSync?.CmdPlayShadowStep(undo: true);
 
         //EFFECTS ENDED
         player.additionalSpeedModifier -= modifier;
@@ -474,11 +511,14 @@ public class PlayerSkillController : MonoBehaviour
         //Reset precharge for loading again
         player.playerControl.isSoundPlayed = false;
         activeSkillTypeTwoAnimator.SetTrigger("penetrate");
+        player.animSync?.CmdPlayPenetrate();
 
         // Trigger fire weapon event
         SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
             ProjectileKind.Default, new AttackContext { isPenetrationArrow = true }, 0, belongingEnemy: null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isPenetrateActive = false));
@@ -502,11 +542,14 @@ public class PlayerSkillController : MonoBehaviour
         player.playerControl.isSoundPlayed = false;
 
         activeSkillTypeThreeAnimator.SetTrigger("tripleThreat");
+        player.animSync?.CmdPlayTripleThreat();
 
         // Trigger fire weapon event
         SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
             ProjectileKind.Default, new AttackContext { isTripleThreat = true }, 0, belongingEnemy: null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isTripleThreatActive = false));
@@ -529,8 +572,10 @@ public class PlayerSkillController : MonoBehaviour
         //Reset precharge for loading again
         player.playerControl.isSoundPlayed = false;
 
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
         // Trigger fire weapon event
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
             ProjectileKind.Default, new AttackContext { isBindingArrow = true }, 0, belongingEnemy: null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isBindingArrowActive = false));
@@ -576,8 +621,10 @@ public class PlayerSkillController : MonoBehaviour
 
         SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
         // Trigger fire weapon event
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
             ProjectileKind.Grapple, default, 0, belongingEnemy: null);
     }
 
@@ -589,6 +636,8 @@ public class PlayerSkillController : MonoBehaviour
         if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             player.animator.SetTrigger("rage");
+            player.animSync?.CmdRage(player.LastAim, player.LastAttackdir);
+
             SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
             player.healthEvent.CallRageSpecialMoveEvent(); // This is for displaying rage icon
             player.isRageActive = true;
@@ -648,7 +697,7 @@ public class PlayerSkillController : MonoBehaviour
         if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             player.animator.SetTrigger("shatterCry");
-            activeSkillTypeOneAnimator.gameObject.SetActive(true);
+            player.animSync?.CmdShatterCry(player.LastAim, player.LastAttackdir);
 
             SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
             player.healthEvent.CallShatterCrySpecialMoveEvent(); // This is for displaying shatter cry icon
@@ -677,8 +726,14 @@ public class PlayerSkillController : MonoBehaviour
                 {
                     IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(affectedEnemy.gameObject);
 
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle != lastWeaponTitle)
+                    {
+                        currentWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+                        lastWeaponTitle = player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle;
+                    }
+
                     // Apply effects
-                    player.meleeAttackMainHand.CheckFearStatus(affectedEnemy, enemyCombatData, isShatterCry: true);
+                    player.meleeAttackMainHand.CheckFearStatus(currentWeaponDetails, affectedEnemy, enemyCombatData, isShatterCry: true);
                 }
             }
         }
@@ -705,6 +760,8 @@ public class PlayerSkillController : MonoBehaviour
             if (!player.isWhirlrendActive)
             {
                 player.animator.SetBool("whirlrend", true);
+                player.animSync?.CmdWhirlrend(player.LastAim, player.LastAttackdir, undo:false);
+
                 activeSkillTypeTwoAnimator.gameObject.SetActive(true);
                 SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
                 player.healthEvent.CallWhirlrendSpecialMoveEvent(); // This is for displaying rage icon
@@ -722,6 +779,8 @@ public class PlayerSkillController : MonoBehaviour
         player.isWhirlrendActive = false;
 
         player.animator.SetBool("whirlrend", false);
+        player.animSync?.CmdWhirlrend(player.LastAim, player.LastAttackdir, undo: true);
+
         activeSkillTypeTwoAnimator.gameObject.SetActive(false);
         player.healthEvent.CallWhirlrendWoreOffEvent();
         player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duration of aura skill ended
@@ -733,6 +792,8 @@ public class PlayerSkillController : MonoBehaviour
     public void AxeThrow(int slotIndex, ref ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
     {
         Weapon offhandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
+
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(offhandWeapon.weaponStats.weaponTitle);
 
         //Reset precharge for loading again
         player.playerControl.isSoundPlayed = false;
@@ -750,19 +811,25 @@ public class PlayerSkillController : MonoBehaviour
             _ => player.currentMainHandMaxDamageValue
         };
 
-        // OFF-HAND
-        AttackShape offHandAttackType = player.playerControl.DetermineAttackType(offhandWeapon?.weaponDetails);
-        player.meleeAttackEvent.CallAttackEvent(player.playerControl.aimDirection, offhandWeapon, offHandAttackType, MeleeHand.OffHand, false, false, false, false, false, false, isThrowingAxe: true);
+        if (offhandWeapon != null)
+        {
+            // OFF-HAND
+            AttackShape offHandAttackType = player.playerControl.DetermineAttackType(offhandWeapon.weaponStats);
+            player.meleeAttackEvent.CallAttackEvent(player.playerControl.aimDirection, offhandWeapon, offHandAttackType, MeleeHand.OffHand, false, false, false, false, false, false, isThrowingAxe: true);
 
-        StartCoroutine(CloseThrowAxeState(activeSkillData));
+            StartCoroutine(CloseThrowAxeState(activeSkillData, weaponDetails));
+        }
     }
 
-    IEnumerator CloseThrowAxeState(ActiveUniqueSkillDetailsSO.LevelData activeSkillData)
+    IEnumerator CloseThrowAxeState(ActiveUniqueSkillDetailsSO.LevelData activeSkillData, WeaponDetailsSO weaponDetails)
     {
         yield return new WaitForSeconds(activeSkillData.cooldown * (1 - player.currentSkillCooldownReducer));
 
         player.isAxeThrowActive = false;
-        player.AddNextWeaponToPlayer(ref DropItem.droppedThrowingAxe, true, false, false, false, equipOffHand: true);
+
+        if(!NetworkServer.active && !NetworkClient.active) player.AddNextWeaponToPlayer(ref DropItem.droppedThrowingAxe, weaponDetails, true, false, false, false, equipOffHand: true);
+        else player.AddNextWeaponToPlayer(ref DropItemNetwork.droppedThrowingAxe, weaponDetails, true, false, false, false, equipOffHand: true);
+
         Destroy(DropOnAxeThrow.dropItemGameObject, 0.2f);
     }
 
@@ -814,12 +881,26 @@ public class PlayerSkillController : MonoBehaviour
         // Save original position
         Vector2 originalPos = player.rb2D.position;
 
-        Room currentRoom = GameManager.Instance.GetCurrentRoom();
+        Room currentRoom = null;
+        RoomNetData roomNetData = default;
+        InstantiatedRoom ir;
+        Vector3Int pointerCellPosition = Vector3Int.zero;
 
-        Vector3Int pointerCellPosition = currentRoom.instantiatedRoom.grid.WorldToCell(mouseWorld);
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            currentRoom = GameManager.Instance.GetCurrentRoom();
+            ir = currentRoom.instantiatedRoom;
+        }
+        else
+        {
+            roomNetData = GameSessionManager.Instance.GetCurrentRoomNetData();
+            ir = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);
+        }
+
+        pointerCellPosition = ir.grid.WorldToCell(mouseWorld);
 
         // Check if the clicked tile is not marked as an obstacle
-        if (!IsObstacleTile(currentRoom, pointerCellPosition))
+        if (!IsObstacleTile(currentRoom, roomNetData, pointerCellPosition))
         {
             player.health.isDamageable = false;
 
@@ -868,7 +949,9 @@ public class PlayerSkillController : MonoBehaviour
         if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             activeSkillTypeTwoAnimator.gameObject.SetActive(true);
+
             activeSkillTypeTwoAnimator.SetBool("venomousIvy", true);
+            player.animSync?.CmdVenomousIvy(undo: false); // FOR MP
 
             //SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
@@ -883,7 +966,10 @@ public class PlayerSkillController : MonoBehaviour
         yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
         player.isVenomousIvyActive = false;
+
         activeSkillTypeTwoAnimator.SetBool("venomousIvy", false);
+        player.animSync?.CmdVenomousIvy(undo: true); // FOR MP
+
         activeSkillTypeTwoAnimator.gameObject.SetActive(false);
         player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duration of aura skill ended
     }
@@ -897,6 +983,7 @@ public class PlayerSkillController : MonoBehaviour
         {
             activeSkillTypeThreeAnimator.gameObject.SetActive(true);
             activeSkillTypeThreeAnimator.SetBool("fadeAndFeed", true);
+            player.animSync?.CmdFadeAndFeed(undo: false);
 
             // ENABLE SKILL EFFECTS
             player.healthEvent.CallFadeAndFeedSpecialMoveEvent(); // This is for displaying guarded oath icon
@@ -936,6 +1023,8 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isFadeAndFeedActive = false;
         activeSkillTypeThreeAnimator.SetBool("fadeAndFeed", false);
+        player.animSync?.CmdFadeAndFeed(undo: true);
+
         activeSkillTypeThreeAnimator.gameObject.SetActive(false);
 
         player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duration of aura skill ended
@@ -956,8 +1045,10 @@ public class PlayerSkillController : MonoBehaviour
 
         Vector2 direction = (targetPos - player.rb2D.position).normalized;
 
-        player.animator.SetBool("bladeDash", true);
         activeSkillTypeFourAnimator.gameObject.SetActive(true);
+
+        player.animator.SetBool("bladeDash", true);
+        player.animSync?.CmdBladeDash(player.LastAim, player.LastAttackdir, undo: false);
 
         SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
@@ -984,13 +1075,16 @@ public class PlayerSkillController : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        activeSkillTypeFourAnimator.gameObject.SetActive(false);
-
         // Reset collision
         player.polygonCollider2D.forceReceiveLayers = originalMask;
 
         player.playerControl.isDashing = false;
+
         player.animator.SetBool("bladeDash", false);
+        player.animSync?.CmdBladeDash(player.LastAim, player.LastAttackdir, undo: true);
+
+        activeSkillTypeFourAnimator.gameObject.SetActive(false);
+
         player.isBladeAndDashActive = false;
     }
 
@@ -1013,8 +1107,10 @@ public class PlayerSkillController : MonoBehaviour
 
         player.playerSkillProjectile = player.playerDetails.shirukenDetails.projectilePrefabArray[0].GetComponentInChildren<Projectile>();
 
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
         // Trigger fire weapon event
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser: false,
             ProjectileKind.Shiruken, default, 0, belongingEnemy: null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isShirukenActive = false));
@@ -1031,7 +1127,9 @@ public class PlayerSkillController : MonoBehaviour
             {
                 player.isBlizzardActive = true;
                 SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
-                StartCoroutine(BlizzardRoutine(slotIndex, activeSkillData));
+
+                if (!NetworkServer.active && !NetworkClient.active) StartCoroutine(BlizzardRoutine(slotIndex, activeSkillData));
+                else player.animSync.CmdPlayBlizzard(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier), slotIndex, player.NetAuth.netId);
             }
         }
     }
@@ -1067,14 +1165,16 @@ public class PlayerSkillController : MonoBehaviour
             activeSkillTypeTwoAnimator.gameObject.SetActive(true);
 
             activeSkillTypeTwoAnimator.SetBool("mycarasSeal", true);
-            player.healthEvent.CallMycarasSealSpecialMoveEvent(); // This is for displaying valor icon
+            player.animSync?.CmdPlayMycarasSeal(undo: false); // FOR MP
+
+            player.healthEvent.CallMycarasSealSpecialMoveEvent(); // This is for displaying Mycara's Seal icon
             player.isMycarasSealActive = true;
             SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
             StartCoroutine(MycarasSealRoutine(slotIndex, activeSkillData));
 
-            GameObject forceFieldObject = player.forcefieldTransform.gameObject;
-            forceFieldObject.SetActive(true);
+            //GameObject forceFieldObject = player.forcefieldTransform.gameObject;
+            //forceFieldObject.SetActive(true);
         }
     }
 
@@ -1086,7 +1186,10 @@ public class PlayerSkillController : MonoBehaviour
         SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isMycarasSealActive = false;
         player.healthEvent.CallMycarasSealWoreOffEvent();
+
         activeSkillTypeTwoAnimator.SetBool("mycarasSeal", false);
+        player.animSync?.CmdPlayMycarasSeal(undo: true); // FOR MP
+
         activeSkillTypeTwoAnimator.gameObject.SetActive(false);
         player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duratin of aura skill ended
     }
@@ -1119,8 +1222,10 @@ public class PlayerSkillController : MonoBehaviour
         //Reset precharge for loading again
         player.playerControl.isSoundPlayed = false;
 
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
         // Trigger fire weapon event
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
             ProjectileKind.IceBreaker, default, 0, belongingEnemy: null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isIceBreakerActive = false));
@@ -1137,7 +1242,9 @@ public class PlayerSkillController : MonoBehaviour
             {
                 player.isAbsoluteZeroActive = true;
                 SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
-                StartCoroutine(AbsoluteZeroRoutine(slotIndex, activeSkillData));
+
+                if (!NetworkServer.active && !NetworkClient.active) StartCoroutine(AbsoluteZeroRoutine(slotIndex, activeSkillData));
+                else player.animSync.CmdPlayAbsoluteZero(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier), slotIndex, player.NetAuth.netId);
             }
         }
     }
@@ -1180,8 +1287,10 @@ public class PlayerSkillController : MonoBehaviour
         //Reset precharge for loading again
         player.playerControl.isSoundPlayed = false;
 
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
         // Trigger fire weapon event
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
             ProjectileKind.FireBlast, default, 0, belongingEnemy: null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isFireBlastActive = false));
@@ -1195,11 +1304,18 @@ public class PlayerSkillController : MonoBehaviour
         player.isMoltenRiftActive = true;
 
         // Start playing teleport particle system
-        if (teleportParticleRoutine != null)
+        if (NetworkClient.active)
         {
-            StopCoroutine(teleportParticleRoutine);
+            player.animSync.CmdPlayMoltenRiftParticles();
         }
-        teleportParticleRoutine = StartCoroutine(ParticleSystemRoutine());
+        else
+        {
+            if (teleportParticleRoutine != null)
+            {
+                StopCoroutine(teleportParticleRoutine);
+            }
+            teleportParticleRoutine = StartCoroutine(ParticleSystemRoutine());
+        }
 
         // Wait for mouse click to teleport the character
         InputManager.Instance.pointerPosition.action.performed += OnMoltenRiftInput;
@@ -1207,7 +1323,14 @@ public class PlayerSkillController : MonoBehaviour
         // Play special move sound effect
         SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
-        StartCoroutine(EnableInvincibility());
+        if (NetworkClient.active)
+        {
+            player.animSync.CmdInvincibility();
+        }
+        else
+        {
+            StartCoroutine(EnableInvincibility());
+        }
     }
 
     /// <summary>
@@ -1240,28 +1363,45 @@ public class PlayerSkillController : MonoBehaviour
 
     public void OnMoltenRiftInput(InputAction.CallbackContext context)
     {
-        if (particlePlayed)
+        if (!particlePlayed) return;
+
+        // Get mouse world position and teleport the character
+        Vector3 pointerWorldPosition = HelperUtilities.GetMouseWorldPosition(player);
+
+        // Local validation first
+        if (IsObstacleTile_Local(pointerWorldPosition)) return;
+
+        if (NetworkClient.active)
         {
-            // Get current room and its bounds
-            Room room = GameManager.Instance.GetCurrentRoom();
+            // Safe client prediction
+            player.rb2D.position = pointerWorldPosition;
 
-            // Get mouse world position and teleport the character
-            Vector3 pointerWorldPosition = HelperUtilities.GetMouseWorldPosition(player);
-            Vector3Int pointerCellPosition = room.instantiatedRoom.grid.WorldToCell(pointerWorldPosition);
+            // Then notify server
+            player.animSync.CmdMoltenRiftTeleport(pointerWorldPosition);
+            player.animSync.CmdStopParticle();
+        }
+        else
+        {
+            TryTeleport_SinglePlayer(pointerWorldPosition);
 
-            // Check if the clicked tile is not marked as an obstacle
-            if (!IsObstacleTile(room, pointerCellPosition))
-            {
-                // Teleport the character to the clicked tile
-                player.rb2D.position = pointerWorldPosition;
+            // Stop playing teleport particle system
+            player.specialMoveParticlesSystem.Stop();
+            particlePlayed = false;
+        }
 
-                // Stop playing teleport particle system
-                player.specialMoveParticlesSystem.Stop();
-                particlePlayed = false;
+        // Unsubscribe from the event to prevent multiple teleports
+        InputManager.Instance.pointerPosition.action.performed -= OnMoltenRiftInput;
+    }
 
-                // Unsubscribe from the event to prevent multiple teleports
-                InputManager.Instance.pointerPosition.action.performed -= OnMoltenRiftInput;
-            }
+    private void TryTeleport_SinglePlayer(Vector3 targetPosition)
+    {
+        Room room = GameManager.Instance.GetCurrentRoom();
+
+        Vector3Int cellPos = room.instantiatedRoom.grid.WorldToCell(targetPosition);
+
+        if (!IsObstacleTile(room, default, cellPos))
+        {
+            player.rb2D.position = targetPosition;
         }
     }
 
@@ -1276,7 +1416,9 @@ public class PlayerSkillController : MonoBehaviour
             {
                 player.isFlameLotusActive = true;
                 SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
-                StartCoroutine(FlameLotusRoutine(slotIndex, activeSkillData));
+
+                if (!NetworkServer.active && !NetworkClient.active) StartCoroutine(FlameLotusRoutine(slotIndex, activeSkillData));
+                else player.animSync.CmdPlayFlameLotus(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier), slotIndex, player.NetAuth.netId);
             }
         }
     }
@@ -1312,14 +1454,16 @@ public class PlayerSkillController : MonoBehaviour
             activeSkillTypeTwoAnimator.gameObject.SetActive(true);
 
             activeSkillTypeTwoAnimator.SetBool("kynarasEmbrace", true);
+            player.animSync?.CmdPlayKynarasEmbrace(undo: false); // FOR MP
+
             player.healthEvent.CallKynarasEmbraceSpecialMoveEvent(); // This is for displaying Kynara's Embrace icon
             player.isKynarasEmbraceActive = true;
             SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
             StartCoroutine(KynarasEmbraceRoutine(slotIndex, activeSkillData));
 
-            GameObject forceFieldObject = player.forcefieldTransform.gameObject;
-            forceFieldObject.SetActive(true);
+            //GameObject forceFieldObject = player.forcefieldTransform.gameObject;
+            //forceFieldObject.SetActive(true);
         }
     }
 
@@ -1340,7 +1484,10 @@ public class PlayerSkillController : MonoBehaviour
         yield return new WaitForSeconds(0.5f); // Explosion duration
 
         player.isKynarasEmbraceActive = false;
+
         activeSkillTypeTwoAnimator.SetBool("kynarasEmbrace", false);
+        player.animSync?.CmdPlayKynarasEmbrace(undo: true); // FOR MP
+
         activeSkillTypeTwoAnimator.gameObject.SetActive(false);
         player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duratin of aura skill ended
     }
@@ -1421,8 +1568,10 @@ public class PlayerSkillController : MonoBehaviour
         //Reset precharge for loading again
         player.playerControl.isSoundPlayed = false;
 
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
         // Trigger fire weapon event
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser,
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
             ProjectileKind.BlazingCyclone, default, 0, belongingEnemy: null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isBlazingCycloneActive = false));
@@ -1438,7 +1587,9 @@ public class PlayerSkillController : MonoBehaviour
             if (!player.isMistOfDisruptionActive)
             {
                 player.isMistOfDisruptionActive = true;
-                StartCoroutine(MistOfDisruptionRoutine(slotIndex, activeSkillData));
+
+                if (!NetworkServer.active && !NetworkClient.active) StartCoroutine(MistOfDisruptionRoutine(slotIndex, activeSkillData));
+                else player.animSync.CmdMistOfDisruption(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier), slotIndex, player.NetAuth.netId);
             }
         }
     }
@@ -1472,7 +1623,10 @@ public class PlayerSkillController : MonoBehaviour
             activeSkillTypeTwoAnimator.gameObject.SetActive(true);
 
             activeSkillTypeTwoAnimator.SetBool("nymarasWindveil", true);
+            player.animSync?.CmdPlayNymarasWindveil(undo: false); // FOR MP
+
             player.healthEvent.CallNymarasWindveilSpecialMoveEvent(); // This is for displaying Nymara'w Windveil icon
+
             player.isNymarasWindveilActive = true;
             SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
 
@@ -1515,7 +1669,10 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isNymarasWindveilActive = false;
         player.healthEvent.CallNymarasWindveilWoreOffEvent();
+
         activeSkillTypeTwoAnimator.SetBool("nymarasWindveil", false);
+        player.animSync?.CmdPlayNymarasWindveil(undo: false); // FOR MP
+
         activeSkillTypeTwoAnimator.gameObject.SetActive(false);
         player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duratin of aura skill ended
     }
@@ -1559,7 +1716,13 @@ public class PlayerSkillController : MonoBehaviour
                 {
                     IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(enemy.gameObject);
 
-                    player.meleeAttackMainHand.CheckStaticStatus(enemy, enemyCombatData, isNymarasWindveil: true, player.isConductiveTouchActive);
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle != lastWeaponTitle)
+                    {
+                        currentWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+                        lastWeaponTitle = player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle;
+                    }
+
+                    player.meleeAttackMainHand.CheckStaticStatus(currentWeaponDetails, enemy, enemyCombatData, isNymarasWindveil: true, player.isConductiveTouchActive);
                 }
             }
         }
@@ -1582,8 +1745,10 @@ public class PlayerSkillController : MonoBehaviour
         //Reset precharge for loading again
         player.playerControl.isSoundPlayed = false;
 
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
         // Trigger fire weapon event
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.isLaser, 
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser, 
             ProjectileKind.ChainLightning, new AttackContext { chainLightningPhase = ChainLightningPhase.First}, 0, belongingEnemy: null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isChainLightningActive = false));
@@ -1598,7 +1763,9 @@ public class PlayerSkillController : MonoBehaviour
         {
             player.isEyeOfTheStormActive = true;
             SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
-            StartCoroutine(EyeOfTheStormRoutine(slotIndex, activeSkillData));
+
+            if (!NetworkServer.active && !NetworkClient.active) StartCoroutine(EyeOfTheStormRoutine(slotIndex, activeSkillData));
+            else player.animSync.CmdPlayEyeOfTheStorm(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier), slotIndex, player.NetAuth.netId);
         }
     }
 
@@ -1632,6 +1799,7 @@ public class PlayerSkillController : MonoBehaviour
         {
             activeSkillTypeThreeAnimator.gameObject.SetActive(true);
             activeSkillTypeThreeAnimator.SetBool("ionicRejuvenation", true);
+            player.animSync?.CmdIonicRejuvenation(undo: false);
 
             // ENABLE SKILL EFFECTS
             player.healthEvent.CallIonicRejuvenationSpecialMoveEvent(); // This is for displaying ionic rejuvenation icon
@@ -1687,7 +1855,10 @@ public class PlayerSkillController : MonoBehaviour
         player.healthEvent.CallIonicRejuvenationWoreOffEvent(); // This is for displaying ionic rejuvenation icon
 
         player.isIonicRejuvenationActive = false;
+
         activeSkillTypeThreeAnimator.SetBool("ionicRejuvenation", false);
+        player.animSync?.CmdIonicRejuvenation(undo: true);
+
         activeSkillTypeThreeAnimator.gameObject.SetActive(false);
 
         player.specialMovesCooldownCheckArray[slotIndex - 1] = true; // Start cooldown process after effective duration of aura skill ended
@@ -1761,7 +1932,7 @@ public class PlayerSkillController : MonoBehaviour
                 {
                     if (mainHandWeapon != null)
                     {
-                        switch (mainHandWeapon.weaponDetails.weaponClass)
+                        switch (mainHandWeapon.weaponStats.weaponClass)
                         {
                             case WeaponClass.Sword:
                             case WeaponClass.Axe:
@@ -1795,7 +1966,7 @@ public class PlayerSkillController : MonoBehaviour
                 {
                     if (mainHandWeapon != null)
                     {
-                        switch (mainHandWeapon.weaponDetails.weaponClass)
+                        switch (mainHandWeapon.weaponStats.weaponClass)
                         {
                             case WeaponClass.Sword:
                             case WeaponClass.Axe:
@@ -1842,7 +2013,7 @@ public class PlayerSkillController : MonoBehaviour
 
                 if (mainHandWeapon != null)
                 {
-                    switch (mainHandWeapon.weaponDetails.weaponClass)
+                    switch (mainHandWeapon.weaponStats.weaponClass)
                     {
                         case WeaponClass.Sword:
                         case WeaponClass.Axe:
@@ -1908,21 +2079,54 @@ public class PlayerSkillController : MonoBehaviour
         player.healthEvent.CallCuredCompletelyEvent();
     }
 
-    private bool IsObstacleTile(Room room, Vector3Int cellPosition)
+    bool IsObstacleTile_Local(Vector3 worldPos)
     {
+        if (!NetworkClient.active)
+        {
+            // SP
+            Room room = GameManager.Instance.GetCurrentRoom();
+            Vector3Int cell = room.instantiatedRoom.grid.WorldToCell(worldPos);
+
+            return IsObstacleTile(room, default, cell);
+        }
+        else
+        {
+            // MP
+            RoomNetData roomNetData = GameSessionManager.Instance.GetCurrentRoomNetData();
+            InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);
+
+            Vector3Int cell = ir.grid.WorldToCell(worldPos);
+
+            return IsObstacleTile(null, roomNetData, cell);
+        }
+    }
+
+    public bool IsObstacleTile(Room room, RoomNetData roomNetData, Vector3Int cellPosition)
+    {
+        Vector2Int adjustedCellPosition = Vector2Int.zero;
+        InstantiatedRoom ir;
+
+        bool isMultiplayer = NetworkClient.active || NetworkServer.active;
+
+        if (isMultiplayer)
+        {
+            ir = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);
+        }
+        else ir = room.instantiatedRoom;
+
         // Convert cell position to adjusted position relative to room bounds
-        Vector2Int adjustedCellPosition = new Vector2Int(cellPosition.x - room.templateLowerBounds.x,
-            cellPosition.y - room.templateLowerBounds.y);
+        if (isMultiplayer) adjustedCellPosition = new Vector2Int(cellPosition.x - roomNetData.templateLowerBounds.x, cellPosition.y - roomNetData.templateLowerBounds.y);
+        else adjustedCellPosition = new Vector2Int(cellPosition.x - room.templateLowerBounds.x, cellPosition.y - room.templateLowerBounds.y);
 
         // Check if the adjusted cell position is within the valid range
-        if (adjustedCellPosition.x < 0 || adjustedCellPosition.y < 0 || adjustedCellPosition.x >= room.instantiatedRoom.
-            aStarMovementPenalty.GetLength(0) || adjustedCellPosition.y >= room.instantiatedRoom.aStarMovementPenalty.GetLength(1))
+        if (adjustedCellPosition.x < 0 || adjustedCellPosition.y < 0 || adjustedCellPosition.x >= ir.aStarMovementPenalty.GetLength(0) 
+            || adjustedCellPosition.y >= ir.aStarMovementPenalty.GetLength(1))
         {
             // Cell position is outside the valid range (out of bounds)
             return true; // Treat it as an obstacle
         }
 
         // Check if the cell is marked as an obstacle
-        return room.instantiatedRoom.aStarMovementPenalty[adjustedCellPosition.x, adjustedCellPosition.y] == 0;
+        return ir.aStarMovementPenalty[adjustedCellPosition.x, adjustedCellPosition.y] == 0;
     }
 }

@@ -33,13 +33,18 @@ public class PassiveItemDatabaseSO : ScriptableObject
             return null;
         }
 
-        if (!lookup.TryGetValue(passiveItemType, out PassiveItemDetailsSO weapon))
+        if (!lookup.TryGetValue(passiveItemType, out PassiveItemDetailsSO passiveItem))
         {
-            Debug.LogError($"PassiveItemTitle not found in database {passiveItemType}");
+            Debug.LogError($"PassiveItemType not found in database {passiveItemType}");
             return null;
         }
 
-        return weapon;
+        if (passiveItemType == PassiveItemType.None)
+        {
+            return null;
+        }
+
+        return passiveItem;
     }
 
     public PassiveItemType GetPassiveItemType(PassiveItemDetailsSO details)

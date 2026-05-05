@@ -9,6 +9,9 @@ public class CircleOrigin : MonoBehaviour
     Player player;
     CircleCollider2D circleCollider;
 
+    WeaponTitle lastWeaponTitle;
+    WeaponDetailsSO currentWeaponDetails;
+
     private void Awake()
     {
         player = GetComponentInParent<Player>();
@@ -25,10 +28,17 @@ public class CircleOrigin : MonoBehaviour
             return;
         }
 
+        if (player.activeWeapon.GetCurrentMainHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle != lastWeaponTitle)
+        {
+            currentWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+            lastWeaponTitle = player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle;
+        }
+
         // Runtime logic
         if (GetComponentInParent<Projectile>() == null && player.activeWeapon.GetCurrentMainHandWeapon() != null)
         {
-            circleRadius = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.circleRadius;
+
+            circleRadius = currentWeaponDetails.circleRadius;
 
             UpdateColliderShape();
         }

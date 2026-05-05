@@ -38,6 +38,11 @@ public class WeaponDatabaseSO : ScriptableObject
             return null;
         }
 
+        if (title == WeaponTitle.None)
+        {
+            return null;
+        }
+
         return weapon;
     }
 

@@ -59,7 +59,7 @@ public class DropOnAxeThrow : MonoBehaviour
     {
         dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
         dropItem = dropItemGameObject.GetComponent<DropItem>();
-        dropItem.droppedByPlayer = false;
+        dropItem.dropSourceType = DropSourceType.Player;
 
         // Set collider to true
         dropItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
@@ -74,6 +74,8 @@ public class DropOnAxeThrow : MonoBehaviour
 
         dropItem.hasWeaponDrop = true;
 
-        dropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
+
+        dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position, null);
     }
 }

@@ -143,10 +143,17 @@ public enum InnerPathName
     SurgeTapGain
 }
 
+public enum DropSourceType
+{
+    Enemy,
+    Player
+}
+
 public enum PassiveItemCategory
 {
     Primary,
-    Secondary
+    Secondary,
+    None
 }
 
 public enum PassiveItemType
@@ -406,7 +413,22 @@ public enum WeaponTitle
     Stiletto,
     Shank,
     Kris,
-    HuntingKnife
+    HuntingKnife,
+    BasiliskFire,
+    BeholderEye,
+    Cryothar,
+    FEFire,
+    GalvanusLightning,
+    Moldran,
+    MoravelleBow,
+    NexarionWand,
+    PixieProjectile,
+    Pyrothar,
+    SepharothMight,
+    SnakeSpit,
+    SylvarokWhip,
+    Venomancer,
+    WraithWisp
 }
 
 public enum WeaponClass
@@ -739,7 +761,8 @@ public enum SlotType
     Inventory,
     Drop,
     Upgrade,
-    Dismantle
+    Dismantle,
+    None
 }
 
 public enum ItemSwapPos
@@ -786,10 +809,10 @@ public enum MeleeHand
     OffHand
 }
 
-public enum DropType
+public enum ItemType
 {
+    None,
     PassiveItem,
-    ActiveItem,
     Weapon
 }
 

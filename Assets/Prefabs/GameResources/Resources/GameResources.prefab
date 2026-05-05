@@ -130,4 +130,10 @@ MonoBehaviour:
   ammoHoverAnimatorController: {fileID: 9100000, guid: 2e47b120b7574f54da4bcd574ae4fa24, type: 2}
   lockIcon: {fileID: 21300000, guid: 75be281a614718c4b89d49a81d864e9d, type: 3}
   statusEffectPrefab: {fileID: 4504222057889846316, guid: 6db624b761613c34993166e791bd6b5a, type: 3}
+  umbralMistNetworkPrefab: {fileID: 5635943874621960470, guid: 017fa793ab7633f449a892746ef7e7b3, type: 3}
+  blizzardNetworkPrefab: {fileID: 3013032350884882768, guid: d1df0e02b1decd042bebf4c353d051c9, type: 3}
+  absoluteZeroPrefab: {fileID: 4201862250200994957, guid: f1356f156e387b64c804bfc6bd01b53b, type: 3}
+  flameLotusPrefab: {fileID: 1024944149772817240, guid: 3e50bb6a065cd714f8eacf302a244609, type: 3}
+  mistOfDisruptionPrefab: {fileID: 5052213109228790065, guid: 5d3b90f00180bb94387f16763e566ea5, type: 3}
+  eyeOfTheStormPrefab: {fileID: 5602583268280607687, guid: f32e0c7815fe320419704cecc43910a7, type: 3}
   minimapBossPrefab: {fileID: 668306937615276397, guid: a6f6cb3ad6450194983577547ff3e678, type: 3}

@@ -16,6 +16,9 @@ public class VenomousIvy : MonoBehaviour
     Dictionary<Enemy, float> affectedEnemies = new Dictionary<Enemy, float>();
     float playerLastTime;
 
+    WeaponTitle lastWeaponTitle;
+    WeaponDetailsSO currentWeaponDetails;
+
     private void OnEnable()
     {
         OnVenomousIvyActivated.AddListener(EnableVenomousIvy);
@@ -64,9 +67,15 @@ public class VenomousIvy : MonoBehaviour
 
             IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(affectedEnemy.gameObject);
 
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle != lastWeaponTitle)
+            {
+                currentWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+                lastWeaponTitle = player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle;
+            }
+
             // Apply effects
-            player.meleeAttackMainHand.CheckPoisonStatus(affectedEnemy, enemyCombatData, isVenomousIvy: true);
-            player.meleeAttackMainHand.CheckRootStatus(affectedEnemy, enemyCombatData, isVenomousIvy: true);
+            player.meleeAttackMainHand.CheckPoisonStatus(currentWeaponDetails, affectedEnemy, enemyCombatData, isVenomousIvy: true);
+            player.meleeAttackMainHand.CheckRootStatus(currentWeaponDetails, affectedEnemy, enemyCombatData, isVenomousIvy: true);
 
             // Update last affected time
             affectedEnemies[affectedEnemy] = Time.time;

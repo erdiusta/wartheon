@@ -4,24 +4,26 @@ using UnityEngine;
 [RequireComponent(typeof(FireWeapon))]
 public class FireWeaponNetwork : NetworkBehaviour
 {
+    FireWeaponEvent fireWeaponEvent;
     FireWeapon fireWeapon;
 
     private void Awake()
     {
+        fireWeaponEvent = GetComponent<FireWeaponEvent>();
         fireWeapon = GetComponent<FireWeapon>();
     }
 
     // Called by FireWeapon
     public void RequestFireWeapon(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, AttackContext attackContext)
+        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos)
     {
-        CmdFireWeapon(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext);
+        CmdFireWeapon(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos);
     }
 
     [Command]
     private void CmdFireWeapon(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, AttackContext attackContext)
+        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos)
     {
-        fireWeapon.ServerFireWeapon(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext);
+        fireWeapon.ServerFireWeapon(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos);
     }
 }

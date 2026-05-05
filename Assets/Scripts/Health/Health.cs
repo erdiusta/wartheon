@@ -47,8 +47,6 @@ public class Health : MonoBehaviour
     // Inner Path
     float secondBreathHealTimer = 0f;
 
-    bool isMultiplayer = false;
-
     private void Awake()
     {
 #if UNITY_EDITOR
@@ -97,8 +95,6 @@ public class Health : MonoBehaviour
         healthEvent = GetComponent<HealthEvent>();
         flashManager = GetComponent<FlashManager>();
 
-        Debug.Log("Player name is " + player.playerDetails.playerCharacterIndex.ToString() + ".");
-
         playerReady = true;
 
         if (player.playerDetails.isImmuneAfterHit)
@@ -122,7 +118,7 @@ public class Health : MonoBehaviour
         if (SceneManager.GetActiveScene().buildIndex != 2) return;
 
         if (playerReady && player != null)
-        {;
+        {
             if (InputManager.TutorialEnabled)
             {
                 int indexValue = (int)TutorialInteraction.Instance.currentTutorialPhase;
@@ -270,8 +266,6 @@ public class Health : MonoBehaviour
 
             if (player != null)
             {
-                Debug.Log($"Player {player.playerDetails.playerCharacterName} has died.");
-
                 // Player death
                 DestroyUtility.Destroy(player.gameObject, playerDied: true, 0);
             }

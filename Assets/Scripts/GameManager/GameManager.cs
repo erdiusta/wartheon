@@ -1,6 +1,5 @@
 using Mirror;
 using System.Collections;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using TMPro;
@@ -16,6 +15,8 @@ using UnityEngine.UI;
 public class GameManager : SingletonMonobehaviour<GameManager>
 {
     public static bool isDemo = false;
+    [HideInInspector] public DropItem nearestDropItem = null;
+    [HideInInspector] public DropItemNetwork nearestDropItemNetwork = null;
 
     public bool HasLocalPlayer => localPlayer != null;
     Player localPlayer;
@@ -202,6 +203,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     bool deathChecked;
 
+    EnemySpawnerNetwork spawnerNetwork;
+
     protected override void Awake()
     {
         base.Awake();
@@ -253,6 +256,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         // MP-Only Setup
         ClientEnterGameplay(player);
+
+        spawnerNetwork = FindFirstObjectByType<EnemySpawnerNetwork>();
     }
 
     /// <summary>
@@ -693,7 +698,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             buttonBuildButton.SetActive(false);
         }
 
-        if (EnemySpawner.Instance.isBossInstantiated)
+        bool isBossInstantiated = !NetworkServer.active && !NetworkClient.active ? EnemySpawner.Instance.isBossInstantiated : spawnerNetwork.isBossInstantiated;
+
+        if (isBossInstantiated)
         {
             if (!bossHealthInitializationOnProcess)
             {
@@ -729,10 +736,21 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         bossHealthInitializationOnProcess = true;
 
         float completeInvisibleDuration = 1f;
+        string enemyName;
 
-        bossEnemy = EnemySpawner.Instance.GetBoss();
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            bossEnemy = EnemySpawner.Instance.GetBoss();
+            enemyName = EnumExtensions.ToPrettyString(bossEnemy.GetComponent<IEnemyCombatData>().EnemyCategory);
+        }
+        else
+        {
+            bossEnemy = spawnerNetwork.GetBoss();
+            enemyName = EnumExtensions.ToPrettyString(spawnerNetwork.bossEnemyName);
+        }
+
         healthBarContainer.SetActive(true);
-        healthBarContainer.GetComponentInChildren<TextMeshProUGUI>().text = bossEnemy.enemyDetails.enemyName;
+        healthBarContainer.GetComponentInChildren<TextMeshProUGUI>().text = enemyName;
 
         // Become invisible
         while (invisibleTimer < completeInvisibleDuration)
@@ -855,23 +873,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         previousRoom = currentRoom;
         currentRoom = room;
-    }
-
-    /// <summary>
-    /// Room enemies defeated - test if all dungeon rooms have been cleared of enemies - if so load next dungeon game level
-    /// </summary>
-    private void FindBossRoom()
-    {
-        // Loop through all dungeon rooms to see if cleared of enemies
-        foreach (KeyValuePair<string, Room> keyValuePair in DungeonBuilder.Instance.dungeonBuilderRoomDictionary)
-        {
-            // Detect boss room
-            if (keyValuePair.Value.roomNodeType.isBossRoom)
-            {
-                bossRoom = keyValuePair.Value.instantiatedRoom;
-                break;
-            }
-        }
     }
 
     public void ServerTogglePause_SP()
@@ -1376,6 +1377,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     private IEnumerator DisplayMessageRoutine(string text, Color textColor, float displaySeconds, bool timed = false)
     {
+        InputManager.Instance.uiConfirmConsumed = false;
+
         // Set text
         messageTextTMP.SetText(text);
         messageTextTMP.color = textColor;
@@ -1624,6 +1627,23 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         return null;
     }
 
+    public InstantiatedRoom FindBossRoom()
+    {
+        foreach (KeyValuePair<string, RoomNetData> kvp in DungeonRuntime.RoomNetDataDict)
+        {
+            // Detect boss room
+            if (kvp.Value.isBossRoom)
+            {
+                InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(kvp.Value.roomId);
+                bossRoom = ir;
+
+                return bossRoom;
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// Set health bar value with health between 0 and 1
     /// </summary>
@@ -1631,14 +1651,23 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         if (enemy != null)
         {
-            if (enemy.enemyDetails.isEnemyBoss)
+            if (enemy.Isboss)
             {
                 if (enemyHealthBarCoroutine != null)
                 {
                     StopCoroutine(enemyHealthBarCoroutine);
                 }
 
-                float targetScaleValue = healthValue / enemy.health.GetMaximumHealth();
+                healthValue = Mathf.Max(0, healthValue);
+
+                IHealthAuthority healthAuthority;
+
+                if (!NetworkServer.active && !NetworkClient.active) healthAuthority = enemy.GetComponent<LocalHealthAuthority>();
+                else healthAuthority = enemy.GetComponent<NetworkHealthAuthority>();
+
+                int enemyMaxHealth = healthAuthority.MaxHealth;
+                float targetScaleValue = healthValue / enemyMaxHealth;
+
                 enemyHealthBarCoroutine = StartCoroutine(SmoothHealthBarChange(targetScaleValue));
             }
         }
@@ -1669,22 +1698,22 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     public void GoToWeaponSetWithIndex(int setIndex, bool onStart = false)
     {
-        localPlayer.playerControl.NextWeaponSet(true, false, onStart, setIndex);
+        localPlayer.playerControl.NextWeaponSet(false, onStart, setIndex);
     }
 
     public void WeaponSetOne(bool onStart = false)
     {
-        localPlayer.playerControl.NextWeaponSet(true, false, onStart, 1);
+        localPlayer.playerControl.NextWeaponSet(false, onStart, 1);
     }
 
     public void WeaponSetTwo(bool onStart = false)
     {
-        localPlayer.playerControl.NextWeaponSet(true, false, onStart, 2);
+        localPlayer.playerControl.NextWeaponSet(false, onStart, 2);
     }
 
     public void WeaponSetThree(bool onStart = false)
     {
-        localPlayer.playerControl.NextWeaponSet(true, false, onStart, 3);
+        localPlayer.playerControl.NextWeaponSet(false, onStart, 3);
     }
 
     public void OpenPopUpLog(PopUpReason popUpReason, int shardGain = 0)

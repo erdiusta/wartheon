@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -68,15 +69,17 @@ public class MainHandWeaponStatusUI : MonoBehaviour
 
     private void Subscribe()
     {
-        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
-        player.setActiveWeaponEvent.OnSetInactiveMainHandWeapon += SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
+        player.setActiveWeaponEvent.OnSetActiveMainHandWeaponForHud += SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
+        player.setActiveWeaponEvent.OnSetInactiveMainHandWeaponForHud += SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
+
         player.weaponFiredEvent.OnWeaponFired += WeaponFiredEvent_OnWeaponFired;
     }
 
     private void Unsubscribe()
     {
-        player.setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
-        player.setActiveWeaponEvent.OnSetInactiveMainHandWeapon -= SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
+        player.setActiveWeaponEvent.OnSetActiveMainHandWeaponForHud -= SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
+        player.setActiveWeaponEvent.OnSetInactiveMainHandWeaponForHud -= SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
+
         player.weaponFiredEvent.OnWeaponFired -= WeaponFiredEvent_OnWeaponFired;
     }
 
@@ -102,13 +105,14 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void SetActiveWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        if (setActiveWeaponEventArgs.weapon != null)
+        if (setActiveWeaponEventArgs.weaponStats.weaponTitle != WeaponTitle.None)
         {
-            SetActiveWeapon(setActiveWeaponEventArgs.weapon);
+            Weapon weapon = WeaponDropGenerator.GetWeaponWithStats(setActiveWeaponEventArgs.weaponStats, setActiveWeaponEventArgs.rarity, ItemSlotStatus.MainHand, -1);
+            SetActiveWeapon(weapon);
         }
     }
 
-    private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
     {
         MakeWeaponInactive();
         cooldownBarParent.gameObject.SetActive(false);
@@ -161,14 +165,15 @@ public class MainHandWeaponStatusUI : MonoBehaviour
         }
 
         ResetWeaponCooldownBar(weapon);
-        UpdateActiveWeaponImage(weapon.weaponDetails);
+        UpdateActiveWeaponImage(weapon);
     }
 
     /// <summary>
     /// Populate active weapon image
     /// </summary>
-    private void UpdateActiveWeaponImage(WeaponDetailsSO weaponDetails)
+    private void UpdateActiveWeaponImage(Weapon weapon)
     {
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
         weaponImage.sprite = weaponDetails.weaponFrontSprite;
     }
 
@@ -179,8 +184,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     {
         if (currentWeapon != null)
         {
-            cooldownTimer = (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalAttackCoolDownModifier));
-
+            cooldownTimer = (currentWeapon.weaponStats.weaponCooldownDuration * (1 - player.additionalAttackCoolDownModifier));
 
             // Set bar scale to 1
             barImage.transform.localScale = new Vector3(1f, 1f, 1f);
@@ -210,7 +214,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     IEnumerator CooldownRoutine(Weapon currentWeapon)
     {
-        if (currentWeapon.itemSlotStatus == ItemSlotStatus.MainHand)
+        if (currentWeapon.ItemSlotStatus == ItemSlotStatus.MainHand)
         {
             cooldownBarParent.gameObject.SetActive(true);
         }
@@ -220,7 +224,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
             float barFill = 0f;
 
             // Update cooldown bar
-            barFill = cooldownTimer / (currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalAttackCoolDownModifier));
+            barFill = cooldownTimer / (currentWeapon.weaponStats.weaponCooldownDuration * (1 - player.additionalAttackCoolDownModifier));
 
             // Update bar fill
             if (barFill > 0f)

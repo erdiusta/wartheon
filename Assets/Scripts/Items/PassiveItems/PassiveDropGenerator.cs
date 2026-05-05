@@ -4,60 +4,64 @@ using UnityEngine;
 
 public static class PassiveDropGenerator
 {
-    public static PassiveItem GetPassiveWithStats(PassiveItemStats passiveStats, Rarity rarity)
+    public static PassiveItem GetPassiveWithStats(PassiveItemStats passiveStats, Rarity rarity, ItemSlotStatus slotStatus, int inventoryIndex)
     {
         PassiveItem passiveItem = new PassiveItem(rarity);
         passiveItem.passiveStats = passiveStats;
+        passiveItem.ItemSlotStatus = slotStatus;
+        passiveItem.ItemType = ItemType.PassiveItem;
+        passiveItem.InventoryIndex = inventoryIndex;
 
         return passiveItem;
     }
 
-    public static PassiveItem CreateRolledInstance(PassiveItemDetailsSO passiveItemDetails, WartheonRNG rng, bool rarityAlreadySet = false, Rarity rarity = Rarity.Basic)
+    public static PassiveItem CreateRolledInstance(PassiveItemDetailsSO passiveItemDetails, WartheonRNG rng, bool rarityAlreadySet = false, Rarity rarity = Rarity.Basic, bool isPrimaryPassive = false)
     {
         Rarity itemRarity = GetRarity(rng);
 
-        PassiveItem passiveItem = new PassiveItem(itemRarity)
-        {
-            passiveItemDetails = passiveItemDetails,
-        };
+        PassiveItem passiveItem = new PassiveItem(itemRarity);
 
         passiveItem.passiveStats = new PassiveItemStats
         {
             passiveItemType = passiveItemDetails.passiveItemType,
-            passiveItemSlotName = passiveItemDetails.passiveItemSlotName,
-            baseUniqueRolled = passiveItemDetails.baseUniqueModifier,
-            baseTypeRolled = passiveItemDetails.baseTypeModifier
         };
 
-        // Additional pool rolls depend on rarity
-        List<BoostType> pool = passiveItemDetails.additionalModifierPoolForType;
-
-        if (pool != null && pool.Count > 0)
+        if (!isPrimaryPassive)
         {
-            SetPassiveItemModifier(ref passiveItem, passiveItem.passiveStats.baseUniqueRolled, passiveItemDetails, rng);
-            SetPassiveItemModifier(ref passiveItem, passiveItem.passiveStats.baseTypeRolled, passiveItemDetails, rng);
+            passiveItem.passiveStats.passiveItemSlotName = passiveItemDetails.passiveItemSlotName;
+            passiveItem.passiveStats.baseUniqueRolled = passiveItemDetails.baseUniqueModifier;
+            passiveItem.passiveStats.baseTypeRolled = passiveItemDetails.baseTypeModifier;
 
-            if (itemRarity == Rarity.Mythic)
+            // Additional pool rolls depend on rarity
+            List<BoostType> pool = passiveItemDetails.additionalModifierPoolForType;
+
+            if (pool != null && pool.Count > 0)
             {
-                passiveItem.passiveStats.mythicBoostType = RollOne(pool, exclude: new HashSet<BoostType>
+                SetPassiveItemModifier(ref passiveItem, passiveItem.passiveStats.baseUniqueRolled, passiveItemDetails, rng);
+                SetPassiveItemModifier(ref passiveItem, passiveItem.passiveStats.baseTypeRolled, passiveItemDetails, rng);
+
+                if (itemRarity == Rarity.Mythic)
+                {
+                    passiveItem.passiveStats.mythicBoostType = RollOne(pool, exclude: new HashSet<BoostType>
                 {
                     passiveItemDetails.baseUniqueModifier,
                     passiveItemDetails.baseTypeModifier,
                     passiveItem.passiveStats.enchantedBoostType
                 }, rng);
 
-                SetPassiveItemModifier(ref passiveItem, passiveItem.passiveStats.enchantedBoostType, passiveItemDetails, rng);
-                SetPassiveItemModifier(ref passiveItem, passiveItem.passiveStats.mythicBoostType, passiveItemDetails, rng);
-            }
-            else if (itemRarity == Rarity.Enchanted)
-            {
-                passiveItem.passiveStats.enchantedBoostType = RollOne(pool, exclude: new HashSet<BoostType>()
+                    SetPassiveItemModifier(ref passiveItem, passiveItem.passiveStats.enchantedBoostType, passiveItemDetails, rng);
+                    SetPassiveItemModifier(ref passiveItem, passiveItem.passiveStats.mythicBoostType, passiveItemDetails, rng);
+                }
+                else if (itemRarity == Rarity.Enchanted)
+                {
+                    passiveItem.passiveStats.enchantedBoostType = RollOne(pool, exclude: new HashSet<BoostType>()
                 {
                     passiveItemDetails.baseUniqueModifier,
                     passiveItemDetails.baseTypeModifier
                 }, rng);
 
-                SetPassiveItemModifier(ref passiveItem, passiveItem.passiveStats.enchantedBoostType, passiveItemDetails, rng);
+                    SetPassiveItemModifier(ref passiveItem, passiveItem.passiveStats.enchantedBoostType, passiveItemDetails, rng);
+                }
             }
         }
 

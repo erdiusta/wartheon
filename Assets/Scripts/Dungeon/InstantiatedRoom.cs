@@ -93,11 +93,17 @@ public class InstantiatedRoom : MonoBehaviour
     // Delete chest items when exiting rooms
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag(Settings.playerTag))
+        if (!NetworkServer.active && !NetworkClient.active)
         {
-            if (IsCorridor()) return;
+            if (collision.CompareTag(Settings.playerTag))
+            {
+                if (IsCorridor()) return;
 
-            GameManager.Instance.RegisterRoomVisit(this);
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.RegisterRoomVisit(this);
+                }
+            }
         }
     }
 
@@ -106,8 +112,13 @@ public class InstantiatedRoom : MonoBehaviour
         if (isMultiplayer) return roomNetData.isCorridor || roomNetData.isCorridorEW || roomNetData.isCorridorNS;
         else
         {
-            string typeName = room.roomNodeType.roomNodeTypeName;
-            return typeName == "Corridor" || typeName == "Corridor NS" || typeName == "Corridor EW";
+            if(room != null)
+            {
+                string typeName = room.roomNodeType.roomNodeTypeName;
+                return typeName == "Corridor" || typeName == "Corridor NS" || typeName == "Corridor EW";
+            }
+
+            return true;
         }
     }
 

@@ -1376,6 +1376,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4770697194666701406, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       insertIndex: 27
       addedObject: {fileID: 2200625387144387695}
+    - targetCorrespondingSourceObject: {fileID: 4770697194666701406, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1923953462374770595}
   m_SourcePrefab: {fileID: 100100000, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
 --- !u!1 &38858171499291080 stripped
 GameObject:
@@ -1395,6 +1398,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: {fileID: 0}
+--- !u!114 &1923953462374770595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 38858171499291080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5fedc4320ec514ea0a751e42be96e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainHandBackgroundSlot: {fileID: 0}
+  mainHandEquippedSlot: {fileID: 0}
+  offHandBackgroundSlot: {fileID: 0}
+  offHandEquippedSlot: {fileID: 0}
+  originalSlotIndex: 1
+  mainHandDropped: 0
 --- !u!1 &7130026987593935357 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2327260788624308843, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}

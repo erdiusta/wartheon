@@ -15,6 +15,10 @@ public class ShatterCry : MonoBehaviour
     // Dictionary to track last affected time per enemy
     Dictionary<Enemy, float> affectedEnemies = new Dictionary<Enemy, float>();
     float playerLastTime;
+
+    WeaponTitle lastWeaponTitle;
+    WeaponDetailsSO currentWeaponDetails;
+
     private void OnEnable()
     {
         OnShatterCryActivated.AddListener(EnableShatterCry);
@@ -61,10 +65,16 @@ public class ShatterCry : MonoBehaviour
                 if (Time.time - lastTime < effectCooldown) return;
             }
 
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle != lastWeaponTitle)
+            {
+                currentWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+                lastWeaponTitle = player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle;
+            }
+
             IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(affectedEnemy.gameObject);
 
             // Apply effects
-            player.meleeAttackMainHand.CheckFearStatus(affectedEnemy, enemyCombatData, isShatterCry: true);
+            player.meleeAttackMainHand.CheckFearStatus(currentWeaponDetails, affectedEnemy, enemyCombatData, isShatterCry: true);
 
             // Update last affected time
             affectedEnemies[affectedEnemy] = Time.time;

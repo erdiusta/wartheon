@@ -4,11 +4,28 @@ using Mirror;
 [DisallowMultipleComponent]
 public class ProjectileNetwork : NetworkBehaviour
 {
+    [SyncVar] public uint ownerNetId;
+
     Projectile projectile;
+
+    Player owner;
 
     private void Awake()
     {
         projectile = GetComponent<Projectile>();
+    }
+
+    public override void OnStartServer()
+    {
+        ResolveOwnerServer();
+    }   
+
+    void ResolveOwnerServer()
+    {
+        if (NetworkServer.spawned.TryGetValue(ownerNetId, out var identity))
+        {
+            owner = identity.GetComponent<Player>();
+        }
     }
 
     [ClientRpc]
@@ -17,6 +34,11 @@ public class ProjectileNetwork : NetworkBehaviour
     {
         projectile.InitializeProjectile(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileSpeed, projectileKind, null, ctx, overrideProjectileMovement: false,
             fallingFromSkies: false, projectileCounter - 1, projectilePerShot, netId, projectileIndex, enemyNetId, null);
+    }
+
+    [ClientRpc]
+    public void SetThrowingAxe()
+    {
 
     }
 }

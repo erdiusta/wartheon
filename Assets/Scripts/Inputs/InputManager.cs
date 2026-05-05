@@ -63,7 +63,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public InputActionAsset actions;
     Vector2 lastMousePosition;
 
-    bool uiConfirmConsumed;
+    [HideInInspector] public bool uiConfirmConsumed;
 
     #region INPUT ACTION REFERENCES
     [Space(10)]
@@ -176,33 +176,33 @@ public class InputManager : SingletonMonobehaviour<InputManager>
 
     public void OnShowTooltipPerformed(InputAction.CallbackContext context)
     {
-        if (!context.performed) return;
+        //if (!context.performed) return;
 
-        if (EventSystem.current.currentSelectedGameObject == null) return;
+        //if (EventSystem.current.currentSelectedGameObject == null) return;
 
-        Slot currentSlot = EventSystem.current.currentSelectedGameObject.GetComponent<Slot>();
+        //Slot currentSlot = EventSystem.current.currentSelectedGameObject.GetComponent<Slot>();
 
-        if (currentSlot != null && currentSlot.equippedTransform.childCount > 0)
-        {
-            if (currentSlot.tooltipRect != null)
-            {
-                bool isActive = currentSlot.tooltipRect.gameObject.activeSelf;
+        //if (currentSlot != null && currentSlot.equippedTransform.childCount > 0)
+        //{
+        //    if (currentSlot.tooltipRect != null)
+        //    {
+        //        bool isActive = currentSlot.tooltipRect.gameObject.activeSelf;
 
-                // Toggle tooltip
-                currentSlot.tooltipRect.gameObject.SetActive(!isActive);
+        //        // Toggle tooltip
+        //        currentSlot.tooltipRect.gameObject.SetActive(!isActive);
 
-                if (!isActive)
-                {
-                    currentSlot.UpdateTooltipPanelInfo();
-                    Slot.currentOpenTooltip = currentSlot.tooltipRect.gameObject;
-                }
-                else
-                {
-                    if (Slot.currentOpenTooltip == currentSlot.tooltipRect)
-                        Slot.currentOpenTooltip = null;
-                }
-            }
-        }
+        //        if (!isActive)
+        //        {
+        //            currentSlot.UpdateTooltipPanelInfo();
+        //            Slot.currentOpenTooltip = currentSlot.tooltipRect.gameObject;
+        //        }
+        //        else
+        //        {
+        //            if (Slot.currentOpenTooltip == currentSlot.tooltipRect)
+        //                Slot.currentOpenTooltip = null;
+        //        }
+        //    }
+        //}
     }
 
     public bool AnyNonTooltipInputPressed()
@@ -212,10 +212,6 @@ public class InputManager : SingletonMonobehaviour<InputManager>
 
     public bool AnyUIConfirmIntent()
     {
-        //if (!GameplayInputEnabled) return false;
-
-        if (uiConfirmConsumed) return false;
-
         // ignore movement / aim / interaction
         if (movement.action.WasPressedThisFrame()) return false;
         if (pointerPosition.action.WasPressedThisFrame()) return false;
@@ -224,9 +220,19 @@ public class InputManager : SingletonMonobehaviour<InputManager>
 
         bool pressed = Keyboard.current?.anyKey.wasPressedThisFrame == true || Mouse.current?.leftButton.wasPressedThisFrame == true || Mouse.current?.rightButton.wasPressedThisFrame == true || AnyGamepadButtonPressed();
 
-        if (pressed) uiConfirmConsumed = true;
+        if (pressed && !uiConfirmConsumed)
+        {
+            uiConfirmConsumed = true;
+            return true;
+        }
 
-        return pressed;
+        if (!pressed)
+        {
+            // Reset when input is released
+            uiConfirmConsumed = false;
+        }
+
+        return false;
     }
 
     private bool AnyGamepadButtonPressed()

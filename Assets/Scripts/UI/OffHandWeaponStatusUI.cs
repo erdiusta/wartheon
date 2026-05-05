@@ -65,22 +65,22 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     private void Subscribe()
     {
         player.setActiveWeaponEvent.OnSetActiveOffHandWeapon += SetActiveWeaponEvent_OnSetActiveOffHandWeapon;
-        player.setActiveWeaponEvent.OnSetInactiveOffHandWeapon += SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
         player.setActiveWeaponEvent.OnSetActiveMainHandWeapon += SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
         player.setActiveWeaponEvent.OnSetInactiveMainHandWeapon += SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
-        player.setActiveWeaponEvent.OnTwoHandWeaponEquipped += SetActiveWeaponEvent_OnTwoHandWeaponEquipped;
-        player.setActiveWeaponEvent.OnOneHandWeaponEquipped += SetActiveWeaponEvent_OnOneHandWeaponEquipped;
+        player.setActiveWeaponEvent.OnSetInactiveOffHandWeaponForHud += SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
+        player.setActiveWeaponEvent.OnTwoHandWeaponEquippedLockIconHud += SetActiveWeaponEvent_OnTwoHandWeaponEquipped;
+        player.setActiveWeaponEvent.OnOneHandWeaponEquippedLockIconHud += SetActiveWeaponEvent_OnOneHandWeaponEquipped;
         player.weaponFiredEvent.OnWeaponFired += WeaponFiredEvent_OnWeaponFired;
     }
 
     private void Unsubscribe()
     {
         player.setActiveWeaponEvent.OnSetActiveOffHandWeapon -= SetActiveWeaponEvent_OnSetActiveOffHandWeapon;
-        player.setActiveWeaponEvent.OnSetInactiveOffHandWeapon -= SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
         player.setActiveWeaponEvent.OnSetActiveMainHandWeapon -= SetActiveWeaponEvent_OnSetActiveMainHandWeapon;
         player.setActiveWeaponEvent.OnSetInactiveMainHandWeapon -= SetActiveWeaponEvent_OnSetInactiveMainHandWeapon;
-        player.setActiveWeaponEvent.OnTwoHandWeaponEquipped -= SetActiveWeaponEvent_OnTwoHandWeaponEquipped;
-        player.setActiveWeaponEvent.OnOneHandWeaponEquipped -= SetActiveWeaponEvent_OnOneHandWeaponEquipped;
+        player.setActiveWeaponEvent.OnSetInactiveOffHandWeaponForHud -= SetActiveWeaponEvent_OnSetInactiveOffHandWeapon;
+        player.setActiveWeaponEvent.OnTwoHandWeaponEquippedLockIconHud -= SetActiveWeaponEvent_OnTwoHandWeaponEquipped;
+        player.setActiveWeaponEvent.OnOneHandWeaponEquippedLockIconHud -= SetActiveWeaponEvent_OnOneHandWeaponEquipped;
         player.weaponFiredEvent.OnWeaponFired -= WeaponFiredEvent_OnWeaponFired;
     }
 
@@ -102,7 +102,13 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void SetActiveWeaponEvent_OnSetActiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        SetActiveWeapon(setActiveWeaponEventArgs.weapon);
+        Weapon weapon = WeaponDropGenerator.GetWeaponWithStats(setActiveWeaponEventArgs.weaponStats, setActiveWeaponEventArgs.rarity, ItemSlotStatus.OffHand, -1);
+        SetActiveWeapon(weapon);
+    }
+
+    private void SetActiveWeaponEvent_OnSetActiveOffHandWeaponForHud(SetActiveWeaponEvent arg1, SetActiveWeaponEventArgs arg2)
+    {
+
     }
 
     private void SetActiveWeaponEvent_OnSetInactiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
@@ -116,7 +122,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void SetActiveWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        if (setActiveWeaponEventArgs.weapon.weaponDetails.wieldType == WieldType.TwoHanded)
+        if (setActiveWeaponEventArgs.weaponStats.wieldType == WieldType.TwoHanded)
         {
             MakeWeaponInactive();
             cooldownBarParent.gameObject.SetActive(false);
@@ -155,7 +161,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
 
     private void WeaponFiredEvent_OnWeaponFired(WeaponFiredEvent weaponFiredEvent, WeaponFiredEventArgs weaponFiredEventArgs)
     {
-        if (weaponFiredEventArgs.weapon.weaponDetails.weaponClass != WeaponClass.Shield && !weaponFiredEventArgs.mainHand)
+        if (weaponFiredEventArgs.weapon.weaponStats.weaponClass != WeaponClass.Shield && !weaponFiredEventArgs.mainHand)
         {
             WeaponFired(weaponFiredEventArgs.weapon);
         }
@@ -177,9 +183,9 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     {
         if (weapon != null)
         {
-            UpdateActiveWeaponImage(weapon.weaponDetails);
+            UpdateActiveWeaponImage(weapon);
 
-            if (weapon.weaponDetails.weaponClass != WeaponClass.Shield) // If weapon is dual-wield
+            if (weapon.weaponStats.weaponClass != WeaponClass.Shield) // If weapon is dual-wield
             {
                 cooldownBarParent.gameObject.SetActive(true);
                 ResetWeaponCooldownBar(weapon);
@@ -198,7 +204,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
         {
             if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
             {
-                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
+                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.wieldType == WieldType.TwoHanded)
                 {
                     MakeWeaponInactive();
                     DisplayLockImage();
@@ -236,8 +242,9 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// <summary>
     /// Populate active weapon image
     /// </summary>
-    private void UpdateActiveWeaponImage(WeaponDetailsSO weaponDetails)
+    private void UpdateActiveWeaponImage(Weapon weapon)
     {
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
         weaponImage.sprite = weaponDetails.weaponFrontSprite;
     }
 
@@ -245,7 +252,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     {
         if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
         {
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType != WieldType.TwoHanded)
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.wieldType != WieldType.TwoHanded)
             {
                 weaponImage.sprite = noWeaponSprite;
             }
@@ -270,17 +277,19 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     IEnumerator CooldownRoutine(Weapon currentWeapon)
     {
-        if (currentWeapon.itemSlotStatus == ItemSlotStatus.OffHand)
+        if (currentWeapon.ItemSlotStatus == ItemSlotStatus.OffHand)
         {
             cooldownBarParent.gameObject.SetActive(true);
         }
 
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(currentWeapon.weaponStats.weaponTitle);
+
         while (currentWeapon.weaponStats.onCooldown)
         {
             // Update cooldown bar
-            float barFill = currentWeapon.weaponDetails.isMeleeWeapon ? cooldownTimer / 
-                (currentWeapon.weaponDetails.weaponCooldownDuration * (1 + player.additionalAttackRatingModifier)):
-                cooldownTimer / currentWeapon.weaponDetails.weaponCooldownDuration;
+            float barFill = weaponDetails.isMeleeWeapon ? cooldownTimer / 
+                (currentWeapon.weaponStats.weaponCooldownDuration * (1 + player.additionalAttackRatingModifier)):
+                cooldownTimer / currentWeapon.weaponStats.weaponCooldownDuration;
 
             // Update bar fill
             if (barFill > 0f)
@@ -300,7 +309,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// </summary>
     private void ResetWeaponCooldownBar(Weapon currentWeapon)
     {
-        cooldownTimer = currentWeapon.weaponDetails.weaponCooldownDuration * (1 - player.additionalAttackRatingModifier);
+        cooldownTimer = currentWeapon.weaponStats.weaponCooldownDuration * (1 - player.additionalAttackRatingModifier);
 
         // Set bar scale to 1
         barImage.transform.localScale = new Vector3(1f, 1f, 1f);

@@ -73,7 +73,7 @@ public class GameSessionManager : NetworkBehaviour
     InstantiatedRoom bossRoom;
     Room currentRoom;
     Room previousRoom;
-    RoomNetData currentRoomNetData;
+    [SyncVar] public RoomNetData currentRoomNetData;
     RoomNetData previousRoomNetData;
 
     HashSet<Room> visitedRooms = new HashSet<Room>();
@@ -192,7 +192,6 @@ public class GameSessionManager : NetworkBehaviour
                 SetGameState(GameState.dungeonAndPlayersGenerated);
                 break;
             case GameState.dungeonAndPlayersGenerated:
-                FindBossRoom();
                 SetGameState(GameState.playingLevel);
                 break;
             case GameState.playingLevel:
@@ -286,7 +285,7 @@ public class GameSessionManager : NetworkBehaviour
         // Bake nav meshes when dungeon build is successful
         AstarPath.active?.Scan();
 
-        // Reset Phoenix Rising - Kynara spec   ific skill
+        // Reset Phoenix Rising - Kynara specific skill
         foreach (Player player in ServerPlayers)
         {
             if (!player.isInitialized) continue;
@@ -315,35 +314,18 @@ public class GameSessionManager : NetworkBehaviour
     {
         Vector3 roomCenter = new Vector3((currentRoomNetData.lowerBounds.x + currentRoomNetData.upperBounds.x) * 0.5f, (currentRoomNetData.lowerBounds.y + currentRoomNetData.upperBounds.y) * 0.5f, 0f);
 
-        float spacing = 1.25f;
         int index = 0;
 
         foreach (Player player in ServerPlayers)
         {
-            Vector3 offset = new Vector3((index % 2 == 0 ? -1 : 1) * spacing, (index / 2) * spacing, 0f);
-            Vector3 spawnPos = roomCenter + offset;
+            Vector3 spawnPos = roomCenter;
 
-            var nt = player.GetComponent<NetworkTransformReliable>();
+            var nt = player.GetComponent<NetworkTransformReliable>();           
             nt.ServerTeleport(spawnPos, Quaternion.identity);
 
-            player.transform.localPosition = Vector3.zero; // Fix synced positions between players
+            player.transform.localPosition = Vector3.zero; // Fix synced positions between player
 
             index++;
-        }
-    }
-
-    [Server]
-    private void FindBossRoom()
-    {
-        // Loop through all dungeon rooms to see if cleared of enemies
-        foreach (KeyValuePair<string, Room> keyValuePair in DungeonBuilder.Instance.dungeonBuilderRoomDictionary)
-        {
-            // Detect boss room
-            if (keyValuePair.Value.roomNodeType.isBossRoom)
-            {
-                bossRoom = keyValuePair.Value.instantiatedRoom;
-                break;
-            }
         }
     }
 
@@ -406,8 +388,6 @@ public class GameSessionManager : NetworkBehaviour
         Player player = NetworkClient.localPlayer.GetComponent<Player>();
         if (player == null) yield break;
 
-        Debug.Log(player.playerDetails.playerCharacterIndex.ToString() + " is disabled.");
-
         // Fade out
         yield return StartCoroutine(GameManager.Instance.Fade(0f, 1f, 1f, Color.black));
 
@@ -424,8 +404,6 @@ public class GameSessionManager : NetworkBehaviour
 
         player.EnablePlayer();
         InputManager.Instance.EnableGameplayInput();
-
-        Debug.Log(player.playerDetails.playerCharacterIndex.ToString() + " is enabled.");
     }
 
     IEnumerator LevelCompletedUI()

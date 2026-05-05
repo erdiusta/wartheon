@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
+public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectHandler
 {
     public static bool IsBookOpen { get; set; }
 
@@ -20,6 +20,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     public Button weaponSetOneButton;
     public Button weaponSetTwoButton;
     public Button weaponSetThreeButton;
+    public Button dropButton;
 
     [SerializeField] TMP_Text characterName;
     [SerializeField] Image characterImage;
@@ -80,7 +81,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] Transform mainHandWeaponSlot;
     [SerializeField] Transform offHandWeaponSlot;
 
-    [Header("Passive Item Slots")]
+    [Header("PASSIVE ITEM SLOTS")]
     Transform passiveItemHeadSlot;
     Transform passiveItemChestSlot;
     Transform passiveItemNeckSlot;
@@ -89,7 +90,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     Transform passiveItemLegSlot;
     Transform passiveItemFingerSlot;
 
-    [Header("Inventory Item Slots")]
+    [Header("INVENTORY ITEM SLOTS")]
     Transform inventoryParent;
     Transform inventoryItemSlot;
 
@@ -119,10 +120,16 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] TMP_Text bossDetailsText;
     [SerializeField] Transform bossImageContainer;
 
+    // TOOLTIP PANEL
+    [Space(10)]
+    public TooltipManager tooltipManager;
+
     Player player;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         characterSeparatorImage = transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
 
         // Passive Item Slots
@@ -226,6 +233,9 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnWeaponDropped += StaticEventHandler_OnWeaponDropped;
 
         // BOOK INVENTORY EVENTS
+        StaticEventHandler.OnWeaponRemoved += StaticEventHandler_OnWeaponRemoved;
+        StaticEventHandler.OnInventoryItemRemoved += StaticEventHandler_OnInventoryItemRemoved;
+
         StaticEventHandler.OnWeaponAddedToInventory += StaticEventHandler_OnWeaponAddedToInventory;
         StaticEventHandler.OnPassiveItemAddedToInventorySlot += StaticEventHandler_OnPassiveItemAddedToInventorySlot;
         StaticEventHandler.OnInventoryWeaponDropped += StaticEventHandler_OnInventoryWeaponDropped;
@@ -280,6 +290,9 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         StaticEventHandler.OnWeaponDropped -= StaticEventHandler_OnWeaponDropped;
 
         // BOOK INVENTORY EVENTS
+        StaticEventHandler.OnWeaponRemoved -= StaticEventHandler_OnWeaponRemoved;
+        StaticEventHandler.OnInventoryItemRemoved -= StaticEventHandler_OnInventoryItemRemoved;
+
         StaticEventHandler.OnWeaponAddedToInventory -= StaticEventHandler_OnWeaponAddedToInventory;
         StaticEventHandler.OnPassiveItemAddedToInventorySlot -= StaticEventHandler_OnPassiveItemAddedToInventorySlot;
         StaticEventHandler.OnInventoryWeaponDropped -= StaticEventHandler_OnInventoryWeaponDropped;
@@ -361,9 +374,55 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         innerPathDetailsText.text = string.Empty;
     }
 
-    private void StaticEventHandler_OnWeaponPickedUp(WeaponAddedToBookArgs weaponAddedToBookArgs)
+    private void StaticEventHandler_OnWeaponRemoved(WeaponAddedToBookArgs args)
     {
-        StartCoroutine(WeaponPickUpRoutine(weaponAddedToBookArgs.pickedUpByOffHand, weaponAddedToBookArgs.weapon));
+        if (args.weapon == null) return;
+
+        StartCoroutine(WeaponRemoveRoutine(args.slotType));
+    }
+
+    IEnumerator WeaponRemoveRoutine(SlotType slotType)
+    {
+        yield return new WaitForEndOfFrame();
+
+        if (slotType == SlotType.WeaponMainHand)
+        {
+            EmptyMainHandEquippedSlot();
+            EnableBackgroundDisableEquippedTransform(offHand: false);
+        }
+        else if (slotType == SlotType.WeaponOffHand)
+        {
+            EmptyOffhandEquippedSlot();
+            EnableBackgroundDisableEquippedTransform(offHand: true);
+        }
+    }
+
+    private void StaticEventHandler_OnInventoryItemRemoved(WeaponAddedToBookArgs args)
+    {
+        StartCoroutine(InventoryItemRemoveRoutine(args.inventoryIndexNumber));
+    }
+
+    IEnumerator InventoryItemRemoveRoutine(int index)
+    {
+        yield return new WaitForEndOfFrame();
+
+        Transform equippedInventorySlot = inventoryParent.GetChild(index);
+
+        Transform inventoryItemBackground = equippedInventorySlot.GetChild(0);
+        Transform inventoryItemEquipped = equippedInventorySlot.GetChild(1);
+
+        for (int i = inventoryItemEquipped.childCount - 1; i >= 0; i--)
+        {
+            Destroy(inventoryItemEquipped.GetChild(i).gameObject);
+        }
+
+        inventoryItemBackground.gameObject.SetActive(true);
+        inventoryItemEquipped.gameObject.SetActive(false);
+    }
+
+    private void StaticEventHandler_OnWeaponPickedUp(WeaponAddedToBookArgs args)
+    {
+        StartCoroutine(WeaponPickUpRoutine(args.pickedUpByOffHand, args.weapon));
     }
 
     IEnumerator WeaponPickUpRoutine(bool pickedUpByOffHand, Weapon weapon)
@@ -384,7 +443,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             EmptyMainHandEquippedSlot();
             PlaceWeaponIconToMainHand(weapon);
 
-            if (weapon.weaponDetails.wieldType == WieldType.TwoHanded)
+            if (weapon.weaponStats.wieldType == WieldType.TwoHanded)
             {
                 PlaceLockIcon();
             }
@@ -398,13 +457,16 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     IEnumerator InventoryWeaponAddRoutine(int index, Weapon weapon)
     {
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
+        Sprite weaponSprite = weaponDetails.weaponFrontSprite;
+
         yield return new WaitForEndOfFrame();
 
-        Transform equippedInventroySlot = inventoryParent.GetChild(index);
-        equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.Inventory;
+        Transform equippedInventorySlot = inventoryParent.GetChild(index);
+        equippedInventorySlot.GetComponent<Slot>().slotType = SlotType.Inventory;
 
-        Transform inventoryItemBackground = equippedInventroySlot.GetChild(0);
-        Transform inventoryItemEquipped = equippedInventroySlot.GetChild(1);
+        Transform inventoryItemBackground = equippedInventorySlot.GetChild(0);
+        Transform inventoryItemEquipped = equippedInventorySlot.GetChild(1);
         inventoryItemBackground.gameObject.SetActive(false);
         inventoryItemEquipped.gameObject.SetActive(true);
 
@@ -412,7 +474,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
         // Set Draggable Item
         DraggableItem inventoryDraggableItem = inventoryItem.GetComponent<DraggableItem>();
-        inventoryDraggableItem.SetDraggableItem(weapon, equippedInventroySlot.GetComponent<Slot>(), weapon.weaponDetails.weaponFrontSprite, ItemSlotStatus.Inventory);
+
+        inventoryDraggableItem.SetDraggableItem(weapon, equippedInventorySlot.GetComponent<Slot>(), weaponSprite, ItemSlotStatus.Inventory);
     }
 
     private void StaticEventHandler_OnInventoryWeaponDropped(WeaponAddedToBookArgs weaponAddedToBookArgs)
@@ -446,13 +509,16 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     IEnumerator InventoryPassiveItemAddRoutine(PassiveItem passiveItem, int index)
     {
+        PassiveItemDetailsSO passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
+        Sprite passiveItemSprite = passiveItemDetails.passiveItemSprite;
+
         yield return new WaitForEndOfFrame();
 
         if (index < 0) yield break;
 
         Transform equippedInventroySlot = inventoryParent.GetChild(index);
         equippedInventroySlot.GetComponent<Slot>().slotType = SlotType.Inventory;
-        equippedInventroySlot.GetComponent<Slot>().passiveItemSlotName = passiveItem.passiveItemDetails.passiveItemSlotName;
+        equippedInventroySlot.GetComponent<Slot>().passiveItemSlotName = passiveItem.passiveStats.passiveItemSlotName;
 
         Transform inventoryItemBackground = equippedInventroySlot.GetChild(0);
         Transform inventoryItemEquipped = equippedInventroySlot.GetChild(1);
@@ -463,7 +529,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
         // Set Draggable Item
         DraggableItem inventoryDraggableItem = inventoryItem.GetComponent<DraggableItem>();
-        inventoryDraggableItem.SetDraggableItem(passiveItem, equippedInventroySlot.GetComponent<Slot>(), passiveItem.passiveItemDetails.passiveItemSprite, 
+        inventoryDraggableItem.SetDraggableItem(passiveItem, equippedInventroySlot.GetComponent<Slot>(), passiveItemSprite, 
             ItemSlotStatus.Inventory);
     }
 
@@ -501,8 +567,11 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     IEnumerator SlotAndInventoryWeaponSwapRoutine(Weapon slotWeapon, Weapon inventoryWeapon, int index, int weaponSetNumber, bool onMainHand, DraggableItem slotWeaponDraggableItem,
         DraggableItem inventoryWeaponDraggableItem)
     {
-        Sprite slotWeaponSprite = slotWeapon.weaponDetails.weaponFrontSprite;
-        Sprite inventoryWeaponSprite = inventoryWeapon.weaponDetails.weaponFrontSprite;
+        WeaponDetailsSO slotWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(slotWeapon.weaponStats.weaponTitle);
+        WeaponDetailsSO inventoryWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(inventoryWeapon.weaponStats.weaponTitle);
+
+        Sprite slotWeaponSprite = slotWeaponDetails.weaponFrontSprite;
+        Sprite inventoryWeaponSprite = inventoryWeaponDetails.weaponFrontSprite;
 
         yield return new WaitUntil(() => !DraggableItem.IsDragging);
         yield return new WaitForEndOfFrame();
@@ -547,11 +616,24 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void StaticEventHandler_OnGenericItemPlacedToEmptyInventory(ItemGenericPlacedArgs args)
     {
-        StartCoroutine(ItemGenericPlaceToEmptyInventorySlotRoutine(args.item, args.fromIndex, args.toIndex, args.sprite));
+        StartCoroutine(ItemGenericPlaceToEmptyInventorySlotRoutine(args.item, args.fromIndex, args.toIndex));
     }
 
-    IEnumerator ItemGenericPlaceToEmptyInventorySlotRoutine(ItemGeneric item, int fromIndex, int targetSlotIndex, Sprite sprite)
+    IEnumerator ItemGenericPlaceToEmptyInventorySlotRoutine(ItemGeneric item, int fromIndex, int targetSlotIndex)
     {
+        Sprite sprite = null;
+
+        if(item is Weapon w)
+        {
+            WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(w.weaponStats.weaponTitle);
+            sprite = weaponDetails.weaponFrontSprite;
+        }
+        else if (item is PassiveItem p)
+        {
+            PassiveItemDetailsSO passiveDetails = WartheonDatabase.Instance.GetPassiveItemDetails(p.passiveStats.passiveItemType);
+            sprite = passiveDetails.passiveItemSprite;
+        }
+
         // Wait for drag to fully end
         yield return new WaitUntil(() => !DraggableItem.IsDragging);
 
@@ -627,7 +709,9 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
         Transform inventoryItemEquipped = equippedInventorySlot.GetChild(1);
         DraggableItem inventoryPassiveDraggableItem = inventoryItemEquipped.GetComponentInChildren<DraggableItem>();
 
-        Transform slot = GetEquippedSlot(slotPassiveItem.passiveItemDetails.passiveItemSlotName);
+        PassiveItemDetailsSO slotPassiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(slotPassiveItem.passiveStats.passiveItemType);
+
+        Transform slot = GetEquippedSlot(slotPassiveItemDetails.passiveItemSlotName);
         Transform slotEquipped = slot.GetChild(1);
         DraggableItem slotPassiveDraggableItem = slotEquipped.GetComponentInChildren<DraggableItem>();
 
@@ -708,7 +792,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
             {
                 // Off-hand empty and main hand is two-handed weapon
-                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType == WieldType.TwoHanded)
+                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0].weaponStats.wieldType == WieldType.TwoHanded)
                 {
                     PlaceLockIcon();
                 }
@@ -743,7 +827,7 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             EnableBackgroundDisableEquippedTransform();
 
             // Remove lock icon
-            if (weaponAddedToBookArgs.weapon != null && weaponAddedToBookArgs.weapon.weaponDetails.wieldType == WieldType.TwoHanded)
+            if (weaponAddedToBookArgs.weapon != null && weaponAddedToBookArgs.weapon.weaponStats.wieldType == WieldType.TwoHanded)
             {
                 DisableBackgroundEnableEquippedTransform(true);
                 EmptyOffhandEquippedSlot();
@@ -757,13 +841,17 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     private void PlaceWeaponIconToMainHand(Weapon weapon)
     {
         GameObject newMainHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, mainHandWeaponEquipped);
-        newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weapon.weaponDetails.weaponFrontSprite;
+
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
+        newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weaponDetails.weaponFrontSprite;
     }
 
     private void PlaceWeaponIconToOffhand(Weapon weapon)
     {
         GameObject offHandWeaponAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, offHandWeaponEquipped);
-        offHandWeaponAtSlot.GetComponent<Image>().sprite = weapon.weaponDetails.weaponFrontSprite;
+
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
+        offHandWeaponAtSlot.GetComponent<Image>().sprite = weaponDetails.weaponFrontSprite;
     }
 
     private void EmptyMainHandEquippedSlot()
@@ -886,8 +974,10 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
             Destroy(equipped.GetChild(i).gameObject);
         }
 
+        PassiveItemDetailsSO passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
+
         passiveItemObject = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
-        passiveItemObject.GetComponent<Image>().sprite = passiveItem.passiveItemDetails.passiveItemSprite;
+        passiveItemObject.GetComponent<Image>().sprite = passiveItemDetails.passiveItemSprite;
 
         UpdatePlayerStatInfo(GameManager.Instance.GetLocalPlayer());
     }
@@ -1076,6 +1166,8 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
     {
         foreach (Transform child in statsPage)
         {
+            if (child == tooltipManager.transform) continue;
+
             child.gameObject.SetActive(true);
         }
     }
@@ -1357,16 +1449,16 @@ public class BookUI : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     public void SelectWeaponSetOne()
     {
-        GameManager.Instance.GetLocalPlayer().playerControl.NextWeaponSet(true, false, false, 1);
+        GameManager.Instance.GetLocalPlayer().playerControl.NextWeaponSet(false, false, 1);
     }
 
     public void SelectWeaponSetTwo()
     {
-        GameManager.Instance.GetLocalPlayer().playerControl.NextWeaponSet(true, false, false, 2);
+        GameManager.Instance.GetLocalPlayer().playerControl.NextWeaponSet(false, false, 2);
     }
 
     public void SelectWeaponSetThree()
     {
-        GameManager.Instance.GetLocalPlayer().playerControl.NextWeaponSet(true, false, false, 3);
+        GameManager.Instance.GetLocalPlayer().playerControl.NextWeaponSet(false, false, 3);
     }
 }

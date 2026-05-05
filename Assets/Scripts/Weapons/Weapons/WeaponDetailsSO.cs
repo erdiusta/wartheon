@@ -313,19 +313,6 @@ public class WeaponDetailsSO : ScriptableObject
     #endregion
     public bool hasThrust = false;
 
-    #region Header RANGED WEAPON OPERATING VALUES
-    [Space(10)]
-    [Header("RANGED WEAPON OPERATING VALUES")]
-    #endregion
-    #region Tooltip
-    [Tooltip("Select if the weapon has infinite projectile")]
-    #endregion Tooltip
-    public bool hasInfiniteProjectile = false;
-    #region Tooltip
-    [Tooltip("Weapon ammo capacity - the maximum number of rounds at that can be held for this weapon")]
-    #endregion Tooltip
-    public int weaponProjectileCapacity = 100;
-
     #region Tooltip
     [Tooltip("Weapon Precharge Time - time in seconds to hold fire button down before firing")]
     #endregion Tooltip

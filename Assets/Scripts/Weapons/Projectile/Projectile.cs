@@ -40,7 +40,7 @@ public class Projectile : MonoBehaviour, IFireable
 
     ContactFilter2D filter = new ContactFilter2D();
 
-    DropOnAxeThrow dropOnAxeThrow;
+    //DropOnAxeThrow dropOnAxeThrow;
 
     // NYVERAN ARROWS
     bool isPenetrationArrow;
@@ -143,6 +143,12 @@ public class Projectile : MonoBehaviour, IFireable
     float additionalBowAccuracyModifier = 0f;
     float additionalAttackRangeModifier = 0f;
 
+    WeaponTitle lastWeaponTitle;
+    WeaponDetailsSO currentWeaponDetails;
+
+    // MULTIPLAYER
+    int projectileIndex;
+
     private void Awake()
     {
         playerLayer = LayerMask.NameToLayer("Player");
@@ -163,13 +169,7 @@ public class Projectile : MonoBehaviour, IFireable
             blastRadius = projectileDetails.blastRadius;
         }
 
-        if (isGrappleHook)
-        {
-            grappleStartPoint = transform;
-
-            isGrappleReleased = false;
-        }
-        else if (isLaserBeam)
+        if (isLaserBeam)
         {
             laserStartPoint = transform;
         }
@@ -194,6 +194,8 @@ public class Projectile : MonoBehaviour, IFireable
         else
         {
             isMultiplayer = true;
+            this.projectileIndex = projectileIndex;
+
             NetworkIdentity ownerIdentity = null;
             projectileDetails = WartheonDatabase.Instance.GetProjectile(projectileIndex);
 
@@ -231,10 +233,16 @@ public class Projectile : MonoBehaviour, IFireable
             additionalAttackRangeModifier = player.additionalAttackRangeModifier;
         }
             
-        if (isThrowingAxe) dropOnAxeThrow = GetComponent<DropOnAxeThrow>();
+        //if (isThrowingAxe) dropOnAxeThrow = GetComponent<DropOnAxeThrow>();
 
         // Grapple hook
         isGrappleHook = projectileKind == ProjectileKind.Grapple;
+
+        if (isGrappleHook)
+        {
+            grappleStartPoint = transform;
+            isGrappleReleased = false;
+        }
 
         isLaserBeam = projectileDetails.isLaser;
 
@@ -611,7 +619,7 @@ public class Projectile : MonoBehaviour, IFireable
 
         if (isLaserBeam && !isGrappleHook)
         {
-            laserDuration = belongingEnemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCooldownDuration - laserDurationOffset;
+            laserDuration = belongingEnemy.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponCooldownDuration - laserDurationOffset;
         }
     }
 
@@ -694,6 +702,10 @@ public class Projectile : MonoBehaviour, IFireable
     // This is for bouncing projectiles
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (projectileDetails == null) return;
+
+        uint playerOwnerNetId = player != null ? player.NetAuth != null ? player.NetAuth.netId : 0 : 0;
+
         if(NetworkServer.active || (!NetworkServer.active && !NetworkClient.active))
         {
             // BOUNCING PROCESS
@@ -711,10 +723,7 @@ public class Projectile : MonoBehaviour, IFireable
             }
 
             // If this is a laser, don't disable it on collision
-            if (projectileDetails != null && isLaserBeam)
-            {
-                return;  // Let the laser continue without being disabled
-            }
+            if (isLaserBeam) return;
 
             // If already colliding with something return
             if (isColliding) return;
@@ -763,7 +772,7 @@ public class Projectile : MonoBehaviour, IFireable
                     }
                     else
                     {
-                        if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Shield)
+                        if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentOffHandWeapon().weaponStats.weaponClass == WeaponClass.Shield)
                         {
                             // Get enemy projectile direction
                             Vector2 enemyProjectileDirection = (player.transform.position - transform.position).normalized;
@@ -777,7 +786,7 @@ public class Projectile : MonoBehaviour, IFireable
                             // Calculate the dot product between the shield's forward direction and the projectile direction
                             float dotProduct = Vector2.Dot(pointerDirection, enemyProjectileDirection);
 
-                            float blockingThreshold = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.blockChance;
+                            float blockingThreshold = player.activeWeapon.GetCurrentOffHandWeapon().weaponStats.blockChance;
 
                             // Check if the dot product is greater than the threshold, block fails
                             if (dotProduct > blockingThreshold - 1f && player.health.GetCurrentHealth() > 0)
@@ -788,20 +797,20 @@ public class Projectile : MonoBehaviour, IFireable
                                 if (player.health.GetCurrentHealth() > 0)
                                 {
                                     // Status checks
-                                    CheckBleedingStatus(player);
-                                    CheckStunStatus(player);
-                                    CheckSlowStatus(player);
-                                    CheckWarmStatus(player);
-                                    CheckBurnStatus(player);
-                                    CheckPoisonStatus(player);
-                                    CheckChillStatus(player);
-                                    CheckFrostStatus(player);
-                                    CheckStaticStatus(player);
-                                    CheckParalyzeStatus(player);
-                                    CheckRootStatus(player);
-                                    CheckCurseStatus(player);
-                                    CheckFearStatus(player);
-                                    CheckBlindStatus(player);
+                                    CheckBleedingStatusOnPlayer(player);
+                                    CheckStunStatusOnPlayer(player);
+                                    CheckSlowStatusOnPlayer(player);
+                                    CheckWarmStatusOnPlayer(player);
+                                    CheckBurnStatusOnPlayer(player);
+                                    CheckPoisonStatusOnPlayer(player);
+                                    CheckChillStatusOnPlayer(player);
+                                    CheckFrostStatusOnPlayer(player);
+                                    CheckStaticStatusOnPlayer(player);
+                                    CheckParalyzeStatusOnPlayer(player);
+                                    CheckRootStatusOnPlayer(player);
+                                    CheckCurseStatusOnPlayer(player);
+                                    CheckFearStatusOnPlayer(player);
+                                    CheckBlindStatusOnPlayer(player);
                                 }
                             }
                             else
@@ -815,20 +824,20 @@ public class Projectile : MonoBehaviour, IFireable
                                     if (player.health.GetCurrentHealth() > 0)
                                     {
                                         // Status checks
-                                        CheckBleedingStatus(player);
-                                        CheckStunStatus(player);
-                                        CheckSlowStatus(player);
-                                        CheckWarmStatus(player);
-                                        CheckBurnStatus(player);
-                                        CheckPoisonStatus(player);
-                                        CheckChillStatus(player);
-                                        CheckFrostStatus(player);
-                                        CheckStaticStatus(player);
-                                        CheckParalyzeStatus(player);
-                                        CheckRootStatus(player);
-                                        CheckCurseStatus(player);
-                                        CheckFearStatus(player);
-                                        CheckBlindStatus(player);
+                                        CheckBleedingStatusOnPlayer(player);
+                                        CheckStunStatusOnPlayer(player);
+                                        CheckSlowStatusOnPlayer(player);
+                                        CheckWarmStatusOnPlayer(player);
+                                        CheckBurnStatusOnPlayer(player);
+                                        CheckPoisonStatusOnPlayer(player);
+                                        CheckChillStatusOnPlayer(player);
+                                        CheckFrostStatusOnPlayer(player);
+                                        CheckStaticStatusOnPlayer(player);
+                                        CheckParalyzeStatusOnPlayer(player);
+                                        CheckRootStatusOnPlayer(player);
+                                        CheckCurseStatusOnPlayer(player);
+                                        CheckFearStatusOnPlayer(player);
+                                        CheckBlindStatusOnPlayer(player);
                                     }
                                 }
                                 else
@@ -849,20 +858,20 @@ public class Projectile : MonoBehaviour, IFireable
                             if (player.health.GetCurrentHealth() > 0)
                             {
                                 // Status checks
-                                CheckBleedingStatus(player);
-                                CheckStunStatus(player);
-                                CheckSlowStatus(player);
-                                CheckWarmStatus(player);
-                                CheckBurnStatus(player);
-                                CheckPoisonStatus(player);
-                                CheckChillStatus(player);
-                                CheckFrostStatus(player);
-                                CheckStaticStatus(player);
-                                CheckParalyzeStatus(player);
-                                CheckRootStatus(player);
-                                CheckCurseStatus(player);
-                                CheckFearStatus(player);
-                                CheckBlindStatus(player);
+                                CheckBleedingStatusOnPlayer(player);
+                                CheckStunStatusOnPlayer(player);
+                                CheckSlowStatusOnPlayer(player);
+                                CheckWarmStatusOnPlayer(player);
+                                CheckBurnStatusOnPlayer(player);
+                                CheckPoisonStatusOnPlayer(player);
+                                CheckChillStatusOnPlayer(player);
+                                CheckFrostStatusOnPlayer(player);
+                                CheckStaticStatusOnPlayer(player);
+                                CheckParalyzeStatusOnPlayer(player);
+                                CheckRootStatusOnPlayer(player);
+                                CheckCurseStatusOnPlayer(player);
+                                CheckFearStatusOnPlayer(player);
+                                CheckBlindStatusOnPlayer(player);
                             }
                         }
                     }
@@ -907,34 +916,34 @@ public class Projectile : MonoBehaviour, IFireable
 
                                     switch (rng)
                                     {
-                                        case 1: CheckSlowStatus(enemy, true); break;
-                                        case 2: CheckBleedingStatus(enemy, true); break;
-                                        case 3: CheckPoisonStatus(enemy, true); break;
-                                        case 4: CheckBurnStatus(enemy, true); break;
-                                        case 5: CheckFrostStatus(enemy, true); break;
-                                        case 6: CheckFearStatus(enemy, true); break;
-                                        case 7: CheckBlindStatus(enemy, true); break;
+                                        case 1: CheckSlowStatusOnEnemy(enemy, true); break;
+                                        case 2: CheckBleedingStatusOnEnemy(enemy, true); break;
+                                        case 3: CheckPoisonStatusOnEnemy(enemy, true); break;
+                                        case 4: CheckBurnStatusOnEnemy(enemy, true); break;
+                                        case 5: CheckFrostStatusOnEnemy(enemy, true); break;
+                                        case 6: CheckFearStatusOnEnemy(enemy, true); break;
+                                        case 7: CheckBlindStatusOnEnemy(enemy, true); break;
                                         default: break;
                                     }
                                 }
                                 else
                                 {
                                     // Status checks - PROJECTILE
-                                    CheckBleedingStatus(enemy, false, isThrowingAxe);
-                                    CheckStunStatus(enemy);
-                                    CheckSlowStatus(enemy);
-                                    CheckWarmStatus(enemy);
-                                    CheckBurnStatus(enemy);
-                                    CheckPoisonStatus(enemy);
-                                    CheckChillStatus(enemy);
-                                    CheckFrostStatus(enemy);
-                                    CheckShatterStatus(enemy, ref inflictedDamage, isIceBreaker);
-                                    CheckStaticStatus(enemy, player.isConductiveTouchActive);
-                                    CheckParalyzeStatus(enemy);
-                                    CheckRootStatus(enemy, isBindingArrow);
-                                    CheckCurseStatus(enemy);
-                                    CheckFearStatus(enemy);
-                                    CheckBlindStatus(enemy);
+                                    CheckBleedingStatusOnEnemy(enemy, false, isThrowingAxe);
+                                    CheckStunStatusOnEnemy(enemy);
+                                    CheckSlowStatusOnEnemy(enemy);
+                                    CheckWarmStatusOnEnemy(enemy);
+                                    CheckBurnStatusOnEnemy(enemy);
+                                    CheckPoisonStatusOnEnemy(enemy);
+                                    CheckChillStatusOnEnemy(enemy);
+                                    CheckFrostStatusOnEnemy(enemy);
+                                    CheckShatterStatusOnEnemy(enemy, ref inflictedDamage, isIceBreaker);
+                                    CheckStaticStatusOnEnemy(enemy, player.isConductiveTouchActive);
+                                    CheckParalyzeStatusOnEnemy(enemy);
+                                    CheckRootStatusOnEnemy(enemy, playerOwnerNetId, projectileIndex, isBindingArrow);
+                                    CheckCurseStatusOnEnemy(enemy);
+                                    CheckFearStatusOnEnemy(enemy);
+                                    CheckBlindStatusOnEnemy(enemy);
                                 }
                             }
                         }
@@ -952,34 +961,34 @@ public class Projectile : MonoBehaviour, IFireable
 
                                 switch (rng)
                                 {
-                                    case 1: CheckSlowStatus(enemy, true); break;
-                                    case 2: CheckBleedingStatus(enemy, true); break;
-                                    case 3: CheckPoisonStatus(enemy, true); break;
-                                    case 4: CheckBurnStatus(enemy, true); break;
-                                    case 5: CheckFrostStatus(enemy, true); break;
-                                    case 6: CheckFearStatus(enemy, true); break;
-                                    case 7: CheckBlindStatus(enemy, true); break;
+                                    case 1: CheckSlowStatusOnEnemy(enemy, true); break;
+                                    case 2: CheckBleedingStatusOnEnemy(enemy, true); break;
+                                    case 3: CheckPoisonStatusOnEnemy(enemy, true); break;
+                                    case 4: CheckBurnStatusOnEnemy(enemy, true); break;
+                                    case 5: CheckFrostStatusOnEnemy(enemy, true); break;
+                                    case 6: CheckFearStatusOnEnemy(enemy, true); break;
+                                    case 7: CheckBlindStatusOnEnemy(enemy, true); break;
                                     default: break;
                                 }
                             }
                             else
                             {
                                 // Status checks - PROJECTILE
-                                CheckBleedingStatus(enemy, false, isThrowingAxe);
-                                CheckStunStatus(enemy);
-                                CheckSlowStatus(enemy);
-                                CheckWarmStatus(enemy);
-                                CheckBurnStatus(enemy);
-                                CheckPoisonStatus(enemy);
-                                CheckChillStatus(enemy);
-                                CheckFrostStatus(enemy);
-                                CheckStaticStatus(enemy, player.isConductiveTouchActive);
-                                CheckParalyzeStatus(enemy);
-                                CheckShatterStatus(enemy, ref inflictedDamage, isIceBreaker);
-                                CheckRootStatus(enemy, isBindingArrow);
-                                CheckCurseStatus(enemy);
-                                CheckFearStatus(enemy);
-                                CheckBlindStatus(enemy);
+                                CheckBleedingStatusOnEnemy(enemy, false, isThrowingAxe);
+                                CheckStunStatusOnEnemy(enemy);
+                                CheckSlowStatusOnEnemy(enemy);
+                                CheckWarmStatusOnEnemy(enemy);
+                                CheckBurnStatusOnEnemy(enemy);
+                                CheckPoisonStatusOnEnemy(enemy);
+                                CheckChillStatusOnEnemy(enemy);
+                                CheckFrostStatusOnEnemy(enemy);
+                                CheckStaticStatusOnEnemy(enemy, player.isConductiveTouchActive);
+                                CheckParalyzeStatusOnEnemy(enemy);
+                                CheckShatterStatusOnEnemy(enemy, ref inflictedDamage, isIceBreaker);
+                                CheckRootStatusOnEnemy(enemy, playerOwnerNetId, projectileIndex, isBindingArrow);
+                                CheckCurseStatusOnEnemy(enemy);
+                                CheckFearStatusOnEnemy(enemy);
+                                CheckBlindStatusOnEnemy(enemy);
                             }
                         }
                     }
@@ -997,34 +1006,34 @@ public class Projectile : MonoBehaviour, IFireable
 
                             switch (rng)
                             {
-                                case 1: CheckSlowStatus(enemy, true); break;
-                                case 2: CheckBleedingStatus(enemy, true); break;
-                                case 3: CheckPoisonStatus(enemy, true); break;
-                                case 4: CheckBurnStatus(enemy, true); break;
-                                case 5: CheckFrostStatus(enemy, true); break;
-                                case 6: CheckFearStatus(enemy, true); break;
-                                case 7: CheckBlindStatus(enemy, true); break;
+                                case 1: CheckSlowStatusOnEnemy(enemy, true); break;
+                                case 2: CheckBleedingStatusOnEnemy(enemy, true); break;
+                                case 3: CheckPoisonStatusOnEnemy(enemy, true); break;
+                                case 4: CheckBurnStatusOnEnemy(enemy, true); break;
+                                case 5: CheckFrostStatusOnEnemy(enemy, true); break;
+                                case 6: CheckFearStatusOnEnemy(enemy, true); break;
+                                case 7: CheckBlindStatusOnEnemy(enemy, true); break;
                                 default: break;
                             }
                         }
                         else
                         {
                             // Status checks - PROJECTILE
-                            CheckBleedingStatus(enemy, false, isThrowingAxe);
-                            CheckStunStatus(enemy);
-                            CheckSlowStatus(enemy);
-                            CheckWarmStatus(enemy);
-                            CheckBurnStatus(enemy);
-                            CheckPoisonStatus(enemy);
-                            CheckChillStatus(enemy);
-                            CheckFrostStatus(enemy);
-                            CheckStaticStatus(enemy, player.isConductiveTouchActive);
-                            CheckParalyzeStatus(enemy);
-                            CheckShatterStatus(enemy, ref inflictedDamage, isIceBreaker);
-                            CheckRootStatus(enemy, isBindingArrow);
-                            CheckCurseStatus(enemy);
-                            CheckFearStatus(enemy);
-                            CheckBlindStatus(enemy);
+                            CheckBleedingStatusOnEnemy(enemy, false, isThrowingAxe);
+                            CheckStunStatusOnEnemy(enemy);
+                            CheckSlowStatusOnEnemy(enemy);
+                            CheckWarmStatusOnEnemy(enemy);
+                            CheckBurnStatusOnEnemy(enemy);
+                            CheckPoisonStatusOnEnemy(enemy);
+                            CheckChillStatusOnEnemy(enemy);
+                            CheckFrostStatusOnEnemy(enemy);
+                            CheckStaticStatusOnEnemy(enemy, player.isConductiveTouchActive);
+                            CheckParalyzeStatusOnEnemy(enemy);
+                            CheckShatterStatusOnEnemy(enemy, ref inflictedDamage, isIceBreaker);
+                            CheckRootStatusOnEnemy(enemy, playerOwnerNetId, projectileIndex, isBindingArrow);
+                            CheckCurseStatusOnEnemy(enemy);
+                            CheckFearStatusOnEnemy(enemy);
+                            CheckBlindStatusOnEnemy(enemy);
                         }
                     }
                 }
@@ -1130,9 +1139,11 @@ public class Projectile : MonoBehaviour, IFireable
     {
         Player player = collision.GetComponent<Player>();
 
+        WeaponDetailsSO offhandWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentOffHandWeapon().weaponStats.weaponTitle);
+
         // Adjust animator layer weights
         player.transform.GetChild(2).GetComponent<Animator>().SetTrigger(Settings.block);
-        SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponSwingSoundEffect);
+        SoundEffectManager.Instance.PlaySoundEffect(offhandWeaponDetails.weaponSwingSoundEffect);
         player.healthEvent.CallBlockEvent();
 
         yield return new WaitForSeconds(0.6f);
@@ -1331,13 +1342,15 @@ public class Projectile : MonoBehaviour, IFireable
 
                 if (isIceBreaker || isFireBlast || isBlazingCyclone || isShiruken || isChainLightning)
                 {
-                    elementalDamage = (int)(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.elementalForgeRate * damageDone);
+                    elementalDamage = (int)(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.elementalForgeRate * damageDone);
                     additionalElementalDamage = (int)(elementalDamage * (1 + player.additionalMagicDamageModifier));
                     elementalDamage += additionalElementalDamage;
                 }
                 else if (isThrowingAxe)
                 {
-                    elementalDamage = (int)(DropItem.droppedThrowingAxe.weaponDetails.elementalForgeRate * damageDone);
+                    if(!NetworkServer.active && !NetworkClient.active) elementalDamage = (int)(DropItem.droppedThrowingAxe.weaponStats.elementalForgeRate * damageDone);
+                    else elementalDamage = (int)(DropItemNetwork.droppedThrowingAxe.weaponStats.elementalForgeRate * damageDone);
+
                     additionalElementalDamage = (int)(elementalDamage * (1 + player.additionalMagicDamageModifier));
                     elementalDamage += additionalElementalDamage;
                 }
@@ -1382,11 +1395,12 @@ public class Projectile : MonoBehaviour, IFireable
 
                 if (isIceBreaker || isFireBlast || isBlazingCyclone || isShiruken || isChainLightning)
                 {
-                    weaponDetails = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails;
+                    weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
                 }
                 else if (isThrowingAxe)
                 {
-                    weaponDetails = DropItem.droppedThrowingAxe.weaponDetails;
+                    if (!NetworkServer.active && !NetworkClient.active) weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(DropItem.droppedThrowingAxe.weaponStats.weaponTitle);
+                    else weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(DropItemNetwork.droppedThrowingAxe.weaponStats.weaponTitle);
                 }
                 else
                 {
@@ -1489,12 +1503,12 @@ public class Projectile : MonoBehaviour, IFireable
         // Calculate damage after critical hit check
         if (player.isStealthActive)
         {
-            damageDone = criticalHitHappened ? (int)(damageDone * (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+            damageDone = criticalHitHappened ? (int)(damageDone * (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.criticalHitDamage +
                 player.additionalCriticalMeleeDamageModifier + player.additionalCriticalDamageOnCloakedPrecision)) : damageDone;
         }
         else
         {
-            damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.criticalHitDamageMultiplier +
+            damageDone = criticalHitHappened ? (int)(damageDone * player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.criticalHitDamage +
                 player.additionalCriticalMeleeDamageModifier) : damageDone;
         }
 
@@ -1551,11 +1565,11 @@ public class Projectile : MonoBehaviour, IFireable
         if (hit.collider != null && hit.collider.CompareTag(Settings.playerTag))
         {
             // Status checks
-            CheckPoisonStatus(player);
-            CheckFrostStatus(player);
-            CheckStunStatus(player);
-            CheckCurseStatus(player);
-            CheckBlindStatus(player);
+            CheckPoisonStatusOnPlayer(player);
+            CheckFrostStatusOnPlayer(player);
+            CheckStunStatusOnPlayer(player);
+            CheckCurseStatusOnPlayer(player);
+            CheckBlindStatusOnPlayer(player);
 
             DealLaserDamage(hit.collider);
         }
@@ -1669,11 +1683,11 @@ public class Projectile : MonoBehaviour, IFireable
             {
                 grappleHasDealtDamage = true;
 
-                CheckPoisonStatus(player);
-                CheckFrostStatus(player);
-                CheckStunStatus(player);
-                CheckCurseStatus(player);
-                CheckBlindStatus(player);
+                CheckPoisonStatusOnPlayer(player);
+                CheckFrostStatusOnPlayer(player);
+                CheckStunStatusOnPlayer(player);
+                CheckCurseStatusOnPlayer(player);
+                CheckBlindStatusOnPlayer(player);
 
                 damageDone = Random.Range(projectileDetails.projectilePhyDamageMin, projectileDetails.projectilePhyDamageMax);
                 int inflictedDamage = (int)(damageDone * (1 - hit.transform.GetComponent<Enemy>().currentArmor));
@@ -1687,7 +1701,14 @@ public class Projectile : MonoBehaviour, IFireable
                 if (hit.transform.TryGetComponent(out Enemy enemy))
                 {
                     IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(enemy.gameObject);
-                    player.meleeAttackMainHand.CheckStunStatus(enemy, enemyCombatData, false, isGrapple: true);
+
+                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle != lastWeaponTitle)
+                    {
+                        currentWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+                        lastWeaponTitle = player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle;
+                    }
+
+                    player.meleeAttackMainHand.CheckStunStatus(currentWeaponDetails, enemy, enemyCombatData, false, isGrapple: true);
                 }
 
                 Physics2D.IgnoreLayerCollision(playerLayer, poolLayer, false); // re-enable
@@ -1916,7 +1937,7 @@ public class Projectile : MonoBehaviour, IFireable
 
         if (isThrowingAxe)
         {
-            dropOnAxeThrow.DropProcess();
+            //dropOnAxeThrow.DropProcess();
             player.isAxeThrowActive = false;
         }
 
@@ -1934,8 +1955,8 @@ public class Projectile : MonoBehaviour, IFireable
     {
         GameObject projectileEffectPrefab;
 
-        if (!NetworkServer.active && !NetworkClient.active) projectileEffectPrefab = projectileDetails.projectileHitEffect.projectileHitEffectPrefab;
-        else projectileEffectPrefab = projectileDetails.projectileHitEffect.projectileHitEffectPrefabMP;
+        if (!NetworkServer.active && !NetworkClient.active) projectileEffectPrefab = projectileDetails.projectileHitEffect != null ? projectileDetails.projectileHitEffect.projectileHitEffectPrefab : null;
+        else projectileEffectPrefab = projectileDetails.projectileHitEffect != null ? projectileDetails.projectileHitEffect.projectileHitEffectPrefabMP : null;
 
         // Process if a hit effect has been specified
         if (projectileDetails.projectileHitEffect != null && projectileEffectPrefab != null)
@@ -1969,10 +1990,12 @@ public class Projectile : MonoBehaviour, IFireable
         if (NetworkServer.active && projectileNetwork != null) NetworkServer.UnSpawn(projectileEffectPrefab.gameObject);
     }
 
+    #region CC PLAYER
+
     /// <summary>
     /// Check bleeding status - Player
     /// </summary>
-    private void CheckBleedingStatus(Player player)
+    private void CheckBleedingStatusOnPlayer(Player player)
     {
         if (player.isImmunetoBleeding) return;
 
@@ -1987,57 +2010,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check bleeding status - Enemy
-    /// </summary>
-    private void CheckBleedingStatus(Enemy enemy, bool arrowOfTheSeven = false, bool isThrowingAxe = false)
-    {
-        if (enemy.enemyDetails.isImmuneToBleeding) return;
-
-        if (arrowOfTheSeven)
-        {
-            if (player != null)
-            {
-                enemy.bleedDuration = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
-                {
-                    1 => 6,
-                    2 => 7,
-                    3 => 8,
-                    _ => 2 // Default
-                };
-            }
-        }
-
-        float bleedingChance = 0f;
-
-        if (isThrowingAxe)
-        {
-            if (player != null)
-            {
-                bleedingChance = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch
-                {
-                    1 => 0.2f,
-                    2 => 0.3f,
-                    3 => 0.45f,
-                    _ => 0f // Default
-                };
-            }
-        }
-
-        // Check get bleeding
-        float randomDice = Random.Range(0f, 1f);
-        if (randomDice < projectileDetails.bleedingChance + bleedingChance + player.additionalStatusEffectInflictModifier + player.additionalBleedChance 
-            || arrowOfTheSeven)
-        {
-            enemy.statusEffectAnimators.bleedAnimator.SetTrigger(Settings.activateVFX);
-            enemy.healthEvent.CallGetBleedingEvent();
-            enemy.healthStatus |= HealthStatus.Bleeding; // Add Bleeding status
-        }
-    }
-
-    /// <summary>
     /// Check warmed status - Player
     /// </summary>
-    public void CheckWarmStatus(Player player)
+    public void CheckWarmStatusOnPlayer(Player player)
     {
         if (player.isImmunetoBurn) return;
 
@@ -2066,40 +2041,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check warmed status - Enemy
-    /// </summary>
-    public void CheckWarmStatus(Enemy enemy)
-    {
-        EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
-
-        bool isWarmed = (enemy.healthStatus & HealthStatus.Burned) != 0;
-
-        if (!isWarmed)
-        {
-            float randomDice = Random.Range(0f, 1f);
-
-            if (randomDice < projectileDetails.warmChance)
-            {
-                if (enemy.isWarmed && !isWarmed)
-                {
-                    enemy.healthEvent.CallGetBurnEvent();
-                    enemy.healthStatus |= HealthStatus.Burned; // Add Burned status
-
-                    enemy.healthEvent.CallWarmCuredEvent();
-                }
-                else if (!enemy.isWarmed && !isWarmed)
-                {
-                    enemy.isWarmed = true;
-                    enemy.healthEvent.CallGetWarmedEvent();
-                }
-            }
-        }
-    }
-
-    /// <summary>
     /// Check burn status - Player
     /// </summary>
-    private void CheckBurnStatus(Player player)
+    private void CheckBurnStatusOnPlayer(Player player)
     {
         if (player.isImmunetoBurn) return;
 
@@ -2114,40 +2058,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check burn status - Enemy
-    /// </summary>
-    private void CheckBurnStatus(Enemy enemy, bool arrowOfTheSeven = false)
-    {
-        if (enemy.enemyDetails.isImmuneToBurn) return;
-
-        if (arrowOfTheSeven)
-        {
-            if (player != null)
-            {
-                enemy.burnDuration = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
-                {
-                    1 => 6,
-                    2 => 7,
-                    3 => 8,
-                    _ => 2 // Default
-                };
-            }
-        }
-
-        // Check get burn
-        float randomDice = Random.Range(0f, 1f);
-        if (randomDice < projectileDetails.burnChance + player.additionalStatusEffectInflictModifier + player.additionalBurnChance || arrowOfTheSeven)
-        {
-            enemy.statusEffectAnimators.burnAnimator.SetTrigger(Settings.activateVFX);
-            enemy.healthEvent.CallGetBurnEvent();
-            enemy.healthStatus |= HealthStatus.Burned; // Add Burned status
-        }
-    }
-
-    /// <summary>
     /// Check slow status - Player
     /// </summary>
-    private void CheckSlowStatus(Player player)
+    private void CheckSlowStatusOnPlayer(Player player)
     {
         if (player.isImmunetoSlow) return;
 
@@ -2165,43 +2078,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check slow status - Enemy
-    /// </summary>
-    private void CheckSlowStatus(Enemy enemy, bool arrowOfTheSeven = false)
-    {
-        if (enemy.enemyDetails.isImmuneToSlow) return;
-
-        if (!enemy.isSlowed)
-        {
-            if (arrowOfTheSeven)
-            {
-                if (player != null)
-                {
-                    enemy.slowDuration = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
-                    {
-                        1 => 6,
-                        2 => 7,
-                        3 => 8,
-                        _ => 2 // Default
-                    };
-                }
-            }
-
-            // Check get bleeding
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < projectileDetails.slowChance + player.additionalStatusEffectInflictModifier + player.additionalSlowChance || arrowOfTheSeven)
-            {
-                enemy.statusEffectAnimators.slowAnimator.SetTrigger(Settings.activateVFX);
-                enemy.healthEvent.CallGetSlowEvent();
-                enemy.isSlowed = true;
-            }
-        }
-    }
-
-    /// <summary>
     /// Check poison status - Player
     /// </summary>
-    private void CheckPoisonStatus(Player player)
+    private void CheckPoisonStatusOnPlayer(Player player)
     {
         if (player.isImmunetoPoison) return;
 
@@ -2216,40 +2095,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check poison status - Enemy
-    /// </summary>
-    private void CheckPoisonStatus(Enemy enemy, bool arrowOfTheSeven = false)
-    {
-        if (enemy.enemyDetails.isImmuneToPoison) return;
-
-        if (arrowOfTheSeven)
-        {
-            if (player != null)
-            {
-                enemy.poisonDuration = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
-                {
-                    1 => 6,
-                    2 => 7,
-                    3 => 8,
-                    _ => 2 // Default
-                };
-            }
-        }
-
-        // Check get poison
-        float randomDice = Random.Range(0f, 1f);
-        if (randomDice < projectileDetails.poisonChance + player.additionalStatusEffectInflictModifier + player.additionalPoisonChance || arrowOfTheSeven)
-        {
-            enemy.statusEffectAnimators.poisonAnimator.SetTrigger(Settings.activateVFX);
-            enemy.healthEvent.CallGetPoisonedEvent();
-            enemy.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
-        }
-    }
-
-    /// <summary>
     /// Check stun status - Player
     /// </summary>
-    private void CheckStunStatus(Player player)
+    private void CheckStunStatusOnPlayer(Player player)
     {
         bool isStunned = (player.moveStatus & MoveStatus.Stun) != 0;
 
@@ -2270,28 +2118,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check stun status - Enemy
-    /// </summary>
-    private void CheckStunStatus(Enemy enemy)
-    {
-        if (enemy.enemyDetails.isImmuneToStun) return;
-
-        bool isStunned = (enemy.moveStatus & MoveStatus.Stun) != 0;
-
-        if (!isStunned)
-        {
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < projectileDetails.stunChance + player.additionalStatusEffectInflictModifier + player.additionalStunChance)
-            {
-                StartCoroutine(StunRoutine(enemy));
-            }
-        }
-    }
-
-    /// <summary>
     /// Check root status - Player
     /// </summary>
-    private void CheckRootStatus(Player player)
+    private void CheckRootStatusOnPlayer(Player player)
     {
         bool isRooted = (player.moveStatus & MoveStatus.Root) != 0;
 
@@ -2311,44 +2140,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check root status - Enemy
-    /// </summary>
-    private void CheckRootStatus(Enemy enemy, bool isBindingArrow = false)
-    {
-        if (enemy.enemyDetails.isImmuneToRoot) return;
-
-        bool isRooted = (enemy.moveStatus & MoveStatus.Root) != 0;
-
-        EnemyAI enemyMovementAI = enemy.GetComponent<EnemyAI>();
-
-        if ((!isRooted && enemy.health.currentHealth > 0) || isBindingArrow)
-        {
-            if (isBindingArrow)
-            {
-                if (player != null)
-                {
-                    enemy.rootDuration = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch
-                    {
-                        1 => 3,
-                        2 => 4,
-                        3 => 5,
-                        _ => 2 // Default
-                    };
-                }
-            }
-
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < projectileDetails.rootChance + player.additionalStatusEffectInflictModifier + player.additionalRootChance || isBindingArrow)
-            {
-                StartCoroutine(RootRoutine(enemy));
-            }
-        }
-    }
-
-    /// <summary>
     /// Check chill status - Player
     /// </summary>
-    private void CheckChillStatus(Player player)
+    private void CheckChillStatusOnPlayer(Player player)
     {
         if (player.isImmunetoFrost) return;
 
@@ -2382,38 +2176,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check chill status - Enemy
-    /// </summary>
-    public void CheckChillStatus(Enemy enemy, bool isIceBreaker = false)
-    {
-        bool isFrozen = (enemy.moveStatus & MoveStatus.Frozen) != 0;
-
-        if (!isFrozen)
-        {
-            float randomDice = Random.Range(0f, 1f);
-
-            if (randomDice < projectileDetails.chillChance)
-            {
-                if (enemy.isChilled && !isFrozen)
-                {
-                    StartCoroutine(FrostRoutine(enemy)); // Second chill
-
-                    enemy.healthEvent.CallChillCuredEvent();
-                }
-                else if (!enemy.isChilled && !isFrozen)
-                {
-                    enemy.isChilled = true;
-                    enemy.healthEvent.CallGetChillEvent();
-                }
-            }
-        }
-    }
-
-
-    /// <summary>
     /// Check static status - Player
     /// </summary>
-    private void CheckStaticStatus(Player player)
+    private void CheckStaticStatusOnPlayer(Player player)
     {
         if (player.isImmunetoParalyze) return;
 
@@ -2446,9 +2211,389 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
+    /// Check frost status - Player
+    /// </summary>
+    private void CheckFrostStatusOnPlayer(Player player)
+    {
+        if (player.isImmunetoFrost) return;
+
+        bool isFrozen = (player.moveStatus & MoveStatus.Frozen) != 0;
+
+        if (!isFrozen)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.frostChance - player.currentStatusResistance)
+            {
+                player.playerControl.isPlayerRolling = false;
+
+                player.statusEffectAnimators.frostAnimator.SetTrigger(Settings.activateVFX);
+                player.moveStatus |= MoveStatus.Frozen;
+                player.healthEvent.CallGetFrostEvent();
+                player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+                player.animatePlayer.ResetAnimatonParameters();
+                player.animator.SetBool(Settings.isFrozen, true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check paralyze status - Player
+    /// </summary>
+    private void CheckParalyzeStatusOnPlayer(Player player)
+    {
+        if (player.isImmunetoParalyze) return;
+
+        bool isParalyzed = (player.moveStatus & MoveStatus.Paralyze) != 0;
+
+        if (!isParalyzed)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.paralyzeChance - player.currentStatusResistance)
+            {
+                player.playerControl.isPlayerRolling = false;
+
+                player.statusEffectAnimators.paralyzeAnimator.SetTrigger(Settings.activateVFX);
+                player.moveStatus |= MoveStatus.Paralyze;
+                player.healthEvent.CallGetParalyzedEvent();
+                player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+                player.animatePlayer.ResetAnimatonParameters();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check blind status - Player
+    /// </summary>
+    private void CheckBlindStatusOnPlayer(Player player)
+    {
+        if (player.isImmunetoBlind) return;
+
+        float randomDice = Random.Range(0f, 1f);
+        if (randomDice < projectileDetails.blindChance - player.currentStatusResistance)
+        {
+            player.statusEffectAnimators.blindAnimator.SetTrigger(Settings.activateVFX);
+            player.healthEvent.CallGetBlindEvent();
+        }
+    }
+
+    /// <summary>
+    /// Check curse status - Player
+    /// </summary>
+    private void CheckCurseStatusOnPlayer(Player player)
+    {
+        if (!player.isCursed)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.curseChance - player.currentStatusResistance)
+            {
+                player.statusEffectAnimators.curseAnimator.SetTrigger(Settings.activateVFX);
+                player.isCursed = true;
+                player.healthEvent.CallGetCurseEvent();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check fear status - Player
+    /// </summary>
+    private void CheckFearStatusOnPlayer(Player player)
+    {
+        if (!player.isFeared)
+        {
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.fearChance - player.currentStatusResistance)
+            {
+                player.statusEffectAnimators.fearAnimator.SetTrigger(Settings.activateVFX);
+                player.isFeared = true;
+                player.healthEvent.CallGetFearEvent();
+            }
+        }
+    }
+    #endregion
+
+    #region CC ENEMY
+    /// <summary>
+    /// Check bleeding status - Enemy
+    /// </summary>
+    private void CheckBleedingStatusOnEnemy(Enemy enemy, bool arrowOfTheSeven = false, bool isThrowingAxe = false)
+    {
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            if (enemy.enemyDetails.isImmuneToBleeding) return;
+
+            if (arrowOfTheSeven)
+            {
+                if (player != null)
+                {
+                    enemy.bleedDuration = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
+                    {
+                        1 => 6,
+                        2 => 7,
+                        3 => 8,
+                        _ => 2 // Default
+                    };
+                }
+            }
+
+            float bleedingChance = 0f;
+
+            if (isThrowingAxe)
+            {
+                if (player != null)
+                {
+                    bleedingChance = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch
+                    {
+                        1 => 0.2f,
+                        2 => 0.3f,
+                        3 => 0.45f,
+                        _ => 0f // Default
+                    };
+                }
+            }
+
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+
+            if (randomDice < projectileDetails.bleedingChance + bleedingChance + player.additionalStatusEffectInflictModifier + player.additionalBleedChance
+                || arrowOfTheSeven)
+            {
+                enemy.statusEffectAnimators.bleedAnimator.SetTrigger(Settings.activateVFX);
+                enemy.healthEvent.CallGetBleedingEvent();
+                enemy.healthStatus |= HealthStatus.Bleeding; // Add Bleeding status
+            }
+        }
+        else
+        {
+            player.NetAuth.CmdApplyBleeding(enemy.enemyNetwork.netIdentity, player.NetAuth.netId, projectileIndex, arrowOfTheSeven, isThrowingAxe);
+        }
+    }
+
+    /// <summary>
+    /// Check warmed status - Enemy
+    /// </summary>
+    public void CheckWarmStatusOnEnemy(Enemy enemy)
+    {
+        EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
+
+        bool isWarmed = (enemy.healthStatus & HealthStatus.Burned) != 0;
+
+        if (!isWarmed)
+        {
+            float randomDice = Random.Range(0f, 1f);
+
+            if (randomDice < projectileDetails.warmChance)
+            {
+                if (enemy.isWarmed && !isWarmed)
+                {
+                    enemy.healthEvent.CallGetBurnEvent();
+                    enemy.healthStatus |= HealthStatus.Burned; // Add Burned status
+
+                    enemy.healthEvent.CallWarmCuredEvent();
+                }
+                else if (!enemy.isWarmed && !isWarmed)
+                {
+                    enemy.isWarmed = true;
+                    enemy.healthEvent.CallGetWarmedEvent();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check burn status - Enemy
+    /// </summary>
+    private void CheckBurnStatusOnEnemy(Enemy enemy, bool arrowOfTheSeven = false)
+    {
+        if (enemy.enemyDetails.isImmuneToBurn) return;
+
+        if (arrowOfTheSeven)
+        {
+            if (player != null)
+            {
+                enemy.burnDuration = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
+                {
+                    1 => 6,
+                    2 => 7,
+                    3 => 8,
+                    _ => 2 // Default
+                };
+            }
+        }
+
+        // Check get burn
+        float randomDice = Random.Range(0f, 1f);
+        if (randomDice < projectileDetails.burnChance + player.additionalStatusEffectInflictModifier + player.additionalBurnChance || arrowOfTheSeven)
+        {
+            enemy.statusEffectAnimators.burnAnimator.SetTrigger(Settings.activateVFX);
+            enemy.healthEvent.CallGetBurnEvent();
+            enemy.healthStatus |= HealthStatus.Burned; // Add Burned status
+        }
+    }
+
+    /// <summary>
+    /// Check slow status - Enemy
+    /// </summary>
+    private void CheckSlowStatusOnEnemy(Enemy enemy, bool arrowOfTheSeven = false)
+    {
+        if (enemy.enemyDetails.isImmuneToSlow) return;
+
+        if (!enemy.isSlowed)
+        {
+            if (arrowOfTheSeven)
+            {
+                if (player != null)
+                {
+                    enemy.slowDuration = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
+                    {
+                        1 => 6,
+                        2 => 7,
+                        3 => 8,
+                        _ => 2 // Default
+                    };
+                }
+            }
+
+            // Check get bleeding
+            float randomDice = Random.Range(0f, 1f);
+            if (randomDice < projectileDetails.slowChance + player.additionalStatusEffectInflictModifier + player.additionalSlowChance || arrowOfTheSeven)
+            {
+                enemy.statusEffectAnimators.slowAnimator.SetTrigger(Settings.activateVFX);
+                enemy.healthEvent.CallGetSlowEvent();
+                enemy.isSlowed = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check poison status - Enemy
+    /// </summary>
+    private void CheckPoisonStatusOnEnemy(Enemy enemy, bool arrowOfTheSeven = false)
+    {
+        if (enemy.enemyDetails.isImmuneToPoison) return;
+
+        if (arrowOfTheSeven)
+        {
+            if (player != null)
+            {
+                enemy.poisonDuration = player.playerDetails.fourthActiveSkillDetails.GetCurrentActiveLevel() switch
+                {
+                    1 => 6,
+                    2 => 7,
+                    3 => 8,
+                    _ => 2 // Default
+                };
+            }
+        }
+
+        // Check get poison
+        float randomDice = Random.Range(0f, 1f);
+        if (randomDice < projectileDetails.poisonChance + player.additionalStatusEffectInflictModifier + player.additionalPoisonChance || arrowOfTheSeven)
+        {
+            enemy.statusEffectAnimators.poisonAnimator.SetTrigger(Settings.activateVFX);
+            enemy.healthEvent.CallGetPoisonedEvent();
+            enemy.healthStatus |= HealthStatus.Poisoned; // Add Poisoned status
+        }
+    }
+
+    /// <summary>
+    /// Check stun status - Enemy
+    /// </summary>
+    private void CheckStunStatusOnEnemy(Enemy enemy)
+    {
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            if (enemy.enemyDetails.isImmuneToStun) return;
+
+            bool isStunned = (enemy.moveStatus & MoveStatus.Stun) != 0;
+
+            if (!isStunned)
+            {
+                float randomDice = Random.Range(0f, 1f);
+                if (randomDice < projectileDetails.stunChance + player.additionalStatusEffectInflictModifier + player.additionalStunChance)
+                {
+                    StartCoroutine(StunRoutine(enemy));
+                }
+            }
+        }
+        else
+        {
+            player.NetAuth.CmdApplyStun(enemy.enemyNetwork.netIdentity, player.NetAuth.netId, projectileIndex);
+        }
+    }
+
+    /// <summary>
+    /// Check root status - Enemy
+    /// </summary>
+    private void CheckRootStatusOnEnemy(Enemy enemy, uint projectileOwnerNetId, int projectileIndex, bool isBindingArrow = false)
+    {
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            if (enemy.enemyDetails.isImmuneToRoot) return;
+
+            bool isRooted = (enemy.moveStatus & MoveStatus.Root) != 0;
+
+            if ((!isRooted && enemy.health.currentHealth > 0) || isBindingArrow)
+            {
+                if (isBindingArrow)
+                {
+                    if (player != null)
+                    {
+                        enemy.rootDuration = player.playerDetails.thirdActiveSkillDetails.GetCurrentActiveLevel() switch
+                        {
+                            1 => 3,
+                            2 => 4,
+                            3 => 5,
+                            _ => 2 // Default
+                        };
+                    }
+                }
+
+                float randomDice = Random.Range(0f, 1f);
+
+                if (randomDice < projectileDetails.rootChance + player.additionalStatusEffectInflictModifier + player.additionalRootChance || isBindingArrow)
+                {
+                    StartCoroutine(RootRoutine(enemy));
+                }
+            }
+        }
+        else
+        {
+            player.NetAuth.CmdApplyRoot(enemy.enemyNetwork.netIdentity, player.NetAuth.netId, projectileIndex, isBindingArrow);
+        }
+    }
+
+    /// <summary>
+    /// Check chill status - Enemy
+    /// </summary>
+    public void CheckChillStatusOnEnemy(Enemy enemy, bool isIceBreaker = false)
+    {
+        bool isFrozen = (enemy.moveStatus & MoveStatus.Frozen) != 0;
+
+        if (!isFrozen)
+        {
+            float randomDice = Random.Range(0f, 1f);
+
+            if (randomDice < projectileDetails.chillChance)
+            {
+                if (enemy.isChilled && !isFrozen)
+                {
+                    StartCoroutine(FrostRoutine(enemy)); // Second chill
+
+                    enemy.healthEvent.CallChillCuredEvent();
+                }
+                else if (!enemy.isChilled && !isFrozen)
+                {
+                    enemy.isChilled = true;
+                    enemy.healthEvent.CallGetChillEvent();
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Check static status - Enemy
     /// </summary>
-    public void CheckStaticStatus(Enemy enemy, bool isVindictiveTouchActive = false)
+    public void CheckStaticStatusOnEnemy(Enemy enemy, bool isVindictiveTouchActive = false)
     {
         bool isParalyzed = (enemy.moveStatus & MoveStatus.Paralyze) != 0;
 
@@ -2474,35 +2619,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check frost status - Player
-    /// </summary>
-    private void CheckFrostStatus(Player player)
-    {
-        if (player.isImmunetoFrost) return;
-
-        bool isFrozen = (player.moveStatus & MoveStatus.Frozen) != 0;
-
-        if (!isFrozen)
-        {
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < projectileDetails.frostChance - player.currentStatusResistance)
-            {
-                player.playerControl.isPlayerRolling = false;
-
-                player.statusEffectAnimators.frostAnimator.SetTrigger(Settings.activateVFX);
-                player.moveStatus |= MoveStatus.Frozen;
-                player.healthEvent.CallGetFrostEvent();
-                player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
-                player.animatePlayer.ResetAnimatonParameters();
-                player.animator.SetBool(Settings.isFrozen, true);
-            }
-        }
-    }
-
-    /// <summary>
     /// Check frost status - Enemy
     /// </summary>
-    private void CheckFrostStatus(Enemy enemy, bool arrowOfTheSeven = false)
+    private void CheckFrostStatusOnEnemy(Enemy enemy, bool arrowOfTheSeven = false)
     {
         if (enemy.enemyDetails.isImmuneToFrost) return;
 
@@ -2533,40 +2652,15 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check paralyze status - Player
-    /// </summary>
-    private void CheckParalyzeStatus(Player player)
-    {
-        if (player.isImmunetoParalyze) return;
-
-        bool isParalyzed = (player.moveStatus & MoveStatus.Paralyze) != 0;
-
-        if (!isParalyzed)
-        {
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < projectileDetails.paralyzeChance - player.currentStatusResistance)
-            {
-                player.playerControl.isPlayerRolling = false;
-
-                player.statusEffectAnimators.paralyzeAnimator.SetTrigger(Settings.activateVFX);
-                player.moveStatus |= MoveStatus.Paralyze;
-                player.healthEvent.CallGetParalyzedEvent();
-                player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
-                player.animatePlayer.ResetAnimatonParameters();
-            }
-        }
-    }
-
-    /// <summary>
     /// Check paralyze status - Enemy
     /// </summary>
-    private void CheckParalyzeStatus(Enemy enemy, bool arrowOfTheSeven = false)
+    private void CheckParalyzeStatusOnEnemy(Enemy enemy, bool arrowOfTheSeven = false)
     {
         if (enemy.enemyDetails.isImmuneToParalyze) return;
 
         bool isParalyzed = (enemy.moveStatus & MoveStatus.Paralyze) != 0;
 
-        if (!isParalyzed|| arrowOfTheSeven)
+        if (!isParalyzed || arrowOfTheSeven)
         {
             if (arrowOfTheSeven)
             {
@@ -2593,7 +2687,7 @@ public class Projectile : MonoBehaviour, IFireable
     /// <summary>
     /// Check shatter status - Enemy
     /// </summary>
-    private void CheckShatterStatus(Enemy enemy, ref int inflictedDamage, bool isIceBreaker = false)
+    private void CheckShatterStatusOnEnemy(Enemy enemy, ref int inflictedDamage, bool isIceBreaker = false)
     {
         Health enemyHealth = enemy.GetComponent<Health>();
 
@@ -2629,24 +2723,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check blind status - Player
-    /// </summary>
-    private void CheckBlindStatus(Player player)
-    {
-        if (player.isImmunetoBlind) return;
-
-        float randomDice = Random.Range(0f, 1f);
-        if (randomDice < projectileDetails.blindChance - player.currentStatusResistance)
-        {
-            player.statusEffectAnimators.blindAnimator.SetTrigger(Settings.activateVFX);
-            player.healthEvent.CallGetBlindEvent();
-        }
-    }
-
-    /// <summary>
     /// Check blind status - Enemy
     /// </summary>
-    private void CheckBlindStatus(Enemy enemy, bool arrowOfTheSeven = false)
+    private void CheckBlindStatusOnEnemy(Enemy enemy, bool arrowOfTheSeven = false)
     {
         if (enemy.enemyDetails.isImmuneToBlind) return;
 
@@ -2668,7 +2747,7 @@ public class Projectile : MonoBehaviour, IFireable
 
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < projectileDetails.blindChance + player.additionalStatusEffectInflictModifier + player.additionalBlindChance + 
+            if (randomDice < projectileDetails.blindChance + player.additionalStatusEffectInflictModifier + player.additionalBlindChance +
                 player.additionalBlindMakerModifier || arrowOfTheSeven)
             {
                 enemy.statusEffectAnimators.blindAnimator.SetTrigger(Settings.activateVFX);
@@ -2678,26 +2757,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check curse status - Player
-    /// </summary>
-    private void CheckCurseStatus(Player player)
-    {
-        if (!player.isCursed)
-        {
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < projectileDetails.curseChance - player.currentStatusResistance)
-            {
-                player.statusEffectAnimators.curseAnimator.SetTrigger(Settings.activateVFX);
-                player.isCursed = true;
-                player.healthEvent.CallGetCurseEvent();
-            }
-        }
-    }
-
-    /// <summary>
     /// Check curse status - Enemy
     /// </summary>
-    private void CheckCurseStatus(Enemy enemy)
+    private void CheckCurseStatusOnEnemy(Enemy enemy)
     {
         if (enemy.enemyDetails.isImmuneToCurse) return;
 
@@ -2714,26 +2776,9 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     /// <summary>
-    /// Check fear status - Player
-    /// </summary>
-    private void CheckFearStatus(Player player)
-    {
-        if (!player.isFeared)
-        {
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < projectileDetails.fearChance - player.currentStatusResistance)
-            {
-                player.statusEffectAnimators.fearAnimator.SetTrigger(Settings.activateVFX);
-                player.isFeared = true;
-                player.healthEvent.CallGetFearEvent();
-            }
-        }
-    }
-
-    /// <summary>
     /// Check curse status - Enemy
     /// </summary>
-    private void CheckFearStatus(Enemy enemy, bool arrowOfTheSeven = false)
+    private void CheckFearStatusOnEnemy(Enemy enemy, bool arrowOfTheSeven = false)
     {
         if (enemy.enemyDetails.isImmuneToCurse) return;
 
@@ -2762,6 +2807,9 @@ public class Projectile : MonoBehaviour, IFireable
             }
         }
     }
+    #endregion
+
+    #region CC Routines
 
     IEnumerator StunRoutine(Enemy enemy)
     {
@@ -2811,7 +2859,9 @@ public class Projectile : MonoBehaviour, IFireable
 
         if (isFireBlast)
         {
-            GetComponent<Animator>().SetTrigger("impact");
+            animator.SetTrigger("impact");
+            animSync?.UpdateProjectileImpact(impact: true);
+
             SoundEffectManager.Instance.PlaySoundEffect(projectileDetails.projectileImpactSoundEffect);
             Explosion();
 
@@ -2830,6 +2880,10 @@ public class Projectile : MonoBehaviour, IFireable
             DisableProjectile();
         }
     }
+
+    #endregion
+
+    #region THE REST
 
     /// <summary>
     /// Based on circle radius of the bomb, detect all enemy colliders for damage
@@ -2864,7 +2918,7 @@ public class Projectile : MonoBehaviour, IFireable
                         DamageContext ctx = new DamageContext { source = DamageSourceType.Projectile, dealerPosition = transform.position, receiverPosition = player.transform.position };
                         ReceiveProjectileDamage receiveProjectileDamage = collider.GetComponent<ReceiveProjectileDamage>();
                         receiveProjectileDamage.TakeProjectileDamage(inflictedDamage, ctx);
-                        CheckStunStatus(player);
+                        CheckStunStatusOnPlayer(player);
 
                         // Apply knockback
                         Vector2 knockbackDir = (player.transform.position - transform.position).normalized;
@@ -2890,7 +2944,7 @@ public class Projectile : MonoBehaviour, IFireable
 
                         if (isFireBlast)
                         {
-                            CheckBurnStatus(enemy);
+                            CheckBurnStatusOnEnemy(enemy);
                         }
 
                         if (!enemy.enemyDetails.hasKnockbackResistance && enemy.GetComponent<Health>().currentHealth > 0)
@@ -3039,7 +3093,11 @@ public class Projectile : MonoBehaviour, IFireable
             if (next != null)
             {
                 // Spawn next hop at the hit position
-                GameObject projectilePrefab = projectileDetails.projectilePrefabArray[0];
+                GameObject projectilePrefab = null;
+
+                if(!NetworkServer.active && !NetworkClient.active) projectilePrefab = projectileDetails.projectilePrefabArray[0];
+                else projectilePrefab = projectileDetails.projectilePrefabArray[1];
+
                 IFireable projIFireable = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, origin, Quaternion.identity);
                 Projectile nextProj = projIFireable as Projectile;
 
@@ -3057,7 +3115,8 @@ public class Projectile : MonoBehaviour, IFireable
 
                 // Initialize with the incremented phase (important so Start() doesn�t clobber it)
                 nextProj.InitializeProjectile(aimAngle, aimAngle, toNext, projectileSpeed: 35f, ProjectileKind.ChainLightning, projectileDetails, new AttackContext { chainLightningPhase = nextProj.chainLightningPhase },
-                    overrideProjectileMovement: false, fallingFromSkies: false, projectileCounter: 1, projectilePerShot: 1, 0, 0, enemyNetId: 0, belongingEnemy: null);  // pass the incremented phase
+                    overrideProjectileMovement: false, fallingFromSkies: false, projectileCounter: 1, projectilePerShot: 1, player.NetAuth.netId, WartheonDatabase.Instance.GetProjectileId(projectileDetails), 
+                    enemyNetId: 0, belongingEnemy: null);  // pass the incremented phase
 
                 // Optional damage falloff
                 nextProj.damageDone = Mathf.RoundToInt(damageDone * chainDamageFalloff);
@@ -3198,6 +3257,8 @@ public class Projectile : MonoBehaviour, IFireable
         Vector3 position = this == null ? Vector3.zero : transform.position;
         Gizmos.DrawWireSphere(position, blastRadius);
     }
+
+    #endregion
 
     #region Validation
 #if UNITY_EDITOR

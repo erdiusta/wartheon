@@ -5,10 +5,11 @@ public class NetworkHealthAuthority : NetworkBehaviour, IHealthAuthority
 {
     [HideInInspector] public Health health;
 
-    [SyncVar] int currentHealth;
+    [SyncVar (hook = nameof(OnHealthChanged))] public int currentHealth;
+    [SyncVar (hook = nameof(OnMaxHealthChanged))] public int maxHealth;
 
     public int CurrentHealth => currentHealth;
-    public int MaxHealth => health.GetMaximumHealth();
+    public int MaxHealth => maxHealth;
 
     private void Awake()
     {
@@ -20,13 +21,39 @@ public class NetworkHealthAuthority : NetworkBehaviour, IHealthAuthority
         base.OnStartServer();
 
         currentHealth = health.GetMaximumHealth();
+        maxHealth = health.GetMaximumHealth();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        currentHealth = health.GetMaximumHealth();
+        maxHealth = health.GetMaximumHealth();
+    }
+
+    private void OnHealthChanged(int oldValue, int newValue)
+    {
+        if (health == null) return;
+
+        //int damageAmount = Mathf.Clamp(oldValue - newValue, 0, maxHealth);
+        health.ApplyReplicatedHealth(newValue, oldValue - newValue, default);
+
+        if (GetComponent<Environment>() != null) return;
+
+        Debug.Log("Health after change is " + health.currentHealth);
+    }
+
+    private void OnMaxHealthChanged(int oldValue, int newValue)
+    {
+        if (health == null) return;
+
+        health.SetMaximumHealth(newValue);
     }
 
     public void ApplyDamage(int amount, DamageContext ctx)
     {
         if (!isServer) return;
-
-        int oldHealth = currentHealth;
 
         health.ApplyDamageInternal(amount, ctx);
         currentHealth = health.GetCurrentHealth();

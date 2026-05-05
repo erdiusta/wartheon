@@ -1,39 +1,48 @@
+using Mirror;
+
 public static class BookUIRefreshHelper
 {
-    public static void RefreshBookUIAfterItemPlacement(ItemGeneric item, Slot sourceSlot, Slot targetSlot)
+    public static void RefreshBookUIAfterItemPlacement(ItemGeneric item, int inventoryIndex)
     {
         Player player = GameManager.Instance.GetLocalPlayer();
 
-        // Weapon placed into inventory
-        if (item is Weapon weapon)
+        bool isMultiplayer = NetworkServer.active || NetworkClient.active;
+
+        if (isMultiplayer)
         {
-            if (weapon.itemSlotStatus == ItemSlotStatus.Inventory)
-            {
-                int index = InventoryManager.Instance.FindIndexOfItem(weapon);
-                StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, index);
-            }
-            else
-            {
-                StaticEventHandler.CallInventoryWeaponDroppedEventForBook(sourceSlot.inventoryIndexNumber);
-            }
-
-            StaticEventHandler.CallWeaponSwitchedEventForBook(); // Always call switch to refresh view
+            //player.playerInventoryNetwork.RequestRefreshUI(item, inventoryIndex);
         }
-
-        // Passive item placed into inventory
-        else if (item is PassiveItem passive)
+        else
         {
-            if (passive.itemSlotStatus == ItemSlotStatus.Inventory)
+            // Weapon placed into inventory
+            if (item is Weapon weapon)
             {
-                int index = InventoryManager.Instance.FindIndexOfItem(passive);
-                StaticEventHandler.CallPassiveItemAddedToInventorySlot(passive, index);
+                if (weapon.ItemSlotStatus == ItemSlotStatus.Inventory)
+                {
+                    int index = player.playerInventory.FindIndexOfItem(weapon);
+                    StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, index);
+                }
+                else
+                {
+                    StaticEventHandler.CallInventoryWeaponDroppedEventForBook(inventoryIndex);
+                }
+
+                StaticEventHandler.CallWeaponSwitchedEventForBook(); // Always call switch to refresh view
             }
-            else
+
+            // Passive item placed into inventory
+            else if (item is PassiveItem passive)
             {
-                StaticEventHandler.CallInventoryPassiveItemDroppedEventForBook(sourceSlot.inventoryIndexNumber);
+                if (passive.ItemSlotStatus == ItemSlotStatus.Inventory)
+                {
+                    int index = player.playerInventory.FindIndexOfItem(passive);
+                    StaticEventHandler.CallPassiveItemAddedToInventorySlot(passive, index);
+                }
+                else
+                {
+                    StaticEventHandler.CallInventoryPassiveItemDroppedEventForBook(inventoryIndex);
+                }
             }
         }
-
-        // Active item: no need to do anything — UI events for active items already fire on equip
     }
 }

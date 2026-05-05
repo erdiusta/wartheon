@@ -78,7 +78,7 @@ public class GalvanusAINetwork : EnemyAINetwork, IMutualBossBehaviour
         }
 
         // Emergency pullback if Moravelle drifts outside bounds
-        if (IsOutsideBossRoom(transform.position, cellMin, cellMax))
+        if (IsOutsideBossRoom(transform.position, cellMin, cellMax, true))
         {
             Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
             transform.position = safePos;

@@ -120,56 +120,67 @@ public class ActiveWeapon : PlayerBoundBehaviour
         weaponOffHandAnimator = offHandAnchorPosition.GetComponent<Animator>();
     }
 
-    private void SetActiveMainWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
-        SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    private void SetActiveMainWeaponEvent_OnSetActiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        SetMainHandWeapon(setActiveWeaponEventArgs.weapon, setActiveWeaponEventArgs.weaponSetIndex, setActiveWeaponEventArgs.onStart,
-            setActiveWeaponEventArgs.onSwitch);
+        Weapon weapon = WeaponDropGenerator.GetWeaponWithStats(setActiveWeaponEventArgs.weaponStats, setActiveWeaponEventArgs.rarity, ItemSlotStatus.MainHand, -1);
+        SetMainHandWeapon(weapon, setActiveWeaponEventArgs.weaponSetIndex, setActiveWeaponEventArgs.onStart, setActiveWeaponEventArgs.onStartWeaponIndex);
 
         if (enemy != null) return;
 
         // Update new weapon values
-        player?.UpdateDamageValues();
-        player?.UpdateArmorValues();
-        player?.UpdateAttackRatingAndCriticalValues();
-        player?.UpdateBlockAndDodgeValues();
+        if (!setActiveWeaponEventArgs.onStart && setActiveWeaponEventArgs.isStatUpdateAllowed)
+        {
+            player?.UpdateDamageValues();
+            player?.UpdateArmorValues();
+            player?.UpdateAttackRatingAndCriticalValues();
+            player?.UpdateBlockAndDodgeValues();
+        }
     }
 
     private void SetActiveWeaponEvent_OnSetInactiveMainHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        DeselectMainHandWeapon(setActiveWeaponEventArgs.isWeaponSwapping, setActiveWeaponEventArgs.weaponSetIndex, setActiveWeaponEventArgs.onSwitch);
+        DeselectMainHandWeapon(setActiveWeaponEventArgs.isWeaponSwapping);
 
         // Update new weapon values
-        player?.UpdateDamageValues();
-        player?.UpdateArmorValues();
-        player?.UpdateAttackRatingAndCriticalValues();
-        player?.UpdateBlockAndDodgeValues();
+        if (setActiveWeaponEventArgs.isStatUpdateAllowed)
+        {
+            player?.UpdateDamageValues();
+            player?.UpdateArmorValues();
+            player?.UpdateAttackRatingAndCriticalValues();
+            player?.UpdateBlockAndDodgeValues();
+        }
     }
 
-    private void SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, 
-        SetActiveWeaponEventArgs setActiveWeaponEventArgs)
+    private void SetActiveOffHandWeaponEvent_OnSetActiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
-        SetOffHandWeapon(setActiveWeaponEventArgs.weapon, setActiveWeaponEventArgs.onStart);
+        Weapon weapon = WeaponDropGenerator.GetWeaponWithStats(setActiveWeaponEventArgs.weaponStats, setActiveWeaponEventArgs.rarity, ItemSlotStatus.OffHand, -1);
+        SetOffHandWeapon(weapon, setActiveWeaponEventArgs.onStart);
 
         // Update new weapon values
-        player?.UpdateDamageValues();
-        player?.UpdateArmorValues();
-        player?.UpdateAttackRatingAndCriticalValues();
-        player?.UpdateBlockAndDodgeValues();
+        if (!setActiveWeaponEventArgs.onStart && setActiveWeaponEventArgs.isStatUpdateAllowed)
+        {
+            player?.UpdateDamageValues();
+            player?.UpdateArmorValues();
+            player?.UpdateAttackRatingAndCriticalValues();
+            player?.UpdateBlockAndDodgeValues();
+        }
     }
 
-    private void SetActiveWeaponEvent_OnSetInactiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent)
+    private void SetActiveWeaponEvent_OnSetInactiveOffHandWeapon(SetActiveWeaponEvent setActiveWeaponEvent, SetActiveWeaponEventArgs setActiveWeaponEventArgs)
     {
         DeselectOffHandWeapon();
 
         // Update new weapon values
-        player?.UpdateDamageValues();
-        player?.UpdateArmorValues();
-        player?.UpdateAttackRatingAndCriticalValues();
-        player?.UpdateBlockAndDodgeValues();
+        if (setActiveWeaponEventArgs.isStatUpdateAllowed)
+        {
+            player?.UpdateDamageValues();
+            player?.UpdateArmorValues();
+            player?.UpdateAttackRatingAndCriticalValues();
+            player?.UpdateBlockAndDodgeValues();
+        }
     }
 
-    private void SetMainHandWeapon(Weapon weapon, int weaponSetIndex, bool onStart, bool onSwitch)
+    private void SetMainHandWeapon(Weapon weapon, int weaponSetIndex, bool onStart, int onStartWeaponIndex)
     {
         currentMainHandWeapon = weapon;
 
@@ -178,7 +189,9 @@ public class ActiveWeapon : PlayerBoundBehaviour
         isSwitching = true;
         weaponToBeDropped = weapon; // for removing lock icon during two-handed weapon drop issue
 
-        Weapon equippedWeapon; 
+        Weapon equippedWeapon;
+
+        WeaponDetailsSO weaponDetails = onStart ? player.playerDetails.startingWeaponList[onStartWeaponIndex] : WartheonDatabase.Instance.GetWeaponDetails(currentMainHandWeapon.weaponStats.weaponTitle);
 
         if (player != null)
         {
@@ -189,7 +202,7 @@ public class ActiveWeapon : PlayerBoundBehaviour
             player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).eulerAngles = Vector3.zero;
             player.aimWeapon.mainHandWeaponAnchorPointTransform.GetChild(0).localScale = new Vector3(1f, 1f, 1f);
 
-            if (equippedWeapon.weaponDetails.weaponClass == WeaponClass.Bow)
+            if (equippedWeapon.weaponStats.weaponClass == WeaponClass.Bow)
             {
                 OffHandWeaponRemoveCheck(weaponSetIndex); // Remove possible off-hand during weapon switch
                 ResetAnimationParameters();
@@ -202,9 +215,9 @@ public class ActiveWeapon : PlayerBoundBehaviour
                 playerAnimator.SetFloat(Settings.mainPosture, 2); // Bow posture
                 playerAnimator.SetBool(Settings.isMeleeWeapon, false);
 
-                weaponMainHandAnimator.runtimeAnimatorController = currentMainHandWeapon.weaponDetails.weaponAnimatorController;
+                weaponMainHandAnimator.runtimeAnimatorController = weaponDetails.weaponAnimatorController;
             }
-            else if (equippedWeapon.weaponDetails.weaponClass == WeaponClass.Staff)
+            else if (equippedWeapon.weaponStats.weaponClass == WeaponClass.Staff)
             {
                 OffHandWeaponRemoveCheck(weaponSetIndex); // Remove possible off-hand during weapon switch
                 ResetAnimationParameters();
@@ -215,9 +228,9 @@ public class ActiveWeapon : PlayerBoundBehaviour
                 playerAnimator.SetFloat(Settings.mainPosture, 1); // Two-handed posture
                 playerAnimator.SetBool(Settings.isMeleeWeapon, false);
 
-                weaponMainHandAnimator.runtimeAnimatorController = currentMainHandWeapon.weaponDetails.weaponAnimatorController;
+                weaponMainHandAnimator.runtimeAnimatorController = weaponDetails.weaponAnimatorController;
             }
-            else if (equippedWeapon.weaponDetails.weaponClass == WeaponClass.Crossbow)
+            else if (equippedWeapon.weaponStats.weaponClass == WeaponClass.Crossbow)
             {
                 OffHandWeaponRemoveCheck(weaponSetIndex); // Remove possible off-hand during weapon switch
                 ResetAnimationParameters();
@@ -230,7 +243,7 @@ public class ActiveWeapon : PlayerBoundBehaviour
                 playerAnimator.SetFloat(Settings.mainPosture, 1); // Two-handed posture
                 playerAnimator.SetBool(Settings.isMeleeWeapon, false);
 
-                weaponMainHandAnimator.runtimeAnimatorController = currentMainHandWeapon.weaponDetails.weaponAnimatorController;
+                weaponMainHandAnimator.runtimeAnimatorController = weaponDetails.weaponAnimatorController;
             }
             else if (currentOffHandWeapon == null) // This means that's not a dual wield nor shield
             {
@@ -246,11 +259,11 @@ public class ActiveWeapon : PlayerBoundBehaviour
                 weaponOffHandAnimator.enabled = false;
                 weaponMainHandAnimator.enabled = false;
 
-                if (currentMainHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded)
+                if (currentMainHandWeapon.weaponStats.wieldType == WieldType.TwoHanded)
                 {
                     playerAnimator.SetFloat(Settings.mainPosture, 1); // Two handed posture
 
-                    if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Spear)
+                    if (currentMainHandWeapon.weaponStats.weaponClass == WeaponClass.Spear)
                     {
                         playerAnimator.SetInteger(Settings.smearSize, 0); // Reset smear values as this motion won't use swings
                         playerAnimator.SetInteger(Settings.thrustSize, 2); // Long size thrust for two handed spear
@@ -279,16 +292,16 @@ public class ActiveWeapon : PlayerBoundBehaviour
         }
 
         // Set current weapon sprite
-        weaponMainHandSpriteRenderer.sprite = currentMainHandWeapon.weaponDetails.weaponFrontSprite;
+        weaponMainHandSpriteRenderer.sprite = weaponDetails.weaponFrontSprite;
 
-        weaponMainHandShootPositionUpTransform.localPosition = currentMainHandWeapon.weaponDetails.weaponRightShootPosition;
+        weaponMainHandShootPositionUpTransform.localPosition = weaponDetails.weaponRightShootPosition;
 
         isSwitching = false;
     }
 
     private void OffHandWeaponRemoveCheck(int weaponSetIndex)
     {
-        if (currentOffHandWeapon != null && currentMainHandWeapon.weaponDetails.wieldType != WieldType.OneHanded)
+        if (currentOffHandWeapon != null && currentMainHandWeapon.weaponStats.wieldType != WieldType.OneHanded)
         {
             DeselectOffHandWeapon();
 
@@ -302,7 +315,7 @@ public class ActiveWeapon : PlayerBoundBehaviour
 
     private void ThrustSwingAnimationCheck()
     {
-        if (currentMainHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded)
+        if (currentMainHandWeapon.weaponStats.wieldType == WieldType.TwoHanded)
         {
             playerAnimator.SetFloat(Settings.mainPosture, 1); // Two handed posture
         }
@@ -311,19 +324,19 @@ public class ActiveWeapon : PlayerBoundBehaviour
             playerAnimator.SetFloat(Settings.mainPosture, 0); // One handed posture
         }
 
-        if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Spear) // If weapon is a spear, thrust motions should be enabled
+        if (currentMainHandWeapon.weaponStats.weaponClass == WeaponClass.Spear) // If weapon is a spear, thrust motions should be enabled
         {
             playerAnimator.SetInteger(Settings.smearSize, 0); // Reset smear values as this motion won't use swings
             playerAnimator.SetInteger(Settings.thrustSize, 1);
         }
         else
         {
-            if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Dagger)
+            if (currentMainHandWeapon.weaponStats.weaponClass == WeaponClass.Dagger)
             {
                 playerAnimator.SetInteger(Settings.thrustSize, 0);
                 playerAnimator.SetInteger(Settings.smearSize, 1); // Set smear size to 1 for dagger
             }
-            else if (currentMainHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw)
+            else if (currentMainHandWeapon.weaponStats.weaponClass == WeaponClass.Claw)
             {
                 playerAnimator.SetInteger(Settings.smearSize, 0);
                 playerAnimator.SetInteger(Settings.thrustSize, 1); // Set smear size to 1 for claws
@@ -339,7 +352,12 @@ public class ActiveWeapon : PlayerBoundBehaviour
     {
         currentOffHandWeapon = weapon;
 
-        if (currentOffHandWeapon.weaponDetails.weaponClass == WeaponClass.Shield)
+        WeaponDetailsSO offHandWeaponDetails;
+
+        if (onStart) offHandWeaponDetails = player.playerDetails.startingWeaponList[1];
+        else offHandWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(currentOffHandWeapon.weaponStats.weaponTitle);
+
+        if (offHandWeaponDetails.weaponClass == WeaponClass.Shield)
         {
             weaponOffHandAnimator.enabled = true;
 
@@ -347,7 +365,7 @@ public class ActiveWeapon : PlayerBoundBehaviour
             playerAnimator.SetBool(Settings.isDualWield, false);
 
             // Set animator controller to the weapon animator
-            weaponOffHandAnimator.runtimeAnimatorController = currentOffHandWeapon.weaponDetails.weaponAnimatorController;
+            weaponOffHandAnimator.runtimeAnimatorController = offHandWeaponDetails.weaponAnimatorController;
         }
         else
         {
@@ -358,10 +376,10 @@ public class ActiveWeapon : PlayerBoundBehaviour
         }
 
         // Set current weapon sprite
-        weaponOffHandSpriteRenderer.sprite = currentOffHandWeapon.weaponDetails.weaponFrontSprite;
+        weaponOffHandSpriteRenderer.sprite = offHandWeaponDetails.weaponFrontSprite;
     }
 
-    private void DeselectMainHandWeapon(bool isWeaponSwapped, int weaponSetIndex, bool onSwitch)
+    private void DeselectMainHandWeapon(bool isWeaponSwapped)
     {
         offHandAnchorPosition.gameObject.SetActive(true);
         playerAnimator.SetFloat(Settings.mainPosture, 0f); // Reset posture for non-armed situation
@@ -402,16 +420,6 @@ public class ActiveWeapon : PlayerBoundBehaviour
         playerAnimator.SetBool(Settings.isDualWield, false);
     }
 
-    public void RefreshFromNetworkState()
-    {
-        var weaponState = GetComponent<PlayerWeaponState>();
-
-        Weapon main = currentMainHandWeapon;
-        Weapon off = currentOffHandWeapon;
-    }
-
-    public ProjectileDetailsSO GetCurrentProjectile() => currentMainHandWeapon.weaponDetails.weaponCurrentProjectile;
-
     public Weapon GetCurrentMainHandWeapon() => currentMainHandWeapon;
 
     public Vector3 GetMainHandShootPositionUp() => weaponMainHandShootPositionUpTransform.position;
@@ -423,11 +431,6 @@ public class ActiveWeapon : PlayerBoundBehaviour
     public Vector3 GetMainHandShootPositionLeft() => weaponMainHandShootPositionLeftTransform.position;
 
     public Vector3 GetRightHandShootEffectPosition() => weaponMainHandEffectPositionTransform.position;
-
-    public void RemoveCurrentRightHandWeapon()
-    {
-        currentMainHandWeapon = null;
-    }
 
     public Weapon GetCurrentOffHandWeapon()
     {

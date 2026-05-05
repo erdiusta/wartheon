@@ -1,11 +1,8 @@
 
-public class ItemGeneric
+public abstract class ItemGeneric
 {
-    public ItemSlotStatus itemSlotStatus;
-    public Rarity rarity;
-
-    public ItemGeneric(Rarity rarity)
-    {
-        this.rarity = rarity;
-    }
+    public abstract ItemType ItemType { get; set; }
+    public abstract Rarity Rarity { get; set; }
+    public abstract ItemSlotStatus ItemSlotStatus { get; set; }
+    public abstract int InventoryIndex { get; set; }
 }

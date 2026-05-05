@@ -57,7 +57,6 @@ MonoBehaviour:
   belongingParent: {fileID: 0}
   spriteRenderer: {fileID: 6316016757709079695}
   projectileDetails: {fileID: 0}
-  projectileMaterial: {fileID: 2100000, guid: ec62d7e313859404bb5c275b213f06ed, type: 2}
   chainJumpRadius: 6
   chainDelay: 0.05
   chainDamageFalloff: 0.8
@@ -148,7 +147,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -257139871
   m_SortingLayer: 3
-  m_SortingOrder: 10
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 1dcb15e5e19fefd40956f26ae70322bb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -158,7 +157,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!60 &9140885954065316800
 PolygonCollider2D:

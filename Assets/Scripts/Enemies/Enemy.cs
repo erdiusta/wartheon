@@ -1,4 +1,3 @@
-using Mirror;
 using Pathfinding;
 using System;
 using System.Collections;
@@ -350,12 +349,47 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
         // Process if enemy has a weapon
         if (enemyDetails.enemyWeapon != null)
         {
-            Weapon weapon = new Weapon (enemyDetails.enemyWeapon.rarity) { weaponDetails = enemyDetails.enemyWeapon };
+            Weapon weapon = new Weapon (enemyDetails.enemyWeapon.rarity);
 
-            weapon.weaponStats.weaponRemainingProjectile = enemyDetails.enemyWeapon.weaponProjectileCapacity;
+            weapon.weaponStats = new WeaponStats
+            {
+                weaponClass = enemyDetails.enemyWeapon.weaponClass,
+                weaponTitle = enemyDetails.enemyWeapon.weaponTitle,
+
+                wieldType = enemyDetails.enemyWeapon.wieldType,
+                isMeleeWeapon = enemyDetails.enemyWeapon.isMeleeWeapon,
+                hasSwing = enemyDetails.enemyWeapon.hasSwing,
+                hasThrust = enemyDetails.enemyWeapon.hasThrust,
+                elementalForgeRate = enemyDetails.enemyWeapon.elementalForgeRate,
+
+                baseUniqueRolled = enemyDetails.enemyWeapon.baseUniqueModifier,
+                baseTypeRolled = enemyDetails.enemyWeapon.baseTypeModifier,
+
+                physicalDamageMin = enemyDetails.enemyWeapon.physicalDamageMin,
+                physicalDamageMax = enemyDetails.enemyWeapon.physicalDamageMax,
+                magicDamageMin = enemyDetails.enemyWeapon.magicDamageMin,
+                magicDamageMax = enemyDetails.enemyWeapon.magicDamageMax,
+
+                physicalAttackDamageIncrease = Mathf.RoundToInt((enemyDetails.enemyWeapon.isShield ? 0 : enemyDetails.enemyWeapon.isMeleeWeapon ? enemyDetails.enemyWeapon.physicalDamageMin
+                : enemyDetails.enemyWeapon.weaponCurrentProjectile.projectilePhyDamageMin) * (1 - enemyDetails.enemyWeapon.elementalForgeRate)),
+
+                magicAttackDamageIncrease = Mathf.RoundToInt((enemyDetails.enemyWeapon.isShield ? 0 : enemyDetails.enemyWeapon.isMeleeWeapon ? enemyDetails.enemyWeapon.physicalDamageMin
+                : enemyDetails.enemyWeapon.weaponCurrentProjectile.projectilePhyDamageMin) * enemyDetails.enemyWeapon.elementalForgeRate),
+
+                weaponCooldownDuration = enemyDetails.enemyWeapon.weaponCooldownDuration,
+                blockChance = enemyDetails.enemyWeapon.blockChance,
+                weaponAttackRating = enemyDetails.enemyWeapon.weaponAttackRating,
+                criticalHitChance = enemyDetails.enemyWeapon.criticalHitChance,
+                criticalHitDamage = enemyDetails.enemyWeapon.criticalHitDamageMultiplier,
+
+                criticalHitChanceIncrease = enemyDetails.enemyWeapon.criticalHitChance,
+                criticalHitDamageIncrease = enemyDetails.enemyWeapon.criticalHitDamageMultiplier,
+
+                weaponPrechargeTime = enemyDetails.enemyWeapon.weaponPrechargeTime
+            };
 
             //Set weapon for enemy
-            setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon, 1, false, false);
+            setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(weapon.weaponStats, weapon.Rarity, 1, false, isStatUpdateAllowed: true);
         }
     }
 
@@ -466,5 +500,6 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
 
     // Movement
     public float MaxBaseMoveSpeed => enemyDetails.movementDetails.GetBaseMaxMoveSpeed();
+    public MoveStatus MoveStatus => moveStatus;
     #endregion
 }

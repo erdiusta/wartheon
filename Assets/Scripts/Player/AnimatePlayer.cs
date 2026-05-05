@@ -69,6 +69,134 @@ public class AnimatePlayer : MonoBehaviour
         }
     }
 
+    #region CAELION
+    public void ApplyShield(AimDirection aimDirection, Player player)
+    {
+        Weapon playerOffHandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
+
+        Transform offHandHoldingHand = player.transform.GetChild(2).GetChild(0).GetChild(0).GetChild(0);
+
+        Animator shieldAnimator = player.transform.GetChild(2).GetComponent<Animator>();
+        SpriteRenderer shieldSpriteRenderer = player.transform.GetChild(2).GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
+
+        if (playerOffHandWeapon != null && playerOffHandWeapon.weaponStats.weaponClass == WeaponClass.Shield)
+        {
+            var currentShieldDetails = WartheonDatabase.Instance.GetWeaponDetails(playerOffHandWeapon.weaponStats.weaponTitle);
+
+            switch (aimDirection)
+            {
+                case AimDirection.Up:
+                case AimDirection.UpRight:
+                case AimDirection.UpLeft:
+                    shieldAnimator.runtimeAnimatorController = null;
+                    shieldSpriteRenderer.sprite = currentShieldDetails.weaponRearSprite;
+                    offHandHoldingHand.gameObject.SetActive(true);
+                    break;
+                default:
+                    shieldSpriteRenderer.sprite = currentShieldDetails.weaponFrontSprite;
+                    shieldAnimator.runtimeAnimatorController = currentShieldDetails.weaponAnimatorController;
+                    offHandHoldingHand.gameObject.SetActive(false);
+                    break;
+            }
+        }
+        else
+        {
+            if (!offHandHoldingHand.gameObject.activeSelf) offHandHoldingHand.gameObject.SetActive(true);
+        }
+    }
+
+    public void ApplySeismicSlam()
+    {
+        player.animator.SetTrigger("seismicSlam");
+    }
+
+    public void ApplyShieldBash(bool undo)
+    {
+        player.animator.SetBool("shieldBash", !undo);
+    }
+    #endregion
+
+    #region MORVEN
+
+    public void ApplyBloodDrain(AimDirection aim, AttackDirection attackDir, bool undo)
+    {
+        ResetAnimatonParameters();
+        SetAimParameters(aim);
+        SetAttackDirectionParameters(attackDir);
+
+        player.animator.SetBool("blood", !undo);
+    }
+
+    public void ApplyCullTheMeek(AimDirection aim, AttackDirection attackDir, bool undo)
+    {
+        ResetAnimatonParameters();
+        SetAimParameters(aim);
+        SetAttackDirectionParameters(attackDir);
+
+        player.animator.SetBool("cullTheMeek", !undo);
+    }
+    #endregion
+
+    #region MYCARA
+    public void ApplySheerCold(AimDirection aim, AttackDirection attackDir, bool undo)
+    {
+        ResetAnimatonParameters();
+        SetAimParameters(aim);
+        SetAttackDirectionParameters(attackDir);
+
+        player.animator.SetBool("sheerCold", !undo);
+    }
+    #endregion
+
+    #region NYXA
+    public void ApplyDontBlink(AimDirection aim, AttackDirection attackDir, bool undo)
+    {
+        ResetAnimatonParameters();
+        SetAimParameters(aim);
+        SetAttackDirectionParameters(attackDir);
+
+        player.animator.SetBool("dontBlink", !undo);
+    }
+
+    public void ApplyWhisperSlice(AimDirection aim, AttackDirection attackDir, bool undo)
+    {
+        ResetAnimatonParameters();
+        SetAimParameters(aim);
+        SetAttackDirectionParameters(attackDir);
+
+        player.animator.SetBool("whisperSlice", !undo);
+    }
+    #endregion
+
+    #region KARNAG
+    public void ApplyRage(AimDirection aim, AttackDirection attackDir)
+    {
+        ResetAnimatonParameters();
+        SetAimParameters(aim);
+        SetAttackDirectionParameters(attackDir);
+
+        player.animator.SetTrigger("rage");
+    }
+
+    public void ApplyShatterCry(AimDirection aim, AttackDirection attackDir)
+    {
+        ResetAnimatonParameters();
+        SetAimParameters(aim);
+        SetAttackDirectionParameters(attackDir);
+
+        player.animator.SetTrigger("shatterCry");
+    }
+
+    public void ApplyWhirlrend(AimDirection aim, AttackDirection attackDir, bool undo)
+    {
+        ResetAnimatonParameters();
+        SetAimParameters(aim);
+        SetAttackDirectionParameters(attackDir);
+
+        player.animator.SetBool("whirlrend", !undo);
+    }
+    #endregion
+
     public void EndRoll()
     {
         ResetAnimatonParameters();
@@ -102,6 +230,7 @@ public class AnimatePlayer : MonoBehaviour
     {
         if (player.animator.GetBool(Settings.isAttack)) return;
 
+        ApplyShield(aim, player);
         SetAimParameters(aim);
     }
 

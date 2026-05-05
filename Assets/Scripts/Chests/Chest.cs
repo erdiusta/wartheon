@@ -1,14 +1,15 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using Mirror;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(SpriteRenderer))]
 public class Chest : MonoBehaviour, IUsable
 {
-    [HideInInspector] public bool dropCompleted = false;
     [HideInInspector] public ChestState chestState = ChestState.closed;
     [HideInInspector] public Coroutine chestLockSoundRoutine;
+    [HideInInspector] public ChestNetwork chestNetwork;
 
     #region Tooltip
     [Tooltip("Populate withItemSpawnPoint transform")]
@@ -24,11 +25,11 @@ public class Chest : MonoBehaviour, IUsable
     DropItemNetwork dropItemNetwork;
 
     WartheonRNG rng;
-    bool isMultiplayer = false;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        chestNetwork = GetComponent<ChestNetwork>();
     }
 
     /// <summary>
@@ -47,6 +48,7 @@ public class Chest : MonoBehaviour, IUsable
     public void Initialize(PassiveItemDetailsSO passiveItemDetails, WartheonRNG rng)
     {
         this.passiveItemDetails = passiveItemDetails;
+        this.rng = rng;
         EnableChest();
     }
 
@@ -71,7 +73,8 @@ public class Chest : MonoBehaviour, IUsable
             case ChestState.closed:
                 if (GameManager.Instance.GetLocalPlayer().keyCount > 0)
                 {
-                    OpenChest();
+                    OpenChest(5000, isMultiplayer: false);
+
                     StartCoroutine(MoveItemDown(dropItem.transform, 1.5f));
                 }
                 else
@@ -94,80 +97,193 @@ public class Chest : MonoBehaviour, IUsable
         }
     }
 
+    [Server]
+    public void Server_StartChestProcess(uint playerNetId)
+    {
+        if (!isEnabled) return;
+
+        switch (chestNetwork.chestState)
+        {
+            case ChestState.closed:
+                if (GameManager.Instance.GetLocalPlayer().keyCount > 0)
+                {
+                    OpenChest(playerNetId, isMultiplayer: true);
+
+                    // Spawn network item here
+                    StartCoroutine(MoveItemDown(dropItemNetwork.transform, 1.5f, isMultiplayer: true));
+                }
+                else
+                {
+                    if (chestLockSoundRoutine == null)
+                    {
+                        chestLockSoundRoutine = StartCoroutine(PlayLockRoutine());
+                    }
+                }
+                break;
+            case ChestState.weaponItem:
+                break;
+            case ChestState.empty:
+                break;
+            default:
+                break;
+        }
+    }
+
     /// <summary>
     /// Open the chest on first use
     /// </summary>
-    private void OpenChest()
+    private void OpenChest(uint playerNetId, bool isMultiplayer)
     {
-        Player player = GameManager.Instance.GetLocalPlayer();
-        player.consumableEvent.CallKeyCountChangedEvent(--player.keyCount);
+        if (!isMultiplayer)
+        {
+            Player player = GameManager.Instance.GetLocalPlayer();
+            player.consumableEvent.CallKeyCountChangedEvent(--player.keyCount);
 
-        animator.SetBool(Settings.use, true);
+            animator.SetBool(Settings.use, true);
 
-        // chest open sound effect
-        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.chestOpen);
+            // chest open sound effect
+            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.chestOpen);
+        }
 
-        UpdateChestState();       
+        UpdateChestState(playerNetId, isMultiplayer);       
     }
 
     /// <summary>
     /// Create items based on what should be spawned and the chest state
     /// </summary>
-    private void UpdateChestState()
+    private void UpdateChestState(uint playerNetId, bool isMultiplayer)
     {
         if (weaponDetails != null)
         {
-            chestState = ChestState.weaponItem;
-            InstantiateWeaponItem();
+            if (isMultiplayer)
+            {
+                chestNetwork.openerNetId = playerNetId;
+                chestNetwork.chestState = ChestState.weaponItem;
+            }
+            else chestState = ChestState.weaponItem;
+
+            InstantiateWeaponItem(isMultiplayer);
         }
         else if (passiveItemDetails != null)
         {
-            chestState = ChestState.weaponItem;
-            InstantiatePassiveItem();
+            if (isMultiplayer)
+            {
+                chestNetwork.openerNetId = playerNetId;
+                chestNetwork.chestState = ChestState.weaponItem;
+            }
+            else chestState = ChestState.weaponItem;
+
+            InstantiatePassiveItem(isMultiplayer);
         }
         else
         {
-            chestState = ChestState.empty;
+            if (isMultiplayer) chestNetwork.chestState = ChestState.empty;
+            else chestState = ChestState.empty;
         }
     }
 
     /// <summary>
     /// Instantiate a weapon item for the player to collect
     /// </summary>
-    private void InstantiateWeaponItem()
+    private void InstantiateWeaponItem(bool isMultiplayer)
     {
-        InstantiateItem();
-        dropItem.hasWeaponDrop = true;
-        dropItem.hasSecondaryPassiveDrop = false;
+        InstantiateDropItem(isMultiplayer);
 
-        // Create a weapon instance with rolled modifiers
-        Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails, rng);
+        if (!isMultiplayer)
+        {
+            dropItem.hasWeaponDrop = true;
+            dropItem.hasSecondaryPassiveDrop = false;
 
-        dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, itemSpawnPoint.position);
+            // Create a weapon instance with rolled modifiers
+            Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails, rng);
+
+            dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, itemSpawnPoint.position, null);
+        }
+        else
+        {
+            Weapon weapon = new Weapon(Rarity.Basic);
+
+            dropItemNetwork.hasWeaponDrop = true;
+            dropItemNetwork.dropSourceType = DropSourceType.Enemy;
+
+            weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails, rng);
+
+            NetworkTransformUnreliable nt = dropItemNetwork.GetComponent<NetworkTransformUnreliable>();
+            nt.ServerTeleport(transform.position, Quaternion.identity);
+
+            dropItemNetwork.weaponTitle = weapon.weaponStats.weaponTitle;
+            dropItemNetwork.weaponClass = weapon.weaponStats.weaponClass;
+            dropItemNetwork.weaponStats = weapon.weaponStats;
+        }
     }
 
     /// <summary>
     /// Instantiate a passive item for the player to collect
     /// </summary>
-    private void InstantiatePassiveItem()
+    private void InstantiatePassiveItem(bool isMultiplayer)
     {
-        InstantiateItem();
-        dropItem.hasWeaponDrop = false;
-        dropItem.hasSecondaryPassiveDrop = true;
+        InstantiateDropItem(isMultiplayer);
 
-        // Create a passive item instance with rolled modifiers
-        PassiveItem passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
+        if (!isMultiplayer)
+        {
+            dropItem.hasWeaponDrop = false;
+            dropItem.hasSecondaryPassiveDrop = true;
 
-        dropItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, itemSpawnPoint.position);
+            // Create a passive item instance with rolled modifiers
+            PassiveItem passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
+
+            dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, itemSpawnPoint.position, null);
+        }
+        else
+        {
+            PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
+
+            if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
+            {
+                dropItemNetwork.hasPrimaryPassiveDrop = true;
+                dropItemNetwork.dropSourceType = DropSourceType.Enemy;
+                passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng, false, Rarity.Basic, isPrimaryPassive: true);
+            }
+            else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
+            {
+                dropItemNetwork.hasSecondaryPassiveDrop = true;
+                dropItemNetwork.dropSourceType = DropSourceType.Enemy;
+                passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
+            }
+
+            NetworkTransformUnreliable nt = dropItemNetwork.GetComponent<NetworkTransformUnreliable>();
+            nt.ServerTeleport(transform.position, Quaternion.identity);
+
+            dropItemNetwork.passiveItemType = passiveItem.passiveStats.passiveItemType;
+            dropItemNetwork.passiveItemSlotName = passiveItem.passiveStats.passiveItemSlotName;
+            dropItemNetwork.passiveStats = passiveItem.passiveStats; 
+        }
     }
 
     /// <summary>
     /// Instantiate a chest item
     /// </summary>
-    private void InstantiateItem()
+    private void InstantiateDropItem(bool isMultiplayer)
     {
-        dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        dropItem = dropItemGameObject.GetComponent<DropItem>();
+        if (!isMultiplayer)
+        {
+            dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+            dropItem = dropItemGameObject.GetComponent<DropItem>();
+        }
+        else
+        {
+            if (NetworkServer.active)
+            {
+                dropItemGameObject = Instantiate(GameResources.Instance.chestItemNetworkPrefab);
+                NetworkServer.Spawn(dropItemGameObject);
+
+                dropItemNetwork = dropItemGameObject.GetComponent<DropItemNetwork>();
+                dropItemNetwork.dropSourceType = DropSourceType.Enemy;
+
+                // Set collider to true
+                dropItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
+            }
+        }
     }
 
     public void PlayLock()
@@ -193,15 +309,22 @@ public class Chest : MonoBehaviour, IUsable
     /// <summary>
     /// Slow motion item drop from chest
     /// </summary>
-    private IEnumerator MoveItemDown(Transform itemTransform, float distance)
+    private IEnumerator MoveItemDown(Transform itemTransform, float distance, bool isMultiplayer = false)
     {
         float elapsedTime = 0f;
         Vector3 initialPosition = itemTransform.position;
         Vector3 targetPosition = initialPosition - new Vector3(0f, distance, 0f);
 
+        DropItemNetwork dropItemNetwork = itemTransform.GetComponent<DropItemNetwork>();
+        DropItem dropItem = itemTransform.GetComponent<DropItem>();
+
+        yield return null;
+
+        if (isMultiplayer) dropItemNetwork.canInitialize = true;
+
         while (elapsedTime < 2f)
         {
-            if (itemTransform == null) break;
+            if (itemTransform == null || itemTransform.Equals(null)) break;
 
             elapsedTime += Time.deltaTime; // Increment time based on frame rate
             itemTransform.position = Vector3.Lerp(initialPosition, targetPosition, elapsedTime);
@@ -209,9 +332,12 @@ public class Chest : MonoBehaviour, IUsable
         }
 
         // Ensure the item reaches the target position
-        itemTransform.position = targetPosition;
+        if(itemTransform != null && !itemTransform.Equals(null)) itemTransform.position = targetPosition;
+
+
 
         // Make sure drop completed
-        dropCompleted = true;
+        if (isMultiplayer) dropItemNetwork.dropCompleted = true;
+        else dropItem.dropCompleted = true;
     }
 }

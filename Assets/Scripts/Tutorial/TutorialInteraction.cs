@@ -259,11 +259,13 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 // Initialize drop
                 Weapon weapon = WeaponDropGenerator.CreateRolledInstance(player.playerDetails.startingWeapon, rng);
 
+                WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
+
                 DropItem dropItem = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<DropItem>(true);
                 dropItem.gameObject.SetActive(true);
 
                 dropItem.hasWeaponDrop = true;
-                dropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, dropItem.transform.position, true);
+                dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, dropItem.transform.position, null, true);
                 break;
             case TutorialPhase.AimAndFire:
                 isCheckPlayed = false;
@@ -347,10 +349,9 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
 
                 // Initialize drop
                 PassiveItem passiveItem = new PassiveItem(GameResources.Instance.healthPassiveItem.rarity);
-                passiveItem.passiveItemDetails = GameResources.Instance.healthPassiveItem;
 
                 dropItem.hasPrimaryPassiveDrop = true;
-                dropItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, dropItem.transform.position, true);
+                dropItem.Initialize(passiveItem, GameResources.Instance.healthPassiveItem.passiveItemSprite, dropItem.transform.position, null, true);
                 break;
             case TutorialPhase.PickUpPrimaryPassiveCoin:
                 isCheckPlayed = false;
@@ -367,10 +368,9 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
 
                 // Initialize drop
                 PassiveItem secondPassiveItem = new PassiveItem(GameResources.Instance.coinPassiveItem.rarity);
-                secondPassiveItem.passiveItemDetails = GameResources.Instance.coinPassiveItem;
 
                 dropItem.hasPrimaryPassiveDrop = true;
-                dropItem.Initialize(secondPassiveItem, secondPassiveItem.passiveItemDetails.passiveItemSprite, dropItem.transform.position, true);
+                dropItem.Initialize(secondPassiveItem, GameResources.Instance.coinPassiveItem.passiveItemSprite, dropItem.transform.position, null, true);
                 break;
             case TutorialPhase.Parry:
                 isCheckPlayed = false;
@@ -454,7 +454,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 passiveItem = PassiveDropGenerator.CreateRolledInstance(GameResources.Instance.secondaryPassiveItem, rng);
 
                 dropItem.hasSecondaryPassiveDrop = true;
-                dropItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, dropItem.transform.position, true);
+                dropItem.Initialize(passiveItem, GameResources.Instance.secondaryPassiveItem.passiveItemSprite, dropItem.transform.position, null, true);
 
                 break;
             case TutorialPhase.SkillsPage:

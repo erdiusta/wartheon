@@ -23,6 +23,8 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
     bool passedToWait;
 
+    EnemySpawnerNetwork spawnerNetwork;
+
     public bool PassedToWait
     {
         get => passedToWait;
@@ -91,7 +93,7 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
         }
 
         // Emergency pullback if Moravelle drifts outside bounds
-        if (IsOutsideBossRoom(transform.position, cellMin, cellMax))
+        if (IsOutsideBossRoom(transform.position, cellMin, cellMax, true))
         {
             Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
             transform.position = safePos;
@@ -412,7 +414,7 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
                     Vector3Int cellPosition = (Vector3Int)currentRoomNetData.spawnPositions[Random.Range(0, currentRoomNetData.spawnPositions.Length)];
 
                     // Create Enemy - Get next enemy type to spawn 
-                    EnemySpawnerNetwork.Instance.CreateEnemy(enemyDetails.enemyMinionDetails, grid.CellToWorld(cellPosition));
+                    spawnerNetwork.CreateEnemy(enemyDetails.enemyMinionDetails, grid.CellToWorld(cellPosition));
                 }
             }
 

@@ -7,7 +7,7 @@ public class DungeonNetworkController : NetworkBehaviour
 {
     public static DungeonNetworkController Instance { get; private set; }
 
-    private readonly HashSet<string> processedRooms = new();
+    public readonly HashSet<string> processedRooms = new();
 
     private void Awake()
     {
@@ -20,20 +20,65 @@ public class DungeonNetworkController : NetworkBehaviour
     public void ServerRoomEntered(string roomId, NetworkIdentity initiator, Vector2 entryDirection)
     {
         // Hard Guard
-        if (processedRooms.Contains(roomId)) return;
-        processedRooms.Add(roomId);
+        if (!processedRooms.Add(roomId)) return;
 
         DungeonRuntime.MarkRoomVisited(roomId);
         RoomNetData roomNetData = DungeonRuntime.GetRoomNetData(roomId);
 
-        RpcRoomChanged(roomNetData);
+        InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);
+        if (ir == null) return;
+
+        if (roomNetData.isShopRoom && !roomNetData.shopRoomGoodsCreated)
+        {
+            WartheonRNG rng = new WartheonRNG(Random.Range(int.MinValue, int.MaxValue));
+            Counter counter = ir.GetComponentInChildren<Counter>();
+
+            NpcType npcType = ir.GetComponentInChildren<NPC>().npcType;
+
+            if (counter != null)
+            {
+                if (npcType == NpcType.Gambler)
+                {
+                    RpcSpawnForClient(roomNetData);
+                }
+                else
+                {
+                    counter.SpawnItems(ir, rng, true);
+                }
+            }
+        }
+
+        RpcRoomChanged(roomId, roomNetData);
 
         if (roomNetData.roomCombatState == RoomCombatState.Idle) TeleportAllPlayersNearInitiator(roomNetData, initiator, entryDirection);
     }
 
     [ClientRpc]
-    private void RpcRoomChanged(RoomNetData roomNetData)
+    void RpcSpawnForClient(RoomNetData roomNetData)
     {
+        InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);
+        if (ir == null) return;
+
+        if (roomNetData.isShopRoom && !roomNetData.shopRoomGoodsCreated)
+        {
+            roomNetData.shopRoomGoodsCreated = true;
+
+            WartheonRNG rng = new WartheonRNG(Random.Range(int.MinValue, int.MaxValue));
+            Counter counter = ir.GetComponentInChildren<Counter>();
+
+            if (counter != null) counter.SpawnItems(ir, rng, true);
+        }
+    }
+
+    [ClientRpc]
+    private void RpcRoomChanged(string roomId, RoomNetData roomNetData)
+    {
+        if (!isServer)
+        {
+            if (processedRooms.Contains(roomId)) return;
+            processedRooms.Add(roomId);
+        }
+
         StaticEventHandler.CallRoomChangedEvent(null, roomNetData);
     }
 
@@ -89,4 +134,15 @@ public class DungeonNetworkController : NetworkBehaviour
             if (data.isEntrance) StaticEventHandler.CallRoomChangedEvent(null, data);
         }
     }
+
+    //public void RequestBuildRoomNetDataDictionary()
+    //{
+    //    RpcBuildRoomNetDataDictionary();
+    //}
+
+    //[ClientRpc]
+    //private void RpcBuildRoomNetDataDictionary()
+    //{
+    //    if (!isServer) DungeonRuntime.RoomNetDataDict = BuildRoomNetDataDictionary();
+    //}
 }

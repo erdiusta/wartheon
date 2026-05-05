@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad0d48074276e0640b14ec3640a668d8, type: 3}
-  m_Name: ProjectileDetails_TreantWhip
+  m_Name: ProjectileDetails_SylvarokWhip
   m_EditorClassIdentifier: 
-  projectileName: Treant Whip Blob
+  projectileName: Sylvarok Whip Blob
   isPlayerProjectile: 0
   projectilePrefabArray:
   - {fileID: 2585463276777236944, guid: 6a5368c795ec3214a9c5205ac2869442, type: 3}

@@ -39,9 +39,10 @@ public class TriangleOrigin : MonoBehaviour
         {
             if (isMainHand)
             {
-                WeaponDetailsSO weapon = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails;
-                coneLength = weapon.coneLength;
-                coneAngle = weapon.coneAngle;
+                WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
+                coneLength = weaponDetails.coneLength;
+                coneAngle = weaponDetails.coneAngle;
             }
         }
     }
@@ -53,9 +54,10 @@ public class TriangleOrigin : MonoBehaviour
         {
             if (player.activeWeapon.GetCurrentOffHandWeapon() != null && !isMainHand)
             {
-                WeaponDetailsSO weapon = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails;
-                coneLength = weapon.coneLength;
-                coneAngle = weapon.coneAngle;
+                WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentOffHandWeapon().weaponStats.weaponTitle);
+
+                coneLength = weaponDetails.coneLength;
+                coneAngle = weaponDetails.coneAngle;
             }
         }
     }

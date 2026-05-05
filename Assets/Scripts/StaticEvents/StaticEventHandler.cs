@@ -223,11 +223,11 @@ public static class StaticEventHandler
     }
 
     // Gamble completed event
-    public static event Action OnGambleCompleted;
+    public static event Action<GambleArgs> OnGambleCompleted;
 
-    public static void CallGambleCompletedEvent()
+    public static void CallGambleCompletedEvent(Player caller)
     {
-        OnGambleCompleted?.Invoke();
+        OnGambleCompleted?.Invoke(new GambleArgs { caller = caller});
     }
 
     // Book weapon pick-up event
@@ -238,12 +238,20 @@ public static class StaticEventHandler
         OnWeaponPickedUp?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, pickedUpByOffHand = pickedUpByOffHand });
     }
 
+    // Book weapon removed from slot
+    public static event Action<WeaponAddedToBookArgs> OnWeaponRemoved;
+
+    public static void CallWeaponRemovedFromEquippedSlot(SlotType slotType)
+    {
+        OnWeaponRemoved?.Invoke(new WeaponAddedToBookArgs { slotType = slotType });
+    }
+
     // Book weapon pick-up and tranport to inventory event
     public static event Action<WeaponAddedToBookArgs> OnWeaponAddedToInventory;
 
     public static void CallOnWeaponAddedToInventoryEventForBook(Weapon weapon, int inventoryIndexNumber)
     {
-        OnWeaponAddedToInventory?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, inventoryIndexNumber = inventoryIndexNumber });
+        OnWeaponAddedToInventory?.Invoke(new WeaponAddedToBookArgs { weapon = weapon, inventoryIndexNumber = inventoryIndexNumber});
     }
 
     // Book weapon 
@@ -252,6 +260,13 @@ public static class StaticEventHandler
     public static void CallInventoryWeaponDroppedEventForBook(int inventoryIndexNumber)
     {
         OnInventoryWeaponDropped?.Invoke(new WeaponAddedToBookArgs { inventoryIndexNumber = inventoryIndexNumber });
+    }
+
+    public static event Action<WeaponAddedToBookArgs> OnInventoryItemRemoved;
+
+    public static void CallInventoryItemRemovedForBook(int inventoryIndexNumber)
+    {
+        OnInventoryItemRemoved?.Invoke(new WeaponAddedToBookArgs { inventoryIndexNumber = inventoryIndexNumber });
     }
 
     // Book weapon drop event
@@ -284,14 +299,6 @@ public static class StaticEventHandler
         });
     }
 
-    // Item removed from active item slot on book event
-    public static event Action OnItemRemovedFromActiveItemSlot;
-
-    public static void CallItemRemovedFromActiveItemSlot()
-    {
-        OnItemRemovedFromActiveItemSlot?.Invoke();
-    }
-
     // Item added to passiveitem slot on book event
     public static event Action<PassiveItemAddedToBookArgs> OnItemAddedToPassiveItemSlot;
 
@@ -305,7 +312,7 @@ public static class StaticEventHandler
 
     public static void CallPassiveItemAddedToInventorySlot(PassiveItem passiveItem, int inventoryIndexNumber)
     {
-        OnPassiveItemAddedToInventorySlot?.Invoke(new PassiveItemAddedToBookArgs { passiveItem = passiveItem, inventoryIndexNumber = inventoryIndexNumber });
+        OnPassiveItemAddedToInventorySlot?.Invoke(new PassiveItemAddedToBookArgs { passiveItem = passiveItem, inventoryIndexNumber = inventoryIndexNumber});
     }
 
     // Item removed from passiveitem inventory slot on book event
@@ -347,9 +354,9 @@ public static class StaticEventHandler
     // Items placed to another inventory slot
     public static event Action<ItemGenericPlacedArgs> OnGenericItemPlacedToEmptyInventory;
 
-    public static void CallGenericItemPlacedToEmptyInInventory(ItemGeneric item,int fromIndex, int toIndex, Sprite sprite)
+    public static void CallGenericItemPlacedToEmptyInInventory(ItemGeneric item,int fromIndex, int toIndex)
     {
-        OnGenericItemPlacedToEmptyInventory?.Invoke(new ItemGenericPlacedArgs{ item = item, fromIndex = fromIndex, toIndex = toIndex, sprite = sprite });
+        OnGenericItemPlacedToEmptyInventory?.Invoke(new ItemGenericPlacedArgs{ item = item, fromIndex = fromIndex, toIndex = toIndex});
     }
 
     // Items swapped between inventory
@@ -359,6 +366,16 @@ public static class StaticEventHandler
     {
         OnGenericItemsSwappedInInventory?.Invoke(new ItemGenericSwappedArgs { draggableItem = draggableItem, targetItem = targetItem, 
             draggableItemInventoryIndex = draggableItemInventoryIndex, targetItemInventoryIndex = targetItemInventoryIndex});
+    }
+
+    // Swap failed event
+    public static event Action<SwapFailedArgs> OnSwapFailed;
+
+    public static void CallSwapFailedEvent(PopUpReason reason)
+    {
+        GameManager.Instance.OpenPopUpLog(reason);
+
+        OnSwapFailed?.Invoke(new SwapFailedArgs { reason = reason });
     }
 
     // Health change on book event
@@ -380,7 +397,7 @@ public static class StaticEventHandler
     // Introduction ui screen opened event
     public static event Action<IntroductionPopUpUIArgs> OnDropPickedUp;
 
-    public static void CallIntroductionPopUpEvent(DropType dropType, ItemGeneric receivable)
+    public static void CallIntroductionPopUpEvent(ItemType dropType, ItemGeneric receivable)
     {
         OnDropPickedUp?.Invoke(new IntroductionPopUpUIArgs { dropType = dropType, receivable = receivable });
     }
@@ -594,7 +611,6 @@ public class ItemGenericPlacedArgs : EventArgs
     public ItemGeneric item;
     public int fromIndex;
     public int toIndex;
-    public Sprite sprite;
 }
 
 public class ItemGenericSwappedArgs : EventArgs
@@ -636,6 +652,11 @@ public class PassiveItemRemovedFromBookArgs : EventArgs
     public int inventoryIndexNumber;
 }
 
+public class SwapFailedArgs : EventArgs
+{
+    public PopUpReason reason;
+}
+
 public class HealthChangedArgs : EventArgs
 {
     public int currentHealth;
@@ -666,7 +687,7 @@ public class InventoryPassiveUpgradedArgs : EventArgs
 
 public class IntroductionPopUpUIArgs : EventArgs
 {
-    public DropType dropType;
+    public ItemType dropType;
     public ItemGeneric receivable;
 }
 
@@ -685,6 +706,11 @@ public class CoinAndShardArgs : EventArgs
 {
     public int updatedCoinAmount;
     public int updatedShardAmount;
+}
+
+public class GambleArgs : EventArgs
+{
+    public Player caller;
 }
 
 public class MobHoverArgs : EventArgs
@@ -718,7 +744,6 @@ public class PassiveUnlockArgs : EventArgs
 {
     public PassiveItemType passiveItemType;
 }
-
 
 public class EnemyKilledArgs : EventArgs
 {

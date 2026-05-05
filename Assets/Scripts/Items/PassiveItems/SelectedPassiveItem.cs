@@ -1,12 +1,15 @@
+using Mirror;
 using UnityEngine;
 
 public class SelectedPassiveItem : MonoBehaviour
 {
     SetPassiveItemEvent setPassiveItemEvent;
+    Player player;
 
     private void Awake()
     {
         setPassiveItemEvent = GetComponent<SetPassiveItemEvent>();
+        player = GetComponent<Player>();
     }
 
     private void OnEnable()
@@ -34,18 +37,28 @@ public class SelectedPassiveItem : MonoBehaviour
     {
         if (args.player.equippedPassiveItems.TryGetValue(args.passiveItemSlotName, out PassiveItem equippedItem) && equippedItem != null)
         {
-            RemovePassiveEffects(args.player, equippedItem);
             args.player.equippedPassiveItems[args.passiveItemSlotName] = null; // Item removed from passive slot
         }
 
-        if (!InventoryManager.Instance.IsInventoryFull() && !args.isSwap && !args.dropButton)
+        if (!NetworkServer.active && !NetworkClient.active)
         {
-            args.passiveItem.itemSlotStatus = ItemSlotStatus.Inventory;
-            InventoryManager.Instance.PlaceItemToInventoryIndexSlot(args.passiveItem); // Item added to inventory slot
+            if (!args.player.playerInventory.IsInventoryFull() && !args.isSwap && !args.dropButton)
+            {
+                args.passiveItem.ItemSlotStatus = ItemSlotStatus.Inventory;
+                player.playerInventory.PlaceItemToInventoryIndexSlot(args.passiveItem); // Item added to inventory slot
+            }
+        }
+        else
+        {
+            if (!args.player.playerInventory.IsInventoryFull() && !args.isSwap && !args.dropButton)
+            {
+                args.passiveItem.ItemSlotStatus = ItemSlotStatus.Inventory;
+                player.playerInventory.PlaceItemToInventoryIndexSlot(args.passiveItem); // Item added to inventory slot
+            }
         }
 
         // Rebuild once and update stats/UI once
-        args.player.RecalculateSecondaryStats();
+        player.RecalculateSecondaryStats();
         StaticEventHandler.CallStatsChangedOnTheBookEvent();
     }
 
@@ -53,41 +66,15 @@ public class SelectedPassiveItem : MonoBehaviour
     {
         PassiveItemSlotName slot = passiveItemSlotName;
 
-        // If already equipped and not a swap, move to inventory
-        if (player.equippedPassiveItems[slot] != null && !isSwap)
-        {
-            // Swap: move currently equipped item to inventory
-            if (!InventoryManager.Instance.IsInventoryFull())
-            {
-                // Place current item to inventory
-                InventoryManager.Instance.PlaceItemToInventoryIndexSlot(player.equippedPassiveItems[slot]);
-            }
+        if (isSwap) return;
 
-            // Remove old item effects
-            RemovePassiveEffects(player, player.equippedPassiveItems[slot]);
+        if (!player.playerInventory.IsInventoryFull())
+        {
+            // Place current item to inventory
+            player.playerInventory.PlaceItemToInventoryIndexSlot(player.equippedPassiveItems[slot]);
         }
 
         // Equip new item and apply effects
         player.equippedPassiveItems[slot] = newItem;
-        ApplyPassiveEffects(player, newItem);
-    }
-
-    private void ApplyPassiveEffects(Player player, PassiveItem item)
-    {
-        if (item == null || item.passiveItemDetails == null) return;
-
-        // Optional gameplay flag (non-stat behavior)
-        if (item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak) player.shadowCloakEquipped = true;
-    }
-
-    private void RemovePassiveEffects(Player player, PassiveItem item)
-    {
-        if (item == null) return;
-
-        // Optional gameplay flag (non-stat behavior)
-        if (item.passiveItemDetails != null && item.passiveItemDetails.passiveItemType == PassiveItemType.ShadowCloak)
-        {
-            player.shadowCloakEquipped = false;
-        }
     }
 }

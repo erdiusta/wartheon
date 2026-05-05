@@ -54,7 +54,10 @@ public class EyeOfTheStorm : MonoBehaviour
         }
 
         Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
-        if (mainHandWeapon == null || mainHandWeapon.weaponDetails.weaponCurrentProjectile == null) return;
+
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(mainHandWeapon.weaponStats.weaponTitle);
+
+        if (mainHandWeapon == null || weaponDetails.weaponCurrentProjectile == null) return;
 
         float damageModifier = 1f;
 

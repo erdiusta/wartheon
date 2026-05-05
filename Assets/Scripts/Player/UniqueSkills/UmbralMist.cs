@@ -9,6 +9,9 @@ public class UmbralMist : MonoBehaviour
     bool isSmokeEnabled;
     Player player;
 
+    WeaponTitle lastWeaponTitle;
+    WeaponDetailsSO currentWeaponDetails;
+
     private void OnEnable()
     {
         OnSmokeActivated.AddListener(EnableSmoke);
@@ -44,12 +47,18 @@ public class UmbralMist : MonoBehaviour
     {
         if (collision.CompareTag(Settings.enemyTag) && isSmokeEnabled)
         {
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle != lastWeaponTitle)
+            {
+                currentWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+                lastWeaponTitle = player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle;
+            }
+
             Enemy affectedEnemy = collision.GetComponent<Enemy>();
 
             if (affectedEnemy != null)
             {
                 IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(affectedEnemy.gameObject);
-                player.meleeAttackMainHand.CheckBlindStatus(affectedEnemy, enemyCombatData, umbralMist: true);
+                player.meleeAttackMainHand.CheckBlindStatus(currentWeaponDetails, affectedEnemy, enemyCombatData, umbralMist: true);
             }
         }
     }

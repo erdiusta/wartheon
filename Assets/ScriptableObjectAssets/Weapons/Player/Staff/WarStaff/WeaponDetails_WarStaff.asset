@@ -54,7 +54,7 @@ MonoBehaviour:
   weaponSecondaryProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 11400000, guid: e1c8591c71ab89d448879b0d39d25d09, type: 2}
-  weaponImpactSoundEffect: {fileID: 0}
+  weaponImpactSoundEffect: {fileID: 11400000, guid: 05f4834c93baa084aa8d96b1654caa0e, type: 2}
   isMeleeWeapon: 0
   isShield: 0
   shieldArmorRate: 0.1
@@ -80,6 +80,4 @@ MonoBehaviour:
   dodgeChance: 0.4
   hasSwing: 0
   hasThrust: 0
-  hasInfiniteProjectile: 1
-  weaponProjectileCapacity: 0
   weaponPrechargeTime: 0

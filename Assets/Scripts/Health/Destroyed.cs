@@ -98,7 +98,7 @@ public class Destroyed : MonoBehaviour
             if (killerPlayer != null)
             {
                 // Upon death, add experience points to player's related branch mastery points
-                switch (killerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass)
+                switch (killerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass)
                 {
                     case WeaponClass.Sword:
                         killerPlayer.branchMastery.swordMasteryPoints += enemyCombatData.ExperiencePoints;
@@ -155,28 +155,36 @@ public class Destroyed : MonoBehaviour
                             else if (!NetworkServer.active && !NetworkClient.active) enemy.enemyAI.StopAllCoroutines();
                             break;
                         case EnemyBehaviour.Moravelle:
-                            enemy.GetComponent<MoravelleAI>().StopAllCoroutines();
+                            if (NetworkServer.active) enemy.GetComponent<MoravelleAINetwork>().StopAllCoroutines();
+                            else if (!NetworkServer.active && !NetworkClient.active) enemy.GetComponent<MoravelleAI>().StopAllCoroutines();
                             break;
                         case EnemyBehaviour.Sylvarok:
-                            enemy.GetComponent<SylvarokAI>().StopAllCoroutines();
+                            if (NetworkServer.active) enemy.GetComponent<SylvarokAINetwork>().StopAllCoroutines();
+                            else if (!NetworkServer.active && !NetworkClient.active) enemy.GetComponent<SylvarokAI>().StopAllCoroutines();
                             break;
                         case EnemyBehaviour.Galvanus:
-                            enemy.GetComponent<GalvanusAI>().StopAllCoroutines();
+                            if (NetworkServer.active) enemy.GetComponent<GalvanusAINetwork>().StopAllCoroutines();
+                            else if (!NetworkServer.active && !NetworkClient.active) enemy.GetComponent<GalvanusAI>().StopAllCoroutines();
                             break;
                         case EnemyBehaviour.Sepharoth:
-                            enemy.GetComponent<SepharothAI>().StopAllCoroutines();
+                            if (NetworkServer.active) enemy.GetComponent<SepharothAINetwork>().StopAllCoroutines();
+                            else if (!NetworkServer.active && !NetworkClient.active) enemy.GetComponent<SepharothAI>().StopAllCoroutines();
                             break;
                         case EnemyBehaviour.Cryothar:
-                            enemy.GetComponent<CryotharAI>().StopAllCoroutines();
+                            if (NetworkServer.active) enemy.GetComponent<CryotharAINetwork>().StopAllCoroutines();
+                            else if (!NetworkServer.active && !NetworkClient.active) enemy.GetComponent<CryotharAI>().StopAllCoroutines();
                             break;
                         case EnemyBehaviour.Venomancer:
-                            enemy.GetComponent<VenomancerAI>().StopAllCoroutines();
+                            if (NetworkServer.active) enemy.GetComponent<VenomancerAINetwork>().StopAllCoroutines();
+                            else if (!NetworkServer.active && !NetworkClient.active) enemy.GetComponent<VenomancerAI>().StopAllCoroutines();
                             break;
                         case EnemyBehaviour.Pyrothar:
-                            enemy.GetComponent<PyrotharAI>().StopAllCoroutines();
+                            if (NetworkServer.active) enemy.GetComponent<PyrotharAINetwork>().StopAllCoroutines();
+                            else if (!NetworkServer.active && !NetworkClient.active) enemy.GetComponent<PyrotharAI>().StopAllCoroutines();
                             break;
                         case EnemyBehaviour.Moldran:
-                            enemy.GetComponent<MoldranAI>().StopAllCoroutines();
+                            if (NetworkServer.active) enemy.GetComponent<MoldranAINetwork>().StopAllCoroutines();
+                            else if (!NetworkServer.active && !NetworkClient.active) enemy.GetComponent<MoldranAI>().StopAllCoroutines();
                             break;
                         case EnemyBehaviour.Roaming:
                             if (NetworkServer.active) enemy.enemyAINetwork.StopAllCoroutines();

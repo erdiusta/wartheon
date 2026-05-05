@@ -4,10 +4,13 @@ using UnityEngine;
 
 public static class WeaponDropGenerator
 {
-    public static Weapon GetWeaponWithStats(WeaponStats weaponStats, Rarity rarity)
+    public static Weapon GetWeaponWithStats(WeaponStats weaponStats, Rarity rarity, ItemSlotStatus slotStatus, int inventoryIndex)
     {
         Weapon weapon = new Weapon(rarity);
         weapon.weaponStats = weaponStats;
+        weapon.ItemSlotStatus = slotStatus;
+        weapon.ItemType = ItemType.Weapon;
+        weapon.InventoryIndex = inventoryIndex;
 
         return weapon;
     }
@@ -16,17 +19,25 @@ public static class WeaponDropGenerator
     {
         Rarity weaponRarity = GetRarity(rng);
 
-        Weapon weapon = new Weapon(weaponRarity)
-        {
-            // Copy passive flags from SO so tooltips & effects know what this instance can do
-            weaponDetails = weaponDetails,
-        };
+        Weapon weapon = new Weapon(weaponRarity);
 
         weapon.weaponStats = new WeaponStats
         {
+            weaponClass = weaponDetails.weaponClass,
             weaponTitle = weaponDetails.weaponTitle,
+            wieldType = weaponDetails.wieldType,
+            isMeleeWeapon = weaponDetails.isMeleeWeapon,
+            hasSwing = weaponDetails.hasSwing,
+            hasThrust = weaponDetails.hasThrust,
+            elementalForgeRate = weaponDetails.elementalForgeRate,
+
             baseUniqueRolled = weaponDetails.baseUniqueModifier,
             baseTypeRolled = weaponDetails.baseTypeModifier,
+
+            physicalDamageMin = weaponDetails.physicalDamageMin,
+            physicalDamageMax = weaponDetails.physicalDamageMax,
+            magicDamageMin = weaponDetails.magicDamageMin,
+            magicDamageMax = weaponDetails.magicDamageMax,
 
             physicalAttackDamageIncrease = Mathf.RoundToInt((weaponDetails.isShield ? 0 : weaponDetails.isMeleeWeapon ? weaponDetails.physicalDamageMin
             : weaponDetails.weaponCurrentProjectile.projectilePhyDamageMin) * (1 - weaponDetails.elementalForgeRate)),
@@ -34,8 +45,16 @@ public static class WeaponDropGenerator
             magicAttackDamageIncrease = Mathf.RoundToInt((weaponDetails.isShield ? 0 : weaponDetails.isMeleeWeapon ? weaponDetails.physicalDamageMin
             : weaponDetails.weaponCurrentProjectile.projectilePhyDamageMin) * weaponDetails.elementalForgeRate),
 
+            weaponCooldownDuration = weaponDetails.weaponCooldownDuration,
+            blockChance = weaponDetails.blockChance,
+            weaponAttackRating = weaponDetails.weaponAttackRating,
+            criticalHitChance = weaponDetails.criticalHitChance,
+            criticalHitDamage = weaponDetails.criticalHitDamageMultiplier,
+
             criticalHitChanceIncrease = weaponDetails.criticalHitChance,
-            criticalHitDamageIncrease = weaponDetails.criticalHitDamageMultiplier
+            criticalHitDamageIncrease = weaponDetails.criticalHitDamageMultiplier,
+
+            weaponPrechargeTime = weaponDetails.weaponPrechargeTime
         };
 
         // Additional pool rolls depend on rarity
@@ -110,7 +129,7 @@ public static class WeaponDropGenerator
 
     public static void SetWeaponModifier(ref Weapon weapon, BoostType boostType, WeaponDetailsSO weaponDetails, WartheonRNG rng)
     {
-        bool isMeleeWeapon = weaponDetails.isMeleeWeapon;
+        bool isMeleeWeapon = weapon.weaponStats.isMeleeWeapon;
 
         // Determine base damage safely (shields -> 0)
         int baseMin = 0, baseMax = 0;
@@ -123,7 +142,7 @@ public static class WeaponDropGenerator
 
         if (!isShield)
         {
-            if (weaponDetails.isMeleeWeapon)
+            if (weapon.weaponStats.isMeleeWeapon)
             {
                 baseMin = weaponDetails.physicalDamageMin;
                 baseMax = weaponDetails.physicalDamageMax;

@@ -25,9 +25,8 @@ public class EnemyAINetwork : NetworkBehaviour
     #endregion Tooltip
     public LayerMask avoidLayerMask;
 
-    [HideInInspector] public MoveStatus moveStatus = MoveStatus.Idle;
     [HideInInspector] public int updateFrameNumber = 1; // default value.  This is set by the enemy spawner
-    [HideInInspector] public EnemyPhase enemyPhase;
+    [HideInInspector] [SyncVar] public EnemyPhase enemyPhase;
 
     protected Enemy enemy;
     protected Coroutine attackAnimationRoutine;
@@ -82,12 +81,15 @@ public class EnemyAINetwork : NetworkBehaviour
     protected float speedReducer;
 
     // MULTIPLAYER
+    protected bool isMultiplayer;
     protected bool enemyFullyInitialized;
     protected IEnemyCombatData enemyCombatData;
     protected IEnemyMovementData enemyMovementData;
     protected bool wasMoving = false;
     protected uint enemyNetId = 0;
     protected float targetRefreshTimer;
+
+    protected EnemySpawnerNetwork spawnerNetwork;
 
     protected virtual void Awake()
     {
@@ -112,20 +114,23 @@ public class EnemyAINetwork : NetworkBehaviour
     {
         if (!isServer) return System.Array.Empty<Vector2Int>();
 
-        if (EnemyRoomResolver.TryGetRoom(out _, out var spawnPositions)) return spawnPositions;
+        if (EnemyRoomResolver.TryGetRoom(out _, out var spawnPositions, spawnerNetwork)) return spawnPositions;
         return System.Array.Empty<Vector2Int>();
     }
 
-    protected virtual void Start() {}
+    protected virtual void Start() 
+    {
+        spawnerNetwork = FindFirstObjectByType<EnemySpawnerNetwork>();
+    }
 
     public override void OnStartServer()
     {
         base.OnStartServer();
 
+        isMultiplayer = true;
+
         // Cache player target reference
         targetPlayer = HelperUtilities.GetClosestPlayer(transform.position);
-
-        if (targetPlayer != null) enemy.aiDestinationSetter.target = targetPlayer.transform;
 
         enemy.currentMoveSpeed = enemyDetails.movementDetails.GetBaseMaxMoveSpeed();
 
@@ -134,6 +139,8 @@ public class EnemyAINetwork : NetworkBehaviour
         // Set enemy aiLerp speed dynamically based on related enemy's moveSpeed
         if (!enemy.Isboss)
         {
+            if (targetPlayer != null) enemy.aiDestinationSetter.target = targetPlayer.transform;
+
             enemy.aiRigidbody2D.speed = enemy.currentMoveSpeed;
         }
 
@@ -179,9 +186,10 @@ public class EnemyAINetwork : NetworkBehaviour
         }
     }
 
+    [ServerCallback]
     protected virtual void FixedUpdate()
     {
-        if (!isServer || !enemyFullyInitialized) return;
+        if (!enemyFullyInitialized) return;
 
         dashTimer += Time.fixedDeltaTime;
         attackMoveTimer -= Time.fixedDeltaTime;
@@ -200,7 +208,7 @@ public class EnemyAINetwork : NetworkBehaviour
 
         if (isDashing)
         {
-            if ((moveStatus & MoveStatus.KnockedBack) != 0)
+            if ((enemy.moveStatus & MoveStatus.KnockedBack) != 0)
             {
                 CancelDash();
             }
@@ -231,7 +239,7 @@ public class EnemyAINetwork : NetworkBehaviour
             SecondaryStatusEffectsCheck();
         }
 
-        if (moveStatus == MoveStatus.Idle)
+        if (enemy.moveStatus == MoveStatus.Idle)
         {
             // If enemy is attacking process and in attack phase, don't get involved in AStar calculations
             if (enemyPhase == EnemyPhase.Attack && isAttacking) return;
@@ -512,12 +520,13 @@ public class EnemyAINetwork : NetworkBehaviour
 
     private void RangedAttackProcess(Transform target, float distanceToTarget, float chaseDistance)
     {
-        float attackRange = enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileSpeed *
-        enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.lifeDuration;
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(enemy.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
+        float attackRange = weaponDetails.weaponCurrentProjectile.projectileSpeed * weaponDetails.weaponCurrentProjectile.lifeDuration;
 
         if (target.CompareTag(Settings.decoyTag))
         {
-            attackRange = enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileRange;
+            attackRange = weaponDetails.weaponCurrentProjectile.projectileRange;
         }
 
         if (distanceToTarget < attackRange) SwitchToAttack();
@@ -855,23 +864,26 @@ public class EnemyAINetwork : NetworkBehaviour
         }
     }
 
+    #region CC Routines
     public IEnumerator StunRoutine()
     {
         enemy.idle.StopVelocity();
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
-        enemy.animator.SetBool(Settings.isStunned, true);
+
+        enemy.enemyNetwork.RpcPlayStunEffect(undo: false);
+
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.stunSoundEffect);
 
         yield return new WaitForSeconds(enemy.stunDuration);
 
-        enemy.healthEvent.CallStunCuredEvent();
-        enemy.animator.SetBool(Settings.isStunned, false);
+        enemy.enemyNetwork.RpcPlayStunEffect(undo: true);
+
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         // Reset stun status and allow other stun coroutines to be started
         ResetEnemySpeed();
         enemy.stunDuration = 2; // Reset to default value
-        moveStatus &= ~MoveStatus.Stun;
+        enemy.moveStatus &= ~MoveStatus.Stun;
         stunEnemyRoutine = null;
     }
 
@@ -889,7 +901,7 @@ public class EnemyAINetwork : NetworkBehaviour
         // Reset stun status and allow other stun coroutines to be started
         ResetEnemySpeed();
         enemy.paralyzeDuration = 2; // Reset to default value
-        moveStatus &= ~MoveStatus.Paralyze;
+        enemy.moveStatus &= ~MoveStatus.Paralyze;
         stunEnemyRoutine = null;
     }
 
@@ -935,7 +947,7 @@ public class EnemyAINetwork : NetworkBehaviour
         yield return new WaitForSeconds(duration);
 
         // Reset All Cold Status
-        moveStatus &= ~MoveStatus.Frozen;
+        enemy.moveStatus &= ~MoveStatus.Frozen;
         enemy.isChilled = false;
         enemy.isShattered = false;
         enemy.healthEvent.CallChillCuredEvent();
@@ -948,20 +960,23 @@ public class EnemyAINetwork : NetworkBehaviour
     public IEnumerator RootRoutine()
     {
         enemy.idle.StopVelocity();
-        enemy.rootAnimator.SetBool("root", true);
+
+        // Notify All Clients
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
         SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.rootSoundEffect);
+
+        enemy.enemyNetwork.RpcPlayRootEffect(undo: false);
 
         yield return new WaitForSeconds(enemy.rootDuration);
 
         enemy.rootDuration = 2; // Reset to default value
-        enemy.rootAnimator.SetBool("root", false);
-        enemy.healthEvent.CallRootCuredEvent();
+
+        enemy.enemyNetwork.RpcPlayRootEffect(undo: true);
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         // Reset stun status and allow other stun coroutines to be started
         ResetEnemySpeed();
-        moveStatus &= ~MoveStatus.Root;
+        enemy.moveStatus &= ~MoveStatus.Root;
         rootEnemyRoutine = null;
     }
 
@@ -979,15 +994,18 @@ public class EnemyAINetwork : NetworkBehaviour
         yield return new WaitForSeconds(enemy.freezeDuration);
 
         enemy.freezeDuration = 2; // Reset to default value
+
         enemy.healthEvent.CallFrostCuredEvent();
+
         enemy.animateEnemy.SetIdleAnimationParameters();
+
         enemy.animator.SetBool(Settings.isFrozen, false);
         enemy.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         // Reset stun status and allow other stun coroutines to be started
         ResetEnemySpeed();
         // Remove Frozen
-        moveStatus &= ~MoveStatus.Frozen;
+        enemy.moveStatus &= ~MoveStatus.Frozen;
         enemyPhase = EnemyPhase.Patrol;
         frostEnemyRoutine = null;
     }
@@ -1030,13 +1048,14 @@ public class EnemyAINetwork : NetworkBehaviour
 
         //transform.position += (Vector3)(direction * fearMoveSpeed * Time.deltaTime);
     }
+    #endregion
 
     protected bool HasNegativeMoveStatusEffect()
     {
         bool negativeStatusEffect = false;
 
         // Frozen
-        if ((moveStatus & MoveStatus.Frozen) != 0)
+        if ((enemy.moveStatus & MoveStatus.Frozen) != 0)
         {
             enemy.idle.StopVelocity();
             negativeStatusEffect = true;
@@ -1054,7 +1073,7 @@ public class EnemyAINetwork : NetworkBehaviour
         }
 
         // Stun
-        if ((moveStatus & MoveStatus.Stun) != 0)
+        if ((enemy.moveStatus & MoveStatus.Stun) != 0)
         {
             enemy.idle.StopVelocity();
             negativeStatusEffect = true;
@@ -1066,7 +1085,7 @@ public class EnemyAINetwork : NetworkBehaviour
         }
 
         // Paralyze
-        if ((moveStatus & MoveStatus.Paralyze) != 0)
+        if ((enemy.moveStatus & MoveStatus.Paralyze) != 0)
         {
             enemy.idle.StopVelocity();
             negativeStatusEffect = true;
@@ -1078,7 +1097,7 @@ public class EnemyAINetwork : NetworkBehaviour
         }
 
         // Root
-        if ((moveStatus & MoveStatus.Root) != 0)
+        if ((enemy.moveStatus & MoveStatus.Root) != 0)
         {
             enemy.idle.StopVelocity();
             negativeStatusEffect = true;
@@ -1090,7 +1109,7 @@ public class EnemyAINetwork : NetworkBehaviour
         }
 
         // Knocked Back
-        if ((moveStatus & MoveStatus.KnockedBack) != 0)
+        if ((enemy.moveStatus & MoveStatus.KnockedBack) != 0)
         {
             negativeStatusEffect = true;
         }
@@ -1098,7 +1117,7 @@ public class EnemyAINetwork : NetworkBehaviour
         // If no negative effects were detected, revert to Idle
         if (!negativeStatusEffect)
         {
-            moveStatus = MoveStatus.Idle;
+            enemy.moveStatus = MoveStatus.Idle;
         }
 
         return negativeStatusEffect;
@@ -1133,16 +1152,38 @@ public class EnemyAINetwork : NetworkBehaviour
 
     protected Vector3 ClampToBossRoom(Vector3 worldPosition, Vector2Int cellMin, Vector2Int cellMax)
     {
-        Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
+        Grid grid;
+
+        if (isMultiplayer)
+        {
+            InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(GameSessionManager.Instance.GetCurrentRoomNetData().roomId);
+            grid = ir.grid;
+        }
+        else
+        {
+            grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
+        }
+
         Vector3Int cell = grid.WorldToCell(worldPosition);
         cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
         cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
         return grid.GetCellCenterWorld(cell);
     }
 
-    protected bool IsOutsideBossRoom(Vector3 worldPosition, Vector2Int cellMin, Vector2Int cellMax)
+    protected bool IsOutsideBossRoom(Vector3 worldPosition, Vector2Int cellMin, Vector2Int cellMax, bool isMultiplayer)
     {
-        Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
+        Grid grid;
+
+        if (isMultiplayer)
+        {
+            InstantiatedRoom ir = GameManager.Instance.FindBossRoom();
+            grid = ir.grid;
+        }
+        else
+        {
+            grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
+        }
+
         Vector3Int cell = grid.WorldToCell(worldPosition);
         return cell.x < cellMin.x || cell.x > cellMax.x || cell.y < cellMin.y || cell.y > cellMax.y;
     }

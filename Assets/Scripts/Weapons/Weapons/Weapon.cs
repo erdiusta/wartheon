@@ -1,16 +1,22 @@
 using System.Collections.Generic;
-using UnityEngine;
-
 public class Weapon : ItemGeneric
 {
-    [Header("Definition")]
-    public WeaponDetailsSO weaponDetails;
     public WeaponStats weaponStats;
 
-    public Weapon(Rarity rarity) : base(rarity)
+    ItemType itemType;
+    Rarity rarity;
+    ItemSlotStatus itemSlotStatus;
+    int inventoryIndex;
+
+    public Weapon(Rarity rarity)
     {
         this.rarity = rarity;
     }
+
+    public override ItemType ItemType { get => itemType; set => itemType = value; }
+    public override Rarity Rarity { get => rarity; set => rarity = value; }
+    public override ItemSlotStatus ItemSlotStatus { get => itemSlotStatus; set => itemSlotStatus = value; }
+    public override int InventoryIndex { get => inventoryIndex; set => inventoryIndex = value; }
 
     // Convenience helpers
     public IEnumerable<BoostType> GetAllBoosts()
@@ -24,12 +30,18 @@ public class Weapon : ItemGeneric
 
 public struct WeaponStats
 {
+    public WeaponClass weaponClass;
     public WeaponTitle weaponTitle;
+    public WieldType wieldType;
+    public bool isMeleeWeapon;
+    public bool hasSwing;
+    public bool hasThrust;
+    public float elementalForgeRate;
+    public int inventoryIndex;
 
     public float activeWeaponHandling;
     public int weaponBelongingToWhichMainHandSet;
     public int weaponBelongingToWhichOffHandSet;
-    public int weaponRemainingProjectile;
     public bool firingCompletedIfWeaponIsPrecharged;
     public bool firingStoppedPrematurelyIfWeaponIsPrecharged;
     public bool onPrecharge;
@@ -44,6 +56,17 @@ public struct WeaponStats
     public BoostType mythicBoostType;
 
     // Weapon stats
+    public int physicalDamageMin;
+    public int physicalDamageMax;
+    public int magicDamageMin;
+    public int magicDamageMax;
+    public float blockChance;
+    public float weaponCooldownDuration;
+    public float weaponAttackRating;
+    public float criticalHitChance;
+    public float criticalHitDamage;
+    public float weaponPrechargeTime;
+
     public float attackCooldownModifier;
     public int physicalAttackDamageIncrease;
     public float attackRatingIncrease;

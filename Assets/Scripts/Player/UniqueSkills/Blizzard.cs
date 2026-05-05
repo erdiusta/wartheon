@@ -15,6 +15,10 @@ public class Blizzard : MonoBehaviour
     // Dictionary to track last affected time per enemy
     Dictionary<Enemy, float> affectedEnemies = new Dictionary<Enemy, float>();
     float playerLastTime;
+
+    WeaponTitle lastWeaponTitle;
+    WeaponDetailsSO currentWeaponDetails;
+
     private void OnEnable()
     {
         OnBlizzardActivated.AddListener(EnableBlizzard);
@@ -69,8 +73,14 @@ public class Blizzard : MonoBehaviour
 
             IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(affectedEnemy.gameObject);
 
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle != lastWeaponTitle)
+            {
+                currentWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+                lastWeaponTitle = player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle;
+            }
+
             // Apply effects
-            player.meleeAttackMainHand.CheckChillStatus(affectedEnemy, enemyCombatData, isBlizzard: true);
+            player.meleeAttackMainHand.CheckChillStatus(currentWeaponDetails, affectedEnemy, enemyCombatData, isBlizzard: true);
 
             Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
 

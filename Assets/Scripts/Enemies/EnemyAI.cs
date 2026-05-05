@@ -103,7 +103,7 @@ public class EnemyAI : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        if (!EnemyRoomResolver.TryGetRoom(out InstantiatedRoom instantiatedRoom, out Vector2Int[] spawnPositions)) return; // Room Not Ready
+        if (!EnemyRoomResolver.TryGetRoom(out InstantiatedRoom instantiatedRoom, out Vector2Int[] spawnPositions, null)) return; // Room Not Ready
 
         enemy.patrol.targets = instantiatedRoom.CreatePatrolTargets(spawnPositions, patrolPointsParentContainer);
         PatrolRigidbody2D.OnRequestSpawnPositions += Patrol_OnRequestSpawnPositions;
@@ -117,7 +117,7 @@ public class EnemyAI : MonoBehaviour
 
     private Vector2Int[] Patrol_OnRequestSpawnPositions()
     {
-        if (EnemyRoomResolver.TryGetRoom(out _, out var spawnPositions)) return spawnPositions;
+        if (EnemyRoomResolver.TryGetRoom(out _, out var spawnPositions, null)) return spawnPositions;
         return System.Array.Empty<Vector2Int>();
     }
 
@@ -476,12 +476,13 @@ public class EnemyAI : MonoBehaviour
 
     private void RangedAttackProcess(Transform target, float distanceToTarget, float chaseDistance)
     {
-        float attackRange = enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileSpeed *
-        enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.lifeDuration;
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(enemy.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
+        float attackRange = weaponDetails.weaponCurrentProjectile.projectileSpeed * weaponDetails.weaponCurrentProjectile.lifeDuration;
 
         if (target.CompareTag(Settings.decoyTag))
         {
-            attackRange = enemy.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponCurrentProjectile.projectileRange;
+            attackRange = weaponDetails.weaponCurrentProjectile.projectileRange;
         }
 
         if (distanceToTarget < attackRange) SwitchToAttack();

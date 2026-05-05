@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class TooltipManager : SingletonMonobehaviour<TooltipManager>
+public class TooltipManager : MonoBehaviour
 {
     [Header("Core")]
     [SerializeField] RectTransform tooltipPanel;
@@ -21,14 +21,9 @@ public class TooltipManager : SingletonMonobehaviour<TooltipManager>
     public TMP_Text ContentText => contentText;
     public TMP_Text BonusText => bonusText;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
-        if(tooltipPanel == null)
-        {
-            tooltipPanel = GetComponent<RectTransform>();
-        }
+        if(tooltipPanel == null) tooltipPanel = GetComponent<RectTransform>();
 
         if (tooltipPanel != null)
         {

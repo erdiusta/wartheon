@@ -3431,6 +3431,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1a7b6e0a31fe714cbc2cb62fcaa1c50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initialWeaponStateApplied: 0
   forcefieldTransform: {fileID: 0}
   levelUpAnimator: {fileID: 2946168106481843369}
   levelUpDetails: {fileID: 11400000, guid: 40ba893ce07dd0b4c809a5726349ecc3, type: 2}
@@ -3456,6 +3457,7 @@ MonoBehaviour:
   aimWeapon: {fileID: 0}
   aimWeaponNetwork: {fileID: 0}
   activeWeapon: {fileID: 0}
+  weaponState: {fileID: 0}
   selectedPassiveItem: {fileID: 0}
   weaponFiredEvent: {fileID: 0}
   spriteRenderer: {fileID: 0}
@@ -3480,6 +3482,8 @@ MonoBehaviour:
   animSync: {fileID: 0}
   networkAuthority: {fileID: 0}
   state: {fileID: 0}
+  playerInventory: {fileID: 0}
+  playerInventoryNetwork: {fileID: 0}
   keyCount: 0
   previousSetIndex: 1
   branchMastery: {fileID: 0}
@@ -3568,7 +3572,7 @@ MonoBehaviour:
   additionalCastDurationModifier: 1
   additionalDropChanceModifier: 0
   currentStatusResistance: 0
-  additinalNPCCostModifier: 0
+  additionalNPCCostModifier: 0
   thirtyPercentDamageAbsorbIsActive: 0
   blindModifier: 0
   additionalBlindMakerModifier: 0
@@ -3586,8 +3590,6 @@ MonoBehaviour:
   specialMoveParticlesSystem: {fileID: 0}
   currentWeaponSlotSetIndex: 1
   summonedEnemies: []
-  mainHandSlotFilled: 0
-  offHandSlotFilled: 0
   specialSkillNumber: 0
   specialMoveEvent: {fileID: 0}
   specialMovesCooldownCheckArray: 000000
@@ -3665,7 +3667,6 @@ MonoBehaviour:
   isIonicRejuvenationActive: 0
   isConductiveTouchActive: 0
   nymaraSkillUsageTimer: 0
-  shadowCloakEquipped: 0
   poisonDuration: 2
   bleedDuration: 2
   rootDuration: 2
@@ -4069,6 +4070,7 @@ MonoBehaviour:
   activeSkillTypeTwoAnimator: {fileID: 0}
   activeSkillTypeThreeAnimator: {fileID: 0}
   activeSkillTypeFourAnimator: {fileID: 0}
+  particlePlayed: 0
 --- !u!114 &3760601999533703318
 MonoBehaviour:
   m_ObjectHideFlags: 0

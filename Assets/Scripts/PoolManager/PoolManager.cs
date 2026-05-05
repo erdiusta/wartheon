@@ -61,11 +61,6 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
         for (int i = 0; i < poolArray.Length; i++)
         {
             CreatePoolMP(poolArray[i].prefab, poolArray[i].poolSize, poolArray[i].componentType, out NetworkIdentity ni);
-
-            if (ni != null)
-            {
-                Debug.Log("Server projectile assetId: " + ni.assetId);
-            }
         }
 
         IsInitialized = true;

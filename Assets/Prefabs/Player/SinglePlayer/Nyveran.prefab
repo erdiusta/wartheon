@@ -494,11 +494,11 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 3cbcb1e9936af724d841b9df0fe0c7ae, type: 2}
     - target: {fileID: 312786131199480866, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.x
-      value: 0.5555556
+      value: 0.625
       objectReference: {fileID: 0}
     - target: {fileID: 312786131199480866, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Size.y
-      value: 1.3333334
+      value: 1.625
       objectReference: {fileID: 0}
     - target: {fileID: 312786131199480866, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: m_Sprite
@@ -965,6 +965,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4770697194666701406, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       insertIndex: 27
       addedObject: {fileID: 6201363590735046783}
+    - targetCorrespondingSourceObject: {fileID: 4770697194666701406, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2374982278794824117}
     - targetCorrespondingSourceObject: {fileID: 5700531651610207517, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2663043252430049303}
@@ -987,6 +990,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: {fileID: 0}
+--- !u!114 &2374982278794824117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 38858171499291080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5fedc4320ec514ea0a751e42be96e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainHandBackgroundSlot: {fileID: 0}
+  mainHandEquippedSlot: {fileID: 0}
+  offHandBackgroundSlot: {fileID: 0}
+  offHandEquippedSlot: {fileID: 0}
+  originalSlotIndex: 1
+  mainHandDropped: 0
 --- !u!1 &982556344181683851 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5700531651610207517, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}

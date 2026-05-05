@@ -49,7 +49,7 @@ public class EnemyAimAndShootAINetwork : EnemyAINetwork
         if (HasNegativeMoveStatusEffect()) return;
         else SecondaryStatusEffectsCheck();
 
-        if (moveStatus == MoveStatus.Idle)
+        if (enemy.moveStatus == MoveStatus.Idle)
         {
             if (targetPlayer == null || targetPlayer.health.hasDied) return;
 

@@ -28,7 +28,7 @@ public class KeyUI : MonoBehaviour
         }
 
         keyCountDisplayText.text = "x" + player.keyCount;
-        player.consumableEvent.OnShardCountChanged += ConsumableEvent_OnKeyCountChanged;
+        player.consumableEvent.OnKeyCountChanged += ConsumableEvent_OnKeyCountChanged;
     }
 
     private void ConsumableEvent_OnKeyCountChanged(ConsumableEvent arg1, ConsumableEventArgs arg)

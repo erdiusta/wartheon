@@ -2,13 +2,22 @@ using System.Collections.Generic;
 
 public class PassiveItem : ItemGeneric
 {
-    public PassiveItemDetailsSO passiveItemDetails;
     public PassiveItemStats passiveStats;
 
-    public PassiveItem(Rarity rarity) : base(rarity)
+    ItemType itemType;
+    Rarity rarity;
+    ItemSlotStatus itemSlotStatus;
+    int inventoryIndex;
+
+    public PassiveItem(Rarity rarity)
     {
         this.rarity = rarity;
     }
+
+    public override ItemType ItemType { get => itemType; set => itemType = value; }
+    public override Rarity Rarity { get => rarity; set => rarity = value; }
+    public override ItemSlotStatus ItemSlotStatus { get => itemSlotStatus; set => itemSlotStatus = value; }
+    public override int InventoryIndex { get => inventoryIndex; set => inventoryIndex = value; }
 
     // Convenience helpers
     public IEnumerable<BoostType> GetAllBoosts()
@@ -24,6 +33,7 @@ public struct PassiveItemStats
 {
     public PassiveItemType passiveItemType;
     public PassiveItemSlotName passiveItemSlotName;
+    public int inventoryIndex;
     public int activePrice;
 
     // Rolled modifiers

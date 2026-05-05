@@ -16,6 +16,9 @@ public class FlameLotus : MonoBehaviour
     Dictionary<Enemy, float> affectedEnemies = new Dictionary<Enemy, float>();
     float playerLastTime;
 
+    WeaponTitle lastWeaponTitle;
+    WeaponDetailsSO currentWeaponDetails;
+
     private void OnEnable()
     {
         OnFlameLotusActivated.AddListener(EnableFlameLotus);
@@ -81,8 +84,14 @@ public class FlameLotus : MonoBehaviour
 
             IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(affectedEnemy.gameObject);
 
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle != lastWeaponTitle)
+            {
+                currentWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+                lastWeaponTitle = player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle;
+            }
+
             // Apply effects
-            player.meleeAttackMainHand.CheckWarmStatus(affectedEnemy, enemyCombatData, isFlameLotus: true);
+            player.meleeAttackMainHand.CheckWarmStatus(currentWeaponDetails, affectedEnemy, enemyCombatData, isFlameLotus: true);
 
             DamageContext ctx = new DamageContext { owner = DamageOwner.Player, source = DamageSourceType.Projectile };
             ReceiveProjectileDamage receiveProjectileDamage = affectedEnemy.GetComponent<ReceiveProjectileDamage>();

@@ -128,8 +128,11 @@ public class MainUI : SingletonMonobehaviour<MainUI>
         }
     }
 
-    public void UpdateTooltipPanelInfo(ItemGeneric itemGeneric, bool hasWeaponDrop, bool hasSecondaryPassiveDrop, TooltipSource source)
+    public void UpdateTooltipPanelInfo(WeaponStats weaponStats, PassiveItemStats passiveStats, WeaponTitle weaponTitle, PassiveItemType passiveItemType, Rarity rarity, 
+        bool hasWeaponDrop, bool hasSecondaryPassiveDrop, TooltipSource source)
     {
+        if (player == null || !player.IsLocal) return;
+
         if (currentTooltipSource == source) return;
 
         currentTooltipSource = source;
@@ -138,13 +141,9 @@ public class MainUI : SingletonMonobehaviour<MainUI>
 
         Weapon equippedWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
 
-        if (itemGeneric != null)
+        if (hasWeaponDrop && equippedWeapon != null)
         {
-            if (equippedWeapon != null)
-            {
-                if (itemGeneric is Weapon w && w.weaponDetails.weaponClass != WeaponClass.Shield)
-                    tooltipPanelEquipped.SetActive(true);
-            }
+            if (weaponStats.weaponClass != WeaponClass.Shield) tooltipPanelEquipped.SetActive(true);
         }
 
         ClearTooltipPanel();
@@ -153,44 +152,40 @@ public class MainUI : SingletonMonobehaviour<MainUI>
         //// NEW: also clear modifier text blocks
         //ClearModifierTexts();
 
-        if (hasSecondaryPassiveDrop)
+        if (hasSecondaryPassiveDrop && passiveItemType != PassiveItemType.None)
         {
-            if (itemGeneric is PassiveItem)
-            {
-                ReshapeTooltip(isWeapon: false);
+            ReshapeTooltip(isWeapon: false);
 
-                BoostTypeColorUpdate(itemGeneric);
+            BoostTypeColorUpdate(rarity);
 
-                PassiveItem passiveItem = (PassiveItem)itemGeneric;
-                PassiveItemDetailsSO passiveItemDetails = passiveItem.passiveItemDetails;
+            PassiveItem passiveItem = PassiveDropGenerator.GetPassiveWithStats(passiveStats, rarity, ItemSlotStatus.None, -1);
 
-                headerText.text = passiveItemDetails.passiveItemName;
-                levelText.text = $"({passiveItem.rarity.ToString()})";
+            headerText.text = passiveStats.passiveItemType.ToString();
+            levelText.text = $"({passiveItem.Rarity.ToString()})";
 
-                // HEAD
-                //NECK
-                // CHEST
-                // FINGER
-                // ARM
-                // BACK
-                // LEG
+            // HEAD
+            //NECK
+            // CHEST
+            // FINGER
+            // ARM
+            // BACK
+            // LEG
 
-                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseUniqueRolled, BoostPhase.Unique);
-                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseTypeRolled, BoostPhase.Type);
-                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.enchantedBoostType, BoostPhase.Enchanted);
-                BoostForPassiveItem(passiveItem, passiveItem.passiveStats.mythicBoostType, BoostPhase.Mythic);
-            }
+            BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseUniqueRolled, BoostPhase.Unique, bonusText);
+            BoostForPassiveItem(passiveItem, passiveItem.passiveStats.baseTypeRolled, BoostPhase.Type, bonusText);
+            BoostForPassiveItem(passiveItem, passiveItem.passiveStats.enchantedBoostType, BoostPhase.Enchanted, bonusText);
+            BoostForPassiveItem(passiveItem, passiveItem.passiveStats.mythicBoostType, BoostPhase.Mythic, bonusText);
         }
-        if (hasWeaponDrop && itemGeneric is Weapon weapon)
+        if (hasWeaponDrop && weaponTitle != WeaponTitle.None)
         {
             ReshapeTooltip(isWeapon: true);
 
-            BoostTypeColorUpdate(itemGeneric);
+            BoostTypeColorUpdate(rarity);
 
-            WeaponDetailsSO weaponDetails = weapon.weaponDetails;
+            Weapon weapon = WeaponDropGenerator.GetWeaponWithStats(weaponStats, rarity, ItemSlotStatus.None, -1);
 
             // Populate text field based on the related weapon info
-            switch (weapon.rarity)
+            switch (weapon.Rarity)
             {
                 case Rarity.Basic:
                     headerText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
@@ -213,9 +208,9 @@ public class MainUI : SingletonMonobehaviour<MainUI>
             }
 
             // Equipped
-            if (equippedWeapon != null && weapon.weaponDetails.weaponClass != WeaponClass.Shield)
+            if (equippedWeapon != null && weapon.weaponStats.weaponClass != WeaponClass.Shield)
             {
-                switch (equippedWeapon.rarity)
+                switch (equippedWeapon.Rarity)
                 {
                     case Rarity.Basic:
                         headerTextEquipped.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);
@@ -238,68 +233,68 @@ public class MainUI : SingletonMonobehaviour<MainUI>
                 }
 
                 equippedText.text = "Equipped";
-                headerTextEquipped.text = equippedWeapon.weaponDetails.weaponName;
-                levelTextEquipped.text = $"({equippedWeapon.rarity.ToString()})\n";
-                contentTextEquipped.text = $"Class: {equippedWeapon.weaponDetails.weaponClass.ToString()}\n";
+                headerTextEquipped.text = equippedWeapon.weaponStats.weaponTitle.ToString();
+                levelTextEquipped.text = $"({equippedWeapon.Rarity.ToString()})\n";
+                contentTextEquipped.text = $"Class: {equippedWeapon.weaponStats.weaponClass.ToString()}\n";
 
-                float equippedFireRate = (float)Math.Round(1 / (equippedWeapon.weaponDetails.weaponCooldownDuration - (equippedWeapon.weaponStats.attackCooldownModifier / 2)), 2);
+                float equippedFireRate = (float)Math.Round(1 / (equippedWeapon.weaponStats.weaponCooldownDuration - (equippedWeapon.weaponStats.attackCooldownModifier / 2)), 2);
 
                 contentTextEquipped.text += $"Attack Speed: {equippedFireRate}\n";
-                contentTextEquipped.text += $"Wield Type: {equippedWeapon.weaponDetails.wieldType.ToString()}\n";
+                contentTextEquipped.text += $"Wield Type: {equippedWeapon.weaponStats.wieldType.ToString()}\n";
             }
 
-            headerText.text = weaponDetails.weaponName;
-            levelText.text = $"({weapon.rarity.ToString()})";
-            contentText.text = $"Class: {weaponDetails.weaponClass.ToString()}\n";
+            headerText.text = weapon.weaponStats.weaponTitle.ToString();
+            levelText.text = $"({weapon.Rarity.ToString()})";
+            contentText.text = $"Class: {weapon.weaponStats.weaponClass.ToString()}\n";
 
-            if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
+            if (weapon.weaponStats.weaponClass == WeaponClass.Shield)
             {
-                contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
-                contentText.text += $"Block Rate: {weapon.weaponDetails.blockChance * 100}%\n";
+                contentText.text += $"Wield Type: {weapon.weaponStats.wieldType.ToString()}\n";
+                contentText.text += $"Block Rate: {weapon.weaponStats.blockChance * 100}%\n";
             }
             else
             {
-                float fireRate = (float)Math.Round(1 / (weapon.weaponDetails.weaponCooldownDuration - (weapon.weaponStats.attackCooldownModifier / 2)), 2);
+                float fireRate = (float)Math.Round(1 / (weapon.weaponStats.weaponCooldownDuration - (weapon.weaponStats.attackCooldownModifier / 2)), 2);
                 contentText.text += $"Attack Speed: {fireRate}\n";
 
-                contentText.text += $"Wield Type: {weapon.weaponDetails.wieldType.ToString()}\n";
+                contentText.text += $"Wield Type: {weapon.weaponStats.wieldType.ToString()}\n";
 
-                contentText.text += $"Phy. Damage: {weapon.weaponDetails.physicalDamageMin + weapon.weaponStats.physicalAttackDamageIncrease}-" +
-                    $"{weapon.weaponDetails.physicalDamageMax + weapon.weaponStats.physicalAttackDamageIncrease}\n";
+                contentText.text += $"Phy. Damage: {weapon.weaponStats.physicalDamageMin + weapon.weaponStats.physicalAttackDamageIncrease}-" +
+                    $"{weapon.weaponStats.physicalDamageMax + weapon.weaponStats.physicalAttackDamageIncrease}\n";
 
-                contentText.text += $"Magic Damage: {weapon.weaponDetails.magicDamageMin + weapon.weaponStats.magicAttackDamageIncrease}-" +
-                    $"{weapon.weaponDetails.magicDamageMax + weapon.weaponStats.magicAttackDamageIncrease}\n";
+                contentText.text += $"Magic Damage: {weapon.weaponStats.magicDamageMin + weapon.weaponStats.magicAttackDamageIncrease}-" +
+                    $"{weapon.weaponStats.magicDamageMax + weapon.weaponStats.magicAttackDamageIncrease}\n";
 
                 contentText.text += $"Attack Rating: {weapon.weaponStats.attackRatingIncrease * 100}\n";
                 contentText.text += $"Cr. Hit Chance: {weapon.weaponStats.criticalHitChanceIncrease * 100}%\n";
                 contentText.text += $"Cr. Hit Damage: {weapon.weaponStats.criticalHitDamageIncrease * 100}%\n";
             }
 
-            contentTextEquipped.text += $"Phy. Damage: {equippedWeapon.weaponDetails.physicalDamageMin + equippedWeapon.weaponStats.physicalAttackDamageIncrease}-" +
-                $"{equippedWeapon.weaponDetails.physicalDamageMax + equippedWeapon.weaponStats.physicalAttackDamageIncrease}\n";
+            if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
+            {
+                contentTextEquipped.text += $"Phy. Damage: {equippedWeapon.weaponStats.physicalDamageMin + equippedWeapon.weaponStats.physicalAttackDamageIncrease}-" +
+                    $"{equippedWeapon.weaponStats.physicalDamageMax + equippedWeapon.weaponStats.physicalAttackDamageIncrease}\n";
 
-            contentTextEquipped.text += $"Magic Damage: {equippedWeapon.weaponDetails.magicDamageMin + equippedWeapon.weaponStats.magicAttackDamageIncrease}-" +
-                $"{equippedWeapon.weaponDetails.magicDamageMax + equippedWeapon.weaponStats.magicAttackDamageIncrease}\n";
+                contentTextEquipped.text += $"Magic Damage: {equippedWeapon.weaponStats.magicDamageMin + equippedWeapon.weaponStats.magicAttackDamageIncrease}-" +
+                    $"{equippedWeapon.weaponStats.magicDamageMax + equippedWeapon.weaponStats.magicAttackDamageIncrease}\n";
 
-            contentTextEquipped.text += $"Attack Rating: {equippedWeapon.weaponStats.attackRatingIncrease * 100}%\n";
-            contentTextEquipped.text += $"Cr. Hit Chance: {equippedWeapon.weaponStats.criticalHitChanceIncrease * 100}%\n";
-            contentTextEquipped.text += $"Cr. Hit Damage: {equippedWeapon.weaponStats.criticalHitDamageIncrease * 100}%\n";
+                contentTextEquipped.text += $"Attack Rating: {equippedWeapon.weaponStats.attackRatingIncrease * 100}%\n";
+                contentTextEquipped.text += $"Cr. Hit Chance: {equippedWeapon.weaponStats.criticalHitChanceIncrease * 100}%\n";
+                contentTextEquipped.text += $"Cr. Hit Damage: {equippedWeapon.weaponStats.criticalHitDamageIncrease * 100}%\n";
+            }
 
-            BoostForWeapon(weapon, weapon.weaponStats.baseUniqueRolled, BoostPhase.Unique);
-            BoostForWeapon(weapon, weapon.weaponStats.baseTypeRolled, BoostPhase.Type);
-            BoostForWeapon(weapon, weapon.weaponStats.enchantedBoostType, BoostPhase.Enchanted);
-            BoostForWeapon(weapon, weapon.weaponStats.mythicBoostType, BoostPhase.Mythic);
+            BoostForWeapon(weapon, weapon.weaponStats.baseUniqueRolled, BoostPhase.Unique, bonusText);
+            BoostForWeapon(weapon, weapon.weaponStats.baseTypeRolled, BoostPhase.Type, bonusText);
+            BoostForWeapon(weapon, weapon.weaponStats.enchantedBoostType, BoostPhase.Enchanted, bonusText);
+            BoostForWeapon(weapon, weapon.weaponStats.mythicBoostType, BoostPhase.Mythic, bonusText);
 
-            //// NEW: Modifiers for the DROP item
-            //SetModifierBlock(weapon, modifiersHeaderText, modifierBaseUniqueText, modifierBaseTypeText, modifierExtra1Text, modifierExtra2Text);
-
-            ////  NEW: Modifiers for the EQUIPPED item (if visible and not a shield)
-            //equippedWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
-            //if (equippedWeapon != null && weaponDetails.weaponClass != WeaponClass.Shield)
-            //{
-            //    SetModifierBlock(equippedWeapon, modifiersHeaderTextEquipped, modifierBaseUniqueTextEquipped, modifierBaseTypeTextEquipped,
-            //        modifierExtra1TextEquipped,modifierExtra2TextEquipped);
-            //}
+            if (equippedWeapon != null)
+            {
+                BoostForWeapon(equippedWeapon, equippedWeapon.weaponStats.baseUniqueRolled, BoostPhase.Unique, bonusTextEquipped);
+                BoostForWeapon(equippedWeapon, equippedWeapon.weaponStats.baseTypeRolled, BoostPhase.Type, bonusTextEquipped);
+                BoostForWeapon(equippedWeapon, equippedWeapon.weaponStats.enchantedBoostType, BoostPhase.Enchanted, bonusTextEquipped);
+                BoostForWeapon(equippedWeapon, equippedWeapon.weaponStats.mythicBoostType, BoostPhase.Mythic, bonusTextEquipped);
+            }
         }
     }
 
@@ -311,7 +306,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
         else tooltipRect.sizeDelta = new Vector2(tooltipRect.sizeDelta.x, 60);
     }
 
-    private void BoostForWeapon(Weapon weapon, BoostType boostType, BoostPhase boostPhase)
+    private void BoostForWeapon(Weapon weapon, BoostType boostType, BoostPhase boostPhase, TMP_Text bonusText)
     {
         if (boostType != BoostType.None)
         {
@@ -489,7 +484,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
     }
 
 
-    private void BoostForPassiveItem(PassiveItem passiveItem, BoostType boostType, BoostPhase boostPhase)
+    private void BoostForPassiveItem(PassiveItem passiveItem, BoostType boostType, BoostPhase boostPhase, TMP_Text bonusText)
     {
         if (boostType != BoostType.None)
         {
@@ -666,9 +661,9 @@ public class MainUI : SingletonMonobehaviour<MainUI>
         }
     }
 
-    private void BoostTypeColorUpdate(ItemGeneric itemGeneric)
+    private void BoostTypeColorUpdate(Rarity rarity)
     {
-        switch (itemGeneric.rarity)
+        switch (rarity)
         {
             case Rarity.Basic:
                 headerText.colorGradient = new VertexGradient(basicLevelColor1, basicLevelColor1, basicLevelColor2, basicLevelColor2);

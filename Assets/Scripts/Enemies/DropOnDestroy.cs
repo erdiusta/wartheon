@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -72,6 +73,7 @@ public class DropOnDestroy : MonoBehaviour
         ExecuteDropProcess(seed, dropData);
     }
 
+    // SERVER CODE
     public void ExecuteDropProcess(int seed, EnemyDropData dropData)
     {
         WartheonRNG rng = new WartheonRNG(seed);
@@ -189,7 +191,7 @@ public class DropOnDestroy : MonoBehaviour
             dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
 
             dropItem = dropItemGameObject.GetComponent<DropItem>();
-            dropItem.droppedByPlayer = false;
+            dropItem.dropSourceType = DropSourceType.Enemy;
 
             // Set collider to true
             dropItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
@@ -202,8 +204,8 @@ public class DropOnDestroy : MonoBehaviour
                 NetworkServer.Spawn(dropItemGameObject);
 
                 dropItemNetwork = dropItemGameObject.GetComponent<DropItemNetwork>();
-                dropItemNetwork.droppedByPlayer = false;
-
+                dropItemNetwork.dropSourceType = DropSourceType.Enemy;
+                
                 // Set collider to true
                 dropItemGameObject.GetComponent<BoxCollider2D>().enabled = true;
             }
@@ -224,24 +226,32 @@ public class DropOnDestroy : MonoBehaviour
             Weapon weapon = new Weapon(Rarity.Basic);
 
             dropItemNetwork.hasWeaponDrop = true;
+            dropItemNetwork.dropSourceType = DropSourceType.Enemy;
+
             weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails, rng);
 
             NetworkTransformUnreliable nt = dropItemNetwork.GetComponent<NetworkTransformUnreliable>();
             nt.ServerTeleport(transform.position, Quaternion.identity);
 
             dropItemNetwork.weaponTitle = weapon.weaponStats.weaponTitle;
+            dropItemNetwork.weaponClass = weapon.weaponStats.weaponClass;
             dropItemNetwork.weaponStats = weapon.weaponStats;
+            dropItemNetwork.dropCompleted = true;
+
+            StartCoroutine(InitializeRoutine(dropItemNetwork));
         }
         else
         {
             if (dropItem == null) return;
 
             dropItem.hasWeaponDrop = true;
+            dropItem.dropCompleted = true;
+            dropItem.dropSourceType = DropSourceType.Enemy;
 
             // Create a weapon instance with rolled modifiers
             Weapon weapon = WeaponDropGenerator.CreateRolledInstance(weaponDetails, rng);
 
-            dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position);
+            dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position, null);
         }
     }
 
@@ -258,14 +268,18 @@ public class DropOnDestroy : MonoBehaviour
 
             PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
 
+            if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.None) return;
+
             if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
             {
                 dropItemNetwork.hasPrimaryPassiveDrop = true;
-                passiveItem.passiveItemDetails = passiveItemDetails;
+                dropItemNetwork.dropSourceType = DropSourceType.Enemy;
+                passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng, false, Rarity.Basic, isPrimaryPassive: true);
             }
             else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
             {
                 dropItemNetwork.hasSecondaryPassiveDrop = true;
+                dropItemNetwork.dropSourceType = DropSourceType.Enemy;
                 passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
             }
 
@@ -274,7 +288,10 @@ public class DropOnDestroy : MonoBehaviour
 
             dropItemNetwork.passiveItemType = passiveItem.passiveStats.passiveItemType;
             dropItemNetwork.passiveItemSlotName = passiveItem.passiveStats.passiveItemSlotName;
-            dropItemNetwork.passiveStats = passiveItem.passiveStats; // Here initialization starts in DropItemNetwork
+            dropItemNetwork.passiveStats = passiveItem.passiveStats;
+            dropItemNetwork.dropCompleted = true;
+
+            StartCoroutine(InitializeRoutine(dropItemNetwork));
         }
         else
         {
@@ -282,19 +299,29 @@ public class DropOnDestroy : MonoBehaviour
 
             PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
 
-            if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
+            if (passiveItemDetails?.passiveItemCategory == PassiveItemCategory.Primary)
             {
                 dropItem.hasPrimaryPassiveDrop = true;
-                passiveItem.passiveItemDetails = passiveItemDetails;
+                dropItem.dropSourceType = DropSourceType.Enemy;
+                passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng, false, Rarity.Basic, isPrimaryPassive: true);
             }
-            else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
+            else if (passiveItemDetails?.passiveItemCategory == PassiveItemCategory.Secondary)
             {
                 dropItem.hasSecondaryPassiveDrop = true;
+                dropItem.dropSourceType = DropSourceType.Enemy;
                 passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
             }
 
-            dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position);
+            dropItem.dropCompleted = true;
+            dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position, null);
         }
+    }
+
+    IEnumerator InitializeRoutine(DropItemNetwork drop)
+    {
+        yield return null;
+
+        drop.canInitialize = true;
     }
 
     /// <summary>

@@ -93,7 +93,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 dungeonBuildSuccessful = AttemptToBuildRandomDungeon(roomNodeGraph);
             }
 #endregion
-#region Instantiate Prepared Rooms For Each Clients 
+#region Instantiate Prepared Rooms
 
             if (dungeonBuildSuccessful)
             {

@@ -1,7 +1,6 @@
 using Mirror;
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem.Utilities;
 using Random = UnityEngine.Random;
 
 public static class ServerMeleeCombat
@@ -34,39 +33,10 @@ public static class ServerMeleeCombat
                 _ => null
             };
 
-            if (mainHandWeapon.weaponDetails == null)
-            {
-                Debug.LogError("Main weapon's weapon details reference is null!");
-            }
+            WeaponDetailsSO mainHandWeaponDetails = mainHandWeapon != null ? WartheonDatabase.Instance.GetWeaponDetails(mainHandWeapon.weaponStats.weaponTitle) : null;
+            WeaponDetailsSO offHandWeaponDetails = offHandWeapon != null ? WartheonDatabase.Instance.GetWeaponDetails(offHandWeapon.weaponStats.weaponTitle) : null;
 
-            if (hand == MeleeHand.OffHand && offHandWeapon != null && offHandWeapon.weaponDetails.isMeleeWeapon && damageDealerPlayer.isAxeThrowActive && isThrowingAxe)
-            {
-                Vector3 weaponDirection;
-                float weaponAngleDegrees, playerAngleDegrees;
-                AimDirection playerAimDirection;
-                AttackDirection playerAttackDirection;
-
-                // Aim weapon input
-                damageDealerPlayer.playerControl.AimWeaponInput(out weaponDirection, out weaponAngleDegrees, out playerAngleDegrees, out playerAimDirection, out playerAttackDirection);
-
-                // Trigger fire weapon event
-                //SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
-                damageDealerPlayer.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, ProjectileKind.ThrowingAxe, default, 0, belongingEnemy: null);
-
-                DropItem.droppedThrowingAxe = damageDealerPlayer.activeWeapon.GetCurrentOffHandWeapon();
-
-                damageDealerPlayer.playerControl.DeactivateOffhandWeapon();
-
-                // Update stat values
-                damageDealerPlayer.UpdateDamageValues();
-                damageDealerPlayer.UpdateArmorValues();
-                damageDealerPlayer.UpdateAttackRatingAndCriticalValues();
-                damageDealerPlayer.UpdateBlockAndDodgeValues();
-
-                StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponOffHand);
-
-                damageDealerPlayer.offHandSlotFilled = false;
-            }
+            WeaponDetailsSO hittingHandWeaponDetails = hittingHandWeapon != null ? WartheonDatabase.Instance.GetWeaponDetails(hittingHandWeapon.weaponStats.weaponTitle) : null;
 
             Transform originTransform = ResolveAttackOrigin(damageDealerPlayer, attackType, hand);
             Collider2D attackCollider = originTransform.GetComponent<Collider2D>();
@@ -104,7 +74,7 @@ public static class ServerMeleeCombat
                     if (collider.TryGetComponent(out Environment environment) &&
                         collider.TryGetComponent(out Health envHealth))
                     {
-                        SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeapon.weaponDetails.weaponImpactSoundEffect);
+                        SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeaponDetails.weaponImpactSoundEffect);
 
                         DamageContext ctx = new DamageContext { source = DamageSourceType.Melee, dealerPosition = damageDealerPlayer.transform.position, 
                             receiverPosition = collider.transform.position, hand = hand, dealerNetId = damageDealerPlayer.NetAuth.netId };
@@ -117,8 +87,8 @@ public static class ServerMeleeCombat
 
                     if (collider.CompareTag(Settings.practiceDummy))
                     {
-                        SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeapon.weaponDetails.weaponImpactSoundEffect);
-                        DummyCheck(hand, receiveMeleeDamage, damageDealerPlayer);
+                        SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeaponDetails.weaponImpactSoundEffect);
+                        DummyCheck(hand, receiveMeleeDamage, damageDealerPlayer, hittingHandWeaponDetails, isShieldBash: true);
                         continue;
                     }
 
@@ -141,7 +111,7 @@ public static class ServerMeleeCombat
 
                         if (shieldBash)
                         {
-                            CheckStunStatus(enemy, enemyCombatData, shieldBash: true, false, damageDealerPlayer);
+                            CheckStunStatus(hittingHandWeaponDetails, enemy, enemyCombatData, shieldBash: true, false, damageDealerPlayer);
 
                             if (mainHandWeapon != null)
                             {
@@ -166,11 +136,6 @@ public static class ServerMeleeCombat
 
                             enemy.enemyMovementNetwork.ServerApplyKnockback(knockbackDir, knockbackForce, dealDamageMass);
                             continue;
-                        }
-
-                        if (!enemyCombatData.Isboss)
-                        {
-                            CheckSuddenDeathStatus(enemy, enemyHealth, enemyCombatData, damageDealerPlayer);
                         }
 
                         if (enemyHealth.suddenDeathHappened)
@@ -216,24 +181,24 @@ public static class ServerMeleeCombat
 
                         if (damageDealerPlayer.isTriadExecutionActive) damageDealerPlayer.triadExecutionCounter++;
 
-                        if (!isSheerCold) SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeapon.weaponDetails.weaponImpactSoundEffect);
+                        if (!isSheerCold) SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeaponDetails.weaponImpactSoundEffect);
 
                         if (!enemyCombatData.Isboss && enemy.health.GetCurrentHealth() > 0)
                         {
-                            CheckBleedingStatus(enemy, enemyCombatData, damageDealerPlayer);
-                            CheckStunStatus(enemy, enemyCombatData, false, false, damageDealerPlayer);
-                            CheckSlowStatus(enemy, enemyCombatData, false, damageDealerPlayer);
-                            CheckChillStatus(enemy, enemyCombatData, false, damageDealerPlayer);
-                            CheckFrostStatus(enemy, enemyCombatData, isSheerCold, damageDealerPlayer);
-                            CheckShatterStatus(enemy, enemyCombatData, ref inflictedDamage, damageDealerPlayer);
-                            CheckStaticStatus(enemy, enemyCombatData, false, damageDealerPlayer.isConductiveTouchActive, damageDealerPlayer);
-                            CheckParalyzeStatus(enemy, enemyCombatData, damageDealerPlayer);
-                            CheckRootStatus(enemy, enemyCombatData, false, damageDealerPlayer);
-                            CheckWarmStatus(enemy, enemyCombatData, false, damageDealerPlayer);
-                            CheckBurnStatus(enemy, enemyCombatData, damageDealerPlayer);
-                            CheckPoisonStatus(enemy, enemyCombatData, false, damageDealerPlayer);
-                            CheckBlindStatus(enemy, enemyCombatData, false, damageDealerPlayer);
-                            CheckFearStatus(enemy, enemyCombatData, false, damageDealerPlayer);
+                            CheckBleedingStatus(hittingHandWeaponDetails, enemy, enemyCombatData, damageDealerPlayer);
+                            CheckStunStatus(hittingHandWeaponDetails, enemy, enemyCombatData, false, false, damageDealerPlayer);
+                            CheckSlowStatus(hittingHandWeaponDetails, enemy, enemyCombatData, false, damageDealerPlayer);
+                            CheckChillStatus(hittingHandWeaponDetails, enemy, enemyCombatData, false, damageDealerPlayer);
+                            CheckFrostStatus(hittingHandWeaponDetails, enemy, enemyCombatData, isSheerCold, damageDealerPlayer);
+                            CheckShatterStatus(hittingHandWeaponDetails, enemy, enemyCombatData, ref inflictedDamage, damageDealerPlayer);
+                            CheckStaticStatus(hittingHandWeaponDetails, enemy, enemyCombatData, false, damageDealerPlayer.isConductiveTouchActive, damageDealerPlayer);
+                            CheckParalyzeStatus(hittingHandWeaponDetails, enemy, enemyCombatData, damageDealerPlayer);
+                            CheckRootStatus(hittingHandWeaponDetails, enemy, enemyCombatData, false, damageDealerPlayer);
+                            CheckWarmStatus(hittingHandWeaponDetails, enemy, enemyCombatData, false, damageDealerPlayer);
+                            CheckBurnStatus(hittingHandWeaponDetails, enemy, enemyCombatData, damageDealerPlayer);
+                            CheckPoisonStatus(hittingHandWeaponDetails, enemy, enemyCombatData, false, damageDealerPlayer);
+                            CheckBlindStatus(hittingHandWeaponDetails, enemy, enemyCombatData, false, damageDealerPlayer);
+                            CheckFearStatus(hittingHandWeaponDetails, enemy, enemyCombatData, false, damageDealerPlayer);
                         }
 
                         if (damageDealerPlayer.playerDetails.playerCharacterIndex == Character.Morven && damageDealerPlayer.isStealthActive)
@@ -300,13 +265,17 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Dummy hit interactions
     /// </summary>
-    private static void DummyCheck(MeleeHand hand, ReceiveMeleeDamage receiveMeleeDamage, Player dealerPlayer)
+    private static void DummyCheck(MeleeHand hand, ReceiveMeleeDamage receiveMeleeDamage, Player dealerPlayer, WeaponDetailsSO weaponDetails, bool isShieldBash = false)
     {
         // Damage produced by player
-        int damageDone = dealerPlayer.isCursed
-            ? (hand == MeleeHand.MainHand ? dealerPlayer.currentMainHandMinDamageValue : dealerPlayer.currentOffHandMinDamageValue)
+        int damageDone = dealerPlayer.isCursed ? (hand == MeleeHand.MainHand ? dealerPlayer.currentMainHandMinDamageValue : dealerPlayer.currentOffHandMinDamageValue)
             : Random.Range(hand == MeleeHand.MainHand ? dealerPlayer.currentMainHandMinDamageValue : dealerPlayer.currentOffHandMinDamageValue,
                 hand == MeleeHand.MainHand ? dealerPlayer.currentMainHandMaxDamageValue : dealerPlayer.currentOffHandMaxDamageValue);
+
+        if (isShieldBash)
+        {
+            damageDone = (int)(Random.Range(dealerPlayer.currentMainHandMinDamageValue, dealerPlayer.currentMainHandMaxDamageValue) * 0.5f);
+        }
 
         Weapon weapon = new Weapon(Rarity.Basic);
 
@@ -318,12 +287,12 @@ public static class ServerMeleeCombat
         // Calculate damage after critical hit check
         if (dealerPlayer.isStealthActive)
         {
-            damageDone = criticalHitHappened ? (int)(damageDone * (weapon.weaponDetails.criticalHitDamageMultiplier + dealerPlayer.additionalCriticalMeleeDamageModifier +
+            damageDone = criticalHitHappened ? (int)(damageDone * (weaponDetails.criticalHitDamageMultiplier + dealerPlayer.additionalCriticalMeleeDamageModifier +
                 dealerPlayer.additionalCriticalDamageOnCloakedPrecision)) : damageDone;
         }
         else
         {
-            damageDone = criticalHitHappened ? (int)(damageDone * weapon.weaponDetails.criticalHitDamageMultiplier +
+            damageDone = criticalHitHappened ? (int)(damageDone * weaponDetails.criticalHitDamageMultiplier +
                 dealerPlayer.additionalCriticalMeleeDamageModifier) : damageDone;
         }
 
@@ -390,7 +359,7 @@ public static class ServerMeleeCombat
 
         damageDone = criticalHitHappened ? (int)(damageDone * critMultiplier) : damageDone;
 
-        int baseElemental = (int)(weapon.weaponDetails.elementalForgeRate * damageDone);
+        int baseElemental = (int)(weapon.weaponStats.elementalForgeRate * damageDone);
         int elementalDamage = (int)(baseElemental * (1 + dealerPlayer.additionalMagicDamageModifier));
         int nonElementalDamage = damageDone - baseElemental;
 
@@ -419,10 +388,10 @@ public static class ServerMeleeCombat
         int inflictedNonElemental = (int)(nonElementalDamage * (1 - effectiveArmor));
 
         // Apply bonus dark damage if BloodDrain is active and weapon is Dark elemental
-        if (dealerPlayer.meleeAttackMainHand.isBloodDrain && weapon.weaponDetails.elementalBias == ElementalBias.Dark) elementalDamage = (int)(elementalDamage * 1.5f); // +50% dark damage
+        if (dealerPlayer.meleeAttackMainHand.isBloodDrain) elementalDamage = (int)(elementalDamage * 1.5f); // +50% dark damage
 
         // Apply bonus dark damage if CullTheMeek is active and weapon is Dark elemental
-        if (dealerPlayer.meleeAttackMainHand.isCullTheMeek && weapon.weaponDetails.elementalBias == ElementalBias.Dark)
+        if (dealerPlayer.meleeAttackMainHand.isCullTheMeek)
         {
             int enemyMissingHealth = enemy.health.GetMaximumHealth() - enemy.health.GetCurrentHealth();
 
@@ -531,34 +500,17 @@ public static class ServerMeleeCombat
         return criticalHitHappened;
     }
 
-    /// <summary>
-    /// Check sudden death status
-    /// </summary>
-    private static void CheckSuddenDeathStatus(Enemy enemy, Health enemyHealth, IEnemyCombatData enemyCombatData, Player dealerPlayer)
-    {
-        if (enemy.health.currentHealth > 0)
-        {
-            float randomDice = Random.Range(0f, 1f);
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.suddenKillChance)
-            {
-                enemyHealth.suddenDeathHappened = true;
-                DestroyUtility.Destroy(enemy.gameObject, playerDied: false, dealerPlayer.NetAuth.netId);
-                enemy.healthEvent.CallGetDeathEvent();
-                SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
-            }
-        }
-    }
 
     /// <summary>
     /// Check bleeding status
     /// </summary>
-    private static void CheckBleedingStatus(Enemy enemy, IEnemyCombatData enemyCombatData, Player dealerPlayer)
+    private static void CheckBleedingStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, Player dealerPlayer)
     {
         if (enemyCombatData.IsImmuneToBleeding) return;
 
         // Check get bleeding
         float randomDice = Random.Range(0f, 1f);
-        if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.bleedingChance + dealerPlayer.additionalStatusEffectInflictModifier +
+        if (randomDice < weaponDetails.bleedingChance + dealerPlayer.additionalStatusEffectInflictModifier +
             dealerPlayer.additionalBleedChance)
         {
             enemy.healthEvent.CallGetBleedingEvent();
@@ -570,7 +522,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check warm status
     /// </summary>
-    public static void CheckWarmStatus(Enemy enemy, IEnemyCombatData enemyCombatData, bool isFlameLotus, Player dealerPlayer)
+    public static void CheckWarmStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, bool isFlameLotus, Player dealerPlayer)
     {
         bool isBurned = (enemy.healthStatus & HealthStatus.Burned) != 0;
 
@@ -578,7 +530,7 @@ public static class ServerMeleeCombat
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.warmChance + dealerPlayer.additionalStatusEffectInflictModifier || isFlameLotus)
+            if (randomDice < weaponDetails.warmChance + dealerPlayer.additionalStatusEffectInflictModifier || isFlameLotus)
             {
                 if (enemy.isWarmed && !isBurned)
                 {
@@ -597,13 +549,13 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check burn status
     /// </summary>
-    private static void CheckBurnStatus(Enemy enemy, IEnemyCombatData enemyCombatData, Player dealerPlayer)
+    private static void CheckBurnStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, Player dealerPlayer)
     {
         if (enemyCombatData.IsImmuneToBurn) return;
 
         // Check get bleeding
         float randomDice = Random.Range(0f, 1f);
-        if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.burnChance + dealerPlayer.additionalStatusEffectInflictModifier +
+        if (randomDice < weaponDetails.burnChance + dealerPlayer.additionalStatusEffectInflictModifier +
             dealerPlayer.additionalBurnChance)
         {
             enemy.healthEvent.CallGetBurnEvent();
@@ -615,7 +567,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check poison status
     /// </summary>
-    public static void CheckPoisonStatus(Enemy enemy, IEnemyCombatData enemyCombatData, bool isVenomousIvy, Player dealerPlayer)
+    public static void CheckPoisonStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, bool isVenomousIvy, Player dealerPlayer)
     {
         if (enemyCombatData.IsImmuneToPoison) return;
 
@@ -632,7 +584,7 @@ public static class ServerMeleeCombat
 
         // Check get bleeding
         float randomDice = Random.Range(0f, 1f);
-        if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.poisonChance + dealerPlayer.additionalStatusEffectInflictModifier +
+        if (randomDice < weaponDetails.poisonChance + dealerPlayer.additionalStatusEffectInflictModifier +
             dealerPlayer.additionalPoisonChance || isVenomousIvy)
         {
             enemy.healthEvent.CallGetPoisonedEvent();
@@ -644,7 +596,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check chill status
     /// </summary>
-    public static void CheckChillStatus(Enemy enemy, IEnemyCombatData enemyCombatData, bool isBlizzard, Player dealerPlayer)
+    public static void CheckChillStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, bool isBlizzard, Player dealerPlayer)
     {
         bool isFrozen = (enemy.moveStatus & MoveStatus.Frozen) != 0;
 
@@ -652,7 +604,7 @@ public static class ServerMeleeCombat
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.chillChance + dealerPlayer.additionalStatusEffectInflictModifier || isBlizzard)
+            if (randomDice < weaponDetails.chillChance + dealerPlayer.additionalStatusEffectInflictModifier || isBlizzard)
             {
                 if (enemy.isChilled && !isFrozen && !isBlizzard)
                 {
@@ -673,7 +625,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check frost status
     /// </summary>
-    private static void CheckFrostStatus(Enemy enemy, IEnemyCombatData enemyCombatData, bool isSheerCold, Player dealerPlayer)
+    private static void CheckFrostStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, bool isSheerCold, Player dealerPlayer)
     {
         if (enemyCombatData.IsImmuneToFrost) return;
 
@@ -684,7 +636,7 @@ public static class ServerMeleeCombat
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.frostChance + dealerPlayer.additionalStatusEffectInflictModifier +
+            if (randomDice < weaponDetails.frostChance + dealerPlayer.additionalStatusEffectInflictModifier +
             dealerPlayer.additionalFreezeChance || isSheerCold)
             {
                 enemy.moveStatus |= MoveStatus.Frozen;
@@ -696,7 +648,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check shatter status
     /// </summary>
-    private static void CheckShatterStatus(Enemy enemy, IEnemyCombatData enemyCombatData, ref int inflictedDamage, Player dealerPlayer)
+    private static void CheckShatterStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, ref int inflictedDamage, Player dealerPlayer)
     {
         Health enemyHealth = enemy.GetComponent<Health>();
 
@@ -723,7 +675,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check static status
     /// </summary>
-    public static void CheckStaticStatus(Enemy enemy, IEnemyCombatData enemyCombatData, bool isNymarasWindveil, bool isConductiveTouch, Player dealerPlayer)
+    public static void CheckStaticStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, bool isNymarasWindveil, bool isConductiveTouch, Player dealerPlayer)
     {
         bool isParalyzed = (enemy.moveStatus & MoveStatus.Paralyze) != 0;
 
@@ -731,7 +683,7 @@ public static class ServerMeleeCombat
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.staticChance + dealerPlayer.additionalStatusEffectInflictModifier
+            if (randomDice < weaponDetails.staticChance + dealerPlayer.additionalStatusEffectInflictModifier
                 || isNymarasWindveil || isConductiveTouch)
             {
                 if (enemy.isStatic && !isParalyzed && !isNymarasWindveil)
@@ -751,7 +703,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check paralyze status
     /// </summary>
-    private static void CheckParalyzeStatus(Enemy enemy, IEnemyCombatData enemyCombatData, Player dealerPlayer)
+    private static void CheckParalyzeStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, Player dealerPlayer)
     {
         if (enemyCombatData.IsImmuneToParalyze) return;
 
@@ -761,7 +713,7 @@ public static class ServerMeleeCombat
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.paralyzeChance + dealerPlayer.additionalStatusEffectInflictModifier +
+            if (randomDice < weaponDetails.paralyzeChance + dealerPlayer.additionalStatusEffectInflictModifier +
                 dealerPlayer.additionalParalyzeChance)
             {
                 enemy.moveStatus |= MoveStatus.Paralyze;
@@ -773,7 +725,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check slow status
     /// </summary>
-    public static void CheckSlowStatus(Enemy enemy, IEnemyCombatData enemyCombatData, bool isAbsoluteZero, Player dealerPlayer)
+    public static void CheckSlowStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, bool isAbsoluteZero, Player dealerPlayer)
     {
         if (enemyCombatData.IsImmuneToSlow) return;
 
@@ -781,7 +733,7 @@ public static class ServerMeleeCombat
         {
             float randomDice = Random.Range(0f, 1f);
 
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.slowChance + dealerPlayer.additionalStatusEffectInflictModifier +
+            if (randomDice < weaponDetails.slowChance + dealerPlayer.additionalStatusEffectInflictModifier +
                 dealerPlayer.additionalSlowChance || isAbsoluteZero)
             {
                 enemy.isSlowed = true;
@@ -794,7 +746,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check stun status
     /// </summary>
-    public static void CheckStunStatus(Enemy enemy, IEnemyCombatData enemyCombatData, bool shieldBash, bool isGrapple, Player dealerPlayer)
+    public static void CheckStunStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, bool shieldBash, bool isGrapple, Player dealerPlayer)
     {
         if (enemyCombatData.IsImmuneToStun) return;
 
@@ -824,7 +776,7 @@ public static class ServerMeleeCombat
         if (!isStunned || isGrapple)
         {
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.stunChance + dealerPlayer.additionalStatusEffectInflictModifier +
+            if (randomDice < weaponDetails.stunChance + dealerPlayer.additionalStatusEffectInflictModifier +
                 dealerPlayer.additionalStunChance || isGrapple)
             {
                 enemy.statusEffectAnimators.stunAnimator.SetTrigger(Settings.activateVFX);
@@ -837,7 +789,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check root status
     /// </summary>
-    public static void CheckRootStatus(Enemy enemy, IEnemyCombatData enemyCombatData, bool isVenomousIvy, Player dealerPlayer)
+    public static void CheckRootStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, bool isVenomousIvy, Player dealerPlayer)
     {
         if (enemyCombatData.IsImmuneToRoot) return;
 
@@ -857,7 +809,7 @@ public static class ServerMeleeCombat
             }
 
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.rootChance + dealerPlayer.additionalStatusEffectInflictModifier +
+            if (randomDice < weaponDetails.rootChance + dealerPlayer.additionalStatusEffectInflictModifier +
                 dealerPlayer.additionalRootChance || isVenomousIvy)
             {
                 enemy.statusEffectAnimators.rootAnimator.SetTrigger(Settings.activateVFX);
@@ -870,7 +822,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check blind status
     /// </summary>
-    public static void CheckBlindStatus(Enemy enemy, IEnemyCombatData enemyCombatData, bool umbralMist, Player dealerPlayer)
+    public static void CheckBlindStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, bool umbralMist, Player dealerPlayer)
     {
         if (enemyCombatData.IsImmuneToBlind) return;
 
@@ -884,7 +836,7 @@ public static class ServerMeleeCombat
         {
             // Check get bleeding
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.blindChance + dealerPlayer.additionalStatusEffectInflictModifier +
+            if (randomDice < weaponDetails.blindChance + dealerPlayer.additionalStatusEffectInflictModifier +
             dealerPlayer.additionalBlindChance + dealerPlayer.additionalStatusEffectInflictModifier)
             {
                 enemy.statusEffectAnimators.blindAnimator.SetTrigger(Settings.activateVFX);
@@ -897,7 +849,7 @@ public static class ServerMeleeCombat
     /// <summary>
     /// Check fear status - Enemy
     /// </summary>
-    public static void CheckFearStatus(Enemy enemy, IEnemyCombatData enemyCombatData, bool isShatterCry, Player dealerPlayer)
+    public static void CheckFearStatus(WeaponDetailsSO weaponDetails, Enemy enemy, IEnemyCombatData enemyCombatData, bool isShatterCry, Player dealerPlayer)
     {
         if (enemyCombatData.IsImmuneToFear) return;
 
@@ -915,7 +867,7 @@ public static class ServerMeleeCombat
             }
 
             float randomDice = Random.Range(0f, 1f);
-            if (randomDice < dealerPlayer.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.fearChance + dealerPlayer.additionalStatusEffectInflictModifier +
+            if (randomDice < weaponDetails.fearChance + dealerPlayer.additionalStatusEffectInflictModifier +
             dealerPlayer.additionalFearChance || isShatterCry)
             {
                 enemy.statusEffectAnimators.fearAnimator.SetTrigger(Settings.activateVFX);

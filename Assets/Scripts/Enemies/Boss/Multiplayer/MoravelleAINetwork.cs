@@ -44,7 +44,7 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
     protected override void Start() 
     {
-
+        currentMoravellePhase = MoravellePhase.Wait;
     }
 
     protected override void OnEnable() 
@@ -74,6 +74,8 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
     protected override void FixedUpdate() 
     {
+        if (!isServer) return;
+
         prevVel = rb2D.linearVelocity;
 
         if (enemyPhase == EnemyPhase.Death)
@@ -87,7 +89,7 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
         }
 
         // Emergency pullback if Moravelle drifts outside bounds
-        if (IsOutsideBossRoom(transform.position, cellMin, cellMax))
+        if (IsOutsideBossRoom(transform.position, cellMin, cellMax, true))
         {
             Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
             transform.position = safePos;

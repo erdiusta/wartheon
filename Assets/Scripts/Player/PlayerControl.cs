@@ -1,6 +1,10 @@
 using Mirror;
+using Pathfinding.Serialization;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -417,6 +421,7 @@ public class PlayerControl : MonoBehaviour
                     {
                         GameManager.Instance.isBookClosing = true;
                         BookUI.IsBookOpen = false;
+
                         BookCloseProcess();
                     }
                 }
@@ -740,57 +745,63 @@ public class PlayerControl : MonoBehaviour
 
         if (InputManager.firingDisabled) return; // For tutorial issues
 
-        // Fire when left mouse button is clicked - melee
-        if (mainHand.weaponDetails.isMeleeWeapon && !GameManager.Instance.isOverviewCameraEnabled)
+        WeaponDetailsSO mainHandWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(mainHand.weaponStats.weaponTitle);
+        WeaponDetailsSO offHandWeaponDetails = offHand != null ? WartheonDatabase.Instance.GetWeaponDetails(offHand.weaponStats.weaponTitle) : null;
+
+        if (mainHandWeaponDetails != null)
         {
-            if (InputManager.Instance.attack.action.WasPressedThisFrame() && !IsClickingSpecificUILayer() && !isParrying)
+            // Fire when left mouse button is clicked - melee
+            if (mainHand.weaponStats.isMeleeWeapon && !GameManager.Instance.isOverviewCameraEnabled)
             {
-                // MAIN-HAND
-                if (mainHand?.weaponDetails.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
+                if (InputManager.Instance.attack.action.WasPressedThisFrame() && !IsClickingSpecificUILayer() && !isParrying)
                 {
-                    AttackShape mainHandAttackType = DetermineAttackType(mainHand.weaponDetails);
-                    player.meleeAttackEvent.CallAttackEvent(aimDirection, mainHand, mainHandAttackType, MeleeHand.MainHand);
+                    // MAIN-HAND
+                    if (mainHand.weaponStats.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
+                    {
+                        AttackShape mainHandAttackType = DetermineAttackType(mainHand.weaponStats);
+                        player.meleeAttackEvent.CallAttackEvent(aimDirection, mainHand, mainHandAttackType, MeleeHand.MainHand);
+                    }
+
+                    // OFF-HAND
+                    if (offHandWeaponDetails != null && offHand.weaponStats.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
+                    {
+                        AttackShape offHandAttackType = DetermineAttackType(offHand.weaponStats);
+                        player.meleeAttackEvent.CallAttackEvent(aimDirection, offHand, offHandAttackType, MeleeHand.OffHand);
+                    }
                 }
 
-                // OFF-HAND
-                if (offHand?.weaponDetails.isMeleeWeapon == true && !player.meleeAttackMainHand.IsAttacking)
-                {
-                    AttackShape offHandAttackType = DetermineAttackType(offHand?.weaponDetails);
-                    player.meleeAttackEvent.CallAttackEvent(aimDirection, offHand, offHandAttackType, MeleeHand.OffHand);
-                }
+                return;
             }
 
-            return;
-        }
-    
-        // Fire for non-precharge weapons (fire once per press)
-        if (mainHand.weaponDetails.weaponPrechargeTime == 0f && InputManager.Instance.attack.action.WasPressedThisFrame()
-            && !IsClickingSpecificUILayer() && !GameManager.Instance.isOverviewCameraEnabled)
-        {
-            isSoundPlayed = false;
-
-            if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow || mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow ||
-                mainHand.weaponDetails.weaponClass == WeaponClass.Staff)
+            // Fire for non-precharge weapons (fire once per press)
+            if (mainHandWeaponDetails.weaponPrechargeTime == 0f && InputManager.Instance.attack.action.WasPressedThisFrame()
+                && !IsClickingSpecificUILayer() && !GameManager.Instance.isOverviewCameraEnabled)
             {
-                if (!mainHand.weaponStats.onCooldown)
+                isSoundPlayed = false;
+
+                if (mainHand.weaponStats.weaponClass == WeaponClass.Bow || mainHand.weaponStats.weaponClass == WeaponClass.Crossbow ||
+                    mainHand.weaponStats.weaponClass == WeaponClass.Staff)
                 {
-                    //player.meleeAttackMainHand.IsAttacking = true;
+                    if (!mainHand.weaponStats.onCooldown)
+                    {
+                        //player.meleeAttackMainHand.IsAttacking = true;
 
-                    // Trigger fire weapon event
-                    player.meleeAttackEvent.CallAttackEvent(playerAimDirection, mainHand, AttackShape.None, MeleeHand.None);
+                        // Trigger fire weapon event
+                        player.meleeAttackEvent.CallAttackEvent(playerAimDirection, mainHand, AttackShape.None, MeleeHand.None);
+                    }
                 }
-            }
 
-            // Fire event (only once per press)
-            player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, mainHand.weaponDetails.weaponCurrentProjectile.isLaser,
-                ProjectileKind.Default, default, player.netId, belongingEnemy: null);
+                // Fire event (only once per press)
+                player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, mainHandWeaponDetails.weaponCurrentProjectile.isLaser,
+                    ProjectileKind.Default, default, player.netId, belongingEnemy: null);
+            }
         }
     }
 
-    public AttackShape DetermineAttackType(WeaponDetailsSO weaponDetails)
+    public AttackShape DetermineAttackType(WeaponStats weaponStats)
     {
-        if (weaponDetails.hasSwing) return AttackShape.Swing;
-        if (weaponDetails.hasThrust) return AttackShape.Thrust;
+        if (weaponStats.hasSwing) return AttackShape.Swing;
+        if (weaponStats.hasThrust) return AttackShape.Thrust;
 
         return AttackShape.Swing; // default fallback
     }
@@ -804,7 +815,7 @@ public class PlayerControl : MonoBehaviour
 
         if (player.activeWeapon.GetCurrentMainHandWeapon() != null && !player.meleeAttackMainHand.IsAttacking)
         {
-            switch (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass)
+            switch (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass)
             {
                 case WeaponClass.Sword:
                 case WeaponClass.Axe:
@@ -881,52 +892,101 @@ public class PlayerControl : MonoBehaviour
         // Switch weapon if mouse scroll wheel selecetd
         if (scrollValue < 0f || switchBack)
         {
-            PreviousWeaponSet(true, onStart);
+            PreviousWeaponSet(onStart);
         }
 
         if (scrollValue > 0f || switchForward)
         {
 
-            NextWeaponSet(true, true, onStart);
+            NextWeaponSet(true, onStart);
         }
     }
 
-    public void NextWeaponSet(bool onlySwitch, bool mouseWheel, bool onStart, int setNumber = 0)
+    public void NextWeaponSet(bool mouseWheel, bool onStart, int setNumber = 0)
     {
         if (setNumber > 0)
         {
-            // Cache previous weapon slot index
-            InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+            if (NetworkClient.active)
+            {
+                if (player.IsLocal)
+                {
+                    // Cache previous weapon slot index
+                    player.playerInventory.SetOriginalSlotIndex(player.weaponState.currentWeaponSetIndex);
+                }
 
-            // Set previous index
-            player.previousSetIndex = player.currentWeaponSlotSetIndex;
+                // Set previous index
+                player.previousSetIndex = player.weaponState.currentWeaponSetIndex;
 
-            // Increment the current weapon slot set index
-            player.currentWeaponSlotSetIndex = setNumber;
+                // Increment the current weapon slot set index
+                player.currentWeaponSlotSetIndex = setNumber;
 
-            SetWeaponSetByIndex(onlySwitch, onStart);
+                player.weaponState.CmdChangeWeaponSet(setNumber, onStart);
 
-            InventoryManager.Instance.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+                //player.playerInventoryNetwork.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+            }
+            else
+            {
+                // Cache previous weapon slot index
+                player.playerInventory.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+
+                // Set previous index
+                player.previousSetIndex = player.currentWeaponSlotSetIndex;
+
+                // Increment the current weapon slot set index
+                player.currentWeaponSlotSetIndex = setNumber;
+
+                SetWeaponSetByIndex(onStart, player.currentWeaponSlotSetIndex);
+
+                //player.playerInventory.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+            }
         }
         else if (mouseWheel)
         {
-            // Cache previous weapon slot index
-            InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
-
-            // Set previous index
-            player.previousSetIndex = player.currentWeaponSlotSetIndex;
-
-            // Increment the current weapon slot set index
-            player.currentWeaponSlotSetIndex++;
-
-            if (player.currentWeaponSlotSetIndex > 3)
+            if (NetworkClient.active)
             {
-                player.currentWeaponSlotSetIndex = 1;
+                if (player.IsLocal)
+                {
+                    // Cache previous weapon slot index
+                    player.playerInventory.SetOriginalSlotIndex(player.weaponState.currentWeaponSetIndex);
+                }
+
+                // Set previous index
+                player.previousSetIndex = player.weaponState.currentWeaponSetIndex;
+
+                int index = player.weaponState.currentWeaponSetIndex;
+
+                // Increment the current weapon slot set index
+                index++;
+
+                if (index > 3) index = 1;
+
+                player.currentWeaponSlotSetIndex = index;
+
+                player.weaponState.CmdChangeWeaponSet(index, onStart);
+
+                //player.playerInventoryNetwork.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+            }
+            else
+            {
+                // Cache previous weapon slot index
+                player.playerInventory.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+
+                // Set previous index
+                player.previousSetIndex = player.currentWeaponSlotSetIndex;
+
+                // Increment the current weapon slot set index
+                player.currentWeaponSlotSetIndex++;
+
+                if (player.currentWeaponSlotSetIndex > 3)
+                {
+                    player.currentWeaponSlotSetIndex = 1;
+                }
+
+                SetWeaponSetByIndex(onStart, player.currentWeaponSlotSetIndex);
+
+                //player.playerInventory.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
             }
 
-            SetWeaponSetByIndex(onlySwitch, onStart);
-
-            InventoryManager.Instance.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
 
             HighlightWeaponSetButton(); //Light and color settings
         }
@@ -934,95 +994,120 @@ public class PlayerControl : MonoBehaviour
         {
             if (player.currentWeaponSlotSetIndex == setNumber) return;
 
-            // Cache previous weapon slot index
-            InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+            if (NetworkClient.active)
+            {
+                if (player.IsLocal)
+                {
+                    // Cache previous weapon slot index
+                    player.playerInventory.SetOriginalSlotIndex(player.weaponState.currentWeaponSetIndex);
+                }
 
-            player.currentWeaponSlotSetIndex = setNumber;
-            SetWeaponSetByIndex(onlySwitch, onStart);
+                player.currentWeaponSlotSetIndex = setNumber;
 
-            InventoryManager.Instance.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+                player.weaponState.CmdChangeWeaponSet(setNumber, onStart);
+
+                //player.playerInventoryNetwork.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+            }
+            else
+            {
+                // Cache previous weapon slot index
+                player.playerInventory.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+
+                player.currentWeaponSlotSetIndex = setNumber;
+                SetWeaponSetByIndex(onStart, player.currentWeaponSlotSetIndex);
+
+                //player.playerInventory.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+            }
 
             HighlightWeaponSetButton(); //Light and color settings
         }
     }
 
-    public void PreviousWeaponSet(bool onlySwitch, bool onStart)
+    public void PreviousWeaponSet(bool onStart)
     {
-        // Cache previous weapon slot index
-        InventoryManager.Instance.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
-
-        player.previousSetIndex = player.currentWeaponSlotSetIndex;
-
-        // Decrease the current weapon slot set index
-        player.currentWeaponSlotSetIndex--;
-
-        if (player.currentWeaponSlotSetIndex < 1)
+        if (NetworkClient.active)
         {
-            player.currentWeaponSlotSetIndex = 3;
-        }
+            if (player.IsLocal)
+            {
+                // Cache previous weapon slot index
+                player.playerInventory.SetOriginalSlotIndex(player.weaponState.currentWeaponSetIndex);
+            }
 
-        SetWeaponSetByIndex(onlySwitch, onStart);
-        InventoryManager.Instance.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+            // Set previous index
+            player.previousSetIndex = player.weaponState.currentWeaponSetIndex;
+
+            int index = player.weaponState.currentWeaponSetIndex;
+
+            // Decrease the current weapon slot set index
+            index--;
+
+            if (index < 1) index = 3;
+
+            player.currentWeaponSlotSetIndex = index;
+
+            player.weaponState.CmdChangeWeaponSet(index, onStart);
+
+            //player.playerInventoryNetwork.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+        }
+        else
+        {
+            // Cache previous weapon slot index
+            player.playerInventory.SetOriginalSlotIndex(player.currentWeaponSlotSetIndex);
+
+            player.previousSetIndex = player.currentWeaponSlotSetIndex;
+
+            // Decrease the current weapon slot set index
+            player.currentWeaponSlotSetIndex--;
+
+            if (player.currentWeaponSlotSetIndex < 1)
+            {
+                player.currentWeaponSlotSetIndex = 3;
+            }
+
+            SetWeaponSetByIndex(onStart, player.currentWeaponSlotSetIndex);
+
+            //player.playerInventory.CurrentWeaponSlotSetIndex = player.currentWeaponSlotSetIndex;
+        }
 
         HighlightWeaponSetButton();
     }
 
-    public void SetWeaponSetByIndex(bool onlySwitch, bool onStart, bool dragFromInventory = false, bool dragToInventory = false, bool inventorySwitch = false)
+    public void SetWeaponSetByIndex(bool onStart, int playerWeaponIndex, bool dragFromInventory = false, bool dragToInventory = false, bool inventorySwitch = false, bool isMultiplayer = false)
     {
-        // WEAPON SLOTS SWITCH
-        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null) // If next slot contains a main-hand weapon
-        {
-            player.setActiveWeaponEvent.CallSetActiveWeaponAtMainHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0],
-                player.currentWeaponSlotSetIndex, onStart, onlySwitch);
+        // Defensive validation
+        if (player == null) player = GetComponent<Player>();
+        if (player == null) return;
 
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.OneHanded)
-            {
-                // If both hands are equipped with one-handed weapon, then swap is true
-                if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
-                {
-                    player.setActiveWeaponEvent.CallOneHandWeaponEquipEvent(true);
-                }
-                else
-                {
-                    player.setActiveWeaponEvent.CallOneHandWeaponEquipEvent();
-                }
-            }
-            else if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.wieldType == WieldType.TwoHanded)
-            {
-                player.setActiveWeaponEvent.CallTwoHandWeaponEquipEvent();
-            }
-        }
-        else
+        // Clamp index and ensure arrays exist
+        playerWeaponIndex = Mathf.Clamp(playerWeaponIndex, 1, player.weaponSlotSetArray?.Length ?? 1);
+
+        bool isWeaponSwapping = dragFromInventory || dragToInventory || inventorySwitch;
+
+        // Treat single-player as "owner" for HUD/book updates
+        bool isOwnerContext = (!NetworkServer.active && !NetworkClient.active) || player.IsLocal;
+
+        // Get references for the set (may be null)
+        Weapon mainHandWeaponInSet = null;
+        Weapon offHandWeaponInSet = null;
+
+        if (player.weaponSlotSetArray != null && player.weaponSlotSetArray.Length >= playerWeaponIndex && player.weaponSlotSetArray[playerWeaponIndex - 1] != null)
         {
-            // There is no weapon in this set
-            player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+            mainHandWeaponInSet = player.weaponSlotSetArray[playerWeaponIndex - 1][0];
+            offHandWeaponInSet = player.weaponSlotSetArray[playerWeaponIndex - 1][1];
         }
 
-        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null) // If next slot contains a off-hand weapon
-        {
-            player.setActiveWeaponEvent.CallSetActiveWeaponAtOffHandEvent(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1], 
-                player.currentWeaponSlotSetIndex, onStart, onlySwitch);
-        }
-        else
-        {
-            if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null) // If next slot contains a main-hand weapon
-            {
-                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0].weaponDetails.wieldType != WieldType.TwoHanded)
-                {
-                    player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
-                }
-            }
-            else
-            {
-                player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
-            }
-        }
+        // Use Player helper to fire unified events (gameplay + optional HUD owner events)
+        player.ApplyWeaponActivationEvents(mainHandWeaponInSet, ItemSlotStatus.MainHand, playerWeaponIndex, onStart, isOwnerContext, allowHudEvents: true, allowLockIconUpdate: true, isWeaponSwapping);
+        player.ApplyWeaponActivationEvents(offHandWeaponInSet, ItemSlotStatus.OffHand, playerWeaponIndex, onStart, isOwnerContext, allowHudEvents: true, allowLockIconUpdate: true, isWeaponSwapping);
 
-        // Update stats after weapon switch
+        // Update stats after weapon switch (owner recalculates and book UI updated locally)
         player.RecalculateSecondaryStats();
 
-        // Book UI SWITCH
-        if(!dragFromInventory && !dragToInventory && !inventorySwitch) StaticEventHandler.CallWeaponSwitchedEventForBook();
+        // Book UI SWITCH: only affect the owner (local or single-player)
+        if (!dragFromInventory && !dragToInventory && !inventorySwitch && isOwnerContext)
+        {
+            StaticEventHandler.CallWeaponSwitchedEventForBook();
+        }
     }
 
     /// <summary>
@@ -1257,7 +1342,7 @@ public class PlayerControl : MonoBehaviour
 
             // GUARDED OATH
             if (player.isGuardedOathActive && player.activeWeapon.GetCurrentOffHandWeapon() != null &&
-                player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass != WeaponClass.Shield)
+                player.activeWeapon.GetCurrentOffHandWeapon().weaponStats.weaponClass != WeaponClass.Shield)
             {
                 foreach (var skill in player.currentlyUsedActiveUniqueSkills)
                 {
@@ -1331,7 +1416,7 @@ public class PlayerControl : MonoBehaviour
                                 break;
                             case ActiveSkill.ShieldBash:
                                 // OFF-HAND
-                                if (offHand?.weaponDetails.weaponClass == WeaponClass.Shield)
+                                if (offHand?.weaponStats.weaponClass == WeaponClass.Shield)
                                 {
                                     player.mana.ConsumeMana(consumedMana);
 
@@ -1342,7 +1427,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.BreakTheLine:
-                                if (!player.isBreakTheLineActive && offHand?.weaponDetails.weaponClass == WeaponClass.Shield)
+                                if (!player.isBreakTheLineActive && offHand?.weaponStats.weaponClass == WeaponClass.Shield)
                                 {
                                     player.mana.ConsumeMana(consumedMana);
 
@@ -1355,7 +1440,7 @@ public class PlayerControl : MonoBehaviour
                                 {
                                     player.playerSkillController.RemoveGuardedOathEffects(inputSlotNumber, ref activeSkillData);
                                 }
-                                else if (!player.isGuardedOathActive && offHand?.weaponDetails.weaponClass == WeaponClass.Shield)
+                                else if (!player.isGuardedOathActive && offHand?.weaponStats.weaponClass == WeaponClass.Shield)
                                 {
                                     if (player.mana.GetCurrentMana() >= reservedMana)
                                     {
@@ -1397,8 +1482,8 @@ public class PlayerControl : MonoBehaviour
                                 // DAGGER CHECK
                                 if (offHand != null && mainHand != null && !isParrying)
                                 {
-                                    if (offHand.weaponDetails.weaponClass == WeaponClass.Dagger &&
-                                        mainHand.weaponDetails.weaponClass == WeaponClass.Dagger && !player.meleeAttackMainHand.IsAttacking)
+                                    if (offHand.weaponStats.weaponClass == WeaponClass.Dagger &&
+                                        mainHand.weaponStats.weaponClass == WeaponClass.Dagger && !player.meleeAttackMainHand.IsAttacking)
                                     {
                                         player.mana.ConsumeMana(consumedMana);
 
@@ -1424,8 +1509,8 @@ public class PlayerControl : MonoBehaviour
                                 // DAGGER CHECK
                                 if (offHand != null && mainHand != null && !isParrying)
                                 {
-                                    if (offHand.weaponDetails.weaponClass == WeaponClass.Dagger &&
-                                        mainHand.weaponDetails.weaponClass == WeaponClass.Dagger && !player.meleeAttackMainHand.IsAttacking)
+                                    if (offHand.weaponStats.weaponClass == WeaponClass.Dagger &&
+                                        mainHand.weaponStats.weaponClass == WeaponClass.Dagger && !player.meleeAttackMainHand.IsAttacking)
                                     {
                                         player.mana.ConsumeMana(consumedMana);
 
@@ -1446,8 +1531,8 @@ public class PlayerControl : MonoBehaviour
                         switch (player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeSkill)
                         {
                             case ActiveSkill.Penetrate:
-                                if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow ||
-                                    mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow)
+                                if (mainHand.weaponStats.weaponClass == WeaponClass.Bow ||
+                                    mainHand.weaponStats.weaponClass == WeaponClass.Crossbow)
                                 {
                                     if (!player.isPenetrateActive)
                                     {
@@ -1461,7 +1546,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.TripleThreat:
-                                if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow || mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow)
+                                if (mainHand.weaponStats.weaponClass == WeaponClass.Bow || mainHand.weaponStats.weaponClass == WeaponClass.Crossbow)
                                 {
                                     if (!player.isTripleThreatActive)
                                     {
@@ -1475,7 +1560,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.BindingArrow:
-                                if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow || mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow)
+                                if (mainHand.weaponStats.weaponClass == WeaponClass.Bow || mainHand.weaponStats.weaponClass == WeaponClass.Crossbow)
                                 {
                                     if (!player.isBindingArrowActive)
                                     {
@@ -1489,7 +1574,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.ArrowsOfTheSevenPlagues:
-                                if (mainHand.weaponDetails.weaponClass == WeaponClass.Bow || mainHand.weaponDetails.weaponClass == WeaponClass.Crossbow)
+                                if (mainHand.weaponStats.weaponClass == WeaponClass.Bow || mainHand.weaponStats.weaponClass == WeaponClass.Crossbow)
                                 {
                                     if (!player.isArrowOfTheSevenActive)
                                     {
@@ -1553,8 +1638,8 @@ public class PlayerControl : MonoBehaviour
                                 if (player.activeWeapon.GetCurrentOffHandWeapon() != null && player.activeWeapon.GetCurrentMainHandWeapon() != null 
                                     && !player.isAxeThrowActive)
                                 {
-                                    if (player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails.weaponClass == WeaponClass.Axe &&
-                                        player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Axe && 
+                                    if (player.activeWeapon.GetCurrentOffHandWeapon().weaponStats.weaponClass == WeaponClass.Axe &&
+                                        player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass == WeaponClass.Axe && 
                                         !player.meleeAttackMainHand.IsAttacking)
                                     {
                                         player.mana.ConsumeMana(consumedMana);
@@ -1583,8 +1668,8 @@ public class PlayerControl : MonoBehaviour
                         Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
                         Weapon offHandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
 
-                        bool mainHanddaggerOrClaw = mainHandWeapon != null && (mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Dagger ||
-                            mainHandWeapon.weaponDetails.weaponClass == WeaponClass.Claw);
+                        bool mainHanddaggerOrClaw = mainHandWeapon != null && (mainHandWeapon.weaponStats.weaponClass == WeaponClass.Dagger ||
+                            mainHandWeapon.weaponStats.weaponClass == WeaponClass.Claw);
 
                         switch (player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeSkill)
                         {
@@ -1688,7 +1773,7 @@ public class PlayerControl : MonoBehaviour
                         switch (player.currentlyUsedActiveUniqueSkills[inputSlotNumber].activeSkill)
                         {
                             case ActiveSkill.Blizzard:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff) 
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass == WeaponClass.Staff) 
                                 {
                                     if (!player.isBlizzardActive)
                                     {
@@ -1696,7 +1781,7 @@ public class PlayerControl : MonoBehaviour
 
                                         // Blizzard attack
                                         player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
-                                        player.playerSkillController.Blizzard(inputSlotNumber, ref activeSkillData); ;
+                                        player.playerSkillController.Blizzard(inputSlotNumber, ref activeSkillData);
                                         player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.Blizzard, inputSlotNumber);
                                     }
                                 }
@@ -1716,7 +1801,7 @@ public class PlayerControl : MonoBehaviour
                                 // STAFF CHECK
                                 if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
                                 {
-                                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff &&
+                                    if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass == WeaponClass.Staff &&
                                         !player.meleeAttackMainHand.IsAttacking)
                                     {
                                         player.mana.ConsumeMana(consumedMana);
@@ -1729,7 +1814,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.Icebreaker:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff &&
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass == WeaponClass.Staff &&
                                     !player.meleeAttackMainHand.IsAttacking)
                                 {
                                     if (!player.isIceBreakerActive)
@@ -1744,7 +1829,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.AbsoluteZero:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass == WeaponClass.Staff)
                                 {
                                     if (!player.isAbsoluteZeroActive)
                                     {
@@ -1766,7 +1851,7 @@ public class PlayerControl : MonoBehaviour
                         {
                             case ActiveSkill.FireBlast:
 
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass == WeaponClass.Staff)
                                 {
                                     if (!player.isFireBlastActive)
                                     {
@@ -1791,7 +1876,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.FlameLotus:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass == WeaponClass.Staff)
                                 {
                                     if (!player.isFlameLotusActive)
                                     {
@@ -1816,7 +1901,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.BlazingCyclone:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass == WeaponClass.Staff)
                                 {
                                     if (!player.isBlazingCycloneActive)
                                     {
@@ -1864,7 +1949,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.ChainLightning:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass == WeaponClass.Staff)
                                 {
                                     if (!player.isChainLightningActive)
                                     {
@@ -1882,7 +1967,7 @@ public class PlayerControl : MonoBehaviour
                                 }
                                 break;
                             case ActiveSkill.EyeOfTheStorm:
-                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponClass == WeaponClass.Staff)
+                                if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponClass == WeaponClass.Staff)
                                 {
                                     if (!player.isEyeOfTheStormActive)
                                     {
@@ -1968,9 +2053,20 @@ public class PlayerControl : MonoBehaviour
                 // Open chest with key process
                 if (InputManager.Instance.interaction.action.IsPressed())
                 {
-                    if (chest.chestState == ChestState.closed && !chest.dropCompleted)
+                    if (!NetworkServer.active && !NetworkClient.active)
                     {
-                        iusable.StartChestProcess();
+                        if (chest.chestState == ChestState.closed)
+                        {
+                            iusable.StartChestProcess();
+                        }
+                    }
+                    else
+                    {
+                        if (chest.chestNetwork.chestState == ChestState.closed)
+                        {
+                            ChestNetwork chestNetwork = chest.GetComponent<ChestNetwork>();
+                            player.NetAuth.CmdRequestOpenChest(chestNetwork.netIdentity);
+                        }
                     }
                 }
             }
@@ -1983,7 +2079,7 @@ public class PlayerControl : MonoBehaviour
                 if (collider2D.GetComponent<CapsuleCollider2D>() != null && collider2D.tag != Settings.playerTag && collider2D.tag != Settings.enemyTag)
                 {
                     DialogueManager dialogueManager = collider2D.GetComponent<DialogueManager>();
-                    NPC npc = dialogueManager.GetComponent<NPC>();
+                    NPC npc = dialogueManager?.GetComponent<NPC>();
 
                     if (npc != null && npc.npcType == NpcType.Gambler) return;
 
@@ -1993,67 +2089,112 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public void DropProcess(DropType dropType, ItemGeneric itemGeneric = null, WeaponDetailsSO toBeSwappedWeaponDetails = null, bool dropOffHand = false,
-    ItemSlotStatus itemSlotStatus = ItemSlotStatus.None, int inventoryIndex = -1, bool dropButton = false)
+    public void DropProcess(ItemType dropType, WeaponStats weaponStats, PassiveItemStats passiveItemStats, Rarity rarity, bool isServer,
+        ItemSlotStatus itemSlotStatus, int inventoryIndex = -1, int setIndex = -1, bool dropButton = false)
     {
-        DropProcess(dropType, itemGeneric, (Weapon)null, dropOffHand, itemSlotStatus, inventoryIndex, dropButton);
+        bool isMultiplayer = NetworkServer.active || NetworkClient.active;
+
+        // Single Player
+        if (!isMultiplayer)
+        {
+            DropProcess_SP(dropType, weaponStats, passiveItemStats, rarity, itemSlotStatus, inventoryIndex, setIndex, dropButton);
+            return;
+        }
+        if (isServer)
+        {
+            DropProcess_Server(dropType, weaponStats, passiveItemStats, rarity, itemSlotStatus, inventoryIndex, setIndex, dropButton);
+            return;
+        }
+           
+        // CLIENT
+        DropProcess_Client(dropType, weaponStats, passiveItemStats, rarity, itemSlotStatus, inventoryIndex, setIndex, dropButton);
     }
 
-    public void DropProcess(DropType dropType, ItemGeneric itemGeneric = null, Weapon toBeSwappedWeapon = null, bool dropOffHand = false, 
-        ItemSlotStatus itemSlotStatus = ItemSlotStatus.None, int inventoryIndex = -1, bool dropButton = false)
+    private void DropProcess_Server(ItemType dropType, WeaponStats weaponStats, PassiveItemStats passiveItemStats, Rarity rarity,
+        ItemSlotStatus itemSlotStatus = ItemSlotStatus.None, int inventoryIndex = -1, int setIndex = -1, bool dropButton = false)
     {
-        if (dropType == DropType.PassiveItem)
+        bool isInventoryFull = player.playerInventory.IsInventoryFull();
+        Vector3 pos = player.transform.position;
+
+        if (dropType == ItemType.PassiveItem)
         {
-            PassiveItem passiveItem = (PassiveItem)itemGeneric;
+            if (itemSlotStatus == ItemSlotStatus.Inventory)
+            {
+                player.playerInventoryNetwork.SpawnDropWeapon_Server(weaponStats, weaponStats.weaponTitle);
+            }
+            else if (true)
+            {
+
+            }
+
+        }
+        else
+        {
+            player.playerInventoryNetwork.SpawnDropPassiveItem_Server(passiveItemStats);
+        }
+    }
+
+    private void DropProcess_Client(ItemType dropType, WeaponStats weaponStats, PassiveItemStats passiveItemStats, Rarity rarity,
+        ItemSlotStatus fromStatus, int fromIndex, int setIndex, bool dropButton)
+    {
+        if (!dropButton) return;
+        if (!player.IsLocal) return;
+
+        if (dropType == ItemType.Weapon) player.playerInventoryNetwork.CmdDropWeapon(weaponStats, weaponStats.weaponTitle, fromStatus, fromIndex, setIndex);
+        else if (dropType == ItemType.PassiveItem) player.playerInventoryNetwork.CmdDropPassive(passiveItemStats, passiveItemStats.passiveItemType, fromStatus, fromIndex, passiveItemStats.passiveItemSlotName);
+    }
+
+    private void DropProcess_SP(ItemType dropType, WeaponStats weaponStats, PassiveItemStats passiveItemStats, Rarity rarity, 
+        ItemSlotStatus itemSlotStatus = ItemSlotStatus.None, int inventoryIndex = -1, int setIndex = -1, bool dropButton = false)
+    {
+        bool isInventoryFull = player.playerInventory.IsInventoryFull();
+
+        if (dropType == ItemType.PassiveItem)
+        {
+            PassiveItem passiveItem = PassiveDropGenerator.GetPassiveWithStats(passiveItemStats, rarity, itemSlotStatus, -1);
+            PassiveItemDetailsSO passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
 
             if (itemSlotStatus == ItemSlotStatus.Inventory)
             {
                 // Just drop from inventory to the floor
-                SpawnDroppedPassiveItem(passiveItem);
-                InventoryManager.Instance.EmptyItemFromInventory(inventoryIndex);
+                SpawnDroppedPassiveItemSP(passiveItem);
+                EmptyItemFromInventorySP(inventoryIndex);
             }
             else if (dropButton)
             {
                 // Manual drop by clicking drop button
-                SpawnDroppedPassiveItem(passiveItem);
-                player.setPassiveItemEvent.CallRemovePassiveItem(player, passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName, isSwap: false, dropButton: true);
+                SpawnDroppedPassiveItemSP(passiveItem);
+                DeactivatePassiveItem(passiveItem.passiveStats, passiveItem.Rarity, passiveItem.ItemSlotStatus, isSwap: false, dropButton: true);
             }
-            else if (InventoryManager.Instance.IsInventoryFull())
+            else if (isInventoryFull)
             {
                 // Forced drop due to full inventory during item pickup
-                SpawnDroppedPassiveItem(passiveItem);
-                player.setPassiveItemEvent.CallRemovePassiveItem(player, passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
+                SpawnDroppedPassiveItemSP(passiveItem);
+                DeactivatePassiveItem(passiveItem.passiveStats, passiveItem.Rarity, passiveItem.ItemSlotStatus, isSwap: false, dropButton: false);
             }
             else
             {
                 // Regular swap -> previous goes to inventory
-                player.setPassiveItemEvent.CallRemovePassiveItem(player, passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
-
-                int index = InventoryManager.Instance.FindIndexOfItem(passiveItem);
-                passiveItem.itemSlotStatus = ItemSlotStatus.Inventory;
-                StaticEventHandler.CallPassiveItemAddedToInventorySlot(passiveItem, index);
+                DeactivatePassiveItem(passiveItem.passiveStats, passiveItem.Rarity, passiveItem.ItemSlotStatus, isSwap: false, dropButton: false);
+                PlaceItemIntoInventorySP(default, passiveItem.passiveStats, passiveItem.Rarity, passiveItem.ItemSlotStatus);
             }
             return;
         }
 
         // === WEAPON ===
-        Weapon weapon = (Weapon)itemGeneric;
-
-        bool IsSwapScenario() => !dropButton && toBeSwappedWeapon != null;
+        Weapon weapon = WeaponDropGenerator.GetWeaponWithStats(weaponStats, rarity, itemSlotStatus, -1);
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
 
         // Inventory-drop case (no active slot involvement)
         if (itemSlotStatus == ItemSlotStatus.Inventory)
         {
-            SpawnDroppedWeapon(weapon);
-
-            // Empty inventory slot + Book update
-            InventoryManager.Instance.EmptyItemFromInventory(inventoryIndex);
-            StaticEventHandler.CallInventoryWeaponDroppedEventForBook(inventoryIndex);
+            SpawnDroppedWeaponSP(weapon);
+            EmptyItemFromInventorySP(inventoryIndex);
             return;
         }
 
         // MAIN-HAND
-        if (weapon.itemSlotStatus == ItemSlotStatus.MainHand)
+        if (weapon.ItemSlotStatus == ItemSlotStatus.MainHand)
         {
             if (dropButton)
             {
@@ -2064,49 +2205,39 @@ public class PlayerControl : MonoBehaviour
                     return;
                 }
 
-                SpawnDroppedWeapon(weapon);
-                DeactivateMainHandWeapon();
+                SpawnDroppedWeaponSP(weapon);
+                DeactivateMainHandWeapon(player.currentWeaponSlotSetIndex, ItemSlotStatus.MainHand);
+                ValueAndUIUpdate(player.currentWeaponSlotSetIndex, ItemSlotStatus.MainHand);
             }
-            else if (InventoryManager.Instance.IsInventoryFull())
+            else if (isInventoryFull)
             {
-                // Forced floor drop during pickup
-                if (IsSwapScenario() &&
-                    !SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon,
-                        player.activeWeapon.GetCurrentMainHandWeapon(),
-                        player.activeWeapon.GetCurrentOffHandWeapon(), false))
-                {
-                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
-                    return;
-                }
+                //// Forced floor drop during pickup
+                //if (!SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon,
+                //        player.activeWeapon.GetCurrentMainHandWeapon(),
+                //        player.activeWeapon.GetCurrentOffHandWeapon(), false))
+                //{
+                //    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                //    return;
+                //}
 
-                SpawnDroppedWeapon(weapon);
-                DeactivateMainHandWeapon();
+                SpawnDroppedWeaponSP(weapon);
+                DeactivateMainHandWeapon(player.currentWeaponSlotSetIndex, ItemSlotStatus.MainHand);
+                ValueAndUIUpdate(player.currentWeaponSlotSetIndex, ItemSlotStatus.MainHand);
             }
             else
             {
-                // Move current to inventory during pickup
-                if (IsSwapScenario() &&
-                    !SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon,
-                        player.activeWeapon.GetCurrentMainHandWeapon(),
-                        player.activeWeapon.GetCurrentOffHandWeapon(), false))
-                {
-                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
-                    return;
-                }
+                //// Move current to inventory during pickup
+                //if (!SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon,
+                //        player.activeWeapon.GetCurrentMainHandWeapon(),
+                //        player.activeWeapon.GetCurrentOffHandWeapon(), false))
+                //{
+                //    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                //    return;
+                //}
 
-                DeactivateMainHandWeapon();
-                int index = InventoryManager.Instance.PlaceItemToInventoryIndexSlot(weapon);
-                weapon.itemSlotStatus = ItemSlotStatus.Inventory;
-                StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, index);
+                DeactivateMainHandWeapon(player.currentWeaponSlotSetIndex, ItemSlotStatus.MainHand);
+                PlaceItemIntoInventorySP(weaponStats, passiveItemStats, rarity, itemSlotStatus);
             }
-
-            // Stats + Book + flags
-            player.UpdateDamageValues();
-            player.UpdateAttackRatingAndCriticalValues();
-            player.UpdateBlockAndDodgeValues();
-
-            StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponMainHand);
-            player.mainHandSlotFilled = false;
 
             return;
         }
@@ -2122,152 +2253,256 @@ public class PlayerControl : MonoBehaviour
                     return;
                 }
 
-                SpawnDroppedOffhandWeapon(weapon);
-                DeactivateOffhandWeapon();
+                SpawnDroppedOffhandWeaponSP(weapon);
+                DeactivateOffhandWeapon(player.currentWeaponSlotSetIndex, ItemSlotStatus.OffHand);
+                ValueAndUIUpdate(player.currentWeaponSlotSetIndex, ItemSlotStatus.OffHand);
             }
-            else if (InventoryManager.Instance.IsInventoryFull())
+            else if (isInventoryFull)
             {
-                if (IsSwapScenario() &&
-                    !SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon,
-                        player.activeWeapon.GetCurrentMainHandWeapon(),
-                        player.activeWeapon.GetCurrentOffHandWeapon(), true))
-                {
-                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
-                    return;
-                }
+                //if (!SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon,
+                //        player.activeWeapon.GetCurrentMainHandWeapon(),
+                //        player.activeWeapon.GetCurrentOffHandWeapon(), true))
+                //{
+                //    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                //    return;
+                //}
 
                 // Forced floor drop during pickup
-                SpawnDroppedOffhandWeapon(weapon);
-                DeactivateOffhandWeapon();
+                SpawnDroppedOffhandWeaponSP(weapon);
+                DeactivateOffhandWeapon(player.currentWeaponSlotSetIndex, ItemSlotStatus.OffHand);
+                ValueAndUIUpdate(player.currentWeaponSlotSetIndex, ItemSlotStatus.OffHand);
             }
             else
             {
-                // Move current to inventory during pickup
-                if (IsSwapScenario() &&
-                    !SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon,
-                        player.activeWeapon.GetCurrentMainHandWeapon(),
-                        player.activeWeapon.GetCurrentOffHandWeapon(), true))
-                {
-                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
-                    return;
-                }
+                //// Move current to inventory during pickup
+                //if (!SlotPlacementRules.IsSwapAllowed(toBeSwappedWeapon, weapon,
+                //        player.activeWeapon.GetCurrentMainHandWeapon(),
+                //        player.activeWeapon.GetCurrentOffHandWeapon(), true))
+                //{
+                //    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.invalidActionSoundEffect);
+                //    return;
+                //}
 
-                DeactivateOffhandWeapon();
-                int index = InventoryManager.Instance.PlaceItemToInventoryIndexSlot(weapon);
-                weapon.itemSlotStatus = ItemSlotStatus.Inventory;
-                StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, index);
+                DeactivateOffhandWeapon(player.currentWeaponSlotSetIndex, ItemSlotStatus.OffHand);
+                PlaceItemIntoInventorySP(weapon.weaponStats, default, weapon.Rarity, weapon.ItemSlotStatus);
+                ValueAndUIUpdate(player.currentWeaponSlotSetIndex, ItemSlotStatus.OffHand);
             }
 
-            if (weapon.weaponDetails.weaponClass == WeaponClass.Shield)
+            if (weapon.weaponStats.weaponClass == WeaponClass.Shield)
             {
                 player.isShieldCalculated = false;
             }
+        }
+    }
 
-            // Stats + Book + flags
+    public void DeactivateMainHandWeapon(int currentWeaponSlotSetIndex, ItemSlotStatus slotStatus)
+    {
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            player.weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] = null;
+
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent(true);
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEventForHud();
+        }
+        else if (NetworkClient.active)
+        {
+            player.NetAuth.CmdDeactivateWeaponAfterDrop(player.currentWeaponSlotSetIndex, slotStatus);
+        }
+    }
+
+    public void DeactivateOffhandWeapon(int currentWeaponSlotSetIndex, ItemSlotStatus slotStatus)
+    {
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            // Set dropped set's off hand null
+            player.weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] = null;
+
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent(isStatUpdateAllowed: true);
+            player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEventForHud();
+        }
+        else if (NetworkClient.active)
+        {
+            player.NetAuth.CmdDeactivateWeaponAfterDrop(currentWeaponSlotSetIndex, slotStatus);
+        }
+    }
+
+    public void DeactivateMainHandWeapon_Client(int index)
+    {
+        player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEventForHud();
+    }
+
+    public void DeactivateOffhandWapon_Client(int index)
+    {
+        player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEventForHud();
+    }
+
+    public void DeactivatePassiveItem(PassiveItemStats passiveStats, Rarity rarity, ItemSlotStatus slotStatus, bool isSwap, bool dropButton)
+    {
+        PassiveItem passiveItem = null;
+        PassiveItemDetailsSO passiveItemDetails = null;
+
+        if (passiveStats.passiveItemType != PassiveItemType.None)
+        {
+            passiveItem = PassiveDropGenerator.GetPassiveWithStats(passiveStats, rarity, slotStatus, -1);
+            passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
+        }
+
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            player.setPassiveItemEvent.CallRemovePassiveItem(player, passiveItem, passiveStats.passiveItemSlotName, isSwap, dropButton);
+        }
+        else if(NetworkClient.active)
+        {
+            player.NetAuth.CmdDeactivatePassiveItemAfterDrop(passiveStats, rarity, slotStatus, isSwap, dropButton);
+        }
+    }
+
+    public void EmptyItemFromInventorySP(int inventoryIndex)
+    {
+        player.playerInventory.EmptyItemFromInventory(inventoryIndex);
+        StaticEventHandler.CallInventoryWeaponDroppedEventForBook(inventoryIndex);
+    }
+
+    public void PlaceItemIntoInventorySP(WeaponStats weaponStats, PassiveItemStats passiveStats, Rarity rarity, ItemSlotStatus slotStatus)
+    {
+        Weapon weapon = null;
+        PassiveItem passiveItem = null;
+        WeaponDetailsSO weaponDetails = null;
+        PassiveItemDetailsSO passiveItemDetails = null;
+
+        if (weaponStats.weaponTitle != WeaponTitle.None)
+        {
+            weapon = WeaponDropGenerator.GetWeaponWithStats(weaponStats, rarity, slotStatus, -1);
+            weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
+        }
+        else if (passiveStats.passiveItemType != PassiveItemType.None)
+        {
+            passiveItem = PassiveDropGenerator.GetPassiveWithStats(passiveStats, rarity, slotStatus, -1);
+            passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
+        }
+
+        if (weapon != null)
+        {
+            int index = player.playerInventory.PlaceItemToInventoryIndexSlot(weapon);
+            weapon.ItemSlotStatus = ItemSlotStatus.Inventory;
+            StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, index);
+        }
+        else if (passiveItem != null)
+        {
+            int index = player.playerInventory.PlaceItemToInventoryIndexSlot(passiveItem);
+            passiveItem.ItemSlotStatus = ItemSlotStatus.Inventory;
+            StaticEventHandler.CallPassiveItemAddedToInventorySlot(passiveItem, index);
+        }
+    }
+
+    public void ValueAndUIUpdate(int currentWeaponSlotSetIndex, ItemSlotStatus slotStatus)
+    {
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
             player.UpdateDamageValues();
             player.UpdateArmorValues();
             player.UpdateAttackRatingAndCriticalValues();
             player.UpdateBlockAndDodgeValues();
 
-            StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponOffHand);
-            player.offHandSlotFilled = false;
+            if(slotStatus == ItemSlotStatus.MainHand)
+            {
+                StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponMainHand);
+            }
+            else if (slotStatus == ItemSlotStatus.OffHand)
+            {
+                StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponOffHand);
+            }
         }
-    }
-
-    private void DeactivateMainHandWeapon()
-    {
-        // De-active dropped main hand weapon
-        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]?.weaponDetails.wieldType == WieldType.OneHanded)
+        else if (NetworkClient.active)
         {
-            // Prevent off-hand ui weapon icon lost in case weapon swapping on drop while equipping a shield
-            player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent(true);
+            player.UpdateDamageValues();
+            player.UpdateArmorValues();
+            player.UpdateAttackRatingAndCriticalValues();
+            player.UpdateBlockAndDodgeValues();
+
+            player.NetAuth.CmdValueAndBookUpdate(currentWeaponSlotSetIndex, slotStatus);
         }
-        else
+    }
+
+    private void SpawnDroppedWeaponSP(Weapon weapon)
+    {
         {
-            player.setActiveWeaponEvent.CallSetInactiveWeaponAtMainHandEvent();
+            GameObject dropItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+            DropItem dropItem = dropItemObject.GetComponent<DropItem>();
+
+            dropItem.hasWeaponDrop = true;
+            dropItem.dropSourceType = DropSourceType.Player;
+
+            dropItem.isColliding = true;
+
+            WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
+
+            dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position, null);
+
+            // Break free from the player object
+            dropItem.spriteRenderer.enabled = true;
+            dropItem.animator.enabled = true;
+            dropItem.animator.runtimeAnimatorController = weaponDetails.weaponHoverAnimatorController;
+
+            dropItem.transform.SetParent(GameManager.Instance.GetCurrentRoom().instantiatedRoom.transform);
+            dropItem.isPickedUp = false;
+            dropItem.dropCompleted = true;
+
+            // Make sure drop completed
+            dropItem.boxCollider2D.enabled = true;
+            dropItem.isColliding = false;
         }
-
-        player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] = null;
     }
 
-    public void DeactivateOffhandWeapon()
-    {
-        // Set dropped set's off hand null
-        player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] = null;
-
-        player.setActiveWeaponEvent.CallSetInactiveWeaponAtOffHandEvent();
-    }
-
-    private void SpawnDroppedWeapon(Weapon weapon)
-    {
-        GameObject dropItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        DropItem dropItem = dropItemObject.GetComponent<DropItem>();
-        DropItem.toBeDroppedDropItem = dropItem;
-
-        DropItem.toBeDroppedDropItem.hasWeaponDrop = true;
-        DropItem.toBeDroppedDropItem.isColliding = true;
-        DropItem.toBeDroppedDropItem.hasMainHandWeapon = true;
-
-        DropItem.toBeDroppedDropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
-
-        // Break free from the player object
-        DropItem.toBeDroppedDropItem.spriteRenderer.enabled = true;
-        DropItem.toBeDroppedDropItem.animator.enabled = true;
-        DropItem.toBeDroppedDropItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
-
-        DropItem.toBeDroppedDropItem.transform.SetParent(GameManager.Instance.GetCurrentRoom().instantiatedRoom.transform);
-        DropItem.toBeDroppedDropItem.isPickedUp = false;
-
-        // Make sure drop completed
-        DropItem.toBeDroppedDropItem.boxCollider2D.enabled = true;
-        DropItem.toBeDroppedDropItem.isColliding = false;
-    }
-
-    private void SpawnDroppedOffhandWeapon(Weapon weapon)
+    private void SpawnDroppedOffhandWeaponSP(Weapon weapon)
     {
         GameObject chestItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
-        DropItem chestItem = chestItemObject.GetComponent<DropItem>();
-        DropItem.toBeDroppedDropItem = chestItem;
+        DropItem dropItem = chestItemObject.GetComponent<DropItem>();
 
-        DropItem.toBeDroppedDropItem.hasWeaponDrop = true;
-        DropItem.toBeDroppedDropItem.isColliding = true;
-        DropItem.toBeDroppedDropItem.hasOffHandWeapon = true;
+        dropItem.hasWeaponDrop = true;
+        dropItem.dropSourceType = DropSourceType.Player;
 
-        DropItem.toBeDroppedDropItem.Initialize(weapon, weapon.weaponDetails.weaponFrontSprite, transform.position);
+        dropItem.isColliding = true;
+
+        WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
+
+        dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position, null);
 
         // Break free from the player object
-        DropItem.toBeDroppedDropItem.spriteRenderer.enabled = true;
-        DropItem.toBeDroppedDropItem.animator.enabled = true;
-        DropItem.toBeDroppedDropItem.animator.runtimeAnimatorController = weapon.weaponDetails.weaponHoverAnimatorController;
+        dropItem.spriteRenderer.enabled = true;
+        dropItem.animator.enabled = true;
+        dropItem.animator.runtimeAnimatorController = weaponDetails.weaponHoverAnimatorController;
 
-        DropItem.toBeDroppedDropItem.transform.SetParent(null);
-        DropItem.toBeDroppedDropItem.isPickedUp = false;
-
+        dropItem.transform.SetParent(GameManager.Instance.GetCurrentRoom().instantiatedRoom.transform);
+        dropItem.isPickedUp = false;
+        dropItem.dropCompleted = true;
 
         // Make sure drop completed
-        DropItem.toBeDroppedDropItem.boxCollider2D.enabled = true;
-        DropItem.toBeDroppedDropItem.isColliding = false;
+        dropItem.boxCollider2D.enabled = true;
+        dropItem.isColliding = false;
     }
 
-
-    private void SpawnDroppedPassiveItem(PassiveItem passiveItem)
+    private void SpawnDroppedPassiveItemSP(PassiveItem passiveItem)
     {
         GameObject dropItemObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
         DropItem dropItem = dropItemObject.GetComponent<DropItem>();
-        DropItem.toBeDroppedDropItem = dropItem;
 
+        dropItem.dropSourceType = DropSourceType.Player;
         dropItem.hasSecondaryPassiveDrop = true;
         dropItem.isColliding = true;
 
-        dropItem.Initialize(passiveItem, passiveItem.passiveItemDetails.passiveItemSprite, transform.position);
+        PassiveItemDetailsSO passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
+
+        dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position, null);
         dropItem.spriteRenderer.enabled = true;
         dropItem.animator.enabled = true;
-        dropItem.animator.runtimeAnimatorController = passiveItem.passiveItemDetails.passiveItemAnimatorController;
+        dropItem.animator.runtimeAnimatorController = passiveItemDetails.passiveItemAnimatorController;
         dropItem.transform.SetParent(GameManager.Instance.GetCurrentRoom().instantiatedRoom.transform);
 
         dropItem.isPickedUp = false;
         dropItem.boxCollider2D.enabled = true;
         dropItem.isColliding = false;
+        dropItem.dropCompleted = true;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

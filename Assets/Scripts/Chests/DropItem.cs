@@ -1,5 +1,6 @@
-using System;
+using Mirror;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,37 +11,41 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     [SerializeField] Transform tooltipPanel;
 
+    public Transform priceContainer;
+
+    [HideInInspector] public DropSourceType dropSourceType;
     [HideInInspector] public bool hasWeaponDrop = false;
     [HideInInspector] public bool hasPrimaryPassiveDrop = false;
     [HideInInspector] public bool hasSecondaryPassiveDrop = false;
+
     [HideInInspector] public SpriteRenderer spriteRenderer;
-    [HideInInspector] public bool isPickedUp = false;
     [HideInInspector] public Animator animator;
     [HideInInspector] public BoxCollider2D boxCollider2D;
-    [HideInInspector] public int remainingItemCharge;
-    [HideInInspector] public bool droppedByPlayer = false; // Used for actives to cache charge count
-    [HideInInspector] public PassiveItem toBeDroppedPassiveItem;
+
+    [HideInInspector] public bool isPickedUp = false;
     [HideInInspector] public bool isColliding;
-    [HideInInspector] public bool hasMainHandWeapon;
-    [HideInInspector] public bool hasOffHandWeapon;
     [HideInInspector] public ItemGeneric itemGeneric;
+
+    // GAMBLE
     [HideInInspector] public bool isGambleDropItem;
     [HideInInspector] public int gambleValue;
-    [HideInInspector] public static DropItem toBeDroppedDropItem;
-    [HideInInspector] public static DropItem nearestDropItem = null;
+    [HideInInspector] public bool isRevealed;
+
     [HideInInspector] public static Weapon droppedThrowingAxe = null;
     [HideInInspector] public bool isInitialized = false;
+    [HideInInspector] public bool dropCompleted;
+    [HideInInspector] public Counter owningCounter;
+    [HideInInspector] public bool isPressedPreviousFrame;
 
-    bool isPurchasing;
-    Chest chest;
+    bool isPurchased;
     bool trackPlayer;
-    bool shardGained = false;
+    bool isNearestDropItem;
 
     public WeaponDetailsSO weaponDetails;
     public PassiveItemDetailsSO passiveItemDetails;
     Player player;
 
-    Animator pickUpAnimator;
+    public Animator pickUpAnimator;
     bool isPointerOver = false;
 
     // Tooltip interaction for 
@@ -51,7 +56,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         animator = transform.GetChild(0).GetComponent<Animator>();
         pickUpAnimator = transform.GetChild(1).GetComponent<Animator>();
-        chest = GetComponentInParent<Chest>();
         boxCollider2D = GetComponent<BoxCollider2D>();
     }
 
@@ -62,23 +66,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void OnEnable()
     {
-        // DEBUG PURPOSE
-        if (weaponDetails != null)
-        {
-            Weapon weapon = new Weapon(weaponDetails.rarity);
-            weapon.weaponDetails = weaponDetails;
-            hasWeaponDrop = true;
-
-            Initialize(weapon, weaponDetails.weaponFrontSprite, transform.position);
-        }
-        else if (passiveItemDetails != null)
-        {
-            PassiveItem passiveItem = new PassiveItem(passiveItemDetails.rarity);
-            passiveItem.passiveItemDetails = passiveItemDetails;
-            hasSecondaryPassiveDrop = true;
- 
-            Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position);
-        }
 
         StaticEventHandler.OnEnemiesCleared += StaticEventHandler_OnEnemiesCleared;
     }
@@ -103,26 +90,26 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             CloseTooltip();
         }
 
-        if (trackPlayer && !isPickedUp)
-        {
-            Vector3 targetPos = player.transform.position + new Vector3(0f, 0.5f, 0f);
+        //if (trackPlayer && !isPickedUp)
+        //{
+        //    Vector3 targetPos = player.transform.position + new Vector3(0f, 0.5f, 0f);
 
-            // Calculcate direction
-            Vector3 direction = (targetPos - transform.position).normalized;
+        //    // Calculcate direction
+        //    Vector3 direction = (targetPos - transform.position).normalized;
 
-            // Move by one snapped step in that direction
-            Vector3 step = direction * SNAP_UNIT * 2;
+        //    // Move by one snapped step in that direction
+        //    Vector3 step = direction * SNAP_UNIT * 2;
 
-            // Only move if not overshooting the target
-            if ((targetPos - transform.position).sqrMagnitude > step.sqrMagnitude)
-            {
-                transform.position = SnapPosition(transform.position + step);
-            }
-            else
-            {
-                transform.position = SnapPosition(targetPos);
-            }
-        }
+        //    // Only move if not overshooting the target
+        //    if ((targetPos - transform.position).sqrMagnitude > step.sqrMagnitude)
+        //    {
+        //        transform.position = SnapPosition(transform.position + step);
+        //    }
+        //    else
+        //    {
+        //        transform.position = SnapPosition(targetPos);
+        //    }
+        //}
     }
 
     private Vector3 SnapPosition(Vector3 pos)
@@ -144,8 +131,11 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (eventData.pointerEnter.GetComponent<DropItem>() == this && eventData.pointerEnter.GetComponentInParent<Player>() == null &&
-              eventData.pointerEnter.GetComponentInParent<Enemy>() == null && isInitialized)
+        DropItem dropItem = eventData.pointerEnter.GetComponent<DropItem>();
+        Player relatedPlayer = eventData.pointerEnter.GetComponentInParent<Player>();
+        Enemy enemy = eventData.pointerEnter.GetComponentInParent<Enemy>();
+
+        if (dropItem == this && relatedPlayer == null && enemy == null && isInitialized)
         {
             OpenTooltip(TooltipSource.Pointer);
         }
@@ -163,7 +153,32 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         animator.SetBool(Settings.hovered, true);
 
-        MainUI.Instance.UpdateTooltipPanelInfo(itemGeneric, hasWeaponDrop, hasSecondaryPassiveDrop, tooltipSource);
+        Weapon weapon = itemGeneric as Weapon;
+        PassiveItem passiveItem = itemGeneric as PassiveItem;
+        WeaponStats weaponStats = default;
+        PassiveItemStats passiveItemStats = default;
+        WeaponTitle weaponTitle = WeaponTitle.None;
+        PassiveItemType passiveItemType = PassiveItemType.None;
+        Rarity rarity = Rarity.Basic;
+
+        if (weapon != null)
+        {
+            weaponStats = weapon.weaponStats;
+            passiveItemStats = default;
+            weaponTitle = weapon.weaponStats.weaponTitle;
+            passiveItemType = default;
+            rarity = weapon.Rarity;
+        }
+        else if (passiveItem != null)
+        {
+            weaponStats = default;
+            passiveItemStats = passiveItem.passiveStats;
+            weaponTitle = default;
+            passiveItemType = passiveItem.passiveStats.passiveItemType;
+            rarity = passiveItem.Rarity;
+        }
+
+        MainUI.Instance.UpdateTooltipPanelInfo(weaponStats, passiveItemStats, weaponTitle, passiveItemType, rarity, hasWeaponDrop, hasSecondaryPassiveDrop, tooltipSource);
         isPointerOver = true;
     }
 
@@ -187,426 +202,285 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void OnTriggerStay2D(Collider2D collision)
     {
+        if (!dropCompleted) return;
+
+        // Ignore irrelevant collisions
         if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.aoeSkill ||
-            collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile) return;
+            collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile || collision.tag == Settings.playerWeapon) return;
 
-        if (GetComponentInParent<Player>() != null) return;
+        Player player = collision.GetComponent<Player>();
+        if (player == null || !player.IsLocal) return;
 
-        if (collision.tag == Settings.playerTag || collision.tag == Settings.playerWeapon)
-        {
-            Player player = collision.GetComponent<Player>();
+        // 1 - NEAREST ITEM FIXED
+        NearestItemCheck(player);
 
-            if (chest == null)
-            {
-                try
-                {
-                    if(isColliding) return;
+        // 2 - HOVER VISUAL
+        animator.SetBool(Settings.hovered, isNearestDropItem);
+        if (!isNearestDropItem) return;
 
-                    // Calculate the distance between the chest item and the player
-                    float distanceToPlayer = Vector2.Distance(player.transform.position, transform.position);
+        // 3 - TOOLTIP
+        TooltipCheck();
 
-                    // Check if there's currently a nearest chest item and if it's valid
-                    if (nearestDropItem == null || nearestDropItem == this || (nearestDropItem != null && Vector2.Distance(player.transform.position, 
-                        nearestDropItem.transform.position) > distanceToPlayer))
-                    {
-                        nearestDropItem = this;
-                    }
+        // 4 - NPC / COUNTER LOGIC
+        NpcCounterCheck();
 
-                    // Only allow the nearest chest item to be interacted with
-                    if (nearestDropItem == this)
-                    {
-                        animator.SetBool(Settings.hovered, true);
+        // 5 - PRIMARY PASSIVE
+        if (IsPrimaryPassive(player)) return;
 
-                        Counter counter = GetComponentInParent<Counter>();
+        // 6 - INPUT HANDLING
+        if (!IsPressed()) return;
 
-                        if (counter != null)
-                        {
-                            NpcType npcType = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<NPC>().npcType;
+        // 7 - GAMBLE
+        if (IsGamble(player)) return;
 
-                            if (npcType == NpcType.Gambler)
-                            {
-                                StaticEventHandler.CallNPCInteractionStartedEvent(npcType); // Close-up camera for gambler
-                            }
-                        }
+        // 8 - WEAPON PICK UP
+        if (IsWeapon(player)) return;
 
-                        if (!tooltipVisibleFromProximity)
-                        {
-                            tooltipVisibleFromProximity = true;
-
-                            // Show tooltip from proximity
-                            if (!hasPrimaryPassiveDrop && !isGambleDropItem)
-                            {
-                                MainUI.Instance.UpdateTooltipPanelInfo(itemGeneric, hasWeaponDrop, hasSecondaryPassiveDrop, TooltipSource.Proximity);
-                            }
-                        }
-
-                        if (isGambleDropItem)
-                        {
-                            if (InputManager.Instance.interaction.action.IsPressed())
-                            {
-                                if (counter != null)
-                                {
-                                    int gambleBlind = 40;
-
-                                    NPC gambleNpc = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<NPC>();
-                 
-                                    if (!InputManager.Instance.isPressedPreviousFrame)
-                                    {
-                                        if (player.coinsAndShards.coinAmount >= gambleBlind)
-                                        {
-                                            player.coinsAndShards.AddCoin(gambleValue);
-
-                                            if (gambleValue < 0)
-                                            {
-                                                SoundEffectManager.Instance.PlaySoundEffect(gambleNpc.gambleLostSoundEffect);
-                                                StaticDialogueHandler.CallGambleLostEvent(); // Gamble lost
-                                            }
-                                            else
-                                            {
-                                                SoundEffectManager.Instance.PlaySoundEffect(gambleNpc.gambleWinSoundEffect);
-                                                StaticDialogueHandler.CallGambleWonEvent(); // Gamble won
-                                            }
-
-                                            isColliding = true;
-
-                                            StaticEventHandler.CallGambleCompletedEvent(); // This event is for resetting gamble chest item
-                                        }
-                                        else
-                                        {
-                                            StaticDialogueHandler.CallInsufficientFundsEvent();
-                                        }
-
-                                    }
-
-                                    InputManager.Instance.isPressedPreviousFrame = true;
-                                }
-                            }
-                            else
-                            {
-                                InputManager.Instance.isPressedPreviousFrame = false;
-                            }
-                        }
-                        else if (hasWeaponDrop)
-                        {
-                            if (InputManager.Instance.interaction.action.IsPressed() && !InputManager.interactionDisabled)
-                            {
-                                if (counter != null)
-                                {
-                                    //NpcType npcType = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<NPC>().npcType;
-                                    //StaticEventHandler.CallNPCInteractionStartedEvent(npcType);
-
-                                    if (weaponDetails != null)
-                                    {
-                                        if (!player.mainHandSlotFilled)
-                                        {
-                                            int currentPrice = Mathf.RoundToInt(weaponDetails.price * (1 + player.additinalNPCCostModifier));
-
-                                            if (player.coinsAndShards.coinAmount >= currentPrice && !isPurchasing)
-                                            {
-                                                if (!MeetsRequirements())
-                                                {
-                                                    if (!shardGained)
-                                                    {
-                                                        int shardGain = ShardGainProcess(player);
-                                                        GameManager.Instance.OpenPopUpLog(PopUpReason.DontMeetRequiredCharacter, shardGain);
-                                                        isPurchasing = true;
-                                                        StaticDialogueHandler.CallTradeCompletedEvent();
-                                                        shardGained = true;
-
-                                                        // Play pickup sound effect
-                                                        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
-                                                    }
-
-                                                    CloseTooltip();
-                                                    Destroy(gameObject, 0.2f);
-                                                    return;
-                                                }
-
-                                                isPurchasing = true;
-                                                StaticDialogueHandler.CallTradeCompletedEvent();
-                                                DropWeaponPickUpProcess(player, weaponDetails);
-                                            }
-                                            else
-                                            {
-                                                StaticDialogueHandler.CallInsufficientFundsEvent();
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    DropWeaponPickUpProcess(player, weaponDetails);
-                                }
-                            }
-                            else
-                            {
-                                InputManager.Instance.isPressedPreviousFrame = false;
-                            }
-                        }
-                        else if (hasSecondaryPassiveDrop)
-                        {
-                            if (InputManager.Instance.interaction.action.IsPressed() && !InputManager.interactionDisabled)
-                            {
-                                if (counter != null)
-                                {
-                                    if (passiveItemDetails != null)
-                                    {
-                                        int currentPrice = (int)(passiveItemDetails.price * (1 + player.additinalNPCCostModifier));
-
-                                        if (GameManager.Instance.GetLocalPlayer().coinsAndShards.coinAmount >= currentPrice && !isPurchasing)
-                                        {
-                                            isPurchasing = true;
-                                            StaticDialogueHandler.CallTradeCompletedEvent();
-                                            DropPassiveItemPickUpProcess(player);
-                                        }
-                                        else
-                                        {
-                                            StaticDialogueHandler.CallInsufficientFundsEvent();
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    DropPassiveItemPickUpProcess(player);
-                                }
-
-                                if (isPickedUp)
-                                {
-                                    InputManager.Instance.isPressedPreviousFrame = true;
-                                }
-                            }
-                            else
-                            {
-                                InputManager.Instance.isPressedPreviousFrame = false;
-                            }
-                        }
-                        else if (hasPrimaryPassiveDrop)
-                        {
-                            CollectPassiveItem(player);
-                        }
-                    }
-                    else
-                    {
-                        animator.SetBool(Settings.hovered, false);
-                    }
-                }
-                catch (InvalidOperationException)
-                {
-                    Destroy(gameObject);
-                }
-            }
-            else if (chest != null && chest.dropCompleted && chest.chestState == ChestState.weaponItem)
-            {
-                try
-                {
-                // Calculate the distance between the chest item and the player
-                float distanceToPlayer = Vector2.Distance(player.transform.position, transform.position);
-
-                    // Check if there is currently a nearest chest item and if it is valid
-                    if (nearestDropItem == null || nearestDropItem == this || (nearestDropItem != null && Vector2.Distance(player.transform.position, 
-                        nearestDropItem.transform.position) > distanceToPlayer))
-                    {
-                        nearestDropItem = this;
-                    }
-
-                    // Only allow the nearest chest item to be interacted with
-                    if (nearestDropItem == this)
-                    {
-                        animator.SetBool(Settings.hovered, true);
-
-                        if (hasWeaponDrop)
-                        {
-                            if (InputManager.Instance.interaction.action.IsPressed() && !InputManager.interactionDisabled)
-                            {
-                                DropWeaponPickUpProcess(player, weaponDetails);
-                            }
-                            else
-                            {
-                                InputManager.Instance.isPressedPreviousFrame = false;
-                            }
-                        }
-                        else if (hasSecondaryPassiveDrop)
-                        {
-                            //Drop process
-                            //player.playerControl.DropProcess(DropType.PassiveItem, player.equippedPassiveItems[passiveItemDetails.passiveItemSlotName], toBeSwappedWeaponDetails: null, false, ItemSlotStatus.None, -1, false, isChest: true);
-
-                            if (InputManager.Instance.interaction.action.IsPressed() && !InputManager.interactionDisabled)
-                            {
-                                DropPassiveItemPickUpProcess(player);
-
-                                // Pick up process
-                                isColliding = false;
-                                CollectPassiveItem(player);
-                                chest.chestState = ChestState.empty;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        animator.SetBool(Settings.hovered, false);
-                    }
-                }
-                catch (InvalidOperationException)
-                {
-                    Destroy(gameObject);
-                }
-            }
-        }
+        // 9 - SECONDARY PASSIVE
+        if (IsSecondaryPassive(player)) return;
     }
 
-    private void DropPassiveItemPickUpProcess(Player player)
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        if (!InputManager.Instance.isPressedPreviousFrame)
+        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.aoeSkill ||
+            collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile || collision.tag == Settings.playerWeapon) return;
+
+        if (collision.CompareTag(Settings.playerTag) || collision.CompareTag(Settings.playerWeapon)) droptItemsInRange.Remove(this);
+
+        if (!collision.CompareTag(Settings.playerTag)) return;
+
+        Player player = collision.GetComponent<Player>();
+        if (player == null || !player.IsLocal) return;
+
+        if (owningCounter != null)
         {
-            if (nearestDropItem != this) return;
+            StaticEventHandler.CallNPCInteractionEndedEvent();
+        }
 
-            if (!isPickedUp)
+        if (MainUI.Instance != null && tooltipVisibleFromProximity)
+        {
+            tooltipVisibleFromProximity = false;
+            MainUI.Instance.CloseTooltipPanel();
+            MainUI.Instance.CloseTooltipEquippedPanel();
+        }
+
+        animator.SetBool(Settings.hovered, false);
+
+        // Reset nearestChestItem when the player exits the trigger
+        if (GameManager.Instance != null && GameManager.Instance.nearestDropItem == this)
+        {
+            GameManager.Instance.nearestDropItem = null;
+            isNearestDropItem = false;
+        }
+
+        isPressedPreviousFrame = false;
+    }
+
+    private void NearestItemCheck(Player player)
+    {
+        float distance = Vector2.Distance(player.transform.position, transform.position);
+
+        var current = GameManager.Instance.nearestDropItem;
+
+        if (current == null)
+        {
+            GameManager.Instance.nearestDropItem = this;
+            isNearestDropItem = true;
+            return;
+        }
+
+        float currentDist = Vector2.Distance(player.transform.position, current.transform.position);
+
+        if (this == current)
+        {
+            isNearestDropItem = true;
+            return;
+        }
+
+        if (distance < currentDist)
+        {
+            current.isNearestDropItem = false;
+            GameManager.Instance.nearestDropItem = this;
+            isNearestDropItem = true;
+        }
+        else
+        {
+            isNearestDropItem = false;
+        }
+    }
+
+    private void TooltipCheck()
+    {
+        if (!tooltipVisibleFromProximity)
+        {
+            tooltipVisibleFromProximity = true;
+
+            WeaponStats weaponStats = itemGeneric is Weapon w ? w.weaponStats : default;
+            PassiveItemStats passiveStats = itemGeneric is PassiveItem p ? p.passiveStats : default;
+
+            if (!hasPrimaryPassiveDrop && !isGambleDropItem)
             {
-                // Drop process
-                if (player.equippedPassiveItems[passiveItemDetails.passiveItemSlotName] != null)
-                {
-                    player.playerControl.DropProcess(DropType.PassiveItem, player.equippedPassiveItems[passiveItemDetails.passiveItemSlotName], toBeSwappedWeaponDetails: null);
-                }
-
-                // Pick up process
-                isColliding = false;
-                CollectPassiveItem(player);
+                MainUI.Instance.UpdateTooltipPanelInfo(weaponStats, passiveStats, weaponStats.weaponTitle, passiveStats.passiveItemType, itemGeneric.Rarity, hasWeaponDrop, hasSecondaryPassiveDrop, TooltipSource.Proximity);
             }
         }
     }
 
-    private void DropWeaponPickUpProcess(Player player, WeaponDetailsSO toBeSwappedWeaponDetails,bool dropToInventory = false)
+    private void NpcCounterCheck()
     {
-        Weapon mainHandWeapon = player.activeWeapon.GetCurrentMainHandWeapon();
-        Weapon offHandWeapon = player.activeWeapon.GetCurrentOffHandWeapon();
+        bool isMultiplayer = NetworkServer.active || NetworkClient.active;
 
-        if (!InputManager.Instance.isPressedPreviousFrame)
+        if (owningCounter != null)
         {
-            if (nearestDropItem != this) return;
+            InstantiatedRoom ir = isMultiplayer ? DungeonRuntime.GetInstantiatedRoom(GameSessionManager.Instance.GetCurrentRoomNetData().roomId) : GameManager.Instance.GetCurrentRoom().instantiatedRoom;
+            NPC npc = ir.GetComponentInChildren<NPC>();
 
-            if (!MeetsRequirements())
+            if (npc != null && npc.npcType == NpcType.Gambler)
             {
-                if (!shardGained)
-                {
-                    int shardGain = ShardGainProcess(player);
-                    GameManager.Instance.OpenPopUpLog(PopUpReason.DontMeetRequiredCharacter, shardGain);
-                    shardGained = true;
-
-                    // Play pickup sound effect
-                    SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
-                }
-
-                Destroy(gameObject, 0.2f);
-                CloseTooltip();
-
-                return;
+                StaticEventHandler.CallNPCInteractionStartedEvent(npc.npcType);
             }
+        }
+    }
 
-            if (weaponDetails.weaponClass == WeaponClass.Shield || (offHandWeapon == null && weaponDetails.wieldType == WieldType.OneHanded && 
-                weaponDetails.weaponClass != WeaponClass.Spear && mainHandWeapon != null && mainHandWeapon.weaponDetails.wieldType == WieldType.OneHanded &&
-                mainHandWeapon.weaponDetails.weaponClass != WeaponClass.Spear))
-            {
-                goto shieldContinue; // Skip drop process because you equip one-handed weapon and chest contains a shield
-            }
+    private bool IsPressed()
+    {
+        bool pressed = InputManager.Instance.interaction.action.IsPressed();
 
-            // Drop off-hand weapon if pick-up item is two-handed
-            if (offHandWeapon != null)
-            {
-                if (weaponDetails.wieldType == WieldType.TwoHanded)
-                {
-                    player.playerControl.DropProcess(DropType.Weapon, offHandWeapon, weaponDetails, true);
-                }
-            }
+        if (!pressed)
+        {
+            isPressedPreviousFrame = false;
+            return false;
+        }
 
-            if (mainHandWeapon != null)
+        if (InputManager.interactionDisabled) return false;
+
+        // Prevent spam
+        if (isPressedPreviousFrame) return false;
+
+        isPressedPreviousFrame = true;
+        return true;
+    }
+
+    private bool IsGamble(Player player)
+    {
+        if (!isGambleDropItem || owningCounter == null) return false;
+        if (owningCounter.isGambleLocked) return true;
+
+        int gambleBlind = 10;
+
+        if (player.coinsAndShards.coinAmount < gambleBlind)
+        {
+            StaticDialogueHandler.CallInsufficientFundsEvent();
+            return true;
+        }
+
+        // Pay the blind
+        player.coinsAndShards.AddCoin(-gambleBlind);
+
+        // Get the gamble results
+        player.coinsAndShards.AddCoin(gambleValue + gambleBlind);
+
+        InstantiatedRoom ir;
+        NPC gambleNpc;
+
+        if (!NetworkServer.active && !NetworkClient.active) ir = GameManager.Instance.GetCurrentRoom().instantiatedRoom;
+        else ir = DungeonRuntime.GetInstantiatedRoom(GameSessionManager.Instance.GetCurrentRoomNetData().roomId);
+
+        gambleNpc = ir.GetComponentInChildren<NPC>();
+
+        if (gambleValue < 0)
+        {
+            SoundEffectManager.Instance.PlaySoundEffect(gambleNpc.gambleLostSoundEffect);
+            StaticDialogueHandler.CallGambleLostEvent();
+        }
+        else
+        {
+            SoundEffectManager.Instance.PlaySoundEffect(gambleNpc.gambleWinSoundEffect);
+            StaticDialogueHandler.CallGambleWonEvent();
+        }
+
+        StaticEventHandler.CallGambleCompletedEvent(player);
+
+        return true;
+    }
+
+    private bool IsWeapon(Player player)
+    {
+        if (!hasWeaponDrop) return false;
+
+        if (owningCounter != null)
+        {
+            if (weaponDetails != null)
             {
-                // If pick-up weapon is two-handed, off-hand weapon is dropped and off-hand active weapon is null
-                if (weaponDetails.wieldType == WieldType.TwoHanded)
+                int price = Mathf.RoundToInt(weaponDetails.price * (1 + player.additionalNPCCostModifier));
+
+                if (!isPurchased)
                 {
-                    player.playerControl.DropProcess(DropType.Weapon, mainHandWeapon, weaponDetails, false);
-                }
-                else
-                {
-                    if (offHandWeapon != null)
+                    if (player.coinsAndShards.coinAmount < price)
                     {
-                        // CURRENT ACTIVE MAIN HAND WEAPON BECOMES NULL HERE AND DROP HAPPENS
-                        player.playerControl.DropProcess(DropType.Weapon, mainHandWeapon, weaponDetails, false);
+                        StaticDialogueHandler.CallInsufficientFundsEvent();
+                        return true;
                     }
                     else
                     {
-                        if (weaponDetails.weaponClass == WeaponClass.Shield)
-                        {
-                            GameManager.Instance.OpenPopUpLog(PopUpReason.ShieldCantBePutOnMainHand);
-                        }
-                        else
-                        {
-                            player.playerControl.DropProcess(DropType.Weapon, mainHandWeapon, weaponDetails, true);
-                        }
-                    }
-                }
-            }
-
-        // AT THIS LINE active main hand weapon becomes null
-
-        shieldContinue:
-            // Pick up process
-            // If weapon dropped for replace
-            if (mainHandWeapon == null)
-            {
-                isColliding = false;
-
-                if (weaponDetails.weaponClass == WeaponClass.Shield)
-                {
-                    GameManager.Instance.OpenPopUpLog(PopUpReason.ShieldCantBePutOnMainHand);
-                }
-                else
-                {
-                    player.isShieldCalculated = false;
-                    CollectWeaponItem(player);
-                }
-            }
-            else
-            {
-                if (!InventoryManager.Instance.IsInventoryFull())
-                {
-                    CollectWeaponItem(player);
-                }
-                else
-                {
-                    // Drop equipped off-hand weapon if to-be-picked-up item is a shield
-                    if (weaponDetails.weaponClass == WeaponClass.Shield)
-                    {
-                        if (offHandWeapon != null)
-                        {
-                            player.playerControl.DropProcess(DropType.Weapon, player.activeWeapon.GetCurrentOffHandWeapon(),
-                                toBeSwappedWeaponDetails: null);
-
-                            CollectWeaponItem(player);
-                        }
-                        else if (mainHandWeapon.weaponDetails.wieldType == WieldType.TwoHanded)
-                        {
-                            GameManager.Instance.OpenPopUpLog(PopUpReason.OffHandCantBeAddedToTwoHanded);
-                        }
-                        else
-                        {
-                            CollectWeaponItem(player);
-                        }
+                        player.coinsAndShards.AddCoin(-price);
+                        isPurchased = true;
+                        StaticDialogueHandler.CallTradeCompletedEvent();
                     }
                 }
             }
         }
 
-        if (isPickedUp)
-        {
-            InputManager.Instance.isPressedPreviousFrame = true;
-        }
+        player.playerInventory.PickUpProcess(player.playerDetails.playerCharacterIndex, this);
+
+        //DropWeaponPickUpProcess(player, weaponDetails);
+
+        return true;
     }
 
-    private int ShardGainProcess(Player player)
+    private bool IsSecondaryPassive(Player player)
+    {
+        if (!hasSecondaryPassiveDrop) return false;
+
+        if (owningCounter != null)
+        {
+            int price = (int)(passiveItemDetails.price * (1 + player.additionalNPCCostModifier));
+
+            if (!isPurchased)
+            {
+                if (player.coinsAndShards.coinAmount < price)
+                {
+                    StaticDialogueHandler.CallInsufficientFundsEvent();
+                    return true;
+                }
+                else
+                {
+                    player.coinsAndShards.AddCoin(-price);
+                    isPurchased = true;
+                    StaticDialogueHandler.CallTradeCompletedEvent();
+                }
+            }
+        }
+
+        player.playerInventory.PickUpProcess(player.playerDetails.playerCharacterIndex, this);
+
+        //DropPassiveItemPickUpProcess(player);
+
+        return true;
+    }
+
+    private bool IsPrimaryPassive(Player player)
+    {
+        if (!hasPrimaryPassiveDrop) return false;
+
+        player.playerInventory.PickUpProcess(player.playerDetails.playerCharacterIndex, this, isPrimaryPassive: true);
+        return true;
+    }
+
+    public int ShardGainProcess(Player player)
     {
         int shardGain = 0;
 
-        switch (itemGeneric.rarity)
+        switch (itemGeneric.Rarity)
         {
             case Rarity.Basic: shardGain = 10; break;
             case Rarity.Enchanted: shardGain = 35; break;
@@ -620,46 +494,15 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return shardGain;
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.tag == Settings.chestItemTag || collision.tag == Settings.enemyProjectile || collision.tag == Settings.aoeSkill ||
-            collision.tag == Settings.enemyTag || collision.tag == Settings.playerProjectile) return;
-
-        if (collision.CompareTag(Settings.playerTag) || collision.CompareTag(Settings.playerWeapon)) droptItemsInRange.Remove(this);
-
-        if (collision.tag == Settings.playerTag || collision.tag == Settings.playerWeapon)
-        {
-            Counter counter = GetComponentInParent<Counter>();
-
-            if (counter != null)
-            {
-                StaticEventHandler.CallNPCInteractionEndedEvent();
-            }
-
-            if (tooltipVisibleFromProximity)
-            {
-                tooltipVisibleFromProximity = false;
-                MainUI.Instance.CloseTooltipPanel();
-                MainUI.Instance.CloseTooltipEquippedPanel();
-                animator.SetBool(Settings.hovered, false);
-            }
-
-            // Reset nearestChestItem when the player exits the trigger
-            if (nearestDropItem == this)
-            {
-                nearestDropItem = null;
-            }
-        }
-    }
-
     /// <summary>
     /// Initialize for enemy drops
     /// </summary>
-    public void Initialize(ItemGeneric itemGeneric, Sprite sprite, Vector3 spawnPosition, bool isTutorial = false)
+    public void Initialize(ItemGeneric itemGeneric, Sprite sprite, Vector3 spawnPosition, Counter counter, bool isTutorial = false)
     {
         spriteRenderer.sprite = sprite;
         transform.position = spawnPosition;
         this.itemGeneric = itemGeneric;
+        owningCounter = counter;
 
         if (isTutorial)
         {
@@ -671,7 +514,9 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (hasPrimaryPassiveDrop || hasSecondaryPassiveDrop)
         {
             PassiveItem passiveItem = (PassiveItem)itemGeneric;
-            passiveItemDetails = passiveItem.passiveItemDetails;
+
+            passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
+
             animator.runtimeAnimatorController = passiveItemDetails?.passiveItemAnimatorController ?? animator.runtimeAnimatorController;
 
             if (hasSecondaryPassiveDrop)
@@ -684,212 +529,159 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         else if (hasWeaponDrop)
         {
             Weapon weapon = (Weapon)itemGeneric;
-            weaponDetails = weapon.weaponDetails;
+
+            weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
+
             animator.runtimeAnimatorController = weaponDetails?.weaponHoverAnimatorController ?? animator.runtimeAnimatorController;
 
             isInitialized = true;
         }
+
+        if (owningCounter != null)
+        {
+            priceContainer.gameObject.SetActive(true);
+
+            TextMeshPro priceText = priceContainer.GetChild(1).GetComponent<TextMeshPro>();
+            float priceModifier = 1 + GameManager.Instance.GetLocalPlayer().additionalNPCCostModifier;
+
+            if (itemGeneric is Weapon w)
+            {
+                priceText.text = $"x {w.weaponStats.activePrice * priceModifier}";
+            }
+            else if (itemGeneric is PassiveItem p)
+            {
+                priceText.text = $"x {p.passiveStats.activePrice * priceModifier}";
+            }
+        }
     }
 
-    /// <summary>
-    /// Collect the weapon and add it to the players weapons list
-    /// </summary>
-    private void CollectWeaponItem(Player player)
+    public void InitializeGamble(Counter counter, DropItem drop)
     {
-        if (!hasWeaponDrop) return;
+        drop.spriteRenderer.sprite = null;
+        drop.animator.runtimeAnimatorController = GameResources.Instance.gambleDiceAnimatorController;
 
-        if (isPickedUp || isColliding) return;
+        drop.owningCounter = counter;
 
-        // Use the instance created at drop time
-        Weapon weapon = (Weapon)itemGeneric;
+        drop.dropCompleted = true; // Initialize starts here
+    }
 
-        if (player.mainHandSlotFilled && InventoryManager.Instance.IsInventoryFull())
-        {
-            if (!player.offHandSlotFilled)
-            {
-                for (int i = 3; i > 0; i--)
-                {
-                    int index = player.currentWeaponSlotSetIndex - i >= 0 ? player.currentWeaponSlotSetIndex - i : player.currentWeaponSlotSetIndex - i + 3;
+    public void PickUpPrimaryPassive(Player player)
+    {
+        if (isPickedUp) return;
 
-                    if (player.weaponSlotSetArray[index][1] != null)
-                    {
-                        continue;
-                    }
-                    else if (player.weaponSlotSetArray[index][1] == null)
-                    {
-                        if (weaponDetails != null)
-                        {
-                            if (weaponDetails.weaponClass == WeaponClass.Shield)
-                            {
-                                if (isPurchasing)
-                                {
-                                    GameManager.Instance.GetLocalPlayer().coinsAndShards.coinAmount -= weaponDetails.price;
-                                }
-                                goto shieldContinue;
-                            }
-                        }
-                    }
-                }
-            }
-
-            GameManager.Instance.OpenPopUpLog(PopUpReason.YourHandsFull);
-            isPurchasing = false;
-            return;
-        }
-
-        shieldContinue:
-        if (weaponDetails != null)
-        {
-            if (isPurchasing)
-            {
-                GameManager.Instance.GetLocalPlayer().coinsAndShards.coinAmount -= weaponDetails.price;
-            }
-
-            // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
-
-            // Pick up item and update equipped weapon list
-            player.UpdateWieldedWeapons(ref weapon, true, false, weaponDetails);
-        }
-        else
-        {
-            //// display message saying you already have the weapon
-            //StartCoroutine(DisplayMessage("WEAPON\nALREADY\nEQUIPPED", 5f));
-        }
-
-        pickUpAnimator.SetTrigger("pickUp");
+        CollectPrimaryPassiveItem(player);
 
         isPickedUp = true;
         isColliding = true;
-        weaponDetails = null;
-        animator.runtimeAnimatorController = null;
-        spriteRenderer.sprite = null;
+        isPurchased = false;
+
         Destroy(gameObject, 1f);
     }
 
-    /// <summary>
-    /// Collect the passive item
-    /// </summary>
-    private void CollectPassiveItem(Player player)
+    private void CollectPrimaryPassiveItem(Player player)
     {
-        if (!hasPrimaryPassiveDrop && !hasSecondaryPassiveDrop) return;
+        if (!hasPrimaryPassiveDrop) return;
 
-        if (isPickedUp || isColliding) return;
+        PassiveItem passiveItem = (PassiveItem)itemGeneric;
 
-        PassiveItem passiveItem;
-
-        if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
+        if (passiveItem.passiveStats.passiveItemType == PassiveItemType.Key)
         {
-            passiveItem = (PassiveItem)itemGeneric;
-
-            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.Key)
-            {
-                player.consumableEvent.CallKeyCountChangedEvent(++player.keyCount);
-
-                // Play pickup sound effect
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.itemPickup);
-            }
-
-            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.SilverCoin)
-            {
-                int coinAmount = 1;
-
-                player.coinsAndShards.AddCoin(coinAmount);
-
-                if (InputManager.TutorialEnabled && TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.PickUpPrimaryPassiveCoin)
-                {
-                    TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
-                }
-
-                // Play pickup sound effect
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.coinPickup);
-            }
-
-            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.GoldCoin)
-            {
-                player.coinsAndShards.AddCoin(5);
-
-                // Play pickup sound effect
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.coinPickup);
-            }
-
-            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.Health)
-            {
-                player.UpdatePlayerHealth(20, false, false);
-
-                if (InputManager.TutorialEnabled && TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.PickUpPrimaryPassiveHealth)
-                {
-                    TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
-                }
-
-                // Play pickup sound effect
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
-            }
-
-            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.Mana)
-            {
-                player.UpdatePlayerMana(20, false, false);
-
-                // Play pickup sound effect
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
-            }
-
-            if (passiveItem.passiveItemDetails.passiveItemType == PassiveItemType.Cure)
-            {
-                // HEALTH STATUS CHECKS
-                if ((player.healthStatus & HealthStatus.Poisoned) != 0)
-                {
-                    player.healthEvent.CallPoisonCuredEvent();
-                    player.healthStatus &= ~HealthStatus.Poisoned; // Remove poisoned status
-                }
-                if ((player.healthStatus & HealthStatus.Burned) != 0)
-                {
-                    player.healthEvent.CallBurnCuredEvent();
-                    player.healthStatus &= ~HealthStatus.Burned; // Remove burned status
-                }
-
-                player.healthStatus = HealthStatus.Normal;
-
-                // MOVE STATUS CHECKS
-                player.moveStatus = MoveStatus.Idle;
-
-                // ARMOR STATUS CHECKS
-                if (player.armorStatus == ArmorStatus.Acid)
-                {
-                    player.armorStatus = ArmorStatus.Normal;
-                    player.healthEvent.CallAcidCuredEvent();
-                }
-
-                // Play pickup sound effect
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
-            }
-        }
-        else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
-        {
-            if (isPurchasing)
-            {
-                player.coinsAndShards.AddCoin(-passiveItemDetails.price);
-            }
-
-            passiveItem = (PassiveItem)itemGeneric;
-            player.AddPassiveItemToPlayer(ref passiveItem, passiveItem.passiveItemDetails.passiveItemSlotName);
-
-            isPickedUp = true;
+            player.consumableEvent.CallKeyCountChangedEvent(++player.keyCount);
 
             // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
+            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.itemPickup);
+        }
+
+        if (passiveItem.passiveStats.passiveItemType == PassiveItemType.SilverCoin)
+        {
+            int coinAmount = 1;
+
+            player.coinsAndShards.AddCoin(coinAmount);
+
+            if (InputManager.TutorialEnabled && TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.PickUpPrimaryPassiveCoin)
+            {
+                TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
+            }
+
+            // Play pickup sound effect
+            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.coinPickup);
+        }
+
+        if (passiveItem.passiveStats.passiveItemType == PassiveItemType.GoldCoin)
+        {
+            player.coinsAndShards.AddCoin(5);
+
+            // Play pickup sound effect
+            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.coinPickup);
+        }
+
+        if (passiveItem.passiveStats.passiveItemType == PassiveItemType.Health)
+        {
+            player.UpdatePlayerHealth(20, false, false);
+
+            if (InputManager.TutorialEnabled && TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.PickUpPrimaryPassiveHealth)
+            {
+                TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
+            }
+
+            // Play pickup sound effect
+            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
+        }
+
+        if (passiveItem.passiveStats.passiveItemType == PassiveItemType.Mana)
+        {
+            player.UpdatePlayerMana(20, false, false);
+
+            // Play pickup sound effect
+            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
+        }
+
+        if (passiveItem.passiveStats.passiveItemType == PassiveItemType.Cure)
+        {
+            // HEALTH STATUS CHECKS
+            if ((player.healthStatus & HealthStatus.Poisoned) != 0)
+            {
+                player.healthEvent.CallPoisonCuredEvent();
+                player.healthStatus &= ~HealthStatus.Poisoned; // Remove poisoned status
+            }
+            if ((player.healthStatus & HealthStatus.Burned) != 0)
+            {
+                player.healthEvent.CallBurnCuredEvent();
+                player.healthStatus &= ~HealthStatus.Burned; // Remove burned status
+            }
+
+            player.healthStatus = HealthStatus.Normal;
+
+            // MOVE STATUS CHECKS
+            player.moveStatus = MoveStatus.Idle;
+
+            // ARMOR STATUS CHECKS
+            if (player.armorStatus == ArmorStatus.Acid)
+            {
+                player.armorStatus = ArmorStatus.Normal;
+                player.healthEvent.CallAcidCuredEvent();
+            }
+
+            // Play pickup sound effect
+            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
         }
 
         StaticEventHandler.CallStatsChangedOnTheBookEvent();
-        isColliding = true;
+
         pickUpAnimator.SetTrigger("pickUp");
         passiveItemDetails = null;
         animator.runtimeAnimatorController = null;
         spriteRenderer.sprite = null;
-        Destroy(gameObject, 1f);
-    }
 
-    private bool MeetsRequirements()
+        if (GameManager.Instance.nearestDropItemNetwork == this)
+        {
+            GameManager.Instance.nearestDropItemNetwork = null;
+            isNearestDropItem = false;
+
+            Debug.Log("It is not the nearest item because object is about to be destroyed.");
+        }
+    }
+    public bool MeetsRequirements()
     {
         switch (player.playerDetails.playerCharacterIndex)
         {
@@ -898,7 +690,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             case Character.Morven:
                 if (weaponDetails.weaponClass == WeaponClass.Dagger) return true; break;
             case Character.Nyveran:
-                if ((weaponDetails.weaponClass == WeaponClass.Dagger && player.activeWeapon) || weaponDetails.weaponClass == WeaponClass.Bow ||
+                if (weaponDetails.weaponClass == WeaponClass.Dagger|| weaponDetails.weaponClass == WeaponClass.Bow ||
                     weaponDetails.weaponClass == WeaponClass.Crossbow) return true; break;
             case Character.Karnag:
                 if (weaponDetails.weaponClass == WeaponClass.Axe) return true; break;

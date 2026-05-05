@@ -51,7 +51,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trailRenderer: {fileID: 2893936929755227308}
-  projectileAnimator: {fileID: 0}
   layerMask:
     serializedVersion: 2
     m_Bits: 2048

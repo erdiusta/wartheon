@@ -2018,6 +2018,7 @@ GameObject:
   - component: {fileID: 6777748807740845358}
   - component: {fileID: 6739161588112280396}
   - component: {fileID: -388810687646564525}
+  - component: {fileID: 6212063011851511909}
   m_Layer: 23
   m_Name: DropItemMP
   m_TagString: Chest Item
@@ -2060,24 +2061,31 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  tooltipPanel: {fileID: 2472769772267327563}
+  spriteRenderer: {fileID: 0}
+  animator: {fileID: 0}
+  pickUpAnimator: {fileID: 0}
+  dropItemAnimationSync: {fileID: 0}
+  dropSourceType: 0
   hasWeaponDrop: 0
   hasPrimaryPassiveDrop: 0
   hasSecondaryPassiveDrop: 0
-  spriteRenderer: {fileID: 0}
   isPickedUp: 0
-  animator: {fileID: 0}
-  boxCollider2D: {fileID: 0}
-  remainingItemCharge: 0
-  droppedByPlayer: 0
-  isColliding: 0
-  hasMainHandWeapon: 0
-  hasOffHandWeapon: 0
+  weaponTitle: 0
+  weaponClass: 0
+  rarity: 0
+  passiveItemType: 0
+  passiveItemSlotName: 0
+  owningCounter: 0
+  priceContainer: {fileID: 4711398271944151909}
   isGambleDropItem: 0
   gambleValue: 0
-  isInitialized: 0
+  isPressedPreviousFrame: 0
+  isNearestDropItem: 0
+  dropCompleted: 0
   weaponDetails: {fileID: 0}
   passiveItemDetails: {fileID: 0}
+  isInitialized: 0
+  isColliding: 0
 --- !u!61 &6777748807740845358
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2175,6 +2183,22 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
+--- !u!114 &6212063011851511909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6166831115549756087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eecd4ac1573c17e4babd65457ffa4876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  pickedUp: 0
 --- !u!1 &6369437353301173717
 GameObject:
   m_ObjectHideFlags: 0

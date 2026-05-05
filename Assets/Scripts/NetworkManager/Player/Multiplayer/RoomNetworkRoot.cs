@@ -1,6 +1,5 @@
 using Mirror;
 using UnityEngine;
-using System.Collections;
 
 [DisallowMultipleComponent]
 public class RoomNetworkRoot : NetworkBehaviour
@@ -37,6 +36,9 @@ public class RoomNetworkRoot : NetworkBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!collision.CompareTag(Settings.playerTag)) return;
+
+        if (collision is PolygonCollider2D) return;
+        if (collision is CapsuleCollider2D) return;
 
         Player player = GameManager.Instance.GetLocalPlayer();
         if (player == null || !player.IsLocal) return;
@@ -79,6 +81,8 @@ public class RoomNetworkRoot : NetworkBehaviour
         InstantiatedRoom instantiatedRoom = roomGameObject.GetComponent<InstantiatedRoom>();
         instantiatedRoom.roomNetData = data;
         instantiatedRoom.InitializeMultiplayer(roomGameObject);
+
+        if(!isServer) DungeonRuntime.RoomNetDataDict.Add(roomNetData.roomId, roomNetData);
 
         // Instantiate room
         roomGameObject.transform.SetParent(transform);

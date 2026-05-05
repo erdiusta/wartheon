@@ -2,10 +2,12 @@ using Mirror;
 using System.Collections;
 using UnityEngine;
 
-public class EnemySpawnerNetwork : SingletonNetworkBehaviour<EnemySpawnerNetwork>
+public class EnemySpawnerNetwork : NetworkBehaviour
 {
     [HideInInspector] public Enemy bossEnemy;
-    [HideInInspector] public bool isBossInstantiated;
+
+    [SyncVar] [HideInInspector] public bool isBossInstantiated;
+    [SyncVar] [HideInInspector] public EnemyCategory bossEnemyName;
 
     int enemiesToSpawn;
     int currentEnemyCount;
@@ -161,8 +163,19 @@ public class EnemySpawnerNetwork : SingletonNetworkBehaviour<EnemySpawnerNetwork
         // Create Enemy - Get next enemy type to spawn 
         if (InputManager.TutorialEnabled)
         {
-            Vector3Int cellPosition = (Vector3Int)currentRoomNetData.spawnPositions[spawnPositionIndex++];
-            spawnPositionIndex %= currentRoomNetData.spawnPositions.Length;
+            Vector3Int cellPosition = Vector3Int.zero;
+
+            try
+            {
+                cellPosition = (Vector3Int)currentRoomNetData.spawnPositions[spawnPositionIndex++];
+                spawnPositionIndex %= currentRoomNetData.spawnPositions.Length;
+            }
+            catch (System.IndexOutOfRangeException)
+            {
+                Debug.Log("Spawn position count is " + currentRoomNetData.spawnPositions.Length);
+                Debug.Log("Spawn position index is " + spawnPositionIndex);
+            }
+
 
             if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Combat)
             {
@@ -202,6 +215,17 @@ public class EnemySpawnerNetwork : SingletonNetworkBehaviour<EnemySpawnerNetwork
             }
             else
             {
+                try
+                {
+                    cellPosition = (Vector3Int)currentRoomNetData.spawnPositions[spawnPositionIndex++];
+                    spawnPositionIndex %= currentRoomNetData.spawnPositions.Length;
+                }
+                catch (System.IndexOutOfRangeException)
+                {
+                    Debug.Log("Spawn position count is " + currentRoomNetData.spawnPositions.Length);
+                    Debug.Log("Spawn position index is " + spawnPositionIndex);
+                }
+
                 cellPosition = (Vector3Int)currentRoomNetData.spawnPositions[spawnPositionIndex++];
                 spawnPositionIndex %= currentRoomNetData.spawnPositions.Length;
             }
@@ -270,6 +294,7 @@ public class EnemySpawnerNetwork : SingletonNetworkBehaviour<EnemySpawnerNetwork
     private void SetEnemyAsBoss(Enemy enemy)
     {
         bossEnemy = enemy;
+        bossEnemyName = bossEnemy.EnemyCategory;
     }
 
     public Enemy GetBoss() => bossEnemy;

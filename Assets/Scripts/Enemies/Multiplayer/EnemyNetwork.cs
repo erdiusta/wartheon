@@ -71,6 +71,8 @@ public class EnemyNetwork : NetworkBehaviour, IEnemyCombatData, IEnemyMovementDa
     // MOVEMENT
     public float MaxBaseMoveSpeed => maxBaseMoveSpeed;
 
+    public MoveStatus MoveStatus { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
     #endregion
 
     Enemy enemy;
@@ -252,5 +254,55 @@ public class EnemyNetwork : NetworkBehaviour, IEnemyCombatData, IEnemyMovementDa
         enemy.currentMoveSpeed = MaxBaseMoveSpeed + enemy.additionalSpeedModifier - enemy.speedReducer;
         enemy.aiRigidbody2D.canMove = true;
         enemy.aiRigidbody2D.speed = enemy.currentMoveSpeed;
+    }
+
+    [ClientRpc]
+    public void RpcPlayBleedingEffect(bool undo)
+    {
+        if (enemy == null) enemy = GetComponent<Enemy>();
+
+        if (!undo)
+        {
+            enemy.healthEvent.CallGetBleedingEvent();
+            enemy.statusEffectAnimators.bleedAnimator.SetTrigger(Settings.activateVFX);
+        }
+        else
+        {
+            enemy.healthEvent.CallBleedingCuredEvent();
+        }
+    }
+
+    [ClientRpc]
+    public void RpcPlayStunEffect(bool undo)
+    {
+        if (enemy == null) enemy = GetComponent<Enemy>();
+
+        if (!undo)
+        {
+            enemy.healthEvent.CallGetStunEvent();
+            enemy.statusEffectAnimators.stunAnimator.SetTrigger(Settings.activateVFX);
+        }
+        else
+        {
+            enemy.healthEvent.CallStunCuredEvent();
+        }
+    }
+
+    [ClientRpc]
+    public void RpcPlayRootEffect(bool undo)
+    {
+        if (enemy == null) enemy = GetComponent<Enemy>();
+
+        if (!undo)
+        {
+            enemy.healthEvent.CallGetRootEvent();
+            enemy.rootAnimator.SetBool("root", true);
+            enemy.statusEffectAnimators.rootAnimator.SetTrigger(Settings.activateVFX);
+        }
+        else
+        {
+            enemy.rootAnimator.SetBool("root", false);
+            enemy.healthEvent.CallRootCuredEvent();
+        }
     }
 }

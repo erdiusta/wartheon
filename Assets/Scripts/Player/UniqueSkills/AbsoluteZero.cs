@@ -16,6 +16,9 @@ public class AbsoluteZero : MonoBehaviour
     Dictionary<Enemy, float> affectedEnemies = new Dictionary<Enemy, float>();
     float playerLastTime;
 
+    WeaponTitle lastWeaponTitle;
+    WeaponDetailsSO currentWeaponDetails;
+
     private void OnEnable()
     {
         OnAbsoluteZeroActivated.AddListener(EnableAbsoluteZero);
@@ -70,9 +73,15 @@ public class AbsoluteZero : MonoBehaviour
 
             IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(affectedEnemy.gameObject);
 
+            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle != lastWeaponTitle)
+            {
+                currentWeaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+                lastWeaponTitle = player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle;
+            }
+
             // Apply effects
-            player.meleeAttackMainHand.CheckSlowStatus(affectedEnemy, enemyCombatData, isAbsoluteZero: true);
-            player.meleeAttackMainHand.CheckChillStatus(affectedEnemy, enemyCombatData, isBlizzard: true);
+            player.meleeAttackMainHand.CheckSlowStatus(currentWeaponDetails, affectedEnemy, enemyCombatData, isAbsoluteZero: true);
+            player.meleeAttackMainHand.CheckChillStatus(currentWeaponDetails, affectedEnemy, enemyCombatData, isBlizzard: true);
 
             // Update last affected time
             affectedEnemies[affectedEnemy] = Time.time;

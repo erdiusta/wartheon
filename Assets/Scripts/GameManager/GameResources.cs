@@ -373,6 +373,35 @@ public class GameResources : MonoBehaviour
     #endregion
     public GameObject statusEffectPrefab;
 
+    #region Header NETWORK SKILL PREFABS
+    [Space(10)]
+    [Header("NETWORK SKILL PREFABS")]
+    #endregion
+    #region Tooltip
+    [Tooltip("Umbral Mist prefab")]
+    #endregion
+    public GameObject umbralMistNetworkPrefab;
+    #region Tooltip
+    [Tooltip("Blizzard prefab")]
+    #endregion
+    public GameObject blizzardNetworkPrefab;
+    #region Tooltip
+    [Tooltip("Absolute Zero prefab")]
+    #endregion
+    public GameObject absoluteZeroPrefab;
+    #region Tooltip
+    [Tooltip("Flame lotus prefab")]
+    #endregion
+    public GameObject flameLotusPrefab;
+    #region Tooltip
+    [Tooltip("Mist of Disruption prefab")]
+    #endregion
+    public GameObject mistOfDisruptionPrefab;
+    #region Tooltip
+    [Tooltip("Eye of the storm prefab")]
+    #endregion
+    public GameObject eyeOfTheStormPrefab;
+
     #region Header MINIMAP
     [Space(10)]
     [Header("MINIMAP")]

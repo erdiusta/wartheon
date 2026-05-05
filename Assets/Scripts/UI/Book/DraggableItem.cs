@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,20 +11,19 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
     [HideInInspector] public Transform originalParent;
     [HideInInspector] public RectTransform rectTransform;
     [HideInInspector] public Transform bookStatsPageContainer;
-    [HideInInspector] public bool swapCancelled;
     [HideInInspector] public Slot belongingSlot;
-    [HideInInspector] public int originalIndexNum ;
+    [HideInInspector] public int originalIndexNum;
     [HideInInspector] public bool transactionOnTheSameSet;
     [HideInInspector] public bool contactSuccessful;
     [HideInInspector] public bool justMoveNotSwap;
     [HideInInspector] public bool isLockIcon;
-    [HideInInspector] public bool dragMainSlotOff;
     [HideInInspector] public Image image;
 
     CanvasGroup canvasGroup;
     Canvas canvas;
     Vector2 originalPosition;
     GameObject dropButton;
+    bool swapCancelled;
 
     private void Awake()
     {
@@ -36,20 +36,32 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
     protected override void OnEnable()
     {
         base.OnEnable();
+
+        StaticEventHandler.OnSwapFailed += StaticEventHandler_OnSwapFailed;
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
+
+        StaticEventHandler.OnSwapFailed -= StaticEventHandler_OnSwapFailed;
+    }
+
+    private void StaticEventHandler_OnSwapFailed(SwapFailedArgs obj)
+    {
+        swapCancelled = true;
     }
 
     protected override void HandlePlayerReady(Player player, PlayerDetailsSO details)
     {
+        if (!player.IsLocal) return;
+
         bookStatsPageContainer = GetTopLevelParent(transform, 4);
         belongingSlot = GetTopLevelParent(transform, 2).GetComponent<Slot>();
-        dropButton = InventoryManager.Instance.GetDropButtonObject();
+        this.player = player;
         originalIndexNum = player.currentWeaponSlotSetIndex;
         transactionOnTheSameSet = true;
+        dropButton = BookUI.Instance.dropButton.gameObject;
 
         GetItemGenericInfo();
     }
@@ -59,7 +71,7 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
         if (isLockIcon) return;
 
         originalPosition = rectTransform.anchoredPosition;
-        originalParent = transform.parent;  
+        originalParent = transform.parent;
         canvasGroup.alpha = 0.6f;
         canvasGroup.blocksRaycasts = false;
         transform.SetParent(bookStatsPageContainer); // Go 4 level up for preventing drag interruption while set change
@@ -79,7 +91,7 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
             if (belongingSlot.slotType == SlotType.Passive) return;
 
             WeaponSetButton weaponSetButton = eventData.pointerEnter.GetComponent<WeaponSetButton>();
-            int setIndex ;
+            int setIndex;
 
             // Dragging happening between different sets
             if (weaponSetButton != null)
@@ -106,19 +118,47 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
         canvasGroup.alpha = 1.0f;  // Reset the transparency
         canvasGroup.blocksRaycasts = true;  // Re-enable blocking raycasts
 
+        // DO NOT leave the visual under the cursor — always reset visually.
+        // We will either hide/destroy the object (multiplayer move) or reset/reparent it.
+        // ResetPosition() will reparent back to originalParent and place at originalPosition.
         ResetPosition();
 
         dropButton.SetActive(true);
 
-        // Update weapon set in book ui
-        StaticEventHandler.CallWeaponSwitchedEventForBook();
+        // Update weapon set in book ui - only run this locally (owner) to avoid race/duplicate updates on remotes
+        if (player != null && player.IsLocal)
+        {
+            StaticEventHandler.CallWeaponSwitchedEventForBook();
+        }
+
+        bool isMultiplayer = NetworkServer.active || NetworkClient.active;
 
         if (contactSuccessful)
         {
             if (justMoveNotSwap)
             {
+                // Move (non-swap) succeeded. In multiplayer we must avoid duplicate visuals:
+                // - Mark the source inventory slot as pending so network code can safely clear it later.
+                // - Hide this local draggable immediately so it doesn't remain under cursor.
+                if (isMultiplayer)
+                {
+                    int fromIndex = belongingSlot != null ? belongingSlot.inventoryIndexNumber : -1;
+                    if (fromIndex >= 0 && player?.playerInventory != null)
+
+                    // hide the visual and stop dragging — the network callbacks will create the final visual
+                    gameObject.SetActive(false);
+                    IsDragging = false;
+
+                    contactSuccessful = false;
+                    justMoveNotSwap = false;
+                    return;
+                }
+
+                // Single-player: preserve original early return behaviour
                 IsDragging = false;
-                return; // This is only valid for swaps
+                contactSuccessful = false;
+                justMoveNotSwap = false;
+                return;
             }
         }
 
@@ -127,16 +167,18 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
         // Check if the drag was canceled due to an invalid swap
         if (swapCancelled)
         {
+            swapCancelled = false;
+
             if (belongingSlot != null)
             {
                 if (belongingSlot.slotType == SlotType.WeaponMainHand && belongingSlot.inventoryIndexNumber == -1)
                 {
-                    Weapon weapon = (Weapon)itemGeneric;
+                    Weapon weapon = itemGeneric as Weapon;
                     player.weaponSlotSetArray[weapon.weaponStats.weaponBelongingToWhichMainHandSet - 1][0] = weapon;
                 }
                 else if (belongingSlot.slotType == SlotType.WeaponOffHand && belongingSlot.inventoryIndexNumber == -1)
                 {
-                    Weapon weapon = (Weapon)itemGeneric;
+                    Weapon weapon = itemGeneric as Weapon;
                     player.weaponSlotSetArray[weapon.weaponStats.weaponBelongingToWhichOffHandSet - 1][1] = weapon;
                 }
             }
@@ -151,54 +193,62 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
             }
 
             IsDragging = false;
+
+            // Revert to original place (already ResetPosition above, but keep semantics)
+            contactSuccessful = false;
+            justMoveNotSwap = false;
             return;
         }
 
-        if (eventData.pointerEnter != null)
+        // If pointerEnter is null or not a valid drop target, ensure we revert (ResetPosition already executed)
+        if (eventData.pointerEnter == null)
         {
-            if (eventData.pointerEnter.CompareTag(Settings.weaponSetButton))
-            {
-                // Return to original parent if not dropped on a valid slot
-                RevertWeaponBackToBelongingSlots();
-                ResetPosition();
-            }
-            else if (eventData.pointerEnter.CompareTag(Settings.dropButton))
-            {
-                int originalIndex = InventoryManager.Instance.GetOriginalSlotIndex();
+            RevertWeaponBackToBelongingSlots();
+            dropButton.SetActive(true);
+            contactSuccessful = false;
+            justMoveNotSwap = false;
+            IsDragging = false;
+            return;
+        }
 
-                // Drop off hand weapon
-                if (originalParent.GetChild(0).GetComponent<DraggableItem>().belongingSlot.slotType == SlotType.WeaponOffHand)
-                {
-                    Destroy(originalParent.GetChild(0).gameObject);
-                }
-                // Drop main hand weapon if off-hand is empty
-                else if (originalParent.GetChild(0).GetComponent<DraggableItem>().belongingSlot.slotType == SlotType.WeaponMainHand &&
-                    player.weaponSlotSetArray[originalIndex - 1][1] == null)
-                {
-                    Destroy(originalParent.GetChild(0).gameObject);
-                }
-            }
-            else if (eventData.pointerEnter.CompareTag(Settings.bookCover))
+        // Handle known pointerEnter targets
+        if (eventData.pointerEnter.CompareTag(Settings.weaponSetButton))
+        {
+            // Return to original parent if not dropped on a valid slot (ResetPosition already executed)
+            RevertWeaponBackToBelongingSlots();
+        }
+        else if (eventData.pointerEnter.CompareTag(Settings.dropButton))
+        {
+            int originalIndex = player.playerInventory.GetOriginalSlotIndex();
+
+            // Drop off hand weapon
+            if (originalParent.GetChild(0).GetComponent<DraggableItem>().belongingSlot.slotType == SlotType.WeaponOffHand)
             {
-                RevertWeaponBackToBelongingSlots();
+                Destroy(originalParent.GetChild(0).gameObject);
             }
-            else if (eventData.pointerEnter.transform.parent.CompareTag(Settings.mainHandSlot) || eventData.pointerEnter.transform.parent.CompareTag(Settings.offHandSlot) ||
-                eventData.pointerEnter.transform.CompareTag(Settings.mainHandSlot) || eventData.pointerEnter.transform.CompareTag(Settings.offHandSlot))
+            // Drop main hand weapon if off-hand is empty
+            else if (originalParent.GetChild(0).GetComponent<DraggableItem>().belongingSlot.slotType == SlotType.WeaponMainHand &&
+                player.weaponSlotSetArray[originalIndex - 1][1] == null)
             {
-                // If hits one of the slots, don't do anything
+                Destroy(originalParent.GetChild(0).gameObject);
             }
-            else
-            {
-                // Return to original parent if not dropped on a valid slot
-                RevertWeaponBackToBelongingSlots();
-                ResetPosition();
-            }
+        }
+        else if (eventData.pointerEnter.CompareTag(Settings.bookCover))
+        {
+            RevertWeaponBackToBelongingSlots();
+        }
+        else if (eventData.pointerEnter.transform != null &&
+            (eventData.pointerEnter.transform.parent != null && (eventData.pointerEnter.transform.parent.CompareTag(Settings.mainHandSlot) || eventData.pointerEnter.transform.parent.CompareTag(Settings.offHandSlot)) ||
+             eventData.pointerEnter.transform.CompareTag(Settings.mainHandSlot) || eventData.pointerEnter.transform.CompareTag(Settings.offHandSlot)))
+        {
+            // Dropped on a valid slot — swap/move handling performed by Slot.OnDrop.
+            // For swaps we keep the object (SwapProcess will manage belongingSlot references).
+            // For simple moves in multiplayer we already hid the visual above.
         }
         else
         {
-            // Return to original parent if not dropped on a valid slot
+            // Not a valid slot -> revert (ResetPosition already executed)
             RevertWeaponBackToBelongingSlots();
-            ResetPosition();
         }
 
         dropButton.SetActive(true);
@@ -231,7 +281,7 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
         this.itemGeneric = itemGeneric;
         this.belongingSlot = belongingSlot;
 
-        itemGeneric.itemSlotStatus = itemSlotStatus;
+        itemGeneric.ItemSlotStatus = itemSlotStatus;
 
         if (image == null) image = GetComponent<Image>();
         if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
@@ -295,7 +345,9 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
 
     private ItemGeneric GetItemGenericInfo()
     {
-        if (belongingSlot != null) 
+        bool isMultiplayer = NetworkServer.active || NetworkClient.active;
+
+        if (belongingSlot != null)
         {
             if (belongingSlot.inventoryIndexNumber == -1) // Non-inventory item
             {
@@ -303,7 +355,7 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
                 {
                     case SlotType.Passive:
                         itemGeneric = player.equippedPassiveItems[belongingSlot.passiveItemSlotName];
-                        break;  
+                        break;
                     case SlotType.WeaponMainHand:
                         itemGeneric = GameManager.Instance.GetLocalPlayer().activeWeapon.GetCurrentMainHandWeapon();
                         break;
@@ -316,7 +368,8 @@ public class DraggableItem : PlayerBoundBehaviour, IBeginDragHandler, IDragHandl
             }
             else if (belongingSlot.inventoryIndexNumber >= 0) // Inventory Item
             {
-                itemGeneric = InventoryManager.Instance.GetInventoryItem(belongingSlot.inventoryIndexNumber);
+                if (!isMultiplayer) itemGeneric = player.playerInventory.GetInventoryItem(belongingSlot.inventoryIndexNumber);
+                else itemGeneric = player.playerInventory.GetInventoryItem(belongingSlot.inventoryIndexNumber);
             }
         }
 

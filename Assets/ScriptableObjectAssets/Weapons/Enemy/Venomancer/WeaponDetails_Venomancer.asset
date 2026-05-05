@@ -13,14 +13,8 @@ MonoBehaviour:
   m_Name: WeaponDetails_Venomancer
   m_EditorClassIdentifier: 
   weaponName: Venomancer
-  weaponTitle: 0
-  weaponLevel: 0
-  requiredPrimaryStats:
-    strength: 0
-    dexterity: 0
-    constitution: 0
-    intelligence: 0
-    agility: 0
+  weaponTitle: 44
+  rarity: 0
   weaponClass: 6
   weaponHitSpeed: 0
   wieldType: 1
@@ -31,19 +25,26 @@ MonoBehaviour:
   weaponRearSprite: {fileID: 0}
   weaponAnimatorController: {fileID: 0}
   weaponHoverAnimatorController: {fileID: 0}
-  canKillSuddenly: 0
+  weaponUISprite: {fileID: 0}
+  baseUniqueModifier: 0
+  baseTypeModifier: 0
+  additionalModifierPoolForType: 
   suddenKillChance: 0
-  hasAcid: 0
-  acidEfficiency: 0
-  isPoisonous: 0
+  bleedingChance: 0
+  slowChance: 0
+  warmChance: 0
+  burnChance: 0
   poisonChance: 0
-  hasStunDamage: 0
+  staticChance: 0
+  paralyzeChance: 0
   stunChance: 0
-  hasFrostDamage: 0
+  rootChance: 0
+  chillChance: 0
   frostChance: 0
-  hasBlindDamage: 0
   blindChance: 0
-  canDrainHealth: 0
+  revealChance: 0
+  curseChance: 0
+  fearChance: 0
   healthDrainChance: 0
   weaponRightShootPosition: {x: 0.1875, y: 2.46875, z: 0}
   weaponLeftShootPosition: {x: -0.21875, y: 2.46875, z: 0}
@@ -56,13 +57,18 @@ MonoBehaviour:
   weaponImpactSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 0
-  projectileDeflectRatio: 0
+  shieldArmorRate: 0.1
+  blockChance: 0.4
   circleRadius: 0
   boxLength: 1.2
   boxHeight: 2.6
+  coneLength: 3
+  coneAngle: 35
   hasPhysicalDamage: 0
-  meleeDamageMin: 8
-  meleeDamageMax: 12
+  physicalDamageMin: 4
+  physicalDamageMax: 7
+  magicDamageMin: 0
+  magicDamageMax: 0
   meleeDamageElementalBias: 0
   secondMeleeDamageMin: 7
   secondMeleeDamageMax: 10
@@ -70,7 +76,8 @@ MonoBehaviour:
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 2
   weaponCooldownDuration: 2
-  weaponBaseHandling: 0.8
+  weaponAttackRating: 0.8
+  dodgeChance: 0.4
   hasSwing: 0
   hasThrust: 0
   hasInfiniteProjectile: 1

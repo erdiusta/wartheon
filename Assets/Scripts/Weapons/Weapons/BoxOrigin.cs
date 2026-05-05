@@ -39,9 +39,10 @@ public class BoxOrigin : MonoBehaviour
         {
             if (isMainHand)
             {
-                WeaponDetailsSO weapon = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails;
-                boxLength = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxLength;
-                boxHeight = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxHeight;
+                WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
+
+                boxLength = weaponDetails.boxLength;
+                boxHeight = weaponDetails.boxHeight;
             }
         }
     }
@@ -53,9 +54,10 @@ public class BoxOrigin : MonoBehaviour
         {
             if (player.activeWeapon.GetCurrentOffHandWeapon() != null && !isMainHand)
             {
-                WeaponDetailsSO weapon = player.activeWeapon.GetCurrentOffHandWeapon().weaponDetails;
-                boxLength = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxLength;
-                boxHeight = player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.boxHeight;
+                WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentOffHandWeapon().weaponStats.weaponTitle);
+
+                boxLength = weaponDetails.boxLength;
+                boxHeight = weaponDetails.boxHeight;
             }
         }
     }

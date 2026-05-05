@@ -353,7 +353,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -257139871
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 986175181, guid: 16fa578641c429e47b532271f1c113f4, type: 3}
   m_Color: {r: 0.9529412, g: 1, b: 0.46666667, a: 1}
   m_FlipX: 0
@@ -471,6 +471,9 @@ MonoBehaviour:
   damageTaken: 0
   hasDied: 0
   LastDamageDealerNetId: 0
+  spriteRenderer: {fileID: 0}
+  isImmuneAfterHit: 0
+  immunityTime: 0
 --- !u!114 &7388905435801709234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -713,6 +716,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

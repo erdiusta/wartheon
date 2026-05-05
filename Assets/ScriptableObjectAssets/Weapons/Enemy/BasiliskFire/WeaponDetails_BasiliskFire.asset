@@ -13,38 +13,72 @@ MonoBehaviour:
   m_Name: WeaponDetails_BasiliskFire
   m_EditorClassIdentifier: 
   weaponName: Basilisk Fire
-  weaponTitle: 0
+  weaponTitle: 31
+  rarity: 0
+  weaponClass: 5
+  weaponHitSpeed: 0
+  wieldType: 1
+  elementalBias: 0
+  elementalForgeRate: 0
+  price: 0
   weaponFrontSprite: {fileID: 0}
   weaponRearSprite: {fileID: 0}
   weaponAnimatorController: {fileID: 0}
   weaponHoverAnimatorController: {fileID: 0}
-  weaponClass: 5
-  wieldType: 1
-  price: 0
-  canKillSuddenly: 0
+  weaponUISprite: {fileID: 0}
+  baseUniqueModifier: 0
+  baseTypeModifier: 0
+  additionalModifierPoolForType: 
   suddenKillChance: 0.1
-  hasAcid: 0
-  acidEfficiency: 0
-  hasStunDamage: 0
+  bleedingChance: 0
+  slowChance: 0
+  warmChance: 0
+  burnChance: 0
+  poisonChance: 0
+  staticChance: 0
+  paralyzeChance: 0
   stunChance: 0
-  weaponShootPosition: {x: 1.8, y: 1, z: 0}
+  rootChance: 0
+  chillChance: 0
+  frostChance: 0
+  blindChance: 0
+  revealChance: 0
+  curseChance: 0
+  fearChance: 0
+  healthDrainChance: 0
+  weaponRightShootPosition: {x: 0, y: 0, z: 0}
+  weaponLeftShootPosition: {x: 0, y: 0, z: 0}
+  weaponUpShootPosition: {x: 0, y: 0, z: 0}
+  weaponDownShootPosition: {x: 0, y: 0, z: 0}
   weaponCurrentProjectile: {fileID: 11400000, guid: 7d219b64b9aa9ab46839075b51a349bd, type: 2}
+  weaponSecondaryProjectile: {fileID: 0}
   weaponShootEffect: {fileID: 0}
   weaponSwingSoundEffect: {fileID: 0}
   weaponImpactSoundEffect: {fileID: 0}
-  weaponReloadingSoundEffect: {fileID: 0}
   isMeleeWeapon: 0
   isShield: 0
-  weaponCooldownDuration: 0.2
-  weaponBaseHandling: 0.8
-  projectileDeflectRatio: 0.4
+  shieldArmorRate: 0.1
+  blockChance: 0.4
   circleRadius: 0
-  meleeDamageMin: 0
-  meleeDamageMax: 0
+  boxLength: 1.2
+  boxHeight: 2.6
+  coneLength: 3
+  coneAngle: 35
+  hasPhysicalDamage: 0
+  physicalDamageMin: 4
+  physicalDamageMax: 7
+  magicDamageMin: 0
+  magicDamageMax: 0
+  meleeDamageElementalBias: 0
+  secondMeleeDamageMin: 4
+  secondMeleeDamageMax: 7
+  secondMeleeDamageElementalBias: 0
   criticalHitChance: 0.1
   criticalHitDamageMultiplier: 2
+  weaponCooldownDuration: 0.2
+  weaponAttackRating: 0.8
+  dodgeChance: 0.4
   hasSwing: 0
-  hasSweep: 0
   hasThrust: 0
   hasInfiniteProjectile: 1
   weaponProjectileCapacity: 0
