@@ -90,9 +90,9 @@ public class WartheonNetworkManager : NetworkManager
         // Don't jump to MainGame until lobby phase is completed and scene change from NetworkManager
         if (sceneName != "MainGameScene") return;
 
-        for (int i = 0; i < NetworkServer.connections.Values.Count; i++)
+        foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
         {
-            if (!connectionToCharacterIndex.TryGetValue(NetworkServer.connections[i].connectionId, out int charIndex)) continue;
+            if (!connectionToCharacterIndex.TryGetValue(conn.connectionId, out int charIndex)) continue;
 
             // Create pool
             PoolManager.Instance.InitializePoolMP();
@@ -104,10 +104,8 @@ public class WartheonNetworkManager : NetworkManager
             var state = gameplayPlayer.GetComponent<PlayerNetworkState>();
             state.SetCharacterIndex(charIndex);
 
-            NetworkServer.ReplacePlayerForConnection(NetworkServer.connections[i], gameplayPlayer, ReplacePlayerOptions.KeepActive);
+            NetworkServer.ReplacePlayerForConnection(conn, gameplayPlayer, ReplacePlayerOptions.KeepActive);
         }
-
-        characterLocks.Clear();
     }
 
     public override void OnClientSceneChanged()

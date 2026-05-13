@@ -1,4 +1,5 @@
 using Mirror;
+using UnityEngine;
 
 public class EnemyAnimationSync : NetworkBehaviour
 {
@@ -9,6 +10,7 @@ public class EnemyAnimationSync : NetworkBehaviour
     public AimDirection aimDirection;
 
     AnimateEnemy animateEnemy;
+    Animator animator;
 
     public override void OnStartClient()
     {
@@ -39,14 +41,14 @@ public class EnemyAnimationSync : NetworkBehaviour
     [Server]
     public void PlayAttackServer(AimDirection aim)
     {
-        if (!isServer) return;
-
         RpcPlayAttack(aim);
     }
 
     [ClientRpc]
     private void RpcPlayAttack(AimDirection aim)
     {
+        if (isServer) return;
+
         animateEnemy?.ApplyAttack(aim);
     }
 
@@ -59,6 +61,64 @@ public class EnemyAnimationSync : NetworkBehaviour
     [ClientRpc]
     private void RpcResetAnimations()
     {
+        if (isServer) return;
+
         animateEnemy?.ResetAnimatonParameters();
+    }
+
+    [Server]
+    public void ResetAllBossAnimations()
+    {
+        RpcResetAllBossAnimations();
+    }
+
+    [ClientRpc]
+    private void RpcResetAllBossAnimations()
+    {
+        if (isServer) return;
+
+        animateEnemy?.ResetBossAnimationParameters();
+    }
+
+    [Server]
+    public void SetBossCastAnimation(bool isEnabled)
+    {
+        RpcSetBossCastAnimation(isEnabled);
+    }
+
+    [ClientRpc]
+    public void RpcSetBossCastAnimation(bool isEnabled)
+    {
+        if (isServer) return;
+
+        animateEnemy?.SetCastAnimation(isEnabled);
+    }
+
+    [Server]
+    public void SetBossChargeAnimation(bool isEnabled)
+    {
+        RpcSetBossChargeAnimation(isEnabled);
+    }
+
+    [ClientRpc]
+    public void RpcSetBossChargeAnimation(bool isEnabled)
+    {
+        if (isServer) return;
+
+        animateEnemy?.SetChargeAnimation(isEnabled);
+    }
+
+    [Server]
+    public void SetBossFocusedAnimation(bool isEnabled)
+    {
+        RpcSetBossFocusedAnimation(isEnabled);
+    }
+
+    [ClientRpc]
+    public void RpcSetBossFocusedAnimation(bool isActive)
+    {
+        if (isServer) return;
+
+        animateEnemy?.SetFocusedAnimation(isActive);
     }
 }

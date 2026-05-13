@@ -334,7 +334,7 @@ public class FireWeapon : MonoBehaviour
         if (ctx.moravellePhase == MoravellePhase.SpreadArrowShot || ctx.cryotharPhase == CryotharPhase.IceProjectile
             || ctx.pyrotharPhase == PyrotharPhase.FireProjectile)
         {
-            projectilePerShot = 10;
+            projectilePerShot = 14;
         }
         else if (ctx.moldranPhase == MoldranPhase.Projectile)
         {

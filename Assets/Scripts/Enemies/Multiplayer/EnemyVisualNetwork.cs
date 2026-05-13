@@ -59,6 +59,7 @@ public class EnemyVisualNetwork : NetworkBehaviour
         materializeDuration = details.enemyMaterializeTime;
         materalizeColor = details.enemyMaterializeColor;
         isMaterializing = true;
+        enemy.health.isDamageable = false;
     }
 
     private void OnMaterializeChanged(bool oldVal, bool newVal)
@@ -81,6 +82,7 @@ public class EnemyVisualNetwork : NetworkBehaviour
         {
             enemy.initializationCompleted = true;
             isMaterializing = false;
+            enemy.health.isDamageable = true;
         }
 
         EnableEnemy(true);

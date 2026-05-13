@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
   m_Name: EnemyDetails_Galvanus
   m_EditorClassIdentifier: 
-  guid: 08a7a80ae724a0a499694bd6b91cce66
-  previousEnemyPrefab: {fileID: 7183228443647751644, guid: 0774227b2500d3e468ac2f5f15dea51f, type: 3}
   enemyName: Galvanus
   enemyDetails: A golem-like sentry creature charged with electricity. Stay away
     from its jolts causing stun.
@@ -36,12 +34,7 @@ MonoBehaviour:
   elementalForgeRate: 0.5
   enemyMinionDetails: {fileID: 0}
   physicalResistance: 0
-  fireResistance: 0
-  waterResistance: 0
-  airResistance: 0
-  earthResistance: 0
-  lightResistance: 0
-  darkResistance: 0
+  magicResistance: 0
   hasShield: 0
   deflectChance: 0
   isImmuneToBleeding: 0
@@ -89,9 +82,7 @@ MonoBehaviour:
   healthDrainChance: 0
   hasBlindDamage: 0
   blindChance: 0
-  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 5
-  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 3.0747018, g: 3.732132, b: 1.6020001, a: 0}
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
@@ -117,8 +108,6 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}
     minDamageAmount: 12
     maxDamageAmount: 16
-  isImmuneAfterHit: 1
-  hitImmunityTime: 2
   isHealthBarDisplayed: 1
   hasKnockbackResistance: 1
   primaryPassiveItemsByLevelList:
@@ -134,7 +123,7 @@ MonoBehaviour:
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 4
-    - dungeonObject: {fileID: 11400000, guid: 7f77cbb7da049074e890fd55cd6d4ada, type: 2}
+    - dungeonObject: {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
       ratio: 3
   weaponsByLevelList:
   - dungeonLevel: {fileID: 11400000, guid: 2b0f259b5be392c4bbf7af684ce15a67, type: 2}

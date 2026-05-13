@@ -1,6 +1,10 @@
+using UnityEngine;
+
 public struct AttackContext
 {
     public EnemyType enemyType;
+    public bool useOverrideDirection;
+    public Vector2 overrideDirection;
 
     // Boss phases
     public ProjectileKind projectileKind;

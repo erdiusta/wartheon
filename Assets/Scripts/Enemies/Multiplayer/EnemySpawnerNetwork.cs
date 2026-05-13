@@ -295,6 +295,8 @@ public class EnemySpawnerNetwork : NetworkBehaviour
     {
         bossEnemy = enemy;
         bossEnemyName = bossEnemy.EnemyCategory;
+
+        bossEnemy.health.isDamageable = false;
     }
 
     public Enemy GetBoss() => bossEnemy;

@@ -1,6 +1,7 @@
 using Pathfinding;
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -32,6 +33,8 @@ using UnityEngine.Rendering;
 [DisallowMultipleComponent]
 public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
 {
+    public TextMeshPro debugDisplay;
+
     [HideInInspector] public EnemyDetailsSO enemyDetails;
     [HideInInspector] public AIDestinationSetter aiDestinationSetter;
     [HideInInspector] public PatrolRigidbody2D patrol;
@@ -502,4 +505,11 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
     public float MaxBaseMoveSpeed => enemyDetails.movementDetails.GetBaseMaxMoveSpeed();
     public MoveStatus MoveStatus => moveStatus;
     #endregion
+}
+
+public struct PendingProjectileRequest
+{
+    public ProjectileKind projectileKind;
+    public AttackContext attackContext;
+    public Vector2 lockedAimVector;
 }

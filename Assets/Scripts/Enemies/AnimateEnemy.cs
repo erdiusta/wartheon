@@ -49,8 +49,6 @@ public class AnimateEnemy : MonoBehaviour
         SetAttackAnimationParameters();
     }
 
-
-
     /// <summary>
     /// Initialise aim animation parameters
     /// </summary>
@@ -137,6 +135,18 @@ public class AnimateEnemy : MonoBehaviour
     }
 
     /// <summary>
+    /// Reset boss animation parameters
+    /// </summary>
+    public void ResetBossAnimationParameters()
+    {
+        enemy.animator.SetFloat(Settings.motionType, 0);
+
+        SetCastAnimation(false);
+        SetFocusedAnimation(false);
+        SetChargeAnimation(false);
+    }
+
+    /// <summary>
     /// Set aim animation parameters
     /// </summary>
     public void SetAimParameters(AimDirection aimDirection)
@@ -194,16 +204,19 @@ public class AnimateEnemy : MonoBehaviour
         }
     }
 
-    // Method to check if the Animator contains the specified parameter
-    bool HasParameter(Animator animator, int paramHashCode)
+    public void SetCastAnimation(bool isEnabled)
     {
-        foreach (AnimatorControllerParameter param in animator.parameters)
-        {
-            if (param.GetHashCode() == paramHashCode)
-            {
-                return true;
-            }
-        }
-        return false;
+
+        enemy.animator.SetBool(Settings.cast, isEnabled);
+    }
+
+    public void SetFocusedAnimation(bool isEnabled)
+    {
+        enemy.animator.SetBool(Settings.focused, isEnabled);
+    }
+
+    public void SetChargeAnimation(bool isEnabled)
+    {
+        enemy.animator.SetBool(Settings.charge, isEnabled);
     }
 }

@@ -39,7 +39,8 @@ public class EnemyAINetwork : NetworkBehaviour
     protected Coroutine shatterEnemyRoutine;
     protected Coroutine slowEnemyRoutine;
     protected Coroutine fearEnemyRoutine;
-    protected Vector3 lockedVector;
+    protected Vector2 trackingVector;
+    protected Vector3 attackLockedVector;
     protected RoomNetData currentRoomNetData;
     protected Rigidbody2D rb2D;
     protected Vector2 prevVel;
@@ -90,6 +91,14 @@ public class EnemyAINetwork : NetworkBehaviour
     protected float targetRefreshTimer;
 
     protected EnemySpawnerNetwork spawnerNetwork;
+
+    protected PendingProjectileRequest pendingProjectileRequest;
+    protected bool hasPendingProjectile;
+
+    protected Vector2 chargeStartPosition;
+    protected Vector2 chargeMoveDirection;
+    protected bool chargeRecoveryActive;
+    protected Coroutine chargeRecoveryRoutine;
 
     protected virtual void Awake()
     {
@@ -216,7 +225,7 @@ public class EnemyAINetwork : NetworkBehaviour
             {
                 if (!hasAppliedDashImpulse)
                 {
-                    Vector2 force = lockedVector.normalized * enemy.currentMoveSpeed * dashSpeedMultiplier * rb2D.mass;
+                    Vector2 force = attackLockedVector.normalized * enemy.currentMoveSpeed * dashSpeedMultiplier * rb2D.mass;
                     rb2D.AddForce(force, ForceMode2D.Impulse);
                     hasAppliedDashImpulse = true;
                 }
@@ -286,7 +295,7 @@ public class EnemyAINetwork : NetworkBehaviour
                         {
                             Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() -
                                 enemy.GetEnemyPosition()).normalized : (targetPlayer.GetPlayerPosition() - enemy.GetEnemyPosition()).normalized;
-                            lockedVector = direction;
+                            attackLockedVector = direction;
                         }
 
                         // Check if cooldown has expired
@@ -333,7 +342,7 @@ public class EnemyAINetwork : NetworkBehaviour
         // Re-enable enemy layer collisions and force interaction
         Physics2D.IgnoreLayerCollision(gameObject.layer, LayerMask.NameToLayer("Enemy"), false);
 
-        lockedVector = Vector2.zero;
+        attackLockedVector = Vector2.zero;
         enemy.rb2D.linearVelocity = Vector2.zero;
 
         dashTimer = 0f;
@@ -569,7 +578,7 @@ public class EnemyAINetwork : NetworkBehaviour
     {
         isAttacking = true;
         // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
 
@@ -588,7 +597,7 @@ public class EnemyAINetwork : NetworkBehaviour
         // Calculate the locked target position if not already locked
         if (!isTargetLocked)
         {
-            lockedTargetPosition = enemy.GetEnemyPosition() + lockedVector * enemyDetails.attackMoveEfficentDistance;
+            lockedTargetPosition = enemy.GetEnemyPosition() + attackLockedVector * enemyDetails.attackMoveEfficentDistance;
             isTargetLocked = true;
         }
 
@@ -650,7 +659,21 @@ public class EnemyAINetwork : NetworkBehaviour
         AimDirection enemyAimDirection;
         AttackDirection enemyAttackDirection;
 
-        Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection, out enemyAttackDirection);
+        if (ctx.useOverrideDirection)
+        {
+            weaponDirection = ctx.overrideDirection.normalized;
+
+            playerDirectionVector = weaponDirection;
+            weaponAngleDegrees = HelperUtilities.GetAngleFromVector(weaponDirection);
+            enemyAngleDegrees = weaponAngleDegrees;
+
+            enemyAimDirection = HelperUtilities.GetAimDirection(enemyAngleDegrees);
+            enemyAttackDirection = HelperUtilities.GetAttackDirection(enemyAngleDegrees);
+        }
+        else
+        {
+            Aim(out playerDirectionVector, out weaponDirection, out weaponAngleDegrees, out enemyAngleDegrees, out enemyAimDirection, out enemyAttackDirection);
+        }
 
         // Only fire if enemy has a weapon
         if (enemyDetails.enemyWeapon != null)
@@ -661,21 +684,6 @@ public class EnemyAINetwork : NetworkBehaviour
             // Is the player in range
             if (playerDirectionVector.magnitude <= enemyProjectileRange)
             {
-                // Does this enemy require line of sight to the player before firing
-                //if (enemyDetails.firingLineOfSightRequired)
-                //{
-                //    if (!IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange))
-                //    {
-                //        // Attempt flank if cooldown allows
-                //        if (Time.time - flankDecisionTimer > FLANK_COOLDOWN)
-                //        {
-                //            enemyPhaseAtPreviousFrame = enemyPhase;
-                //        }
-
-                //        return;
-                //    }
-                //}
-
                 enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser, kind, ctx, enemyNetId, enemy);
             }
         }
@@ -1149,6 +1157,79 @@ public class EnemyAINetwork : NetworkBehaviour
         // Calculate a random weapon shoot interval
         return Random.Range(enemyDetails.firingIntervalMin, enemyDetails.firingIntervalMax);
     }
+
+    protected Vector2 GetValidPosition(Vector2 desiredPosition, CapsuleCollider2D movementCollider)
+    {
+        if (movementCollider == null) return desiredPosition;
+
+        Vector2 currentPos = transform.position;
+        Vector2 dir = (desiredPosition - currentPos).normalized;
+
+        float distance = Vector2.Distance(currentPos, desiredPosition); 
+
+        // Too close
+        if (distance <= 0.01f) return currentPos;
+
+        ContactFilter2D filter = new ContactFilter2D();
+
+        filter.useLayerMask = true;
+        filter.useTriggers = false;
+
+        filter.layerMask = GetObstacleMask();
+
+        RaycastHit2D[] hits = new RaycastHit2D[16];
+
+        int hitCount = movementCollider.Cast(dir, filter, hits, distance);
+        bool validHitFound = false;
+
+        float closestDistance = float.MaxValue;
+
+        // FIND CLOSEST VALID OBSTACLE
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider2D hitCol = hits[i].collider;
+
+            if (hitCol == null) continue;
+
+            // Door collision control
+            if (hitCol.GetComponentInParent<Door>() != null) continue;
+
+            // Ignore self
+            if (hitCol.transform.root == transform.root) continue;
+
+            // Ignore triggers
+            if (hitCol.isTrigger) continue;
+
+            // Ignore zero distance overlap artifacts
+            if (hits[i].distance <= 0.03f) continue;
+
+            if (hits[i].distance < closestDistance)
+            {
+                closestDistance = hits[i].distance;
+
+                validHitFound = true;
+            }
+        }
+
+        // VALID OBSTACLE FOUND
+        if (validHitFound)
+        {
+            // Small safety padding
+            float safeDistance = Mathf.Max(0, closestDistance - 0.05f);
+
+            if (safeDistance < 1.25f)
+            {
+                safeDistance = 1.25f;
+
+                return currentPos + dir * safeDistance;
+            }
+        }
+
+        // PATH IS VALID
+        return desiredPosition;
+    }
+
+    protected LayerMask GetObstacleMask() => LayerMask.GetMask("Wall", "Pool", "Environment");
 
     protected Vector3 ClampToBossRoom(Vector3 worldPosition, Vector2Int cellMin, Vector2Int cellMax)
     {

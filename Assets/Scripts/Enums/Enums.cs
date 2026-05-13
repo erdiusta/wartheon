@@ -597,7 +597,7 @@ public enum MoravellePhase
     None,
     Wait,
     StraightArrowShot,
-    ChargeAndRetreat,
+    Charge,
     SpreadArrowShot,
 }
 

@@ -82,11 +82,11 @@ public class VenomancerAINetwork : EnemyAINetwork, IMutualBossBehaviour
         {
             Vector3 direction = GameSessionManager.Instance.GetDecoy() != null ? (GameSessionManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
                 (targetPlayer.GetPlayerPosition() - transform.position).normalized;
-            lockedVector = direction;
+            attackLockedVector = direction;
         }
 
         // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
         enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Venomancer);

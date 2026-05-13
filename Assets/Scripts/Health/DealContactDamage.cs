@@ -53,16 +53,6 @@ public class DealContactDamage : MonoBehaviour
         GetDamageFromSummonedEnemies(collision.collider);
     }
 
-    //// Trigger contact damage when enter a collider
-    //private void OnCollisionStay2D(Collision2D collision)
-    //{
-    //    // If already colliding with something return
-    //    if (isColliding) return;
-
-    //    ContactDamage(collision.collider);
-    //    GetDamageFromSummonedEnemies(collision.collider);
-    //}
-
     private void ContactDamage(Collider2D collision)
     {
         // If the collision object isn't in the specified layer then return (use bitwise comparison)

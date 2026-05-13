@@ -88,11 +88,11 @@ public class GalvanusAINetwork : EnemyAINetwork, IMutualBossBehaviour
         if (targetPlayer != null)
         {
             Vector3 direction = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
-            lockedVector = direction;
+            attackLockedVector = direction;
         }
 
         // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
         enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Galvanus);

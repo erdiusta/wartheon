@@ -148,7 +148,7 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
                     HandleStraightArrowShot();
                     break;
 
-                case MoravellePhase.ChargeAndRetreat:
+                case MoravellePhase.Charge:
                     HandleChargeAndRetreat();
                     break;
 
@@ -187,7 +187,7 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
 
         if (moravelleAttackMoveRoutine == null)
         {
-            moravelleAttackMoveRoutine = StartCoroutine(AttackRoutine(MoravellePhase.ChargeAndRetreat));
+            moravelleAttackMoveRoutine = StartCoroutine(AttackRoutine(MoravellePhase.Charge));
         }
     }
 
@@ -215,13 +215,13 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
         {
             if (Random.Range(0, 101) > 65)
             {
-                currentMoravellePhase = MoravellePhase.ChargeAndRetreat;
+                currentMoravellePhase = MoravellePhase.Charge;
                 return;
             }
         }
 
         if (currentMoravellePhase == MoravellePhase.StraightArrowShot ||
-            currentMoravellePhase == MoravellePhase.ChargeAndRetreat ||
+            currentMoravellePhase == MoravellePhase.Charge ||
             currentMoravellePhase == MoravellePhase.SpreadArrowShot)
         {
             currentMoravellePhase = MoravellePhase.Wait;
@@ -270,7 +270,7 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
                 yield return null;
             }
         }
-        else if (moravellePhase == MoravellePhase.ChargeAndRetreat)
+        else if (moravellePhase == MoravellePhase.Charge)
         {
             isAttacking = true;
 

@@ -1,29 +1,62 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
 {
-    // Define the cell boundaries in grid coordinates
+    // ROOM LIMITS
     readonly Vector2Int cellMin = new Vector2Int(-8, 2);
     readonly Vector2Int cellMax = new Vector2Int(12, 18);
 
-    // BOSSES
+    // PHASE
     MoravellePhase currentMoravellePhase;
-    private float phaseTimer;  // Timer to control phase duration
-    private float waitPhase = 0.5f;  // Adjust this to control how long each phase lasts
 
-    Vector3 lockedPosition;
-    bool chargeProcessStarted;
+    [Header("Boss Behaviour")]
+    [SerializeField] float waitPhase = 0.15f;
+    [SerializeField] float preferredDistance = 6f;
 
-    public UnityEvent resetAnimationEvent;
+    [Header("Movement")]
+    [SerializeField] float strafeForce = 4f;
+    [SerializeField] float retreatForce = 6f;
+    [SerializeField] float movementForce = 5f;
 
-    Coroutine moravelleAttackMoveRoutine;
+    [Header("Charge")]
+    [SerializeField] float chargePrepareDuration = 0.55f;
+    [SerializeField] float chargeDuration = 0.45f;
+    [SerializeField] float chargePredictionMultiplier = 0.45f;
+    [SerializeField] float chargeOvershootDistance = 1.5f;
+
+    [Header("Boss Scaling")]
+    [SerializeField] float phase2Threshold = 0.7f;
+    [SerializeField] float phase3Threshold = 0.4f;
+
+    // STATE
+    private float phaseTimer;
+    bool phase2Active;
+    bool phase3Active;
+
+    float aggressiveMultiplier = 1f;
 
     bool passedToWait;
 
+    bool lockAttackVector;
+    Vector3 lockedPosition;
+
+    CapsuleCollider2D movementCollider;
+
+    Coroutine moravelleRoutine;
+
+    // ANIMATION EVENT STATES
+    bool pendingChargeRelease;
+    bool chargeReleased;
+
+    // EVENTS
+    public UnityEvent resetAnimationEvent;
+    public UnityEvent chargeStartEvent;
+    public UnityEvent bowReleaseEvent;
+
+    // PROPERTIES
     public bool PassedToWait
     {
         get => passedToWait;
@@ -40,6 +73,8 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
     protected override void Awake()
     {
         base.Awake();
+
+        movementCollider = GetComponent<CapsuleCollider2D>();
     }
 
     protected override void Start() 
@@ -52,104 +87,20 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
         currentRoomNetData = GameSessionManager.Instance.GetCurrentRoomNetData();
 
         resetAnimationEvent.AddListener(ResetAnimations);
+        chargeStartEvent.AddListener(OnChargeReleaseFrame);
+        bowReleaseEvent.AddListener(OnBowReleaseFrame);
     }
 
     protected override void OnDisable() 
     {
         resetAnimationEvent.RemoveListener(ResetAnimations);
+        chargeStartEvent.RemoveListener(OnChargeReleaseFrame);
+        bowReleaseEvent.RemoveListener(OnBowReleaseFrame);
     }
 
-    public void ResetAnimationEvent()
-    {
-        resetAnimationEvent?.Invoke();
-    }
-
-    private void ResetAnimations()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-        enemy.animator.SetFloat(Settings.motionType, 0);
-        enemy.animator.SetBool(Settings.focused, false);
-        enemy.animator.SetBool(Settings.cast, false);
-    }
-
-    protected override void FixedUpdate() 
-    {
-        if (!isServer) return;
-
-        prevVel = rb2D.linearVelocity;
-
-        if (enemyPhase == EnemyPhase.Death)
-        {
-            if (attackAnimationRoutine != null)
-            {
-                StopCoroutine(attackAnimationRoutine);
-            }
-
-            return;
-        }
-
-        // Emergency pullback if Moravelle drifts outside bounds
-        if (IsOutsideBossRoom(transform.position, cellMin, cellMax, true))
-        {
-            Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
-            transform.position = safePos;
-            rb2D.linearVelocity = Vector2.zero;
-        }
-
-        // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
-        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
-        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Moravelle);
-        enemy.animateEnemy.ResetAimAnimationParameters();
-        enemy.animateEnemy.SetAimParameters(unitAimDirection);
-
-        // Update timers - Fire Projectile
-        firingIntervalTimer -= Time.fixedDeltaTime;
-
-        HasNegativeMoveStatusEffect();
-
-        if (enemy.moveStatus == MoveStatus.Idle)
-        {
-            if (targetPlayer.isStealthActive)
-            {
-                PlayerStealthCheck();
-            }
-
-            switch (currentMoravellePhase)
-            {
-                case MoravellePhase.Wait:
-                    enemy.animator.SetBool(Settings.charge, false);
-                    enemy.animator.SetBool(Settings.focused, false);
-                    enemy.animator.SetBool(Settings.cast, false);
-
-                    PassedToWait = true;
-
-                    firingIntervalTimer = WeaponShootInterval();
-                    firingDurationTimer = WeaponShootDuration();
-
-                    phaseTimer += Time.fixedDeltaTime;
-                    if (phaseTimer >= waitPhase)
-                    {
-                        TransitionToNextPhase();
-                        phaseTimer = 0f;
-                    }
-                    break;
-
-                case MoravellePhase.StraightArrowShot:
-                    HandleStraightArrowShot();
-                    break;
-
-                case MoravellePhase.ChargeAndRetreat:
-                    HandleChargeAndRetreat();
-                    break;
-
-                case MoravellePhase.SpreadArrowShot:
-                    HandleSpreadArrowShot();
-                    break;
-            }
-        }
-    }
+    public void ResetAnimationEvent() => resetAnimationEvent?.Invoke();
+    public void ChargeReleaseEvent() => chargeStartEvent?.Invoke();
+    public void BowReleaseEvent() => bowReleaseEvent?.Invoke();
 
     protected override void Update()
     {
@@ -176,49 +127,380 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
         if (targetPlayer != null)
         {
-            Vector3 direction = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
-            lockedVector = direction;
+            trackingVector = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+            if (!lockAttackVector)
+            {
+                attackLockedVector = trackingVector;
+            }
         }
     }
 
-    public void HandleWaitPhase()
+    protected override void FixedUpdate() 
     {
-        // Logic for waiting phase (maybe the Centaur just moves or idles here)
-        enemy.animateEnemy.ResetAnimatonParameters();
-        enemy.animateEnemy.SetIdleAnimationParameters();
-    }
+        if (!isServer || !enemyFullyInitialized) return;
 
-    private void HandleStraightArrowShot()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (moravelleAttackMoveRoutine == null)
+        if (enemyPhase == EnemyPhase.Death)
         {
-            moravelleAttackMoveRoutine = StartCoroutine(AttackRoutine(MoravellePhase.StraightArrowShot));
+            if (attackAnimationRoutine != null)
+            {
+                StopCoroutine(attackAnimationRoutine);
+            }
+
+            return;
         }
-    }
 
-    private void HandleChargeAndRetreat()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
+        UpdateBossDifficulty();
 
-        if (moravelleAttackMoveRoutine == null)
+        // AIM
+        Vector2 activeAimVector = attackLockedVector;
+        float unitAngle = HelperUtilities.GetAngleFromVector(activeAimVector);
+        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
+        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+
+        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Moravelle);
+
+        if (unitAimDirection != enemy.LastAim)
         {
-            moravelleAttackMoveRoutine = StartCoroutine(AttackRoutine(MoravellePhase.ChargeAndRetreat));
+            enemy.LastAim = unitAimDirection;
+
+            enemy.animateEnemy.ResetAimAnimationParameters();
+            enemy.animateEnemy.SetAimParameters(unitAimDirection);
+
+            enemy.enemyAnimSync?.ResetAllBossAnimations();
+            enemy.enemyAnimSync?.UpdateAnimationStateServer(wasMoving, unitAimDirection);
         }
-    }
 
-    private void HandleSpreadArrowShot()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
+        // STATE
+        if (enemy.moveStatus != MoveStatus.Idle) return;
 
-        if (moravelleAttackMoveRoutine == null)
+        switch (currentMoravellePhase)
         {
-            moravelleAttackMoveRoutine = StartCoroutine(AttackRoutine(MoravellePhase.SpreadArrowShot));
+            case MoravellePhase.Wait:
+                enemy.debugDisplay.text = "Current Phase: WAIT";
+
+                PassedToWait = true;
+                phaseTimer += Time.fixedDeltaTime;
+                MaintainDistance();
+
+                if (phaseTimer >= waitPhase)
+                {
+                    phaseTimer = 0;
+                    TransitionToNextPhase();
+                }
+                break;
+            case MoravellePhase.StraightArrowShot:
+                enemy.debugDisplay.text = "Current Phase: STRAIGHT ARROW SHOT";
+
+                if (moravelleRoutine == null)
+                {
+                    moravelleRoutine = StartCoroutine(StraightArrowRoutine());
+                }
+                break;
+
+            case MoravellePhase.SpreadArrowShot:
+                enemy.debugDisplay.text = "Current Phase: SPREAD ARROW SHOT";
+
+                if (moravelleRoutine == null)
+                {
+                    moravelleRoutine = StartCoroutine(SpreadArrowRoutine());
+                }
+
+                break;
+
+            case MoravellePhase.Charge:
+                enemy.debugDisplay.text = "Current Phase: CHARGE";
+
+                if (moravelleRoutine == null)
+                {
+                    moravelleRoutine = StartCoroutine(ChargeRoutine());
+                }
+
+                break;
+
+            default:
+                break;
         }
     }
 
-    private void TransitionToNextPhase()
+    // STRAIGHT SHOT
+    IEnumerator StraightArrowRoutine()
+    {
+        float attackDuration = 4f;
+        float timer = 0f;
+
+        enemy.animateEnemy.SetCastAnimation(true);
+        enemy.enemyAnimSync?.SetBossCastAnimation(true);
+
+        while (timer < attackDuration)
+        {
+            if (enemy.health.hasDied) yield break;
+
+            timer += Time.fixedDeltaTime;
+
+            StrafeAroundPlayer();
+            MaintainDistance();
+
+            if (!hasPendingProjectile)
+            {
+                hasPendingProjectile = true;
+
+                Vector2 shotDirection = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+                pendingProjectileRequest = new PendingProjectileRequest
+                {
+                    projectileKind = ProjectileKind.Default,
+                    attackContext = default,
+                    lockedAimVector = shotDirection
+                };
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        enemy.animateEnemy.SetCastAnimation(false);
+        enemy.enemyAnimSync?.SetBossCastAnimation(false);
+
+        moravelleRoutine = null;
+
+        currentMoravellePhase = MoravellePhase.Wait;
+        phaseTimer = 0;
+    }
+
+    // SPREAD SHOT
+    IEnumerator SpreadArrowRoutine()
+    {
+        float timer = 0f;
+        float duration = 2f;
+
+        enemy.animateEnemy.SetFocusedAnimation(true);
+        enemy.enemyAnimSync?.SetBossFocusedAnimation(true);
+
+        while (timer < duration)
+        {
+            if (enemy.health.hasDied) yield break;
+
+            timer += Time.fixedDeltaTime;
+
+            MaintainDistance();
+
+            if (!hasPendingProjectile)
+            {
+                hasPendingProjectile = true;
+
+                Vector2 shotDirection = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+                pendingProjectileRequest = new PendingProjectileRequest
+                {
+                    projectileKind = ProjectileKind.Default,
+                    attackContext = new AttackContext { moravellePhase = MoravellePhase.SpreadArrowShot },
+                    lockedAimVector = shotDirection
+                };
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        enemy.animateEnemy.SetFocusedAnimation(false);
+        enemy.enemyAnimSync?.SetBossFocusedAnimation(false);
+
+        moravelleRoutine = null;
+
+        currentMoravellePhase = MoravellePhase.Wait;
+        phaseTimer = 0;
+    }
+
+    // CHARGE
+    IEnumerator ChargeRoutine()
+    {
+        lockAttackVector = true;
+        isAttacking = true;
+
+        chargeStartPosition = transform.position;
+
+        Rigidbody2D targetRB = targetPlayer.GetComponent<Rigidbody2D>();
+
+        Vector2 currentPos = transform.position;
+        Vector2 predictedPosition = targetPlayer.GetPlayerPosition();
+
+        if (targetRB != null)
+        {
+            predictedPosition += targetRB.linearVelocity * chargePredictionMultiplier;
+        }
+
+        Vector2 chargeDirection = (predictedPosition - currentPos).normalized;
+
+        chargeMoveDirection = chargeDirection;
+
+        Vector2 overshootPosition = predictedPosition + chargeDirection * chargeOvershootDistance;
+        Vector2 clampedPosition = ClampToBossRoom(overshootPosition, cellMin, cellMax);
+        lockedPosition = GetValidPosition(clampedPosition, movementCollider);
+
+        // PREPARE CHARGE
+        pendingChargeRelease = true;
+        chargeReleased = false;
+
+        enemy.animateEnemy.SetChargeAnimation(true);
+        enemy.enemyAnimSync?.SetBossChargeAnimation(true);
+
+        float timer = 0f;
+
+        while (!chargeReleased)
+        {
+            if (enemy.health.hasDied) yield break;
+
+            timer += Time.fixedDeltaTime;
+
+            if (timer >= chargePrepareDuration + 1f)
+            {
+                break;
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        // CHARGE LOOP
+        while (isCharging)
+        {
+            CapsuleCollider2D col = movementCollider;
+
+            if (col != null)
+            {
+                ContactFilter2D filter = new ContactFilter2D();
+                filter.useLayerMask = true;
+                filter.useTriggers = false;
+                filter.layerMask = GetObstacleMask();
+
+                RaycastHit2D[] hits = new RaycastHit2D[10];
+
+                int hitCount = col.Cast(rb2D.linearVelocity.normalized, filter, hits, 0.15f);
+
+                bool validObstacleDetected = false;
+
+                // VALIDATE HITS
+                for (int i = 0; i < hitCount; i++)
+                {
+                    Collider2D hitCol = hits[i].collider;
+
+                    if (hitCol == null) continue;
+
+                    // Door collision control
+                    if (hitCol.GetComponentInParent<Door>() != null) continue;
+
+                    // Ignore self colliders
+                    if (hitCol.transform.root == transform.root) continue;
+
+                    // Ignore triggers
+                    if (hitCol.isTrigger) continue;
+
+                    // Ignore overlap artifacts
+                    if (hits[i].distance <= 0.001f) continue;
+
+                    validObstacleDetected = true;
+                    break;
+                }
+
+                // STOP CHARGE ON VALID OBSTACLE
+                if (validObstacleDetected)
+                {
+                    StopCharge();
+                    break;
+                }
+            }
+
+            // TARGET REACHED
+            Vector2 toTarget = (Vector2)lockedPosition - (Vector2)transform.position;
+            float dot = Vector2.Dot(chargeMoveDirection, toTarget);
+
+            if (dot <= 0f)
+            {
+                StopCharge();
+                break;
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        lockAttackVector = false;
+        isAttacking = false;
+        moravelleRoutine = null;
+
+        currentMoravellePhase = MoravellePhase.Wait;
+        phaseTimer = 0;
+    }
+
+    // ANIMATION EVENTS
+    public void OnBowReleaseFrame()
+    {
+        if (!isServer) return;
+
+        if (!hasPendingProjectile) return;
+
+        attackLockedVector = pendingProjectileRequest.lockedAimVector;
+        lockAttackVector = true;
+
+        FireWeapon(false, pendingProjectileRequest.projectileKind, pendingProjectileRequest.attackContext);
+
+        hasPendingProjectile = false;
+
+        StartCoroutine(DelayedAimUnlock());
+    }
+
+    IEnumerator DelayedAimUnlock()
+    {
+        yield return new WaitForSeconds(0.08f);
+
+        lockAttackVector = false;
+    }
+
+    public void OnChargeReleaseFrame()
+    {
+        if (!isServer) return;
+
+        if (!pendingChargeRelease) return;
+
+        pendingChargeRelease = false;
+        chargeReleased = true;
+
+        StartChargeMovement();
+    }
+
+    // START CHARGE
+    void StartChargeMovement()
+    {
+        isCharging = true;
+
+        Vector2 currentPos = transform.position;
+        Vector2 moveDir = ((Vector2)lockedPosition - currentPos).normalized;
+
+        float chargeDistance = Vector2.Distance(currentPos, lockedPosition);
+        float requiredVelocity = chargeDistance / chargeDuration;
+
+        rb2D.linearVelocity = Vector2.zero;
+        rb2D.linearDamping = 0;
+
+        rb2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb2D.linearVelocity = moveDir * requiredVelocity;
+    }
+
+    // STOP CHARGE
+    void StopCharge()
+    {
+        isCharging = false;
+
+        rb2D.linearVelocity = Vector2.zero;
+        rb2D.linearDamping = 3;
+        rb2D.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
+
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+    }
+
+    // TRANSITIONS
+    void TransitionToNextPhase()
     {
         if (targetPlayer == null) return;
 
@@ -228,174 +510,102 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
             return;
         }
 
-        if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) < 4f)
+        float distance = Vector2.Distance(transform.position, targetPlayer.GetPlayerPosition());
+        float random = Random.value;
+
+        // HIGH AGGRESSION LOW HP
+        float chargeChance = phase3Active ? 0.55f : phase2Active ? 0.4f : 0.3f;
+
+        // CLOSE RANGE
+        if (distance < 5f)
         {
-            if (Random.Range(0, 101) > 65)
-            {
-                currentMoravellePhase = MoravellePhase.ChargeAndRetreat;
-                return;
-            }
+            if (random < chargeChance) currentMoravellePhase = MoravellePhase.Charge;
+            else currentMoravellePhase = MoravellePhase.SpreadArrowShot;
+
+            return;
         }
 
-        if (currentMoravellePhase == MoravellePhase.StraightArrowShot ||
-            currentMoravellePhase == MoravellePhase.ChargeAndRetreat ||
-            currentMoravellePhase == MoravellePhase.SpreadArrowShot)
+        // MID RANGE
+        if (distance < 8f)
         {
-            currentMoravellePhase = MoravellePhase.Wait;
+            if (random < chargeChance) currentMoravellePhase = MoravellePhase.Charge;
+            else if (random < 0.45f) currentMoravellePhase = MoravellePhase.StraightArrowShot;
+            else currentMoravellePhase = MoravellePhase.SpreadArrowShot;
         }
-        else
+
+        // LONG RANGE
+        if (random < 0.45f) currentMoravellePhase = MoravellePhase.Charge;
+        else if(random < 0.65f) currentMoravellePhase = MoravellePhase.SpreadArrowShot;
+        else currentMoravellePhase = MoravellePhase.StraightArrowShot;
+    }
+
+    // HELPERS
+    public void HandleWaitPhase()
+    {
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+    }
+
+    void UpdateBossDifficulty()
+    {
+        float hpPercent = (float)enemy.health.GetCurrentHealth() / enemy.health.GetMaximumHealth();
+
+        if (!phase2Active && hpPercent <= phase2Threshold)
         {
-            currentMoravellePhase = (MoravellePhase)Random.Range(2, Enum.GetValues(typeof(MoravellePhase)).Length);
+            phase2Active = true;
+            aggressiveMultiplier = 1.2f;
+            waitPhase = 0.15f;
+        }
+
+        if (!phase3Active && hpPercent <= phase3Threshold)
+        {
+            phase3Active = true;
+            aggressiveMultiplier = 1.5f;
+            waitPhase = 0.1f;
         }
     }
 
-    IEnumerator AttackRoutine(MoravellePhase moravellePhase)
+    void StrafeAroundPlayer()
     {
-        if (enemy.health.hasDied) yield break;
+        if (targetPlayer == null) return;
 
-        if (moravellePhase == MoravellePhase.StraightArrowShot)
+        Vector2 toPlayer = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+        Vector2 perpendicular = Random.value > 0.5f ? Vector2.Perpendicular(toPlayer) : -Vector2.Perpendicular(toPlayer);
+        rb2D.AddForce(perpendicular * strafeForce);
+    }
+
+    void MaintainDistance()
+    {
+        if (targetPlayer == null) return;
+
+        float distance = Vector2.Distance(transform.position, targetPlayer.GetPlayerPosition());
+        Vector2 dir = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+        if (distance < preferredDistance - 1f)
         {
-            float fireTimer = 0f;
-            float fireProjectileDuration = 5f;
-
-            yield return null;
-
-            while (fireTimer < fireProjectileDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                fireTimer += Time.fixedDeltaTime;
-
-                if (firingIntervalTimer < 0f)
-                {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.deltaTime;
-                        enemy.animator.SetBool(Settings.cast, true);
-                        yield return null;
-                        FireWeapon(isLaser: false, ProjectileKind.Default, default);
-                    }
-                    else
-                    {
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                        enemy.animator.SetBool(Settings.cast, false);
-                        enemy.animateEnemy.SetIdleAnimationParameters();
-                    }
-                }
-
-                yield return null;
-            }
+            rb2D.AddForce(-dir * retreatForce);
         }
-        else if (moravellePhase == MoravellePhase.ChargeAndRetreat)
+        else if (distance > preferredDistance + 2f)
         {
-            isAttacking = true;
-
-            if (!chargeProcessStarted && targetPlayer != null)
-            {
-                lockedPosition = ClampToBossRoom(targetPlayer.GetPlayerPosition(), cellMin, cellMax);
-            }
-
-            chargeProcessStarted = true;
-
-            float prechargeDuration = 0.4f;
-            float chargeTimer = 0f;
-            enemy.animator.SetBool(Settings.charge, true);
-
-            while (chargeTimer < prechargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.fixedDeltaTime;
-                yield return waitForFixedUpdate;
-            }
-
-            isCharging = true;
-
-            chargeTimer = 0f;
-            float chargeDuration = 1f;
-            Vector3 clampedPosition = ClampToBossRoom(lockedPosition, cellMin, cellMax);
-
-            Vector3 currentPos = ClampToBossRoom(transform.position, cellMin, cellMax);
-            transform.position = currentPos; // Optional but safe snap-in
-            Vector2 moveDir = (clampedPosition - currentPos).normalized;
-
-            float distance = Vector2.Distance(transform.position, clampedPosition);
-            float requiredVelocity = distance / chargeDuration;
-            Vector2 force = moveDir * requiredVelocity * rb2D.mass;
-
-            rb2D.linearVelocity = Vector2.zero;
-            rb2D.linearDamping = 0;
-            rb2D.AddForce(force, ForceMode2D.Impulse);
-
-            yield return waitForFixedUpdate;
-
-            float timer = 0f;
-            while (timer < chargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-                timer += Time.fixedDeltaTime;
-                yield return waitForFixedUpdate;
-            }
-
-            rb2D.linearDamping = 3;
-            rb2D.linearVelocity = Vector2.zero;
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animateEnemy.SetIdleAnimationParameters();
-            isCharging = false;
-            isAttacking = false;     
+            rb2D.AddForce(dir * movementForce);
         }
-        else if (moravellePhase == MoravellePhase.SpreadArrowShot)
-        {
-            float prechargeDuration = 0.8f;
-            float chargeTimer = 0f;
-            enemy.animator.SetBool(Settings.focused, true);
-            yield return null;
+    }
 
-            while (chargeTimer < prechargeDuration)
-            {
-                chargeTimer += Time.fixedDeltaTime;
-                yield return null;
-            }
+    private void ResetAnimations()
+    {
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
 
-            float fireTimer = 0f;
-            float fireProjectileDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
-
-            while (fireTimer < fireProjectileDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                fireTimer += Time.fixedDeltaTime;
-
-                if (firingIntervalTimer < 0f)
-                {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.fixedDeltaTime;
-                        FireWeapon(isLaser: false, ProjectileKind.Default, new AttackContext { moravellePhase = MoravellePhase.SpreadArrowShot });
-                    }
-                    else
-                    {
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                        enemy.animator.SetBool(Settings.focused, false);
-                        enemy.animateEnemy.SetIdleAnimationParameters();
-                    }
-                }
-
-                yield return null;
-            }
-        }
-
-        chargeProcessStarted = false;
-        moravelleAttackMoveRoutine = null;
-
-        TransitionToNextPhase();
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
     }
 
     public void PlayerStealthCheck()
     {
-        // Check if the player is on stealth
         currentMoravellePhase = MoravellePhase.Wait;
     }
 }

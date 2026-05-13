@@ -560,6 +560,10 @@ PrefabInstance:
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[5].y
       value: 0.2703578
       objectReference: {fileID: 0}
+    - target: {fileID: 7294595444096721567, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7736189416814370986, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Name
       value: MoravelleMP
@@ -668,6 +672,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   health: {fileID: 0}
+  currentHealth: 0
+  maxHealth: 0
 --- !u!114 &4412708412548613768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -706,13 +712,29 @@ MonoBehaviour:
   avoidLayerMask:
     serializedVersion: 2
     m_Bits: 134217728
-  moveStatus: 1
   updateFrameNumber: 1
   enemyPhase: 0
   isAttacking: 0
   isDashing: 0
   patrolPointsParentContainer: {fileID: 0}
+  waitPhase: 0.15
+  preferredDistance: 6
+  strafeForce: 4
+  retreatForce: 6
+  movementForce: 5
+  chargePrepareDuration: 0.55
+  chargeDuration: 0.45
+  chargePredictionMultiplier: 0.45
+  chargeOvershootDistance: 1.5
+  phase2Threshold: 0.7
+  phase3Threshold: 0.4
   resetAnimationEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  chargeStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  bowReleaseEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &-4987966330220460127

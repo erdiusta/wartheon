@@ -389,7 +389,7 @@ public class Projectile : MonoBehaviour, IFireable
         else if (attackContext.moravellePhase == MoravellePhase.SpreadArrowShot)
         {
             // Define the total angle spread (e.g., 45 degrees spread)
-            float totalSpreadAngle = 45f;
+            float totalSpreadAngle = 120f;
 
             // Calculate the angle increment between projectiles
             float angleIncrement = (projectilePerShot > 1) ? totalSpreadAngle / (projectilePerShot - 1) : 0f;
@@ -3259,13 +3259,4 @@ public class Projectile : MonoBehaviour, IFireable
     }
 
     #endregion
-
-    #region Validation
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(trailRenderer), trailRenderer);
-    }
-#endif
-    #endregion Validation
 }
