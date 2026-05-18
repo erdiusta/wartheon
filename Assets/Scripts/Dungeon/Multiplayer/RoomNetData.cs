@@ -29,7 +29,8 @@ public struct RoomNetData : IEquatable<RoomNetData>
     public bool isClearedOfEnemies;
     public bool isPreviouslyVisited;
     public bool shopRoomGoodsCreated;
-    public bool isRoomReady;
+    public EnemyCategory currentBossCategory;
+    public bool bossSpawned;
 
     public bool Equals(RoomNetData other) => roomId == other.roomId;
 

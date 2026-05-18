@@ -56,7 +56,7 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
 
     protected override void OnEnable()
     {
-        player = GameManager.Instance.GetLocalPlayer();
+        targetPlayer = GameManager.Instance.GetLocalPlayer();
         currentRoom = GameManager.Instance.GetCurrentRoom();
     }
 
@@ -78,16 +78,16 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
 
         Vector3 direction = new Vector3();
 
-        if (player != null)
+        if (targetPlayer != null)
         {
             direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-            (player.GetPlayerPosition() - transform.position).normalized;
+            (targetPlayer.GetPlayerPosition() - transform.position).normalized;
         }
 
-        lockedVector = direction;
+        attackLockedVector = direction;
 
         // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
         enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Sepharoth);
@@ -187,15 +187,15 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
     private void TransitionToNextPhase()
     {
         // Check if the player is on stealth
-        if (player.isStealthActive)
+        if (targetPlayer.isStealthActive)
         {
             PlayerStealthCheck();
             return;
         }
 
-        if (player != null)
+        if (targetPlayer != null)
         {
-            if (Vector3.Distance(transform.position, player.transform.position) < 4f)
+            if (Vector3.Distance(transform.position, targetPlayer.transform.position) < 4f)
             {
                 // If player is too close to boss, automatically next phase will be smear attack most probably
                 int randomNum = Random.Range(0, 101);
@@ -215,7 +215,7 @@ public class SepharothAI : EnemyAI, IMutualBossBehaviour
                     currentSepharothPhase = (SepharothPhase)Random.Range(2, Enum.GetValues(typeof(SepharothPhase)).Length);
                 }
             }
-            else if (Vector3.Distance(transform.position, player.transform.position) > 12f)
+            else if (Vector3.Distance(transform.position, targetPlayer.transform.position) > 12f)
             {
                 currentSepharothPhase = SepharothPhase.LaserBeam;
                 return;

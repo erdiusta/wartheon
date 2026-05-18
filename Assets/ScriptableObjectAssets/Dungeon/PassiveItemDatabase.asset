@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: PassiveItemDatabase
   m_EditorClassIdentifier: 
   passiveItems:
+  - {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
   - {fileID: 11400000, guid: b6c5a418ee246db4183a03f7e0f937f1, type: 2}
   - {fileID: 11400000, guid: 08e8bebe630fbf34aba6d625c1694dad, type: 2}
   - {fileID: 11400000, guid: 7fe0007dd8d74cf41af8c4abb421eb28, type: 2}
   - {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
   - {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
-  - {fileID: 11400000, guid: 5b178b4d426a0984989163cdb3bda4c7, type: 2}
   - {fileID: 11400000, guid: d3c7b7d092919724bb3eca41c9ec80a1, type: 2}
   - {fileID: 11400000, guid: 3722962329d0d9144a1d23a65472b371, type: 2}
   - {fileID: 11400000, guid: be152e877f875b54f8ad12bc5268b43f, type: 2}

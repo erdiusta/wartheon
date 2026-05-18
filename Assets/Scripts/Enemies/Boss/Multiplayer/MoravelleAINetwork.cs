@@ -17,7 +17,7 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
     [SerializeField] float preferredDistance = 6f;
 
     [Header("Movement")]
-    [SerializeField] float strafeForce = 4f;
+    [SerializeField] float strafeForce = 8f;
     [SerializeField] float retreatForce = 6f;
     [SerializeField] float movementForce = 5f;
 
@@ -116,6 +116,11 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
             return;
         }
 
+        if (chargeGraceTimer > 0)
+        {
+            chargeGraceTimer -= Time.deltaTime;
+        }
+
         healTimer += Time.deltaTime;
         targetRefreshTimer += Time.deltaTime;
 
@@ -167,7 +172,7 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
             enemy.animateEnemy.ResetAimAnimationParameters();
             enemy.animateEnemy.SetAimParameters(unitAimDirection);
 
-            enemy.enemyAnimSync?.ResetAllBossAnimations();
+            enemy.enemyAnimSync?.ResetAimAnimations();
             enemy.enemyAnimSync?.UpdateAnimationStateServer(wasMoving, unitAimDirection);
         }
 
@@ -315,6 +320,7 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
     {
         lockAttackVector = true;
         isAttacking = true;
+        chargeGraceTimer = 1.5f;
 
         chargeStartPosition = transform.position;
 
@@ -373,7 +379,7 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
                 RaycastHit2D[] hits = new RaycastHit2D[10];
 
-                int hitCount = col.Cast(rb2D.linearVelocity.normalized, filter, hits, 0.15f);
+                int hitCount = col.Cast(chargeMoveDirection, filter, hits, 0.15f);
 
                 bool validObstacleDetected = false;
 
@@ -410,9 +416,17 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
             // TARGET REACHED
             Vector2 toTarget = (Vector2)lockedPosition - (Vector2)transform.position;
-            float dot = Vector2.Dot(chargeMoveDirection, toTarget);
+            float remainingDistance = toTarget.magnitude;
 
-            if (dot <= 0f)
+            if (remainingDistance <= 0.6f)
+            {
+                StopCharge();
+                break;
+            }
+
+            float speed = rb2D.linearVelocity.magnitude;
+
+            if (speed <= 0.05f && chargeGraceTimer <= 0f)
             {
                 StopCharge();
                 break;
@@ -488,15 +502,38 @@ public class MoravelleAINetwork : EnemyAINetwork, IMutualBossBehaviour
     {
         isCharging = false;
 
-        rb2D.linearVelocity = Vector2.zero;
-        rb2D.linearDamping = 3;
-        rb2D.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
-
         enemy.animateEnemy.ResetAnimatonParameters();
         enemy.animateEnemy.ResetBossAnimationParameters();
 
         enemy.enemyAnimSync?.ResetAllAnimations();
         enemy.enemyAnimSync?.ResetAllBossAnimations();
+
+        StartCoroutine(ReturnToCenterRoutine());
+    }
+
+    IEnumerator ReturnToCenterRoutine()
+    {
+        isRecoveringFromCharge = true;
+
+        float recoveryDuration = 0.4f;
+        float timer = 0f;
+
+        rb2D.linearDamping = 4f;
+
+        while (timer < recoveryDuration)
+        {
+            timer += Time.fixedDeltaTime;
+
+            Vector2 cellCenter = (currentRoomNetData.lowerBounds + currentRoomNetData.upperBounds) / 2;
+            Vector2 dir = (cellCenter - (Vector2)transform.position).normalized;
+
+            rb2D.linearVelocity = dir * 3f;
+
+            yield return waitForFixedUpdate;
+        }
+
+        rb2D.linearVelocity = Vector2.zero;
+        isRecoveringFromCharge = false;
     }
 
     // TRANSITIONS

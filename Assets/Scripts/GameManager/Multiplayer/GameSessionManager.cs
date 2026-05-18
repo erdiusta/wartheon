@@ -2,6 +2,8 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -78,6 +80,8 @@ public class GameSessionManager : NetworkBehaviour
 
     HashSet<Room> visitedRooms = new HashSet<Room>();
     [HideInInspector] public Queue<InstantiatedRoom> lastThreeRooms = new Queue<InstantiatedRoom>();
+
+    [SyncVar] public bool levelTransitionInProgress;
 
     // ==========================
     // UNITY LIFECYCLE
@@ -181,7 +185,7 @@ public class GameSessionManager : NetworkBehaviour
     }
 
     [Server]
-    private void HandleServerState(GameState newState)
+    public void HandleServerState(GameState newState)
     {
         switch (newState)
         {
@@ -201,13 +205,11 @@ public class GameSessionManager : NetworkBehaviour
             case GameState.engagingBoss:
                 break;
             case GameState.levelCompleted:
-                RpcShowLevelCompletedUI();
+                StartCoroutine(ServerLevelCompletedRoutine());
                 break;
             case GameState.gameWon:
-                if (previousGameState != GameState.gameWon) RpcShowGameWonUI();
                 break;
             case GameState.gameLost:
-                if (previousGameState != GameState.gameLost) RpcShowGameLostUI();
                 break;
             case GameState.gamePaused:
                 break;
@@ -247,6 +249,7 @@ public class GameSessionManager : NetworkBehaviour
                 StartCoroutine(GameWonUI());
                 break;
             case GameState.gameLost:
+                StartCoroutine(GameLostUI());
                 break;
             case GameState.gamePaused:
                 break;
@@ -270,6 +273,8 @@ public class GameSessionManager : NetworkBehaviour
     [Server]
     private void PlayDungeonLevel()
     {
+        levelTransitionInProgress = true;
+
         //Build dungeon for level
         bool success = DungeonBuilder.Instance.GenerateDungeon(dungeonLevelList[selectedDungeonLevelIndex], tutorialEnabled: false);
 
@@ -280,7 +285,7 @@ public class GameSessionManager : NetworkBehaviour
         }
 
         // Instantiate rooms
-        DungeonNetworkController.Instance.SpawnDungeon();
+        DungeonNetworkController.Instance.SpawnDungeon(selectedDungeonLevelIndex);
 
         // Bake nav meshes when dungeon build is successful
         AstarPath.active?.Scan();
@@ -306,11 +311,22 @@ public class GameSessionManager : NetworkBehaviour
         // Spawn players safely
         SpawnPlayers();
 
+        // Allow player transforms/network sync
+        yield return null;
+
+        // Initialize entrance room properly
+        InitializeEntranceRoom();
+
+        // Allow player transforms/network sync
+        yield return null;
+
+        levelTransitionInProgress = false;
+
         // Now clients are allowed to proceed
         RpcClientGameplayReady(selectedDungeonLevelIndex);
     }
 
-    private void SpawnPlayers()
+    void SpawnPlayers()
     {
         Vector3 roomCenter = new Vector3((currentRoomNetData.lowerBounds.x + currentRoomNetData.upperBounds.x) * 0.5f, (currentRoomNetData.lowerBounds.y + currentRoomNetData.upperBounds.y) * 0.5f, 0f);
 
@@ -330,6 +346,26 @@ public class GameSessionManager : NetworkBehaviour
     }
 
     [Server]
+    void InitializeEntranceRoom()
+    {
+        RoomNetData entranceRoom = default;
+
+        foreach (RoomNetData room in DungeonRuntime.RoomNetDataDict.Values)
+        {
+            if (!room.isEntrance) continue;
+
+            entranceRoom = room;
+            break;
+        }
+
+        Player initiator = ServerPlayers.FirstOrDefault();
+
+        if (initiator == null) return;
+
+        DungeonNetworkController.Instance.ServerRoomEntered(entranceRoom.roomId, initiator.NetAuth.netIdentity, Vector2.zero);
+    }
+
+    [Server]
     public void ServerTogglePause()
     {
         if (gameState == GameState.gamePaused)
@@ -346,29 +382,6 @@ public class GameSessionManager : NetworkBehaviour
     // ==========================
     // SERVER RPCS (UI ONLY)
     // ==========================
-    [ClientRpc]
-    private void RpcShowLevelCompletedUI()
-    {
-        if (!isClient) return;
-        StartCoroutine(LevelCompletedUI());
-    }
-
-    [ClientRpc]
-    private void RpcShowGameWonUI()
-    {
-        if (!isClient) return;
-        StartCoroutine(GameWonUI());
-    }
-
-    [ClientRpc]
-    private void RpcShowGameLostUI()
-    {
-        if (!isClient) return;
-        StopAllCoroutines();
-        StartCoroutine(GameLostUI());
-    }
-
-
     [ClientRpc]
     private void RpcClientGameplayReady(int levelIndex)
     {
@@ -406,11 +419,46 @@ public class GameSessionManager : NetworkBehaviour
         InputManager.Instance.EnableGameplayInput();
     }
 
+    [Server]
+    IEnumerator ServerLevelCompletedRoutine()
+    {
+        EnemySpawner.ActiveBoss = null;
+
+        DungeonNetworkController.Instance.activeBossNetId = 0;
+
+        yield return new WaitForSeconds(5f);
+
+        DestroyEnemies();
+
+        // Allow enemy despawns to propagate
+        yield return null;
+
+        DestroyDungeon(selectedDungeonLevelIndex);
+
+        DungeonNetworkController.Instance.processedRooms.Clear();
+
+        selectedDungeonLevelIndex++;
+
+        // Allow despawns to propagate to clients
+        yield return new WaitForSeconds(0.2f);
+
+        if (selectedDungeonLevelIndex >= dungeonLevelList.Count)
+        {
+            SetGameState(GameState.gameWon);
+            yield break;
+        }
+
+        PlayDungeonLevel();
+
+        SetGameState(GameState.dungeonAndPlayersGenerated);
+    }
+
     IEnumerator LevelCompletedUI()
     {
+        messageTextTMP.SetText("WELL DONE WARTHEON TEAM! YOU'VE SURVIVED\n\nTHIS DUNGEON LEVEL! PRESS OK FOR NEXT LEVEL!");
+
         yield return StartCoroutine(GameManager.Instance.Fade(0f, 1f, 1.5f, Color.black));
 
-        messageTextTMP.SetText("WELL DONE WARTHEON TEAM! YOU'VE SURVIVED\n\nTHIS DUNGEON LEVEL! PRESS OK FOR NEXT LEVEL!");
         messageTextTMP.color = Color.yellow;
 
         yield return new WaitForSeconds(2f);
@@ -521,6 +569,35 @@ public class GameSessionManager : NetworkBehaviour
     }
 
     [Server]
+    private void DestroyDungeon(int generationToDestroy)
+    {
+        RoomNetworkRoot[] roomRoots = FindObjectsByType<RoomNetworkRoot>(FindObjectsSortMode.None);
+
+        foreach (RoomNetworkRoot root in roomRoots)
+        {
+            if (root == null) continue;
+
+            if (root.dungeonGenerationId != generationToDestroy) continue;
+
+            NetworkServer.Destroy(root.gameObject);
+        }
+    }
+
+    [Server]
+    private void DestroyEnemies()
+    {
+        Enemy[] remainingEnemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+
+        foreach (Enemy enemy in remainingEnemies)
+        {
+            if (enemy == null) continue;
+            if (enemy.Isboss) continue;
+
+            NetworkServer.Destroy(enemy.gameObject);
+        }
+    }
+
+    [Server]
     public void SetCurrentRoom(Room room, RoomNetData roomNetData = default)
     {
         previousRoom = currentRoom;
@@ -552,30 +629,18 @@ public class GameSessionManager : NetworkBehaviour
     }
 
     [Server]
-    public void RegisterRoomVisit(InstantiatedRoom room)
+    public void ClearAllDropItemsInScene()
     {
-        if (lastThreeRooms.Contains(room)) return;
+        DropItemNetwork[] dropItems = FindObjectsByType<DropItemNetwork>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
-        if (room.IsCorridor()) return;
-
-        if (lastThreeRooms.Count == 3)
+        foreach (DropItemNetwork item in dropItems)
         {
-            InstantiatedRoom roomToClear = lastThreeRooms.Dequeue();
-            roomToClear.DestroyAllDroppedItems();
+            if (item == null) continue;
+
+            if (item.currentLocation != DropItemLocation.World) continue;
+
+            NetworkServer.Destroy(item.gameObject);
         }
-
-        lastThreeRooms.Enqueue(room);
-    }
-
-    [Server]
-    public void ClearAllRoomItemsOnLevelEnd()
-    {
-        foreach (InstantiatedRoom room in lastThreeRooms)
-        {
-            room.DestroyAllDroppedItems();
-        }
-
-        lastThreeRooms.Clear();
     }
 }
 

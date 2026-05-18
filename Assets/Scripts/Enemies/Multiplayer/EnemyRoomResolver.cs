@@ -3,14 +3,15 @@ using UnityEngine;
 
 public static class EnemyRoomResolver
 {
-    public static bool TryGetRoom(out InstantiatedRoom instantiatedRoom, out Vector2Int[] spawnPositions, EnemySpawnerNetwork spawnerNetwork)
+    public static bool TryGetRoom(out InstantiatedRoom instantiatedRoom, out Vector2Int[] spawnPositions)
     {
         instantiatedRoom = null;
         spawnPositions = null;
 
         if (NetworkServer.active)
         {
-            var roomNetData = spawnerNetwork.GetCurrentRoomNetData();
+            var roomNetData = GameSessionManager.Instance.GetCurrentRoomNetData();
+
             if (roomNetData.roomId != null) return false;
 
             instantiatedRoom = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);

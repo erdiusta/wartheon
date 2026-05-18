@@ -203,6 +203,7 @@ public class Chest : MonoBehaviour, IUsable
         {
             Weapon weapon = new Weapon(Rarity.Basic);
 
+            dropItemNetwork.currentLocation = DropItemLocation.World;
             dropItemNetwork.hasWeaponDrop = true;
             dropItemNetwork.dropSourceType = DropSourceType.Enemy;
 
@@ -231,6 +232,7 @@ public class Chest : MonoBehaviour, IUsable
 
             // Create a passive item instance with rolled modifiers
             PassiveItem passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
+            passiveItem.passiveStats.passiveItemType = passiveItemDetails.passiveItemType;
 
             dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, itemSpawnPoint.position, null);
         }
@@ -240,12 +242,14 @@ public class Chest : MonoBehaviour, IUsable
 
             if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
             {
+                dropItemNetwork.currentLocation = DropItemLocation.World;
                 dropItemNetwork.hasPrimaryPassiveDrop = true;
                 dropItemNetwork.dropSourceType = DropSourceType.Enemy;
                 passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng, false, Rarity.Basic, isPrimaryPassive: true);
             }
             else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
             {
+                dropItemNetwork.currentLocation = DropItemLocation.World;
                 dropItemNetwork.hasSecondaryPassiveDrop = true;
                 dropItemNetwork.dropSourceType = DropSourceType.Enemy;
                 passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);

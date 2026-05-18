@@ -59,7 +59,19 @@ public class EnemyVisualNetwork : NetworkBehaviour
         materializeDuration = details.enemyMaterializeTime;
         materalizeColor = details.enemyMaterializeColor;
         isMaterializing = true;
-        enemy.health.isDamageable = false;
+        enemy.health.healthAuthority.IsDamageable = false;
+
+        StartCoroutine(ServerMaterializeRoutine());
+    }
+
+    [Server]
+    IEnumerator ServerMaterializeRoutine()
+    {
+        yield return new WaitForSeconds(materializeDuration);
+
+        enemy.health.healthAuthority.IsDamageable = true;
+
+        isMaterializing = false;
     }
 
     private void OnMaterializeChanged(bool oldVal, bool newVal)
@@ -82,7 +94,7 @@ public class EnemyVisualNetwork : NetworkBehaviour
         {
             enemy.initializationCompleted = true;
             isMaterializing = false;
-            enemy.health.isDamageable = true;
+            enemy.health.healthAuthority.IsDamageable = true;
         }
 
         EnableEnemy(true);

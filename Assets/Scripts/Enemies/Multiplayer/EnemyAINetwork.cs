@@ -90,7 +90,7 @@ public class EnemyAINetwork : NetworkBehaviour
     protected uint enemyNetId = 0;
     protected float targetRefreshTimer;
 
-    protected EnemySpawnerNetwork spawnerNetwork;
+    protected EnemySpawner enemySpawner;
 
     protected PendingProjectileRequest pendingProjectileRequest;
     protected bool hasPendingProjectile;
@@ -99,6 +99,8 @@ public class EnemyAINetwork : NetworkBehaviour
     protected Vector2 chargeMoveDirection;
     protected bool chargeRecoveryActive;
     protected Coroutine chargeRecoveryRoutine;
+    protected float chargeGraceTimer = 1.5f;
+    protected bool isRecoveringFromCharge;
 
     protected virtual void Awake()
     {
@@ -123,13 +125,13 @@ public class EnemyAINetwork : NetworkBehaviour
     {
         if (!isServer) return System.Array.Empty<Vector2Int>();
 
-        if (EnemyRoomResolver.TryGetRoom(out _, out var spawnPositions, spawnerNetwork)) return spawnPositions;
+        if (EnemyRoomResolver.TryGetRoom(out _, out var spawnPositions)) return spawnPositions;
         return System.Array.Empty<Vector2Int>();
     }
 
     protected virtual void Start() 
     {
-        spawnerNetwork = FindFirstObjectByType<EnemySpawnerNetwork>();
+        enemySpawner = GetComponentInParent<EnemySpawner>();
     }
 
     public override void OnStartServer()

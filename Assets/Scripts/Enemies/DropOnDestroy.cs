@@ -80,7 +80,7 @@ public class DropOnDestroy : MonoBehaviour
 
         int primaryPassiveItemNum = rng.Range(0, dropData.primaryPassiveDropChanceMax + 1);
 
-        CreatePrimaryPassiveItems(seed, primaryPassiveItemNum);
+        CreatePrimaryPassiveItems(rng, seed, primaryPassiveItemNum);
 
         // OTHER DROPS PHASE IF HAS
         // Should drop be spawned based on specified chance? If not return.
@@ -122,17 +122,17 @@ public class DropOnDestroy : MonoBehaviour
         }
     }
 
-    private void CreatePrimaryPassiveItems(int seed, int primaryPassiveItemNum)
+    private void CreatePrimaryPassiveItems(WartheonRNG rng, int seed, int primaryPassiveItemNum)
     {
         for (int i = 0; i < primaryPassiveItemNum; i++)
         {
-            WartheonRNG rng = new WartheonRNG(seed);
+            // Retrieve item details
+            primaryPassiveItemDetails = GetPrimaryPassiveItemDetailsToSpawn(primaryPassiveItemNum, rng);
+
+            if(primaryPassiveItemDetails == null) return;
 
             // Instantiate item container
             InstantiateDropItem();
-
-            // Retrieve item details
-            primaryPassiveItemDetails = GetPrimaryPassiveItemDetailsToSpawn(primaryPassiveItemNum, rng);
 
             InstantiatePassiveItem(primaryPassiveItemDetails, seed);
 
@@ -233,6 +233,7 @@ public class DropOnDestroy : MonoBehaviour
             NetworkTransformUnreliable nt = dropItemNetwork.GetComponent<NetworkTransformUnreliable>();
             nt.ServerTeleport(transform.position, Quaternion.identity);
 
+            dropItemNetwork.currentLocation = DropItemLocation.World;
             dropItemNetwork.weaponTitle = weapon.weaponStats.weaponTitle;
             dropItemNetwork.weaponClass = weapon.weaponStats.weaponClass;
             dropItemNetwork.weaponStats = weapon.weaponStats;
@@ -268,12 +269,14 @@ public class DropOnDestroy : MonoBehaviour
 
             PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
 
+            if (passiveItemDetails == null) return;
             if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.None) return;
 
             if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
             {
                 dropItemNetwork.hasPrimaryPassiveDrop = true;
                 dropItemNetwork.dropSourceType = DropSourceType.Enemy;
+
                 passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng, false, Rarity.Basic, isPrimaryPassive: true);
             }
             else if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Secondary)
@@ -286,6 +289,7 @@ public class DropOnDestroy : MonoBehaviour
             NetworkTransformUnreliable nt = dropItemNetwork.GetComponent<NetworkTransformUnreliable>();
             nt.ServerTeleport(transform.position, Quaternion.identity);
 
+            dropItemNetwork.currentLocation = DropItemLocation.World;
             dropItemNetwork.passiveItemType = passiveItem.passiveStats.passiveItemType;
             dropItemNetwork.passiveItemSlotName = passiveItem.passiveStats.passiveItemSlotName;
             dropItemNetwork.passiveStats = passiveItem.passiveStats;
@@ -298,6 +302,7 @@ public class DropOnDestroy : MonoBehaviour
             if (dropItem == null) return;
 
             PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
+            passiveItem.passiveStats.passiveItemType = passiveItemDetails.passiveItemType;
 
             if (passiveItemDetails?.passiveItemCategory == PassiveItemCategory.Primary)
             {
@@ -313,6 +318,8 @@ public class DropOnDestroy : MonoBehaviour
             }
 
             dropItem.dropCompleted = true;
+            passiveItem.passiveStats.passiveItemType = passiveItemDetails.passiveItemType;
+
             dropItem.Initialize(passiveItem, passiveItemDetails.passiveItemSprite, transform.position, null);
         }
     }

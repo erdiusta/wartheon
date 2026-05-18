@@ -3050,7 +3050,7 @@ public class Projectile : MonoBehaviour, IFireable
         float closestDistance = Mathf.Infinity;
         Transform closestEnemy = null;
 
-        Enemy[] enemyArrayInRoom = EnemySpawner.Instance.GetComponentsInChildren<Enemy>();
+        Enemy[] enemyArrayInRoom = GameManager.Instance.GetCurrentRoom().instantiatedRoom.enemySpawner.GetComponentsInChildren<Enemy>();
 
         for (int i = 0; i < enemyArrayInRoom.Length; i++)
         {

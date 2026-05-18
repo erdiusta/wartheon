@@ -24,6 +24,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
     [SyncVar] public bool hasPrimaryPassiveDrop = false;
     [SyncVar] public bool hasSecondaryPassiveDrop = false;
     [SyncVar] public bool isPickedUp = false;
+    [SyncVar] public DropItemLocation currentLocation;
 
     [Header("Weapon Data")]
     [SyncVar] public WeaponTitle weaponTitle;
@@ -37,7 +38,6 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
     [SyncVar] public PassiveItemSlotName passiveItemSlotName;
 
     [Header("NPC Data")]
-    [SyncVar] public bool owningCounter;
     public Transform priceContainer;
 
     [Header("Gamble Data")]
@@ -119,8 +119,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
                 itemGeneric = PassiveDropGenerator.GetPassiveWithStats(passiveStats, rarity, ItemSlotStatus.None, -1);
             }
 
-            containingPassiveItem = (PassiveItem)itemGeneric;
-            itemGeneric = containingPassiveItem;
+            if (passiveItemDetails == null) return;
 
             Initialize(passiveItemDetails.passiveItemSprite, transform.position);
         }
@@ -235,7 +234,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
         Player player = collision.GetComponent<Player>();
         if (player == null || !player.IsLocal) return;
 
-        if (owningCounter)
+        if (currentLocation == DropItemLocation.Counter)
         {
             StaticEventHandler.CallNPCInteractionEndedEvent();
         }
@@ -307,7 +306,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
 
     private void NpcCounterCheck()
     {
-        if (owningCounter)
+        if (currentLocation == DropItemLocation.Counter)
         {
             InstantiatedRoom instantiatedRoom = DungeonRuntime.GetInstantiatedRoom(GameSessionManager.Instance.GetCurrentRoomNetData().roomId);
 
@@ -343,7 +342,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
     {
         if (!hasWeaponDrop) return false;
 
-        if (owningCounter)
+        if (currentLocation == DropItemLocation.Counter)
         {
             if (weaponDetails != null)
             {
@@ -375,7 +374,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
     {
         if (!hasSecondaryPassiveDrop) return false;
 
-        if (owningCounter)
+        if (currentLocation == DropItemLocation.Counter)
         {
             int price = (int)(passiveItemDetails.price * (1 + player.additionalNPCCostModifier));
 
@@ -442,7 +441,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
             isInitialized = true;
         }
 
-        if (owningCounter)
+        if (currentLocation == DropItemLocation.Counter)
         {
             SetPriceSettings(isGamble: false);
         }

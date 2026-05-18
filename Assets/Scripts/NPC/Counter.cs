@@ -145,8 +145,8 @@ public class Counter : NetworkBehaviour
         {
             DropItemNetwork dropItemNetwork = obj.GetComponent<DropItemNetwork>();
 
+            dropItemNetwork.currentLocation = DropItemLocation.Counter;
             dropItemNetwork.hasWeaponDrop = true;
-            dropItemNetwork.owningCounter = true;
 
             dropItemNetwork.weaponTitle = weapon.weaponStats.weaponTitle;
             dropItemNetwork.weaponClass = weapon.weaponStats.weaponClass;
@@ -172,6 +172,7 @@ public class Counter : NetworkBehaviour
 
         PassiveItem item = PassiveDropGenerator.CreateRolledInstance(details, rng);
         item.passiveStats.activePrice = (int)(details.price * (1 + player.additionalNPCCostModifier));
+        item.passiveStats.passiveItemType = details.passiveItemType;
 
         if (isMultiplayer)
         {
@@ -179,8 +180,8 @@ public class Counter : NetworkBehaviour
 
             if (details.passiveItemCategory == PassiveItemCategory.Primary) dropItemNetwork.hasPrimaryPassiveDrop = true;
             else if(details.passiveItemCategory == PassiveItemCategory.Secondary) dropItemNetwork.hasSecondaryPassiveDrop = true;
-            dropItemNetwork.owningCounter = true;
 
+            dropItemNetwork.currentLocation = DropItemLocation.Counter;
             dropItemNetwork.passiveItemType = item.passiveStats.passiveItemType;
             dropItemNetwork.passiveItemSlotName = item.passiveStats.passiveItemSlotName;
 

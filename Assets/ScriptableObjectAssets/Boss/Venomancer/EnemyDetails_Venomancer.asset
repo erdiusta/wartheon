@@ -81,7 +81,7 @@ MonoBehaviour:
   healthDrainChance: 0
   hasBlindDamage: 0
   blindChance: 0
-  enemyMaterializeTime: 5
+  enemyMaterializeTime: 3
   enemyMaterializeColor: {r: 3.0747018, g: 3.732132, b: 1.6020001, a: 0}
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}

@@ -11,7 +11,6 @@ public class Health : MonoBehaviour
     [HideInInspector] public int currentHealth;
     [HideInInspector] public int maximumHealth;
     [HideInInspector] public int currentShield;
-    [HideInInspector] public bool isDamageable = true;
     [HideInInspector] public Enemy enemy;
     [HideInInspector] public bool isBlocking;
     [HideInInspector] public bool isDodging;
@@ -25,6 +24,7 @@ public class Health : MonoBehaviour
     [HideInInspector] public SpriteRenderer spriteRenderer;
     [HideInInspector] public bool isImmuneAfterHit;
     [HideInInspector] public float immunityTime = 0f;
+    [HideInInspector] public IHealthAuthority healthAuthority;
 
     HealthEvent healthEvent;
     Player player;
@@ -49,10 +49,7 @@ public class Health : MonoBehaviour
 
     private void Awake()
     {
-#if UNITY_EDITOR
-        var authorities = GetComponents<IHealthAuthority>();
-        Debug.Assert(authorities.Length == 1, $"Expected exactly one IHealthAuthority on {name}");
-#endif
+        healthAuthority = GetComponent<IHealthAuthority>();
         healthEvent = GetComponent<HealthEvent>();
         flashManager = GetComponent<FlashManager>();
         enemy = GetComponent<Enemy>();
@@ -77,6 +74,11 @@ public class Health : MonoBehaviour
             isImmuneAfterHit = true;
             immunityTime = 0.4f;
             spriteRenderer = enemy.spriteRendererArray[0];
+
+            if (enemy.Isboss)
+            {
+                immunityTime = 2f;
+            }
         }
 
         if (dummy != null)
@@ -125,11 +127,11 @@ public class Health : MonoBehaviour
 
                 if (indexValue >= (int)TutorialPhase.Parry)
                 {
-                    isDamageable = true;
+                    healthAuthority.IsDamageable = true;
                 }
                 else
                 {
-                    isDamageable = false;
+                    healthAuthority.IsDamageable = false;
                 }
             }
 
@@ -269,8 +271,10 @@ public class Health : MonoBehaviour
                 // Player death
                 DestroyUtility.Destroy(player.gameObject, playerDied: true, 0);
             }
-            else if (enemy != null && enemy.initializationCompleted)
+            else if (enemy != null)
             {
+                if (!enemy.initializationCompleted) return;
+
                 if (player != null && player.resourcefulActive) player.mana.AddMana(4); // Add mana on kill
 
                 // Enemy death
@@ -301,7 +305,7 @@ public class Health : MonoBehaviour
             isProjectileHit = true;
         }
 
-        if (isDamageable || ctx.bypassImmunity)
+        if (healthAuthority.IsDamageable || ctx.bypassImmunity)
         {
             if (player != null)
             {
@@ -395,7 +399,10 @@ public class Health : MonoBehaviour
 
     public void SyncHealthVisuals(int damageAmount, DamageContext ctx)
     {
-        if (isDamageable || ctx.bypassImmunity)
+        Debug.Log("Health IsDamageable is " + healthAuthority.IsDamageable);
+        Debug.Log("Bypass Immunity is " + ctx.bypassImmunity);
+
+        if (healthAuthority.IsDamageable || ctx.bypassImmunity)
         {
             if (player != null && currentHealth > 0)
             {
@@ -526,7 +533,7 @@ public class Health : MonoBehaviour
     {
         int iterations = Mathf.RoundToInt(immunityTime / spriteFlashInterval / 4);
 
-        isDamageable = isProjectileHit;
+        healthAuthority.IsDamageable = isProjectileHit;
 
         if (dodgedOrBlocked)
         {
@@ -601,7 +608,7 @@ public class Health : MonoBehaviour
         }
 
         // If not hit by a projectile, re-enable damageability
-        isDamageable = true;
+        healthAuthority.IsDamageable = true;
 
         isProjectileHit = false; // Reset the projectile hit flag
         immunityCoroutine = null;

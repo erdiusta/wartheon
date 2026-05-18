@@ -95,6 +95,7 @@ public static class ServerMeleeCombat
                     if (!collider.TryGetComponent(out Enemy enemy)) continue;
 
                     IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(enemy.gameObject);
+                    IHealthAuthority healthAuthority = enemy.GetComponent<IHealthAuthority>();
 
                     // Calculate hit chance
                     bool attackHits = damageDealerPlayer.currentAttackRatingValue * 100 - enemyCombatData.DeflectionValue * 100 > Random.Range(0, 100);

@@ -49,7 +49,7 @@ public class SylvarokAI : EnemyAI, IMutualBossBehaviour
 
     protected override void OnEnable() 
     {
-        player = GameManager.Instance.GetLocalPlayer();
+        targetPlayer = GameManager.Instance.GetLocalPlayer();
         currentRoom = GameManager.Instance.GetCurrentRoom();
     }
 
@@ -86,15 +86,15 @@ public class SylvarokAI : EnemyAI, IMutualBossBehaviour
 
         Vector3 direction = Vector3.zero;
 
-        if (player != null)
+        if (targetPlayer != null)
         {
             direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-                (player.GetPlayerPosition() - transform.position).normalized;
-            lockedVector = direction;
+                (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+            attackLockedVector = direction;
         }
 
         // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
         enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Sylvarok);
@@ -108,7 +108,7 @@ public class SylvarokAI : EnemyAI, IMutualBossBehaviour
 
         if (enemy.moveStatus == MoveStatus.Idle)
         {
-            if (player.isStealthActive)
+            if (targetPlayer.isStealthActive)
             {
                 PlayerStealthCheck();
             }
@@ -199,13 +199,13 @@ public class SylvarokAI : EnemyAI, IMutualBossBehaviour
     private void TransitionToNextPhase()
     {
         // Check if the player is on stealth
-        if (player.isStealthActive)
+        if (targetPlayer.isStealthActive)
         {
             PlayerStealthCheck();
             return;
         }
 
-        if (player != null && Vector3.Distance(transform.position, player.GetPlayerPosition()) < 4f)
+        if (targetPlayer != null && Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) < 4f)
         {
             // If player is too close to treant, automatically next phase will be chargeAndRetreat or razorLeaf
             currentSylvarokPhase = (SylvarokPhase)Random.Range(2, 4);
@@ -244,9 +244,9 @@ public class SylvarokAI : EnemyAI, IMutualBossBehaviour
             // Lock-on player position during the start of precharge
             if (!chargeProcessStarted)
             {
-                if (player != null)
+                if (targetPlayer != null)
                 {
-                    lockedPosition = player.GetPlayerPosition();
+                    lockedPosition = targetPlayer.GetPlayerPosition();
                 }
             }
 
@@ -408,7 +408,7 @@ public class SylvarokAI : EnemyAI, IMutualBossBehaviour
                     Vector3Int cellPosition = (Vector3Int)currentRoom.spawnPositionArray[Random.Range(0, currentRoom.spawnPositionArray.Length)];
 
                     // Create Enemy - Get next enemy type to spawn 
-                    EnemySpawner.Instance.CreateEnemy(enemyDetails.enemyMinionDetails, grid.CellToWorld(cellPosition), out minion);
+                    GameManager.Instance.GetCurrentRoom().instantiatedRoom.enemySpawner.CreateEnemySP(enemyDetails.enemyMinionDetails, grid.CellToWorld(cellPosition), out minion);
                 }
             }
 

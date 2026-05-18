@@ -51,7 +51,7 @@ public class CryotharAI : EnemyAI, IMutualBossBehaviour
 
     protected override void OnEnable() 
     {
-        player = GameManager.Instance.GetLocalPlayer();
+        targetPlayer = GameManager.Instance.GetLocalPlayer();
     }
 
     protected override void OnDisable() { }
@@ -70,15 +70,15 @@ public class CryotharAI : EnemyAI, IMutualBossBehaviour
             return;
         }
 
-        if (player != null)
+        if (targetPlayer != null)
         {
             Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
                 (GameManager.Instance.GetLocalPlayer().GetPlayerPosition() - transform.position).normalized;
-            lockedVector = direction;
+            attackLockedVector = direction;
         }
 
         // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
         enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Cryothar);
@@ -93,7 +93,7 @@ public class CryotharAI : EnemyAI, IMutualBossBehaviour
         if (enemy.moveStatus == MoveStatus.Idle)
         {
             // Check if the player is on stealth
-            if (player != null && GameManager.Instance.GetLocalPlayer().isStealthActive)
+            if (targetPlayer != null && GameManager.Instance.GetLocalPlayer().isStealthActive)
             {
                 PlayerStealthCheck();
             }
@@ -192,22 +192,22 @@ public class CryotharAI : EnemyAI, IMutualBossBehaviour
     private void TransitionToNextPhase()
     {
         // Check if the player is on stealth
-        if (player != null && player.isStealthActive)
+        if (targetPlayer != null && targetPlayer.isStealthActive)
         {
             PlayerStealthCheck();
             return;
         }
 
 
-        if (player != null)
+        if (targetPlayer != null)
         {
-            if (Vector3.Distance(transform.position, player.GetPlayerPosition()) < 2f)
+            if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) < 2f)
             {
                 // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
                 currentCryotharPhase = (CryotharPhase)Random.Range(4, Enum.GetValues(typeof(CryotharPhase)).Length);
                 return;
             }
-            else if (Vector3.Distance(transform.position, player.GetPlayerPosition()) > 10f)
+            else if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) > 10f)
             {
                 // If player is too far to boss, automatically next phase will be Icicle,
                 currentCryotharPhase = CryotharPhase.Icicle;

@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
   m_Name: EnemyDetails_Centaur
   m_EditorClassIdentifier: 
-  guid: 9455641d1e36c98499b95ab6e395fa36
-  previousEnemyPrefab: {fileID: 7183228443647751644, guid: e942b4fde2fcdae43bc95bb86569cd58, type: 3}
   enemyName: Centaur
   enemyDetails: The mighy creature of mixture of human and horse. He can fire rapid
     arrows and dashes towards you if you come closer.
@@ -36,12 +34,7 @@ MonoBehaviour:
   elementalForgeRate: 0
   enemyMinionDetails: {fileID: 0}
   physicalResistance: 0
-  fireResistance: 0
-  waterResistance: 0
-  airResistance: 0
-  earthResistance: 0
-  lightResistance: 0
-  darkResistance: 0
+  magicResistance: 0
   hasShield: 0
   deflectChance: 0
   isImmuneToBleeding: 0
@@ -89,9 +82,7 @@ MonoBehaviour:
   healthDrainChance: 0
   hasBlindDamage: 0
   blindChance: 0
-  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  enemyMaterializeTime: 5
-  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
+  enemyMaterializeTime: 3
   enemyMaterializeColor: {r: 3.0747018, g: 3.732132, b: 1.6020001, a: 0}
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
@@ -117,8 +108,6 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
     minDamageAmount: 6
     maxDamageAmount: 10
-  isImmuneAfterHit: 1
-  hitImmunityTime: 2
   isHealthBarDisplayed: 1
   hasKnockbackResistance: 1
   primaryPassiveItemsByLevelList:

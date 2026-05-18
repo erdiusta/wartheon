@@ -41,7 +41,7 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Start() 
     {
-        player = GameManager.Instance.GetLocalPlayer();
+        targetPlayer = GameManager.Instance.GetLocalPlayer();
         currentGalvanusPhase = GalvanusPhase.Wait;
     }
 
@@ -75,15 +75,15 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
         Vector3 direction = Vector3.zero;
 
-        if (player != null)
+        if (targetPlayer != null)
         {
             direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-                (player.GetPlayerPosition() - transform.position).normalized;
-            lockedVector = direction;
+                (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+            attackLockedVector = direction;
         }
 
         // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
         enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Galvanus);
@@ -97,12 +97,12 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
         if (enemy.moveStatus == MoveStatus.Idle)
         {
-            if (player.isStealthActive)
+            if (targetPlayer.isStealthActive)
             {
                 PlayerStealthCheck();
             }
 
-            if (player != null && player.isStealthActive)
+            if (targetPlayer != null && targetPlayer.isStealthActive)
             {
                 PlayerStealthCheck();
             }
@@ -182,15 +182,15 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
     private void TransitionToNextPhase()
     {
-        if (player == null) return;
+        if (targetPlayer == null) return;
 
-        if (player.isStealthActive)
+        if (targetPlayer.isStealthActive)
         {
             PlayerStealthCheck();
             return;
         }
 
-        float distance = Vector3.Distance(transform.position + new Vector3(0f, 0.8f, 0f), player.GetPlayerPosition());
+        float distance = Vector3.Distance(transform.position + new Vector3(0f, 0.8f, 0f), targetPlayer.GetPlayerPosition());
 
         if (distance < 4f)
         {
@@ -268,9 +268,9 @@ public class GalvanusAI : EnemyAI, IMutualBossBehaviour
 
             isAttacking = true;
 
-            if (!chargeProcessStarted && player != null)
+            if (!chargeProcessStarted && targetPlayer != null)
             {
-                lockedPosition = ClampToBossRoom(player.GetPlayerPosition(), cellMin, cellMax);
+                lockedPosition = ClampToBossRoom(targetPlayer.GetPlayerPosition(), cellMin, cellMax);
             }
 
             chargeProcessStarted = true;

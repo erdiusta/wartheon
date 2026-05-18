@@ -79,7 +79,8 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             // Clear previous level items before generating next level
             if (currentLevel > 1)
             {
-                DestroyAllDroppedItems();
+                if (!NetworkServer.active && !NetworkClient.active) GameManager.Instance.ClearAllDropItemsInScene();
+                else if (NetworkServer.active) GameSessionManager.Instance.ClearAllDropItemsInScene();
             }
 
             // Loop until dungeon successfully built or more than max attempts for node graph
@@ -709,22 +710,6 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     public InstantiatedRoom GetInstantiatedRoom(Room room)
     {
         return room.instantiatedRoom; // SP
-    }
-
-    public void DestroyAllDroppedItems()
-    {
-        DropItem[] dropItems = GetComponentsInChildren<DropItem>(true);
-
-        if (dropItems != null)
-        {
-            foreach (DropItem item in dropItems)
-            {
-                if (item.GetComponentInParent<Player>() != null) continue;
-                if (item.GetComponentInParent<Counter>() != null) continue;
-
-                Destroy(item.gameObject);
-            }
-        }
     }
 
     /// <summary>

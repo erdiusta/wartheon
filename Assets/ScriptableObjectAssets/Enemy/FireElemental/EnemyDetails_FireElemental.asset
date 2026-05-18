@@ -146,8 +146,6 @@ MonoBehaviour:
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 2
-    - dungeonObject: {fileID: 0}
-      ratio: 4
     - dungeonObject: {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
       ratio: 4
   - dungeonLevel: {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}
@@ -162,8 +160,6 @@ MonoBehaviour:
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 2
-    - dungeonObject: {fileID: 0}
-      ratio: 4
     - dungeonObject: {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
       ratio: 4
   weaponsByLevelList:

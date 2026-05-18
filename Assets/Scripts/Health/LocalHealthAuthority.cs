@@ -6,6 +6,9 @@ public class LocalHealthAuthority: MonoBehaviour, IHealthAuthority
 
     public int CurrentHealth => health.GetCurrentHealth();
     public int MaxHealth => health.GetMaximumHealth();
+    public bool IsDamageable { get => isDamageable; set => isDamageable = value; }
+
+    private bool isDamageable = true;
 
     private void Awake()
     {

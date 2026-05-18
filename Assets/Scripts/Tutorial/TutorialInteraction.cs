@@ -375,7 +375,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
             case TutorialPhase.Parry:
                 isCheckPlayed = false;
                 InputManager.parryDisabled = false;
-                player.health.isDamageable = true;
+                player.health.healthAuthority.IsDamageable = true;
 
                 keyboardBinding = InputManager.Instance.parryButton.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
                 gamepadBinding = InputManager.Instance.parryButton.action.GetBindingDisplayString(InputBinding.MaskByGroup("Gamepad"));
@@ -386,7 +386,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                     " you. Parry only works at melee weapons. Timing is very important. Maybe needs a little practice to master it.\n\nUse" + keyboardBinding + " for keyboard.\n\nUse " +
                     gamepadBinding + " for gampepad.";
 
-                StartCoroutine(EnemySpawner.Instance.SpawnEnemiesRoutine(rng));
+                StartCoroutine(GameManager.Instance.GetCurrentRoom().instantiatedRoom.enemySpawner.SpawnEnemiesRoutineSP(rng));
 
                 MusicManager.Instance.PlayMusic(GameResources.Instance.combatMusic);
 
@@ -403,7 +403,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 questText.text = "Now another mob spawns. This one can fire projectiles. Parry doesn't work on projectiles but you can dodge from it by rolling." +
                     "\n\nUse " + keyboardBinding + " for keyboard.\n\nUse " + gamepadBinding + " for gampepad.";
 
-                StartCoroutine(EnemySpawner.Instance.SpawnEnemiesRoutine(rng));
+                StartCoroutine(GameManager.Instance.GetCurrentRoom().instantiatedRoom.enemySpawner.SpawnEnemiesRoutineSP(rng));
 
                 break;
             case TutorialPhase.SpecialSkill:
@@ -427,7 +427,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                     "so you won't be able to use it again for a while." +"\n\nUse " + keyboardBinding + ", " + keyboardBindingTwo + ", " + keyboardBindingThree +" for keyboard.\n\nUse " 
                     + gamepadBinding + ", " + gamepadBindingTwo + ", " + gamepadBindingThree + " for gampepad.";
 
-                StartCoroutine(EnemySpawner.Instance.SpawnEnemiesRoutine(rng));
+                StartCoroutine(GameManager.Instance.GetCurrentRoom().instantiatedRoom.enemySpawner.SpawnEnemiesRoutineSP(rng));
                 break;
             case TutorialPhase.KillEmAll:
                 isCheckPlayed = false;
@@ -605,7 +605,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 }
                 break;
             case TutorialPhase.KillEmAll:
-                if (EnemySpawner.Instance.transform.childCount == 0)
+                if (GameManager.Instance.GetCurrentRoom().instantiatedRoom.enemySpawner.transform.childCount == 0)
                 {
                     PassTutorialProcess();
                     MusicManager.Instance.PlayMusic(GameResources.Instance.ambientMusic);

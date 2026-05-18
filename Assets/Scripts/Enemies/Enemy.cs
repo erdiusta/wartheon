@@ -73,6 +73,7 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
     [HideInInspector] public bool leftHandWeaponDamageHappened;
     [HideInInspector] public float currentArmor;
     [HideInInspector] public StatusEffectAnimators statusEffectAnimators;
+    [HideInInspector] public EnemySpawner owningSpawner;
 
     [HideInInspector] public bool isMaterializing;
     [HideInInspector] public float currentMoveSpeed;
@@ -243,11 +244,11 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
             if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Parry || TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.DodgeRoll 
                 || TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.SpecialSkill)
             {
-                health.isDamageable = false;
+                health.healthAuthority.IsDamageable = false;
             }
             else
             {
-                health.isDamageable = true;
+                health.healthAuthority.IsDamageable = true;
             }
         }
     }
@@ -284,6 +285,8 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
 
         health.OnEnemyInitialized(this);
         dropOnDestroy.InitializeDropList();
+
+        owningSpawner = GetComponentInParent<EnemySpawner>();
 
         EnemyRegistry.ActiveEnemies.Add(this);
 

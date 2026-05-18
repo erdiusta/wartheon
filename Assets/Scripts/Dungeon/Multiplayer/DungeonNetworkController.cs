@@ -9,6 +9,8 @@ public class DungeonNetworkController : NetworkBehaviour
 
     public readonly HashSet<string> processedRooms = new();
 
+    [SyncVar(hook = nameof(OnBossNetIdChanged))] public uint activeBossNetId;
+
     private void Awake()
     {
         if (Instance != null) return; 
@@ -16,17 +18,43 @@ public class DungeonNetworkController : NetworkBehaviour
         Instance = this;
     }
 
+    private void OnBossNetIdChanged(uint oldNetId, uint newNetId)
+    {
+        if (isServer) return;
+
+        if (newNetId == 0)
+        {
+            EnemySpawner.ActiveBoss = null;
+            return;
+        }
+
+        if (NetworkClient.spawned.TryGetValue(newNetId, out NetworkIdentity identity))
+        {
+            if (identity.GetComponent<EnemyNetwork>().Isboss)
+            {
+                EnemySpawner.ActiveBoss = identity.GetComponent<Enemy>();
+            }
+        }
+    }
+
     [Server]
     public void ServerRoomEntered(string roomId, NetworkIdentity initiator, Vector2 entryDirection)
     {
-        // Hard Guard
-        if (!processedRooms.Add(roomId)) return;
-
         DungeonRuntime.MarkRoomVisited(roomId);
         RoomNetData roomNetData = DungeonRuntime.GetRoomNetData(roomId);
 
         InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);
+
         if (ir == null) return;
+
+        if(roomNetData.isCombatRoom && roomNetData.roomCombatState == RoomCombatState.Idle)
+        {
+            if (!processedRooms.Add(roomId)) return;
+
+            ir.enemySpawner.RoomChangedMP(ref roomNetData);
+        }
+
+        if (!roomNetData.isEntrance && roomNetData.roomCombatState == RoomCombatState.Engaged) TeleportAllPlayersNearInitiator(roomNetData, initiator, entryDirection);
 
         if (roomNetData.isShopRoom && !roomNetData.shopRoomGoodsCreated)
         {
@@ -37,26 +65,47 @@ public class DungeonNetworkController : NetworkBehaviour
 
             if (counter != null)
             {
-                if (npcType == NpcType.Gambler)
-                {
-                    RpcSpawnForClient(roomNetData);
-                }
-                else
-                {
-                    counter.SpawnItems(ir, rng, true);
-                }
+                if (npcType == NpcType.Gambler) RpcSpawnForClient(roomNetData);
+                else counter.SpawnItems(ir, rng, true);
             }
         }
 
         RpcRoomChanged(roomId, roomNetData);
 
-        if (roomNetData.roomCombatState == RoomCombatState.Idle) TeleportAllPlayersNearInitiator(roomNetData, initiator, entryDirection);
+        // Lock interactions
+        if (roomNetData.roomCombatState == RoomCombatState.Engaged) ir.LockDoors();
+        else ir.UnlockDoors(0f);
+
+        RpcLockDoors(roomNetData);
+    }
+
+    [ClientRpc]
+    private void RpcRoomChanged(string roomId, RoomNetData roomNetData)
+    {
+        if (!isServer)
+        {
+            if (!processedRooms.Add(roomId)) return;
+        }
+
+        StaticEventHandler.CallRoomChangedEvent(null, roomNetData);
+    }
+
+    [ClientRpc]
+    private void RpcLockDoors(RoomNetData roomNetData)
+    {
+        if (isServer) return;
+
+        InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);
+
+        if (roomNetData.roomCombatState == RoomCombatState.Engaged) ir.LockDoors();
+        else ir.UnlockDoors(0f);
     }
 
     [ClientRpc]
     void RpcSpawnForClient(RoomNetData roomNetData)
     {
         InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);
+
         if (ir == null) return;
 
         if (roomNetData.isShopRoom && !roomNetData.shopRoomGoodsCreated)
@@ -70,19 +119,8 @@ public class DungeonNetworkController : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
-    private void RpcRoomChanged(string roomId, RoomNetData roomNetData)
-    {
-        if (!isServer)
-        {
-            if (processedRooms.Contains(roomId)) return;
-            processedRooms.Add(roomId);
-        }
-
-        StaticEventHandler.CallRoomChangedEvent(null, roomNetData);
-    }
-
-    [Server] private void TeleportAllPlayersNearInitiator(RoomNetData roomNetData, NetworkIdentity initiator, Vector2 entryDirection)
+    [Server] 
+    private void TeleportAllPlayersNearInitiator(RoomNetData roomNetData, NetworkIdentity initiator, Vector2 entryDirection)
     {
         if (initiator == null) return;
 
@@ -115,7 +153,7 @@ public class DungeonNetworkController : NetworkBehaviour
     }
 
     [Server]
-    public void SpawnDungeon()
+    public void SpawnDungeon(int dungeonLevelIndex)
     {
         foreach (RoomNetData data in DungeonRuntime.RoomNetDataDict.Values)
         {
@@ -125,13 +163,14 @@ public class DungeonNetworkController : NetworkBehaviour
             GameObject rootObject = Instantiate(rootPrefab, roomPosition, Quaternion.identity);
 
             RoomNetworkRoot root = rootObject.GetComponent<RoomNetworkRoot>();
-            root.templateId = data.templateId;
+
+            if (data.isEntrance) GameSessionManager.Instance.SetCurrentRoom(null, data);
+
             root.roomNetData = data;
+            root.dungeonGenerationId = dungeonLevelIndex;
             root.randomNum = Random.Range(1, 101);
 
             NetworkServer.Spawn(rootObject);
-
-            if (data.isEntrance) StaticEventHandler.CallRoomChangedEvent(null, data);
         }
     }
 

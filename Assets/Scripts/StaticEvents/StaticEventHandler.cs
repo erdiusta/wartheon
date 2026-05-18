@@ -168,9 +168,9 @@ public static class StaticEventHandler
     // Room enemies defeated event
     public static event Action<RoomEnemiesDefeatedArgs> OnRoomEnemiesDefeated;
 
-    public static void CallRoomEnemiesDefeatedEvent(Room room, List<GameObject> summonedEnemies)
+    public static void CallRoomEnemiesDefeatedEvent(Room room, RoomNetData roomNetData, List<GameObject> summonedEnemies)
     {
-        OnRoomEnemiesDefeated?.Invoke(new RoomEnemiesDefeatedArgs { room = room, summonedEnemies = summonedEnemies });
+        OnRoomEnemiesDefeated?.Invoke(new RoomEnemiesDefeatedArgs { room = room, data = roomNetData, summonedEnemies = summonedEnemies });
     }
 
     // Room enemies defeated event

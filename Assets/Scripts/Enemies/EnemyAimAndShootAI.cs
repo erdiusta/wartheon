@@ -36,7 +36,7 @@ public class EnemyAimAndShootAI : EnemyAI
 
         if (enemy.moveStatus == MoveStatus.Idle)
         {
-            if (player == null || player.health.hasDied) return;
+            if (targetPlayer == null || targetPlayer.health.hasDied) return;
 
             UpdatePhaseStatus(true);
 

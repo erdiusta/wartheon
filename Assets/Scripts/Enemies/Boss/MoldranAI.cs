@@ -51,7 +51,7 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
 
     protected override void OnEnable() 
     {
-        player = GameManager.Instance.GetLocalPlayer();
+        targetPlayer = GameManager.Instance.GetLocalPlayer();
     }
 
     protected override void OnDisable() { }
@@ -70,15 +70,15 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
             return;
         }
 
-        if (player != null)
+        if (targetPlayer != null)
         {
             Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-                (player.GetPlayerPosition() - transform.position).normalized;
-            lockedVector = direction;
+                (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+            attackLockedVector = direction;
         }
 
         // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
         enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Moldran);
@@ -198,15 +198,15 @@ public class MoldranAI : EnemyAI, IMutualBossBehaviour
             return;
         }
 
-        if (player != null)
+        if (targetPlayer != null)
         {
-            if (Vector3.Distance(transform.position, player.GetPlayerPosition()) < 2f)
+            if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) < 2f)
             {
                 // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
                 currentMoldranPhase = (MoldranPhase)Random.Range(4, Enum.GetValues(typeof(MoldranPhase)).Length);
                 return;
             }
-            else if (Vector3.Distance(transform.position, player.GetPlayerPosition()) > 10f)
+            else if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) > 10f)
             {
                 // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
                 int rng = Random.Range(0, 2);

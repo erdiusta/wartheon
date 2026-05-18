@@ -324,7 +324,7 @@ public class PlayerSkillController : MonoBehaviour
             if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
             {
                 // EFFECTS
-                player.health.isDamageable = false;
+                player.health.healthAuthority.IsDamageable = false;
 
                 player.healthEvent.CallStealthSpecialMoveEvent(); // This is for displaying stealth icon
 
@@ -352,7 +352,7 @@ public class PlayerSkillController : MonoBehaviour
         {
             if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
             {
-                player.health.isDamageable = false;
+                player.health.healthAuthority.IsDamageable = false;
                 player.healthEvent.CallStealthSpecialMoveEvent();
 
                 if (!player.isStealthActive)
@@ -400,7 +400,7 @@ public class PlayerSkillController : MonoBehaviour
     IEnumerator UnstealthRoutine()
     {
         // Set immunity
-        player.health.isDamageable = false;
+        player.health.healthAuthority.IsDamageable = false;
 
         // Set player's stealth status to false
         player.isStealthActive = false;
@@ -418,7 +418,7 @@ public class PlayerSkillController : MonoBehaviour
         currentColor.a = 1f;
         player.spriteRenderer.color = currentColor;
 
-        player.health.isDamageable = true;
+        player.health.healthAuthority.IsDamageable = true;
         unstealthRoutine = null;
     }
 
@@ -902,7 +902,7 @@ public class PlayerSkillController : MonoBehaviour
         // Check if the clicked tile is not marked as an obstacle
         if (!IsObstacleTile(currentRoom, roomNetData, pointerCellPosition))
         {
-            player.health.isDamageable = false;
+            player.health.healthAuthority.IsDamageable = false;
 
             player.cancelledDueToInvalidTile = false;
             int consumedMana = (int)(activeSkillData.manaCost * (1 - player.additionalManaReductionModifier));
@@ -933,7 +933,7 @@ public class PlayerSkillController : MonoBehaviour
 
             yield return new WaitForSeconds(0.6f);
 
-            player.health.isDamageable = true;
+            player.health.healthAuthority.IsDamageable = true;
         }
         else
         {
@@ -1338,7 +1338,7 @@ public class PlayerSkillController : MonoBehaviour
     /// </summary>
     IEnumerator EnableInvincibility()
     {
-        player.health.isDamageable = false;
+        player.health.healthAuthority.IsDamageable = false;
 
         // 4 is duration of invincibility
         int iterations = Mathf.RoundToInt(4 / Health.spriteFlashInterval / 2);
@@ -1358,7 +1358,7 @@ public class PlayerSkillController : MonoBehaviour
         }
 
         player.isMoltenRiftActive = false;
-        player.health.isDamageable = true;
+        player.health.healthAuthority.IsDamageable = true;
     }
 
     public void OnMoltenRiftInput(InputAction.CallbackContext context)

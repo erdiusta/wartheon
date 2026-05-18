@@ -84,7 +84,7 @@ public enum GameState
 public enum RoomCombatState
 {
     Idle,
-    CombatActive,
+    Engaged,
     Cleared
 }
 
@@ -577,6 +577,7 @@ public enum EnemyType
 
 public enum EnemyPhase
 {
+    Inactive,
     Patrol,
     Chase,
     Attack,
@@ -829,4 +830,11 @@ public enum MPReplaceType
     Crate,
     Barrel,
     Vase
+}
+
+public enum DropItemLocation
+{
+    World,
+    Inventory,
+    Counter
 }

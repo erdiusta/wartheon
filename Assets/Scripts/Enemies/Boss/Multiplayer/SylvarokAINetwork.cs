@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
@@ -23,8 +24,6 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
     bool passedToWait;
 
-    EnemySpawnerNetwork spawnerNetwork;
-
     public bool PassedToWait
     {
         get => passedToWait;
@@ -45,6 +44,8 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
     protected override void Start() 
     {
+        base.Start();
+
         currentSylvarokPhase = SylvarokPhase.Wait;
         previousSylvarokPhase = SylvarokPhase.Wait;
     }
@@ -414,7 +415,7 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
                     Vector3Int cellPosition = (Vector3Int)currentRoomNetData.spawnPositions[Random.Range(0, currentRoomNetData.spawnPositions.Length)];
 
                     // Create Enemy - Get next enemy type to spawn 
-                    spawnerNetwork.CreateEnemy(enemyDetails.enemyMinionDetails, grid.CellToWorld(cellPosition));
+                    enemySpawner.CreateEnemyMP(enemyDetails.enemyMinionDetails, grid.CellToWorld(cellPosition));
                 }
             }
 

@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
   m_Name: EnemyDetails_MainSlime
   m_EditorClassIdentifier: 
-  guid: 33ab847bbc5a13844a7d0e313cfd95a1
-  previousEnemyPrefab: {fileID: 7183228443647751644, guid: 1bdfacacb77d0034da5411a570f35dab, type: 3}
   enemyName: Main Slime
   enemyDetails: Sticky. It Can Poison The Player. 30% Earth Elemental Bias.
   enemyCategory: 28
@@ -35,12 +33,7 @@ MonoBehaviour:
   elementalForgeRate: 0.3
   enemyMinionDetails: {fileID: 11400000, guid: eebf9331bb362bb489ed6e14f9d48e28, type: 2}
   physicalResistance: 0
-  fireResistance: -0.2
-  waterResistance: 0
-  airResistance: 0
-  earthResistance: 0.2
-  lightResistance: 0
-  darkResistance: 0
+  magicResistance: 0
   hasShield: 0
   deflectChance: 0
   isImmuneToBleeding: 0
@@ -88,9 +81,7 @@ MonoBehaviour:
   healthDrainChance: 0
   hasBlindDamage: 0
   blindChance: 0
-  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
-  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 0.6236082, g: 1.8584495, b: 0.029190252, a: 0}
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
@@ -126,8 +117,6 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
     minDamageAmount: 16
     maxDamageAmount: 20
-  isImmuneAfterHit: 1
-  hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
   primaryPassiveItemsByLevelList:
@@ -157,8 +146,6 @@ MonoBehaviour:
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 2
-    - dungeonObject: {fileID: 0}
-      ratio: 4
     - dungeonObject: {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
       ratio: 4
   - dungeonLevel: {fileID: 11400000, guid: e6f192120bd90df40852f7dc59bd4d15, type: 2}
@@ -173,8 +160,6 @@ MonoBehaviour:
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 2
-    - dungeonObject: {fileID: 0}
-      ratio: 4
     - dungeonObject: {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
       ratio: 4
   weaponsByLevelList:
@@ -540,5 +525,5 @@ MonoBehaviour:
     - dungeonObject: {fileID: 11400000, guid: c96badd26432d7941a839503d9d36c2e, type: 2}
       ratio: 1
   primaryPassiveDropChanceMax: 3
-  dropSpawnChanceMin: 10
-  dropSpawnChanceMax: 20
+  dropSpawnChanceMin: 0
+  dropSpawnChanceMax: 0

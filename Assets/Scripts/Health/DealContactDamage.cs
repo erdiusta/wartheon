@@ -110,7 +110,7 @@ public class DealContactDamage : MonoBehaviour
                     // Damage produced by enemy
                     int damageDone = enemy.isCursed ? contactDamageAmountMin : Random.Range(contactDamageAmountMin, contactDamageAmountMax);
 
-                    if (player.health.isDamageable)
+                    if (player.health.healthAuthority.IsDamageable)
                     {
                         if (enemy != null)
                         {

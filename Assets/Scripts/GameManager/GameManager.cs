@@ -140,6 +140,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [HideInInspector] public bool isOverviewCameraClicked;
     [HideInInspector] public bool isOverviewCameraEnabled;
 
+    // Boss
+    bool bossUIVisible;
 
     #region Header DUNGEON LEVELS
     [Space(10)]
@@ -166,7 +168,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [HideInInspector] public Dummy decoy;
     [HideInInspector] public Queue<InstantiatedRoom> lastThreeRooms = new Queue<InstantiatedRoom>();
 
-    bool bossHealthInitializationOnProcess;
     float invisibleTimer = 0f;
     const int ROOM_CONST = 6;
     Room currentRoom;
@@ -202,8 +203,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [SerializeField] float fadeDuration;
 
     bool deathChecked;
-
-    EnemySpawnerNetwork spawnerNetwork;
 
     protected override void Awake()
     {
@@ -256,8 +255,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         // MP-Only Setup
         ClientEnterGameplay(player);
-
-        spawnerNetwork = FindFirstObjectByType<EnemySpawnerNetwork>();
     }
 
     /// <summary>
@@ -465,8 +462,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         {
             Destroy(summonedEnemy);
         }
-
-        FindBossRoom();
     }
 
     private void StaticEventHandler_OnDecoySpawned(DecoySpawnedArgs decoySpawnedArgs)
@@ -662,7 +657,33 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         actions = InputManager.Instance.actions;
 
-        bool roomCleared = currentRoom != null && EnemySpawner.Instance.transform.childCount <= 0;
+        bool roomCleared = true;
+        InstantiatedRoom ir;
+
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            if (GetCurrentRoom() != null)
+            {
+                ir = GetCurrentRoom().instantiatedRoom;
+
+                if (GetCurrentRoom() != null && ir.enemySpawner != null)
+                {
+                    roomCleared = ir.enemySpawner.transform.childCount <= 0;
+                }
+            }
+        }
+        else
+        {
+            if (GameSessionManager.Instance.GetCurrentRoomNetData() != default)
+            {
+                ir = DungeonRuntime.GetInstantiatedRoom(GameSessionManager.Instance.GetCurrentRoomNetData().roomId);
+
+                if (ir != null && ir.enemySpawner != null)
+                {
+                    roomCleared = ir.enemySpawner.transform.childCount <= 0;
+                }
+            }
+        }
 
         bool manaNotFull = localPlayer.mana.GetCurrentMana() < localPlayer.mana.GetMaximumMana();
 
@@ -698,17 +719,20 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             buttonBuildButton.SetActive(false);
         }
 
-        bool isBossInstantiated = !NetworkServer.active && !NetworkClient.active ? EnemySpawner.Instance.isBossInstantiated : spawnerNetwork.isBossInstantiated;
+        Enemy detectedBoss = EnemySpawner.ActiveBoss;
 
-        if (isBossInstantiated)
+        // Boss changed
+        if (detectedBoss != null)
         {
-            if (!bossHealthInitializationOnProcess)
+            if (!bossUIVisible)
             {
-                StartCoroutine(EnemyHealthBarInitialization());
+                StartCoroutine(EnemyHealthBarInitialization(detectedBoss));
             }
         }
         else
         {
+            bossUIVisible = false;
+
             healthBarContainer.GetComponentInChildren<TextMeshProUGUI>().text = string.Empty;
             healthBar.transform.localScale = new Vector3(1f, 1f, 1f);
             healthBarContainer.SetActive(false);
@@ -731,23 +755,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
     }
 
-    IEnumerator EnemyHealthBarInitialization()
+    IEnumerator EnemyHealthBarInitialization(Enemy bossEnemy)
     {
-        bossHealthInitializationOnProcess = true;
-
         float completeInvisibleDuration = 1f;
-        string enemyName;
+        invisibleTimer = 0f;
 
-        if (!NetworkServer.active && !NetworkClient.active)
-        {
-            bossEnemy = EnemySpawner.Instance.GetBoss();
-            enemyName = EnumExtensions.ToPrettyString(bossEnemy.GetComponent<IEnemyCombatData>().EnemyCategory);
-        }
-        else
-        {
-            bossEnemy = spawnerNetwork.GetBoss();
-            enemyName = EnumExtensions.ToPrettyString(spawnerNetwork.bossEnemyName);
-        }
+        IEnemyCombatData enemyCombatData = EnemyDataResolver.Resolve<IEnemyCombatData>(bossEnemy.gameObject);
+        string enemyName = EnumExtensions.ToPrettyString(enemyCombatData.EnemyCategory);
 
         healthBarContainer.SetActive(true);
         healthBarContainer.GetComponentInChildren<TextMeshProUGUI>().text = enemyName;
@@ -773,9 +787,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             yield return null;
         }
 
-        yield return null;
-
-        bossHealthInitializationOnProcess = false;
+        bossUIVisible = true;
     }
 
     private void HandleLevelUpPanel()
@@ -832,7 +844,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                     InputManager.cachedLevelIndex : (InputManager.TutorialEnabled && InputManager.cachedLevelIndex == 1 ? 0 : 1);
                 PlayDungeonLevel(currentDungeonLevelListIndex);
                 gameState = GameState.playingLevel;
-                FindBossRoom();
                 break;
             case GameState.playingLevel:
                 break;
@@ -1407,11 +1418,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
                     displayTimer -= Time.unscaledDeltaTime;
                     yield return null;
                 }
-
-                if (gameState == GameState.levelCompleted)
-                {
-                    ClearAllRoomItemsOnLevelEnd();
-                }
             }
             else
             // else display the message until the return button is pressed
@@ -1445,6 +1451,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         // Wait 2 seconds
         yield return new WaitForSeconds(2f);
 
+        DestroyEnemies();
+
         // Fade in canvas to display text message
         yield return StartCoroutine(Fade(0f, 1f, 2f, new Color(0f, 0f, 0f, 0.4f)));
 
@@ -1472,6 +1480,18 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             yield return StartCoroutine(Fade(1f, 0f, 2f, new Color(0f, 0f, 0f, 0.4f)));
 
             PlayDungeonLevel(currentDungeonLevelListIndex);
+        }
+    }
+    private void DestroyEnemies()
+    {
+        Enemy[] remainingEnemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+
+        foreach (Enemy enemy in remainingEnemies)
+        {
+            if (enemy == null) continue;
+            if (enemy.Isboss) continue;
+
+            Destroy(enemy.gameObject);
         }
     }
 
@@ -1783,6 +1803,8 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     public void RegisterRoomVisit(InstantiatedRoom room)
     {
+        if (room == null) return;
+
         if (lastThreeRooms.Contains(room)) return;
 
         if (room.IsCorridor()) return;
@@ -1790,20 +1812,29 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         if (lastThreeRooms.Count == 3)
         {
             InstantiatedRoom roomToClear = lastThreeRooms.Dequeue();
-            roomToClear.DestroyAllDroppedItems();
+
+            if (roomToClear != null)
+            {
+                roomToClear.DestroyRoomDroppedItems();
+            }
         }
 
         lastThreeRooms.Enqueue(room);
     }
 
-    public void ClearAllRoomItemsOnLevelEnd()
+    public void ClearAllDropItemsInScene()
     {
-        foreach (InstantiatedRoom room in lastThreeRooms)
-        {
-            room.DestroyAllDroppedItems();
-        }
+        DropItem[] dropItems = FindObjectsByType<DropItem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
-        lastThreeRooms.Clear();
+        foreach (DropItem item in dropItems)
+        {
+            if (item == null) continue;
+
+            if (item.GetComponentInParent<Player>() != null) continue;
+            if (item.GetComponentInParent<Counter>() != null) continue;
+
+            Destroy(item.gameObject);
+        }
     }
 
     public static void TutorialIndicatorArrowTransactions(Transform arrowTransform, Transform secondArrowTransform)

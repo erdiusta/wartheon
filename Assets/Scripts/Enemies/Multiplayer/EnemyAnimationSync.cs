@@ -72,6 +72,20 @@ public class EnemyAnimationSync : NetworkBehaviour
         RpcResetAllBossAnimations();
     }
 
+    [Server]
+    public void ResetAimAnimations()
+    {
+        RpcResetAimAnimations();
+    }
+
+    [ClientRpc]
+    private void RpcResetAimAnimations()
+    {
+        if (isServer) return;
+
+        animateEnemy?.ResetAimAnimationParameters();
+    }
+
     [ClientRpc]
     private void RpcResetAllBossAnimations()
     {

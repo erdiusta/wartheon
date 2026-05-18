@@ -2178,6 +2178,7 @@ GameObject:
   - component: {fileID: 675014890003861297}
   - component: {fileID: 6895487677956179772}
   - component: {fileID: -8829251073590563272}
+  - component: {fileID: -6711949606747452784}
   m_Layer: 13
   m_Name: BossRoom_Level8_1_CUTSCENE
   m_TagString: Untagged
@@ -2201,6 +2202,7 @@ Transform:
   - {fileID: 8745834850824341161}
   - {fileID: 4004782066121772485}
   - {fileID: 3820963222235898835}
+  - {fileID: 4588159491239957326}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &675014890003861297
@@ -2302,6 +2304,7 @@ MonoBehaviour:
   roomColliderBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  enemySpawner: {fileID: 0}
   environmentGameObject: {fileID: 539270169103656000}
   roomObstaclesList: []
   northMask: {fileID: 5718178456167196130}
@@ -2320,6 +2323,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e55bb0977782eaf4c8b317f0ca5f1a83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-6711949606747452784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2121098485114120195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a516fffa867304f479f60dec649ab1ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bossEnemy: {fileID: 0}
+  isBossInstantiated: 0
 --- !u!1 &2333376423648023943
 GameObject:
   m_ObjectHideFlags: 0
@@ -3230,6 +3247,52 @@ CompositeCollider2D:
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
   m_CompositeGameObject: {fileID: 2333376423648023943}
+--- !u!1 &2398374282965826519
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4588159491239957326}
+  - component: {fileID: 7852153356421017387}
+  m_Layer: 13
+  m_Name: EnemySpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4588159491239957326
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2398374282965826519}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3715206211872746492}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7852153356421017387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2398374282965826519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a516fffa867304f479f60dec649ab1ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bossEnemy: {fileID: 0}
+  isBossInstantiated: 0
 --- !u!1 &2694119764746622599
 GameObject:
   m_ObjectHideFlags: 0

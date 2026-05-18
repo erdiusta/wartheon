@@ -515,6 +515,8 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             PassiveItem passiveItem = (PassiveItem)itemGeneric;
 
+            Debug.Log("Passive item type is " + passiveItem.passiveStats.passiveItemType);
+
             passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
 
             animator.runtimeAnimatorController = passiveItemDetails?.passiveItemAnimatorController ?? animator.runtimeAnimatorController;

@@ -436,7 +436,7 @@ public class PlayerAnimationSync : NetworkBehaviour
 
     IEnumerator InvincibilityRoutine()
     {
-        player.health.isDamageable = false;
+        player.health.healthAuthority.IsDamageable = false;
 
         // 4 is duration of invincibility
         int iterations = Mathf.RoundToInt(4 / Health.spriteFlashInterval / 2);
@@ -456,7 +456,7 @@ public class PlayerAnimationSync : NetworkBehaviour
         }
 
         player.isMoltenRiftActive = false;
-        player.health.isDamageable = true;
+        player.health.healthAuthority.IsDamageable = true;
     }
 
     // FLAME LOTUS

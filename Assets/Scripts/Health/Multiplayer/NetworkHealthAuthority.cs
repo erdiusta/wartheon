@@ -5,11 +5,22 @@ public class NetworkHealthAuthority : NetworkBehaviour, IHealthAuthority
 {
     [HideInInspector] public Health health;
 
-    [SyncVar (hook = nameof(OnHealthChanged))] public int currentHealth;
-    [SyncVar (hook = nameof(OnMaxHealthChanged))] public int maxHealth;
+    [SyncVar] public int currentHealth;
+    [SyncVar] public int maxHealth;
+    [SyncVar (hook = nameof(OnDamagableChanged))] public bool isDamageable = true;
 
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
+    public bool IsDamageable
+    {
+        get => isDamageable;
+        set
+        {
+            if (!isServer) return;
+
+            isDamageable = value;
+        }
+    }
 
     private void Awake()
     {
@@ -30,25 +41,17 @@ public class NetworkHealthAuthority : NetworkBehaviour, IHealthAuthority
 
         currentHealth = health.GetMaximumHealth();
         maxHealth = health.GetMaximumHealth();
+
+        health.healthAuthority = this;
+        isDamageable = true;
     }
 
-    private void OnHealthChanged(int oldValue, int newValue)
+    private void OnDamagableChanged(bool oldVal, bool newVal)
     {
-        if (health == null) return;
-
-        //int damageAmount = Mathf.Clamp(oldValue - newValue, 0, maxHealth);
-        health.ApplyReplicatedHealth(newValue, oldValue - newValue, default);
-
-        if (GetComponent<Environment>() != null) return;
-
-        Debug.Log("Health after change is " + health.currentHealth);
-    }
-
-    private void OnMaxHealthChanged(int oldValue, int newValue)
-    {
-        if (health == null) return;
-
-        health.SetMaximumHealth(newValue);
+        if (health != null)
+        {
+            isDamageable = newVal;
+        }
     }
 
     public void ApplyDamage(int amount, DamageContext ctx)

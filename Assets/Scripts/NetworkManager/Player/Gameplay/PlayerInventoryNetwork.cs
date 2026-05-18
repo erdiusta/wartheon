@@ -18,6 +18,12 @@ public class PlayerInventoryNetwork : NetworkBehaviour
 
         InventoryItemData data = StaticSlotHandler.ConvertDropToData(drop);
 
+        if (data.Equals(default))
+        {
+            Debug.LogError("PICK UP FAILED BECAUSE PICK UP DATA NOT RETRIEVED.");
+            return;
+        }
+
         CmdPickUpItem(character, data, drop.netIdentity, isPrimaryPassive);
     }
 

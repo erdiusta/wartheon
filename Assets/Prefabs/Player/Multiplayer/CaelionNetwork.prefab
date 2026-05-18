@@ -1435,6 +1435,7 @@ MonoBehaviour:
   health: {fileID: 0}
   currentHealth: 0
   maxHealth: 0
+  isDamageable: 0
 --- !u!114 &5560876360397594064
 MonoBehaviour:
   m_ObjectHideFlags: 0

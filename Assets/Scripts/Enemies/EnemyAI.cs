@@ -39,7 +39,8 @@ public class EnemyAI : MonoBehaviour
     protected Coroutine shatterEnemyRoutine;
     protected Coroutine slowEnemyRoutine;
     protected Coroutine fearEnemyRoutine;
-    protected Vector3 lockedVector;
+    protected Vector2 trackingVector;
+    protected Vector3 attackLockedVector;
     protected Room currentRoom;
     protected Rigidbody2D rb2D;
     protected Vector2 prevVel;
@@ -73,13 +74,23 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] Transform patrolPointsParentContainer;
     protected Coroutine updatePhaseRoutine;
 
-    protected Player player;
+    protected Player targetPlayer;
     protected Dummy decoy;
     protected bool deathAnimationStarted;
 
     protected bool isSlowTriggered;
 
     protected IEnemyMovementData enemyMovementData;
+
+    protected PendingProjectileRequest pendingProjectileRequest;
+    protected bool hasPendingProjectile;
+
+    protected Vector2 chargeStartPosition;
+    protected Vector2 chargeMoveDirection;
+    protected bool chargeRecoveryActive;
+    protected Coroutine chargeRecoveryRoutine;
+    protected float chargeGraceTimer = 1.5f;
+    protected bool isRecoveringFromCharge;
 
     protected virtual void Awake()
     {
@@ -90,7 +101,7 @@ public class EnemyAI : MonoBehaviour
         waitForFixedUpdate = new WaitForFixedUpdate();
 
         // Cache player target reference
-        player = GameManager.Instance.GetLocalPlayer();
+        targetPlayer = GameManager.Instance.GetLocalPlayer();
 
         enemy.currentMoveSpeed = enemyDetails.movementDetails.GetBaseMaxMoveSpeed();
 
@@ -103,7 +114,7 @@ public class EnemyAI : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        if (!EnemyRoomResolver.TryGetRoom(out InstantiatedRoom instantiatedRoom, out Vector2Int[] spawnPositions, null)) return; // Room Not Ready
+        if (!EnemyRoomResolver.TryGetRoom(out InstantiatedRoom instantiatedRoom, out Vector2Int[] spawnPositions)) return; // Room Not Ready
 
         enemy.patrol.targets = instantiatedRoom.CreatePatrolTargets(spawnPositions, patrolPointsParentContainer);
         PatrolRigidbody2D.OnRequestSpawnPositions += Patrol_OnRequestSpawnPositions;
@@ -117,7 +128,7 @@ public class EnemyAI : MonoBehaviour
 
     private Vector2Int[] Patrol_OnRequestSpawnPositions()
     {
-        if (EnemyRoomResolver.TryGetRoom(out _, out var spawnPositions, null)) return spawnPositions;
+        if (EnemyRoomResolver.TryGetRoom(out _, out var spawnPositions)) return spawnPositions;
         return System.Array.Empty<Vector2Int>();
     }
 
@@ -127,7 +138,7 @@ public class EnemyAI : MonoBehaviour
     {
         while (!enemy.initializationCompleted) yield return null;
 
-        if (player != null) enemy.aiDestinationSetter.target = player.transform;
+        if (targetPlayer != null) enemy.aiDestinationSetter.target = targetPlayer.transform;
 
         // Reset attack move timer
         attackMoveTimer = enemy.enemyDetails.attackMoveBaseCooldown;
@@ -135,6 +146,8 @@ public class EnemyAI : MonoBehaviour
         // Default enemy phase
         enemyPhase = EnemyPhase.Patrol;
         enemyPhaseAtPreviousFrame = EnemyPhase.Patrol;
+
+        currentRoom = GameManager.Instance.GetCurrentRoom();
     }
 
     protected virtual void Update()
@@ -163,7 +176,7 @@ public class EnemyAI : MonoBehaviour
             {
                 if (!hasAppliedDashImpulse)
                 {
-                    Vector2 force = lockedVector.normalized * enemy.currentMoveSpeed * dashSpeedMultiplier * rb2D.mass;
+                    Vector2 force = attackLockedVector.normalized * enemy.currentMoveSpeed * dashSpeedMultiplier * rb2D.mass;
                     rb2D.AddForce(force, ForceMode2D.Impulse);
                     hasAppliedDashImpulse = true;
                 }
@@ -189,7 +202,7 @@ public class EnemyAI : MonoBehaviour
 
         if (enemy.moveStatus == MoveStatus.Idle)
         {
-            if (player == null || player.health.hasDied) return;
+            if (targetPlayer == null || targetPlayer.health.hasDied) return;
 
             // If enemy is attacking process and in attack phase, don't get involved in AStar calculations
             if (enemyPhase == EnemyPhase.Attack && isAttacking) return;
@@ -237,8 +250,8 @@ public class EnemyAI : MonoBehaviour
                         if (tag == Settings.enemyTag && !isAttacking) // isAttacking flag added for fixed locked vectort
                         {
                             Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() -
-                                enemy.GetEnemyPosition()).normalized : (player.GetPlayerPosition() - enemy.GetEnemyPosition()).normalized;
-                            lockedVector = direction;
+                                enemy.GetEnemyPosition()).normalized : (targetPlayer.GetPlayerPosition() - enemy.GetEnemyPosition()).normalized;
+                            attackLockedVector = direction;
                         }
 
                         // Check if cooldown has expired
@@ -285,7 +298,7 @@ public class EnemyAI : MonoBehaviour
         // Re-enable enemy layer collisions and force interaction
         Physics2D.IgnoreLayerCollision(gameObject.layer, LayerMask.NameToLayer("Enemy"), false);
 
-        lockedVector = Vector2.zero;
+        attackLockedVector = Vector2.zero;
         enemy.rb2D.linearVelocity = Vector2.zero;
 
         dashTimer = 0f;
@@ -344,7 +357,7 @@ public class EnemyAI : MonoBehaviour
 
         Enemy[] checkedEnemies;
 
-        if (!NetworkServer.active && !NetworkClient.active) checkedEnemies = EnemySpawner.Instance.GetComponentsInChildren<Enemy>();
+        if (!NetworkServer.active && !NetworkClient.active) checkedEnemies = GameManager.Instance.GetCurrentRoom().instantiatedRoom.enemySpawner.GetComponentsInChildren<Enemy>();
         else checkedEnemies = EnemyRegistry.ActiveEnemies.ToArray();
 
         // Ensure the aiDestinationSetter target is valid
@@ -353,7 +366,7 @@ public class EnemyAI : MonoBehaviour
             if (enemy.aiDestinationSetter.target == null ||  enemy.aiDestinationSetter.target.gameObject == null)
             {
                 // Fallback to player if exists
-                if (player != null && !player.health.hasDied) enemy.aiDestinationSetter.target = player.transform;
+                if (targetPlayer != null && !targetPlayer.health.hasDied) enemy.aiDestinationSetter.target = targetPlayer.transform;
                 else
                 {
                     // Optional: fallback to first patrol point
@@ -374,7 +387,7 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        Transform target = GetPriorityTarget(player); // Either Decoy or Player
+        Transform target = GetPriorityTarget(targetPlayer); // Either Decoy or Player
 
         if (target == null) return;
 
@@ -439,7 +452,7 @@ public class EnemyAI : MonoBehaviour
             {
                 float attackMoveTriggerDistance = enemy.enemyDetails.attackMoveTriggerDistance;
 
-                if (distanceToTarget < attackMoveTriggerDistance && attackMoveTimer <= 0f && !player.isStealthActive)
+                if (distanceToTarget < attackMoveTriggerDistance && attackMoveTimer <= 0f && !targetPlayer.isStealthActive)
                 {
                     enemyPhaseAtPreviousFrame = enemyPhase;
                     enemyPhase = EnemyPhase.Attack;
@@ -447,7 +460,7 @@ public class EnemyAI : MonoBehaviour
                 }
                 else if (distanceToTarget < chaseDistance)
                 {
-                    if (!player.isStealthActive) SwitchToChase();
+                    if (!targetPlayer.isStealthActive) SwitchToChase();
                     else SwitchToPatrol();
                 }
                 else
@@ -532,7 +545,7 @@ public class EnemyAI : MonoBehaviour
     {
         isAttacking = true;
         // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
         enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, enemy.EnemyCategory);
@@ -544,7 +557,7 @@ public class EnemyAI : MonoBehaviour
         // Calculate the locked target position if not already locked
         if (!isTargetLocked)
         {
-            lockedTargetPosition = enemy.GetEnemyPosition() + lockedVector * enemyDetails.attackMoveEfficentDistance;
+            lockedTargetPosition = enemy.GetEnemyPosition() + attackLockedVector * enemyDetails.attackMoveEfficentDistance;
             isTargetLocked = true;
         }
 
@@ -676,7 +689,7 @@ public class EnemyAI : MonoBehaviour
     public void Aim(out Vector3 playerDirectionVector, out Vector3 weaponDirection, out float weaponAngleDegrees, out float enemyAngleDegrees,
         out AimDirection enemyAimDirection, out AttackDirection enemyAttackDirection)
     {
-        if (player == null || player.health.hasDied)
+        if (targetPlayer == null || targetPlayer.health.hasDied)
         {
             enemyPhase = EnemyPhase.Patrol;
             playerDirectionVector = Vector3.zero;
@@ -689,10 +702,10 @@ public class EnemyAI : MonoBehaviour
         }
 
         // Player distance
-        playerDirectionVector = player.GetPlayerPosition() - transform.position;
+        playerDirectionVector = targetPlayer.GetPlayerPosition() - transform.position;
 
         // Calculate direction vector of player from weapon shoot position
-        weaponDirection = player.GetPlayerPosition() - weaponShootPosition.position;
+        weaponDirection = targetPlayer.GetPlayerPosition() - weaponShootPosition.position;
 
         // Get weapon to player angle
         weaponAngleDegrees = HelperUtilities.GetAngleFromVector(weaponDirection);
@@ -957,9 +970,9 @@ public class EnemyAI : MonoBehaviour
 
     public void MoveAwayFromPlayer()
     {
-        if (player == null) return;
+        if (targetPlayer == null) return;
 
-        Vector2 direction = (transform.position - player.transform.position).normalized;
+        Vector2 direction = (transform.position - targetPlayer.transform.position).normalized;
         float fearMoveSpeed = enemy.currentMoveSpeed * 0.5f;
 
         transform.position += (Vector3)(direction * fearMoveSpeed * Time.deltaTime);
@@ -1073,6 +1086,79 @@ public class EnemyAI : MonoBehaviour
         cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
         return grid.GetCellCenterWorld(cell);
     }
+
+    protected Vector2 GetValidPosition(Vector2 desiredPosition, CapsuleCollider2D movementCollider)
+    {
+        if (movementCollider == null) return desiredPosition;
+
+        Vector2 currentPos = transform.position;
+        Vector2 dir = (desiredPosition - currentPos).normalized;
+
+        float distance = Vector2.Distance(currentPos, desiredPosition);
+
+        // Too close
+        if (distance <= 0.01f) return currentPos;
+
+        ContactFilter2D filter = new ContactFilter2D();
+
+        filter.useLayerMask = true;
+        filter.useTriggers = false;
+
+        filter.layerMask = GetObstacleMask();
+
+        RaycastHit2D[] hits = new RaycastHit2D[16];
+
+        int hitCount = movementCollider.Cast(dir, filter, hits, distance);
+        bool validHitFound = false;
+
+        float closestDistance = float.MaxValue;
+
+        // FIND CLOSEST VALID OBSTACLE
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider2D hitCol = hits[i].collider;
+
+            if (hitCol == null) continue;
+
+            // Door collision control
+            if (hitCol.GetComponentInParent<Door>() != null) continue;
+
+            // Ignore self
+            if (hitCol.transform.root == transform.root) continue;
+
+            // Ignore triggers
+            if (hitCol.isTrigger) continue;
+
+            // Ignore zero distance overlap artifacts
+            if (hits[i].distance <= 0.03f) continue;
+
+            if (hits[i].distance < closestDistance)
+            {
+                closestDistance = hits[i].distance;
+
+                validHitFound = true;
+            }
+        }
+
+        // VALID OBSTACLE FOUND
+        if (validHitFound)
+        {
+            // Small safety padding
+            float safeDistance = Mathf.Max(0, closestDistance - 0.05f);
+
+            if (safeDistance < 1.25f)
+            {
+                safeDistance = 1.25f;
+
+                return currentPos + dir * safeDistance;
+            }
+        }
+
+        // PATH IS VALID
+        return desiredPosition;
+    }
+
+    protected LayerMask GetObstacleMask() => LayerMask.GetMask("Wall", "Pool", "Environment");
 
     protected bool IsOutsideBossRoom(Vector3 worldPosition, Vector2Int cellMin, Vector2Int cellMax)
     {

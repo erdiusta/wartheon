@@ -27,6 +27,7 @@ public class InstantiatedRoom : MonoBehaviour
     [HideInInspector] public int[,] aStarMovementPenalty; // use this 2d array to store movement penalties from the tilemaps to be used in AStar pathfinding
     [HideInInspector] public Bounds roomColliderBounds;
 
+    [HideInInspector] public EnemySpawner enemySpawner;
 
     #region Header OBJECT REFERENCES
     [Space(10)]
@@ -60,6 +61,8 @@ public class InstantiatedRoom : MonoBehaviour
 
         // Save room collider bounds
         roomColliderBounds = boxCollider2D.bounds;
+
+        enemySpawner = GetComponentInChildren<EnemySpawner>();
     }
 
     // Trigger room changed event when player enters a room
@@ -124,7 +127,10 @@ public class InstantiatedRoom : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (roomNetData.roomId != null) DungeonRuntime.UnregisterRoom(roomNetData.roomId);
+        if (roomNetData.roomId != null)
+        {
+            DungeonRuntime.UnregisterRoom(roomNetData.roomId, this);
+        }        
     }
 
     /// <summary>
@@ -556,7 +562,7 @@ public class InstantiatedRoom : MonoBehaviour
         StartCoroutine(UnlockDoorsRoutine(doorUnlockDelay));
     }
 
-    public void DestroyAllDroppedItems()
+    public void DestroyRoomDroppedItems()
     {
         DropItem[] dropItems = GetComponentsInChildren<DropItem>(true);
 

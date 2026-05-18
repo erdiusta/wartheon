@@ -3120,7 +3120,6 @@ MonoBehaviour:
   currentHealth: 0
   maximumHealth: 0
   currentShield: 0
-  isDamageable: 1
   enemy: {fileID: 0}
   isBlocking: 0
   isDodging: 0

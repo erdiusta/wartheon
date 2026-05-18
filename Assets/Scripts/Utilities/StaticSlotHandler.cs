@@ -182,6 +182,8 @@ public static class StaticSlotHandler
     {
         InventoryItemData data = new InventoryItemData();
 
+        if (drop.itemGeneric == null) return default;
+
         data.itemType = drop.itemGeneric.ItemType;
 
         if (drop.itemGeneric is Weapon w)

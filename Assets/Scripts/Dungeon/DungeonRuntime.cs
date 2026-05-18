@@ -20,8 +20,10 @@ public static class DungeonRuntime
         roomsById[roomId] = room;
     }
 
-    public static void UnregisterRoom(string roomId)
+    public static void UnregisterRoom(string roomId, InstantiatedRoom room)
     {
+        if (string.IsNullOrEmpty(roomId)) return;
+
         roomsById.Remove(roomId);
     }
 

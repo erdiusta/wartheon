@@ -41,7 +41,7 @@ public class PassiveItemDatabaseSO : ScriptableObject
 
         if (passiveItemType == PassiveItemType.None)
         {
-            return null;
+            Debug.Log("PASSIVE ITEM TYPE IS NONE!");
         }
 
         return passiveItem;

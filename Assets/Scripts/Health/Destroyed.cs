@@ -138,8 +138,6 @@ public class Destroyed : MonoBehaviour
 
                 if (enemyCombatData.Isboss)
                 {
-                    EnemySpawner.Instance.isBossInstantiated = false;
-
                     switch (enemyCombatData.EnemyBehaviour)
                     {
                         case EnemyBehaviour.Pursuit:
@@ -198,7 +196,7 @@ public class Destroyed : MonoBehaviour
 
                     if (enemyCombatData.EnemyBehaviour == EnemyBehaviour.Sylvarok)
                     {
-                        foreach (Transform minion in EnemySpawner.Instance.transform)
+                        foreach (Transform minion in GameManager.Instance.GetCurrentRoom().instantiatedRoom.enemySpawner.transform)
                         {
                             if (EnemyDataResolver.Resolve<IEnemyCombatData>(minion.gameObject).EnemyBehaviour == EnemyBehaviour.Sylvarok) continue;
 
@@ -211,7 +209,7 @@ public class Destroyed : MonoBehaviour
                 {
                     if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.Combat)
                     {
-                        killerPlayer.health.isDamageable = true;
+                        killerPlayer.health.healthAuthority.IsDamageable = true;
 
                         DamageContext ctx = new DamageContext { receiverPosition = killerPlayer.transform.position };
                         HealthAuthorityResolver.GetAuthority(killerPlayer.gameObject).ApplyDamage(20, ctx);

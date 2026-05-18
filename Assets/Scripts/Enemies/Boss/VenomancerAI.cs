@@ -59,7 +59,7 @@ public class VenomancerAI : EnemyAI, IMutualBossBehaviour
 
     protected override void OnEnable() 
     {
-        player = GameManager.Instance.GetLocalPlayer();
+        targetPlayer = GameManager.Instance.GetLocalPlayer();
     }
 
     protected override void OnDisable() { }
@@ -78,15 +78,15 @@ public class VenomancerAI : EnemyAI, IMutualBossBehaviour
             return;
         }
 
-        if (player != null)
+        if (targetPlayer != null)
         {
             Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-                (player.GetPlayerPosition() - transform.position).normalized;
-            lockedVector = direction;
+                (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+            attackLockedVector = direction;
         }
 
         // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(lockedVector);
+        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
         enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Venomancer);
@@ -209,15 +209,15 @@ public class VenomancerAI : EnemyAI, IMutualBossBehaviour
             return;
         }
 
-        if (player != null)
+        if (targetPlayer != null)
         {
-            if (Vector3.Distance(transform.position, player.GetPlayerPosition()) < 3f)
+            if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) < 3f)
             {
                 // If player is too close to boss, automatically next phase will be Slam Ground
                 currentVenomancerPhase = VenomancerPhase.SlamGround;
                 return;
             }
-            else if (Vector3.Distance(transform.position, player.GetPlayerPosition()) > 12f)
+            else if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) > 12f)
             {
                 int rng = Random.Range(0, 2);
                 currentVenomancerPhase = rng == 0 ? VenomancerPhase.SludgeThrow : VenomancerPhase.StoneRain;

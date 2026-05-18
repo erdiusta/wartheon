@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
   m_Name: EnemyDetails_BlackWidow
   m_EditorClassIdentifier: 
-  guid: 4bf23a7047c1eab4da5c2558fa54a3e7
-  previousEnemyPrefab: {fileID: 7183228443647751644, guid: d45f52343d7aff846a5fc9a6d45cc9f4, type: 3}
   enemyName: Black Widow
   enemyDetails: Stronger than Spider. Can Poison. Earth Elemental Bias.
   enemyCategory: 17
@@ -35,12 +33,7 @@ MonoBehaviour:
   elementalForgeRate: 0.4
   enemyMinionDetails: {fileID: 0}
   physicalResistance: 0
-  fireResistance: 0
-  waterResistance: 0
-  airResistance: 0
-  earthResistance: 0
-  lightResistance: 0
-  darkResistance: 0
+  magicResistance: 0
   hasShield: 0
   deflectChance: 0
   isImmuneToBleeding: 0
@@ -88,9 +81,7 @@ MonoBehaviour:
   healthDrainChance: 0
   hasBlindDamage: 0
   blindChance: 0
-  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
-  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 1.8584491, g: 0.02629876, b: 0.9415037, a: 0}
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
@@ -131,8 +122,6 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}
     minDamageAmount: 19
     maxDamageAmount: 23
-  isImmuneAfterHit: 1
-  hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
   primaryPassiveItemsByLevelList:
@@ -162,8 +151,6 @@ MonoBehaviour:
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 2
-    - dungeonObject: {fileID: 0}
-      ratio: 4
     - dungeonObject: {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
       ratio: 4
   - dungeonLevel: {fileID: 11400000, guid: 99c1ae446f4b95c4c9302a8443678c1d, type: 2}
@@ -178,8 +165,6 @@ MonoBehaviour:
       ratio: 4
     - dungeonObject: {fileID: 11400000, guid: 25b0e7aa2d88507418cf349e12260326, type: 2}
       ratio: 2
-    - dungeonObject: {fileID: 0}
-      ratio: 4
     - dungeonObject: {fileID: 11400000, guid: f5f1ccba5949100458c9977ec4f7170f, type: 2}
       ratio: 4
   - dungeonLevel: {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}

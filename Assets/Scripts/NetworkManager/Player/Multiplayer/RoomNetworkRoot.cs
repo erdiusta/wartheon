@@ -1,16 +1,22 @@
 using Mirror;
+using System.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
 public class RoomNetworkRoot : NetworkBehaviour
 {
-    [SyncVar] public string templateId;
     [SyncVar] public RoomNetData roomNetData;
     [SyncVar] public int randomNum;
-    
+    [SyncVar] public int dungeonGenerationId;
+
     bool built;
     BoxCollider2D rootCollider2D;
     Vector2 entryDirection;
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+    }
 
     public override void OnStartClient()
     {
@@ -23,18 +29,35 @@ public class RoomNetworkRoot : NetworkBehaviour
         NetworkClient.RegisterPrefab(GameResources.Instance.barrelMPPrefab);
         NetworkClient.RegisterPrefab(GameResources.Instance.vaseMPPrefab);
 
-        BuildVisuals(roomNetData, randomNum);
+        StartCoroutine(DelayedBuild());
 
         RemoveSinglePlayerProps();
     }
 
-    public override void OnStartLocalPlayer()
+    IEnumerator DelayedBuild()
     {
-        base.OnStartLocalPlayer();
+        float timeout = 5f;
+        float timer = 0f;
+
+        while (string.IsNullOrEmpty(roomNetData.templateId))
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= timeout)
+            {
+                Debug.LogError($"TemplateId failed to sync for RoomNetworkRoot: {netId}");
+            }
+
+            yield return null;
+        }
+
+        BuildVisuals(randomNum);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (GameSessionManager.Instance.levelTransitionInProgress) return;
+
         if (!collision.CompareTag(Settings.playerTag)) return;
 
         if (collision is PolygonCollider2D) return;
@@ -59,18 +82,18 @@ public class RoomNetworkRoot : NetworkBehaviour
 
         entryDirection = (transform.position - collision.transform.position).normalized;
 
-        player.NetAuth.CmdEnteredRoom(roomNetData.roomId, entryDirection);
+        if(!roomNetData.isEntrance) player.NetAuth.CmdEnteredRoom(roomNetData.roomId, entryDirection); // Entrance is handled by GameSessionManager on transition separately
     }
 
-    public void BuildVisuals(RoomNetData data, int randomNum)
+    public void BuildVisuals(int randomNum)
     {
         if (built) return;
 
         built = true;
 
-        RoomTemplateSO template = GameSessionManager.Instance.GetRoomTemplateSO(templateId);
+        RoomTemplateSO template = GameSessionManager.Instance.GetRoomTemplateSO(roomNetData.templateId);
 
-        Vector3 roomPosition = new Vector3(data.lowerBounds.x - data.templateLowerBounds.x, data.lowerBounds.y - data.templateLowerBounds.y, 0f);
+        Vector3 roomPosition = new Vector3(roomNetData.lowerBounds.x - roomNetData.templateLowerBounds.x, roomNetData.lowerBounds.y - roomNetData.templateLowerBounds.y, 0f);
         GameObject roomGameObject = Instantiate(template.prefab, roomPosition, Quaternion.identity);
 
         BoxCollider2D roomCollider = roomGameObject.GetComponent<BoxCollider2D>();
@@ -79,7 +102,7 @@ public class RoomNetworkRoot : NetworkBehaviour
         ApplyRoomColliderToRoot(roomCollider, rootCollider2D);
 
         InstantiatedRoom instantiatedRoom = roomGameObject.GetComponent<InstantiatedRoom>();
-        instantiatedRoom.roomNetData = data;
+        instantiatedRoom.roomNetData = roomNetData;
         instantiatedRoom.InitializeMultiplayer(roomGameObject);
 
         if(!isServer) DungeonRuntime.RoomNetDataDict.Add(roomNetData.roomId, roomNetData);
@@ -89,7 +112,7 @@ public class RoomNetworkRoot : NetworkBehaviour
         roomGameObject.transform.localPosition = Vector3.zero;
 
         // Instantiate npc object to the shop room
-        if (data.isShopRoom)
+        if (roomNetData.isShopRoom)
         {
             int npcIndex = 0;
 
