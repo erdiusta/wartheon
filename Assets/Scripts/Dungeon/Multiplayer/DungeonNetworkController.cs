@@ -11,6 +11,8 @@ public class DungeonNetworkController : NetworkBehaviour
 
     [SyncVar(hook = nameof(OnBossNetIdChanged))] public uint activeBossNetId;
 
+    public static uint CachedBossNetId;
+
     private void Awake()
     {
         if (Instance != null) return; 
@@ -22,19 +24,21 @@ public class DungeonNetworkController : NetworkBehaviour
     {
         if (isServer) return;
 
-        if (newNetId == 0)
-        {
-            EnemySpawner.ActiveBoss = null;
-            return;
-        }
+        CachedBossNetId = newNetId;
 
-        if (NetworkClient.spawned.TryGetValue(newNetId, out NetworkIdentity identity))
-        {
-            if (identity.GetComponent<EnemyNetwork>().Isboss)
-            {
-                EnemySpawner.ActiveBoss = identity.GetComponent<Enemy>();
-            }
-        }
+        //if (newNetId == 0)
+        //{
+        //    EnemySpawner.ActiveBoss = null;
+        //    return;
+        //}
+
+        //if (NetworkClient.spawned.TryGetValue(newNetId, out NetworkIdentity identity))
+        //{
+        //    if (identity.GetComponent<EnemyNetwork>().Isboss)
+        //    {
+        //        EnemySpawner.ActiveBoss = identity.GetComponent<Enemy>();
+        //    }
+        //}
     }
 
     [Server]
@@ -44,6 +48,7 @@ public class DungeonNetworkController : NetworkBehaviour
         RoomNetData roomNetData = DungeonRuntime.GetRoomNetData(roomId);
 
         InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);
+        GameSessionManager.Instance.SetCurrentRoom(null, roomNetData);
 
         if (ir == null) return;
 

@@ -719,7 +719,33 @@ public class GameManager : SingletonMonobehaviour<GameManager>
             buttonBuildButton.SetActive(false);
         }
 
-        Enemy detectedBoss = EnemySpawner.ActiveBoss;
+        Enemy detectedBoss = null;
+
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            // SP Path
+            detectedBoss = EnemySpawner.ActiveBoss;
+        }
+        else
+        {
+            // MP Path
+            if (NetworkServer.active)
+            {
+                detectedBoss = EnemySpawner.ActiveBoss;
+            }
+            else
+            {
+                uint bossNetId = DungeonNetworkController.CachedBossNetId;
+
+                if (bossNetId != 0)
+                {
+                    if (NetworkClient.spawned.TryGetValue(bossNetId, out NetworkIdentity identity))
+                    {
+                        detectedBoss = identity.GetComponent<Enemy>();
+                    }
+                }
+            }
+        }
 
         // Boss changed
         if (detectedBoss != null)

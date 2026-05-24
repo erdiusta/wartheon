@@ -68,6 +68,8 @@ public static class Settings
     public static int cast = Animator.StringToHash("cast");
     public static int charge = Animator.StringToHash("charge");
     public static int dash = Animator.StringToHash("dash");
+    public static int summon = Animator.StringToHash("summon");
+    public static int heal = Animator.StringToHash("heal");
     public static int focused = Animator.StringToHash("focused");
     public static int attackType = Animator.StringToHash("attackType");
 
@@ -168,7 +170,7 @@ public static class Settings
 
     #region ENEMY PARAMETERS
     public const int defaultEnemyHealth = 20;
-    public const float targetRefreshInterval = 1f;
+    public const float targetRefreshInterval = 0.4f;
     #endregion
 
     #region UI PARAMETERS

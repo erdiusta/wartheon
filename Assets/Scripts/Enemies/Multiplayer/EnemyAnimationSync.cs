@@ -109,6 +109,35 @@ public class EnemyAnimationSync : NetworkBehaviour
     }
 
     [Server]
+    public void SetBossSummonAnimation(bool isEnabled)
+    {
+        RpcSetBossSummonAnimation(isEnabled);
+    }
+
+    [ClientRpc]
+    public void RpcSetBossSummonAnimation(bool isEnabled)
+    {
+        if (isServer) return;
+
+        animateEnemy?.SetSummonAnimation(isEnabled);
+    }
+
+    [Server]
+    public void SetBossHealAnimation(bool isEnabled)
+    {
+        RpcSetBossHealAnimation(isEnabled);
+    }
+
+    [ClientRpc]
+    public void RpcSetBossHealAnimation(bool isEnabled)
+    {
+        if (isServer) return;
+
+        animateEnemy?.SetHealAnimation(isEnabled);
+    }
+
+
+    [Server]
     public void SetBossChargeAnimation(bool isEnabled)
     {
         RpcSetBossChargeAnimation(isEnabled);

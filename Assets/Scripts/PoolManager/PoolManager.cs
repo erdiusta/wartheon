@@ -157,14 +157,6 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
         }
     }
 
-    IEnumerator DelayReuse(GameObject go, string componentType,uint poolKey)
-    {
-        yield return null;
-
-        go.SetActive(false);
-        poolDictionary[poolKey].Enqueue(go.GetComponent(Type.GetType(componentType)));
-    }
-
     /// <summary>
     /// Get a gameobject component from the pool using the 'poolKey'
     /// </summary>

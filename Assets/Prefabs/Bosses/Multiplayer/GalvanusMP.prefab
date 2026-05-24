@@ -365,6 +365,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1207177700, guid: 946f990462b5bd044a6f86ac8f1aefcf, type: 3}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_MaskInteraction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
@@ -520,6 +524,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: GalvanusMP
       objectReference: {fileID: 0}
+    - target: {fileID: 8141162839608883275, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_Size.x
+      value: 1.99
+      objectReference: {fileID: 0}
+    - target: {fileID: 8141162839608883275, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_Size.y
+      value: 2.79
+      objectReference: {fileID: 0}
+    - target: {fileID: 8141162839608883275, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_Offset.y
+      value: 1.63
+      objectReference: {fileID: 0}
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -535,6 +551,7 @@ PrefabInstance:
     - {fileID: 7400821728870662684, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     - {fileID: 0}
     - {fileID: 1280140502967062622, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -623,6 +640,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   health: {fileID: 0}
+  currentHealth: 0
+  maxHealth: 0
+  isDamageable: 1
 --- !u!114 &-1910597030414012372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -661,12 +681,34 @@ MonoBehaviour:
   avoidLayerMask:
     serializedVersion: 2
     m_Bits: 134217728
-  moveStatus: 1
   updateFrameNumber: 1
   enemyPhase: 0
   isAttacking: 0
   isDashing: 0
   patrolPointsParentContainer: {fileID: 0}
+  waitPhase: 0.15
+  preferredDistance: 6
+  strafeForce: 8
+  retreatForce: 6
+  movementForce: 5
+  chargePrepareDuration: 0.55
+  chargeDuration: 0.45
+  chargePredictionMultiplier: 0.45
+  chargeOvershootDistance: 1.5
+  phase2Threshold: 0.7
+  phase3Threshold: 0.4
+  resetAnimationEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  chargeStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  lightningBoltRelease:
+    m_PersistentCalls:
+      m_Calls: []
+  lightningRelease:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &-8662185796518231842
 MonoBehaviour:
   m_ObjectHideFlags: 0

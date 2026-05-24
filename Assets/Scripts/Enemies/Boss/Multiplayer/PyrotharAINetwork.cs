@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class PyrotharAINetwork : EnemyAINetwork, IMutualBossBehaviour
@@ -11,18 +13,55 @@ public class PyrotharAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
     // BOSSES
     [SerializeField] Transform swordHoldingTransform;
-    [SerializeField] float smearCircleRadius = 0.5f;
+
+    [Header("Combat")]
+    [SerializeField] float preferredDistance = 6f;
+    [SerializeField] float movementForce = 5f;
+    [SerializeField] float retreatForce = 6f;
+    [SerializeField] float strafeForce = 8f;
+
+    [Header("Tail Attack")]
+    [SerializeField] float smearCircleRadius = 2.2f;
+    [SerializeField] int smearDamage = 25;
+    [SerializeField] float smearChargeSpeed = 28f;
+    [SerializeField] float smearChargeDuration = 0.65f;
+    [SerializeField] float smearAttackDuration = 0.8f;
+
+    [Header("Frost Breathe")]
+    [SerializeField] float frostBreatheCircleRadius = 2.2f;
+
+    [Header("Boss Behaviour")]
+    [SerializeField] float waitPhase = 0.15f;
+
+    [Header("Difficulty")]
+    [SerializeField] float phase2Threshold = 0.7f;
+    [SerializeField] float phase3Threshold = 0.4f;
 
     PyrotharPhase currentPyrotharPhase;
-    PyrotharPhase previousPyrotharPhase;
-    private float phaseTimer;  // Timer to control phase duration
-    private float waitPhase = 0.2f;  // Adjust this to control how long each phase lasts
 
-    Health playerHealth;
-    Vector3 lockedPosition;
-    bool chargeProcessStarted;
+    Coroutine pyrotharRoutine;
 
-    Coroutine pyrotharAttackMoveRoutine;
+    bool smearDamageActive;
+
+    // STATE
+    private float phaseTimer;
+
+    bool phase2Active;
+    bool phase3Active;
+
+    bool lockAttackVector;
+    Vector2 lockedPosition;
+
+    float aggressiveMultiplier = 1f;
+
+    readonly HashSet<uint> alreadyHitTargets = new HashSet<uint>();
+
+    // EVENTS
+    public UnityEvent resetAnimationEvent;
+    public UnityEvent smearStartEvent;
+    public UnityEvent smearStopEvent;
+    public UnityEvent breatheReleaseEvent;
+    public UnityEvent icicleReleaseEvent;
 
     bool passedToWait;
 
@@ -44,658 +83,586 @@ public class PyrotharAINetwork : EnemyAINetwork, IMutualBossBehaviour
         base.Awake();
     }
 
-    protected override void Start() 
+    protected override void Start()
     {
+        base.Start();
+
         currentPyrotharPhase = PyrotharPhase.Wait;
     }
-    protected override void OnEnable() 
+
+    protected override void OnEnable()
     {
-        currentRoomNetData = GameSessionManager.Instance.GetCurrentRoomNetData();
+        resetAnimationEvent.AddListener(ResetAnimations);
+        smearStartEvent.AddListener(EnableSmearDamage);
+        smearStopEvent.AddListener(DisableSmearDamage);
+        breatheReleaseEvent.AddListener(OnBreatheReleased);
+        icicleReleaseEvent.AddListener(OnIcicleReleased);
     }
 
-    protected override void OnDisable() { }
+    protected override void OnDisable()
+    {
+        resetAnimationEvent.RemoveListener(ResetAnimations);
+        smearStartEvent.RemoveListener(EnableSmearDamage);
+        smearStopEvent.RemoveListener(DisableSmearDamage);
+        breatheReleaseEvent.RemoveListener(OnBreatheReleased);
+        icicleReleaseEvent.RemoveListener(OnIcicleReleased);
+    }
 
-    protected override void FixedUpdate() { }
+    public void ResetAnimationEvent() => resetAnimationEvent?.Invoke();
+    public void SmearStartEvent() => smearStartEvent?.Invoke();
+    public void SmearStopEvent() => smearStopEvent?.Invoke();
+    public void BreatheReleaseEvent() => breatheReleaseEvent?.Invoke();
+    public void IcicleReleaseEvent() => icicleReleaseEvent?.Invoke();
 
     protected override void Update()
     {
         if (!isServer || !enemyFullyInitialized) return;
+        if (currentRoomNetData == default) currentRoomNetData = enemy.owningSpawner.instantiatedRoom.roomNetData;
 
-        if (enemyPhase == EnemyPhase.Death)
-        {
-            if (attackAnimationRoutine != null)
-            {
-                StopCoroutine(attackAnimationRoutine);
-            }
+        if (enemyPhase == EnemyPhase.Death) return;
 
-            return;
-        }
-
-        healTimer += Time.deltaTime;
-        targetRefreshTimer += Time.deltaTime;
-
-        if (targetRefreshTimer >= Settings.targetRefreshInterval)
-        {
-            targetPlayer = HelperUtilities.GetClosestPlayer(transform.position);
-            targetRefreshTimer = 0;
-        }
+        RefreshTargetAndLockedVector();
 
         if (targetPlayer != null)
         {
-            Vector3 direction = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
-            attackLockedVector = direction;
+            trackingVector = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+        }
+    }
+
+    protected override void FixedUpdate()
+    {
+        if (!isServer || !enemyFullyInitialized) return;
+        if (targetPlayer == null) return;
+        if (enemyPhase == EnemyPhase.Death) return;
+
+        // Emergency pullback if Sylvarok drifts outside bounds
+        if (IsOutsideBossRoom(transform.position, cellMin, cellMax, isMultiplayer: true))
+        {
+            Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
+            rb2D.position = safePos;
+            rb2D.linearVelocity = Vector2.zero;
+
+            Debug.LogWarning("Pyrothar was outside bounds. Snapped back.");
         }
 
-        // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
-        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
-        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Pyrothar);
-        enemy.animateEnemy.ResetAimAnimationParameters();
-        enemy.animateEnemy.SetAimParameters(unitAimDirection);
+        UpdateBossDifficulty();
 
-        // Update timers - Fire Projectile
-        firingIntervalTimer -= Time.deltaTime;
-
-        HasNegativeMoveStatusEffect();
+        HandleAim();
 
         if (enemy.moveStatus == MoveStatus.Idle)
         {
-            // Check if the player is on stealth
-            if (targetPlayer != null && targetPlayer.isStealthActive)
+            if (targetPlayer.isStealthActive)
             {
                 PlayerStealthCheck();
             }
 
-            // Check if the enemy is a Galvanus boss
-            if (enemyDetails.enemyBehaviour == EnemyBehaviour.Pyrothar)
+            switch (currentPyrotharPhase)
             {
-                // Handle phases based on currentPhase
-                switch (currentPyrotharPhase)
-                {
-                    case PyrotharPhase.Wait:
-                        PassedToWait = true;
+                case PyrotharPhase.Wait:
 
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
+                    PassedToWait = true;
+                    phaseTimer += Time.fixedDeltaTime;
 
-                        // Optionally handle phase transitions based on a timer
-                        phaseTimer += Time.deltaTime;
-                        if (phaseTimer >= waitPhase)
-                        {
-                            TransitionToNextPhase();
-                            phaseTimer = 0f;  // Reset the timer for the next phase
-                        }
-                        break;
-
-                    case PyrotharPhase.FireProjectile:
-                        Debug.Log(CryotharPhase.IceProjectile.ToString());
-                        HandleIceProjectile();
-                        break;
-
-                    case PyrotharPhase.TailAttack:
-                        Debug.Log(CryotharPhase.TailAttack.ToString());
-                        HandleTailAttack();
-                        break;
-
-                    case PyrotharPhase.FirePillar:
-                        Debug.Log(CryotharPhase.Icicle.ToString());
-                        HandleIcicle();
-                        break;
-
-                    case PyrotharPhase.FireBreath:
-                        Debug.Log(CryotharPhase.FrostBreath.ToString());
-                        HandleFrostBreath();
-                        break;
-
-                    default:
-                        break;
-                }
+                    if (phaseTimer >= waitPhase)
+                    {
+                        phaseTimer = 0;
+                        TransitionToNextPhase();
+                    }
+                    break;
+                case PyrotharPhase.FireProjectile:
+                    if (pyrotharRoutine == null)
+                    {
+                        pyrotharRoutine = StartCoroutine(FireProjectileRoutine());
+                    }
+                    break;
+                case PyrotharPhase.TailAttack:
+                    if (pyrotharRoutine == null)
+                    {
+                        pyrotharRoutine = StartCoroutine(TailAttackRoutine());
+                    }
+                    break;
+                case PyrotharPhase.FirePillar:
+                    if (pyrotharRoutine == null)
+                    {
+                        pyrotharRoutine = StartCoroutine(FirePillarRoutine());
+                    }
+                    break;
+                case PyrotharPhase.FireBreath:
+                    if (pyrotharRoutine == null)
+                    {
+                        pyrotharRoutine = StartCoroutine(FireBreatheRoutine());
+                    }
+                    break;
+                default:
+                    break;
             }
+        }
+    }
+
+    private void HandleAim()
+    {
+        Vector2 activeAimVector = lockAttackVector ? attackLockedVector : trackingVector;
+        float unitAngle = HelperUtilities.GetAngleFromVector(activeAimVector);
+        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
+        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+
+        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Cryothar);
+
+        if (unitAimDirection != enemy.LastAim)
+        {
+            enemy.LastAim = unitAimDirection;
+
+            enemy.animateEnemy.ResetAimAnimationParameters();
+            enemy.animateEnemy.SetAimParameters(unitAimDirection);
+
+            enemy.enemyAnimSync?.ResetAimAnimations();
+            enemy.enemyAnimSync?.UpdateAnimationStateServer(wasMoving, unitAimDirection);
         }
     }
 
     public void HandleWaitPhase()
     {
-        // Logic for waiting phase (maybe the Centaur just moves or idles here)
-        enemy.animateEnemy.SetIdleAnimationParameters();
-    }
-
-    private void HandleIceProjectile()
-    {
         enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
 
-        if (pyrotharAttackMoveRoutine == null)
-        {
-            pyrotharAttackMoveRoutine = StartCoroutine(AttackRoutine(PyrotharPhase.FireProjectile));
-        }
-    }
-
-    private void HandleTailAttack()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (pyrotharAttackMoveRoutine == null)
-        {
-            pyrotharAttackMoveRoutine = StartCoroutine(AttackRoutine(PyrotharPhase.TailAttack));
-        }
-    }
-
-    private void HandleIcicle()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (pyrotharAttackMoveRoutine == null)
-        {
-            pyrotharAttackMoveRoutine = StartCoroutine(AttackRoutine(PyrotharPhase.FirePillar));
-        }
-    }
-
-    private void HandleFrostBreath()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (pyrotharAttackMoveRoutine == null)
-        {
-            pyrotharAttackMoveRoutine = StartCoroutine(AttackRoutine(PyrotharPhase.FireBreath));
-        }
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
     }
 
     private void TransitionToNextPhase()
     {
-        // Check if the player is on stealth
-        if (targetPlayer.isStealthActive)
+        if (targetPlayer == null)
         {
-            PlayerStealthCheck();
+            currentPyrotharPhase = PyrotharPhase.Wait;
             return;
         }
 
+        float distance = Vector2.Distance(transform.position, targetPlayer.GetPlayerPosition());
+
+        // CLOSE RANGE
+        if (distance < 3f)
+        {
+            int roll = Random.Range(0, 100);
+
+            if (roll < 70) currentPyrotharPhase = PyrotharPhase.FireBreath;
+            else currentPyrotharPhase = PyrotharPhase.TailAttack;
+
+            return;
+        }
+
+        // LONG RANGE
+        if (distance > 8f)
+        {
+            int roll = Random.Range(0, 100);
+
+            if (roll < 65) currentPyrotharPhase = PyrotharPhase.FirePillar;
+            else currentPyrotharPhase = PyrotharPhase.FireProjectile;
+
+            return;
+        }
+
+        // MID RANGE
+        int midRoll = Random.Range(0, 100);
+
+        if (midRoll < 45) currentPyrotharPhase = PyrotharPhase.TailAttack;
+        else if (midRoll < 75) currentPyrotharPhase = PyrotharPhase.FireProjectile;
+        else currentPyrotharPhase = PyrotharPhase.FirePillar;
+    }
+
+    // ICE PROJECTILE
+    IEnumerator FireProjectileRoutine()
+    {
+        BeginRoutine();
+
+        float timer = 0f;
+        float duration = 2f;
+
+        enemy.animateEnemy.SetHealAnimation(true);
+        enemy.enemyAnimSync?.SetBossHealAnimation(true);
+
+        while (timer < duration)
+        {
+            if (enemy.health.hasDied) yield break;
+
+            timer += Time.fixedDeltaTime;
+
+            if (!hasPendingProjectile)
+            {
+                hasPendingProjectile = true;
+
+                Vector2 shotDirection = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+                pendingProjectileRequest = new PendingProjectileRequest
+                {
+                    projectileKind = ProjectileKind.Default,
+                    attackContext = new AttackContext { cryotharPhase = CryotharPhase.IceProjectile },
+                    lockedAimVector = shotDirection
+                };
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        enemy.animateEnemy.SetHealAnimation(false);
+        enemy.enemyAnimSync?.SetBossHealAnimation(false);
+
+        pyrotharRoutine = null;
+
+        currentPyrotharPhase = PyrotharPhase.Wait;
+        phaseTimer = 0;
+    }
+
+    // TAIL ATTACK
+    IEnumerator TailAttackRoutine()
+    {
+        BeginRoutine();
+
+        isAttacking = true;
+
+        // LOCK TARGET POSITION ONCE
         if (targetPlayer != null)
         {
-            if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) < 2f)
-            {
-                // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
-                currentPyrotharPhase = (PyrotharPhase)Random.Range(4, Enum.GetValues(typeof(CryotharPhase)).Length);
-                return;
-            }
-            else if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) > 10f)
-            {
-                // If player is too far to boss, automatically next phase will be Fire Pillar,
-                currentPyrotharPhase = PyrotharPhase.FirePillar;
-                return;
-            }
+            lockedPosition = targetPlayer.GetPlayerPosition();
+            lockAttackVector = true;
         }
 
+        // PRE-CHECK
+        bool closeEnough = Vector2.Distance(rb2D.position, lockedPosition) < 1.2f;
 
-        if (currentPyrotharPhase == PyrotharPhase.TailAttack || currentPyrotharPhase == PyrotharPhase.FirePillar ||
-            currentPyrotharPhase == PyrotharPhase.FireProjectile || currentPyrotharPhase == PyrotharPhase.FireBreath)
+        // PREPARE CHARGE
+        if (!closeEnough)
         {
-            // If centaur made a move then next phase will be wait
-            currentPyrotharPhase = PyrotharPhase.Wait;
+            float prepareTimer = 0f;
+            float prepareDuration = 0.35f;
+
+            while (prepareTimer < prepareDuration)
+            {
+                if (ShouldCancelRoutine()) yield break;
+
+                prepareTimer += Time.fixedDeltaTime;
+                rb2D.linearVelocity = Vector2.zero;
+
+                yield return waitForFixedUpdate;
+            }
+
+            // START CHARGE
+            Vector2 chargeDirection = (lockedPosition - rb2D.position).normalized;
+
+            float chargeTimer = 0f;
+
+            while (chargeTimer < smearChargeDuration)
+            {
+                if (ShouldCancelRoutine()) yield break;
+
+                chargeTimer += Time.fixedDeltaTime;
+
+                float chargeSpeed = smearChargeSpeed * aggressiveMultiplier;
+                rb2D.linearVelocity = chargeDirection * chargeSpeed;
+
+                // EARLY STOP IF CLOSE ENOUGH
+                if (Vector2.Distance(rb2D.position, lockedPosition) < 1.2f)
+                {
+                    break;
+                }
+
+                yield return waitForFixedUpdate;
+            }
+
+            rb2D.linearVelocity = Vector2.zero;
         }
-        else
+
+        // SMALL BUFFER BEFORE SMEAR
+        yield return waitForFixedUpdate;
+
+        alreadyHitTargets.Clear();
+
+        smearDamageActive = false;
+
+        // SMEAR ATTACK START
+        enemy.animateEnemy.SetSummonAnimation(true);
+        enemy.enemyAnimSync?.SetBossSummonAnimation(true);
+
+        float smearTimer = 0f;
+
+        while (smearTimer < smearAttackDuration)
         {
-            // Example of conditional or random phase transitions
-            currentPyrotharPhase = (PyrotharPhase)Random.Range(2, Enum.GetValues(typeof(PyrotharPhase)).Length);
+            if (ShouldCancelRoutine()) yield break;
+
+            smearTimer += Time.fixedDeltaTime;
+
+            // DAMAGE WINDOW CONTROLLED BY ANIMATION EVENTS
+            if (smearDamageActive)
+            {
+                PerformSmearDamage(smearCircleRadius);
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        smearDamageActive = false;
+
+        enemy.animateEnemy.SetSummonAnimation(false);
+        enemy.enemyAnimSync?.SetBossSummonAnimation(false);
+
+        isAttacking = false;
+
+        CleanupRoutine();
+
+        enemy.animateEnemy.SetIdleAnimationParameters();
+        enemy.enemyAnimSync?.UpdateAnimationStateServer(moving: false, enemy.LastAim);
+    }
+
+    // FROST BREATHE
+    IEnumerator FireBreatheRoutine()
+    {
+        BeginRoutine();
+
+        isAttacking = true;
+        rb2D.linearVelocity = Vector2.zero;
+
+        // ONLY USE AT CLOSE RANGE
+        if (targetPlayer == null || Vector2.Distance(rb2D.position, targetPlayer.GetPlayerPosition()) > 3f)
+        {
+            CleanupRoutine();
+            yield break;
+        }
+
+        // LOCK AIM ONCE
+        attackLockedVector = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+        lockAttackVector = true;
+        alreadyHitTargets.Clear();
+
+        smearDamageActive = false;
+
+        // SMEAR ATTACK START
+        enemy.animateEnemy.SetCastAnimation(true);
+        enemy.enemyAnimSync?.SetBossCastAnimation(true);
+
+        float breathTimer = 0f;
+        float breathDuration = 2f;
+
+        while (breathTimer < breathDuration)
+        {
+            if (ShouldCancelRoutine()) yield break;
+
+            breathTimer += Time.fixedDeltaTime;
+
+            // DAMAGE WINDOW CONTROLLED BY ANIMATION EVENTS
+            if (smearDamageActive)
+            {
+                PerformSmearDamage(frostBreatheCircleRadius);
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        smearDamageActive = false;
+
+        enemy.animateEnemy.SetCastAnimation(false);
+        enemy.enemyAnimSync?.SetBossCastAnimation(false);
+
+        isAttacking = false;
+
+        CleanupRoutine();
+
+        enemy.animateEnemy.SetIdleAnimationParameters();
+        enemy.enemyAnimSync?.UpdateAnimationStateServer(moving: false, enemy.LastAim);
+    }
+
+    // ICICLE
+    IEnumerator FirePillarRoutine()
+    {
+        if (enemy.health.hasDied) yield break;
+
+        float timer = 0f;
+        float duration = 2.5f;
+
+        uint lockedTargetNetId = targetPlayer.NetAuth.netId;
+
+        enemy.animateEnemy.SetFocusedAnimation(true);
+        enemy.enemyAnimSync?.SetBossFocusedAnimation(true);
+
+        while (timer < duration)
+        {
+            if (enemy.health.hasDied) yield break;
+
+            timer += Time.fixedDeltaTime;
+
+            yield return waitForFixedUpdate;
+        }
+
+        enemy.animateEnemy.SetFocusedAnimation(false);
+        enemy.enemyAnimSync?.SetBossFocusedAnimation(false);
+
+        pyrotharRoutine = null;
+
+        currentPyrotharPhase = PyrotharPhase.Wait;
+        phaseTimer = 0f;
+    }
+
+    void PerformSmearDamage(float radius)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(swordHoldingTransform.position, radius);
+
+        foreach (Collider2D collider in colliders)
+        {
+            if (!collider.CompareTag(Settings.playerTag)) continue;
+
+            Player player = collider.GetComponent<Player>();
+            if (player == null) continue;
+
+            if (alreadyHitTargets.Contains(player.NetAuth.netId)) continue;
+
+            alreadyHitTargets.Add(player.NetAuth.netId);
+
+            ReceiveProjectileDamage damageReceiver = collider.GetComponent<ReceiveProjectileDamage>();
+
+            if (damageReceiver == null) continue;
+
+            DamageContext ctx = new()
+            {
+                dealerPosition = transform.position,
+                receiverPosition = player.transform.position
+            };
+
+            damageReceiver.TakeProjectileDamage(smearDamage, ctx);
+            ApplyKnockbackToPlayer(player);
         }
     }
 
-    IEnumerator AttackRoutine(PyrotharPhase fireWrymPhase)
+    void BeginRoutine()
     {
-        if (fireWrymPhase == PyrotharPhase.FireProjectile)
+        ResetAnimations();
+
+        rb2D.linearVelocity = Vector2.zero;
+
+        enemy.isFiring = false;
+    }
+
+    void CleanupRoutine()
+    {
+        ResetAnimations();
+
+        rb2D.linearVelocity = Vector2.zero;
+
+        enemy.isFiring = false;
+
+        lockAttackVector = false;
+        hasPendingProjectile = false;
+        pyrotharRoutine = null;
+        currentPyrotharPhase = PyrotharPhase.Wait;
+
+        passedToWait = false;
+        phaseTimer = 0f;
+    }
+
+    bool ShouldCancelRoutine()
+    {
+        if (!isServer)
         {
-            if (enemy.health.hasDied) yield break;
-
-            enemy.animator.SetFloat(Settings.motionType, -1f);
-            enemy.animator.SetInteger(Settings.attackType, 2);
-
-            // PREPARE PRECHARGE PHASE
-            float prechargeDuration = 0.6f;
-            float chargeTimer = 0f;
-
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animator.SetBool(Settings.cast, true);
-
-            yield return null;
-
-            enemy.animator.SetBool(Settings.isAttack, true);
-
-            while (chargeTimer < prechargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
-            }
-
-            chargeTimer = 0f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animator.SetBool(Settings.cast, false);
-            float fireTimer = 0f;
-            float fireProjectileDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
-
-            while (fireTimer < fireProjectileDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                fireTimer += Time.deltaTime;
-
-                // Interval Timer
-                if (firingIntervalTimer < 0f)
-                {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(isLaser: false, ProjectileKind.Default, new AttackContext { pyrotharPhase = PyrotharPhase.FireProjectile });
-                    }
-                    else
-                    {
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                    }
-                }
-
-                yield return null;
-            }
-
-            yield return null;
-
-            enemy.animateEnemy.SetIdleAnimationParameters();
-            previousPyrotharPhase = PyrotharPhase.FireProjectile;
-
+            CleanupRoutine();
+            return true;
         }
-        else if (fireWrymPhase == PyrotharPhase.TailAttack)
+
+        if (enemy.health.hasDied)
         {
-            if (enemy.health.hasDied) yield break;
+            CleanupRoutine();
+            return true;
+        }
 
-            enemy.animator.SetFloat(Settings.motionType, -1f);
-            enemy.animator.SetInteger(Settings.attackType, 0);
+        if (targetPlayer == null)
+        {
+            CleanupRoutine();
+            return true;
+        }
 
-            enemyPhase = EnemyPhase.Attack;
-            isAttacking = true;
+        return false;
+    }
 
-            // PREPARE PRECHARGE PHASE
-            // Lock-on player position during the start of precharge
-            if (!chargeProcessStarted && targetPlayer != null)
-            {
-                lockedPosition = targetPlayer.transform.position + new Vector3(0f, 0.5f, 0f);
-            }
+    // ANIMATION EVENTS
+    public void EnableSmearDamage()
+    {
+        if (!isServer) return;
 
-            chargeProcessStarted = true;
+        alreadyHitTargets.Clear();
+        smearDamageActive = true;
+    }
 
-            // Pre-check if moving towards player is necessary 
-            if (Vector3.Distance(transform.position, lockedPosition) < 1.5f)  // Small threshold for accuracy
-            {
-                // Exit the loop early if boss has reached the destination
-                goto skipRun;
-            }
+    public void DisableSmearDamage()
+    {
+        if (!isServer) return;
 
-            float prehargeDuration = 1.5f;
-            float chargeTimer = 0f;
+        smearDamageActive = false;
+    }
 
-            enemy.animator.SetFloat(Settings.motionType, 1f); // charge trigger to blend tree
+    private void OnBreatheReleased()
+    {
+        if (!isServer) return;
+        if (!hasPendingProjectile) return;
 
-            while (chargeTimer < prehargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
+        attackLockedVector = pendingProjectileRequest.lockedAimVector;
+        lockAttackVector = true;
 
-                chargeTimer += Time.deltaTime;
+        FireWeapon(false, pendingProjectileRequest.projectileKind, pendingProjectileRequest.attackContext);
 
-                yield return null;
-            }
+        hasPendingProjectile = false;
+    }
 
-            chargeTimer = 0f;
-            float chargeDuration = 2f;
+    private void OnIcicleReleased()
+    {
+        if (!isServer) return;
 
-            yield return null;  // Wait for the animation to start
+        FireWeapon(false, pendingProjectileRequest.projectileKind, new AttackContext { cryotharPhase = CryotharPhase.Icicle }, targetPlayer.NetAuth.netId);
 
-            // START CHARGE PHASE
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animateEnemy.SetMovementAnimationParameters();
+        pendingProjectileRequest = default;
+        hasPendingProjectile = false;
+    }
 
-            // Clamp lockedPosition
-            InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId);
-            Grid grid = ir.grid;
+    void UpdateBossDifficulty()
+    {
+        float hpPercent = (float)enemy.health.GetCurrentHealth() / enemy.health.GetMaximumHealth();
 
-            Vector3Int cell = grid.WorldToCell(lockedPosition);
-            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
-            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
-            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
+        if (!phase2Active && hpPercent <= phase2Threshold)
+        {
+            phase2Active = true;
+            aggressiveMultiplier = 1.25f;
+            waitPhase = 0.8f;
+        }
 
-            Vector3 direction = (lockedPosition - transform.position).normalized;
-            float chargeSpeed = 20f;
+        if (!phase3Active && hpPercent <= phase3Threshold)
+        {
+            phase3Active = true;
+            aggressiveMultiplier = 1.5f;
+            waitPhase = 0.6f;
+        }
+    }
 
-            while (chargeTimer < chargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
+    private void ResetAnimations()
+    {
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
 
-                chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+    }
 
-                // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, clampedPosition) < 1.5f)  // Small threshold for accuracy
-                {
-                    // Exit the loop early if boss has reached the destination
-                    break;
-                }
+    private void RefreshTargetAndLockedVector()
+    {
+        targetRefreshTimer += Time.deltaTime;
 
-                yield return null;
-            }
-
-
-        skipRun:
-
-            chargeTimer = 0f;
-
-            yield return null;
-
-            // Location change completed now starting sword smear process starts if player is close to the enemy
-            float smearDuration = 1f;
-
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-
-            Vector3 playerDirectionVector = new Vector3();
+        if (targetRefreshTimer >= Settings.targetRefreshInterval)
+        {
+            targetPlayer = HelperUtilities.GetClosestPlayer(transform.position);
+            targetRefreshTimer = 0f;
 
             if (targetPlayer != null)
             {
-                playerDirectionVector = targetPlayer.GetPlayerPosition() - transform.position;
+                attackLockedVector = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
             }
-
-            yield return null;
-
-            while (chargeTimer < smearDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                enemy.animator.SetBool(Settings.isAttack, true);
-
-                foreach (Collider2D collider in Physics2D.OverlapCircleAll(swordHoldingTransform.position, smearCircleRadius))
-                {
-                    if (collider.GetType() == typeof(PolygonCollider2D))
-                    {
-                        // Don't hit yourself if player is also in the collider list
-                        if (collider.tag == Settings.enemyTag) continue;
-
-                        if (collider.tag == Settings.chestItemTag) continue;
-
-                        if (playerHealth = collider.GetComponent<Health>())
-                        {
-                            Player player = collider.GetComponent<Player>();
-
-                            float blindPenalty = enemy.isBlind ? 0.5f : 0f;
-
-                            DamageContext ctx = new DamageContext { source = DamageSourceType.Melee, dealerPosition = transform.position };
-                            ReceiveProjectileDamage receiveProjectileDamage = collider.GetComponent<ReceiveProjectileDamage>();
-
-                            // Evasiveness - dodge check
-                            if (100 - (player.currentDodgeValue + blindPenalty) * 100 > Random.Range(1, 101))
-                            {
-                                ctx.receiverPosition = player.health.transform.position;
-                                receiveProjectileDamage.TakeProjectileDamage(25, ctx);
-
-                                //SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
-
-                                // Apply knockback
-                                ApplyKnockbackToPlayer(player);
-                            }
-                            else
-                            {
-                                ctx.receiverPosition = enemy.health.transform.position;
-
-                                player.health.isDodging = true;
-                                player.healthEvent.CallDodgeEvent();
-                                player.health.PostHitImmunity(true);
-                                receiveProjectileDamage.TakeProjectileDamage(0, ctx);
-                            }
-                        }
-                    }
-                }
-
-                yield return null;
-
-                //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.attackSoundEffect);
-            }
-
-            enemy.animator.SetBool(Settings.isAttack, false);
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
-            isAttacking = false;
-
-            previousPyrotharPhase = PyrotharPhase.TailAttack;
         }
-        else if (fireWrymPhase == PyrotharPhase.FirePillar)
-        {
-            enemy.animator.SetFloat(Settings.motionType, -1f);
-            enemy.animator.SetInteger(Settings.attackType, 1);
-            enemyPhase = EnemyPhase.Attack;
-
-            // PREPARE PRECHARGE PHASE
-            float prechargeDuration = 1.3f;
-            float chargeTimer = 0f;
-
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animator.SetBool(Settings.cast, true);
-
-            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.chargeSoundEffect);
-
-            yield return null;
-
-            while (chargeTimer < prechargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
-            }
-
-            chargeTimer = 0f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animator.SetBool(Settings.cast, false);
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
-            float fireTimer = 0f;
-            float fireProjectileDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
-
-            while (fireTimer < fireProjectileDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                fireTimer += Time.deltaTime;
-
-                // Interval Timer
-                if (firingIntervalTimer < 0f)
-                {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(isLaser: false, ProjectileKind.Default, new AttackContext { pyrotharPhase = PyrotharPhase.FirePillar });
-                    }
-                    else
-                    {
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                        enemy.animateEnemy.SetIdleAnimationParameters();
-                    }
-                }
-
-                yield return null;
-            }
-
-            yield return null;
-
-            previousPyrotharPhase = PyrotharPhase.FirePillar;
-        }
-        else if (fireWrymPhase == PyrotharPhase.FireBreath)
-        {
-            if (enemy.health.hasDied) yield break;
-
-            enemy.animator.SetFloat(Settings.motionType, -1f);
-            enemy.animator.SetInteger(Settings.attackType, 0);
-
-            enemyPhase = EnemyPhase.Attack;
-            isAttacking = true;
-
-            // PREPARE PRECHARGE PHASE
-            // Lock-on player position during the start of precharge
-            if (!chargeProcessStarted && targetPlayer != null)
-            {
-                lockedPosition = targetPlayer.transform.position + new Vector3(0f, 0.5f, 0f);
-            }
-
-            chargeProcessStarted = true;
-
-            // Pre-check if moving towards player is necessary 
-            if (Vector3.Distance(transform.position, lockedPosition) < 3f)  // Small threshold for accuracy
-            {
-                // Exit the loop early if boss has reached the destination
-                goto skipRun;
-            }
-
-            float prechargeDuration = 1.5f;
-            float chargeTimer = 0f;
-
-            while (chargeTimer < prechargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
-            }
-
-            chargeTimer = 0f;
-            float chargeDuration = 2f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animateEnemy.SetMovementAnimationParameters();
-
-            Vector3 direction = (lockedPosition - transform.position).normalized;
-            float chargeSpeed = 20f;
-
-            while (chargeTimer < chargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, lockedPosition, chargeSpeed * Time.deltaTime);
-
-                // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, lockedPosition) < 1.5f)  // Small threshold for accuracy
-                {
-                    // Exit the loop early if boss has reached the destination
-                    break;
-                }
-
-                yield return null;
-            }
-
-        skipRun:
-
-            chargeTimer = 0f;
-
-            yield return null;
-
-            // Location change completed now starting sword smear process starts if player is close to the enemy
-            float iceBreathDuration = 1f;
-
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-
-            Vector3 playerDirectionVector = new Vector3();
-
-            if (targetPlayer != null)
-            {
-                playerDirectionVector = targetPlayer.GetPlayerPosition() - transform.position;
-            }
-
-            yield return null;
-
-            while (chargeTimer < iceBreathDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                enemy.animator.SetBool(Settings.cast, true);
-
-                foreach (Collider2D collider in Physics2D.OverlapCircleAll(swordHoldingTransform.position, smearCircleRadius))
-                {
-                    if (collider.GetType() == typeof(PolygonCollider2D))
-                    {
-                        // Don't hit yourself if player is also in the collider list
-                        if (collider.tag == Settings.enemyTag) continue;
-
-                        if (collider.tag == Settings.chestItemTag) continue;
-
-                        if (playerHealth = collider.GetComponent<Health>())
-                        {
-                            Player player = collider.GetComponent<Player>();
-
-                            float blindPenalty = enemy.isBlind ? 0.5f : 0f;
-
-                            DamageContext ctx = new DamageContext { source = DamageSourceType.Melee, dealerPosition = player.transform.position};
-                            ReceiveProjectileDamage receiveProjectileDamage = collider.GetComponent<ReceiveProjectileDamage>();
-
-                            // Evasiveness - dodge check
-                            if (100 - (player.currentDodgeValue + blindPenalty) * 100 > Random.Range(1, 101))
-                            {
-                                ctx.receiverPosition = player.transform.position;
-                                receiveProjectileDamage.TakeProjectileDamage(25, ctx);
-
-                                //SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
-
-                                // Apply knockback
-                                ApplyKnockbackToPlayer(player);
-                            }
-                            else
-                            {
-                                ctx.receiverPosition = enemy.health.transform.position;
-
-                                player.health.isDodging = true;
-                                player.healthEvent.CallDodgeEvent();
-                                player.health.PostHitImmunity(true);
-                                receiveProjectileDamage.TakeProjectileDamage(0, ctx);
-                            }
-                        }
-                    }
-                }
-
-                yield return null;
-
-                SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
-            }
-
-            enemy.animator.SetBool(Settings.cast, false);
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
-            isAttacking = false;
-
-            previousPyrotharPhase = PyrotharPhase.FireBreath;
-        }
-
-        chargeProcessStarted = false;
-        pyrotharAttackMoveRoutine = null;
-
-        TransitionToNextPhase();
     }
 
     public void PlayerStealthCheck()
@@ -707,5 +674,8 @@ public class PyrotharAINetwork : EnemyAINetwork, IMutualBossBehaviour
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(swordHoldingTransform.position, smearCircleRadius);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(swordHoldingTransform.position, frostBreatheCircleRadius);
     }
 }

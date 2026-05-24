@@ -598,7 +598,7 @@ PrefabInstance:
     - target: {fileID: 9053816728829046246, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 082b41b72db757f408031388fa01d371, type: 2}
+      objectReference: {fileID: 9100000, guid: b0205ae45c8622c4f91f308ff173161b, type: 2}
     m_RemovedComponents:
     - {fileID: 0}
     - {fileID: 0}
@@ -703,6 +703,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   health: {fileID: 0}
+  currentHealth: 0
+  maxHealth: 0
+  isDamageable: 1
 --- !u!114 &-851402041473580933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -741,14 +744,40 @@ MonoBehaviour:
   avoidLayerMask:
     serializedVersion: 2
     m_Bits: 134217728
-  moveStatus: 1
   updateFrameNumber: 1
   enemyPhase: 0
   isAttacking: 0
   isDashing: 0
   patrolPointsParentContainer: {fileID: 0}
   swordHoldingTransform: {fileID: 2598544421764557147}
-  smearCircleRadius: 0.5
+  preferredDistance: 6
+  movementForce: 5
+  retreatForce: 6
+  strafeForce: 8
+  smearCircleRadius: 2.7
+  smearDamage: 25
+  smearChargeSpeed: 28
+  smearChargeDuration: 0.65
+  smearAttackDuration: 0.8
+  frostBreatheCircleRadius: 2.2
+  waitPhase: 0.15
+  phase2Threshold: 0.7
+  phase3Threshold: 0.4
+  resetAnimationEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  smearStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  smearStopEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  breatheReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  icicleReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1822852663092413031
 MonoBehaviour:
   m_ObjectHideFlags: 0

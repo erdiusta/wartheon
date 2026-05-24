@@ -30316,6 +30316,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  activeBossNetId: 0
 --- !u!4 &663898644
 Transform:
   m_ObjectHideFlags: 0
@@ -49383,6 +49384,9 @@ MonoBehaviour:
   - poolSize: 100
     prefab: {fileID: 2585463276777236944, guid: 7b3a8f85af3a7874abf6cf9ae4dc6503, type: 3}
     componentType: IFireable
+  - poolSize: 20
+    prefab: {fileID: 2585463276777236944, guid: 5d8de6b821c4d2b40aade75c4ac31cde, type: 3}
+    componentType: IFireable
   - poolSize: 100
     prefab: {fileID: 2585463276777236944, guid: f07c950aa9b875742b3fc62b9251c0c2, type: 3}
     componentType: IFireable
@@ -63371,7 +63375,9 @@ MonoBehaviour:
     isClearedOfEnemies: 0
     isPreviouslyVisited: 0
     shopRoomGoodsCreated: 0
-    isRoomReady: 0
+    currentBossCategory: 0
+    bossSpawned: 0
+  levelTransitionInProgress: 0
 --- !u!114 &1611077672
 MonoBehaviour:
   m_ObjectHideFlags: 0

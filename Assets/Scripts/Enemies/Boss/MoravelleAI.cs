@@ -80,6 +80,8 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
 
     protected override void Start()
     {
+        currentRoom = GameManager.Instance.GetCurrentRoom();
+
         currentMoravellePhase = MoravellePhase.Wait;
     }
 
@@ -133,6 +135,8 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
 
     protected override void FixedUpdate()
     {
+        if (targetPlayer == null) return;
+
         if (enemyPhase == EnemyPhase.Death)
         {
             if (attackAnimationRoutine != null)
@@ -144,6 +148,16 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
         }
 
         UpdateBossDifficulty();
+
+        // Emergency pullback if Sylvarok drifts outside bounds
+        if (IsOutsideBossRoom(transform.position, cellMin, cellMax))
+        {
+            Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
+            rb2D.position = safePos;
+            rb2D.linearVelocity = Vector2.zero;
+
+            Debug.LogWarning("Moravelle was outside bounds. Snapped back.");
+        }
 
         // AIM
         Vector2 activeAimVector = attackLockedVector;
@@ -336,7 +350,8 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
 
             if (timer >= chargePrepareDuration + 1f)
             {
-                break;
+                ResetChargeState();
+                yield break;
             }
 
             yield return waitForFixedUpdate;
@@ -430,6 +445,7 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
 
         FireWeapon(false, pendingProjectileRequest.projectileKind, pendingProjectileRequest.attackContext);
 
+        pendingProjectileRequest = default;
         hasPendingProjectile = false;
 
         StartCoroutine(DelayedAimUnlock());
@@ -605,6 +621,24 @@ public class MoravelleAI : EnemyAI, IMutualBossBehaviour
         {
             rb2D.AddForce(dir * movementForce);
         }
+    }
+
+    void ResetChargeState()
+    {
+        pendingChargeRelease = false;
+        chargeReleased = false;
+
+        isCharging = false;
+        lockAttackVector = false;
+        isAttacking = false;
+
+        enemy.animateEnemy.SetChargeAnimation(false);
+        enemy.enemyAnimSync?.SetBossChargeAnimation(false);
+
+        moravelleRoutine = null;
+
+        currentMoravellePhase = MoravellePhase.Wait;
+        phaseTimer = 0f;
     }
 
     private void ResetAnimations()

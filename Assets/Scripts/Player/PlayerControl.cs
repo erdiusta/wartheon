@@ -793,7 +793,7 @@ public class PlayerControl : MonoBehaviour
 
                 // Fire event (only once per press)
                 player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, mainHandWeaponDetails.weaponCurrentProjectile.isLaser,
-                    ProjectileKind.Default, default, player.netId, belongingEnemy: null);
+                    ProjectileKind.Default, default, player.netId, targetNetId: 0, null);
             }
         }
     }
@@ -847,7 +847,7 @@ public class PlayerControl : MonoBehaviour
     private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {
         // Trigger reset prechager mechanism in case a hit taken during the precharge
-        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false, ProjectileKind.Default, default, player.netId, belongingEnemy: null);
+        player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false, ProjectileKind.Default, default, player.netId, targetNetId: 0, null);
     }
 
     public bool IsClickingSpecificUILayer()

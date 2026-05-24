@@ -1,7 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
@@ -12,17 +13,55 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
     // BOSS
     SylvarokPhase currentSylvarokPhase;
-    SylvarokPhase previousSylvarokPhase;
-    private float phaseTimer;  // Timer to control phase duration
-    private float waitPhase = 0.5f;  // Adjust this to control how long each phase lasts
 
+    [Header("Boss Behaviour")]
+    [SerializeField] float waitPhase = 0.15f;
+    [SerializeField] float preferredDistance = 6f;
+
+    [Header("Movement")]
+    [SerializeField] float strafeForce = 8f;
+    [SerializeField] float retreatForce = 6f;
+    [SerializeField] float movementForce = 5f;
+
+    [Header("Charge")]
+    [SerializeField] float chargePrepareDuration = 0.55f;
+    [SerializeField] float chargeDuration = 0.45f;
+    [SerializeField] float chargePredictionMultiplier = 0.45f;
+    [SerializeField] float chargeOvershootDistance = 1.5f;
+
+    [Header("Boss Scaling")]
+    [SerializeField] float phase2Threshold = 0.7f;
+    [SerializeField] float phase3Threshold = 0.4f;
+
+    // STATE
+    private float phaseTimer;
+    bool phase2Active;
+    bool phase3Active;
+
+    bool lockAttackVector;
     Vector3 lockedPosition;
+
+    float aggressiveMultiplier = 1f;
+
+    // EVENTS
+    public UnityEvent resetAnimationEvent;
+    public UnityEvent chargeStartEvent;
+    public UnityEvent razorLeafRelease;
+
+    // ANIMATION EVENT STATES
+    bool pendingChargeRelease;
+    bool chargeReleased;
+
     bool chargeProcessStarted;
     int enemiesToSpawn = 2;
 
-    Coroutine sylvarokAttackMoveRoutine;
+    CapsuleCollider2D movementCollider;
+
+    Coroutine sylvarokRoutine;
 
     bool passedToWait;
+
+    readonly List<Enemy> summonedMinions = new List<Enemy>();
 
     public bool PassedToWait
     {
@@ -40,6 +79,8 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
     protected override void Awake()
     {
         base.Awake();
+
+        movementCollider = GetComponent<CapsuleCollider2D>();
     }
 
     protected override void Start() 
@@ -47,19 +88,56 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
         base.Start();
 
         currentSylvarokPhase = SylvarokPhase.Wait;
-        previousSylvarokPhase = SylvarokPhase.Wait;
     }
 
     protected override void OnEnable() 
     {
         currentRoomNetData = GameSessionManager.Instance.GetCurrentRoomNetData();
+
+        resetAnimationEvent.AddListener(ResetAnimations);
+        chargeStartEvent.AddListener(OnChargeReleaseFrame);
+        razorLeafRelease.AddListener(OnRazorLeafRelease);
     }
 
-    protected override void OnDisable() { }
-
-    protected override void FixedUpdate()
+    protected override void OnDisable()
     {
+        resetAnimationEvent.RemoveListener(ResetAnimations);
+        chargeStartEvent.RemoveListener(OnChargeReleaseFrame);
+        razorLeafRelease.RemoveListener(OnRazorLeafRelease);
+    }
 
+    public void ResetAnimationEvent() => resetAnimationEvent?.Invoke();
+    public void ChargeReleaseEvent() => chargeStartEvent?.Invoke();
+    public void RazorLeafReleaseEvent() => razorLeafRelease?.Invoke();
+
+    public void OnChargeReleaseFrame()
+    {
+        if (!isServer) return;
+
+        if (!pendingChargeRelease) return;
+
+        pendingChargeRelease = false;
+        chargeReleased = true;
+
+        StartChargeMovement();
+    }
+
+    // START CHARGE
+    void StartChargeMovement()
+    {
+        isCharging = true;
+
+        Vector2 currentPos = transform.position;
+        Vector2 moveDir = ((Vector2)lockedPosition - currentPos).normalized;
+
+        float chargeDistance = Vector2.Distance(currentPos, lockedPosition);
+        float requiredVelocity = chargeDistance / chargeDuration;
+
+        rb2D.linearVelocity = Vector2.zero;
+        rb2D.linearDamping = 0;
+
+        rb2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb2D.linearVelocity = moveDir * requiredVelocity;
     }
 
     protected override void Update()
@@ -78,6 +156,11 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
             return;
         }
 
+        if (chargeGraceTimer > 0)
+        {
+            chargeGraceTimer -= Time.deltaTime;
+        }
+
         healTimer += Time.deltaTime;
         targetRefreshTimer += Time.deltaTime;
 
@@ -89,127 +172,411 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
         if (targetPlayer != null)
         {
-            Vector3 direction = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
-            attackLockedVector = direction;
+            trackingVector = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+            if (!lockAttackVector)
+            {
+                attackLockedVector = trackingVector;
+            }
+        }
+    }
+
+    protected override void FixedUpdate()
+    {
+        if (!isServer || !enemyFullyInitialized) return;
+        if (targetPlayer == null) return;
+
+        if (enemyPhase == EnemyPhase.Death)
+        {
+            if (attackAnimationRoutine != null)
+            {
+                StopCoroutine(attackAnimationRoutine);
+            }
+
+            return;
         }
 
-        // Emergency pullback if Moravelle drifts outside bounds
+        UpdateBossDifficulty();
+
+        // Emergency pullback if Sylvarok drifts outside bounds
         if (IsOutsideBossRoom(transform.position, cellMin, cellMax, true))
         {
             Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
-            transform.position = safePos;
+            rb2D.position = safePos;
             rb2D.linearVelocity = Vector2.zero;
 
             Debug.LogWarning("Sylvarok was outside bounds. Snapped back.");
         }
 
-        // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
+        // AIM
+        Vector2 activeAimVector = attackLockedVector;
+        float unitAngle = HelperUtilities.GetAngleFromVector(activeAimVector);
         AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
         AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+
         enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Sylvarok);
-        enemy.animateEnemy.ResetAimAnimationParameters();
-        enemy.animateEnemy.SetAimParameters(unitAimDirection);
 
-        // Update timers - Fire Projectile
-        firingIntervalTimer -= Time.deltaTime;
-
-        HasNegativeMoveStatusEffect();
-
-        if (enemy.moveStatus == MoveStatus.Idle)
+        if (unitAimDirection != enemy.LastAim)
         {
-            if (targetPlayer.isStealthActive)
-            {
-                PlayerStealthCheck();
-            }
+            enemy.LastAim = unitAimDirection;
 
-            switch (currentSylvarokPhase)
-            {
-                case SylvarokPhase.None:
-                    break;
-                case SylvarokPhase.Wait:
-                    PassedToWait = true;
+            enemy.animateEnemy.ResetAimAnimationParameters();
+            enemy.animateEnemy.SetAimParameters(unitAimDirection);
 
-                    // Reset timers
-                    firingIntervalTimer = WeaponShootInterval();
-                    firingDurationTimer = WeaponShootDuration();
+            enemy.enemyAnimSync?.ResetAimAnimations();
+            enemy.enemyAnimSync?.UpdateAnimationStateServer(wasMoving, unitAimDirection);
+        }
 
-                    // Optionally handle phase transitions based on a timer
-                    phaseTimer += Time.deltaTime;
-                    if (phaseTimer >= waitPhase)
-                    {
-                        TransitionToNextPhase();
-                        phaseTimer = 0f;  // Reset the timer for the next phase
-                    }
-                    break;
-                case SylvarokPhase.StraightAttack:
-                    HandleStraightAttack();
-                    break;
-                case SylvarokPhase.RazorLeaf:
-                    HandleRazorLeaf();
-                    break;
-                case SylvarokPhase.Summon:
-                    HandleSummon();
-                    break;
-                case SylvarokPhase.Heal:
-                    HandleHeal();
-                    break;
-                default:
-                    break;
-            }
+        // STATE
+        if (enemy.moveStatus != MoveStatus.Idle) return;
+
+        if (targetPlayer.isStealthActive)
+        {
+            PlayerStealthCheck();
+        }
+
+        switch (currentSylvarokPhase)
+        {
+            case SylvarokPhase.Wait:
+                PassedToWait = true;
+                phaseTimer += Time.fixedDeltaTime;
+                MaintainDistance();
+
+                if (phaseTimer >= waitPhase)
+                {
+                    phaseTimer = 0;
+                    TransitionToNextPhase();
+                }
+                break;
+            case SylvarokPhase.Charge:
+                if (sylvarokRoutine == null)
+                {
+                    sylvarokRoutine = StartCoroutine(ChargeRoutine());
+                }
+                break;
+            case SylvarokPhase.RazorLeaf:
+                if (sylvarokRoutine == null)
+                {
+                    sylvarokRoutine = StartCoroutine(RazorLeafRoutine());
+                }
+                break;
+            case SylvarokPhase.Summon:
+                if (sylvarokRoutine == null)
+                {
+                    sylvarokRoutine = StartCoroutine(SummonRoutine());
+                }
+                break;
+            case SylvarokPhase.Heal:
+                if (sylvarokRoutine == null)
+                {
+                    sylvarokRoutine = StartCoroutine(HealRoutine());
+                }
+                break;
+            default:
+                break;
         }
     }
 
     public void HandleWaitPhase()
     {
-        // Logic for waiting phase (maybe the Centaur just moves or idles here)
-        enemy.animateEnemy.SetIdleAnimationParameters();
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
     }
 
-    private void HandleStraightAttack()
+    // CHARGE
+    IEnumerator ChargeRoutine()
     {
-        enemy.animateEnemy.ResetAnimatonParameters();
+        lockAttackVector = true;
+        isAttacking = true;
+        chargeGraceTimer = 1f;
 
-        if (sylvarokAttackMoveRoutine == null)
+        chargeStartPosition = transform.position;
+
+        Rigidbody2D targetRB = targetPlayer.GetComponent<Rigidbody2D>();
+
+        Vector2 currentPos = transform.position;
+        Vector2 predictedPosition = targetPlayer.GetPlayerPosition();
+
+        if (targetRB != null)
         {
-            sylvarokAttackMoveRoutine = StartCoroutine(AttackRoutine(SylvarokPhase.StraightAttack));
+            predictedPosition += targetRB.linearVelocity * chargePredictionMultiplier;
         }
+
+        Vector2 chargeDirection = (predictedPosition - currentPos).normalized;
+
+        chargeMoveDirection = chargeDirection;
+
+        Vector2 overshootPosition = predictedPosition + chargeDirection * chargeOvershootDistance;
+        Vector2 clampedPosition = ClampToBossRoom(overshootPosition, cellMin, cellMax);
+        lockedPosition = GetValidPosition(clampedPosition, movementCollider);
+
+        // PREPARE CHARGE
+        pendingChargeRelease = true;
+        chargeReleased = false;
+
+        enemy.animateEnemy.SetChargeAnimation(true);
+        enemy.enemyAnimSync?.SetBossChargeAnimation(true);
+
+        float timer = 0f;
+
+        while (!chargeReleased)
+        {
+            if (enemy.health.hasDied) yield break;
+
+            timer += Time.fixedDeltaTime;
+
+            if (timer >= chargePrepareDuration + 1f)
+            {
+                ResetChargeState();
+                yield break;
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        // CHARGE LOOP
+        while (isCharging)
+        {
+            CapsuleCollider2D col = movementCollider;
+
+            if (col != null)
+            {
+                ContactFilter2D filter = new ContactFilter2D();
+                filter.useLayerMask = true;
+                filter.useTriggers = false;
+                filter.layerMask = GetObstacleMask();
+
+                RaycastHit2D[] hits = new RaycastHit2D[10];
+
+                int hitCount = col.Cast(chargeMoveDirection, filter, hits, 0.15f);
+
+                bool validObstacleDetected = false;
+
+                // VALIDATE HITS
+                for (int i = 0; i < hitCount; i++)
+                {
+                    Collider2D hitCol = hits[i].collider;
+
+                    if (hitCol == null) continue;
+
+                    // Door collision control
+                    if (hitCol.GetComponentInParent<Door>() != null) continue;
+
+                    // Ignore self colliders
+                    if (hitCol.transform.root == transform.root) continue;
+
+                    // Ignore triggers
+                    if (hitCol.isTrigger) continue;
+
+                    // Ignore overlap artifacts
+                    if (hits[i].distance <= 0.001f) continue;
+
+                    validObstacleDetected = true;
+                    break;
+                }
+
+                // STOP CHARGE ON VALID OBSTACLE
+                if (validObstacleDetected)
+                {
+                    StopCharge();
+                    break;
+                }
+            }
+
+            // TARGET REACHED
+            Vector2 toTarget = (Vector2)lockedPosition - (Vector2)transform.position;
+            float remainingDistance = toTarget.magnitude;
+
+            if (remainingDistance <= 0.6f)
+            {
+                StopCharge();
+                break;
+            }
+
+            float speed = rb2D.linearVelocity.magnitude;
+
+            if (speed <= 0.05f && chargeGraceTimer <= 0f)
+            {
+                StopCharge();
+                break;
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        lockAttackVector = false;
+        isAttacking = false;
+        sylvarokRoutine = null;
+
+        enemy.animateEnemy.SetChargeAnimation(false);
+        enemy.enemyAnimSync?.SetBossChargeAnimation(false);
+
+        currentSylvarokPhase = SylvarokPhase.Wait;
+        phaseTimer = 0;
     }
 
-    private void HandleSummon()
+    // RAZOR LEAF
+    IEnumerator RazorLeafRoutine()
     {
-        enemy.animateEnemy.ResetAnimatonParameters();
+        if (enemy.health.hasDied) yield break;
 
-        if (sylvarokAttackMoveRoutine == null)
+        float timer = 0f;
+        float duration = 1.2f;
+
+        enemy.animateEnemy.SetFocusedAnimation(true);
+        enemy.enemyAnimSync?.SetBossFocusedAnimation(true);
+
+        while (timer < duration)
         {
-            sylvarokAttackMoveRoutine = StartCoroutine(AttackRoutine(SylvarokPhase.Summon));
+            if (enemy.health.hasDied) yield break;
+
+            timer += Time.fixedDeltaTime;
+
+            MaintainDistance();
+
+            if (!hasPendingProjectile)
+            {
+                hasPendingProjectile = true;
+
+                Vector2 shotDirection = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+                pendingProjectileRequest = new PendingProjectileRequest
+                {
+                    projectileKind = ProjectileKind.Default,
+                    attackContext = new AttackContext { sylvarokPhase = SylvarokPhase.RazorLeaf },
+                    lockedAimVector = shotDirection
+                };
+            }
+
+            yield return waitForFixedUpdate;
         }
+
+        enemy.animateEnemy.SetFocusedAnimation(false);
+        enemy.enemyAnimSync?.SetBossFocusedAnimation(false);
+
+        sylvarokRoutine = null;
+
+        currentSylvarokPhase = SylvarokPhase.Wait;
+        phaseTimer = 0;
     }
 
-    private void HandleHeal()
+    // ANIMATION EVENTS
+    public void OnRazorLeafRelease()
     {
-        enemy.animateEnemy.ResetAnimatonParameters();
+        if (!isServer) return;
 
-        if (sylvarokAttackMoveRoutine == null)
-        {
-            sylvarokAttackMoveRoutine = StartCoroutine(AttackRoutine(SylvarokPhase.Heal));
-        }
+        if (!hasPendingProjectile) return;
+
+        attackLockedVector = pendingProjectileRequest.lockedAimVector;
+        lockAttackVector = true;
+
+        FireWeapon(false, pendingProjectileRequest.projectileKind, pendingProjectileRequest.attackContext);
+
+        pendingProjectileRequest = default;
+        hasPendingProjectile = false;
+
+        StartCoroutine(DelayedAimUnlock());
     }
 
-    private void HandleRazorLeaf()
+    IEnumerator DelayedAimUnlock()
     {
-        enemy.animateEnemy.ResetAnimatonParameters();
+        yield return new WaitForSeconds(0.08f);
 
-        if (sylvarokAttackMoveRoutine == null)
+        lockAttackVector = false;
+    }
+
+    // SUMMON
+    IEnumerator SummonRoutine()
+    {
+        if (enemy.health.hasDied) yield break;
+
+        enemy.animateEnemy.SetSummonAnimation(true);
+        enemy.enemyAnimSync?.SetBossSummonAnimation(true);
+
+        Grid grid = enemy.owningSpawner.instantiatedRoom.GetComponentInChildren<Grid>();
+
+        //SoundEffectManager.Instance.PlaySoundEffect(enemyDetails.attackSoundEffect);
+
+        summonedMinions.RemoveAll(x => x == null || x.health.hasDied);
+
+        for (int i = 0; i < enemiesToSpawn; i++)
         {
-            sylvarokAttackMoveRoutine = StartCoroutine(AttackRoutine(SylvarokPhase.RazorLeaf));
+            bool validSpawnFound = false;
+
+            for (int attempt = 0; attempt < 15; attempt++)
+            {
+                int randomX = Random.Range(cellMin.x, cellMax.y + 1);
+                int randomY = Random.Range(cellMin.x, cellMax.y + 1);
+
+                Vector3Int randomCell = new Vector3Int(randomX, randomY, 0);
+
+                Vector3 spawnWorldPos = grid.GetCellCenterWorld(randomCell);
+
+                Collider2D hit = Physics2D.OverlapCircle(spawnWorldPos, 0.4f, avoidLayerMask);
+
+                if (hit != null) continue;
+
+                GameObject minionObj = enemy.owningSpawner.CreateEnemyMP(enemyDetails.enemyMinionDetails, spawnWorldPos);
+
+                if (minionObj != null)
+                {
+                    Enemy minionEnemy = minionObj.GetComponent<Enemy>();
+
+                    summonedMinions.Add(minionEnemy);
+                }
+
+                validSpawnFound = true;
+                break;
+            }
+
+            if (!validSpawnFound)
+            {
+                Debug.LogWarning("Sylvarok failed to find valid summon position");
+            }
         }
+
+        yield return new WaitForSeconds(1.5f);
+
+        enemy.animateEnemy.SetSummonAnimation(false);
+        enemy.enemyAnimSync?.SetBossSummonAnimation(false);
+
+        currentSylvarokPhase = SylvarokPhase.Wait;
+        phaseTimer = 0;
+
+        sylvarokRoutine = null;
+    }
+
+    // HEAL
+    IEnumerator HealRoutine()
+    {
+        if (enemy.health.hasDied) yield break;
+
+        enemy.animateEnemy.SetHealAnimation(true);
+        enemy.enemyAnimSync?.SetBossHealAnimation(true);
+
+        IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(gameObject);
+        healthAuthority.ApplyDamage(-20, default);
+
+        //SoundEffectManager.Instance.PlaySoundEffect(enemyDetails.chargeSoundEffect);
+
+        yield return new WaitForSeconds(1.5f);
+
+        enemy.animateEnemy.SetHealAnimation(false);
+        enemy.enemyAnimSync?.SetBossHealAnimation(false);
+
+        currentSylvarokPhase = SylvarokPhase.Wait;
+        phaseTimer = 0;
+
+        sylvarokRoutine = null;
     }
 
     private void TransitionToNextPhase()
     {
         // Check if the player is on stealth
-        if (targetPlayer.isStealthActive)
+        if (targetPlayer != null && targetPlayer.isStealthActive)
         {
             PlayerStealthCheck();
             return;
@@ -222,7 +589,7 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
             return;
         }
         
-        if (currentSylvarokPhase == SylvarokPhase.StraightAttack || currentSylvarokPhase == SylvarokPhase.RazorLeaf ||
+        if (currentSylvarokPhase == SylvarokPhase.Charge || currentSylvarokPhase == SylvarokPhase.RazorLeaf ||
             currentSylvarokPhase == SylvarokPhase.Heal || currentSylvarokPhase == SylvarokPhase.Summon)
         {
             // If treant made a move then next phase will be wait
@@ -241,210 +608,120 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
         }
     }
 
-    IEnumerator AttackRoutine(SylvarokPhase treantPhase)
+    // STOP CHARGE
+    void StopCharge()
     {
-        if (treantPhase == SylvarokPhase.StraightAttack)
+        isCharging = false;
+
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+
+        StartCoroutine(ReturnToCenterRoutine());
+    }
+
+    IEnumerator ReturnToCenterRoutine()
+    {
+        isRecoveringFromCharge = true;
+
+        float recoveryDuration = 0.4f;
+        float timer = 0f;
+
+        rb2D.linearDamping = 4f;
+
+        while (timer < recoveryDuration)
         {
-            if (enemy.health.hasDied) yield break;
+            timer += Time.fixedDeltaTime;
 
-            enemyPhase = EnemyPhase.Attack;
-            isAttacking = true;
+            Vector2 cellCenter = (currentRoomNetData.lowerBounds + currentRoomNetData.upperBounds) / 2;
+            Vector2 dir = (cellCenter - (Vector2)transform.position).normalized;
 
-            // PREPARE PRECHARGE PHASE
-            // Lock-on player position during the start of precharge
-            if (!chargeProcessStarted)
-            {
-                if (targetPlayer != null)
-                {
-                    lockedPosition = targetPlayer.GetPlayerPosition();
-                }
-            }
+            rb2D.linearVelocity = dir * 3f;
 
-            chargeProcessStarted = true;
-
-            float prehargeDuration = 1.5f;
-            float chargeTimer = 0f;
-            enemy.animator.SetFloat(Settings.motionType, 3f); // charge trigger to blend tree
-            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
-
-            while (chargeTimer < prehargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
-            }
-
-            chargeTimer = 0f;
-            float chargeDuration = 1.4f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animateEnemy.SetMovementAnimationParameters();
-
-            // Clamp lockedPosition
-            InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId);
-            Grid grid = ir.grid;
-
-            Vector3Int cell = grid.WorldToCell(lockedPosition);
-            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
-            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
-            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
-
-            Vector3 direction = (clampedPosition - transform.position).normalized;
-            float chargeSpeed = 14f;
-
-            while (chargeTimer < chargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
-
-                // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, clampedPosition) < 0.1f)  // Small threshold for accuracy
-                {
-                    if (enemy.health.hasDied) yield break;
-
-                    // Exit the loop early if boss has reached the destination
-                    break;
-                }
-
-                yield return null;
-            }
-
-            // Revert to the idle state after charge completed
-            enemy.animateEnemy.SetIdleAnimationParameters();
-            chargeTimer = 0f;
-
-            yield return null;
-
-            isAttacking = false;
-
-            yield return null;
-
-            previousSylvarokPhase = SylvarokPhase.StraightAttack;
-        }
-        else if (treantPhase == SylvarokPhase.RazorLeaf)
-        {
-            if (enemy.health.hasDied) yield break;
-
-            enemyPhase = EnemyPhase.Chase;
-
-            // PREPARE PRECHARGE PHASE
-            float prechargeDuration = 1f;
-            float chargeTimer = 0f;
-
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animator.SetBool(Settings.cast, true);
-
-            yield return null;
-
-            while (chargeTimer < prechargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
-            }
-
-            chargeTimer = 0f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animator.SetBool(Settings.cast, false);
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
-            float fireTimer = 0f;
-            float fireProjectileDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
-
-            while (fireTimer < fireProjectileDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                fireTimer += Time.deltaTime;
-
-                // Interval Timer
-                if (firingIntervalTimer < 0f)
-                {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(isLaser: false, ProjectileKind.Default, new AttackContext { sylvarokPhase = SylvarokPhase.RazorLeaf });
-                    }
-                    else
-                    {
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                        enemy.animateEnemy.SetIdleAnimationParameters();
-                    }
-                }
-
-                yield return null;
-            }
-
-            yield return null;
-
-            previousSylvarokPhase = SylvarokPhase.RazorLeaf;
-        }
-        else if (treantPhase == SylvarokPhase.Summon)
-        {
-            if (enemy.health.hasDied) yield break;
-
-            enemy.animator.SetBool("summon", true);
-
-            InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId);
-            Grid grid = ir.grid;
-
-            //SoundEffectManager.Instance.PlaySoundEffect(enemyDetails.attackSoundEffect);
-
-            // Check we have somewhere to spawn the enemies
-            if (currentRoomNetData.spawnPositions.Length > 0)
-            {
-                // Loop through to create all the enemeies
-                for (int i = 0; i < enemiesToSpawn; i++)
-                {
-                    Vector3Int cellPosition = (Vector3Int)currentRoomNetData.spawnPositions[Random.Range(0, currentRoomNetData.spawnPositions.Length)];
-
-                    // Create Enemy - Get next enemy type to spawn 
-                    enemySpawner.CreateEnemyMP(enemyDetails.enemyMinionDetails, grid.CellToWorld(cellPosition));
-                }
-            }
-
-            yield return new WaitForSeconds(1.5f);
-
-            enemy.animator.SetBool("summon", false);
-            previousSylvarokPhase = SylvarokPhase.Summon;
-        }
-        else if (treantPhase == SylvarokPhase.Heal)
-        {
-            if (enemy.health.hasDied) yield break;
-
-            enemy.animator.SetBool("heal", true);
-
-            enemy.health.AddHealth(20);
-
-            //SoundEffectManager.Instance.PlaySoundEffect(enemyDetails.chargeSoundEffect);
-
-            yield return new WaitForSeconds(1.5f);
-
-            enemy.animator.SetBool("heal", false);
+            yield return waitForFixedUpdate;
         }
 
-        chargeProcessStarted = false;
-        sylvarokAttackMoveRoutine = null;
+        rb2D.linearVelocity = Vector2.zero;
+        isRecoveringFromCharge = false;
+    }
 
-        TransitionToNextPhase();
+    void UpdateBossDifficulty()
+    {
+        float hpPercent = (float)enemy.health.GetCurrentHealth() / enemy.health.GetMaximumHealth();
 
-        previousSylvarokPhase = SylvarokPhase.Heal;
+        if (!phase2Active && hpPercent <= phase2Threshold)
+        {
+            phase2Active = true;
+            aggressiveMultiplier = 1.2f;
+            waitPhase = 0.15f;
+        }
+
+        if (!phase3Active && hpPercent <= phase3Threshold)
+        {
+            phase3Active = true;
+            aggressiveMultiplier = 1.5f;
+            waitPhase = 0.1f;
+        }
+    }
+
+    void MaintainDistance()
+    {
+        if (targetPlayer == null) return;
+
+        float distance = Vector2.Distance(transform.position, targetPlayer.GetPlayerPosition());
+        Vector2 dir = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+        if (distance < preferredDistance - 1f)
+        {
+            rb2D.AddForce(-dir * retreatForce);
+        }
+        else if (distance > preferredDistance + 2f)
+        {
+            rb2D.AddForce(dir * movementForce);
+        }
+    }
+
+    public void KillAllSummons()
+    {
+        foreach (Enemy minion in summonedMinions)
+        {
+            if (minion == null) continue;
+
+            if (minion.health.hasDied) continue;
+
+            DestroyUtility.Destroy(minion.gameObject, false, minion.health.LastDamageDealerNetId);
+        }
+
+        summonedMinions.Clear();
+    }
+
+    void ResetChargeState()
+    {
+        pendingChargeRelease = false;
+        chargeReleased = false;
+
+        isCharging = false;
+        lockAttackVector = false;
+        isAttacking = false;
+
+        enemy.animateEnemy.SetChargeAnimation(false);
+        enemy.enemyAnimSync?.SetBossChargeAnimation(false);
+
+        sylvarokRoutine = null;
+
+        currentSylvarokPhase = SylvarokPhase.Wait;
+        phaseTimer = 0f;
+    }
+
+    private void ResetAnimations()
+    {
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
     }
 
     public void PlayerStealthCheck()

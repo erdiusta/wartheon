@@ -193,14 +193,26 @@ public class Destroyed : MonoBehaviour
                     }
 
                     enemy.animateEnemy.ResetAnimatonParameters();
+                    enemy.enemyAnimSync?.ResetAllAnimations();
 
                     if (enemyCombatData.EnemyBehaviour == EnemyBehaviour.Sylvarok)
                     {
-                        foreach (Transform minion in GameManager.Instance.GetCurrentRoom().instantiatedRoom.enemySpawner.transform)
+                        if (!NetworkServer.active && !NetworkClient.active)
                         {
-                            if (EnemyDataResolver.Resolve<IEnemyCombatData>(minion.gameObject).EnemyBehaviour == EnemyBehaviour.Sylvarok) continue;
+                            foreach (Transform minion in GameManager.Instance.GetCurrentRoom().instantiatedRoom.enemySpawner.transform)
+                            {
+                                if (EnemyDataResolver.Resolve<IEnemyCombatData>(minion.gameObject).EnemyBehaviour == EnemyBehaviour.Sylvarok) continue;
 
-                            DestroyUtility.Destroy(minion.gameObject, false, minion.GetComponent<Health>().LastDamageDealerNetId);
+                                DestroyUtility.Destroy(minion.gameObject, false, minion.GetComponent<Health>().LastDamageDealerNetId);
+                            }
+                        }
+                        else
+                        {
+                            // Multiplayer Logic
+                            if (!NetworkServer.active) return;
+
+                            enemy.GetComponent<SylvarokAINetwork>().KillAllSummons();
+
                         }
                     }
                 }

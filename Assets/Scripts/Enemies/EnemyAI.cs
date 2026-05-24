@@ -613,7 +613,7 @@ public class EnemyAI : MonoBehaviour
     /// Fire the weapon - laser
     /// </summary>
     protected void FireWeapon(Vector3 lockedPlayerVector, float lockedEnemyAngle, AimDirection lockedAimDirection, AttackDirection lockedAttackDirection,
-        bool isLaser, ProjectileKind kind, AttackContext ctx)
+        bool isLaser, ProjectileKind kind, AttackContext ctx, Enemy ownerEnemyForSp)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
@@ -655,7 +655,7 @@ public class EnemyAI : MonoBehaviour
                 // Does this enemy require line of sight to the player before firing?
                 if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
 
-                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser, kind, ctx, enemyNetId:0, enemy);
+                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser, kind, ctx, ownerNetId: 0, targetNetId: 0, ownerEnemyForSp);
             }
         }
     }
@@ -681,7 +681,8 @@ public class EnemyAI : MonoBehaviour
             // Is the player in range
             if (playerDirectionVector.magnitude <= enemyProjectileRange)
             {
-                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser, kind, ctx, enemyNetId: 0, enemy);
+                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser, kind, ctx, 
+                    ownerNetId: 0, targetNetId: 0, enemy);
             }
         }
     }

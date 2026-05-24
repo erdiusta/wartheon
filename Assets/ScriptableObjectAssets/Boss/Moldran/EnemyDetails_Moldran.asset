@@ -101,9 +101,14 @@ MonoBehaviour:
   firingDurationMax: 0.4
   firingLineOfSightRequired: 0
   enemyHealthDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    enemyHealthAmount: 100
   - dungeonLevel: {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}
     enemyHealthAmount: 2000
   enemyDamageDetailsArray:
+  - dungeonLevel: {fileID: 11400000, guid: 81e3ffdebb3d25749a0cde4286490b32, type: 2}
+    minDamageAmount: 35
+    maxDamageAmount: 50
   - dungeonLevel: {fileID: 11400000, guid: a295acfebb195064facae226c23217a8, type: 2}
     minDamageAmount: 35
     maxDamageAmount: 50

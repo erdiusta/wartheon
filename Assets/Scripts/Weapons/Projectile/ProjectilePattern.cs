@@ -49,8 +49,7 @@ public class ProjectilePattern : MonoBehaviour, IFireable
 
     // FOR PROJECTILE
     public void InitializeProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, float projectileSpeed, ProjectileKind projectileKind, ProjectileDetailsSO projectileDetails, 
-        AttackContext attackContext, bool overrideProjectileMovement, bool fallingFromSkies, int projectileCounter, int projectilePerShot, uint netId, int projectileIndex, 
-        uint enemyNetId, Enemy belongingEnemy = null)
+        AttackContext attackContext, bool overrideProjectileMovement, bool fallingFromSkies, int projectileCounter, int projectilePerShot, int projectileIndex, uint ownerNetId, uint targetNetId, Enemy ownerEnemyForSp)
     {
         if (NetworkServer.active || NetworkClient.active) projectileDetails = WartheonDatabase.Instance.GetProjectile(projectileIndex);
 
@@ -77,7 +76,7 @@ public class ProjectilePattern : MonoBehaviour, IFireable
             projectileArray[i].ResetProjectileState();
 
             projectileArray[i].InitializeProjectile(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileSpeed, projectileKind, projectileDetails, attackContext, overrideProjectileMovement: true, fallingFromSkies,
-                projectileCounter, projectilePerShot, netId, projectileIndex, enemyNetId, belongingEnemy);
+                projectileCounter, projectilePerShot, projectileIndex, ownerNetId, targetNetId, ownerEnemyForSp);
         }
 
         // Set projectile charge timer - this will hold the projectile briefly

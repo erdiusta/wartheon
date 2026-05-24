@@ -361,10 +361,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1282603778, guid: 893779de182ac5747bbb18a1d123d2d7, type: 3}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
-      propertyPath: m_MaskInteraction
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
@@ -593,3 +589,23 @@ MonoBehaviour:
   isAttacking: 0
   isDashing: 0
   patrolPointsParentContainer: {fileID: 0}
+  waitPhase: 0.15
+  preferredDistance: 6
+  strafeForce: 8
+  retreatForce: 6
+  movementForce: 5
+  chargePrepareDuration: 0.55
+  chargeDuration: 0.45
+  chargePredictionMultiplier: 0.45
+  chargeOvershootDistance: 1.5
+  phase2Threshold: 0.7
+  phase3Threshold: 0.4
+  resetAnimationEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  chargeStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  razorLeafRelease:
+    m_PersistentCalls:
+      m_Calls: []

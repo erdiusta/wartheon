@@ -26,7 +26,7 @@ public class EnemySpawner : MonoBehaviour
 
     Player player;
 
-    InstantiatedRoom instantiatedRoom;
+    [HideInInspector] public InstantiatedRoom instantiatedRoom;
 
     private void Awake()
     {
@@ -507,7 +507,7 @@ public class EnemySpawner : MonoBehaviour
     /// <summary>
     /// Create an enemy in the specified position
     /// </summary>
-    public void CreateEnemyMP(EnemyDetailsSO enemyDetails, Vector3 position)
+    public GameObject CreateEnemyMP(EnemyDetailsSO enemyDetails, Vector3 position)
     {
         // Keep track of the number of enemies spawned so far
         if (!enemyDetails.isSummonedMinion) enemiesSpawnedSoFar++;
@@ -550,6 +550,8 @@ public class EnemySpawner : MonoBehaviour
 
         // Subscribe to enemy destroyed event
         enemyObject.GetComponent<DestroyedEvent>().OnDestroyed += Enemy_OnDestroyed;
+
+        return enemyObject;
     }
 
     [Server]

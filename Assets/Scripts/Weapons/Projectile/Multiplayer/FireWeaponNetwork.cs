@@ -15,15 +15,15 @@ public class FireWeaponNetwork : NetworkBehaviour
 
     // Called by FireWeapon
     public void RequestFireWeapon(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos)
+        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos, uint ownerNetId, uint targetNetId)
     {
-        CmdFireWeapon(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos);
+        CmdFireWeapon(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos, ownerNetId, targetNetId);
     }
 
     [Command]
     private void CmdFireWeapon(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos)
+        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos, uint ownerNetId, uint targetNetId)
     {
-        fireWeapon.ServerFireWeapon(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos);
+        fireWeapon.ServerFireWeapon(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos, ownerNetId, targetNetId);
     }
 }

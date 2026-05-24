@@ -22,8 +22,8 @@ MonoBehaviour:
   projectileChargeMaterial: {fileID: 0}
   belongingWeaponDetails: {fileID: 11400000, guid: 6f0f5b12fca4e634b9893d0588ea158d, type: 2}
   projectileHitEffect: {fileID: 11400000, guid: 9e888f32de5d60a429c75fb52a068ded, type: 2}
-  projectilePhyDamageMin: 0
-  projectilePhyDamageMax: 1
+  projectilePhyDamageMin: 15
+  projectilePhyDamageMax: 20
   projectileMagicDamageMin: 0
   projectileMagicDamageMax: 1
   projectileSpeed: 14

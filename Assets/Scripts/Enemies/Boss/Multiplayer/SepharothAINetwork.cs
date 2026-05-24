@@ -1,6 +1,9 @@
+using Mirror;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Color = UnityEngine.Color;
 using Random = UnityEngine.Random;
 
@@ -10,21 +13,68 @@ public class SepharothAINetwork : EnemyAINetwork, IMutualBossBehaviour
     readonly Vector2Int cellMin = new Vector2Int(-8, 2);
     readonly Vector2Int cellMax = new Vector2Int(12, 18);
 
-    // BOSSES
+    // BOSS
+    [Header("References")]
     [SerializeField] Transform swordHoldingTransform;
-    [SerializeField] float smearCircleRadius = 0.5f;
+
+    [Header("Combat")]
+    [SerializeField] float preferredDistance = 6f;
+    [SerializeField] float movementForce = 5f;
+    [SerializeField] float retreatForce = 6f;
+    [SerializeField] float strafeForce = 8f;
+
+    [Header("Laser")]
+    [SerializeField] float laserPrepareDuration = 1f;
+
+    [Header("Smear")]
+    [SerializeField] float smearCircleRadius = 2f;
+    [SerializeField] int smearDamage = 25;
+    [SerializeField] float smearChargeSpeed = 28f;
+    [SerializeField] float smearChargeDuration = 0.65f;
+    [SerializeField] float smearAttackDuration = 0.8f;
+
+    [Header("Invisible")]
+    [SerializeField] float invisibleFadeDuration = 0.6f;
+    [SerializeField] float invisibleMineDuration = 4f;
+
+    [Header("Boss Behaviour")]
+    [SerializeField] float waitPhase = 0.15f;
+
+    [Header("Difficulty")]
+    [SerializeField] float phase2Threshold = 0.7f;
+    [SerializeField] float phase3Threshold = 0.4f;
+
+    [SyncVar(hook = nameof(OnAlphaChanged))] float syncedAlpha = 1f;
 
     SepharothPhase currentSepharothPhase;
-    SepharothPhase previousSepharothPhase;
-    private float phaseTimer;  // Timer to control phase duration
-    private float waitPhase = 0.2f;  // Adjust this to control how long each phase lasts
 
-    Vector3 lockedPosition;
-    bool chargeProcessStarted;
-    Health playerHealth;
+    Coroutine sepharothRoutine;
+
+    bool smearDamageActive;
+
+    // STATE
+    private float phaseTimer;
+
+    bool phase2Active;
+    bool phase3Active;
+
+    bool lockAttackVector;
+    Vector2 lockedPosition;
+
+    float aggressiveMultiplier = 1f;
+
+    bool isInvisible;
+
     SpriteRenderer spriteRenderer;
+    CapsuleCollider2D movementCollider;
+    PolygonCollider2D hitCollider;
 
-    Coroutine sepharothAttackMoveRoutine;
+    readonly HashSet<uint> alreadyHitTargets = new HashSet<uint>();
+
+    // EVENTS
+    public UnityEvent resetAnimationEvent;
+    public UnityEvent smearStartEvent;
+    public UnityEvent smearStopEvent;
 
     bool passedToWait;
 
@@ -44,154 +94,157 @@ public class SepharothAINetwork : EnemyAINetwork, IMutualBossBehaviour
     protected override void Awake()
     {
         base.Awake();
+
+        movementCollider = GetComponent<CapsuleCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        hitCollider = GetComponent<PolygonCollider2D>();
     }
 
-    protected override void Start() 
+    protected override void Start()
     {
-        currentSepharothPhase = SepharothPhase.Wait;
-        previousSepharothPhase = SepharothPhase.Wait;
+        base.Start();
 
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        currentSepharothPhase = SepharothPhase.Wait;
     }
 
     protected override void OnEnable()
     {
-        currentRoomNetData = GameSessionManager.Instance.GetCurrentRoomNetData();
+        resetAnimationEvent.AddListener(ResetAnimations);
+        smearStartEvent.AddListener(EnableSmearDamage);
+        smearStopEvent.AddListener(DisableSmearDamage);
     }
 
-    protected override void OnDisable() { }
+    protected override void OnDisable()
+    {
+        resetAnimationEvent.RemoveListener(ResetAnimations);
+        smearStartEvent.RemoveListener(EnableSmearDamage);
+        smearStopEvent.RemoveListener(DisableSmearDamage);
+    }
 
-    protected override void FixedUpdate() { }
+    void OnAlphaChanged(float oldAlpha, float newAlpha)
+    {
+        SetAlpha(newAlpha);
+    }
+
+    public void ResetAnimationEvent() => resetAnimationEvent?.Invoke();
+    public void SmearStartEvent() => smearStartEvent?.Invoke();
+    public void SmearStopEvent() => smearStopEvent?.Invoke();
 
     protected override void Update()
     {
         if (!isServer || !enemyFullyInitialized) return;
+        if (currentRoomNetData == default) currentRoomNetData = enemy.owningSpawner.instantiatedRoom.roomNetData;
 
-        if (enemyPhase == EnemyPhase.Death)
-        {
-            if (attackAnimationRoutine != null)
-            {
-                StopCoroutine(attackAnimationRoutine);
-            }
+        if (enemyPhase == EnemyPhase.Death) return;
 
-            return;
-        }
-
-        healTimer += Time.deltaTime;
-        targetRefreshTimer += Time.deltaTime;
-
-        if (targetRefreshTimer >= Settings.targetRefreshInterval)
-        {
-            targetPlayer = HelperUtilities.GetClosestPlayer(transform.position);
-            targetRefreshTimer = 0;
-        }
+        RefreshTargetAndLockedVector();
 
         if (targetPlayer != null)
         {
-            Vector3 direction = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
-            attackLockedVector = direction;
+            trackingVector = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+        }
+    }
+
+    protected override void FixedUpdate()
+    {
+        if (!isServer || !enemyFullyInitialized) return;
+        if (targetPlayer == null) return;
+        if (enemyPhase == EnemyPhase.Death) return;
+
+        // Emergency pullback if Sylvarok drifts outside bounds
+        if (IsOutsideBossRoom(transform.position, cellMin, cellMax, isMultiplayer: true))
+        {
+            Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
+            rb2D.position = safePos;
+            rb2D.linearVelocity = Vector2.zero;
+
+            Debug.LogWarning("Sepharoth was outside bounds. Snapped back.");
         }
 
-        // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
-        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
-        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Sepharoth);
-        enemy.animateEnemy.ResetAimAnimationParameters();
-        enemy.animateEnemy.SetAimParameters(unitAimDirection);
+        UpdateBossDifficulty();
 
-        // Update timers - Fire Projectile
-        firingIntervalTimer -= Time.deltaTime;
-
-        HasNegativeMoveStatusEffect();
+        HandleAim();
 
         if (enemy.moveStatus == MoveStatus.Idle)
         {
-            // Check if the player is on stealth
             if (targetPlayer.isStealthActive)
             {
                 PlayerStealthCheck();
             }
 
-            // Check if the enemy is a Sepharoth boss
-            if (enemyDetails.enemyBehaviour == EnemyBehaviour.Sepharoth)
+            switch (currentSepharothPhase)
             {
-                // Handle phases based on currentPhase
-                switch (currentSepharothPhase)
-                {
-                    case SepharothPhase.Wait:
-                        PassedToWait = true;
+                case SepharothPhase.Wait:
+                    enemy.debugDisplay.text = "WAIT";
 
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
+                    PassedToWait = true;
+                    phaseTimer += Time.fixedDeltaTime;
+                    MaintainDistance();
 
-                        // Optionally handle phase transitions based on a timer
-                        phaseTimer += Time.deltaTime;
-                        if (phaseTimer >= waitPhase)
-                        {
-                            TransitionToNextPhase();
-                            phaseTimer = 0f;  // Reset the timer for the next phase
-                        }
-                        break;
-
-                    case SepharothPhase.InvisibleAndMine:
-                        HandleSmearProjectile();
-                        break;
-
-                    case SepharothPhase.SmearAttack:
-                        HandleSmearAttack();
-                        break;
-
-                    case SepharothPhase.LaserBeam:
-                        HandleLaserBeam();
-                        break;
-
-                    default:
-                        break;
-                }
+                    if (phaseTimer >= waitPhase)
+                    {
+                        phaseTimer = 0;
+                        TransitionToNextPhase();
+                    }
+                    break;
+                case SepharothPhase.LaserBeam:
+                    if (sepharothRoutine == null)
+                    {
+                        sepharothRoutine = StartCoroutine(LaserBeamRoutine());
+                    }
+                    break;
+                case SepharothPhase.SmearAttack:
+                    if (sepharothRoutine == null)
+                    {
+                        sepharothRoutine = StartCoroutine(SmearAttackRoutine());
+                    }
+                    break;
+                case SepharothPhase.InvisibleAndMine:
+                    if (sepharothRoutine == null)
+                    {
+                        sepharothRoutine = StartCoroutine(InsivibleAndMineRoutine());
+                    }
+                    break;
+                default:
+                    break;
             }
+        }
+    }
+
+    private void HandleAim()
+    {
+        Vector2 activeAimVector = lockAttackVector ? attackLockedVector : trackingVector;
+        float unitAngle = HelperUtilities.GetAngleFromVector(activeAimVector);
+        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
+        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+
+        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Sepharoth);
+
+        if (unitAimDirection != enemy.LastAim)
+        {
+            enemy.LastAim = unitAimDirection;
+
+            enemy.animateEnemy.ResetAimAnimationParameters();
+            enemy.animateEnemy.SetAimParameters(unitAimDirection);
+
+            enemy.enemyAnimSync?.ResetAimAnimations();
+            enemy.enemyAnimSync?.UpdateAnimationStateServer(wasMoving, unitAimDirection);
         }
     }
 
     public void HandleWaitPhase()
     {
-        // Logic for waiting phase (maybe the Centaur just moves or idles here)
-        enemy.animateEnemy.SetIdleAnimationParameters();
-    }
-
-    private void HandleSmearProjectile()
-    {
         enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
 
-        if (sepharothAttackMoveRoutine == null)
-        {
-            sepharothAttackMoveRoutine = StartCoroutine(AttackRoutine(SepharothPhase.InvisibleAndMine));
-        }
-    }
-
-    private void HandleSmearAttack()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (sepharothAttackMoveRoutine == null)
-        {
-            sepharothAttackMoveRoutine = StartCoroutine(AttackRoutine(SepharothPhase.SmearAttack));
-        }
-    }
-
-    private void HandleLaserBeam()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (sepharothAttackMoveRoutine == null)
-        {
-            sepharothAttackMoveRoutine = StartCoroutine(AttackRoutine(SepharothPhase.LaserBeam));
-        }
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
     }
 
     private void TransitionToNextPhase()
     {
+        if (targetPlayer == null) return;
+
         // Check if the player is on stealth
         if (targetPlayer.isStealthActive)
         {
@@ -199,420 +252,449 @@ public class SepharothAINetwork : EnemyAINetwork, IMutualBossBehaviour
             return;
         }
 
-        if (targetPlayer != null)
-        {
-            if (Vector3.Distance(transform.position, targetPlayer.transform.position) < 4f)
-            {
-                // If player is too close to boss, automatically next phase will be smear attack most probably
-                int randomNum = Random.Range(0, 101);
+        float distance = Vector2.Distance(transform.position, targetPlayer.transform.position);
 
-                if (randomNum < 40)
-                {
-                    currentSepharothPhase = SepharothPhase.SmearAttack;
-                    return;
-                }
-                else if (randomNum < 70)
-                {
-                    currentSepharothPhase = SepharothPhase.LaserBeam;
-                    return;
-                }
-                else
-                {
-                    currentSepharothPhase = (SepharothPhase)Random.Range(2, Enum.GetValues(typeof(SepharothPhase)).Length);
-                }
-            }
-            else if (Vector3.Distance(transform.position, targetPlayer.transform.position) > 12f)
-            {
-                currentSepharothPhase = SepharothPhase.LaserBeam;
-                return;
-            }
+        // CLOSE RANGE
+        if (distance < 4f)
+        {
+            int randomNum = Random.Range(0, 100);
+
+            if (randomNum < 70) currentSepharothPhase = SepharothPhase.SmearAttack;
+            else currentSepharothPhase = SepharothPhase.LaserBeam;
+
+            return;
         }
 
-        if (currentSepharothPhase == SepharothPhase.SmearAttack || currentSepharothPhase == SepharothPhase.LaserBeam ||
-            currentSepharothPhase == SepharothPhase.InvisibleAndMine)
-        {
-            // If boss made a move then next phase will be wait
-            currentSepharothPhase = SepharothPhase.Wait;
-        }
-        else
-        {
-            // Example of conditional or random phase transitions
-            if(previousSepharothPhase == SepharothPhase.LaserBeam)
-            {
-                currentSepharothPhase = (SepharothPhase)Random.Range(2, Enum.GetValues(typeof(SepharothPhase)).Length - 1);
-            }
-            else
-            {
-                currentSepharothPhase = (SepharothPhase)Random.Range(2, Enum.GetValues(typeof(SepharothPhase)).Length);
-            }
-        }
+        // MID & LONG RANGE
+        int midLongRangeRandom = Random.Range(0, 100);
+
+        if (midLongRangeRandom < 35) currentSepharothPhase = SepharothPhase.LaserBeam;
+        else if (midLongRangeRandom < 70) currentSepharothPhase = SepharothPhase.SmearAttack;
+        else currentSepharothPhase = SepharothPhase.InvisibleAndMine;
     }
 
-    IEnumerator AttackRoutine(SepharothPhase sepharothPhase)
+    // LASER BEAM
+    IEnumerator LaserBeamRoutine()
     {
-        if (sepharothPhase == SepharothPhase.InvisibleAndMine)
+        BeginRoutine();
+
+        enemy.debugDisplay.text = "LASER BEAM";
+
+        // Set the motion type for the precharge phase
+        enemy.animateEnemy.SetCastAnimation(true);
+        enemy.enemyAnimSync?.SetBossCastAnimation(true);
+
+        float timer = 0f;
+
+        //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.chargeSoundEffect);
+
+        while (timer < laserPrepareDuration)
         {
-            if (enemy.health.hasDied) yield break;
+            if (ShouldCancelRoutine()) yield break;
 
-            #region Invisibility
-            // BEING INVISIBLE
-            enemyPhase = EnemyPhase.Chase;
+            timer += Time.fixedDeltaTime;
+            rb2D.linearVelocity = Vector2.zero;
 
-            float completeInvisibleDuration = 1.5f;
-            float invisibleTimer = 0f;
-            enemy.GetComponent<PolygonCollider2D>().enabled = false;
-            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
-
-            // Become invisible
-            while (invisibleTimer < completeInvisibleDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                invisibleTimer += Time.deltaTime;
-
-                float newAlpha = 0.8f; // Default to start value
-
-                if (invisibleTimer > 1.2f) newAlpha = 0f;
-                else if (invisibleTimer > 0.9f) newAlpha = 0.2f;
-                else if (invisibleTimer > 0.6f) newAlpha = 0.4f;
-                else if (invisibleTimer > 0.3f) newAlpha = 0.6f;
-
-                // Apply alpha change
-                Color color = spriteRenderer.color;
-                color.a = newAlpha;
-                spriteRenderer.color = color;
-
-                yield return null;
-            }
-
-            yield return null;
-            #endregion
-
-            #region Teleport
-            // TELEPORT TO NEW POSITON DURING INVISIBLE
-            InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId);
-            Grid grid = ir.grid;
-
-            // Selected second mine' position
-            int selectedIndexNum = Random.Range(0, currentRoomNetData.enemySpawnParameters.Length);
-            Vector3Int selectedSpawnPoint = new Vector3Int(currentRoomNetData.spawnPositions[selectedIndexNum].x, currentRoomNetData.spawnPositions[selectedIndexNum].y, 0);
-
-            // Convert the cell position to world position
-            transform.position = grid.CellToWorld(selectedSpawnPoint);
-
-            float minePlantDuration = 5f;
-            float mineTimer = 0f;
-
-            yield return null;
-            #endregion
-
-            #region MinePlanting
-            // MINE PLANTING
-            while (mineTimer < minePlantDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                mineTimer += Time.deltaTime;
-
-                // Interval Timer
-                if (firingIntervalTimer < 0f)
-                {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.deltaTime;
-                        enemy.animateEnemy.SetAttackAnimationParameters();
-                        FireWeapon(isLaser: false, ProjectileKind.Default, new AttackContext { sepharothPhase = SepharothPhase.InvisibleAndMine });
-
-                    }
-                    else
-                    {
-                        // Reset timers and animation
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                        enemy.animateEnemy.SetIdleAnimationParameters();
-                    }
-                }
-
-                yield return null; // Keep invisible issues active
-            }
-
-            yield return null;
-            #endregion
-
-            #region BeingVisibleAgain
-
-            // BE VISIBLE AGAIN
-            enemy.GetComponent<PolygonCollider2D>().enabled = true;
-
-            invisibleTimer = 0f;
-            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
-
-            // Apply alpha change
-            while (invisibleTimer < completeInvisibleDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                invisibleTimer += Time.deltaTime;
-
-                float newAlpha = 0.2f; // Default to start value
-
-                if (invisibleTimer > 1.2f) newAlpha = 1f;
-                else if (invisibleTimer > 0.9f) newAlpha = 0.8f;
-                else if (invisibleTimer > 0.6f) newAlpha = 0.6f;
-                else if (invisibleTimer > 0.3f) newAlpha = 0.4f;
-
-                // Apply alpha change
-                Color color = spriteRenderer.color;
-                color.a = newAlpha;
-                spriteRenderer.color = color;
-
-                yield return null;
-            }
-
-            #endregion  
-
-            previousSepharothPhase = SepharothPhase.InvisibleAndMine;
-
+            yield return waitForFixedUpdate;
         }
-        else if (sepharothPhase == SepharothPhase.SmearAttack)
+
+        FireWeapon(true, ProjectileKind.Default, new AttackContext { sepharothPhase = SepharothPhase.LaserBeam });
+
+        float fireDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
+        timer = 0f;
+
+        while (timer < fireDuration)
         {
-            enemyPhase = EnemyPhase.Attack;
-            isAttacking = true;
+            if (ShouldCancelRoutine()) yield break;
 
-            // PREPARE PRECHARGE PHASE
-            // Lock-on player position during the start of precharge
-            if (!chargeProcessStarted && targetPlayer != null)
+            timer += Time.fixedDeltaTime;
+            rb2D.linearVelocity = Vector2.zero;
+
+            yield return waitForFixedUpdate;
+        }
+
+        enemy.animateEnemy.SetCastAnimation(false);
+        enemy.enemyAnimSync?.SetBossCastAnimation(false);
+
+        CleanupRoutine();
+    }
+
+    // SMEAR ATTACK
+    IEnumerator SmearAttackRoutine()
+    {
+        BeginRoutine();
+
+        enemy.debugDisplay.text = "SMEAR ATTACK";
+
+        isAttacking = true;
+
+
+        // LOCK TARGET POSITION ONCE
+        if (targetPlayer != null)
+        {
+            lockedPosition = targetPlayer.GetPlayerPosition();
+            lockAttackVector = true;
+        }
+
+        // PRE-CHECK
+        bool closeEnough = Vector2.Distance(rb2D.position, lockedPosition) < 1.2f;
+
+        // PREPARE CHARGE
+        if (!closeEnough)
+        {
+            float prepareTimer = 0f;
+            float prepareDuration = 0.35f;
+
+            while (prepareTimer < prepareDuration)
             {
-                lockedPosition = targetPlayer.transform.position + new Vector3(0f, 0.5f, 0f);
+                if (ShouldCancelRoutine()) yield break;
+
+                prepareTimer += Time.fixedDeltaTime;
+                rb2D.linearVelocity = Vector2.zero;
+
+                yield return waitForFixedUpdate;
             }
 
-            chargeProcessStarted = true;
+            // START CHARGE
+            Vector2 chargeDirection = (lockedPosition - rb2D.position).normalized;
 
-            // Pre-check if moving towards player is necessary 
-            if (Vector3.Distance(transform.position, lockedPosition) < 1.5f)  // Small threshold for accuracy
-            {
-                // Exit the loop early if boss has reached the destination
-                goto skipRun;
-            }
-
-            float prehargeDuration = 1.5f;
             float chargeTimer = 0f;
 
-            enemy.animator.SetFloat(Settings.motionType, 1f); // charge trigger to blend tree
-
-            while (chargeTimer < prehargeDuration)
+            while (chargeTimer < smearChargeDuration)
             {
-                if (enemy.health.hasDied) yield break;
+                if (ShouldCancelRoutine()) yield break;
 
-                chargeTimer += Time.deltaTime;
+                chargeTimer += Time.fixedDeltaTime;
 
-                yield return null;
-            }
+                float chargeSpeed = smearChargeSpeed * aggressiveMultiplier;
+                rb2D.linearVelocity = chargeDirection * chargeSpeed;
 
-            chargeTimer = 0f;
-            float chargeDuration = 2f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animateEnemy.SetMovementAnimationParameters();
-
-            // Clamp lockedPosition
-            InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId);
-            Grid grid = ir.grid;
-
-            Vector3Int cell = grid.WorldToCell(lockedPosition);
-            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
-            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
-            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
-
-            Vector3 direction = (lockedPosition - transform.position).normalized;
-            float chargeSpeed = 20f;
-
-            while (chargeTimer < chargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
-
-                // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, lockedPosition) < 1.5f)  // Small threshold for accuracy
+                // EARLY STOP IF CLOSE ENOUGH
+                if (Vector2.Distance(rb2D.position, lockedPosition) < 1.2f)
                 {
-                    // Exit the loop early if boss has reached the destination
                     break;
                 }
 
-                yield return null;
+                yield return waitForFixedUpdate;
             }
 
-
-        skipRun:
-
-            chargeTimer = 0f;
-
-            yield return null;
-
-            // Location change completed now starting sword smear process starts if player is close to the enemy
-            float smearDuration = 1f;
-
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-
-            Vector3 playerDirectionVector = new Vector3();
-
-            if (GameManager.Instance.GetLocalPlayer() != null)
-            {
-                playerDirectionVector = GameManager.Instance.GetLocalPlayer().GetPlayerPosition() - transform.position;
-            }
-
-            yield return null;
-
-            while (chargeTimer < smearDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                enemy.animator.SetBool(Settings.isAttack, true);
-
-                foreach (Collider2D collider in Physics2D.OverlapCircleAll(swordHoldingTransform.position, smearCircleRadius))
-                {
-                    if (collider.GetType() == typeof(PolygonCollider2D))
-                    {
-                        // Don't hit yourself if player is also in the collider list
-                        if (collider.tag == Settings.enemyTag) continue;
-
-                        if (collider.tag == Settings.chestItemTag) continue;
-
-                        if (playerHealth = collider.GetComponent<Health>())
-                        {
-                            Player player = collider.GetComponent<Player>();
-
-                            float blindPenalty = enemy.isBlind ? 0.5f : 0f;
-
-                            DamageContext ctx = new DamageContext { dealerPosition = transform.position};
-                            ReceiveProjectileDamage receiveProjectileDamage = collider.GetComponent<ReceiveProjectileDamage>();
-
-                            // Evasiveness - dodge check
-                            if (100 - (player.currentDodgeValue + blindPenalty) * 100 > Random.Range(1, 101))
-                            {
-                                ctx.receiverPosition = player.transform.position;
-                                receiveProjectileDamage.TakeProjectileDamage(25, ctx);
-
-                                //SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
-
-                                // Apply knockback
-                                ApplyKnockbackToPlayer(player);
-                            }
-                            else
-                            {
-                                ctx.receiverPosition = enemy.health.transform.position;
-
-                                player.health.isDodging = true;
-                                player.healthEvent.CallDodgeEvent();
-                                player.health.PostHitImmunity(true);
-                                receiveProjectileDamage.TakeProjectileDamage(0, ctx);
-                            }
-                        }
-                    }
-                }
-
-                yield return null;
-
-                //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.attackSoundEffect);
-            }
-
-            enemy.animator.SetBool(Settings.isAttack, false);
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
-            isAttacking = false;
-
-            previousSepharothPhase = SepharothPhase.SmearAttack;
+            rb2D.linearVelocity = Vector2.zero; 
         }
-        else if (sepharothPhase == SepharothPhase.LaserBeam)
+
+        // SMALL BUFFER BEFORE SMEAR
+        yield return waitForFixedUpdate;
+
+        alreadyHitTargets.Clear();
+
+        smearDamageActive = false;
+
+        // SMEAR ATTACK START
+        enemy.animateEnemy.SetFocusedAnimation(true);
+        enemy.enemyAnimSync?.SetBossFocusedAnimation(true);
+
+        float smearTimer = 0f;
+
+        while (smearTimer < smearAttackDuration)
         {
-            if (enemy.health.hasDied) yield break;
+            if (ShouldCancelRoutine()) yield break;
 
-            enemyPhase = EnemyPhase.Chase;
+            smearTimer += Time.fixedDeltaTime;
 
-            // PREPARE PRECHARGE PHASE
-            float prechargeDuration = 1f;
-            float chargeTimer = 0f;
-
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animator.SetBool(Settings.cast, true);
-            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.chargeSoundEffect);
-
-            yield return null;
-
-            // Locked Player direction vector
-            Vector3 playerDirectionVector = new Vector3();
-
-            if (GameManager.Instance.GetLocalPlayer() != null)
+            // DAMAGE WINDOW CONTROLLED BY ANIMATION EVENTS
+            if (smearDamageActive)
             {
-                playerDirectionVector = GameManager.Instance.GetLocalPlayer().GetPlayerPosition() - transform.position;
+                PerformSmearDamage();
             }
 
-            // Locked enemy to player angle
-            float enemyAngleDegrees = HelperUtilities.GetAngleFromVector(playerDirectionVector);
-
-            // Locked enemy aim direction
-            AimDirection enemyAimDirection = HelperUtilities.GetAimDirection(enemyAngleDegrees);
-
-            // Locked enemy attack direction
-            AttackDirection enemyAttackDirection = HelperUtilities.GetAttackDirection(enemyAngleDegrees);
-
-            while (chargeTimer < prechargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
-            }
-
-            chargeTimer = 0f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-
-            float fireTimer = 0f;
-            float fireProjectileDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
-            GetComponent<Enemy>().isFiring = false; // Reset firing before laser shot
-
-            // **Fire laser once and hold it for the full duration**
-            FireWeapon(playerDirectionVector, enemyAngleDegrees, enemyAimDirection, enemyAttackDirection, isLaser: true, ProjectileKind.Default, new AttackContext { sepharothPhase = SepharothPhase.LaserBeam });
-
-            while (fireTimer < fireProjectileDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                fireTimer += Time.deltaTime;
-
-                yield return null; // Keep laser active
-            }
-
-            yield return null;
-
-            previousSepharothPhase = SepharothPhase.LaserBeam;
+            yield return waitForFixedUpdate;
         }
 
-        chargeProcessStarted = false;
-        sepharothAttackMoveRoutine = null;
+        smearDamageActive = false;
 
-        enemy.animator.SetBool(Settings.cast, false);
+        enemy.animateEnemy.SetFocusedAnimation(false);
+        enemy.enemyAnimSync?.SetBossFocusedAnimation(false);
+
+        isAttacking = false;
+
+        CleanupRoutine();
+
         enemy.animateEnemy.SetIdleAnimationParameters();
+        enemy.enemyAnimSync?.UpdateAnimationStateServer(moving: false, enemy.LastAim);
+    }
 
-        TransitionToNextPhase();
+    // INVISIBLE AND MINE
+    IEnumerator InsivibleAndMineRoutine()
+    {
+        BeginRoutine();
+
+        enemy.debugDisplay.text = "INVISIBLE AND MINE";
+
+        rb2D.linearVelocity = Vector2.zero;
+
+        // FADE OUT
+        yield return FadeRoutine(1f, 0f);
+
+        isInvisible = true;
+
+        hitCollider.enabled = false;
+
+        // SMALL INVISIBLE DELAY
+        yield return new WaitForSeconds(0.4f);
+
+        int mineCount = Random.Range(3, 5);
+
+        for (int i = 0; i < mineCount; i++)
+        {
+            if (ShouldCancelRoutine()) yield break;
+
+            // TELEPORT TO RANDOM POSITION
+            TeleportToRandomSpawn();
+
+            yield return new WaitForSeconds(0.25f);
+
+            // PLACE MINE
+            if (!hasPendingProjectile)
+            {
+                pendingProjectileRequest = new PendingProjectileRequest
+                {
+                    projectileKind = ProjectileKind.Default,
+                    attackContext = new AttackContext { sepharothPhase = SepharothPhase.InvisibleAndMine }
+                };
+
+                hasPendingProjectile = true;
+
+                FireWeapon(false, pendingProjectileRequest.projectileKind, pendingProjectileRequest.attackContext);
+
+                hasPendingProjectile = false;
+
+                // WAIT BETWEEN MINES
+                yield return new WaitForSeconds(1f);
+            }
+        }
+
+        // FINAL INVISIBLE DELAY
+        yield return new WaitForSeconds(0.5f);
+
+        TeleportNearPlayer();
+
+        hitCollider.enabled = true;
+        isInvisible = false;
+
+        yield return FadeRoutine(0f, 1f);
+
+        CleanupRoutine();
+    }
+
+    void TeleportNearPlayer()
+    {
+        if (targetPlayer == null) return;
+
+        Vector2 offset = Random.insideUnitCircle.normalized * 3f;
+
+        Vector2 targetPos = (Vector2)targetPlayer.transform.position + offset;
+        targetPos = ClampToBossRoom(targetPos, cellMin, cellMax);
+
+        rb2D.position = targetPos;
+    }
+
+    IEnumerator FadeRoutine(float startAlpha, float endAlpha)
+    {
+        float timer = 0f;
+
+        while (timer < invisibleFadeDuration)
+        {
+            timer += Time.fixedDeltaTime;
+            float t = timer / invisibleFadeDuration;
+
+            float alpha = Mathf.Lerp(startAlpha, endAlpha, t);
+
+            syncedAlpha = alpha;
+
+            yield return waitForFixedUpdate;
+        }
+
+        syncedAlpha = endAlpha;
+    }
+
+    void SetAlpha(float alpha)
+    {
+        Color color = spriteRenderer.color;
+        color.a = alpha;
+        spriteRenderer.color = color;
+    }
+
+    void PerformSmearDamage()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(swordHoldingTransform.position, smearCircleRadius);
+
+        foreach (Collider2D collider in colliders)
+        {
+            if (!collider.CompareTag(Settings.playerTag)) continue;
+
+            Player player = collider.GetComponent<Player>();
+            if (player == null) continue;
+
+            if (alreadyHitTargets.Contains(player.NetAuth.netId)) continue;
+
+            alreadyHitTargets.Add(player.NetAuth.netId);
+
+            ReceiveProjectileDamage damageReceiver = collider.GetComponent<ReceiveProjectileDamage>();
+
+            if (damageReceiver == null) continue;
+
+            DamageContext ctx = new()
+            {
+                dealerPosition = transform.position,
+                receiverPosition = player.transform.position
+            };
+
+            damageReceiver.TakeProjectileDamage(smearDamage, ctx);
+            ApplyKnockbackToPlayer(player);
+        }
+    }
+
+    void BeginRoutine()
+    {
+        ResetAnimations();
+
+        rb2D.linearVelocity = Vector2.zero;
+
+        enemy.isFiring = false;
+    }
+
+    void CleanupRoutine()
+    {
+        ResetAnimations();
+
+        rb2D.linearVelocity = Vector2.zero;
+
+        enemy.isFiring = false;
+
+        lockAttackVector = false;
+        hasPendingProjectile = false;
+        sepharothRoutine = null;
+        currentSepharothPhase = SepharothPhase.Wait;
+
+        passedToWait = false;
+        phaseTimer = 0f;
+    }
+
+    bool ShouldCancelRoutine()
+    {
+        if (!isServer)
+        {
+            CleanupRoutine();
+            return true;
+        }
+
+        if (enemy.health.hasDied)
+        {
+            CleanupRoutine();
+            return true;
+        }
+
+        if (targetPlayer == null)
+        {
+            CleanupRoutine();
+            return true;
+        }
+
+        return false;
+    }
+
+    // ANIMATION EVENTS
+    public void EnableSmearDamage()
+    {
+        if (!isServer) return;
+
+        alreadyHitTargets.Clear();
+        smearDamageActive = true;
+    }
+
+    public void DisableSmearDamage()
+    {
+        if (!isServer) return;
+
+        smearDamageActive = false;
+    }
+
+    void UpdateBossDifficulty()
+    {
+        float hpPercent = (float)enemy.health.GetCurrentHealth() / enemy.health.GetMaximumHealth();
+
+        if (!phase2Active && hpPercent <= phase2Threshold)
+        {
+            phase2Active = true;
+            aggressiveMultiplier = 1.25f;
+            waitPhase = 0.8f;
+        }
+
+        if (!phase3Active && hpPercent <= phase3Threshold)
+        {
+            phase3Active = true;
+            aggressiveMultiplier = 1.5f;
+            waitPhase = 0.6f;
+        }
+    }
+
+    void MaintainDistance()
+    {
+        if (targetPlayer == null) return;
+
+        float distance = Vector2.Distance(transform.position, targetPlayer.GetPlayerPosition());
+        Vector2 dir = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+        if (distance < preferredDistance - 1f)
+        {
+            rb2D.AddForce(-dir * retreatForce);
+        }
+        else if (distance > preferredDistance + 2f)
+        {
+            rb2D.AddForce(dir * movementForce);
+        }
+    }
+
+    void TeleportToRandomSpawn()
+    {
+        InstantiatedRoom room = DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId);
+        Grid grid = room.grid;
+
+        int randomIndex = Random.Range(0, currentRoomNetData.spawnPositions.Length);
+
+        Vector3Int spawnCell = new Vector3Int(currentRoomNetData.spawnPositions[randomIndex].x, currentRoomNetData.spawnPositions[randomIndex].y, 0);
+
+        rb2D.position = grid.GetCellCenterWorld(spawnCell);
+    }
+
+    private void ResetAnimations()
+    {
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+    }
+
+    private void RefreshTargetAndLockedVector()
+    {
+        targetRefreshTimer += Time.deltaTime;
+
+        if (targetRefreshTimer >= Settings.targetRefreshInterval)
+        {
+            targetPlayer = HelperUtilities.GetClosestPlayer(transform.position);
+            targetRefreshTimer = 0f;
+
+            if (targetPlayer != null)
+            {
+                attackLockedVector = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+            }
+        }
     }
 
     public void PlayerStealthCheck()
     {
-        // Check if the player is on stealth
         currentSepharothPhase = SepharothPhase.Wait;
     }
 

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class VenomancerAI : EnemyAI, IMutualBossBehaviour
@@ -11,24 +13,50 @@ public class VenomancerAI : EnemyAI, IMutualBossBehaviour
 
     // BOSSES
     [SerializeField] Transform swordHoldingTransform;
-    [SerializeField] float smearCircleRadius = 0.5f;
+
+    [Header("Seismic Slam")]
+    [SerializeField] float seismicSlamCircleRadius = 2.2f;
+    [SerializeField] int seismicSlamDamage = 25;
+    [SerializeField] float seismicSlamChargeSpeed = 28f;
+    [SerializeField] float seismicSlamChargeDuration = 0.65f;
+    [SerializeField] float seismicSlamAttackDuration = 0.8f;
+
+    [Header("Boss Behaviour")]
+    [SerializeField] float waitPhase = 0.15f;
+
+    [Header("Difficulty")]
+    [SerializeField] float phase2Threshold = 0.7f;
+    [SerializeField] float phase3Threshold = 0.4f;
 
     VenomancerPhase currentVenomancerPhase;
-    VenomancerPhase previousVenomancerPhase;
-    private float phaseTimer;  // Timer to control phase duration
-    private float waitPhase = 0.2f;  // Adjust this to control how long each phase lasts
+
+    Coroutine venomancerPhase;
+
+    bool smearDamageActive;
 
     ParticleSystem specialMoveParticlesSystem;
     float shakeIntensity = 3f;
     float shakeDuration = 1.2f;
 
-    bool slamPerformed;
-    Health playerHealth;
-    Vector3 lockedPosition;
-    bool chargeProcessStarted;
-    float seismicSlamCircleRadius = 5f;
+    // STATE
+    private float phaseTimer;
 
-    Coroutine venomancerAttackMoveRoutine;
+    bool phase2Active;
+    bool phase3Active;
+
+    bool lockAttackVector;
+    Vector2 lockedPosition;
+
+    float aggressiveMultiplier = 1f;
+
+    readonly HashSet<uint> alreadyHitTargets = new HashSet<uint>();
+
+    // EVENTS
+    public UnityEvent resetAnimationEvent;
+    public UnityEvent slamStartEvent;
+    public UnityEvent sludgeReleaseEvent;
+    public UnityEvent stoneRainReleaseEvent;
+    public UnityEvent toxicPoolReleaseEvent;
 
     bool passedToWait;
 
@@ -50,493 +78,500 @@ public class VenomancerAI : EnemyAI, IMutualBossBehaviour
         base.Awake();
     }
 
-    protected override void Start() 
+    protected override void Start()
     {
-        specialMoveParticlesSystem = transform.GetChild(transform.childCount - 2).GetComponent<ParticleSystem>();
+        base.Start();
 
         currentVenomancerPhase = VenomancerPhase.Wait;
     }
 
-    protected override void OnEnable() 
+    protected override void OnEnable()
     {
-        targetPlayer = GameManager.Instance.GetLocalPlayer();
+        resetAnimationEvent.AddListener(ResetAnimations);
+        slamStartEvent.AddListener(EnableSlamDamage);
+        sludgeReleaseEvent.AddListener(OnSludgeReleased);
+        stoneRainReleaseEvent.AddListener(OnStoneRainReleased);
+        toxicPoolReleaseEvent.AddListener(OnToxicPoolReleased);
     }
 
-    protected override void OnDisable() { }
+    protected override void OnDisable()
+    {
+        resetAnimationEvent.RemoveListener(ResetAnimations);
+        slamStartEvent.RemoveListener(EnableSlamDamage);
+        sludgeReleaseEvent.RemoveListener(OnSludgeReleased);
+        stoneRainReleaseEvent.RemoveListener(OnStoneRainReleased);
+        toxicPoolReleaseEvent.RemoveListener(OnToxicPoolReleased);
+    }
 
-    protected override void FixedUpdate() { }
+    public void ResetAnimationEvent() => resetAnimationEvent?.Invoke();
+    public void SlamStartEvent() => slamStartEvent?.Invoke();
+    public void SludgeReleaseEvent() => sludgeReleaseEvent?.Invoke();
+    public void StoneRainReleaseEvent() => stoneRainReleaseEvent?.Invoke();
+    public void ToxicPoolReleaseEvent() => toxicPoolReleaseEvent?.Invoke();
 
     protected override void Update()
     {
-        if (enemy.enemyAI.enemyPhase == EnemyPhase.Death)
-        {
-            if (attackAnimationRoutine != null)
-            {
-                StopCoroutine(attackAnimationRoutine);
-            }
+        if (currentRoom == null) currentRoom = enemy.owningSpawner.instantiatedRoom.room;
 
-            return;
-        }
+        if (enemyPhase == EnemyPhase.Death) return;
 
         if (targetPlayer != null)
         {
-            Vector3 direction = GameManager.Instance.GetDecoy() != null ? (GameManager.Instance.GetDecoy().GetDecoyPosition() - transform.position).normalized :
-                (targetPlayer.GetPlayerPosition() - transform.position).normalized;
-            attackLockedVector = direction;
+            trackingVector = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+        }
+    }
+
+    protected override void FixedUpdate()
+    {
+        if (targetPlayer == null) return;
+        if (enemyPhase == EnemyPhase.Death) return;
+
+        // Emergency pullback if Sylvarok drifts outside bounds
+        if (IsOutsideBossRoom(transform.position, cellMin, cellMax))
+        {
+            Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
+            rb2D.position = safePos;
+            rb2D.linearVelocity = Vector2.zero;
+
+            Debug.LogWarning("Venomancer was outside bounds. Snapped back.");
         }
 
-        // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
-        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
-        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Venomancer);
-        enemy.animateEnemy.ResetAimAnimationParameters();
-        enemy.animateEnemy.SetAimParameters(unitAimDirection);
+        UpdateBossDifficulty();
 
-        // Update timers - Fire Projectile
-        firingIntervalTimer -= Time.deltaTime;
-
-        HasNegativeMoveStatusEffect();
+        HandleAim();
 
         if (enemy.moveStatus == MoveStatus.Idle)
         {
-            // Check if the player is on stealth
-            if (GameManager.Instance.GetLocalPlayer() != null && GameManager.Instance.GetLocalPlayer().isStealthActive)
+            if (targetPlayer.isStealthActive)
             {
                 PlayerStealthCheck();
             }
 
-            // Check if the enemy is a Venomancer boss
-            if (enemyDetails.enemyBehaviour == EnemyBehaviour.Venomancer)
+            switch (currentVenomancerPhase)
             {
-                // Handle phases based on currentPhase
-                switch (currentVenomancerPhase)
-                {
-                    case VenomancerPhase.Wait:
-                        PassedToWait = true;
+                case VenomancerPhase.Wait:
 
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
+                    PassedToWait = true;
+                    phaseTimer += Time.fixedDeltaTime;
 
-                        // Optionally handle phase transitions based on a timer
-                        phaseTimer += Time.deltaTime;
-                        if (phaseTimer >= waitPhase)
-                        {
-                            TransitionToNextPhase();
-                            phaseTimer = 0f;  // Reset the timer for the next phase
-                        }
-                        break;
-
-                    case VenomancerPhase.SludgeThrow:
-                        HandleSludgeThrow();
-                        break;
-
-                    case VenomancerPhase.SlamGround:
-                        HandleSlamGround();
-                        break;
-
-                    case VenomancerPhase.StoneRain:
-                        HandleStoneRain();
-                        break;
-
-                    case VenomancerPhase.ToxicPool:
-                        HandleToxicPool();
-                        break;
-
-                    default:
-                        break;
-                }
+                    if (phaseTimer >= waitPhase)
+                    {
+                        phaseTimer = 0;
+                        TransitionToNextPhase();
+                    }
+                    break;
+                case VenomancerPhase.SludgeThrow:
+                    if (venomancerPhase == null)
+                    {
+                        venomancerPhase = StartCoroutine(SludgeThrowRoutine());
+                    }
+                    break;
+                case VenomancerPhase.SlamGround:
+                    if (venomancerPhase == null)
+                    {
+                        venomancerPhase = StartCoroutine(SlamGroundRoutine());
+                    }
+                    break;
+                case VenomancerPhase.StoneRain:
+                    if (venomancerPhase == null)
+                    {
+                        venomancerPhase = StartCoroutine(StoneRainRoutine());
+                    }
+                    break;
+                case VenomancerPhase.ToxicPool:
+                    if (venomancerPhase == null)
+                    {
+                        venomancerPhase = StartCoroutine(ToxicPoolRoutine());
+                    }
+                    break;
+                default:
+                    break;
             }
+        }
+    }
+
+    private void HandleAim()
+    {
+        Vector2 activeAimVector = lockAttackVector ? attackLockedVector : trackingVector;
+        float unitAngle = HelperUtilities.GetAngleFromVector(activeAimVector);
+        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
+        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+
+        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Cryothar);
+
+        if (unitAimDirection != enemy.LastAim)
+        {
+            enemy.LastAim = unitAimDirection;
+
+            enemy.animateEnemy.ResetAimAnimationParameters();
+            enemy.animateEnemy.SetAimParameters(unitAimDirection);
         }
     }
 
     public void HandleWaitPhase()
     {
-        // Logic for waiting phase (maybe the Centaur just moves or idles here)
-        enemy.animateEnemy.SetIdleAnimationParameters();
-    }
-
-    private void HandleSludgeThrow()
-    {
         enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (venomancerAttackMoveRoutine == null)
-        {
-            venomancerAttackMoveRoutine = StartCoroutine(AttackRoutine(VenomancerPhase.SludgeThrow));
-        }
-    }
-
-    private void HandleSlamGround()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (venomancerAttackMoveRoutine == null)
-        {
-            venomancerAttackMoveRoutine = StartCoroutine(AttackRoutine(VenomancerPhase.SlamGround));
-        }
-    }
-
-    private void HandleStoneRain()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (venomancerAttackMoveRoutine == null)
-        {
-            venomancerAttackMoveRoutine = StartCoroutine(AttackRoutine(VenomancerPhase.StoneRain));
-        }
-    }
-
-    private void HandleToxicPool()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (venomancerAttackMoveRoutine == null)
-        {
-            venomancerAttackMoveRoutine = StartCoroutine(AttackRoutine(VenomancerPhase.ToxicPool));
-        }
+        enemy.animateEnemy.ResetBossAnimationParameters();
     }
 
     private void TransitionToNextPhase()
     {
-        // Reset Slam Performed
-        slamPerformed = false;
-
-        // Check if the player is on stealth
-        if (GameManager.Instance.GetLocalPlayer().isStealthActive)
+        if (targetPlayer == null)
         {
-            PlayerStealthCheck();
+            currentVenomancerPhase = VenomancerPhase.Wait;
             return;
         }
 
-        if (targetPlayer != null)
+        float distance = Vector2.Distance(transform.position, targetPlayer.GetPlayerPosition());
+
+        // CLOSE RANGE
+        if (distance < 5f)
         {
-            if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) < 3f)
-            {
-                // If player is too close to boss, automatically next phase will be Slam Ground
-                currentVenomancerPhase = VenomancerPhase.SlamGround;
-                return;
-            }
-            else if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) > 12f)
-            {
-                int rng = Random.Range(0, 2);
-                currentVenomancerPhase = rng == 0 ? VenomancerPhase.SludgeThrow : VenomancerPhase.StoneRain;
-            }
+            int roll = Random.Range(0, 100);
+
+            if (roll < 70) currentVenomancerPhase = VenomancerPhase.SlamGround;
+            else currentVenomancerPhase = VenomancerPhase.SludgeThrow;
+
+            return;
         }
 
-        if (currentVenomancerPhase == VenomancerPhase.SlamGround || currentVenomancerPhase == VenomancerPhase.ToxicPool ||
-            currentVenomancerPhase == VenomancerPhase.SludgeThrow || currentVenomancerPhase == VenomancerPhase.StoneRain)
+        // LONG RANGE
+        if (distance > 10f)
         {
-            // If centaur made a move then next phase will be wait
-            currentVenomancerPhase = VenomancerPhase.Wait;
+            int roll = Random.Range(0, 100);
+
+            if (roll < 35) currentVenomancerPhase = VenomancerPhase.StoneRain;
+            else if (roll < 45) currentVenomancerPhase = VenomancerPhase.ToxicPool;
+            else currentVenomancerPhase = VenomancerPhase.SludgeThrow;
+
+            return;
         }
-        else
-        {
-            // Example of conditional or random phase transitions
-            currentVenomancerPhase = (VenomancerPhase)Random.Range(2, Enum.GetValues(typeof(VenomancerPhase)).Length);
-        }
+
+        // MID RANGE
+        int midRoll = Random.Range(0, 100);
+
+        if (midRoll < 75) currentVenomancerPhase = VenomancerPhase.SludgeThrow;
+        else if (midRoll < 85) currentVenomancerPhase = VenomancerPhase.StoneRain;
+        else currentVenomancerPhase = VenomancerPhase.ToxicPool;
     }
 
-    IEnumerator AttackRoutine(VenomancerPhase venomancerPhase)
+    // SLUDGE THROW
+    IEnumerator SludgeThrowRoutine()
     {
-        if (venomancerPhase == VenomancerPhase.SludgeThrow)
+        BeginRoutine();
+
+        float timer = 0f;
+        float duration = 2f;
+
+        enemy.animateEnemy.SetSummonAnimation(true);
+        enemy.enemyAnimSync?.SetBossSummonAnimation(true);
+
+        while (timer < duration)
         {
             if (enemy.health.hasDied) yield break;
 
-            enemy.animator.SetFloat(Settings.motionType, -1f);
+            timer += Time.fixedDeltaTime;
 
-            // PREPARE PRECHARGE PHASE
-            float prechargeDuration = 0.6f;
-            float chargeTimer = 0f;
-
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animator.SetBool(Settings.cast, true);
-
-            yield return null;
-
-            enemy.animator.SetBool(Settings.isAttack, true);
-            enemy.animator.SetInteger(Settings.attackType, 1);
-
-            while (chargeTimer < prechargeDuration)
+            if (!hasPendingProjectile)
             {
-                if (enemy.health.hasDied) yield break;
+                Vector2 shotDirection = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
 
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
-            }
-
-            chargeTimer = 0f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animator.SetBool(Settings.cast, false);
-            float fireTimer = 0f;
-            float fireProjectileDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
-
-            while (fireTimer < fireProjectileDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                fireTimer += Time.deltaTime;
-
-                // Interval Timer
-                if (firingIntervalTimer < 0f)
+                pendingProjectileRequest = new PendingProjectileRequest
                 {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(isLaser: false, ProjectileKind.Default, new AttackContext { venomancerPhase = VenomancerPhase.SludgeThrow });
-                    }
-                    else
-                    {
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                    }
-                }
+                    projectileKind = ProjectileKind.Default,
+                    attackContext = new AttackContext { venomancerPhase = VenomancerPhase.SludgeThrow },
+                    lockedAimVector = shotDirection
+                };
 
-                yield return null;
+                hasPendingProjectile = true;
+
             }
 
-            yield return null;
-
-            enemy.animateEnemy.SetIdleAnimationParameters();
-            previousVenomancerPhase = VenomancerPhase.SludgeThrow;
-            enemy.animator.SetInteger(Settings.attackType, 0);
-
+            yield return waitForFixedUpdate;
         }
-        else if (venomancerPhase == VenomancerPhase.SlamGround)
+
+        enemy.animateEnemy.SetSummonAnimation(false);
+        enemy.enemyAnimSync?.SetBossSummonAnimation(false);
+
+        venomancerPhase = null;
+
+        currentVenomancerPhase = VenomancerPhase.Wait;
+        phaseTimer = 0;
+    }
+
+    // SLAM GROUND
+    IEnumerator SlamGroundRoutine()
+    {
+        BeginRoutine();
+
+        isAttacking = true;
+
+        // LOCK TARGET POSITION ONCE
+        if (targetPlayer != null)
         {
-            if (enemy.health.hasDied) yield break;
+            lockedPosition = targetPlayer.GetPlayerPosition();
+            lockAttackVector = true;
+        }
 
-            enemyPhase = EnemyPhase.Attack;
-            isAttacking = true;
+        // PRE-CHECK
+        bool closeEnough = Vector2.Distance(rb2D.position, lockedPosition) < 1.2f;
 
-            // PREPARE PRECHARGE PHASE
-            // Lock-on player position during the start of precharge
+        // PREPARE CHARGE
+        if (!closeEnough)
+        {
+            float prepareTimer = 0f;
+            float prepareDuration = 1f;
 
-            if (!chargeProcessStarted && GameManager.Instance.GetLocalPlayer() != null)
+            while (prepareTimer < prepareDuration)
             {
-                lockedPosition = GameManager.Instance.GetLocalPlayer().transform.position + new Vector3(0f, 0.5f, 0f);
+                if (ShouldCancelRoutine()) yield break;
+
+                prepareTimer += Time.fixedDeltaTime;
+                rb2D.linearVelocity *= 0.25f;
+
+                yield return waitForFixedUpdate;
             }
 
-            chargeProcessStarted = true;
-
-            // Pre-check if moving towards player is necessary 
-            if (Vector3.Distance(transform.position, lockedPosition) < 1.5f)  // Small threshold for accuracy
-            {
-                // Exit the loop early if boss has reached the destination
-                goto skipRun;
-            }
-
-            enemy.animator.SetFloat(Settings.motionType, 1f); // charge trigger to blend tree
+            // START CHARGE
+            Vector2 chargeDirection = (lockedPosition - rb2D.position).normalized;
 
             float chargeTimer = 0f;
-            float chargeDuration = 2f;
 
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animateEnemy.SetMovementAnimationParameters();
-
-            // Clamp lockedPosition
-            Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
-
-            Vector3Int cell = grid.WorldToCell(lockedPosition);
-            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
-            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
-            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
-
-            Vector3 direction = (lockedPosition - transform.position).normalized;
-            float chargeSpeed = 20f;
-
-            while (chargeTimer < chargeDuration)
+            while (chargeTimer < seismicSlamChargeDuration)
             {
-                if (enemy.health.hasDied) yield break;
+                if (ShouldCancelRoutine()) yield break;
 
-                chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
+                chargeTimer += Time.fixedDeltaTime;
 
-                // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, clampedPosition) < 1.5f)  // Small threshold for accuracy
+                float chargeSpeed = seismicSlamChargeSpeed * aggressiveMultiplier;
+                rb2D.linearVelocity = chargeDirection * chargeSpeed;
+
+                // EARLY STOP IF CLOSE ENOUGH
+                if (Vector2.Distance(rb2D.position, lockedPosition) < 1.2f)
                 {
-                    // Exit the loop early if boss has reached the destination
                     break;
                 }
 
-                yield return null;
+                yield return waitForFixedUpdate;
             }
 
+            rb2D.linearVelocity = Vector2.zero;
+        }
 
-        skipRun:
+        // SMALL BUFFER BEFORE SMEAR
+        yield return waitForFixedUpdate;
 
-            yield return null;
+        alreadyHitTargets.Clear();
 
-            // SLAM PHASE
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animator.SetBool(Settings.cast, false);
-            enemy.animator.SetFloat(Settings.motionType, -1f);
+        smearDamageActive = false;
 
-            enemy.animator.SetInteger(Settings.attackType, 2);
+        // SMEAR ATTACK START
+        enemy.animateEnemy.SetHealAnimation(true);
 
-            if (!slamPerformed)
+        float smearTimer = 0f;
+
+        while (smearTimer < seismicSlamAttackDuration)
+        {
+            if (ShouldCancelRoutine()) yield break;
+
+            smearTimer += Time.fixedDeltaTime;
+
+            // DAMAGE WINDOW CONTROLLED BY ANIMATION EVENTS
+            if (smearDamageActive)
             {
-                yield return new WaitForSeconds(1f); // Wait for slam body animation
-
                 SeismicSlam();
-                slamPerformed = true;
             }
 
-            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.attackSoundEffect);
-
-            yield return null;
-
-            enemy.animator.SetBool(Settings.isAttack, false);
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
-            isAttacking = false;
-
-            previousVenomancerPhase = VenomancerPhase.SlamGround;
-            enemy.animator.SetInteger(Settings.attackType, 0);
-        }
-        else if (venomancerPhase == VenomancerPhase.StoneRain)
-        {
-            if (enemy.health.hasDied) yield break;
-
-            enemy.animator.SetFloat(Settings.motionType, -1f);
-            enemy.animator.SetInteger(Settings.attackType, 3);
-            enemyPhase = EnemyPhase.Attack;
-
-            // PREPARE PRECHARGE PHASE
-            float prechargeDuration = 1.3f;
-            float chargeTimer = 0f;
-
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animator.SetBool(Settings.cast, true);
-
-            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
-
-            yield return null;
-
-            while (chargeTimer < prechargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
-            }
-
-            chargeTimer = 0f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animator.SetBool(Settings.cast, false);
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
-            float fireTimer = 0f;
-            float fireProjectileDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
-
-            while (fireTimer < fireProjectileDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                fireTimer += Time.deltaTime;
-
-                // Interval Timer
-                if (firingIntervalTimer < 0f)
-                {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(isLaser: false, ProjectileKind.Default, new AttackContext { venomancerPhase = VenomancerPhase.StoneRain });
-                    }
-                    else
-                    {
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                        enemy.animateEnemy.SetIdleAnimationParameters();
-                    }
-                }
-
-                yield return null;
-            }
-
-            yield return null;
-
-            previousVenomancerPhase = VenomancerPhase.StoneRain;
-            enemy.animator.SetInteger(Settings.attackType, 0);
-        }
-        else if (venomancerPhase == VenomancerPhase.ToxicPool)
-        {
-            if (enemy.health.hasDied) yield break;
-
-            enemy.animator.SetFloat(Settings.motionType, -1f);
-            enemy.animator.SetInteger(Settings.attackType, 4);
-
-            enemyPhase = EnemyPhase.Chase;
-
-            float fireTimer = 0f;
-            float fireProjectileDuration = 5f;
-
-            yield return null;
-
-            while (fireTimer < fireProjectileDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                fireTimer += Time.deltaTime;
-
-                // Interval Timer
-                if (firingIntervalTimer < 0f)
-                {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.deltaTime;
-                        enemy.animateEnemy.SetAttackAnimationParameters();
-                        FireWeapon(isLaser: false, ProjectileKind.Default, new AttackContext { venomancerPhase = VenomancerPhase.ToxicPool });
-                    }
-                    else
-                    {
-                        // Reset timers and animation
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                        enemy.animateEnemy.SetIdleAnimationParameters();
-                    }
-                }
-
-                yield return null;
-
-            }
-
-            enemy.animator.SetBool(Settings.isAttack, false);
-
-            yield return null;
-
-            isAttacking = false;
-            previousVenomancerPhase = VenomancerPhase.ToxicPool;
-            enemy.animator.SetInteger(Settings.attackType, 0);
+            yield return waitForFixedUpdate;
         }
 
-        chargeProcessStarted = false;
-        venomancerAttackMoveRoutine = null;
+        yield return new WaitForSeconds(0.4f);
 
-        TransitionToNextPhase();
+        smearDamageActive = false;
+
+        enemy.animateEnemy.SetHealAnimation(false);
+
+        isAttacking = false;
+
+        CleanupRoutine();
+
+        enemy.animateEnemy.SetIdleAnimationParameters();
     }
 
-    public void PlayerStealthCheck()
+    // TOXIC POOL
+    IEnumerator ToxicPoolRoutine()
     {
-        currentVenomancerPhase = VenomancerPhase.Wait;
+        if (enemy.health.hasDied) yield break;
+
+        BeginRoutine();
+
+        float timer = 0f;
+        float duration = 2f;
+
+        enemy.animateEnemy.SetCastAnimation(true);
+
+        while (timer < duration)
+        {
+            if (enemy.health.hasDied) yield break;
+
+            timer += Time.fixedDeltaTime;
+
+            if (!hasPendingProjectile)
+            {
+                hasPendingProjectile = true;
+
+                Vector2 shotDirection = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+
+                pendingProjectileRequest = new PendingProjectileRequest
+                {
+                    projectileKind = ProjectileKind.Default,
+                    attackContext = new AttackContext { venomancerPhase = VenomancerPhase.ToxicPool },
+                    lockedAimVector = shotDirection
+                };
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        enemy.animateEnemy.SetCastAnimation(false);
+
+        CleanupRoutine();
     }
 
+    // STONE RAIN
+    IEnumerator StoneRainRoutine()
+    {
+        if (enemy.health.hasDied) yield break;
+
+        BeginRoutine();
+
+        float timer = 0f;
+        float duration = 2.5f;
+
+        enemy.animateEnemy.SetFocusedAnimation(true);
+
+        while (timer < duration)
+        {
+            if (enemy.health.hasDied) yield break;
+
+            timer += Time.fixedDeltaTime;
+
+            yield return waitForFixedUpdate;
+        }
+
+        enemy.animateEnemy.SetFocusedAnimation(false);
+
+        CleanupRoutine();
+    }
+
+    void BeginRoutine()
+    {
+        ResetAnimations();
+
+        rb2D.linearVelocity = Vector2.zero;
+
+        enemy.isFiring = false;
+    }
+
+    void CleanupRoutine()
+    {
+        ResetAnimations();
+
+        rb2D.linearVelocity = Vector2.zero;
+
+        enemy.isFiring = false;
+
+        lockAttackVector = false;
+        hasPendingProjectile = false;
+        venomancerPhase = null;
+        currentVenomancerPhase = VenomancerPhase.Wait;
+
+        passedToWait = false;
+        phaseTimer = 0f;
+    }
+
+    bool ShouldCancelRoutine()
+    {
+        if (enemy.health.hasDied)
+        {
+            CleanupRoutine();
+            return true;
+        }
+
+        if (targetPlayer == null)
+        {
+            CleanupRoutine();
+            return true;
+        }
+
+        return false;
+    }
+
+    // ANIMATION EVENTS
+    public void EnableSlamDamage()
+    {
+        alreadyHitTargets.Clear();
+        smearDamageActive = true;
+    }
+
+    private void OnSludgeReleased()
+    {
+        if (!hasPendingProjectile) return;
+
+        attackLockedVector = pendingProjectileRequest.lockedAimVector;
+        lockAttackVector = true;
+
+        FireWeapon(false, pendingProjectileRequest.projectileKind, pendingProjectileRequest.attackContext);
+
+        pendingProjectileRequest = default;
+        hasPendingProjectile = false;
+    }
+
+    private void OnStoneRainReleased()
+    {
+        FireWeapon(false, pendingProjectileRequest.projectileKind, new AttackContext { venomancerPhase = VenomancerPhase.StoneRain });
+
+        pendingProjectileRequest = default;
+        hasPendingProjectile = false;
+    }
+
+    private void OnToxicPoolReleased()
+    {
+        FireWeapon(false, pendingProjectileRequest.projectileKind, new AttackContext { venomancerPhase = VenomancerPhase.ToxicPool });
+
+        pendingProjectileRequest = default;
+        hasPendingProjectile = false;
+    }
+
+    void UpdateBossDifficulty()
+    {
+        float hpPercent = (float)enemy.health.GetCurrentHealth() / enemy.health.GetMaximumHealth();
+
+        if (!phase2Active && hpPercent <= phase2Threshold)
+        {
+            phase2Active = true;
+            aggressiveMultiplier = 1.25f;
+            waitPhase = 0.8f;
+        }
+
+        if (!phase3Active && hpPercent <= phase3Threshold)
+        {
+            phase3Active = true;
+            aggressiveMultiplier = 1.5f;
+            waitPhase = 0.6f;
+        }
+    }
+
+    private void ResetAnimations()
+    {
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+    }
 
     /// <summary>
     /// Execute Seismic Slam special move
@@ -550,7 +585,7 @@ public class VenomancerAI : EnemyAI, IMutualBossBehaviour
         {
             specialMoveParticlesSystem.Play();
 
-            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
+            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
         }
 
         StaticEventHandler.CallCameraShakeEvent(shakeIntensity, shakeDuration);
@@ -577,9 +612,14 @@ public class VenomancerAI : EnemyAI, IMutualBossBehaviour
         }
     }
 
+    public void PlayerStealthCheck()
+    {
+        currentVenomancerPhase = VenomancerPhase.Wait;
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(swordHoldingTransform.position, smearCircleRadius);
+        Gizmos.DrawWireSphere(swordHoldingTransform.position, seismicSlamCircleRadius);
     }
 }

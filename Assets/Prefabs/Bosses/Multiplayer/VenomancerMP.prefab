@@ -15107,6 +15107,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -534371811, guid: 7db516a3b0c81324cad6507806f509f9, type: 3}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_MaskInteraction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
@@ -15281,6 +15285,7 @@ PrefabInstance:
     - {fileID: 7400821728870662684, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     - {fileID: 0}
     - {fileID: 1280140502967062622, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3146469945750014307, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
@@ -15301,7 +15306,7 @@ PrefabInstance:
       addedObject: {fileID: -7563676813327572559}
     - targetCorrespondingSourceObject: {fileID: 7736189416814370986, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3551394515470617934}
+      addedObject: {fileID: -3774456003910692437}
     - targetCorrespondingSourceObject: {fileID: 7736189416814370986, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7511428938174769304}
@@ -15380,6 +15385,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   health: {fileID: 0}
+  currentHealth: 0
+  maxHealth: 0
+  isDamageable: 1
 --- !u!114 &-7563676813327572559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15395,7 +15403,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
---- !u!114 &3551394515470617934
+--- !u!114 &-3774456003910692437
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -15404,9 +15412,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7183228443647751644}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87bcb64617e09f44b9c1c1785ad71979, type: 3}
+  m_Script: {fileID: 11500000, guid: c20e381339a404f488a9f415ec7dad78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   enemyDetails: {fileID: 11400000, guid: ef4ad0df83d1cf1408ea42c982970db3, type: 2}
   weaponShootPosition: {fileID: 3455516063969396250}
   shootLayerMask:
@@ -15421,7 +15432,29 @@ MonoBehaviour:
   isDashing: 0
   patrolPointsParentContainer: {fileID: 0}
   swordHoldingTransform: {fileID: 2598544421764557147}
-  smearCircleRadius: 0.5
+  seismicSlamCircleRadius: 3.5
+  seismicSlamDamage: 25
+  seismicSlamChargeSpeed: 28
+  seismicSlamChargeDuration: 0.65
+  seismicSlamAttackDuration: 0.8
+  waitPhase: 0.2
+  phase2Threshold: 0.7
+  phase3Threshold: 0.4
+  resetAnimationEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  slamStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  sludgeReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  stoneRainReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  toxicPoolReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &7511428938174769304
 MonoBehaviour:
   m_ObjectHideFlags: 0

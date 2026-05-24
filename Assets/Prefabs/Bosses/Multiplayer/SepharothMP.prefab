@@ -602,6 +602,7 @@ PrefabInstance:
     - {fileID: 7400821728870662684, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     - {fileID: 0}
     - {fileID: 1280140502967062622, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4239920569477357429, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
@@ -698,6 +699,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   health: {fileID: 0}
+  currentHealth: 0
+  maxHealth: 0
+  isDamageable: 1
 --- !u!114 &-3909808717205073251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -736,14 +740,36 @@ MonoBehaviour:
   avoidLayerMask:
     serializedVersion: 2
     m_Bits: 134217728
-  moveStatus: 1
   updateFrameNumber: 1
   enemyPhase: 0
   isAttacking: 0
   isDashing: 0
   patrolPointsParentContainer: {fileID: 0}
   swordHoldingTransform: {fileID: 2598544421764557147}
-  smearCircleRadius: 0.5
+  preferredDistance: 6
+  movementForce: 5
+  retreatForce: 6
+  strafeForce: 8
+  laserPrepareDuration: 1
+  smearCircleRadius: 2
+  smearDamage: 25
+  smearChargeSpeed: 28
+  smearChargeDuration: 0.65
+  smearAttackDuration: 0.8
+  invisibleFadeDuration: 0.6
+  invisibleMineDuration: 4
+  waitPhase: 0.15
+  phase2Threshold: 0.7
+  phase3Threshold: 0.4
+  resetAnimationEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  smearStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  smearStopEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &8506647473518961208
 MonoBehaviour:
   m_ObjectHideFlags: 0

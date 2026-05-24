@@ -204,6 +204,16 @@ public class AnimateEnemy : MonoBehaviour
         }
     }
 
+    public void SetHealAnimation(bool isEnabled)
+    {
+        enemy.animator.SetBool(Settings.heal, isEnabled);
+    }
+
+    public void SetSummonAnimation(bool isEnabled)
+    {
+        enemy.animator.SetBool(Settings.summon, isEnabled);
+    }
+
     public void SetCastAnimation(bool isEnabled)
     {
 

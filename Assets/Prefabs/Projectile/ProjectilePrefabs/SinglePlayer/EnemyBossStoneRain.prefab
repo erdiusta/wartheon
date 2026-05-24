@@ -56,12 +56,19 @@ MonoBehaviour:
     m_Bits: 2048
   belongingParent: {fileID: 0}
   spriteRenderer: {fileID: 6316016757709079695}
+  isHittingWall: 0
   projectileDetails: {fileID: 0}
   chainJumpRadius: 6
   chainDelay: 0.05
   chainDamageFalloff: 0.8
   chainLightningPhase: 0
   blastRadius: 5
+  damageWindowInActiveEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  damageWindowActiveEvent:
+    m_PersistentCalls:
+      m_Calls: []
   angleSpeed: 10
   ropeTransform: {fileID: 0}
   ropeSpriteRenderer: {fileID: 0}

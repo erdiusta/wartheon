@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
 [DisallowMultipleComponent]
@@ -17,6 +19,8 @@ public class Projectile : MonoBehaviour, IFireable
     [SerializeField] SpriteRenderer spriteRenderer;
 
     [HideInInspector] public Coroutine playerBlockCoroutine;
+
+    [HideInInspector] public bool isHittingWall; // Flag is for wall hit check for penetration arrow
 
     public ProjectileDetailsSO projectileDetails;
 
@@ -41,6 +45,8 @@ public class Projectile : MonoBehaviour, IFireable
     ContactFilter2D filter = new ContactFilter2D();
 
     //DropOnAxeThrow dropOnAxeThrow;
+
+    readonly Dictionary<uint, float> damageTimers = new Dictionary<uint, float>();
 
     // NYVERAN ARROWS
     bool isPenetrationArrow;
@@ -75,7 +81,11 @@ public class Projectile : MonoBehaviour, IFireable
     Coroutine explosionRoutine;
     int damageDone = 0;
     bool lightningStroke;
-    bool isHittingWall; // Flag is for wall hit check for penetration arrow
+
+    // Timer type
+    public UnityEvent damageWindowInActiveEvent;
+    public UnityEvent damageWindowActiveEvent;
+    bool eventIsSubscribed;
 
     // Guided features
     bool isGuided;
@@ -146,6 +156,8 @@ public class Projectile : MonoBehaviour, IFireable
     WeaponTitle lastWeaponTitle;
     WeaponDetailsSO currentWeaponDetails;
 
+    AttackContext prjContext;
+
     // MULTIPLAYER
     int projectileIndex;
 
@@ -164,32 +176,32 @@ public class Projectile : MonoBehaviour, IFireable
 
     private void OnEnable()
     {
-        if (isFireBlast)
+        if (!eventIsSubscribed)
         {
-            blastRadius = projectileDetails.blastRadius;
-        }
-
-        if (isLaserBeam)
-        {
-            laserStartPoint = transform;
-        }
-
-        if (projectileDetails != null && projectileDetails.hasLifeTime)
-        {
-            lifeTimeCountdownTimer = projectileDetails.lifeDuration;
+            damageWindowInActiveEvent.AddListener(OnDamageWindowEnd);
+            damageWindowActiveEvent.AddListener(OnDamageWindowStart);
         }
     }
+
+    private void OnDisable()
+    {
+        damageWindowInActiveEvent.RemoveListener(OnDamageWindowEnd);
+        damageWindowActiveEvent.RemoveListener(OnDamageWindowStart);
+    }
+
 
     /// <summary>
     /// Initialize the projectile being fired - using the projectileDetails, the aimangle, weaponAngle, and weaponAimDirectionVector. If this 
     /// projectile is part of a pattern the projectile movement can be overriden by setting overrideAmmoMovement to true - PROJECTILE
     /// </summary>
     public void InitializeProjectile(float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, float projectileSpeed, ProjectileKind projectileKind, ProjectileDetailsSO projectileDetails, AttackContext attackContext,
-        bool overrideProjectileMovement, bool fallingFromSkies, int projectileCounter, int projectilePerShot, uint netId, int projectileIndex, uint enemyNetId, Enemy belongingEnemy = null)
+        bool overrideProjectileMovement, bool fallingFromSkies, int projectileCounter, int projectilePerShot, int projectileIndex, uint ownerNetId, uint targetNetId, Enemy ownerEnemyForSp)
     {
         if (!NetworkServer.active && !NetworkClient.active)
         {
             player = GameManager.Instance.GetLocalPlayer();
+
+            belongingEnemy = ownerEnemyForSp;
         }
         else
         {
@@ -199,8 +211,8 @@ public class Projectile : MonoBehaviour, IFireable
             NetworkIdentity ownerIdentity = null;
             projectileDetails = WartheonDatabase.Instance.GetProjectile(projectileIndex);
 
-            if (NetworkServer.active) NetworkServer.spawned.TryGetValue(netId, out ownerIdentity);
-            else NetworkClient.spawned.TryGetValue(netId, out ownerIdentity);
+            if (NetworkServer.active) NetworkServer.spawned.TryGetValue(ownerNetId, out ownerIdentity);
+            else NetworkClient.spawned.TryGetValue(ownerNetId, out ownerIdentity);
 
             if (ownerIdentity != null)
             {
@@ -227,6 +239,8 @@ public class Projectile : MonoBehaviour, IFireable
         // Set unique projectiles
         SetUniqueProjectiles(projectileKind, attackContext);
 
+        prjContext = attackContext;
+
         if (projectileDetails.isPlayerProjectile)
         {
             additionalBowAccuracyModifier = player.additionalBowAccuracyModifier;
@@ -249,20 +263,21 @@ public class Projectile : MonoBehaviour, IFireable
         // Initialize isColliding
         isColliding = false;
 
-        // Set belonging enemy if it is
-        this.belongingEnemy = belongingEnemy;
-
         // Set fire direction
-        SetFireDirection(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileKind, projectileDetails, attackContext, projectileCounter, projectilePerShot, netId);
+        SetFireDirection(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileKind, projectileDetails, attackContext, projectileCounter, projectilePerShot, ownerNetId);
 
         // Play sound if it is a unique projectile
         if (attackContext.galvanusPhase == GalvanusPhase.Lightning)
         {
             lightningStroke = true;
         }
-        else if (attackContext.cryotharPhase == CryotharPhase.Icicle || attackContext.pyrotharPhase == PyrotharPhase.FirePillar || attackContext.moldranPhase == MoldranPhase.Spike)
+        else if (attackContext.cryotharPhase == CryotharPhase.Icicle || attackContext.pyrotharPhase == PyrotharPhase.FirePillar)
         {
             SoundEffectManager.Instance.PlaySoundEffect(projectileDetails.projectileFireSoundEffect);
+        }
+        else if (attackContext.moldranPhase == MoldranPhase.Spike)
+        {
+            //SoundEffectManager.Instance.PlaySoundEffect(projectileDetails.projectileFireSoundEffect);
         }
 
         // Set initial projectile material depending on whether there is an projectile charge period
@@ -285,6 +300,20 @@ public class Projectile : MonoBehaviour, IFireable
         // Override projectile movement
         this.overrideProjectileMovement = overrideProjectileMovement;
 
+        if (isFireBlast) blastRadius = projectileDetails.blastRadius;
+
+        if (isLaserBeam) laserStartPoint = transform;
+
+        if (projectileDetails != null && projectileDetails.hasLifeTime) lifeTimeCountdownTimer = projectileDetails.lifeDuration;
+
+        if (!eventIsSubscribed)
+        {
+            damageWindowInActiveEvent.AddListener(OnDamageWindowEnd);
+            damageWindowActiveEvent.AddListener(OnDamageWindowStart);
+        }
+
+        eventIsSubscribed = true;
+
         // Activate projectile gameObject
         gameObject.SetActive(true);
 
@@ -295,6 +324,19 @@ public class Projectile : MonoBehaviour, IFireable
         SetTrailSettings(projectileDetails);
 
         initializationCompleted = true;
+    }
+
+    public void DisableDamageWindowEvent() => damageWindowInActiveEvent?.Invoke();
+    public void EnableDamageWindowEvent() => damageWindowActiveEvent?.Invoke();
+
+    private void OnDamageWindowEnd()
+    {
+        polygonCollider2D.enabled = false;
+    }
+
+    private void OnDamageWindowStart()
+    {
+        polygonCollider2D.enabled = true;
     }
 
     private void Update()
@@ -400,10 +442,10 @@ public class Projectile : MonoBehaviour, IFireable
             // Set the fire direction angle based on the projectile index
             fireDirectionAngle = startAngle + (angleIncrement * projectileCounter);
         }
-        else if (attackContext.cryotharPhase == CryotharPhase.IceProjectile || attackContext.pyrotharPhase == PyrotharPhase.FireProjectile || attackContext.moldranPhase == MoldranPhase.Projectile)
+        else if (attackContext.cryotharPhase == CryotharPhase.IceProjectile || attackContext.moldranPhase == MoldranPhase.Projectile)
         {
             // Define the total angle spread (e.g., 45 degrees spread)
-            float totalSpreadAngle = 30f;
+            float totalSpreadAngle = 120f;
 
             // Calculate the angle increment between projectiles
             float angleIncrement = (projectilePerShot > 1) ? totalSpreadAngle / (projectilePerShot - 1) : 0f;
@@ -414,6 +456,21 @@ public class Projectile : MonoBehaviour, IFireable
             // Set the fire direction angle based on the projectile index
             fireDirectionAngle = startAngle + (angleIncrement * projectileCounter);
         }
+        else if (attackContext.pyrotharPhase == PyrotharPhase.FireProjectile)
+        {
+            // Define the total angle spread (e.g., 45 degrees spread)
+            float totalSpreadAngle = 90f;
+
+            // Calculate the angle increment between projectiles
+            float angleIncrement = (projectilePerShot > 1) ? totalSpreadAngle / (projectilePerShot - 1) : 0f;
+
+            // Adjust the starting angle to center the spread
+            float startAngle = aimAngle - (totalSpreadAngle / 2);
+
+            // Set the fire direction angle based on the projectile index
+            fireDirectionAngle = startAngle + (angleIncrement * projectileCounter);
+        }
+
         else if (attackContext.venomancerPhase == VenomancerPhase.SludgeThrow)
         {
             // Define the total angle spread (e.g., 60 degrees spread)
@@ -619,7 +676,9 @@ public class Projectile : MonoBehaviour, IFireable
 
         if (isLaserBeam && !isGrappleHook)
         {
-            laserDuration = belongingEnemy.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponCooldownDuration - laserDurationOffset;
+            float laserCooldown = 2f; // Currently only for Sepharoth Boss
+
+            laserDuration = laserCooldown - laserDurationOffset;
         }
     }
 
@@ -699,7 +758,39 @@ public class Projectile : MonoBehaviour, IFireable
         }
     }
 
-    // This is for bouncing projectiles
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (!collision.CompareTag(Settings.playerTag)) return;
+
+        Player player = collision.GetComponent<Player>();
+
+        uint id = player.NetAuth.netId;
+
+        if (!damageTimers.ContainsKey(id))
+        {
+            damageTimers[id] = 0f;
+        }
+
+        damageTimers[id] += Time.deltaTime;
+
+        if (damageTimers[id] >= 0.5f)
+        {
+            damageTimers[id] = 0f;
+
+            DamageContext ctx = new DamageContext
+            {
+                source = DamageSourceType.Environment,
+                dealerPosition = transform.position,
+                receiverPosition = player.transform.position
+            };
+
+            ReceiveProjectileDamage receiveProjectileDamage = player.GetComponent<ReceiveProjectileDamage>();
+            receiveProjectileDamage.TakeProjectileDamage(15, ctx);
+
+            CheckPoisonStatusOnPlayer(player); // TOXIC POOL
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (projectileDetails == null) return;
@@ -877,10 +968,14 @@ public class Projectile : MonoBehaviour, IFireable
                     }
                 }
 
-                // Show projectile hit effect
-                ProjectileHitEffect();
+                if (prjContext.galvanusPhase != GalvanusPhase.Lightning && prjContext.cryotharPhase != CryotharPhase.Icicle && prjContext.venomancerPhase != VenomancerPhase.StoneRain &&
+                    prjContext.pyrotharPhase != PyrotharPhase.FirePillar && prjContext.moldranPhase != MoldranPhase.Spike && prjContext.venomancerPhase != VenomancerPhase.ToxicPool)
+                {
+                    // Show projectile hit effect
+                    ProjectileHitEffect();
 
-                DisableProjectile();
+                    DisableProjectile();
+                }
             }
             else if (collision.collider.tag == Settings.playerWeapon) { }
             else if (collision.collider.tag == Settings.enemyTag)
@@ -1556,22 +1651,47 @@ public class Projectile : MonoBehaviour, IFireable
             direction = HelperUtilities.GetDirectionVectorFromAngle(lockedAngle);
         }
 
-        // Check if the laser collides with something
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, Mathf.Infinity, layerMask);
+        RaycastHit2D validHit = default;
 
-        float maxDistance = hit.collider != null ? Vector2.Distance(startPos, hit.point + new Vector2(0f, 0.5f)) : Vector2.Distance(startPos, targetPosition);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, direction, Mathf.Infinity, layerMask);
+
+        foreach (RaycastHit2D hit in hits)
+        {
+            if (hit.collider == null) continue;
+
+            // Ignore helper colliders
+            if (hit.collider is CircleCollider2D) continue;
+            if (hit.collider is CapsuleCollider2D) continue;
+
+            // Only accept polygon collider 
+            if (hit.collider is PolygonCollider2D)
+            {
+                validHit = hit;
+                break;
+            }
+        }
+
+        float maxDistance = validHit.collider != null ? Vector2.Distance(startPos, validHit.point + new Vector2(0f, 0.5f)) : Vector2.Distance(startPos, targetPosition);
+
+        if (validHit.collider is CircleCollider2D) return;
+        if (validHit.collider is CapsuleCollider2D) return;
 
         // If the player is inside the beam, apply continuous damage**
-        if (hit.collider != null && hit.collider.CompareTag(Settings.playerTag))
+        if (validHit.collider != null && validHit.collider.CompareTag(Settings.playerTag))
         {
-            // Status checks
-            CheckPoisonStatusOnPlayer(player);
-            CheckFrostStatusOnPlayer(player);
-            CheckStunStatusOnPlayer(player);
-            CheckCurseStatusOnPlayer(player);
-            CheckBlindStatusOnPlayer(player);
+            player = validHit.collider.GetComponent<Player>();
 
-            DealLaserDamage(hit.collider);
+            if (player != null)
+            {
+                // Status checks
+                CheckPoisonStatusOnPlayer(player);
+                CheckFrostStatusOnPlayer(player);
+                CheckStunStatusOnPlayer(player);
+                CheckCurseStatusOnPlayer(player);
+                CheckBlindStatusOnPlayer(player);
+
+                DealLaserDamage(validHit.collider);
+            }
         }
 
         // **Smoothly Extend Laser Length**
@@ -1584,14 +1704,8 @@ public class Projectile : MonoBehaviour, IFireable
         bool isBeamAbovePlayer = IsBeamAbovePlayer(ref direction);
 
         // Change angle towards player position
-        if (isBeamAbovePlayer)
-        {
-            lockedAngle -= angleSpeed * Time.deltaTime;
-        }
-        else
-        {
-            lockedAngle += angleSpeed * Time.deltaTime;
-        }
+        if (isBeamAbovePlayer) lockedAngle -= angleSpeed * Time.deltaTime;
+        else lockedAngle += angleSpeed * Time.deltaTime;
 
         // **Rotate Laser Sprite**
         spriteRenderer.transform.rotation = Quaternion.Euler(0f, 0f, lockedAngle);
@@ -1924,7 +2038,7 @@ public class Projectile : MonoBehaviour, IFireable
 
     private void DealLaserDamage(Collider2D collider)
     {
-        int inflictedDamage = 0;
+        int inflictedDamage = 15;
 
         DealDamage(collider, ref inflictedDamage, true);
     }
@@ -1943,8 +2057,20 @@ public class Projectile : MonoBehaviour, IFireable
 
         isHittingWall = false;
 
-        if (NetworkServer.active && projectileNetwork != null) NetworkServer.UnSpawn(gameObject);
+        // Multiplayer
+        if (projectileNetwork != null)
+        {
+            if (NetworkServer.active)
+            {
+                projectileNetwork.RpcDisableProjectile();
 
+                NetworkServer.UnSpawn(gameObject);
+            }
+
+            yield break;
+        }
+
+        // Single Player
         gameObject.SetActive(false);
     }
 
@@ -3115,8 +3241,8 @@ public class Projectile : MonoBehaviour, IFireable
 
                 // Initialize with the incremented phase (important so Start() doesn�t clobber it)
                 nextProj.InitializeProjectile(aimAngle, aimAngle, toNext, projectileSpeed: 35f, ProjectileKind.ChainLightning, projectileDetails, new AttackContext { chainLightningPhase = nextProj.chainLightningPhase },
-                    overrideProjectileMovement: false, fallingFromSkies: false, projectileCounter: 1, projectilePerShot: 1, player.NetAuth.netId, WartheonDatabase.Instance.GetProjectileId(projectileDetails), 
-                    enemyNetId: 0, belongingEnemy: null);  // pass the incremented phase
+                    overrideProjectileMovement: false, fallingFromSkies: false, projectileCounter: 1, projectilePerShot: 1, WartheonDatabase.Instance.GetProjectileId(projectileDetails),
+                    player.NetAuth.netId, targetNetId: 0, null);  // pass the incremented phase
 
                 // Optional damage falloff
                 nextProj.damageDone = Mathf.RoundToInt(damageDone * chainDamageFalloff);
@@ -3169,19 +3295,33 @@ public class Projectile : MonoBehaviour, IFireable
 
     public void ResetProjectileState()
     {
+        StopAllCoroutines();
+
+        enabled = true;
+
         isStopped = false;
         isColliding = false;
         isProjectileMaterialSet = false;
         directionInitialized = false;
         isHittingWall = false;
         lightningStroke = false;
+
         hasGrappled = false;
         isGrappleReleased = false;
         grappleHasDealtDamage = false;
 
         velocity = Vector3.zero;
+
         projectileRange = 0f;
         projectileSpeed = 0f;
+
+        lifeTimeCountdownTimer = 0f;
+        projectileChargeTimer = 0f;
+        eventIsSubscribed = false;
+        updateGuidedMissleTimer = 0f;
+
+        target = null;
+        targetPlayer = null;
 
         if (trailRenderer != null)
         {

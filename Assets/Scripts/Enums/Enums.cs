@@ -606,7 +606,7 @@ public enum SylvarokPhase
 {
     None,
     Wait,
-    StraightAttack,
+    Charge,
     RazorLeaf,
     Summon,
     Heal
@@ -616,7 +616,7 @@ public enum GalvanusPhase
 {
     None,
     Wait,
-    DashAttack,
+    Charge,
     LightningBolt,
     Lightning
 }
@@ -625,9 +625,9 @@ public enum SepharothPhase
 {
     None,
     Wait,
-    InvisibleAndMine,
+    LaserBeam,
     SmearAttack,
-    LaserBeam
+    InvisibleAndMine
 }
 
 public enum CryotharPhase

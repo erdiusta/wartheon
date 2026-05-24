@@ -608,6 +608,7 @@ public class GameSessionManager : NetworkBehaviour
     }
 
     public Room GetCurrentRoom() => currentRoom;
+
     public RoomNetData GetCurrentRoomNetData() => currentRoomNetData;
 
     public string GetCurrentRoomNetDataID() => currentRoomNetData.roomId;

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class MoldranAINetwork : EnemyAINetwork, IMutualBossBehaviour
@@ -11,18 +13,53 @@ public class MoldranAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
     // BOSSES
     [SerializeField] Transform swordHoldingTransform;
-    [SerializeField] float smearCircleRadius = 0.5f;
 
-    MoldranPhase currentMoldranPhase;
-    MoldranPhase previousMoldranPhase;
-    private float phaseTimer;  // Timer to control phase duration
-    private float waitPhase = 0.1f;  // Adjust this to control how long each phase lasts
+    [Header("Combat")]
+    [SerializeField] float preferredDistance = 6f;
+    [SerializeField] float movementForce = 5f;
+    [SerializeField] float retreatForce = 6f;
+    [SerializeField] float strafeForce = 8f;
 
-    Health playerHealth;
-    Vector3 lockedPosition;
-    bool chargeProcessStarted;
+    [Header("Swing Attack")]
+    [SerializeField] float smearCircleRadius = 2.2f;
+    [SerializeField] int smearDamage = 25;
+    [SerializeField] float smearChargeSpeed = 28f;
+    [SerializeField] float smearChargeDuration = 0.65f;
+    [SerializeField] float smearAttackDuration = 0.8f;
 
-    Coroutine moldranAttackMoveRoutine;
+    [Header("Boss Behaviour")]
+    [SerializeField] float waitPhase = 0.15f;
+
+    [Header("Difficulty")]
+    [SerializeField] float phase2Threshold = 0.7f;
+    [SerializeField] float phase3Threshold = 0.4f;
+
+    MoldranPhase currentMoldanPhase;
+    MoldranPhase lastPhase;
+
+    Coroutine moldranRoutine;
+
+    bool smearDamageActive;
+
+    // STATE
+    private float phaseTimer;
+
+    bool phase2Active;
+    bool phase3Active;
+
+    bool lockAttackVector;
+    Vector2 lockedPosition;
+
+    float aggressiveMultiplier = 1f;
+
+    readonly HashSet<uint> alreadyHitTargets = new HashSet<uint>();
+
+    // EVENTS
+    public UnityEvent resetAnimationEvent;
+    public UnityEvent projectileReleaseEvent;
+    public UnityEvent smearStartEvent;
+    public UnityEvent smearStopEvent;
+    public UnityEvent spikeReleaseEvent;
 
     bool passedToWait;
 
@@ -44,533 +81,587 @@ public class MoldranAINetwork : EnemyAINetwork, IMutualBossBehaviour
         base.Awake();
     }
 
-    protected override void Start() 
+    protected override void Start()
     {
-        currentMoldranPhase = MoldranPhase.Wait;
+        base.Start();
+
+        currentMoldanPhase = MoldranPhase.Wait;
     }
 
-    protected override void OnEnable() 
+    protected override void OnEnable()
     {
-        currentRoomNetData = GameSessionManager.Instance.GetCurrentRoomNetData();
+        resetAnimationEvent.AddListener(ResetAnimations);
+        projectileReleaseEvent.AddListener(OnProjectileReleased);
+        smearStartEvent.AddListener(EnableSmearDamage);
+        smearStopEvent.AddListener(DisableSmearDamage);
+        spikeReleaseEvent.AddListener(OnSpikeReleased);
     }
 
-    protected override void OnDisable() { }
+    protected override void OnDisable()
+    {
+        resetAnimationEvent.RemoveListener(ResetAnimations);
+        projectileReleaseEvent.RemoveListener(OnProjectileReleased);
+        smearStartEvent.RemoveListener(EnableSmearDamage);
+        smearStopEvent.RemoveListener(DisableSmearDamage);
+        spikeReleaseEvent.RemoveListener(OnSpikeReleased);
+    }
 
-    protected override void FixedUpdate() { }
+    public void ResetAnimationEvent() => resetAnimationEvent?.Invoke();
+    public void ProjectileReleaseEvent() => projectileReleaseEvent?.Invoke();
+    public void SmearStartEvent() => smearStartEvent?.Invoke();
+    public void SmearStopEvent() => smearStopEvent?.Invoke();
+    public void SpikeReleaseEvent() => spikeReleaseEvent?.Invoke();
 
     protected override void Update()
     {
         if (!isServer || !enemyFullyInitialized) return;
+        if (currentRoomNetData == default) currentRoomNetData = enemy.owningSpawner.instantiatedRoom.roomNetData;
 
-        if (enemyPhase == EnemyPhase.Death)
-        {
-            if (attackAnimationRoutine != null)
-            {
-                StopCoroutine(attackAnimationRoutine);
-            }
+        if (enemyPhase == EnemyPhase.Death) return;
 
-            return;
-        }
-
-        healTimer += Time.deltaTime;
-        targetRefreshTimer += Time.deltaTime;
-
-        if (targetRefreshTimer >= Settings.targetRefreshInterval)
-        {
-            targetPlayer = HelperUtilities.GetClosestPlayer(transform.position);
-            targetRefreshTimer = 0;
-        }
+        RefreshTargetAndLockedVector();
 
         if (targetPlayer != null)
         {
-            Vector3 direction = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
-            attackLockedVector = direction;
+            trackingVector = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
+        }
+    }
+
+    protected override void FixedUpdate()
+    {
+        if (!isServer || !enemyFullyInitialized) return;
+        if (targetPlayer == null) return;
+        if (enemyPhase == EnemyPhase.Death) return;
+
+        // Emergency pullback if Sylvarok drifts outside bounds
+        if (IsOutsideBossRoom(transform.position, cellMin, cellMax, isMultiplayer: true))
+        {
+            Vector3 safePos = ClampToBossRoom(transform.position, cellMin, cellMax);
+            rb2D.position = safePos;
+            rb2D.linearVelocity = Vector2.zero;
+
+            Debug.LogWarning("Moldran was outside bounds. Snapped back.");
         }
 
-        // Initialize vectors, angles, directions and aim
-        float unitAngle = HelperUtilities.GetAngleFromVector(attackLockedVector);
-        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
-        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
-        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Moldran);
-        enemy.animateEnemy.ResetAimAnimationParameters();
-        enemy.animateEnemy.SetAimParameters(unitAimDirection);
+        UpdateBossDifficulty();
 
-        // Update timers - Fire Projectile
-        firingIntervalTimer -= Time.deltaTime;
-
-        HasNegativeMoveStatusEffect();
+        HandleAim();
 
         if (enemy.moveStatus == MoveStatus.Idle)
         {
-            // Check if the player is on stealth
-            if (GameManager.Instance.GetLocalPlayer() != null && GameManager.Instance.GetLocalPlayer().isStealthActive)
+            if (targetPlayer.isStealthActive)
             {
                 PlayerStealthCheck();
             }
 
-            // Check if the enemy is a Moldran boss
-            if (enemyDetails.enemyBehaviour == EnemyBehaviour.Moldran)
+            switch (currentMoldanPhase)
             {
-                // Handle phases based on currentPhase
-                switch (currentMoldranPhase)
-                {
-                    case MoldranPhase.Wait:
-                        PassedToWait = true;
+                case MoldranPhase.Wait:
 
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
+                    PassedToWait = true;
+                    phaseTimer += Time.fixedDeltaTime;
 
-                        // Optionally handle phase transitions based on a timer
-                        phaseTimer += Time.deltaTime;
-                        if (phaseTimer >= waitPhase)
-                        {
-                            TransitionToNextPhase();
-                            phaseTimer = 0f;  // Reset the timer for the next phase
-                        }
-                        break;
-
-                    case MoldranPhase.Projectile:
-                        HandleProjectile();
-                        break;
-
-                    case MoldranPhase.SwingAttack:
-                        HandleSwingAttack();
-                        break;
-
-                    case MoldranPhase.Spike:
-                        HandleSpike();
-                        break;
-
-                    case MoldranPhase.Heal:
-                        HandleHeal();
-                        break;
-
-                    default:
-                        break;
-                }
+                    if (phaseTimer >= waitPhase)
+                    {
+                        phaseTimer = 0;
+                        TransitionToNextPhase();
+                    }
+                    break;
+                case MoldranPhase.Projectile:
+                    if (moldranRoutine == null)
+                    {
+                        moldranRoutine = StartCoroutine(ProjectileRoutine());
+                    }
+                    break;
+                case MoldranPhase.SwingAttack:
+                    if (moldranRoutine == null)
+                    {
+                        moldranRoutine = StartCoroutine(SwingAttackRoutine());
+                    }
+                    break;
+                case MoldranPhase.Spike:
+                    if (moldranRoutine == null)
+                    {
+                        moldranRoutine = StartCoroutine(SpikeRoutine());
+                    }
+                    break;
+                case MoldranPhase.Heal:
+                    if (moldranRoutine == null)
+                    {
+                        moldranRoutine = StartCoroutine(HealRoutine());
+                    }
+                    break;
+                default:
+                    break;
             }
+        }
+    }
+
+    private void HandleAim()
+    {
+        Vector2 activeAimVector = lockAttackVector ? attackLockedVector : trackingVector;
+        float unitAngle = HelperUtilities.GetAngleFromVector(activeAimVector);
+        AimDirection unitAimDirection = HelperUtilities.GetAimDirection(unitAngle);
+        AttackDirection attackDirection = HelperUtilities.GetAttackDirection(unitAngle);
+
+        enemy.aimWeapon.Aim(unitAimDirection, attackDirection, unitAngle, EnemyCategory.Moldran);
+
+        if (unitAimDirection != enemy.LastAim)
+        {
+            enemy.LastAim = unitAimDirection;
+
+            enemy.animateEnemy.ResetAimAnimationParameters();
+            enemy.animateEnemy.SetAimParameters(unitAimDirection);
+
+            enemy.enemyAnimSync?.ResetAimAnimations();
+            enemy.enemyAnimSync?.UpdateAnimationStateServer(wasMoving, unitAimDirection);
         }
     }
 
     public void HandleWaitPhase()
     {
-        // Logic for waiting phase (maybe the Centaur just moves or idles here)
-        enemy.animateEnemy.SetIdleAnimationParameters();
-    }
-
-    private void HandleProjectile()
-    {
         enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
 
-        if (moldranAttackMoveRoutine == null)
-        {
-            moldranAttackMoveRoutine = StartCoroutine(AttackRoutine(MoldranPhase.Projectile));
-        }
-    }
-
-    private void HandleSwingAttack()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (moldranAttackMoveRoutine == null)
-        {
-            moldranAttackMoveRoutine = StartCoroutine(AttackRoutine(MoldranPhase.SwingAttack));
-        }
-    }
-
-    private void HandleSpike()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (moldranAttackMoveRoutine == null)
-        {
-            moldranAttackMoveRoutine = StartCoroutine(AttackRoutine(MoldranPhase.Spike));
-        }
-    }
-
-    private void HandleHeal()
-    {
-        enemy.animateEnemy.ResetAnimatonParameters();
-
-        if (moldranAttackMoveRoutine == null)
-        {
-            moldranAttackMoveRoutine = StartCoroutine(AttackRoutine(MoldranPhase.Heal));
-        }
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
     }
 
     private void TransitionToNextPhase()
     {
-        // Check if the player is on stealth
-        if (targetPlayer.isStealthActive)
+        if (targetPlayer == null)
         {
-            PlayerStealthCheck();
+            currentMoldanPhase = MoldranPhase.Wait;
             return;
         }
 
-        if (targetPlayer != null)
+        float distance = Vector2.Distance(transform.position, targetPlayer.GetPlayerPosition());
+
+        if (lastPhase != MoldranPhase.Heal)
         {
-            if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) < 2f)
+            int roll = Random.Range(0, 100);
+
+            if (enemy.health.GetCurrentHealth() / enemy.health.GetMaximumHealth() < 0.2f)
             {
-                // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
-                currentMoldranPhase = (MoldranPhase)Random.Range(4, Enum.GetValues(typeof(MoldranPhase)).Length);
-                return;
+                if (roll < 75) currentMoldanPhase = MoldranPhase.Heal;
+                else goto skipHeal;
             }
-            else if (Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition()) > 10f)
+            else if (enemy.health.GetCurrentHealth() / enemy.health.GetMaximumHealth() < 0.4f)
             {
-                // If player is too close to boss, automatically next phase will be TailAttack or FrostBreath
-                int rng = Random.Range(0, 2);
-                currentMoldranPhase = rng == 0 ? MoldranPhase.Projectile : MoldranPhase.Spike;
-                return;
-            }
-        }
-
-
-
-        if (currentMoldranPhase == MoldranPhase.SwingAttack || currentMoldranPhase == MoldranPhase.Spike ||
-            currentMoldranPhase == MoldranPhase.Projectile || currentMoldranPhase == MoldranPhase.Heal)
-        {
-            // If centaur made a move then next phase will be wait
-            currentMoldranPhase = MoldranPhase.Wait;
-        }
-        else
-        {
-            // Example of conditional or random phase transitions
-            if (previousMoldranPhase == MoldranPhase.Heal) // Don't perform heal consecutively
-            {
-                currentMoldranPhase = (MoldranPhase)Random.Range(2, Enum.GetValues(typeof(MoldranPhase)).Length - 1);
+                if (roll < 55) currentMoldanPhase = MoldranPhase.Heal;
+                else goto skipHeal;
             }
             else
             {
-                currentMoldranPhase = (MoldranPhase)Random.Range(2, Enum.GetValues(typeof(MoldranPhase)).Length);
+                goto skipHeal;
             }
         }
+
+    skipHeal:
+
+        // CLOSE RANGE
+        if (distance < 3f)
+        {
+            int roll = Random.Range(0, 100);
+
+            if (roll < 70) currentMoldanPhase = MoldranPhase.Projectile;
+            else currentMoldanPhase = MoldranPhase.SwingAttack;
+
+            return;
+        }
+
+        // LONG RANGE
+        if (distance > 8f)
+        {
+            int roll = Random.Range(0, 100);
+
+            if (roll < 65) currentMoldanPhase = MoldranPhase.Spike;
+            else currentMoldanPhase = MoldranPhase.Projectile;
+
+            return;
+        }
+
+        // MID RANGE
+        int midRoll = Random.Range(0, 100);
+
+        if (midRoll < 45) currentMoldanPhase = MoldranPhase.SwingAttack;
+        else if (midRoll < 75) currentMoldanPhase = MoldranPhase.Projectile;
+        else currentMoldanPhase = MoldranPhase.Spike;
     }
 
-    IEnumerator AttackRoutine(MoldranPhase moldranPhase)
+    // PROJECTILE
+    IEnumerator ProjectileRoutine()
     {
-        if (moldranPhase == MoldranPhase.Projectile)
+        BeginRoutine();
+
+        lastPhase = MoldranPhase.Projectile;
+
+        float timer = 0f;
+        float duration = 2f;
+
+        enemy.animateEnemy.SetSummonAnimation(true);
+        enemy.enemyAnimSync?.SetBossSummonAnimation(true);
+
+        while (timer < duration)
         {
             if (enemy.health.hasDied) yield break;
 
-            enemy.animator.SetFloat(Settings.motionType, -1f);
-            enemy.animator.SetInteger(Settings.attackType, 2);
+            timer += Time.fixedDeltaTime;
 
-            //// PREPARE PRECHARGE PHASE
-            //float prechargeDuration = 0.6f;
-            //float chargeTimer = 0f;
-
-            //// Set the motion type for the precharge phase
-            //enemy.animateEnemy.ResetAnimatonParameters();
-            //enemy.animator.SetBool(Settings.cast, true);
-
-            //yield return null;
-
-            //enemy.animator.SetBool(Settings.isAttack, true);
-
-            //while (chargeTimer < prechargeDuration)
-            //{
-            //    chargeTimer += Time.deltaTime;
-
-            //    yield return null;
-            //}
-
-            //chargeTimer = 0f;
-
-            //yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animator.SetBool(Settings.cast, false);
-            float fireTimer = 0f;
-            float fireProjectileDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
-
-            while (fireTimer < fireProjectileDuration)
+            if (!hasPendingProjectile)
             {
-                if (enemy.health.hasDied) yield break;
+                hasPendingProjectile = true;
 
-                fireTimer += Time.deltaTime;
+                Vector2 shotDirection = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
 
-                // Interval Timer
-                if (firingIntervalTimer < 0f)
+                pendingProjectileRequest = new PendingProjectileRequest
                 {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(isLaser: false, ProjectileKind.Default, new AttackContext { moldranPhase = MoldranPhase.Projectile });
-                    }
-                    else
-                    {
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                    }
-                }
-
-                yield return null;
+                    projectileKind = ProjectileKind.Default,
+                    attackContext = new AttackContext { moldranPhase = MoldranPhase.Projectile },
+                    lockedAimVector = shotDirection
+                };
             }
 
-            yield return null;
-
-            enemy.animateEnemy.SetIdleAnimationParameters();
-            previousMoldranPhase = MoldranPhase.Projectile;
-
+            yield return waitForFixedUpdate;
         }
-        else if (moldranPhase == MoldranPhase.SwingAttack)
+
+        enemy.animateEnemy.SetSummonAnimation(false);
+        enemy.enemyAnimSync?.SetBossSummonAnimation(false);
+
+        CleanupRoutine();
+    }
+
+    // SWING ATTACK
+    IEnumerator SwingAttackRoutine()
+    {
+        BeginRoutine();
+
+        lastPhase = MoldranPhase.SwingAttack;
+
+        isAttacking = true;
+
+        // LOCK TARGET POSITION ONCE
+        if (targetPlayer != null)
         {
-            if (enemy.health.hasDied) yield break;
+            lockedPosition = targetPlayer.GetPlayerPosition();
+            lockAttackVector = true;
+        }
 
-            enemy.animator.SetFloat(Settings.motionType, -1f);
-            enemy.animator.SetInteger(Settings.attackType, 0);
+        // PRE-CHECK
+        bool closeEnough = Vector2.Distance(rb2D.position, lockedPosition) < 1.2f;
 
-            enemyPhase = EnemyPhase.Attack;
-            isAttacking = true;
+        // PREPARE CHARGE
+        if (!closeEnough)
+        {
+            float prepareTimer = 0f;
+            float prepareDuration = 0.35f;
 
-            // PREPARE PRECHARGE PHASE
-            // Lock-on player position during the start of precharge
-            if (!chargeProcessStarted && GameManager.Instance.GetLocalPlayer() != null)
+            while (prepareTimer < prepareDuration)
             {
-                lockedPosition = GameManager.Instance.GetLocalPlayer().transform.position + new Vector3(0f, 0.5f, 0f);
+                if (ShouldCancelRoutine()) yield break;
+
+                prepareTimer += Time.fixedDeltaTime;
+                rb2D.linearVelocity = Vector2.zero;
+
+                yield return waitForFixedUpdate;
             }
 
-            chargeProcessStarted = true;
+            // START CHARGE
+            Vector2 chargeDirection = (lockedPosition - rb2D.position).normalized;
 
-            // Pre-check if moving towards player is necessary 
-            if (Vector3.Distance(transform.position, lockedPosition) < 1.5f)  // Small threshold for accuracy
-            {
-                // Exit the loop early if boss has reached the destination
-                goto skipRun;
-            }
-
-            float prehargeDuration = 1.5f;
             float chargeTimer = 0f;
 
-            enemy.animator.SetFloat(Settings.motionType, 1f); // charge trigger to blend tree
-
-            //while (chargeTimer < prehargeDuration)
-            //{
-            //    chargeTimer += Time.deltaTime;
-
-            //    yield return null;
-            //}
-
-            //chargeTimer = 0f;
-            float chargeDuration = 2f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animateEnemy.SetMovementAnimationParameters();
-
-            // Clamp lockedPosition
-            Grid grid = GameManager.Instance.GetBossRoom().instantiatedRoom.grid;
-
-            Vector3Int cell = grid.WorldToCell(lockedPosition);
-            cell.x = Mathf.Clamp(cell.x, cellMin.x, cellMax.x);
-            cell.y = Mathf.Clamp(cell.y, cellMin.y, cellMax.y);
-            Vector3 clampedPosition = grid.GetCellCenterWorld(cell);
-
-
-            Vector3 direction = (lockedPosition - transform.position).normalized;
-            float chargeSpeed = 20f;
-
-            while (chargeTimer < chargeDuration)
+            while (chargeTimer < smearChargeDuration)
             {
-                if (enemy.health.hasDied) yield break;
+                if (ShouldCancelRoutine()) yield break;
 
-                chargeTimer += Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, clampedPosition, chargeSpeed * Time.deltaTime);
+                chargeTimer += Time.fixedDeltaTime;
 
-                // Check if boss has reached the destination before the desired duration
-                if (Vector3.Distance(transform.position, lockedPosition) < 1.5f)  // Small threshold for accuracy
+                float chargeSpeed = smearChargeSpeed * aggressiveMultiplier;
+                rb2D.linearVelocity = chargeDirection * chargeSpeed;
+
+                // EARLY STOP IF CLOSE ENOUGH
+                if (Vector2.Distance(rb2D.position, lockedPosition) < 1.2f)
                 {
-                    // Exit the loop early if boss has reached the destination
                     break;
                 }
 
-                yield return null;
+                yield return waitForFixedUpdate;
             }
 
+            rb2D.linearVelocity = Vector2.zero;
+        }
 
-        skipRun:
+        // SMALL BUFFER BEFORE SMEAR
+        yield return waitForFixedUpdate;
 
-            chargeTimer = 0f;
+        alreadyHitTargets.Clear();
 
-            yield return null;
+        smearDamageActive = false;
 
-            // Location change completed now starting sword smear process starts if player is close to the enemy
-            float smearDuration = 1f;
+        // SMEAR ATTACK START
+        enemy.animateEnemy.SetCastAnimation(true);
+        enemy.enemyAnimSync?.SetBossCastAnimation(true);
 
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
+        float smearTimer = 0f;
 
-            Vector3 playerDirectionVector = new Vector3();
+        while (smearTimer < smearAttackDuration)
+        {
+            if (ShouldCancelRoutine()) yield break;
+
+            smearTimer += Time.fixedDeltaTime;
+
+            // DAMAGE WINDOW CONTROLLED BY ANIMATION EVENTS
+            if (smearDamageActive)
+            {
+                PerformSmearDamage(smearCircleRadius);
+            }
+
+            yield return waitForFixedUpdate;
+        }
+
+        smearDamageActive = false;
+
+        enemy.animateEnemy.SetCastAnimation(false);
+        enemy.enemyAnimSync?.SetBossCastAnimation(false);
+
+        isAttacking = false;
+
+        CleanupRoutine();
+
+        enemy.animateEnemy.SetIdleAnimationParameters();
+        enemy.enemyAnimSync?.UpdateAnimationStateServer(moving: false, enemy.LastAim);
+    }
+
+    // SPIKE
+    IEnumerator SpikeRoutine()
+    {
+        if (enemy.health.hasDied) yield break;
+
+        lastPhase = MoldranPhase.Spike;
+
+        float timer = 0f;
+        float duration = 2.5f;
+
+        uint lockedTargetNetId = targetPlayer.NetAuth.netId;
+
+        enemy.animateEnemy.SetFocusedAnimation(true);
+        enemy.enemyAnimSync?.SetBossFocusedAnimation(true);
+
+        while (timer < duration)
+        {
+            if (enemy.health.hasDied) yield break;
+
+            timer += Time.fixedDeltaTime;
+
+            yield return waitForFixedUpdate;
+        }
+
+        enemy.animateEnemy.SetFocusedAnimation(false);
+        enemy.enemyAnimSync?.SetBossFocusedAnimation(false);
+
+        moldranRoutine = null;
+
+        currentMoldanPhase = MoldranPhase.Wait;
+        phaseTimer = 0f;
+    }
+
+    // HEAL
+    IEnumerator HealRoutine()
+    {
+        BeginRoutine();
+
+        lastPhase = MoldranPhase.Heal;
+
+        enemy.animateEnemy.SetHealAnimation(true);
+        enemy.enemyAnimSync?.SetBossHealAnimation(true);
+
+        IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(gameObject);
+        healthAuthority.ApplyDamage(-30, default);
+
+        //SoundEffectManager.Instance.PlaySoundEffect(enemyDetails.chargeSoundEffect);
+
+        yield return new WaitForSeconds(1.5f);
+
+        enemy.animateEnemy.SetHealAnimation(false);
+        enemy.enemyAnimSync?.SetBossHealAnimation(false);
+
+        currentMoldanPhase = MoldranPhase.Wait;
+        phaseTimer = 0;
+
+        moldranRoutine = null;
+
+        enemy.animateEnemy.SetIdleAnimationParameters();
+        enemy.enemyAnimSync?.UpdateAnimationStateServer(moving: false, enemy.LastAim);
+    }
+
+    void PerformSmearDamage(float radius)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(swordHoldingTransform.position, radius);
+
+        foreach (Collider2D collider in colliders)
+        {
+            if (!collider.CompareTag(Settings.playerTag)) continue;
+
+            Player player = collider.GetComponent<Player>();
+            if (player == null) continue;
+
+            if (alreadyHitTargets.Contains(player.NetAuth.netId)) continue;
+
+            alreadyHitTargets.Add(player.NetAuth.netId);
+
+            ReceiveProjectileDamage damageReceiver = collider.GetComponent<ReceiveProjectileDamage>();
+
+            if (damageReceiver == null) continue;
+
+            DamageContext ctx = new()
+            {
+                dealerPosition = transform.position,
+                receiverPosition = player.transform.position
+            };
+
+            damageReceiver.TakeProjectileDamage(smearDamage, ctx);
+            ApplyKnockbackToPlayer(player);
+        }
+    }
+
+    void BeginRoutine()
+    {
+        ResetAnimations();
+
+        rb2D.linearVelocity = Vector2.zero;
+
+        enemy.isFiring = false;
+    }
+
+    void CleanupRoutine()
+    {
+        ResetAnimations();
+
+        rb2D.linearVelocity = Vector2.zero;
+
+        enemy.isFiring = false;
+
+        lockAttackVector = false;
+        hasPendingProjectile = false;
+        moldranRoutine = null;
+        currentMoldanPhase = MoldranPhase.Wait;
+
+        passedToWait = false;
+        phaseTimer = 0f;
+    }
+
+    bool ShouldCancelRoutine()
+    {
+        if (!isServer)
+        {
+            CleanupRoutine();
+            return true;
+        }
+
+        if (enemy.health.hasDied)
+        {
+            CleanupRoutine();
+            return true;
+        }
+
+        if (targetPlayer == null)
+        {
+            CleanupRoutine();
+            return true;
+        }
+
+        return false;
+    }
+
+    // ANIMATION EVENTS
+    public void EnableSmearDamage()
+    {
+        if (!isServer) return;
+
+        alreadyHitTargets.Clear();
+        smearDamageActive = true;
+    }
+
+    public void DisableSmearDamage()
+    {
+        if (!isServer) return;
+
+        smearDamageActive = false;
+    }
+
+    private void OnProjectileReleased()
+    {
+        if (!isServer) return;
+        if (!hasPendingProjectile) return;
+
+        attackLockedVector = pendingProjectileRequest.lockedAimVector;
+        lockAttackVector = true;
+
+        FireWeapon(false, pendingProjectileRequest.projectileKind, pendingProjectileRequest.attackContext);
+
+        hasPendingProjectile = false;
+    }
+
+    private void OnSpikeReleased()
+    {
+        if (!isServer) return;
+
+        FireWeapon(false, pendingProjectileRequest.projectileKind, new AttackContext { moldranPhase = MoldranPhase.Spike }, targetPlayer.NetAuth.netId);
+
+        pendingProjectileRequest = default;
+        hasPendingProjectile = false;
+    }
+
+    void UpdateBossDifficulty()
+    {
+        float hpPercent = (float)enemy.health.GetCurrentHealth() / enemy.health.GetMaximumHealth();
+
+        if (!phase2Active && hpPercent <= phase2Threshold)
+        {
+            phase2Active = true;
+            aggressiveMultiplier = 1.25f;
+            waitPhase = 0.8f;
+        }
+
+        if (!phase3Active && hpPercent <= phase3Threshold)
+        {
+            phase3Active = true;
+            aggressiveMultiplier = 1.5f;
+            waitPhase = 0.6f;
+        }
+    }
+
+    private void ResetAnimations()
+    {
+        enemy.animateEnemy.ResetAnimatonParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+        enemy.animateEnemy.ResetBossAnimationParameters();
+
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+        enemy.enemyAnimSync?.ResetAllAnimations();
+        enemy.enemyAnimSync?.ResetAllBossAnimations();
+    }
+
+    private void RefreshTargetAndLockedVector()
+    {
+        targetRefreshTimer += Time.deltaTime;
+
+        if (targetRefreshTimer >= Settings.targetRefreshInterval)
+        {
+            targetPlayer = HelperUtilities.GetClosestPlayer(transform.position);
+            targetRefreshTimer = 0f;
 
             if (targetPlayer != null)
             {
-                playerDirectionVector = targetPlayer.GetPlayerPosition() - transform.position;
+                attackLockedVector = (targetPlayer.GetPlayerPosition() - transform.position).normalized;
             }
-
-            yield return null;
-
-            while (chargeTimer < smearDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                enemy.animator.SetBool(Settings.isAttack, true);
-
-                foreach (Collider2D collider in Physics2D.OverlapCircleAll(swordHoldingTransform.position, smearCircleRadius))
-                {
-                    if (collider.GetType() == typeof(PolygonCollider2D))
-                    {
-                        // Don't hit yourself if player is also in the collider list
-                        if (collider.tag == Settings.enemyTag) continue;
-
-                        if (collider.tag == Settings.chestItemTag) continue;
-
-                        if (playerHealth = collider.GetComponent<Health>())
-                        {
-                            Player player = collider.GetComponent<Player>();
-
-                            float blindPenalty = enemy.isBlind ? 0.5f : 0f;
-
-                            DamageContext ctx = new DamageContext { source = DamageSourceType.Melee, dealerPosition = transform.position };
-                            ReceiveProjectileDamage receiveProjectileDamage = collider.GetComponent<ReceiveProjectileDamage>();
-
-                            // Evasiveness - dodge check
-                            if (100 - (player.currentDodgeValue + blindPenalty) * 100 > Random.Range(1, 101))
-                            {
-                                ctx.receiverPosition = player.transform.position;
-                                receiveProjectileDamage.TakeProjectileDamage(25, ctx);
-
-                                //SoundEffectManager.Instance.PlaySoundEffect(player.activeWeapon.GetCurrentMainHandWeapon().weaponDetails.weaponImpactSoundEffect);
-
-                                // Apply knockback
-                                ApplyKnockbackToPlayer(player);
-                            }
-                            else
-                            {
-                                ctx.receiverPosition = enemy.health.transform.position;
-
-                                player.health.isDodging = true;
-                                player.healthEvent.CallDodgeEvent();
-                                player.health.PostHitImmunity(true);
-                                receiveProjectileDamage.TakeProjectileDamage(0, ctx);
-                            }
-                        }
-                    }
-                }
-
-                yield return null;
-
-                //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.attackSoundEffect);
-            }
-
-            enemy.animator.SetBool(Settings.isAttack, false);
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
-            isAttacking = false;
-
-            previousMoldranPhase = MoldranPhase.SwingAttack;
         }
-        else if (moldranPhase == MoldranPhase.Spike)
-        {
-            if (enemy.health.hasDied) yield break;
-
-            enemy.animator.SetFloat(Settings.motionType, -1f);
-            enemy.animator.SetInteger(Settings.attackType, 1);
-            enemyPhase = EnemyPhase.Attack;
-
-            // PREPARE PRECHARGE PHASE
-            float prechargeDuration = 1.3f;
-            float chargeTimer = 0f;
-
-            // Set the motion type for the precharge phase
-            enemy.animateEnemy.ResetAnimatonParameters();
-            enemy.animator.SetBool(Settings.cast, true);
-
-            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.roarSoundEffect);
-
-            yield return null;
-
-            while (chargeTimer < prechargeDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                chargeTimer += Time.deltaTime;
-
-                yield return null;
-            }
-
-            chargeTimer = 0f;
-
-            yield return null;  // Wait for the animation to start
-
-            // START CHARGE PHASE
-            enemy.animator.SetBool(Settings.cast, false);
-            enemy.animateEnemy.SetIdleAnimationParameters();
-
-            float fireTimer = 0f;
-            float fireProjectileDuration = enemy.enemyDetails.enemyWeapon.weaponCooldownDuration;
-
-            while (fireTimer < fireProjectileDuration)
-            {
-                if (enemy.health.hasDied) yield break;
-
-                fireTimer += Time.deltaTime;
-
-                // Interval Timer
-                if (firingIntervalTimer < 0f)
-                {
-                    if (firingDurationTimer >= 0)
-                    {
-                        firingDurationTimer -= Time.deltaTime;
-                        FireWeapon(isLaser: false, ProjectileKind.Default, new AttackContext { moldranPhase = MoldranPhase.Spike });
-                    }
-                    else
-                    {
-                        // Reset timers
-                        firingIntervalTimer = WeaponShootInterval();
-                        firingDurationTimer = WeaponShootDuration();
-                        enemy.animateEnemy.SetIdleAnimationParameters();
-                    }
-                }
-
-                yield return null;
-            }
-
-            yield return null;
-
-            previousMoldranPhase = MoldranPhase.Spike;
-        }
-        else if (moldranPhase == MoldranPhase.Heal)
-        {
-            if (enemy.health.hasDied) yield break;
-
-            enemy.animator.SetBool(Settings.cast, true);
-            enemy.animator.SetInteger(Settings.attackType, 0);
-
-            enemy.health.AddHealth(20);
-
-            yield return new WaitForSeconds(2f);
-
-            //SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.chargeSoundEffect);
-
-            previousMoldranPhase = MoldranPhase.Heal;
-            enemy.animator.SetBool(Settings.cast, false);
-        }
-
-        chargeProcessStarted = false;
-        moldranAttackMoveRoutine = null;
-
-        TransitionToNextPhase();
     }
 
     public void PlayerStealthCheck()
     {
-        currentMoldranPhase = MoldranPhase.Wait;
+        currentMoldanPhase = MoldranPhase.Wait;
     }
 
     private void OnDrawGizmos()

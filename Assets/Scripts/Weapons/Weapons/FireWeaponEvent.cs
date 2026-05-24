@@ -7,7 +7,7 @@ public class FireWeaponEvent : MonoBehaviour
     public event Action<FireWeaponEvent, FireWeaponEventArgs> OnFireWeapon;
 
     public void CallFireWeaponEvent(bool fire, bool firePreviousFrame, AimDirection aimDirection ,float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser, 
-        ProjectileKind projectileKind, AttackContext attackContext, uint enemyNetId, Enemy belongingEnemy = null)
+        ProjectileKind projectileKind, AttackContext attackContext, uint ownerNetId, uint targetNetId, Enemy ownerEnemyForSp)
     {
         OnFireWeapon?.Invoke(this, new FireWeaponEventArgs
         {
@@ -20,8 +20,9 @@ public class FireWeaponEvent : MonoBehaviour
             isLaser = isLaser,
             projectileKind = projectileKind,
             attackContext = attackContext,
-            enemyNetId = enemyNetId,
-            belongingEnemy = belongingEnemy,
+            ownerNetId = ownerNetId,
+            targetNetId = targetNetId,
+            ownerEnemy = ownerEnemyForSp
         });
     }
 
@@ -44,8 +45,9 @@ public class FireWeaponEventArgs : EventArgs
     public bool isLaser;
     public ProjectileKind projectileKind;
     public AttackContext attackContext;
-    public uint enemyNetId;
-    public Enemy belongingEnemy;
+    public uint ownerNetId;
+    public uint targetNetId;
+    public Enemy ownerEnemy;
 }
 
 public class FireFocusedShotEventArgs : EventArgs

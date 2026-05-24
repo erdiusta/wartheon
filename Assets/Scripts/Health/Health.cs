@@ -348,7 +348,7 @@ public class Health : MonoBehaviour
                     LastDamageDealerNetId = ctx.dealerNetId;
                 }
 
-                currentHealth -= damageAmount;
+                currentHealth = Mathf.Clamp(currentHealth - damageAmount, 0, maximumHealth);
             }
 
             // Book UI health update

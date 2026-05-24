@@ -15103,6 +15103,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -534371811, guid: 7db516a3b0c81324cad6507806f509f9, type: 3}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_MaskInteraction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
@@ -15352,4 +15356,26 @@ MonoBehaviour:
   isDashing: 0
   patrolPointsParentContainer: {fileID: 0}
   swordHoldingTransform: {fileID: 2598544421764557147}
-  smearCircleRadius: 0.5
+  seismicSlamCircleRadius: 3.5
+  seismicSlamDamage: 25
+  seismicSlamChargeSpeed: 28
+  seismicSlamChargeDuration: 0.65
+  seismicSlamAttackDuration: 0.8
+  waitPhase: 0.15
+  phase2Threshold: 0.7
+  phase3Threshold: 0.4
+  resetAnimationEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  slamStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  sludgeReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  stoneRainReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  toxicPoolReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []

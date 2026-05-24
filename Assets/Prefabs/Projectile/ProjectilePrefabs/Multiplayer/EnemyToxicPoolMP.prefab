@@ -60,12 +60,19 @@ MonoBehaviour:
     m_Bits: 65536
   belongingParent: {fileID: 0}
   spriteRenderer: {fileID: 6316016757709079695}
+  isHittingWall: 0
   projectileDetails: {fileID: 0}
   chainJumpRadius: 6
   chainDelay: 0.05
   chainDamageFalloff: 0.8
   chainLightningPhase: 0
   blastRadius: 5
+  damageWindowInActiveEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  damageWindowActiveEvent:
+    m_PersistentCalls:
+      m_Calls: []
   angleSpeed: 10
   ropeTransform: {fileID: 0}
   ropeSpriteRenderer: {fileID: 0}
@@ -96,6 +103,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  ownerNetId: 0
 --- !u!212 &6316016757709079695
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -208,7 +216,7 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

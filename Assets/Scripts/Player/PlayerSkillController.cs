@@ -519,7 +519,7 @@ public class PlayerSkillController : MonoBehaviour
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
 
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
-            ProjectileKind.Default, new AttackContext { isPenetrationArrow = true }, 0, belongingEnemy: null);
+            ProjectileKind.Default, new AttackContext { isPenetrationArrow = true }, ownerNetId: 0, targetNetId: 0, null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isPenetrateActive = false));
     }
@@ -550,7 +550,7 @@ public class PlayerSkillController : MonoBehaviour
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
 
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
-            ProjectileKind.Default, new AttackContext { isTripleThreat = true }, 0, belongingEnemy: null);
+            ProjectileKind.Default, new AttackContext { isTripleThreat = true }, ownerNetId: 0, targetNetId: 0, null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isTripleThreatActive = false));
     }
@@ -576,7 +576,7 @@ public class PlayerSkillController : MonoBehaviour
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
-            ProjectileKind.Default, new AttackContext { isBindingArrow = true }, 0, belongingEnemy: null);
+            ProjectileKind.Default, new AttackContext { isBindingArrow = true }, ownerNetId: 0, targetNetId: 0, null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isBindingArrowActive = false));
     }
@@ -625,7 +625,7 @@ public class PlayerSkillController : MonoBehaviour
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
-            ProjectileKind.Grapple, default, 0, belongingEnemy: null);
+            ProjectileKind.Grapple, default, ownerNetId: 0, targetNetId: 0, null);
     }
 
     /// <summary>
@@ -1111,7 +1111,7 @@ public class PlayerSkillController : MonoBehaviour
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser: false,
-            ProjectileKind.Shiruken, default, 0, belongingEnemy: null);
+            ProjectileKind.Shiruken, default, ownerNetId: 0, targetNetId: 0, null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isShirukenActive = false));
     }
@@ -1226,7 +1226,7 @@ public class PlayerSkillController : MonoBehaviour
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
-            ProjectileKind.IceBreaker, default, 0, belongingEnemy: null);
+            ProjectileKind.IceBreaker, default, ownerNetId: 0, targetNetId: 0, null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isIceBreakerActive = false));
     }
@@ -1291,7 +1291,7 @@ public class PlayerSkillController : MonoBehaviour
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
-            ProjectileKind.FireBlast, default, 0, belongingEnemy: null);
+            ProjectileKind.FireBlast, default, ownerNetId: 0, targetNetId: 0, null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isFireBlastActive = false));
     }
@@ -1572,7 +1572,7 @@ public class PlayerSkillController : MonoBehaviour
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser,
-            ProjectileKind.BlazingCyclone, default, 0, belongingEnemy: null);
+            ProjectileKind.BlazingCyclone, default, ownerNetId: 0, targetNetId: 0, null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isBlazingCycloneActive = false));
     }
@@ -1749,7 +1749,7 @@ public class PlayerSkillController : MonoBehaviour
 
         // Trigger fire weapon event
         player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, weaponDetails.weaponCurrentProjectile.isLaser, 
-            ProjectileKind.ChainLightning, new AttackContext { chainLightningPhase = ChainLightningPhase.First}, 0, belongingEnemy: null);
+            ProjectileKind.ChainLightning, new AttackContext { chainLightningPhase = ChainLightningPhase.First}, ownerNetId: 0, targetNetId: 0, null);
 
         StartCoroutine(NullifyBooleanAfterTwoFrame(() => player.isChainLightningActive = false));
     }

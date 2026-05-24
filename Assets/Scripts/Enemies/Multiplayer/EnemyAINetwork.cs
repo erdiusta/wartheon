@@ -54,7 +54,6 @@ public class EnemyAINetwork : NetworkBehaviour
 
     Vector3 referencePosition;
     GameObject selectedTargetEnemy;
-    EnemyPhase enemyPhaseAtPreviousFrame;
 
     // PHYSICS
     [HideInInspector] public bool isAttacking;
@@ -178,7 +177,6 @@ public class EnemyAINetwork : NetworkBehaviour
 
         // Default enemy phase
         enemyPhase = EnemyPhase.Patrol;
-        enemyPhaseAtPreviousFrame = EnemyPhase.Patrol;
 
         enemyFullyInitialized = true;
     }
@@ -314,7 +312,6 @@ public class EnemyAINetwork : NetworkBehaviour
                         else
                         {
                             // Cooldown is active, switch to Chase phase to avoid awkward waiting
-                            enemyPhaseAtPreviousFrame = enemyPhase;
                             enemyPhase = EnemyPhase.Chase;
                         }
                     }
@@ -494,7 +491,6 @@ public class EnemyAINetwork : NetworkBehaviour
 
                 if (distanceToTarget < attackMoveTriggerDistance && attackMoveTimer <= 0f && !targetPlayer.isStealthActive)
                 {
-                    enemyPhaseAtPreviousFrame = enemyPhase;
                     enemyPhase = EnemyPhase.Attack;
 
                     // Sync
@@ -547,7 +543,6 @@ public class EnemyAINetwork : NetworkBehaviour
 
     private void SwitchToAttack()
     {
-        enemyPhaseAtPreviousFrame = enemyPhase;
         enemyPhase = EnemyPhase.Attack;
 
         enemy.enemyAnimSync?.ResetAllAnimations();
@@ -558,13 +553,11 @@ public class EnemyAINetwork : NetworkBehaviour
 
     private void SwitchToChase()
     {
-        enemyPhaseAtPreviousFrame = enemyPhase;
         enemyPhase = EnemyPhase.Chase;
     }
 
     private void SwitchToPatrol()
     {
-        enemyPhaseAtPreviousFrame = enemyPhase;
         enemyPhase = EnemyPhase.Patrol;
     }
 
@@ -645,7 +638,6 @@ public class EnemyAINetwork : NetworkBehaviour
 
         // Reset flags after the dash is complete
         IdleProcess(unitAimDirection);
-        enemyPhaseAtPreviousFrame = enemyPhase;
         enemyPhase = EnemyPhase.Patrol;
 
         attackAnimationRoutine = null;
@@ -654,7 +646,7 @@ public class EnemyAINetwork : NetworkBehaviour
     /// <summary>   
     /// Fire the weapon - ordinary aim
     /// </summary>
-    protected void FireWeapon(bool isLaser, ProjectileKind kind, AttackContext ctx)
+    protected void FireWeapon(bool isLaser, ProjectileKind kind, AttackContext ctx, uint targetNetId = 0)
     {
         Vector3 playerDirectionVector, weaponDirection;
         float weaponAngleDegrees, enemyAngleDegrees;
@@ -686,7 +678,8 @@ public class EnemyAINetwork : NetworkBehaviour
             // Is the player in range
             if (playerDirectionVector.magnitude <= enemyProjectileRange)
             {
-                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser, kind, ctx, enemyNetId, enemy);
+                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser, kind, ctx, enemyNetId, 
+                    targetNetId, null);
             }
         }
     }
@@ -743,7 +736,7 @@ public class EnemyAINetwork : NetworkBehaviour
                 // Does this enemy require line of sight to the player before firing?
                 if (enemyDetails.firingLineOfSightRequired && !IsPlayerInLineOfSight(weaponDirection, enemyProjectileRange)) return;
 
-                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser, kind, ctx, enemyNetId, enemy);
+                enemy.fireWeaponEvent.CallFireWeaponEvent(true, false, enemyAimDirection, enemyAngleDegrees, weaponAngleDegrees, weaponDirection, isLaser, kind, ctx, enemyNetId, targetNetId: 0, null);
             }
         }
     }
@@ -850,18 +843,15 @@ public class EnemyAINetwork : NetworkBehaviour
             {
                 if (!GameManager.Instance.GetLocalPlayer().isStealthActive)
                 {
-                    enemyPhaseAtPreviousFrame = enemyPhase;
                     enemyPhase = EnemyPhase.Chase;
                 }
                 else
                 {
-                    enemyPhaseAtPreviousFrame = enemyPhase;
                     enemyPhase = EnemyPhase.Patrol;
                 }
             }
             else
             {
-                enemyPhaseAtPreviousFrame = enemyPhase;
                 enemyPhase = EnemyPhase.Patrol;
             }
         }
@@ -869,7 +859,6 @@ public class EnemyAINetwork : NetworkBehaviour
         {
             // No target found, fall back to player as reference position
             referencePosition = GameManager.Instance.GetLocalPlayer().GetPlayerPosition();
-            enemyPhaseAtPreviousFrame = enemyPhase;
             enemyPhase = EnemyPhase.Patrol;
         }
     }

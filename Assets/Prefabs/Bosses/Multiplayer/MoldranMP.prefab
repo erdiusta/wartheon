@@ -432,6 +432,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -1957096706, guid: 82aa59e69d4670f4f8a2c74a16b84b5c, type: 3}
     - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+      propertyPath: m_MaskInteraction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 962553851605136546, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
@@ -606,6 +610,7 @@ PrefabInstance:
     - {fileID: 7400821728870662684, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     - {fileID: 0}
     - {fileID: 1280140502967062622, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
+    - {fileID: 7400683745092120875, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4239920569477357429, guid: e6bd9d27ebbcea447b3784a5ff5beba2, type: 3}
@@ -702,6 +707,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   health: {fileID: 0}
+  currentHealth: 0
+  maxHealth: 0
+  isDamageable: 1
 --- !u!114 &6856494741208414870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -740,14 +748,36 @@ MonoBehaviour:
   avoidLayerMask:
     serializedVersion: 2
     m_Bits: 134217728
-  moveStatus: 1
   updateFrameNumber: 1
   enemyPhase: 0
   isAttacking: 0
   isDashing: 0
   patrolPointsParentContainer: {fileID: 0}
   swordHoldingTransform: {fileID: 2598544421764557147}
-  smearCircleRadius: 2
+  preferredDistance: 6
+  movementForce: 5
+  retreatForce: 6
+  strafeForce: 8
+  smearCircleRadius: 2.2
+  smearDamage: 25
+  smearChargeSpeed: 28
+  smearChargeDuration: 0.65
+  smearAttackDuration: 0.8
+  waitPhase: 0.1
+  phase2Threshold: 0.7
+  phase3Threshold: 0.4
+  resetAnimationEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  smearStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  smearStopEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  spikeReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &7709420292770028921
 MonoBehaviour:
   m_ObjectHideFlags: 0

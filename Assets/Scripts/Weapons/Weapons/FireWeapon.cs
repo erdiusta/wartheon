@@ -107,7 +107,7 @@ public class FireWeapon : MonoBehaviour
         if (!NetworkServer.active && !NetworkClient.active)
         {
             WeaponFire(args.fire, args.firePreviousFrame, args.aimAngle, args.weaponAimAngle, args.weaponAimDirectionVector, args.isLaser, args.projectileKind, args.attackContext,
-                activeWeapon.GetMainHandShootPositionUp(), args.enemyNetId);
+                activeWeapon.GetMainHandShootPositionUp(), ownerNetId: 0, targetNetId: 0, args.ownerEnemy);
             return;
         }
 
@@ -115,26 +115,27 @@ public class FireWeapon : MonoBehaviour
         if (player != null)
         {
             GetComponent<FireWeaponNetwork>().RequestFireWeapon(args.fire, args.firePreviousFrame, args.aimAngle, args.weaponAimAngle, args.weaponAimDirectionVector, args.isLaser, args.projectileKind, 
-                args.attackContext, shootPos);
+                args.attackContext, shootPos, args.ownerNetId, args.targetNetId);
         }
         else if (enemy != null)
         {
-            ServerFireWeapon(args.fire, args.firePreviousFrame, args.aimAngle, args.weaponAimAngle, args.weaponAimDirectionVector, args.isLaser, args.projectileKind, args.attackContext, shootPos);
+            ServerFireWeapon(args.fire, args.firePreviousFrame, args.aimAngle, args.weaponAimAngle, args.weaponAimDirectionVector, args.isLaser, args.projectileKind, args.attackContext, shootPos, 
+                args.ownerNetId, args.targetNetId);
         }
     }
 
     [Server]
     public void ServerFireWeapon(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos)
+        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos, uint ownerNetId, uint targetNetId, Enemy ownerEnemyForSp = null)
     {
-        WeaponFire(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos);
+        WeaponFire(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos, ownerNetId, targetNetId, ownerEnemyForSp);
     }
 
     /// <summary>
     /// Fire weapon
     /// </summary>
     private void WeaponFire(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos, uint netId = 0)
+        ProjectileKind projectileKind, AttackContext attackContext, Vector3 shootPos, uint ownerNetId = 0, uint targetNetId = 0, Enemy ownerEnemyForSp = null)
     {
         // Laser beam check
         if (isLaser)
@@ -150,7 +151,7 @@ public class FireWeapon : MonoBehaviour
                     enemy.isFiring = true;
 
                     // Fire Laser Beam Projectile (only once)
-                    FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, netId, shootPos);
+                    FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos, ownerNetId, targetNetId, ownerEnemyForSp);
 
                     // Keep laser active for its full duration
                     StartCoroutine(LaserDurationCoroutine(false));                 
@@ -163,7 +164,7 @@ public class FireWeapon : MonoBehaviour
                 if (projectileKind == ProjectileKind.Grapple && player.isHuntersReachActive)
                 {
                     // Fire Laser Beam Projectile (only once)
-                    FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, netId, shootPos);
+                    FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, attackContext, shootPos, ownerNetId, targetNetId, ownerEnemyForSp);
 
                     // Keep laser active for its full duration
                     StartCoroutine(LaserDurationCoroutine(true));
@@ -194,7 +195,7 @@ public class FireWeapon : MonoBehaviour
             // Test if weapon is ready to fire
             if (IsWeaponReadyToFire() || IsShotASpecialSkill(projectileKind, attackContext))
             {
-                FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser: false, projectileKind, attackContext, netId, shootPos);
+                FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser: false, projectileKind, attackContext, shootPos, ownerNetId, targetNetId, ownerEnemyForSp);
                 ResetCooldownTimer(attackContext.moravellePhase);
                 ResetPrechargeTimer(firePreviousFrame);
             }
@@ -295,7 +296,7 @@ public class FireWeapon : MonoBehaviour
     /// Set up ammo using an ammo gameObject and component from the object pool.
     /// </summary>
     private void FireProjectile(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, AttackContext ctx, uint netId, Vector3 shootPos, Enemy belongingEnemy = null)
+        ProjectileKind projectileKind, AttackContext ctx, Vector3 shootPos, uint ownerNetId, uint targetNetId, Enemy ownerEnemyForSp)
     {
         ProjectileDetailsSO currentProjectile;
 
@@ -313,7 +314,8 @@ public class FireWeapon : MonoBehaviour
         if (currentProjectile != null && !isFiringCoroutineRunning)
         {
             // Fire projectile routine
-            StartCoroutine(FireProjectileRoutine(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, currentProjectile, ctx, netId, shootPos, belongingEnemy));
+            StartCoroutine(FireProjectileRoutine(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser, projectileKind, currentProjectile, 
+                ctx, shootPos, ownerNetId, targetNetId, ownerEnemyForSp));
         }
     }
 
@@ -321,7 +323,7 @@ public class FireWeapon : MonoBehaviour
     /// Coroutine to spawn multiple ammo per shot if specified in the projectile details - PROJECTILE
     /// </summary>
     IEnumerator FireProjectileRoutine(bool fire, bool firePreviousFrame, float aimAngle, float weaponAimAngle, Vector3 weaponAimDirectionVector, bool isLaser,
-        ProjectileKind projectileKind, ProjectileDetailsSO currentProjectile, AttackContext ctx, uint netId, Vector3 shootPos, Enemy belongingEnemy = null)
+        ProjectileKind projectileKind, ProjectileDetailsSO currentProjectile, AttackContext ctx, Vector3 shootPos, uint ownerNetId, uint targetNetId, Enemy ownerEnemyForSp)
     {
         // MP client must never spawn projectiles
         if (NetworkClient.active && !NetworkServer.active) yield break;
@@ -331,10 +333,17 @@ public class FireWeapon : MonoBehaviour
         int projectilePerShot = 1;
 
         // MORAVELLE - SPREAD ARROW SHOT OR FROST WRYM - PROJECTILE
-        if (ctx.moravellePhase == MoravellePhase.SpreadArrowShot || ctx.cryotharPhase == CryotharPhase.IceProjectile
-            || ctx.pyrotharPhase == PyrotharPhase.FireProjectile)
+        if (ctx.cryotharPhase == CryotharPhase.IceProjectile)
+        {
+            projectilePerShot = 10;
+        }
+        else if (ctx.moravellePhase == MoravellePhase.SpreadArrowShot || ctx.pyrotharPhase == PyrotharPhase.FireProjectile)
         {
             projectilePerShot = 14;
+        }
+        else if (ctx.cryotharPhase == CryotharPhase.IceProjectile)
+        {
+            projectilePerShot = 10;
         }
         else if (ctx.moldranPhase == MoldranPhase.Projectile)
         {
@@ -343,7 +352,7 @@ public class FireWeapon : MonoBehaviour
         // SYLVAROK - RAZOR LEAF
         else if (ctx.sylvarokPhase == SylvarokPhase.RazorLeaf || ctx.venomancerPhase == VenomancerPhase.SludgeThrow)
         {
-            projectilePerShot = 30;
+            projectilePerShot = 22;
         }
         // GALVANUS - LIGHTNING
         else if (ctx.galvanusPhase == GalvanusPhase.Lightning)
@@ -409,27 +418,25 @@ public class FireWeapon : MonoBehaviour
 
         AimDirection aimDirection = HelperUtilities.GetAimDirection(weaponAimAngle);
 
-        Vector3 weaponShootPosition = Vector3.zero;
-
         if (enemy != null)
         {
             switch (aimDirection)
             {
                 case AimDirection.Up:
-                    weaponShootPosition = activeWeapon.GetMainHandShootPositionUp();
+                    shootPos = activeWeapon.GetMainHandShootPositionUp();
                     break;
                 case AimDirection.UpRight:
                 case AimDirection.Right:
                 case AimDirection.DownRight:
-                    weaponShootPosition = activeWeapon.GetMainHandShootPositionRight();
+                    shootPos = activeWeapon.GetMainHandShootPositionRight();
                     break;
                 case AimDirection.Down:
-                    weaponShootPosition = activeWeapon.GetMainHandShootPositionDown();
+                    shootPos = activeWeapon.GetMainHandShootPositionDown();
                     break;
                 case AimDirection.Left:
                 case AimDirection.DownLeft:
                 case AimDirection.UpLeft:
-                    weaponShootPosition = activeWeapon.GetMainHandShootPositionLeft();
+                    shootPos = activeWeapon.GetMainHandShootPositionLeft();
                     break;
                 default:
                     break;
@@ -439,11 +446,11 @@ public class FireWeapon : MonoBehaviour
         {
             if (projectileKind == ProjectileKind.IceBreaker)
             {
-                weaponShootPosition = activeWeapon.GetMainHandShootPositionUp() - new Vector3(0f, 0.7f, 0f);
+                shootPos = activeWeapon.GetMainHandShootPositionUp() - new Vector3(0f, 0.7f, 0f);
             }
             else
             {
-                weaponShootPosition = activeWeapon.GetMainHandShootPositionUp();
+                shootPos = activeWeapon.GetMainHandShootPositionUp();
             }
         }
 
@@ -460,18 +467,28 @@ public class FireWeapon : MonoBehaviour
             lowerBounds = enemy != null ? enemy.belongingRoom.templateLowerBounds : currentRoom.templateLowerBounds;
             upperBounds = enemy != null ? enemy.belongingRoom.templateLowerBounds : currentRoom.templateUpperBounds;
 
-            if (belongingEnemy != null) targetPlayer = GameManager.Instance.GetLocalPlayer();
-            else targetPlayer = null;
+            targetPlayer = GameManager.Instance.GetLocalPlayer();
         }
         else if (NetworkServer.active)
         {
-            grid = enemy != null ? DungeonRuntime.GetInstantiatedRoom(enemy.belongingRoomData.roomId).grid : DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId).grid;
+            grid = enemy != null ? enemy.owningSpawner.instantiatedRoom.GetComponentInChildren<Grid>() : DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId).grid;
             spawnPositionArray = enemy != null ? enemy.belongingRoomData.spawnPositions : currentRoomNetData.spawnPositions;
             lowerBounds = enemy != null ? enemy.belongingRoomData.templateLowerBounds : currentRoomNetData.templateLowerBounds;
             upperBounds = enemy != null ? enemy.belongingRoomData.templateUpperBounds : currentRoomNetData.templateUpperBounds;
 
-            if (belongingEnemy != null) targetPlayer = GameManager.Instance.GetLocalPlayer();
-            else targetPlayer = null;
+            targetPlayer = null;
+
+            if (targetNetId != 0)
+            {
+                foreach (Player p in GameSessionManager.Instance.ServerPlayers)
+                {
+                    if (p.NetAuth.netId == targetNetId)
+                    {
+                        targetPlayer = p;
+                        break;
+                    }
+                }
+            }
         }
         else
         {
@@ -562,6 +579,15 @@ public class FireWeapon : MonoBehaviour
             {
                 projectileSpeed = currentProjectile.projectileSpeed / 1.5f;
             }
+            else if (ctx.cryotharPhase == CryotharPhase.IceProjectile)
+            {
+                projectileSpeed = currentProjectile.projectileSpeed / 1.4f;
+            }
+            else if (ctx.pyrotharPhase == PyrotharPhase.FireProjectile)
+            {
+                projectileSpeed = currentProjectile.projectileSpeed / 1.2f;
+            }
+
             else if (ctx.galvanusPhase == GalvanusPhase.Lightning || ctx.cryotharPhase == CryotharPhase.Icicle || ctx.venomancerPhase == VenomancerPhase.StoneRain ||
                 ctx.pyrotharPhase == PyrotharPhase.FirePillar || ctx.moldranPhase == MoldranPhase.Spike || ctx.venomancerPhase == VenomancerPhase.ToxicPool)
             {
@@ -577,14 +603,18 @@ public class FireWeapon : MonoBehaviour
                 Vector3Int playerCellPosition = new Vector3Int();
 
                 // Get the player's current cell position
-                if (targetPlayer != null)
+                if(!NetworkServer.active && !NetworkClient.active)
                 {
-                    playerCellPosition = instantiatedRoom.grid.WorldToCell(GameManager.Instance.GetLocalPlayer().transform.position);
+                    targetPlayer = GameManager.Instance.GetLocalPlayer();
+                    playerCellPosition = enemy.belongingRoom.instantiatedRoom.grid.WorldToCell(targetPlayer.transform.position);
                 }
-
-                // Generate a random lightning strike position within bounds
-                Vector3Int randomCellPosition;
-                Vector3 worldPosition;
+                else
+                {
+                    if (targetPlayer != null)
+                    {
+                        playerCellPosition = instantiatedRoom.grid.WorldToCell(targetPlayer.transform.position);
+                    }
+                }
 
                 int attemptCount = 0;
 
@@ -592,20 +622,9 @@ public class FireWeapon : MonoBehaviour
                 {
                     attemptCount++;
 
-                    // Generate random position within 4 tiles around the player
-                    int randomX = Mathf.Clamp(Random.Range(playerCellPosition.x - 4, playerCellPosition.x + 5), lowerBounds.x, upperBounds.x);
-                    int randomY = Mathf.Clamp(Random.Range(playerCellPosition.y - 4, playerCellPosition.y + 5), lowerBounds.y, upperBounds.y);
-                    randomCellPosition = new Vector3Int(randomX, randomY, 0);
-
-                    // Convert to room-local zero-based coordinates
-                    Vector3Int zeroBasedCellPosition = new Vector3Int(randomCellPosition.x - lowerBounds.x, randomCellPosition.y - lowerBounds.y, 0);
-
-                    // Tile is valid, convert cell position to world position
-                    worldPosition = instantiatedRoom.grid.CellToWorld(randomCellPosition);
-
                     if (targetPlayer != null)
                     {
-                        projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, GameManager.Instance.GetLocalPlayer().transform.position, Quaternion.identity);
+                        projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, targetPlayer.transform.position, Quaternion.identity);
                     }
                     else
                     {
@@ -646,21 +665,15 @@ public class FireWeapon : MonoBehaviour
 
             if (NetworkServer.active || NetworkClient.active)
             {
-                if (player != null && player.NetAuth != null)
-                {
-                    netId = player.NetAuth.netId;
-                }
-                else if(enemy != null && enemy.enemyNetwork != null)
-                {
-                    netId = enemy.enemyNetwork.netId;
-                }
+                if (player != null && player.NetAuth != null) ownerNetId = player.NetAuth.netId;
+                else if(enemy != null && enemy.enemyNetwork != null) ownerNetId = enemy.enemyNetwork.netId;
             }
 
             // Initialize projectile - SP
             if (!NetworkServer.active && !NetworkClient.active)
             {
                 projectile.InitializeProjectile(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileSpeed, projectileKind, currentProjectile, ctx, overrideProjectileMovement: false,
-                    fallingFromSkies: false, projectileCounter - 1, projectilePerShot, netId, -1, 0, belongingEnemy);
+                    fallingFromSkies: false, projectileCounter - 1, projectilePerShot, -1, ownerNetId, 0, ownerEnemyForSp);
             }
 
             // Initialize projectile - MP
@@ -672,14 +685,14 @@ public class FireWeapon : MonoBehaviour
                 {
                     Projectile initializeProjectile = (Projectile)projectile;
                     initializeProjectile.GetComponent<ProjectileNetwork>().RpcInitializeProjectile(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileSpeed, projectileKind, ctx,
-                        false, false, projectileCounter - 1, projectilePerShot, netId, projectileIndex, netId);
+                        false, false, projectileCounter - 1, projectilePerShot, projectileIndex, ownerNetId, targetNetId);
                 }
                 else if (projectile is ProjectilePattern)
                 {
                     ProjectilePattern initializeProjectilePattern = (ProjectilePattern)projectile;
 
                     initializeProjectilePattern.GetComponent<ProjectilePatternNetwork>().RpcInitializeProjectilePattern(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileSpeed, projectileKind, ctx,
-                        false, false, projectileCounter - 1, projectilePerShot, netId, projectileIndex, netId);
+                        false, false, projectileCounter - 1, projectilePerShot, projectileIndex, ownerNetId, targetNetId);
                 }
             }
 

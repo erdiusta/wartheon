@@ -188,7 +188,8 @@ public class MeleeAttackMainHand : MonoBehaviour
 
             // Trigger fire weapon event
             //SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
-            player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, ProjectileKind.ThrowingAxe, default, 0, belongingEnemy: null);
+            player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, ProjectileKind.ThrowingAxe, default, 
+                ownerNetId: 0, targetNetId: 0, null);
 
             player.playerControl.DeactivateOffhandWeapon(player.currentWeaponSlotSetIndex, ItemSlotStatus.OffHand); 
 
@@ -1297,7 +1298,8 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         // Trigger fire weapon event
         //SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);              
-        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, ProjectileKind.ThrowingAxe, default, 0, belongingEnemy: null);
+        player.fireWeaponEvent.CallFireWeaponEvent(true, false, playerAimDirection, playerAngleDegrees, weaponAngleDegrees, weaponDirection, false, ProjectileKind.ThrowingAxe, default, 
+            ownerNetId: 0, targetNetId: 0, null);
 
         DropItemNetwork.droppedThrowingAxe = player.activeWeapon.GetCurrentOffHandWeapon();
 
