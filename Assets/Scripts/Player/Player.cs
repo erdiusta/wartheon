@@ -125,7 +125,6 @@ public class Player : MonoBehaviour
     [HideInInspector] public PlayerNetworkState state;
     [HideInInspector] public PlayerInventory playerInventory;
     [HideInInspector] public PlayerInventoryNetwork playerInventoryNetwork;
-
     [HideInInspector] public AimDirection LastAim { get; set; }
     [HideInInspector] public AttackDirection LastAttackdir { get; set; }
 
@@ -752,106 +751,6 @@ public class Player : MonoBehaviour
             if (slot == PassiveItemSlotName.None) continue;
 
             equippedPassiveItems[slot] = null;
-        }
-    }
-
-    /// <summary>
-    /// Update weapons list if a new one acquired
-    /// </summary>
-    public void UpdateWieldedWeapons(ref Weapon weapon, bool pickingUp, bool onStart, WeaponDetailsSO weaponDetails)
-    {
-        Weapon mainHandWeapon = activeWeapon.GetCurrentMainHandWeapon();
-        Weapon offHandWeapon = activeWeapon.GetCurrentOffHandWeapon();
-
-        Debug.Log("Current main hand weapon is " + mainHandWeapon?.weaponStats.weaponTitle.ToString() + " for " + playerDetails.playerCharacterName);
-        Debug.Log("Current off-hand weapon is " + offHandWeapon?.weaponStats.weaponTitle.ToString() + " for " + playerDetails.playerCharacterName);
-
-        WeaponDetailsSO mainHandWeaponDetails = mainHandWeapon != null ? WartheonDatabase.Instance.GetWeaponDetails(mainHandWeapon.weaponStats.weaponTitle) : null;
-        WeaponDetailsSO offHandWeaponDetails = offHandWeapon != null ? WartheonDatabase.Instance.GetWeaponDetails(offHandWeapon.weaponStats.weaponTitle) : null;
-
-        bool isInventoryFull = playerInventory.IsInventoryFull();
-
-        if (mainHandWeapon == null)
-        {
-            AddNextWeaponToPlayer(ref weapon, weaponDetails, pickingUp, onStart, false, false, equipOffHand: false);
-
-            // Set player starting health
-            UpdatePlayerHealth(0, false, true);
-            UpdatePlayerMana(0, false, true);
-
-            UpdateDamageValues();
-            UpdateAttackRatingAndCriticalValues();
-            UpdateBlockAndDodgeValues();
-            UpdateSpeedAndAttackCooldownValues();
-            UpdateResistanceValues();
-            UpdateSecondaryDamageValues();
-
-            StaticEventHandler.CallStatsChangedOnTheBookEvent();
-        }
-        // If inventory is full replace weapon
-        else if (isInventoryFull)
-        {
-            AddNextWeaponToPlayer(ref weapon, weaponDetails, pickingUp, onStart, false, false, equipOffHand: false);
-
-            // Set player starting health
-            UpdatePlayerHealth(0, false, true);
-            UpdatePlayerMana(0, false, true);
-            UpdateDamageValues();
-            UpdateAttackRatingAndCriticalValues();
-            UpdateBlockAndDodgeValues();
-            UpdateSpeedAndAttackCooldownValues();
-            UpdateResistanceValues();
-            UpdateSecondaryDamageValues();
-
-            StaticEventHandler.CallStatsChangedOnTheBookEvent();
-        }
-        // If weapon is one-handed off hand weapon
-        else if (weaponSlotSetArray[currentWeaponSlotSetIndex - 1][1] == null && weapon.weaponStats.wieldType == WieldType.OneHanded && 
-            weapon.weaponStats.weaponClass != WeaponClass.Spear && weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0] != null && 
-            weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0].weaponStats.wieldType == WieldType.OneHanded && 
-            weaponSlotSetArray[currentWeaponSlotSetIndex - 1][0].weaponStats.weaponClass != WeaponClass.Spear)
-        {
-            if (weapon == DropItem.droppedThrowingAxe)
-            {
-                foreach (KeyValuePair<int, ActiveUniqueSkillDetailsSO> keyValuePair in currentlyUsedActiveUniqueSkills)
-                {
-                    if (keyValuePair.Value.activeSkill == ActiveSkill.AxeThrow)
-                    {
-                        specialMovesCooldownCheckArray[keyValuePair.Key - 1] = false;
-                        specialMoveRecastCountArray[keyValuePair.Key - 1] = 0;
-                        specialMoveEvent.CallSpecialMoveCooldownResetEvent(ActiveSkill.AxeThrow, keyValuePair.Key);
-                    }
-                }
-            }
-
-            if (playerDetails.playerCharacterIndex == Character.Nyveran) AddNextWeaponToPlayer(ref weapon, weaponDetails, pickingUp, onStart, false, false, equipOffHand: false); // Nyveran can't wield dual-wield dagger
-            else AddNextWeaponToPlayer(ref weapon, weaponDetails, pickingUp, onStart, false, false, equipOffHand: true);
-
-            // Set player starting health
-            UpdatePlayerHealth(0, false, true);
-            UpdatePlayerMana(0, false, true);
-            UpdateArmorValues();
-            UpdateDamageValues();
-            UpdateAttackRatingAndCriticalValues();
-            UpdateBlockAndDodgeValues();
-            UpdateSpeedAndAttackCooldownValues();
-            UpdateResistanceValues();
-            UpdateSecondaryDamageValues();
-
-            StaticEventHandler.CallStatsChangedOnTheBookEvent();
-        }
-        else if(!pickingUp)
-        {
-            // Add it to inventory slot
-            weapon.ItemSlotStatus = ItemSlotStatus.Inventory;
-
-            int retrievedInventoryIndex = 0;
-
-            if (NetAuth == null) retrievedInventoryIndex = playerInventory.PlaceItemToInventoryIndexSlot(weapon);
-            else retrievedInventoryIndex = playerInventory.PlaceItemToInventoryIndexSlot(weapon);
-
-            StaticEventHandler.CallOnWeaponAddedToInventoryEventForBook(weapon, retrievedInventoryIndex);
-            StaticEventHandler.CallWeaponUnlockedEvent(weaponDetails.weaponTitle);
         }
     }
 
@@ -2349,7 +2248,7 @@ public class Player : MonoBehaviour
         if (isHuntersReachActive && collision.CompareTag(Settings.collisionTilemap))
         { 
             Debug.Log("Player hit a wall during grapple. Cancelling...");
-            playersGrapple.ReleaseGrapple(); // Reference to hook or use event
+            playersGrapple.ReleaseGrapple(NetworkServer.active || NetworkClient.active); // Reference to hook or use event
         }
     }
 

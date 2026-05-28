@@ -234,7 +234,7 @@ public class MeleeAttackMainHand : MonoBehaviour
                 if (collider.TryGetComponent(out Environment environment) &&
                     collider.TryGetComponent(out Health envHealth))
                 {
-                    SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeaponDetails.weaponImpactSoundEffect);
+                    WorldSoundManager.Instance.PlayWorldSound(hittingHandWeaponDetails.weaponImpactSoundEffect, transform.position);
 
                     DamageContext ctx = new DamageContext { source = DamageSourceType.Melee, dealerPosition = transform.position, receiverPosition = collider.transform.position, hand = hand };
                     receiveMeleeDamage.TakeMeleeDamage(100, ctx);
@@ -246,7 +246,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
                 if (collider.CompareTag(Settings.practiceDummy))
                 {
-                    SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeaponDetails?.weaponImpactSoundEffect);
+                    WorldSoundManager.Instance.PlayWorldSound(hittingHandWeaponDetails?.weaponImpactSoundEffect, transform.position);
                     DummyCheck(hand, receiveMeleeDamage, shieldBash);
                     continue;
                 }
@@ -338,7 +338,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
                     if (player.isTriadExecutionActive) player.triadExecutionCounter++;
 
-                    if (!isSheerCold) SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeaponDetails.weaponImpactSoundEffect);
+                    if (!isSheerCold) WorldSoundManager.Instance.PlayWorldSound(hittingHandWeaponDetails.weaponImpactSoundEffect, transform.position);
 
                     if (!enemyCombatData.Isboss && enemy.health.GetCurrentHealth() > 0)
                     {
@@ -374,7 +374,12 @@ public class MeleeAttackMainHand : MonoBehaviour
                 {
                     // Enemy dodged
                     enemyHealth.isDodging = true;
+
                     enemy.healthEvent.CallDodgeEvent();
+
+                    if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(GameManager.Instance.GetLocalPlayer().playerDetails.dodgeSoundEffect, transform.position);
+                    else NetworkSoundManager.Instance.CmdPlaySound(SoundName.PlayerDodge, transform.position);
+
                     enemyHealth.PostHitImmunity(true);
 
                     DamageContext ctx = new DamageContext { source = DamageSourceType.Melee, dealerPosition = transform.position, receiverPosition = enemyHealth.transform.position, hand = hand };
@@ -436,7 +441,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         {
             enemy.healthEvent.CallCriticalHitEvent();
 
-            if(!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.criticalHitSoundEffect);
+            if(!NetworkServer.active && !NetworkClient.active) WorldSoundManager.Instance.PlayWorldSound(enemy.enemyDetails.criticalHitSoundEffect, transform.position);
         }
 
         float critMultiplier = 0f;
@@ -754,7 +759,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
                 enemy.healthEvent.CallGetShatteredEvent();
 
-                if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
+                WorldSoundManager.Instance.PlayWorldSound(enemy.enemyDetails.suddenDeathSoundEffect, transform.position);
             }
         }
     }
@@ -1224,7 +1229,8 @@ public class MeleeAttackMainHand : MonoBehaviour
             // Melee attack sound effect
             if (mainHandWeapon.weaponStats.isMeleeWeapon)
             {
-                SoundEffect(mainHandWeaponDetails.weaponSwingSoundEffect, mainHandWeaponDetails);
+                if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(mainHandWeaponDetails.weaponSwingSoundEffect, transform.position);
+                else NetworkSoundManager.Instance.CmdPlaySound(SoundName.SwordSwing, transform.position);
             }
 
             // Weapon fired event for starting cooldown ui
@@ -1312,16 +1318,5 @@ public class MeleeAttackMainHand : MonoBehaviour
         player.UpdateBlockAndDodgeValues();
 
         StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponOffHand);
-    }
-
-    /// <summary>
-    /// Play weapon shooting sound effect
-    /// </summary>
-    private void SoundEffect(SoundEffectSO soundEffect, WeaponDetailsSO weaponDetails)
-    {
-        if (weaponDetails.weaponSwingSoundEffect != null)
-        {
-            SoundEffectManager.Instance.PlaySoundEffect(soundEffect);
-        }
     }
 }

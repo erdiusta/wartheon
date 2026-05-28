@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SoundEffect_Stealth
   m_EditorClassIdentifier: 
   soundEffectName: Stealth
+  soundName: 76
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundPrefabMP: {fileID: 5744890745976271322, guid: e2969d6382294e24c89e231883f8a14b, type: 3}
   soundEffectClips:
@@ -20,3 +21,7 @@ MonoBehaviour:
   soundEffectPitchRandomVariationMin: 0.8
   soundEffectPitchRandomVariationMax: 1.2
   soundEffectVolume: 0.7
+  spatialBlendSP: 0
+  spatialBlendMP: 1
+  minDistance: 2
+  maxDistance: 20

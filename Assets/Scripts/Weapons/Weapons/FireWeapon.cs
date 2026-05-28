@@ -328,6 +328,8 @@ public class FireWeapon : MonoBehaviour
         // MP client must never spawn projectiles
         if (NetworkClient.active && !NetworkServer.active) yield break;
 
+        bool isMultiplayer = NetworkServer.active;
+
         int projectileCounter = 0;
 
         int projectilePerShot = 1;
@@ -460,7 +462,7 @@ public class FireWeapon : MonoBehaviour
         Vector2Int upperBounds;
         Player targetPlayer;
 
-        if (!NetworkServer.active && !NetworkClient.active)
+        if (!isMultiplayer)
         {
             grid = enemy != null ? enemy.belongingRoom.instantiatedRoom.grid : instantiatedRoom.grid;
             spawnPositionArray = enemy != null ? enemy.belongingRoom.spawnPositionArray : currentRoom.spawnPositionArray;
@@ -469,7 +471,7 @@ public class FireWeapon : MonoBehaviour
 
             targetPlayer = GameManager.Instance.GetLocalPlayer();
         }
-        else if (NetworkServer.active)
+        else
         {
             grid = enemy != null ? enemy.owningSpawner.instantiatedRoom.GetComponentInChildren<Grid>() : DungeonRuntime.GetInstantiatedRoom(currentRoomNetData.roomId).grid;
             spawnPositionArray = enemy != null ? enemy.belongingRoomData.spawnPositions : currentRoomNetData.spawnPositions;
@@ -490,14 +492,6 @@ public class FireWeapon : MonoBehaviour
                 }
             }
         }
-        else
-        {
-            grid = null;
-            spawnPositionArray = null;
-            lowerBounds = Vector2Int.zero;
-            upperBounds = Vector2Int.zero;
-            targetPlayer = null;
-        }
 
         // Default position
         Vector3 projectileSpawnPoint = activeWeapon.GetMainHandShootPositionUp();
@@ -511,17 +505,16 @@ public class FireWeapon : MonoBehaviour
 
             GameObject projectilePrefab;
             // Get projectile prefab from array
-            if (!NetworkServer.active && !NetworkClient.active) // SP
+            if (!isMultiplayer) // SP
             {
                 if (ctx.moravellePhase == MoravellePhase.SpreadArrowShot || ctx.venomancerPhase == VenomancerPhase.ToxicPool) projectilePrefab = currentProjectile.projectilePrefabArray[2];
                 else projectilePrefab = currentProjectile.projectilePrefabArray[0];
             }
-            else if (NetworkServer.active) // MP - Server Only
+            else// MP - Server Only
             {
                 if (ctx.moravellePhase == MoravellePhase.SpreadArrowShot || ctx.venomancerPhase == VenomancerPhase.ToxicPool) projectilePrefab = currentProjectile.projectilePrefabArray[3];
                 else projectilePrefab = currentProjectile.projectilePrefabArray[1];
             }
-            else projectilePrefab = null;
 
             switch (projectileCounter)
             {
@@ -595,7 +588,8 @@ public class FireWeapon : MonoBehaviour
             }
 
             // Get Gameobject with IFireable component
-            IFireable projectile;
+            GameObject projectileGameObject;
+            IFireable fireable;
 
             if (ctx.galvanusPhase == GalvanusPhase.Lightning || ctx.cryotharPhase == CryotharPhase.Icicle || ctx.venomancerPhase == VenomancerPhase.StoneRain ||
                 ctx.pyrotharPhase == PyrotharPhase.FirePillar || ctx.moldranPhase == MoldranPhase.Spike)
@@ -624,11 +618,13 @@ public class FireWeapon : MonoBehaviour
 
                     if (targetPlayer != null)
                     {
-                        projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, targetPlayer.transform.position, Quaternion.identity);
+                        projectileGameObject = Instantiate(projectilePrefab, targetPlayer.transform.position, Quaternion.identity);
+                        if (NetworkServer.active) NetworkServer.Spawn(projectileGameObject);
                     }
                     else
                     {
-                        projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, transform.position, Quaternion.identity);
+                        projectileGameObject = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+                        if (NetworkServer.active) NetworkServer.Spawn(projectileGameObject);
                     }
 
                     break;
@@ -639,58 +635,63 @@ public class FireWeapon : MonoBehaviour
             {
                 if (ctx.sepharothPhase == SepharothPhase.InvisibleAndMine || ctx.venomancerPhase == VenomancerPhase.ToxicPool)
                 {
-                    projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, projectileSpawnPoint, Quaternion.identity);
+                    projectileGameObject = Instantiate(projectilePrefab, projectileSpawnPoint, Quaternion.identity);
+                    if (NetworkServer.active) NetworkServer.Spawn(projectileGameObject);
                 }
                 else if (projectileKind == ProjectileKind.Grapple || projectileKind == ProjectileKind.IceBreaker)
                 {
-                    projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, player.GetPlayerPosition(), Quaternion.identity);
+                    projectileGameObject = Instantiate(projectilePrefab, player.GetPlayerPosition(), Quaternion.identity);
+                    if (NetworkServer.active) NetworkServer.Spawn(projectileGameObject);
                 }
                 else if (projectileKind == ProjectileKind.ThrowingAxe || projectileKind == ProjectileKind.Shiruken)
                 {
-                    projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, player.GetPlayerPosition() + new Vector3(0f, 0.6f, 0f),Quaternion.identity);
+                    projectileGameObject = Instantiate(projectilePrefab, player.GetPlayerPosition() + new Vector3(0f, 0.6f, 0f), Quaternion.identity);
+                    if (NetworkServer.active) NetworkServer.Spawn(projectileGameObject);
                 }
                 else
                 {
-                    projectile = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, shootPos, Quaternion.identity);
+                    projectileGameObject = Instantiate(projectilePrefab, shootPos, Quaternion.identity);
+                    if (NetworkServer.active) NetworkServer.Spawn(projectileGameObject);
                 }
             }
 
             if (isLaser)
             {
-                Projectile spawnedProjectile = (Projectile)projectile;
+                Projectile spawnedProjectile = projectileGameObject.GetComponent<Projectile>();
 
                 spawnedProjectile.lockedTargetVector = weaponAimDirectionVector;
                 spawnedProjectile.lockedAngle = aimAngle;
             }
 
-            if (NetworkServer.active || NetworkClient.active)
+            if (isMultiplayer)
             {
                 if (player != null && player.NetAuth != null) ownerNetId = player.NetAuth.netId;
                 else if(enemy != null && enemy.enemyNetwork != null) ownerNetId = enemy.enemyNetwork.netId;
             }
 
+            fireable = projectileGameObject.GetComponent<IFireable>();
+
             // Initialize projectile - SP
-            if (!NetworkServer.active && !NetworkClient.active)
+            if (!isMultiplayer)
             {
-                projectile.InitializeProjectile(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileSpeed, projectileKind, currentProjectile, ctx, overrideProjectileMovement: false,
+                fireable.InitializeProjectile(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileSpeed, projectileKind, currentProjectile, ctx, overrideProjectileMovement: false,
                     fallingFromSkies: false, projectileCounter - 1, projectilePerShot, -1, ownerNetId, 0, ownerEnemyForSp);
             }
 
             // Initialize projectile - MP
-            if (NetworkServer.active)
+            if (isMultiplayer)
             {
                 int projectileIndex = WartheonDatabase.Instance.GetProjectileId(currentProjectile);
 
-                if (projectile is Projectile)
+                if (fireable is Projectile)
                 {
-                    Projectile initializeProjectile = (Projectile)projectile;
+                    Projectile initializeProjectile = (Projectile)fireable;
                     initializeProjectile.GetComponent<ProjectileNetwork>().RpcInitializeProjectile(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileSpeed, projectileKind, ctx,
                         false, false, projectileCounter - 1, projectilePerShot, projectileIndex, ownerNetId, targetNetId);
                 }
-                else if (projectile is ProjectilePattern)
+                else if (fireable is ProjectilePattern)
                 {
-                    ProjectilePattern initializeProjectilePattern = (ProjectilePattern)projectile;
-
+                    ProjectilePattern initializeProjectilePattern = (ProjectilePattern)fireable;
                     initializeProjectilePattern.GetComponent<ProjectilePatternNetwork>().RpcInitializeProjectilePattern(aimAngle, weaponAimAngle, weaponAimDirectionVector, projectileSpeed, projectileKind, ctx,
                         false, false, projectileCounter - 1, projectilePerShot, projectileIndex, ownerNetId, targetNetId);
                 }
@@ -712,7 +713,7 @@ public class FireWeapon : MonoBehaviour
         bool isGrapple = projectileKind == ProjectileKind.Grapple;
 
         // Weapon fired sound effect
-        WeaponSoundEffect(isGrapple, projectileKind, ctx);
+        WeaponSoundEffect(isGrapple, projectileKind, ctx, isMultiplayer);
 
         if (enemy != null)
         {
@@ -829,7 +830,7 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Play weapon shooting sound effect
     /// </summary>
-    private void WeaponSoundEffect(bool isGrapple, ProjectileKind kind, AttackContext ctx)
+    private void WeaponSoundEffect(bool isGrapple, ProjectileKind kind, AttackContext ctx, bool isMultiplayer)
     {
         if (isGrapple || ctx.isPenetrationArrow) return;
 
@@ -846,30 +847,37 @@ public class FireWeapon : MonoBehaviour
 
             if (kind == ProjectileKind.IceBreaker) 
             {
-                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.iceBreakerDetails.projectileFireSoundEffect);
+                if (isMultiplayer) NetworkSoundManager.Instance.ServerPlaySound(SoundName.IceBreaker, transform.position);
+                else WorldSoundManager.Instance.PlayWorldSound(player.playerDetails.iceBreakerDetails.projectileFireSoundEffect, transform.position);
+
                 return;
             }
             else if (kind == ProjectileKind.FireBlast)
             {
-                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.fireBlastDetails.projectileFireSoundEffect);
+                if (isMultiplayer) NetworkSoundManager.Instance.ServerPlaySound(SoundName.FireBlast, transform.position);
+                else WorldSoundManager.Instance.PlayWorldSound(player.playerDetails.fireBlastDetails.projectileFireSoundEffect, transform.position);
+
                 return;
             }
             else if (kind == ProjectileKind.BlazingCyclone)
             {
-                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.blazingCycloneDetails.projectileFireSoundEffect);
+                if (isMultiplayer) NetworkSoundManager.Instance.ServerPlaySound(SoundName.PyrotharFirePillar, transform.position);
+                else WorldSoundManager.Instance.PlayWorldSound(player.playerDetails.blazingCycloneDetails.projectileFireSoundEffect, transform.position);
+
                 return;
             }
             else if (kind == ProjectileKind.ChainLightning)
             {
-                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.chainLightningDetails.projectileFireSoundEffect);
+                if (isMultiplayer) NetworkSoundManager.Instance.ServerPlaySound(SoundName.GalvanusCharge, transform.position);
+                else WorldSoundManager.Instance.PlayWorldSound(player.playerDetails.chainLightningDetails.projectileFireSoundEffect, transform.position);
+
                 return;
             }
 
-            if (weaponDetails.weaponSwingSoundEffect != null &&
-                GetComponent<PlayerControl>().isSoundPlayed == false)
+            if (weaponDetails.weaponSwingSoundEffect != null)
             {
-                GetComponent<PlayerControl>().isSoundPlayed = true;
-                SoundEffectManager.Instance.PlaySoundEffect(weaponDetails.weaponSwingSoundEffect);
+                if (isMultiplayer) NetworkSoundManager.Instance.ServerPlaySound(SoundName.ArrowShot, transform.position);
+                else WorldSoundManager.Instance.PlayWorldSound(weaponDetails.weaponSwingSoundEffect, transform.position);
             }
         }
     }

@@ -90,12 +90,12 @@ public class WartheonNetworkManager : NetworkManager
         // Don't jump to MainGame until lobby phase is completed and scene change from NetworkManager
         if (sceneName != "MainGameScene") return;
 
+        // Create pool
+        PoolManager.Instance.InitializePoolMP();
+
         foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
         {
             if (!connectionToCharacterIndex.TryGetValue(conn.connectionId, out int charIndex)) continue;
-
-            // Create pool
-            PoolManager.Instance.InitializePoolMP();
 
             // New gameplay player
             GameObject gameplayPlayer = Instantiate(spawnPrefabs[charIndex]);
@@ -108,7 +108,7 @@ public class WartheonNetworkManager : NetworkManager
         }
     }
 
-    public override void OnClientSceneChanged()
+    public override void OnClientSceneChanged() 
     {
         base.OnClientSceneChanged();
 

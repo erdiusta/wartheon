@@ -389,6 +389,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         if (gambleValue < 0)
         {
+
             SoundEffectManager.Instance.PlaySoundEffect(gambleNpc.gambleLostSoundEffect);
             StaticDialogueHandler.CallGambleLostEvent();
         }
@@ -515,8 +516,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             PassiveItem passiveItem = (PassiveItem)itemGeneric;
 
-            Debug.Log("Passive item type is " + passiveItem.passiveStats.passiveItemType);
-
             passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
 
             animator.runtimeAnimatorController = passiveItemDetails?.passiveItemAnimatorController ?? animator.runtimeAnimatorController;
@@ -591,7 +590,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             player.consumableEvent.CallKeyCountChangedEvent(++player.keyCount);
 
             // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.itemPickup);
+            WorldSoundManager.Instance.PlayWorldSound(GameResources.Instance.itemPickup, transform.position);
         }
 
         if (passiveItem.passiveStats.passiveItemType == PassiveItemType.SilverCoin)
@@ -606,7 +605,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             }
 
             // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.coinPickup);
+            WorldSoundManager.Instance.PlayWorldSound(GameResources.Instance.coinPickup, transform.position);
         }
 
         if (passiveItem.passiveStats.passiveItemType == PassiveItemType.GoldCoin)
@@ -614,7 +613,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             player.coinsAndShards.AddCoin(5);
 
             // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.coinPickup);
+            WorldSoundManager.Instance.PlayWorldSound(GameResources.Instance.coinPickup, transform.position);
         }
 
         if (passiveItem.passiveStats.passiveItemType == PassiveItemType.Health)
@@ -627,7 +626,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             }
 
             // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
+            WorldSoundManager.Instance.PlayWorldSound(GameResources.Instance.healthPickup, transform.position);
         }
 
         if (passiveItem.passiveStats.passiveItemType == PassiveItemType.Mana)
@@ -635,7 +634,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             player.UpdatePlayerMana(20, false, false);
 
             // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
+            WorldSoundManager.Instance.PlayWorldSound(GameResources.Instance.healthPickup, transform.position);
         }
 
         if (passiveItem.passiveStats.passiveItemType == PassiveItemType.Cure)
@@ -665,7 +664,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             }
 
             // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
+            WorldSoundManager.Instance.PlayWorldSound(GameResources.Instance.healthPickup, transform.position);
         }
 
         StaticEventHandler.CallStatsChangedOnTheBookEvent();

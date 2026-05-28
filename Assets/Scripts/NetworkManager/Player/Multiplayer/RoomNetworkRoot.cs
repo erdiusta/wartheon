@@ -12,6 +12,7 @@ public class RoomNetworkRoot : NetworkBehaviour
     bool built;
     BoxCollider2D rootCollider2D;
     Vector2 entryDirection;
+    InstantiatedRoom instantiatedRoom;
 
     public override void OnStartServer()
     {
@@ -32,6 +33,21 @@ public class RoomNetworkRoot : NetworkBehaviour
         StartCoroutine(DelayedBuild());
 
         RemoveSinglePlayerProps();
+    }
+
+    [Server]
+    public void Server_UnlockDoors()
+    {
+        RpcUnlockDoors();
+    }
+
+    [ClientRpc]
+    private void RpcUnlockDoors()
+    {
+        instantiatedRoom.roomNetData = roomNetData;
+
+        // Room cleared
+        instantiatedRoom.UnlockDoors(Settings.doorUnlockDelay);
     }
 
     IEnumerator DelayedBuild()
@@ -72,13 +88,12 @@ public class RoomNetworkRoot : NetworkBehaviour
         {
             if (player != null && player.IsLocal && player.isBattleReadyActive && !roomNetData.isPreviouslyVisited && roomNetData.isCombatRoom) // Battle Ready Mechanic
             {
-                player.health.AddHealth(3);
-                player.health.AddShield(5);
+                IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(player.gameObject);
+                healthAuthority.ApplyDamage(-3, default);
+
+                //player.health.AddShield(5);
             }
         }
-
-        // Set room as visited
-        roomNetData.isPreviouslyVisited = true;
 
         entryDirection = (transform.position - collision.transform.position).normalized;
 
@@ -101,7 +116,7 @@ public class RoomNetworkRoot : NetworkBehaviour
 
         ApplyRoomColliderToRoot(roomCollider, rootCollider2D);
 
-        InstantiatedRoom instantiatedRoom = roomGameObject.GetComponent<InstantiatedRoom>();
+        instantiatedRoom = roomGameObject.GetComponent<InstantiatedRoom>();
         instantiatedRoom.roomNetData = roomNetData;
         instantiatedRoom.InitializeMultiplayer(roomGameObject);
 

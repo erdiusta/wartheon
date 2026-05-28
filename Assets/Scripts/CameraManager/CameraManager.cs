@@ -28,11 +28,13 @@ public class CameraManager : MonoBehaviour
         dungeonOverviewCamera.gameObject.SetActive(false);
     }
 
-    public void ShowGameplay()
+    public void ShowGameplay(bool onStart = false)
     {
         gameplayCamera?.gameObject.SetActive(true);
         minimapCamera?.gameObject.SetActive(true);
         dungeonOverviewCamera?.gameObject.SetActive(false);
+
+        if (onStart) gameplayCamera.GetComponentInChildren<AudioListener>().enabled = true;
 
         if (player.IsLocal) gameplayCinemachine.Priority = 15;
     }

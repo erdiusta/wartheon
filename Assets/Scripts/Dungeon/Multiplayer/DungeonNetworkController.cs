@@ -45,9 +45,16 @@ public class DungeonNetworkController : NetworkBehaviour
     public void ServerRoomEntered(string roomId, NetworkIdentity initiator, Vector2 entryDirection)
     {
         DungeonRuntime.MarkRoomVisited(roomId);
-        RoomNetData roomNetData = DungeonRuntime.GetRoomNetData(roomId);
 
-        InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(roomNetData.roomId);
+        InstantiatedRoom ir = DungeonRuntime.GetInstantiatedRoom(roomId);
+        RoomNetworkRoot roomRoot = ir.GetComponentInParent<RoomNetworkRoot>();
+
+        RoomNetData data = roomRoot.roomNetData;
+        data.isPreviouslyVisited = true;
+        roomRoot.roomNetData = data;
+
+        RoomNetData roomNetData = roomRoot.roomNetData;
+
         GameSessionManager.Instance.SetCurrentRoom(null, roomNetData);
 
         if (ir == null) return;

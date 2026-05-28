@@ -10,7 +10,6 @@ public static class DungeonRuntime
     {
         if (!RoomNetDataDict.TryGetValue(roomId, out var roomNet)) return;
 
-        roomNet.isPreviouslyVisited = true;
         roomNet.isLit = true;
         RoomNetDataDict[roomId] = roomNet;
     }
@@ -67,9 +66,7 @@ public static class DungeonRuntime
             isCorridor = room.roomNodeType.isCorridor,
             isCorridorEW = room.roomNodeType.isCorridorEW,
             isCorridorNS = room.roomNodeType.isCorridorNS,
-            isClearedOfEnemies = room.isClearedOfEnemies,
             isLit = room.isLit,
-            isPreviouslyVisited = room.isPreviouslyVisited,
             shopRoomGoodsCreated = room.shopRoomGoodsCreated,
         };
 

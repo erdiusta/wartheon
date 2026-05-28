@@ -1,3 +1,4 @@
+using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -63,7 +64,8 @@ public class Door : MonoBehaviour
             animator.SetBool(Settings.open, true);
 
             // Play sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.doorOpenCloseSoundEffect);
+            if (!NetworkServer.active && !NetworkClient.active) WorldSoundManager.Instance.PlayWorldSound(GameResources.Instance.doorOpenCloseSoundEffect, transform.position, false);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.DoorOpenClose, transform.position);
         }
     }
 

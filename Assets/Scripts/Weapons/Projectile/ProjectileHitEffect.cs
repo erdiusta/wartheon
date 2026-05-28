@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -49,6 +50,8 @@ public class ProjectileHitEffect : MonoBehaviour
 
         // Set hit effect lifetime min and max velocities
         SetHitEffectVelocityOverLifeTime(velocityOverLifetimeMin, velocityOverLifetimeMax);
+
+        StartCoroutine(DestroyProcess());
     }
 
     /// <summary>
@@ -141,5 +144,12 @@ public class ProjectileHitEffect : MonoBehaviour
         minMaxCurveZ.constantMin = minVelocity.z;
         minMaxCurveZ.constantMax = maxVelocity.z;
         velocityOverLifetimeModule.z = minMaxCurveZ;
+    }
+
+    IEnumerator DestroyProcess()
+    {
+        yield return new WaitForSeconds(0.8f);
+
+        Destroy(gameObject);
     }
 }

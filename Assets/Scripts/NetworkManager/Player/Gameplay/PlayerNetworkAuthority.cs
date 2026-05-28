@@ -97,6 +97,8 @@ public class PlayerNetworkAuthority : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
+
+
     }
 
     public override void OnStartLocalPlayer()
@@ -106,7 +108,7 @@ public class PlayerNetworkAuthority : NetworkBehaviour
         if (SceneManager.GetActiveScene().buildIndex != 2) return;
 
         // Assign camera if not already assigned
-        player.cameraManager.ShowGameplay();
+        player.cameraManager.ShowGameplay(onStart: true);
 
         player.MarkLocalAuthorityReady(player);
 

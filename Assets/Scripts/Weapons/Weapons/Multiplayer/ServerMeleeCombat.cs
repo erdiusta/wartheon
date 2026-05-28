@@ -74,7 +74,7 @@ public static class ServerMeleeCombat
                     if (collider.TryGetComponent(out Environment environment) &&
                         collider.TryGetComponent(out Health envHealth))
                     {
-                        SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeaponDetails.weaponImpactSoundEffect);
+                        NetworkSoundManager.Instance.ServerPlaySound(SoundName.SwordImpact, damageDealerPlayer.transform.position);
 
                         DamageContext ctx = new DamageContext { source = DamageSourceType.Melee, dealerPosition = damageDealerPlayer.transform.position, 
                             receiverPosition = collider.transform.position, hand = hand, dealerNetId = damageDealerPlayer.NetAuth.netId };
@@ -87,7 +87,8 @@ public static class ServerMeleeCombat
 
                     if (collider.CompareTag(Settings.practiceDummy))
                     {
-                        SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeaponDetails.weaponImpactSoundEffect);
+                        NetworkSoundManager.Instance.ServerPlaySound(SoundName.SwordImpact, damageDealerPlayer.transform.position);
+
                         DummyCheck(hand, receiveMeleeDamage, damageDealerPlayer, hittingHandWeaponDetails, isShieldBash: true);
                         continue;
                     }
@@ -182,7 +183,7 @@ public static class ServerMeleeCombat
 
                         if (damageDealerPlayer.isTriadExecutionActive) damageDealerPlayer.triadExecutionCounter++;
 
-                        if (!isSheerCold) SoundEffectManager.Instance.PlaySoundEffect(hittingHandWeaponDetails.weaponImpactSoundEffect);
+                        if (!isSheerCold) NetworkSoundManager.Instance.ServerPlaySound(SoundName.SwordImpact, damageDealerPlayer.transform.position);
 
                         if (!enemyCombatData.Isboss && enemy.health.GetCurrentHealth() > 0)
                         {
@@ -348,7 +349,7 @@ public static class ServerMeleeCombat
         {
             enemy.healthEvent.CallCriticalHitEvent();
 
-            if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.criticalHitSoundEffect);
+            NetworkSoundManager.Instance.ServerPlaySound(SoundName.CriticalHit, dealerPlayer.transform.position);
         }
 
         float critMultiplier = 0f;
@@ -668,7 +669,7 @@ public static class ServerMeleeCombat
 
                 enemy.healthEvent.CallGetShatteredEvent();
 
-                if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
+                NetworkSoundManager.Instance.ServerPlaySound(SoundName.SuddenDeath, enemy.transform.position);
             }
         }
     }

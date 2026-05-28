@@ -30,40 +30,24 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
     /// </summary>
     public void PlaySoundEffect(SoundEffectSO soundEffect)
     {
-        if (!NetworkServer.active && !NetworkClient.active)
-        {
-            playingSound = (SoundEffect)PoolManager.Instance.Reuse(soundEffect.soundPrefab, Vector3.zero, Quaternion.identity);
-            playingSound.SetSound(soundEffect);
-            playingSound.gameObject.SetActive(true);
-            AudioClip selectedClip = soundEffect.soundEffectClips[Random.Range(0, soundEffect.soundEffectClips.Length)];
-            StartCoroutine(DisableSound(selectedClip.length));
-        }
-        else 
-        {
-            playingSound = (SoundEffect)PoolManager.Instance.Reuse(soundEffect.soundPrefabMP, Vector3.zero, Quaternion.identity);
-        } 
-    }
+        GameObject playingSoundObject = Instantiate(soundEffect.soundPrefab, Vector3.zero, Quaternion.identity);
+        playingSound = playingSoundObject.GetComponent<SoundEffect>();
 
-    /// <summary>
-    /// Stop the sound effect
-    /// </summary>
-    public void StopSoundEffect(SoundEffectSO soundEffect)
-    {
-        // Select a random clip
+        playingSound.SetSound(soundEffect, false);
+        playingSound.gameObject.SetActive(true);
+
         AudioClip selectedClip = soundEffect.soundEffectClips[Random.Range(0, soundEffect.soundEffectClips.Length)];
-        playingSound.audioSource.clip = selectedClip;
-        playingSound.audioSource.loop = false;
-
-        StartCoroutine(DisableSound(selectedClip.length));
+        StartCoroutine(DisableSound(playingSound, selectedClip.length));
     }
 
     /// <summary>
     /// Disable sound effect object after it has played thus returning it to the object pool
     /// </summary>
-    IEnumerator DisableSound(float soundDuration)
+    IEnumerator DisableSound(SoundEffect sound, float soundDuration)
     {
         yield return new WaitForSeconds(soundDuration);
-        playingSound.gameObject.SetActive(false);
+
+        if (sound != null) Destroy(sound.gameObject);
     }
 
     public void SetVolume(int value)

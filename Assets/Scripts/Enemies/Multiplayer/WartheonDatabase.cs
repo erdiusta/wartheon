@@ -7,6 +7,7 @@ public class WartheonDatabase : SingletonMonobehaviour<WartheonDatabase>
     [SerializeField] ProjectileHitEffectDatabaseSO projectileHitFxDatabase;
     [SerializeField] WeaponDatabaseSO weaponDatabase;
     [SerializeField] PassiveItemDatabaseSO passiveItemDatabase;
+    [SerializeField] SoundDatabaseSO soundDatabase;
 
     protected override void Awake()
     {
@@ -17,6 +18,7 @@ public class WartheonDatabase : SingletonMonobehaviour<WartheonDatabase>
         projectileHitFxDatabase.Initialize();
         weaponDatabase.Initialize();
         passiveItemDatabase.Initialize();
+        soundDatabase.Initialize();
     }
 
     public WeaponDetailsSO GetWeaponDetails(WeaponTitle title)
@@ -24,19 +26,9 @@ public class WartheonDatabase : SingletonMonobehaviour<WartheonDatabase>
         return weaponDatabase.GetWeapon(title);
     }
 
-    public WeaponTitle GetWeaponDetailsTitle(WeaponDetailsSO weaponDetails)
-    {
-        return weaponDatabase.GetWeaponTitle(weaponDetails);
-    }
-
     public PassiveItemDetailsSO GetPassiveItemDetails(PassiveItemType type)
     {
         return passiveItemDatabase.GetPassiveItem(type);
-    }
-
-    public PassiveItemType GetPassiveItemDetailsType(PassiveItemDetailsSO passiveItemDetails)
-    {
-        return passiveItemDatabase.GetPassiveItemType(passiveItemDetails);
     }
 
     public EnemyDetailsSO GetEnemy(EnemyCategory category)
@@ -54,13 +46,13 @@ public class WartheonDatabase : SingletonMonobehaviour<WartheonDatabase>
         return projectileDatabase.GetProjectileId(details);
     }
 
-    public ProjectileHitEffectSO GetProjectileHitFx(int index)
-    {
-        return projectileHitFxDatabase.GetProjectileHitFx(index);
-    }
-
     public int GetProjectileHitFxId(ProjectileHitEffectSO details)
     {
         return projectileHitFxDatabase.GetProjectileHitFxId(details);
+    }
+
+    public SoundEffectSO GetSound(SoundName soundName)
+    {
+        return soundDatabase.GetSound(soundName);
     }
 }

@@ -488,9 +488,11 @@ public class GameSessionManager : NetworkBehaviour
 
     IEnumerator GameLostUI()
     {
+        messageTextTMP.SetText("");
+
         yield return StartCoroutine(GameManager.Instance.Fade(0f, 1f, 2f, Color.black));
 
-        messageTextTMP.SetText("BAD LUCK TEAM! YOU HAVE\nDIED SOMEWHERE IN WARTHEON.");
+        messageTextTMP.SetText("BAD LUCK TEAM! YOU HAVE\nDIED IN WARTHEON.");
         messageTextTMP.color = Color.red;
 
         yield return new WaitForSeconds(2f);

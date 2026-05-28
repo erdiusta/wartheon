@@ -119,5 +119,5 @@ public class SeismicSlam : MonoBehaviour
 
     public void DisableSlam() => isSlamEnabled = false;
 
-    private void PlaySlamSound() => SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.firstActiveSkillDetails.activeUniqueSkillSoundEffectOne);
+    private void PlaySlamSound() => WorldSoundManager.Instance.PlayWorldSound(player.playerDetails.firstActiveSkillDetails.activeUniqueSkillSoundEffectOne, transform.position);
 }

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d6199204684cd648b889173cefd23c8, type: 3}
   m_Name: SoundEffect_OpenChest
   m_EditorClassIdentifier: 
-  soundEffectName: Key Pick Weapon
+  soundEffectName: Open Chest
+  soundName: 46
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundPrefabMP: {fileID: 5744890745976271322, guid: e2969d6382294e24c89e231883f8a14b, type: 3}
   soundEffectClips:
@@ -20,3 +21,7 @@ MonoBehaviour:
   soundEffectPitchRandomVariationMin: 0.9
   soundEffectPitchRandomVariationMax: 1.15
   soundEffectVolume: 0.8
+  spatialBlendSP: 0
+  spatialBlendMP: 1
+  minDistance: 2
+  maxDistance: 20

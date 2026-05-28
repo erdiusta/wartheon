@@ -34,9 +34,6 @@ public class ChestNetwork : NetworkBehaviour
 
         animator.SetBool(Settings.use, true);
 
-        // chest open sound effect
-        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.chestOpen);
-
         if (player == null || player.NetAuth.netId != openerNetId) return;
 
         player.consumableEvent.CallKeyCountChangedEvent(--player.keyCount);

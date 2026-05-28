@@ -46,12 +46,12 @@ public class PlayerSkillController : MonoBehaviour
     /// <summary>
     /// Execute Seismic Slam special move
     /// </summary>
-    public void SeismicSlamProcess()
+    public void SeismicSlamProcess(int skillIndex)
     {
-        SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.firstActiveSkillDetails.activeUniqueSkillSoundEffectTwo);
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[skillIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.SeismicSlam, transform.position);
 
         player.animatePlayer.ApplySeismicSlam();
-
         player.animSync?.CmdPlaySeismicSlam();
 
         // Make Caelion unpushable
@@ -135,7 +135,8 @@ public class PlayerSkillController : MonoBehaviour
     {
         if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
-            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.Stealth, transform.position);
 
             int originalMinDamage = player.currentMainHandMinDamageValue;
             int originalMaxDamage = player.currentMainHandMaxDamageValue;
@@ -209,7 +210,9 @@ public class PlayerSkillController : MonoBehaviour
     public void GuardedOath(int slotIndex)
     {
         player.isGuardedOathActive = true;
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.ShadowStep, transform.position);
 
         activeSkillTypeTwoAnimator.SetBool("oath", true);
         player.animSync?.CmdPlayGuardedOath(undo: false); // FOR MP
@@ -337,7 +340,9 @@ public class PlayerSkillController : MonoBehaviour
 
             // Get the current color of the sprite renderer
             Color currentColor = player.spriteRenderer.color;
-            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.Stealth, transform.position);
 
             // Set the alpha value to 0.3 (30% opacity)
             currentColor.a = 0.3f;
@@ -446,7 +451,9 @@ public class PlayerSkillController : MonoBehaviour
                 player.animSync?.CmdPlayShadowStep(undo: false);
 
                 player.healthEvent.CallShadowStepSpecialMoveEvent(); // This is for displaying shadow step icon
-                SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+                if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+                else NetworkSoundManager.Instance.CmdPlaySound(SoundName.ShadowStep, transform.position);
 
                 float modifier = 0f;
 
@@ -509,12 +516,13 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isPenetrateActive = true;
         //Reset precharge for loading again
-        player.playerControl.isSoundPlayed = false;
+
         activeSkillTypeTwoAnimator.SetTrigger("penetrate");
         player.animSync?.CmdPlayPenetrate();
 
         // Trigger fire weapon event
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.Penetrate, transform.position);
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
 
@@ -539,13 +547,13 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isTripleThreatActive = true;
         //Reset precharge for loading again
-        player.playerControl.isSoundPlayed = false;
 
         activeSkillTypeThreeAnimator.SetTrigger("tripleThreat");
         player.animSync?.CmdPlayTripleThreat();
 
         // Trigger fire weapon event
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.TripleThreat, transform.position);
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
 
@@ -570,7 +578,6 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isBindingArrowActive = true;
         //Reset precharge for loading again
-        player.playerControl.isSoundPlayed = false;
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
 
@@ -588,7 +595,10 @@ public class PlayerSkillController : MonoBehaviour
     {
         player.isArrowOfTheSevenActive = true;
         player.healthEvent.CallSevenArrowsSpecialMoveEvent();
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.ArrowOfTheSevenPlagues, transform.position);
+
         StartCoroutine(ArrowOfTheSevenPlaguesRoutine(slotIndex, activeSkillData));
     }
 
@@ -617,9 +627,9 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isHuntersReachActive = true;
         //Reset precharge for loading again
-        player.playerControl.isSoundPlayed = false;
 
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.HuntersReach1, transform.position);
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
 
@@ -638,7 +648,9 @@ public class PlayerSkillController : MonoBehaviour
             player.animator.SetTrigger("rage");
             player.animSync?.CmdRage(player.LastAim, player.LastAttackdir);
 
-            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.Rage, transform.position);
+
             player.healthEvent.CallRageSpecialMoveEvent(); // This is for displaying rage icon
             player.isRageActive = true;
             StartCoroutine(RageRoutine(slotIndex, activeSkillData));
@@ -699,7 +711,9 @@ public class PlayerSkillController : MonoBehaviour
             player.animator.SetTrigger("shatterCry");
             player.animSync?.CmdShatterCry(player.LastAim, player.LastAttackdir);
 
-            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.ShatterCry, transform.position);
+
             player.healthEvent.CallShatterCrySpecialMoveEvent(); // This is for displaying shatter cry icon
             player.isShatterCryActive = true;
             StartCoroutine(ShatterCryRoutine(slotIndex, activeSkillData));
@@ -763,7 +777,10 @@ public class PlayerSkillController : MonoBehaviour
                 player.animSync?.CmdWhirlrend(player.LastAim, player.LastAttackdir, undo:false);
 
                 activeSkillTypeTwoAnimator.gameObject.SetActive(true);
-                SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+                if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+                else NetworkSoundManager.Instance.CmdPlaySound(SoundName.Whirlrend, transform.position);
+
                 player.healthEvent.CallWhirlrendSpecialMoveEvent(); // This is for displaying rage icon
                 player.isWhirlrendActive = true;
                 StartCoroutine(WhirlrendRoutine(slotIndex, activeSkillData));
@@ -796,7 +813,6 @@ public class PlayerSkillController : MonoBehaviour
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(offhandWeapon.weaponStats.weaponTitle);
 
         //Reset precharge for loading again
-        player.playerControl.isSoundPlayed = false;
         player.isAxeThrowActive = true;
 
         player.playerSkillProjectile = player.playerDetails.throwingAxeDetails.projectilePrefabArray[0].GetComponentInChildren<Projectile>();
@@ -1006,7 +1022,8 @@ public class PlayerSkillController : MonoBehaviour
 
             StaticEventHandler.CallStatsChangedOnTheBookEvent(); // Book UI
 
-            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.FadeAndFeed, transform.position);
 
             player.isFadeAndFeedActive = true;
             StartCoroutine(FadeAndFeedRoutine(slotIndex, activeSkillData));
@@ -1050,7 +1067,8 @@ public class PlayerSkillController : MonoBehaviour
         player.animator.SetBool("bladeDash", true);
         player.animSync?.CmdBladeDash(player.LastAim, player.LastAttackdir, undo: false);
 
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.BladeDash, transform.position);
 
         StartCoroutine(BladeDashRoutine(direction, dashForce, dashDuration, activeSkillData, isInitialCast));
     }
@@ -1102,7 +1120,6 @@ public class PlayerSkillController : MonoBehaviour
         player.playerControl.AimWeaponInput(out weaponDirection, out weaponAngleDegrees, out playerAngleDegrees, out playerAimDirection, out playerAttackDirection);
 
         //Reset precharge for loading again
-        player.playerControl.isSoundPlayed = false;
         player.isShirukenActive = true;
 
         player.playerSkillProjectile = player.playerDetails.shirukenDetails.projectilePrefabArray[0].GetComponentInChildren<Projectile>();
@@ -1126,7 +1143,9 @@ public class PlayerSkillController : MonoBehaviour
             if (!player.isBlizzardActive)
             {
                 player.isBlizzardActive = true;
-                SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+                if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+                else NetworkSoundManager.Instance.CmdPlaySound(SoundName.Blizzard, transform.position);
 
                 if (!NetworkServer.active && !NetworkClient.active) StartCoroutine(BlizzardRoutine(slotIndex, activeSkillData));
                 else player.animSync.CmdPlayBlizzard(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier), slotIndex, player.NetAuth.netId);
@@ -1145,7 +1164,7 @@ public class PlayerSkillController : MonoBehaviour
         // Wait until effective duration of skill ended
         yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
-        SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        WorldSoundManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isBlizzardActive = false;
 
         blizzardObject.GetComponent<Animator>().SetBool("blizzard", false);
@@ -1169,7 +1188,9 @@ public class PlayerSkillController : MonoBehaviour
 
             player.healthEvent.CallMycarasSealSpecialMoveEvent(); // This is for displaying Mycara's Seal icon
             player.isMycarasSealActive = true;
-            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.MycarasSeal, transform.position);
 
             StartCoroutine(MycarasSealRoutine(slotIndex, activeSkillData));
 
@@ -1183,7 +1204,7 @@ public class PlayerSkillController : MonoBehaviour
         // Wait until effective duration of skill ended
         yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
-        SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        WorldSoundManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isMycarasSealActive = false;
         player.healthEvent.CallMycarasSealWoreOffEvent();
 
@@ -1199,7 +1220,8 @@ public class PlayerSkillController : MonoBehaviour
     /// </summary>
     public void SheerCold(int slotIndex)
     {
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.SheerCold, transform.position);
 
         player.meleeAttackEvent.CallAttackEvent(AimDirection.Up, player.activeWeapon.GetCurrentMainHandWeapon(), AttackShape.Cone, MeleeHand.MainHand,
             false, false, false, true);
@@ -1220,7 +1242,6 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isIceBreakerActive = true;
         //Reset precharge for loading again
-        player.playerControl.isSoundPlayed = false;
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
 
@@ -1241,7 +1262,9 @@ public class PlayerSkillController : MonoBehaviour
             if (!player.isAbsoluteZeroActive)
             {
                 player.isAbsoluteZeroActive = true;
-                SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+                if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+                else NetworkSoundManager.Instance.CmdPlaySound(SoundName.Blizzard, transform.position);
 
                 if (!NetworkServer.active && !NetworkClient.active) StartCoroutine(AbsoluteZeroRoutine(slotIndex, activeSkillData));
                 else player.animSync.CmdPlayAbsoluteZero(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier), slotIndex, player.NetAuth.netId);
@@ -1260,7 +1283,7 @@ public class PlayerSkillController : MonoBehaviour
         // Wait until effective duration of skill ended
         yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
-        SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        WorldSoundManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isAbsoluteZeroActive = false;
 
         absoluteZeroObject.GetComponent<Animator>().SetBool("absoluteZero", false);
@@ -1285,7 +1308,6 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isFireBlastActive = true;
         //Reset precharge for loading again
-        player.playerControl.isSoundPlayed = false;
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
 
@@ -1321,7 +1343,8 @@ public class PlayerSkillController : MonoBehaviour
         InputManager.Instance.pointerPosition.action.performed += OnMoltenRiftInput;
 
         // Play special move sound effect
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.MoltenRift, transform.position);
 
         if (NetworkClient.active)
         {
@@ -1415,7 +1438,9 @@ public class PlayerSkillController : MonoBehaviour
             if (!player.isFlameLotusActive)
             {
                 player.isFlameLotusActive = true;
-                SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+                if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+                else NetworkSoundManager.Instance.CmdPlaySound(SoundName.PyrotharFireSound, transform.position);
 
                 if (!NetworkServer.active && !NetworkClient.active) StartCoroutine(FlameLotusRoutine(slotIndex, activeSkillData));
                 else player.animSync.CmdPlayFlameLotus(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier), slotIndex, player.NetAuth.netId);
@@ -1434,7 +1459,7 @@ public class PlayerSkillController : MonoBehaviour
         // Wait until effective duration of skill ended
         yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
-        SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        WorldSoundManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isFlameLotusActive = false;
 
         flameLotusObject.GetComponent<Animator>().SetBool("flameLotus", false);
@@ -1458,7 +1483,9 @@ public class PlayerSkillController : MonoBehaviour
 
             player.healthEvent.CallKynarasEmbraceSpecialMoveEvent(); // This is for displaying Kynara's Embrace icon
             player.isKynarasEmbraceActive = true;
-            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.PyrotharFireSound, transform.position);
 
             StartCoroutine(KynarasEmbraceRoutine(slotIndex, activeSkillData));
 
@@ -1498,7 +1525,9 @@ public class PlayerSkillController : MonoBehaviour
     public void Explosion(int slotIndex)
     {
         player.filter.SetLayerMask(player.layerMask);
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectTwo);
+
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectTwo, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.BombBurst, transform.position);
 
         Collider2D[] results = new Collider2D[20];
         int hitCount = Physics2D.OverlapCircle(transform.position, player.kynarasEmbraceCircleRadius, player.filter, results);
@@ -1566,7 +1595,6 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isBlazingCycloneActive = true;
         //Reset precharge for loading again
-        player.playerControl.isSoundPlayed = false;
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
 
@@ -1600,7 +1628,8 @@ public class PlayerSkillController : MonoBehaviour
 
         mistOfDisruptionObject.GetComponent<Animator>().SetBool("mistOfDisruption", true);
 
-        SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.MistOfDisruption, transform.position);
 
         // Wait until effective duration of skill ended
         yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
@@ -1628,7 +1657,9 @@ public class PlayerSkillController : MonoBehaviour
             player.healthEvent.CallNymarasWindveilSpecialMoveEvent(); // This is for displaying Nymara'w Windveil icon
 
             player.isNymarasWindveilActive = true;
-            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.MycarasSeal, transform.position);
 
             // Effects
             float speedIncrease = player.playerDetails.secondActiveSkillDetails.GetCurrentActiveLevel() switch
@@ -1743,7 +1774,6 @@ public class PlayerSkillController : MonoBehaviour
 
         player.isChainLightningActive = true;
         //Reset precharge for loading again
-        player.playerControl.isSoundPlayed = false;
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.weaponTitle);
 
@@ -1762,7 +1792,9 @@ public class PlayerSkillController : MonoBehaviour
         if (player.specialMoveDurationTimerArray[slotIndex - 1] < activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier))
         {
             player.isEyeOfTheStormActive = true;
-            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.EyeOfTheStorm, transform.position);
 
             if (!NetworkServer.active && !NetworkClient.active) StartCoroutine(EyeOfTheStormRoutine(slotIndex, activeSkillData));
             else player.animSync.CmdPlayEyeOfTheStorm(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier), slotIndex, player.NetAuth.netId);
@@ -1780,7 +1812,7 @@ public class PlayerSkillController : MonoBehaviour
         // Wait until effective duration of skill ended
         yield return new WaitForSeconds(activeSkillData.effectiveDuration * (1 + player.currentSkillDurationModifier));
 
-        SoundEffectManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+        WorldSoundManager.Instance.StopSoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
         player.isEyeOfTheStormActive = false;
 
         eyeOfTheStormObject.GetComponent<Animator>().SetBool("eyeOfTheStorm", false);
@@ -1839,7 +1871,8 @@ public class PlayerSkillController : MonoBehaviour
 
             StaticEventHandler.CallStatsChangedOnTheBookEvent(); // Book UI
 
-            SoundEffectManager.Instance.PlaySoundEffect(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne);
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[slotIndex].activeUniqueSkillSoundEffectOne, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.IonicRejuvenation, transform.position);
 
             player.isIonicRejuvenationActive = true;
             StartCoroutine(IonicRejuvenationRoutine(slotIndex, activeSkillData));

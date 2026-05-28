@@ -64,10 +64,17 @@ public class Destroyed : MonoBehaviour
                 player.idle.StopVelocity();
                 player.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
 
-                if(!NetworkServer.active && !NetworkClient.active) InputManager.glossaryDisabled = true; // Disable glossary
+                InputManager.glossaryDisabled = true; // Disable glossary
 
-                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.deathSoundEffect);
-                deathSoundPlayed = true;
+                if (!NetworkServer.active && !NetworkClient.active) WorldSoundManager.Instance.PlayWorldSound(player.playerDetails.deathSoundEffect, transform.position);
+                else if (NetworkClient.active)
+                {
+                    GameSessionManager.Instance.SetGameState(GameState.gameLost);
+
+                    NetworkSoundManager.Instance.CmdPlaySound(SoundName.PlayerDeath, transform.position);
+                }
+                    
+                 deathSoundPlayed = true;
             }
         }
         else

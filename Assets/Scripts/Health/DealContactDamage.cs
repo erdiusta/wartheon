@@ -91,6 +91,10 @@ public class DealContactDamage : MonoBehaviour
 
                     player.healthEvent.CallParryEvent();
                     player.health.PostHitImmunity(true);
+
+                    if (!NetworkServer.active && !NetworkClient.active) WorldSoundManager.Instance.PlayWorldSound(GameManager.Instance.GetLocalPlayer().playerDetails.parrySoundEffect, transform.position);
+                    else NetworkSoundManager.Instance.CmdPlaySound(SoundName.PlayerParry, transform.position);
+
                     return;
                 }
 
@@ -116,7 +120,6 @@ public class DealContactDamage : MonoBehaviour
                         {
                             if (player.isValorActive)
                             {
-                                //SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.activeSkillTwoSoundEffect);
                                 player.health.PostHitImmunity(true);
                             }
                             else

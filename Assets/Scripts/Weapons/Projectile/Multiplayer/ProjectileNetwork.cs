@@ -36,6 +36,19 @@ public class ProjectileNetwork : NetworkBehaviour
             fallingFromSkies: false, projectileCounter - 1, projectilePerShot, projectileIndex, ownerNetId,  targetNetId, null);
     }
 
+    [Command(requiresAuthority = false)]
+    public void CmdDestroyProjectile()
+    {
+        if(GetComponent<Projectile>() == null)
+        {
+            Debug.LogError("To be destroyed projectile is null");
+            return;
+        }
+
+        GetComponent<Projectile>().Server_DestroyProjectile();
+    }
+
+
     [ClientRpc]
     public void RpcDisableProjectile()
     {

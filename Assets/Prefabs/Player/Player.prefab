@@ -2740,6 +2740,7 @@ GameObject:
   - component: {fileID: 1685972761179437279}
   - component: {fileID: 7400904241070551064}
   - component: {fileID: 2907059240818603119}
+  - component: {fileID: 2034069898099566365}
   m_Layer: 0
   m_Name: GameplayCamera
   m_TagString: Untagged
@@ -2790,9 +2791,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 1.2039474
-    width: 0.39382717
-    height: 0.39350328
+    y: 1.2147505
+    width: 0.37362638
+    height: 0.37337312
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 40
@@ -2929,6 +2930,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8388608
   m_MaxRayIntersections: 0
+--- !u!81 &2034069898099566365
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4642173910953537333}
+  m_Enabled: 0
 --- !u!1 &4671886437323162194
 GameObject:
   m_ObjectHideFlags: 0
@@ -3768,7 +3777,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e310c4644cec5c4ca3f442586358113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isSoundPlayed: 0
   movementTimer: 0
   isPlayerRolling: 0
   playerBodycenterPosition: {x: 0, y: 0, z: 0}

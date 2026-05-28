@@ -21,6 +21,8 @@ public class EnemySpawner : MonoBehaviour
     Room currentRoom;
     RoomNetData currentRoomNetData;
 
+    RoomNetworkRoot currentRoomNetworkRoot;
+
     RoomEnemySpawnParameters roomEnemySpawnParameters;
     RoomEnemySpawnParametersNet roomEnemySpawnParametersNet;
 
@@ -343,6 +345,8 @@ public class EnemySpawner : MonoBehaviour
         //    SceneObjectsManager.dynamicGameObjectsInScene.Add(player.gameObject);
         //}
 
+        currentRoomNetworkRoot = instantiatedRoom.GetComponentInParent<RoomNetworkRoot>();
+
         currentRoomNetData = roomNetData;
         roomNetData.roomCombatState = RoomCombatState.Engaged;
 
@@ -368,7 +372,13 @@ public class EnemySpawner : MonoBehaviour
         if (!currentRoomNetData.TryGetEnemySpawnParameters(dungeonLevelIndex, out roomEnemySpawnParametersNet))
         {
             // No spawn parameters - room is auto-cleared
-            currentRoomNetData.isClearedOfEnemies = true;
+            RoomNetData data = currentRoomNetworkRoot.roomNetData;
+            data.isClearedOfEnemies = true;
+            data.roomCombatState = RoomCombatState.Cleared;
+
+            currentRoomNetworkRoot.roomNetData = data;
+            currentRoomNetData = currentRoomNetworkRoot.roomNetData;
+
             return;
         }
 
@@ -565,7 +575,18 @@ public class EnemySpawner : MonoBehaviour
 
         if (currentEnemyCount <= 0 && enemiesSpawnedSoFar == enemiesToSpawn)
         {
-            currentRoomNetData.isClearedOfEnemies = true;
+            currentRoomNetworkRoot = instantiatedRoom.GetComponentInParent<RoomNetworkRoot>();
+
+            RoomNetData data = currentRoomNetworkRoot.roomNetData;
+            data.isClearedOfEnemies = true;
+            data.roomCombatState = RoomCombatState.Cleared;
+
+            currentRoomNetworkRoot.roomNetData = data;
+            instantiatedRoom.roomNetData = currentRoomNetworkRoot.roomNetData;
+            currentRoomNetData = currentRoomNetworkRoot.roomNetData;
+
+            currentRoomNetworkRoot.Server_UnlockDoors();
+
             StaticEventHandler.CallEnemiesClearedEvent();
 
             // Set game state
@@ -586,16 +607,8 @@ public class EnemySpawner : MonoBehaviour
                 }
             }
 
-            // Unlock doors
-            if (!InputManager.TutorialEnabled)
-            {
-                instantiatedRoom.UnlockDoors(Settings.doorUnlockDelay);
-            }
-
             //// Update music for room
             //MusicManager.Instance.PlayMusic(currentRoom.ambientMusic, 0.2f, 2f);
-
-            currentRoomNetData.roomCombatState = RoomCombatState.Cleared;
 
             // Trigger room enemies defeated event
             StaticEventHandler.CallRoomEnemiesDefeatedEventMP(currentRoomNetData, GameSessionManager.Instance.summonedEnemies);

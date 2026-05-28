@@ -50,7 +50,8 @@ public class PlayerInventoryNetwork : NetworkBehaviour
                 shardGain = StaticSlotHandler.ShardGainProcess(drop.itemGeneric, player);
 
                 GameManager.Instance.OpenPopUpLog(PopUpReason.DontMeetRequiredCharacter, shardGain);
-                SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
+
+                NetworkSoundManager.Instance.ServerPlaySound(SoundName.PickUpWeapon, transform.position);
             }
 
             RpcDontMeetRequirements(player.NetAuth.netIdentity, shardGain, drop.netIdentity);
@@ -114,7 +115,8 @@ public class PlayerInventoryNetwork : NetworkBehaviour
         StartCoroutine(DestroyRoutine(1f, drop));
     }
 
-    [ClientRpc] void RpcDontMeetRequirements(NetworkIdentity playerNetId, int shardGain, NetworkIdentity dropNetIdentity)
+    [ClientRpc] 
+    void RpcDontMeetRequirements(NetworkIdentity playerNetId, int shardGain, NetworkIdentity dropNetIdentity)
     {
         DropItemNetwork drop = dropNetIdentity.GetComponent<DropItemNetwork>();
         drop.pickUpAnimator.SetTrigger("pickUp");
@@ -129,7 +131,6 @@ public class PlayerInventoryNetwork : NetworkBehaviour
         shardGain = StaticSlotHandler.ShardGainProcess(drop.itemGeneric, player);
 
         GameManager.Instance.OpenPopUpLog(PopUpReason.DontMeetRequiredCharacter, shardGain);
-        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.weaponPickup);
     }
 
     [ClientRpc]

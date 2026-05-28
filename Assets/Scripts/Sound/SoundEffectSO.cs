@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "SoundEffect_", menuName = "Scriptable Objects/Sound/Sound Effect")]
@@ -13,6 +11,10 @@ public class SoundEffectSO : ScriptableObject
     [Tooltip("The name for the sound effect")]
     #endregion
     public string soundEffectName;
+    #region Tooltip
+    [Tooltip("The name of the sound effect based on enum")]
+    #endregion
+    public SoundName soundName;
     #region Tooltip
     [Tooltip("The prefab for the sound effect")]
     #endregion
@@ -42,6 +44,19 @@ public class SoundEffectSO : ScriptableObject
     #endregion
     [Range(0f, 1f)]
     public float soundEffectVolume = 1f;
+
+    [Header("SPATIAL SETTINGS")]
+    [Range(0f, 1f)]
+    public float spatialBlendSP = 0f;
+
+    [Range(0f, 1f)]
+    public float spatialBlendMP = 1f;
+
+    public float minDistance = 2f;
+    public float maxDistance = 20f;
+
+    [System.NonSerialized]
+    public SoundEffect activeSound;
 
     #region Validation
 #if UNITY_EDITOR

@@ -113,5 +113,5 @@ MonoBehaviour:
   weaponsByLevelList: []
   secondaryPassiveItemsByLevelList: []
   primaryPassiveDropChanceMax: 0
-  dropSpawnChanceMin: 100
-  dropSpawnChanceMax: 100
+  dropSpawnChanceMin: 0
+  dropSpawnChanceMax: 0

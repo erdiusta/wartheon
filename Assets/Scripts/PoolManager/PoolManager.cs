@@ -1,6 +1,5 @@
 using Mirror;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -141,7 +140,7 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
         {
             // Get object from pool queue
             Component componentToReuse = GetComponentFromPool(poolKey);
-       
+
             ResetObject(position, rotation, componentToReuse, prefab);
 
             if (parent != null) componentToReuse.transform.SetParent(parent);
@@ -199,14 +198,5 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
         }
 
         return (uint)identity.PoolId;
-    }
-
-    public Transform GetAnchorParent(GameObject prefab)
-    {
-        uint poolKey = GetPoolKey(prefab);
-
-        if (poolAnchorDictionary.TryGetValue(poolKey, out Transform anchor)) return anchor;
-
-        return objectPoolTransform; // fallback
     }
 }

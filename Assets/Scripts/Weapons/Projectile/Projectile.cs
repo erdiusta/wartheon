@@ -4,12 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
 [DisallowMultipleComponent]
 public class Projectile : MonoBehaviour, IFireable
 {
+    bool isDestroying;
+
     #region Tooltip
     [Tooltip("Populate with child TrailRenderer component")]
     #endregion Tooltip
@@ -148,6 +149,8 @@ public class Projectile : MonoBehaviour, IFireable
     bool directionInitialized = false;
 
     ProjectileNetwork projectileNetwork;
+    ProjectilePatternNetwork projectilePatternNetwork;
+
     bool isMultiplayer = false;
     bool initializationCompleted = false;
     float additionalBowAccuracyModifier = 0f;
@@ -170,8 +173,9 @@ public class Projectile : MonoBehaviour, IFireable
 
         polygonCollider2D = GetComponent<PolygonCollider2D>();
         projectileNetwork = GetComponent<ProjectileNetwork>();
+        projectilePatternNetwork = GetComponentInParent<ProjectilePatternNetwork>();
 
-        if(polygonCollider2D == null) polygonCollider2D = GetComponentInChildren<PolygonCollider2D>(); // Grapple head
+        if (polygonCollider2D == null) polygonCollider2D = GetComponentInChildren<PolygonCollider2D>(); // Grapple head
     }
 
     private void OnEnable()
@@ -273,7 +277,8 @@ public class Projectile : MonoBehaviour, IFireable
         }
         else if (attackContext.cryotharPhase == CryotharPhase.Icicle || attackContext.pyrotharPhase == PyrotharPhase.FirePillar)
         {
-            SoundEffectManager.Instance.PlaySoundEffect(projectileDetails.projectileFireSoundEffect);
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(projectileDetails.projectileFireSoundEffect, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.CryotharIcicle, transform.position);
         }
         else if (attackContext.moldranPhase == MoldranPhase.Spike)
         {
@@ -319,7 +324,7 @@ public class Projectile : MonoBehaviour, IFireable
 
         velocity = fireDirectionVector.normalized * projectileSpeed;
 
-        PrepareToFire();
+        PrepareToFire(NetworkServer.active || NetworkClient.active);
 
         SetTrailSettings(projectileDetails);
 
@@ -350,7 +355,7 @@ public class Projectile : MonoBehaviour, IFireable
 
         if (projectileDetails != null && projectileDetails.hasLifeTime && lifeTimeCountdownTimer < 0)
         {
-            DisableProjectile();
+            DestroyProjectile(isMultiplayer);
         }
 
         if (updateGuidedMissleTimer > 0f) updateGuidedMissleTimer -= Time.deltaTime;
@@ -382,28 +387,28 @@ public class Projectile : MonoBehaviour, IFireable
 
                 if (dist <= 2f) // Lowered threshold
                 {
-                    ReleaseGrapple();
+                    ReleaseGrapple(isMultiplayer);
                 }
             }
 
             if (!isGrappleReleased)
             {
-                UpdateGrappleHook();
+                UpdateGrappleHook(isMultiplayer);
             }
         }
         else if (isLaserBeam)
         {
-            UpdateLaser();
+            UpdateLaser(isMultiplayer);
         }
         else
         {
             if (isGuided && target != null)
             {
-                MoveGuidedProjectile();
+                MoveGuidedProjectile(isMultiplayer);
             }
             else
             {
-                MoveStandardProjectile();
+                MoveStandardProjectile(isMultiplayer);
             }
         }
     }
@@ -584,8 +589,58 @@ public class Projectile : MonoBehaviour, IFireable
     /// <summary>
     /// Disable the projectile - thus returning it to the object pool
     /// </summary>
-    private void DisableProjectile()
+    private void DestroyProjectile(bool isMultiplayer)
     {
+        if (isMultiplayer)
+        {
+            if (projectileNetwork != null) projectileNetwork.CmdDestroyProjectile();
+            else if (projectilePatternNetwork != null) projectilePatternNetwork.CmdDestroyProjectilePattern();
+        }
+        else
+        {
+            if (!isPenetrationArrow && !isBlazingCyclone)
+            {
+                velocity = Vector2.zero;
+                isStopped = true;
+                stoppedPosition = transform.position;
+            }
+            else
+            {
+                if (isHittingWall)
+                {
+                    velocity = Vector2.zero;
+                    isStopped = true;
+                    stoppedPosition = transform.position;
+                }
+            }
+
+            if (transform.GetComponentInParent<ProjectilePattern>() != null || isGrappleHook || isIceBreaker || isFireBlast) { }
+            else
+            {
+                GetComponent<Animator>().SetTrigger("impact");
+                animSync?.UpdateProjectileImpact(impact: true);
+            }
+
+            if (!isPenetrationArrow && !isBlazingCyclone)
+            {
+                StartCoroutine(DestroyProcess(0.2f));
+            }
+            else
+            {
+                if (isHittingWall)
+                {
+                    StartCoroutine(DestroyProcess(0.2f));
+                }
+            }
+        }
+    }
+
+    public void Server_DestroyProjectile()
+    {
+        if (isDestroying) return;
+
+        isDestroying = true;
+
         if (!isPenetrationArrow && !isBlazingCyclone)
         {
             velocity = Vector2.zero;
@@ -608,21 +663,21 @@ public class Projectile : MonoBehaviour, IFireable
             GetComponent<Animator>().SetTrigger("impact");
             animSync?.UpdateProjectileImpact(impact: true);
         }
-            
+
         if (!isPenetrationArrow && !isBlazingCyclone)
         {
-            StartCoroutine(DisableProcess(0.2f));
+            StartCoroutine(DestroyProcess(0.2f));
         }
         else
         {
             if (isHittingWall)
             {
-                StartCoroutine(DisableProcess(0.2f));
+                StartCoroutine(DestroyProcess(0.2f));
             }
         }
     }
 
-    private void PrepareToFire()
+    private void PrepareToFire(bool isMultiplayer)
     {
         // GUIDED MISSLE CHECK
         isGuided = projectileDetails.isGuided;
@@ -649,7 +704,7 @@ public class Projectile : MonoBehaviour, IFireable
                     }
                     else
                     {
-                        DisableProjectile();
+                        DestroyProjectile(isMultiplayer);
                     }
                 }
             }
@@ -682,7 +737,7 @@ public class Projectile : MonoBehaviour, IFireable
         }
     }
 
-    private void MoveStandardProjectile(VenomancerPhase venomancerPhase = VenomancerPhase.None)
+    private void MoveStandardProjectile(bool isMultiplayer, VenomancerPhase venomancerPhase = VenomancerPhase.None)
     {
         // Don't move projectile if movement has been overriden - e.g. this projectile is part of an projectile pattern
         if (!overrideProjectileMovement)
@@ -697,13 +752,13 @@ public class Projectile : MonoBehaviour, IFireable
             {
                 if (!projectileDetails.isTrap && venomancerPhase != VenomancerPhase.ToxicPool)
                 {
-                    DisableProjectile();
+                    DestroyProjectile(isMultiplayer);
                 }
             }
             if (lightningStroke)
             {
                 lightningStroke = false;
-                StartCoroutine(DisableProcess(3.5f));
+                StartCoroutine(DestroyProcess(3.5f));
             }
         }
         else
@@ -715,7 +770,7 @@ public class Projectile : MonoBehaviour, IFireable
         }
     }
 
-    private void MoveGuidedProjectile()
+    private void MoveGuidedProjectile(bool isMultiplayer)
     {
         if (!overrideProjectileMovement)
         {
@@ -753,7 +808,7 @@ public class Projectile : MonoBehaviour, IFireable
 
             if (projectileRange < 0f)
             {
-                DisableProjectile();
+                DestroyProjectile(isMultiplayer);
             }
         }
     }
@@ -796,6 +851,8 @@ public class Projectile : MonoBehaviour, IFireable
         if (projectileDetails == null) return;
 
         uint playerOwnerNetId = player != null ? player.NetAuth != null ? player.NetAuth.netId : 0 : 0;
+
+        bool isMultiplayer = NetworkServer.active || NetworkClient.active;
 
         if(NetworkServer.active || (!NetworkServer.active && !NetworkClient.active))
         {
@@ -858,6 +915,10 @@ public class Projectile : MonoBehaviour, IFireable
 
                         player.health.isDodging = true;
                         player.healthEvent.CallDodgeEvent();
+
+                        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(GameManager.Instance.GetLocalPlayer().playerDetails.dodgeSoundEffect, transform.position);
+                        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.PlayerDodge, transform.position);
+
                         player.health.PostHitImmunity(true);
                         //player.health.TakeDamage(0, transform.position, player.health.transform.position, false);
                     }
@@ -974,7 +1035,7 @@ public class Projectile : MonoBehaviour, IFireable
                     // Show projectile hit effect
                     ProjectileHitEffect();
 
-                    DisableProjectile();
+                    DestroyProjectile(isMultiplayer);
                 }
             }
             else if (collision.collider.tag == Settings.playerWeapon) { }
@@ -1139,12 +1200,12 @@ public class Projectile : MonoBehaviour, IFireable
                 // Projectile behaviour on contact (replace with:)
                 if (enemy != null)
                 {
-                    OnHitEnemy(enemy);
+                    OnHitEnemy(enemy, isMultiplayer);
                 }
                 else
                 {
                     // Non-enemy contact behavior (walls, ground, etc.)
-                    DisableProjectile();
+                    DestroyProjectile(isMultiplayer);
                 }
             }
             else if (collision.collider.tag == Settings.decoyTag)
@@ -1160,12 +1221,12 @@ public class Projectile : MonoBehaviour, IFireable
                     if (explosionRoutine == null)
                     {
                         velocity = Vector3.zero;
-                        explosionRoutine = StartCoroutine(ExplosionRoutine());
+                        explosionRoutine = StartCoroutine(ExplosionRoutine(isMultiplayer));
                     }
                 }
                 else
                 {
-                    DisableProjectile();
+                    DestroyProjectile(isMultiplayer);
                 }
             }
             else if (collision.collider.tag == Settings.practiceDummy)
@@ -1177,12 +1238,12 @@ public class Projectile : MonoBehaviour, IFireable
                     if (explosionRoutine == null)
                     {
                         velocity = Vector3.zero;
-                        explosionRoutine = StartCoroutine(ExplosionRoutine());
+                        explosionRoutine = StartCoroutine(ExplosionRoutine(isMultiplayer));
                     }
                 }
                 else
                 {
-                    DisableProjectile();
+                    DestroyProjectile(isMultiplayer);
                 }
             }
             else if (collision.collider.tag == Settings.playerWeapon)
@@ -1204,7 +1265,7 @@ public class Projectile : MonoBehaviour, IFireable
                     if (explosionRoutine == null)
                     {
                         velocity = new Vector3(0f, 0f, 1f);
-                        explosionRoutine = StartCoroutine(ExplosionRoutine());
+                        explosionRoutine = StartCoroutine(ExplosionRoutine(isMultiplayer));
                     }
                 }
                 else if (isShiruken)
@@ -1213,7 +1274,7 @@ public class Projectile : MonoBehaviour, IFireable
                 }
                 else
                 {
-                    DisableProjectile();
+                    DestroyProjectile(isMultiplayer);
                 }
             }
         }
@@ -1238,8 +1299,11 @@ public class Projectile : MonoBehaviour, IFireable
 
         // Adjust animator layer weights
         player.transform.GetChild(2).GetComponent<Animator>().SetTrigger(Settings.block);
-        SoundEffectManager.Instance.PlaySoundEffect(offhandWeaponDetails.weaponSwingSoundEffect);
-        player.healthEvent.CallBlockEvent();
+
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(offhandWeaponDetails.weaponSwingSoundEffect, transform.position);
+        else NetworkSoundManager.Instance.CmdPlaySound(SoundName.SwordSwing, transform.position);
+
+       player.healthEvent.CallBlockEvent();
 
         yield return new WaitForSeconds(0.6f);
 
@@ -1625,13 +1689,13 @@ public class Projectile : MonoBehaviour, IFireable
         isColliding = false;
     }
 
-    private void UpdateLaser()
+    private void UpdateLaser(bool isMultiplayer)
     {
         laserDuration -= Time.deltaTime;
 
         if (laserDuration <= 0)
         {
-            DisableProjectile();
+            DestroyProjectile(isMultiplayer);
             return;
         }
 
@@ -1731,7 +1795,7 @@ public class Projectile : MonoBehaviour, IFireable
         }
     }
 
-    private void UpdateGrappleHook()
+    private void UpdateGrappleHook(bool isMultiplayer)
     {
         Vector3 startPos = grappleStartPoint.position;
         Vector2 direction = fireDirectionVector.normalized;
@@ -1771,7 +1835,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (!missRetractStarted && hit.collider == null && currentRopeLength >= maxGrappleRange - 0.01f)
             {
                 missRetractStarted = true;
-                StartCoroutine(RetractMissedGrapple());
+                StartCoroutine(RetractMissedGrapple(isMultiplayer));
                 return;                                    // stop further processing this frame
             }
         }
@@ -1835,8 +1899,8 @@ public class Projectile : MonoBehaviour, IFireable
 
                 isHookedToTheWall = true;
 
-                SoundEffectSO hookHangSound = player.playersAllActiveUniqueSkills[4].activeUniqueSkillSoundEffectTwo;
-                SoundEffectManager.Instance.PlaySoundEffect(hookHangSound);
+                if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.playersAllActiveUniqueSkills[4].activeUniqueSkillSoundEffectTwo, transform.position);
+                else NetworkSoundManager.Instance.CmdPlaySound(SoundName.HuntersReach2, transform.position);
             }
 
             // GRAPPLE - PULL PLAYER PHASE
@@ -1846,7 +1910,7 @@ public class Projectile : MonoBehaviour, IFireable
                 if(player.HasPlayerStrongNegativeStatusEffectExcludingHealth() && !missRetractStarted)
                 {
                     missRetractStarted = true;
-                    StartCoroutine(RetractMissedGrapple());
+                    StartCoroutine(RetractMissedGrapple(isMultiplayer));
                     return;
                 }
 
@@ -1877,7 +1941,7 @@ public class Projectile : MonoBehaviour, IFireable
                         if (!missRetractStarted)
                         {
                             missRetractStarted = true;
-                            StartCoroutine(RetractMissedGrapple());
+                            StartCoroutine(RetractMissedGrapple(isMultiplayer));
                         }
                         return;
                     }
@@ -1943,13 +2007,13 @@ public class Projectile : MonoBehaviour, IFireable
         return _stallTimer > stallTimeout; // true => cancel
     }
 
-    public void ReleaseGrapple()
+    public void ReleaseGrapple(bool isMultiplayer)
     {
         EndLatchedState();
 
         // OLD
         ResetGrapple();
-        DisableProjectile();
+        DestroyProjectile(isMultiplayer);
         InputManager.dodgeRollDisabled = false;
     }
 
@@ -1969,7 +2033,7 @@ public class Projectile : MonoBehaviour, IFireable
         transform.SetParent(belongingParent);
 
         grappleHeadTransform.GetComponent<SpriteRenderer>().enabled = false;
-        PoolManager.Instance.ResetObject(Vector3.zero, Quaternion.identity, transform, gameObject);
+
         grappleHeadTransform.localPosition = Vector3.zero;
         grappleHeadTransform.localEulerAngles = Vector3.zero;
         ropeTransform.localPosition = Vector3.zero;
@@ -1978,7 +2042,7 @@ public class Projectile : MonoBehaviour, IFireable
         EndLatchedState();
     }
 
-    IEnumerator RetractMissedGrapple()
+    IEnumerator RetractMissedGrapple(bool isMultiplayer)
     {
         float retractSpeed = 50f;
 
@@ -2005,7 +2069,7 @@ public class Projectile : MonoBehaviour, IFireable
         }
 
         // After fully retracted
-        ReleaseGrapple(); // Safely reset and return to pool
+        ReleaseGrapple(isMultiplayer); // Safely reset and return to pool
     }
 
     private bool IsBeamAbovePlayer(ref Vector3 direction)
@@ -2043,7 +2107,7 @@ public class Projectile : MonoBehaviour, IFireable
         DealDamage(collider, ref inflictedDamage, true);
     }
 
-    IEnumerator DisableProcess(float disableDuration)
+    IEnumerator DestroyProcess(float disableDuration)
     {
         yield return new WaitForSeconds(disableDuration);
 
@@ -2060,18 +2124,13 @@ public class Projectile : MonoBehaviour, IFireable
         // Multiplayer
         if (projectileNetwork != null)
         {
-            if (NetworkServer.active)
-            {
-                projectileNetwork.RpcDisableProjectile();
-
-                NetworkServer.UnSpawn(gameObject);
-            }
+            if (NetworkServer.active) NetworkServer.Destroy(gameObject);
 
             yield break;
         }
 
         // Single Player
-        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -2079,15 +2138,16 @@ public class Projectile : MonoBehaviour, IFireable
     /// </summary>
     private void ProjectileHitEffect()
     {
-        GameObject projectileEffectPrefab;
+        //if (!NetworkServer.active && !NetworkClient.active) projectileEffectPrefab = projectileDetails.projectileHitEffect != null ? projectileDetails.projectileHitEffect.projectileHitEffectPrefab : null;
+        //else projectileEffectPrefab = projectileDetails.projectileHitEffect != null ? projectileDetails.projectileHitEffect.projectileHitEffectPrefabMP : null;
 
-        if (!NetworkServer.active && !NetworkClient.active) projectileEffectPrefab = projectileDetails.projectileHitEffect != null ? projectileDetails.projectileHitEffect.projectileHitEffectPrefab : null;
-        else projectileEffectPrefab = projectileDetails.projectileHitEffect != null ? projectileDetails.projectileHitEffect.projectileHitEffectPrefabMP : null;
+        GameObject projectileEffectPrefab = projectileDetails.projectileHitEffect != null ? projectileDetails.projectileHitEffect.projectileHitEffectPrefab : null;
 
         // Process if a hit effect has been specified
         if (projectileDetails.projectileHitEffect != null && projectileEffectPrefab != null)
         {
-            ProjectileHitEffect projectileHitEffect = (ProjectileHitEffect)PoolManager.Instance.Reuse(projectileEffectPrefab, transform.position, Quaternion.identity);
+            GameObject projGameObject = Instantiate(projectileEffectPrefab, transform.position, Quaternion.identity);
+            ProjectileHitEffect projectileHitEffect = projGameObject.GetComponent<ProjectileHitEffect>();
 
             ProjectileHitEffectSO hitEffectDetails = projectileDetails.projectileHitEffect;
 
@@ -2095,25 +2155,16 @@ public class Projectile : MonoBehaviour, IFireable
             projectileHitEffect.SetHitEffect(hitEffectDetails.duration, hitEffectDetails.startParticleSize, hitEffectDetails.startParticleSpeed, hitEffectDetails.startLifetime, hitEffectDetails.effectGravity, hitEffectDetails.maxParticleNumber,
                 hitEffectDetails.emissionRate, hitEffectDetails.burstParticleNumber, hitEffectDetails.velocityOverLifetimeMin, hitEffectDetails.velocityOverLifetimeMax);
 
-            if (NetworkServer.active) // Replicate to clients
-            {
-                int projectileFxId = WartheonDatabase.Instance.GetProjectileHitFxId(hitEffectDetails);
-                projectileHitEffect.GetComponent<ProjectileHitEffectNetwork>().RpcInitializeProjectileFX(hitEffectDetails.duration, hitEffectDetails.startParticleSize, hitEffectDetails.startParticleSpeed, hitEffectDetails.startLifetime, 
-                    hitEffectDetails.effectGravity, hitEffectDetails.maxParticleNumber, hitEffectDetails.emissionRate, hitEffectDetails.burstParticleNumber, hitEffectDetails.velocityOverLifetimeMin, hitEffectDetails.velocityOverLifetimeMax, projectileFxId);
-            }
+            //if (NetworkServer.active) // Replicate to clients
+            //{
+            //    int projectileFxId = WartheonDatabase.Instance.GetProjectileHitFxId(hitEffectDetails);
+            //    projectileHitEffect.GetComponent<ProjectileHitEffectNetwork>().RpcInitializeProjectileFX(hitEffectDetails.duration, hitEffectDetails.startParticleSize, hitEffectDetails.startParticleSpeed, hitEffectDetails.startLifetime, 
+            //        hitEffectDetails.effectGravity, hitEffectDetails.maxParticleNumber, hitEffectDetails.emissionRate, hitEffectDetails.burstParticleNumber, hitEffectDetails.velocityOverLifetimeMin, hitEffectDetails.velocityOverLifetimeMax, projectileFxId);
+            //}
 
             // Set gameobject active (the particle system is set to automatically disable the gameobject once finished)
             projectileHitEffect.gameObject.SetActive(true);
-
-            StartCoroutine(HitFxDisableProcess(projectileEffectPrefab));
         }
-    }
-
-    IEnumerator HitFxDisableProcess(GameObject projectileEffectPrefab)
-    {
-        yield return new WaitForSeconds(0.6f);
-
-        if (NetworkServer.active && projectileNetwork != null) NetworkServer.UnSpawn(projectileEffectPrefab.gameObject);
     }
 
     #region CC PLAYER
@@ -2844,7 +2895,9 @@ public class Projectile : MonoBehaviour, IFireable
             ReceiveProjectileDamage receiveProjectileDamage = enemy.GetComponent<ReceiveProjectileDamage>();
             receiveProjectileDamage.TakeProjectileDamage(inflictedDamage, ctx);
             enemy.healthEvent.CallGetShatteredEvent();
-            SoundEffectManager.Instance.PlaySoundEffect(enemy.enemyDetails.suddenDeathSoundEffect);
+
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(enemy.enemyDetails.suddenDeathSoundEffect, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.SuddenDeath, transform.position);
         }
     }
 
@@ -2979,7 +3032,7 @@ public class Projectile : MonoBehaviour, IFireable
         yield return new WaitForFixedUpdate();
     }
 
-    IEnumerator ExplosionRoutine(bool isEnemy = false)
+    IEnumerator ExplosionRoutine(bool isMultiplayer, bool isEnemy = false)
     {
         Animator animator = GetComponent<Animator>();
 
@@ -2988,22 +3041,28 @@ public class Projectile : MonoBehaviour, IFireable
             animator.SetTrigger("impact");
             animSync?.UpdateProjectileImpact(impact: true);
 
-            SoundEffectManager.Instance.PlaySoundEffect(projectileDetails.projectileImpactSoundEffect);
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(projectileDetails.projectileImpactSoundEffect, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.BombBurst, transform.position);
+
+
             Explosion();
 
             yield return new WaitForSeconds(0.5f);
 
-            DisableProjectile();
+            DestroyProjectile(isMultiplayer);
         }
         else if (isEnemy)
         {
             animator.SetTrigger("burst");
-            SoundEffectManager.Instance.PlaySoundEffect(projectileDetails.projectileImpactSoundEffect);
+
+            if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(projectileDetails.projectileImpactSoundEffect, transform.position);
+            else NetworkSoundManager.Instance.CmdPlaySound(SoundName.BombBurst, transform.position);
+
             Explosion(true);
 
             yield return new WaitForSeconds(0.5f);
 
-            DisableProjectile();
+            DestroyProjectile(isMultiplayer);
         }
     }
 
@@ -3192,7 +3251,7 @@ public class Projectile : MonoBehaviour, IFireable
         return closestEnemy;
     }
 
-    private void OnHitEnemy(Enemy hitEnemy)
+    private void OnHitEnemy(Enemy hitEnemy, bool isMultiplayer)
     {
         // Record this hit for the chain
         if (chainHitSet == null) chainHitSet = new HashSet<Enemy>();
@@ -3203,7 +3262,7 @@ public class Projectile : MonoBehaviour, IFireable
             if (explosionRoutine == null)
             {
                 velocity = new Vector3(0f, 0f, 1f);
-                explosionRoutine = StartCoroutine(ExplosionRoutine());
+                explosionRoutine = StartCoroutine(ExplosionRoutine(isMultiplayer));
             }
             return;
         }
@@ -3224,7 +3283,9 @@ public class Projectile : MonoBehaviour, IFireable
                 if(!NetworkServer.active && !NetworkClient.active) projectilePrefab = projectileDetails.projectilePrefabArray[0];
                 else projectilePrefab = projectileDetails.projectilePrefabArray[1];
 
-                IFireable projIFireable = (IFireable)PoolManager.Instance.Reuse(projectilePrefab, origin, Quaternion.identity);
+                GameObject projGameObject = Instantiate(projectilePrefab, origin, Quaternion.identity);
+                IFireable projIFireable = projGameObject.GetComponent<IFireable>();
+
                 Projectile nextProj = projIFireable as Projectile;
 
                 // Compute direction/angle from origin to next
@@ -3253,7 +3314,7 @@ public class Projectile : MonoBehaviour, IFireable
         }
 
         // Current projectile is done after resolving the hit/chain
-        DisableProjectile();
+        DestroyProjectile(isMultiplayer);
     }
 
     private Enemy FindClosestEnemyFrom(Vector2 origin, HashSet<Enemy> exclude, float radius, Enemy ignoreEnemy)

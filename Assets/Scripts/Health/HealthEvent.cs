@@ -1,3 +1,4 @@
+using Mirror;
 using System;
 using UnityEngine;
 
@@ -613,8 +614,6 @@ public class HealthEvent : MonoBehaviour
     public void CallParryEvent()
     {
         OnParried?.Invoke(this);
-
-        SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetLocalPlayer().playerDetails.parrySoundEffect);
     }
 
     public event Action<HealthEvent> OnDodged;
@@ -622,8 +621,6 @@ public class HealthEvent : MonoBehaviour
     public void CallDodgeEvent()
     {
         OnDodged?.Invoke(this);
-
-        SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetLocalPlayer().playerDetails.dodgeSoundEffect);
     }
 
     public event Action<HealthEvent> OnBlocked;
@@ -631,8 +628,6 @@ public class HealthEvent : MonoBehaviour
     public void CallBlockEvent()
     {
         OnBlocked?.Invoke(this);
-
-        SoundEffectManager.Instance.PlaySoundEffect(GameManager.Instance.GetLocalPlayer().playerDetails.blockSoundEffect);
     }
 
     public event Action<HealthEvent> OnCriticalHit;

@@ -81,7 +81,7 @@ public class Chest : MonoBehaviour, IUsable
                 {
                     if (chestLockSoundRoutine == null)
                     {
-                        chestLockSoundRoutine = StartCoroutine(PlayLockRoutine());
+                        chestLockSoundRoutine = StartCoroutine(PlayLockRoutine(isMultiplayer: false));
                     }
                 }
                 break;
@@ -116,7 +116,7 @@ public class Chest : MonoBehaviour, IUsable
                 {
                     if (chestLockSoundRoutine == null)
                     {
-                        chestLockSoundRoutine = StartCoroutine(PlayLockRoutine());
+                        chestLockSoundRoutine = StartCoroutine(PlayLockRoutine(isMultiplayer: true));
                     }
                 }
                 break;
@@ -142,7 +142,8 @@ public class Chest : MonoBehaviour, IUsable
             animator.SetBool(Settings.use, true);
 
             // chest open sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.chestOpen);
+            if (isMultiplayer) NetworkSoundManager.Instance.ServerPlaySound(SoundName.OpenChest, transform.position);
+            else WorldSoundManager.Instance.PlayWorldSound(GameResources.Instance.chestOpen, transform.position);
         }
 
         UpdateChestState(playerNetId, isMultiplayer);       
@@ -157,6 +158,8 @@ public class Chest : MonoBehaviour, IUsable
         {
             if (isMultiplayer)
             {
+                NetworkSoundManager.Instance.ServerPlaySound(SoundName.OpenChest, transform.position);
+
                 chestNetwork.openerNetId = playerNetId;
                 chestNetwork.chestState = ChestState.weaponItem;
             }
@@ -168,6 +171,8 @@ public class Chest : MonoBehaviour, IUsable
         {
             if (isMultiplayer)
             {
+                NetworkSoundManager.Instance.ServerPlaySound(SoundName.OpenChest, transform.position);
+
                 chestNetwork.openerNetId = playerNetId;
                 chestNetwork.chestState = ChestState.weaponItem;
             }
@@ -290,20 +295,13 @@ public class Chest : MonoBehaviour, IUsable
         }
     }
 
-    public void PlayLock()
-    {
-        if (chestLockSoundRoutine == null)
-        {
-            chestLockSoundRoutine = StartCoroutine(PlayLockRoutine());
-        }
-    }
-
     /// <summary>
     /// Play lock routine
     /// </summary>
-    IEnumerator PlayLockRoutine()
+    IEnumerator PlayLockRoutine(bool isMultiplayer)
     {
-        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.chestLock);
+        if (isMultiplayer) NetworkSoundManager.Instance.ServerPlaySound(SoundName.ChestLocked, transform.position);
+        else WorldSoundManager.Instance.PlayWorldSound(GameResources.Instance.chestOpen, transform.position);
 
         yield return new WaitForSeconds(2f);
 

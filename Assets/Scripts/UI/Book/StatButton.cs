@@ -6,9 +6,10 @@ public class StatButton : MonoBehaviour
 
     Player player;
 
-    private void Start()
+
+    private void Update()
     {
-        player = GameManager.Instance.GetLocalPlayer();
+        if(player == null) player = GameManager.Instance.GetLocalPlayer();
     }
 
     public void IncreaseStatPoint()

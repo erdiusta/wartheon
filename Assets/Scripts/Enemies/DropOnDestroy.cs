@@ -328,6 +328,8 @@ public class DropOnDestroy : MonoBehaviour
     {
         yield return null;
 
+        if (drop == null || drop.gameObject == null) yield break;
+
         drop.canInitialize = true;
     }
 

@@ -82,6 +82,9 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
 
     private void OnInitialize(bool oldValue, bool newValue)
     {
+        if (this == null || gameObject == null) return;
+        if (!newValue) return;
+
         InitializeVisual();
     }
 
@@ -485,6 +488,24 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
 
         pickUpAnimator.SetTrigger("pickUp");
 
+        switch (passiveStats.passiveItemType)
+        {
+            case PassiveItemType.Health:
+            case PassiveItemType.Cure:
+            case PassiveItemType.Mana:
+                NetworkSoundManager.Instance.ServerPlaySound(SoundName.HealthPickUp, transform.position);
+                break;
+            case PassiveItemType.SilverCoin:
+            case PassiveItemType.GoldCoin:
+                NetworkSoundManager.Instance.ServerPlaySound(SoundName.CoinPickUp, transform.position);
+                break;
+            case PassiveItemType.Key:
+                NetworkSoundManager.Instance.ServerPlaySound(SoundName.ItemPickUp, transform.position);
+                break;
+            default:
+                break;
+        }
+
         RpcPickUpPrimaryPassive(player.NetAuth.netIdentity);
 
         StartCoroutine(DestroyRoutine(1f));
@@ -514,8 +535,6 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
         {
             player.consumableEvent.CallKeyCountChangedEvent(++player.keyCount);
 
-            // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.itemPickup);
         }
 
         if (passiveStats.passiveItemType == PassiveItemType.SilverCoin)
@@ -523,43 +542,23 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
             int coinAmount = 1;
 
             player.coinsAndShards.AddCoin(coinAmount);
-
-            if (InputManager.TutorialEnabled && TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.PickUpPrimaryPassiveCoin)
-            {
-                TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
-            }
-
-            // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.coinPickup);
         }
 
         if (passiveStats.passiveItemType == PassiveItemType.GoldCoin)
         {
-            player.coinsAndShards.AddCoin(5);
+            int coinAmount = 5;
 
-            // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.coinPickup);
+            player.coinsAndShards.AddCoin(coinAmount);
         }
 
         if (passiveStats.passiveItemType == PassiveItemType.Health)
         {
             player.UpdatePlayerHealth(20, false, false);
-
-            if (InputManager.TutorialEnabled && TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.PickUpPrimaryPassiveHealth)
-            {
-                TutorialInteraction.Instance.currentTutorialProcess = TutorialProcess.QuestPassed;
-            }
-
-            // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
         }
 
         if (passiveStats.passiveItemType == PassiveItemType.Mana)
         {
             player.UpdatePlayerMana(20, false, false);
-
-            // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
         }
 
         if (passiveStats.passiveItemType == PassiveItemType.Cure)
@@ -587,9 +586,6 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
                 player.armorStatus = ArmorStatus.Normal;
                 player.healthEvent.CallAcidCuredEvent();
             }
-
-            // Play pickup sound effect
-            SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healthPickup);
         }
 
         StaticEventHandler.CallStatsChangedOnTheBookEvent();

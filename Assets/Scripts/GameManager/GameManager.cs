@@ -237,6 +237,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         PrepareGameManagerSP();
     }
+
     private void PrepareGameManagerSP()
     {
         if (gameplayInitialized) return; // Prevent duplicate call
@@ -562,7 +563,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         if (!NetworkServer.active && !NetworkClient.active)
         {
             // Enable camera
-            localPlayer.cameraManager.ShowGameplay();
+            localPlayer.cameraManager.ShowGameplay(onStart: true);
 
             previousGameState = GameState.gameStarted;
             gameState = GameState.gameStarted;
@@ -1394,7 +1395,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         string messageText = "LEVEL " + (currentDungeonLevelListIndex).ToString() + "\n\n" + dungeonLevelList[currentDungeonLevelListIndex].levelName.ToUpper();
 
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.nextLevelSoundEffect);
+        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.nextLevelSoundEffect);
 
         // Show Message (Safe)
         yield return StartCoroutine(DisplayMessageRoutine(messageText, Color.yellow, 1f, true));

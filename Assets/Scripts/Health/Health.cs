@@ -399,9 +399,6 @@ public class Health : MonoBehaviour
 
     public void SyncHealthVisuals(int damageAmount, DamageContext ctx)
     {
-        Debug.Log("Health IsDamageable is " + healthAuthority.IsDamageable);
-        Debug.Log("Bypass Immunity is " + ctx.bypassImmunity);
-
         if (healthAuthority.IsDamageable || ctx.bypassImmunity)
         {
             if (player != null && currentHealth > 0)

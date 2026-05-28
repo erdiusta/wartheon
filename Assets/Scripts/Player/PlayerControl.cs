@@ -16,8 +16,6 @@ public class PlayerControl : MonoBehaviour
 {
     Player player;
 
-    [HideInInspector] public bool isSoundPlayed = false;
-
     [HideInInspector] public float movementTimer = 0;
     [HideInInspector] public bool isPlayerRolling;
     [HideInInspector] public bool IsParrying { get => isParrying; set { isParrying = value; } }
@@ -777,8 +775,6 @@ public class PlayerControl : MonoBehaviour
             if (mainHandWeaponDetails.weaponPrechargeTime == 0f && InputManager.Instance.attack.action.WasPressedThisFrame()
                 && !IsClickingSpecificUILayer() && !GameManager.Instance.isOverviewCameraEnabled)
             {
-                isSoundPlayed = false;
-
                 if (mainHand.weaponStats.weaponClass == WeaponClass.Bow || mainHand.weaponStats.weaponClass == WeaponClass.Crossbow ||
                     mainHand.weaponStats.weaponClass == WeaponClass.Staff)
                 {
@@ -1400,7 +1396,7 @@ public class PlayerControl : MonoBehaviour
                                 {
                                     player.mana.ConsumeMana(consumedMana);
 
-                                    player.playerSkillController.SeismicSlamProcess();
+                                    player.playerSkillController.SeismicSlamProcess(inputSlotNumber);
                                     player.specialMovesCooldownCheckArray[inputSlotNumber - 1] = true;
                                     player.specialMoveEvent.CallSpecialMoveUsedEvent(ActiveSkill.SeismicSlam, inputSlotNumber);
                                 }

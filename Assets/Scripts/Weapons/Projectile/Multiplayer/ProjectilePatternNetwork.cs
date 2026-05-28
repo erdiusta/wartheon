@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections;
 using UnityEngine;
 
 public class ProjectilePatternNetwork : NetworkBehaviour
@@ -8,6 +9,30 @@ public class ProjectilePatternNetwork : NetworkBehaviour
     private void Awake()
     {
         projectilePattern = GetComponent<ProjectilePattern>();
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdDestroyProjectilePattern()
+    {
+        if (GetComponentInChildren<Projectile>() == null)
+        {
+            Debug.LogError("To be destroyed projectile child is null");
+            return;
+        }
+
+        foreach (Projectile projectile in GetComponentsInChildren<Projectile>())
+        {
+            projectile.Server_DestroyProjectile();
+        }
+
+        StartCoroutine(DestroyRoutine());
+    }
+
+    IEnumerator DestroyRoutine()
+    {
+        yield return new WaitForSeconds(1f);
+
+        NetworkServer.Destroy(gameObject);
     }
 
     [ClientRpc]
