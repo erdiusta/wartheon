@@ -139,6 +139,16 @@ public class FlameLotusNetwork : NetworkBehaviour
             ReceiveProjectileDamage receiveProjectileDamage = affectedEnemy.GetComponent<ReceiveProjectileDamage>();
             receiveProjectileDamage.TakeProjectileDamage(inflictedDamage, ctx);
 
+            IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(affectedEnemy.gameObject);
+
+            // Check if player levels-after killing the enemy
+            int levelBeforeKillingEnemy = owner.currentLevel;
+
+            if (healthAuthority.CurrentHealth <= 0)
+            {
+                owner.NetAuth.Server_ExpGain(owner.NetAuth.netIdentity, levelBeforeKillingEnemy, affectedEnemy.enemyNetwork.netIdentity);
+            }
+
             // Update last affected time
             affectedEnemies[affectedEnemy] = Time.time;
         }

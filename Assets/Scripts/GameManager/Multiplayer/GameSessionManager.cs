@@ -214,7 +214,6 @@ public class GameSessionManager : NetworkBehaviour
             case GameState.gamePaused:
                 break;
             case GameState.restartGame:
-                SceneManager.LoadScene("MainMenuScene");
                 break;
             default:
                 break;
@@ -254,6 +253,7 @@ public class GameSessionManager : NetworkBehaviour
             case GameState.gamePaused:
                 break;
             case GameState.restartGame:
+                StartCoroutine(RestartRoutine());
                 break;
             default:
                 break;
@@ -408,7 +408,7 @@ public class GameSessionManager : NetworkBehaviour
         messageTextTMP.SetText("LEVEL " + (levelIndex + 1).ToString() + "\n\n" + dungeonLevelList[levelIndex].levelName.ToUpper());
         messageTextTMP.color = Color.yellow;
 
-        //SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.nextLevelSoundEffect);
+        SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.nextLevelSoundEffect);
 
         yield return new WaitForSeconds(1f);
 
@@ -417,6 +417,10 @@ public class GameSessionManager : NetworkBehaviour
 
         player.EnablePlayer();
         InputManager.Instance.EnableGameplayInput();
+
+        // Update music for room
+        MusicTrackSO ambientMusic = WartheonDatabase.Instance.GetMusic(selectedDungeonLevelIndex, MusicType.Ambient);
+        MusicManager.Instance.PlayMusic(ambientMusic, 0.2f, 2f);
     }
 
     [Server]
@@ -506,31 +510,44 @@ public class GameSessionManager : NetworkBehaviour
     // ==========================
     // CLIENT -> SERVER REQUESTS
     // ==========================
-    [Command]
+    [Command(requiresAuthority = false)]
     private void CmdRequestNextLevel()
     {
         // Increase index to next level
         selectedDungeonLevelIndex++;
 
-        // DEMO CASE
-        if (selectedDungeonLevelIndex >= 2 && isDemo)
+        if (selectedDungeonLevelIndex >= dungeonLevelList.Count)
         {
-            gameState = GameState.gameWon;
-        }
-        else if (selectedDungeonLevelIndex >= dungeonLevelList.Count)
-        {
-            gameState = GameState.gameWon;
+            SetGameState(GameState.gameWon);
         }
         else
         {
-            gameState = GameState.gameStarted;
+            SetGameState(GameState.gameStarted);
         }
     }
 
-    [Command]
+    [Command(requiresAuthority = false)]
     private void CmdRequestRestart()
     {
-        gameState = GameState.restartGame;
+        SetGameState(GameState.restartGame);
+    }
+
+    IEnumerator RestartRoutine()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        if (NetworkServer.active && NetworkClient.active)
+        {
+            // Host
+            WartheonNetworkManager.Instance.StopHost();
+        }
+        else if (NetworkClient.active)
+        {
+            // Client
+            WartheonNetworkManager.Instance.StopClient();
+        }
+
+        SceneManager.LoadScene("MainMenuScene");
     }
 
     // ==========================

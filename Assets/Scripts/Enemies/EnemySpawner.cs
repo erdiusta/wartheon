@@ -326,8 +326,8 @@ public class EnemySpawner : MonoBehaviour
                 instantiatedRoom.UnlockDoors(Settings.doorUnlockDelay);
             }
 
-            //// Update music for room
-            //MusicManager.Instance.PlayMusic(instantiatedRoom.room.ambientMusic, 0.2f, 2f);
+            // Update music for room
+            MusicManager.Instance.PlayMusic(instantiatedRoom.room.ambientMusic, 0.2f, 2f);
 
             // Trigger room enemies defeated event
             StaticEventHandler.CallRoomEnemiesDefeatedEvent(instantiatedRoom.room, default, GameManager.Instance.GetLocalPlayer().summonedEnemies);
@@ -353,9 +353,6 @@ public class EnemySpawner : MonoBehaviour
         enemiesSpawnedSoFar = 0;
         currentEnemyCount = 0;
         spawnPositionIndex = 0;
-
-        //// Update music for room
-        //MusicManager.Instance.PlayMusic(currentRoom.ambientMusic, 0.2f, 2f);
 
         // Tutorial check - Lock door for a while
         if (currentRoomNetData.isEntrance) goto entranceRoomCheck;
@@ -388,15 +385,9 @@ public class EnemySpawner : MonoBehaviour
         // Get concurrent number of enemies to spawn
         enemyMaxConcurrentSpawnNumber = Random.Range(roomEnemySpawnParametersNet.minConcurrentEnemies, roomEnemySpawnParametersNet.maxConcurrentEnemies + 1);
 
-    //// Update music for room
-    //MusicManager.Instance.PlayMusic(currentRoom.battleMusic, 0.2f, 0.5f);
-
     entranceRoomCheck:
-        //instantiatedRoom.LockDoors();
-
         // Spawn enemies
         SpawnEnemiesMP(currentRoomNetData);
-
     }
 
     [Server]
@@ -607,11 +598,10 @@ public class EnemySpawner : MonoBehaviour
                 }
             }
 
-            //// Update music for room
-            //MusicManager.Instance.PlayMusic(currentRoom.ambientMusic, 0.2f, 2f);
-
             // Trigger room enemies defeated event
             StaticEventHandler.CallRoomEnemiesDefeatedEventMP(currentRoomNetData, GameSessionManager.Instance.summonedEnemies);
+
+            currentRoomNetworkRoot.Server_RefreshMusic();
         }
     }
 

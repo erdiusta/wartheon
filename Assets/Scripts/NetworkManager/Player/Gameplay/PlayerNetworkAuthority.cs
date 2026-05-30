@@ -319,6 +319,112 @@ public class PlayerNetworkAuthority : NetworkBehaviour
         player.specialMovesCooldownCheckArray[slotIndex - 1] = true;
     }
 
+    [Command(requiresAuthority = false)]
+    public void CmdExpGain(NetworkIdentity netIdentity, int levelBeforeKillingEnemy, NetworkIdentity enemyNetIdentity)
+    {
+        Player player = netIdentity.GetComponent<Player>();
+
+        player.levelUpAnimator.SetTrigger(Settings.levelUp);
+    }
+
+    [Server]
+    public void Server_ExpGain(NetworkIdentity netIdentity, int levelBeforeKillingEnemy, NetworkIdentity enemyNetIdentity)
+    {
+        IEnemyCombatData enemyCombatData = enemyNetIdentity.GetComponent<IEnemyCombatData>();
+
+        Player player = netIdentity.GetComponent<Player>();
+        Enemy enemy = enemyNetIdentity.GetComponent<Enemy>();
+
+        if (enemy.EnemyCategory == EnemyCategory.MainSlime && !enemy.minionsSpawned)
+        {
+            enemy.minionsSpawned = true;
+            StaticEventHandler.CallEnemyKilledEvent(enemy);
+        }
+
+        if (player.IsLocal && (player.currentLevel > levelBeforeKillingEnemy && !player.health.hasDied))
+        {
+            player.levelUpAnimator.SetTrigger(Settings.levelUp);
+
+            player.currentSkillPoints++;
+            player.currentStatPoints += 2;
+
+            SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.levelUpSoundEffect);
+            StaticEventHandler.CallStatPointChangedEvent();
+            StaticEventHandler.CallLevelUp();
+
+            player.health.SetMaximumHealth(player.health.maximumHealth, true);
+            player.mana.AddMana(30);
+
+            if (player.IsLocal)
+            {
+                player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
+                player.manaEvent.CallManaChangedEvent(player.mana.currentMana);
+            }
+        }
+
+        RpcExpGain(netIdentity, levelBeforeKillingEnemy, enemyNetIdentity, enemyCombatData.ExperiencePoints);
+    }
+
+    [ClientRpc]
+    public void RpcExpGain(NetworkIdentity netIdentity, int levelBeforeKillingEnemy, NetworkIdentity enemyNetIdentity, int enemyExpPoints)
+    {
+        Player player = netIdentity.GetComponent<Player>();
+        Enemy enemy = enemyNetIdentity.GetComponent<Enemy>();
+
+        IEnemyCombatData enemyCombatData = enemy.GetComponent<IEnemyCombatData>();
+
+        if (player == null) return;
+
+        if (player != null && player.isViciousMomentumActive)
+        {
+            player.viciousMomentumCooldownTimer = 0f;
+            player.viciousMomentumTriggered = true;
+        }
+
+        if (player != null && player.isCombatFocusActive)
+        {
+            player.combatFocusCooldownTimer = 0f;
+            player.combatFocusTriggered = true;
+        }
+
+        // Gain Experience Upon Killing An Enemy
+        int gainedExpFromEnemy = (int)(enemyExpPoints * player.expGainModifier);
+        player.currentGainedTotalExperiencePoints += gainedExpFromEnemy;
+
+        if(player.IsLocal) StaticEventHandler.CallExpGained();
+
+        for (int i = 0; i < player.levelUpDetails.playerLevelDataList.Count; i++)
+        {
+            if (player.currentLevel == player.levelUpDetails.playerLevelDataList[i].playerLevel &&
+                player.currentGainedTotalExperiencePoints >= player.levelUpDetails.playerLevelDataList[i].levelUpExpPointForNextLevel)
+            {
+                player.currentLevel++;
+            }
+        }
+
+        // If current level is more than level before killing enemy, it means char leveled up!
+        if (player.currentLevel > levelBeforeKillingEnemy && !player.health.hasDied)
+        {
+            player.levelUpAnimator.SetTrigger(Settings.levelUp);
+
+            if (player.IsLocal)
+            {
+                player.currentSkillPoints++;
+                player.currentStatPoints += 2;
+
+                SoundEffectManager.Instance.PlaySoundEffect(player.playerDetails.levelUpSoundEffect);
+                StaticEventHandler.CallStatPointChangedEvent();
+                StaticEventHandler.CallLevelUp();
+
+                player.health.SetMaximumHealth(player.health.maximumHealth, true);
+                player.mana.AddMana(30);
+
+                player.healthEvent.CallHealthChangedEvent(player.health.currentHealth, 0, MeleeHand.None);
+                player.manaEvent.CallManaChangedEvent(player.mana.currentMana);
+            }
+        }
+    }
+
     public override void OnStopClient()
     {
         base.OnStopClient();

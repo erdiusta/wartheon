@@ -82,6 +82,7 @@ public class EyeOfTheStormNetwork : NetworkBehaviour
     {
         Enemy affectedEnemy = enemyCollider.GetComponent<Enemy>();
         if (affectedEnemy == null) return;
+        if (!isServer) return;
 
         if (affectedEnemies.TryGetValue(affectedEnemy, out float lastTime))
         {
@@ -121,6 +122,17 @@ public class EyeOfTheStormNetwork : NetworkBehaviour
         DamageContext ctx = new DamageContext { owner = DamageOwner.Player, source = DamageSourceType.Projectile };
         ReceiveProjectileDamage receiveProjectileDamage = enemyCollider.GetComponent<ReceiveProjectileDamage>();
         receiveProjectileDamage.TakeProjectileDamage(inflictedDamage, ctx);
+
+        IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(affectedEnemy.gameObject);
+
+        // Check if player levels-after killing the enemy
+        int levelBeforeKillingEnemy = owner.currentLevel;
+
+        if (healthAuthority.CurrentHealth <= 0)
+        {
+            owner.NetAuth.Server_ExpGain(owner.NetAuth.netIdentity, levelBeforeKillingEnemy, affectedEnemy.enemyNetwork.netIdentity);
+        }
+
         affectedEnemies[affectedEnemy] = Time.time;
     }
 }

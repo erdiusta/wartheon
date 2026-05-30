@@ -7,8 +7,6 @@ public class RangedAttackEvent : MonoBehaviour
 
     public void TriggerEventAtMainRangedHand()
     {
-        Debug.Log("ANIMATION EVENT");
-
         OnAnimationRangedAttackAnimationTriggered?.Invoke();
     }
 }

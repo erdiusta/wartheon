@@ -651,5 +651,6 @@ public class HealthEventArgs : EventArgs
     public int damageAmount;
     public MeleeHand hand;
     public bool onStart;
+    public uint killerPlayerNetId;
 }
 

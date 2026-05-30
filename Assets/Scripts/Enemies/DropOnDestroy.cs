@@ -6,8 +6,6 @@ using Random = UnityEngine.Random;
 
 public class DropOnDestroy : MonoBehaviour
 {
-    [HideInInspector] public GameObject dropItemGameObject;
-
     // Consumables
     List<SpawnableObjectsByLevel<PassiveItemDetailsSO>> enemyPrimaryPassiveItemDropList;
 
@@ -78,17 +76,13 @@ public class DropOnDestroy : MonoBehaviour
     {
         WartheonRNG rng = new WartheonRNG(seed);
 
-        int primaryPassiveItemNum = rng.Range(0, dropData.primaryPassiveDropChanceMax + 1);
+        int primaryPassiveItemNum = Random.Range(0, dropData.primaryPassiveDropChanceMax + 1);
 
         CreatePrimaryPassiveItems(rng, seed, primaryPassiveItemNum);
 
         // OTHER DROPS PHASE IF HAS
         // Should drop be spawned based on specified chance? If not return.
-        if (!RandomDropCheck(out int chancePercent, out int randomPercent, rng))
-        {
-            Destroy(dropItemGameObject);
-            return;
-        }
+        if (!RandomDropCheck(out int chancePercent, out int randomPercent, rng)) return;
 
         // Instantiate container
         InstantiateDropItem();
@@ -109,16 +103,14 @@ public class DropOnDestroy : MonoBehaviour
         {
             InstantiateWeaponItem(weaponDetails, seed);
 
-            if (isMultiplayer) dropItemNetwork.transform.SetParent(instantiatedRoom.transform);
-            else dropItem.transform.SetParent(instantiatedRoom.transform);
+            if(!isMultiplayer) dropItem.transform.SetParent(instantiatedRoom.transform);
         }
 
         if (secondaryPassiveItemDetails != null)
         {
             InstantiatePassiveItem(secondaryPassiveItemDetails, seed);
 
-            if (isMultiplayer) dropItemNetwork.transform.SetParent(instantiatedRoom.transform);
-            else dropItem.transform.SetParent(instantiatedRoom.transform);
+            if (!isMultiplayer) dropItem.transform.SetParent(instantiatedRoom.transform);
         }
     }
 
@@ -136,10 +128,9 @@ public class DropOnDestroy : MonoBehaviour
 
             InstantiatePassiveItem(primaryPassiveItemDetails, seed);
 
-            if (isMultiplayer) dropItemNetwork.transform.SetParent(null);
-            else dropItem.transform.SetParent(null);
+            if (!isMultiplayer) dropItem.transform.SetParent(null);
 
-            Vector3 spawnPointDeviation = new Vector3(rng.Range(-2, 2), rng.Range(-2, 2), 0);
+            Vector3 spawnPointDeviation = new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0);
 
             if (isMultiplayer) dropItemNetwork.transform.position += spawnPointDeviation;
             else dropItem.transform.position += spawnPointDeviation;
@@ -188,7 +179,7 @@ public class DropOnDestroy : MonoBehaviour
     {
         if (!isMultiplayer)
         {
-            dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
+            GameObject dropItemGameObject = Instantiate(GameResources.Instance.chestItemPrefab, transform);
 
             dropItem = dropItemGameObject.GetComponent<DropItem>();
             dropItem.dropSourceType = DropSourceType.Enemy;
@@ -200,7 +191,7 @@ public class DropOnDestroy : MonoBehaviour
         {
             if (NetworkServer.active)
             {
-                dropItemGameObject = Instantiate(GameResources.Instance.chestItemNetworkPrefab, transform);
+                GameObject dropItemGameObject = Instantiate(GameResources.Instance.chestItemNetworkPrefab);
                 NetworkServer.Spawn(dropItemGameObject);
 
                 dropItemNetwork = dropItemGameObject.GetComponent<DropItemNetwork>();
@@ -270,7 +261,11 @@ public class DropOnDestroy : MonoBehaviour
             PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
 
             if (passiveItemDetails == null) return;
-            if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.None) return;
+            if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.None)
+            {
+                NetworkServer.Destroy(dropItemNetwork.gameObject);
+                return;
+            }
 
             if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.Primary)
             {
@@ -303,6 +298,12 @@ public class DropOnDestroy : MonoBehaviour
 
             PassiveItem passiveItem = new PassiveItem(Rarity.Basic);
             passiveItem.passiveStats.passiveItemType = passiveItemDetails.passiveItemType;
+
+            if (passiveItemDetails.passiveItemCategory == PassiveItemCategory.None)
+            {
+                Destroy(dropItem.gameObject);
+                return;
+            }
 
             if (passiveItemDetails?.passiveItemCategory == PassiveItemCategory.Primary)
             {

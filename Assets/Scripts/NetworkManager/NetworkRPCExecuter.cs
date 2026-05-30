@@ -12,7 +12,10 @@ public class NetworkRPCExecuter : NetworkBehaviour
     [ClientRpc]
     public void RpcPrepareForSceneChange()
     {
+        LoadingManager.SafeInstance?.ShowLoadingScreen();
+
         MultiplayerLobbyUI.Instance?.ShutdownLobby();
+
         //MainMenuUI.Instance?.ExitMultiplayerLobby();
     }
 }

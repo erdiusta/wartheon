@@ -20601,6 +20601,7 @@ MonoBehaviour:
   weaponDatabase: {fileID: 11400000, guid: aabb0eefc8aefdc419cf8f1da97b6abe, type: 2}
   passiveItemDatabase: {fileID: 11400000, guid: 9243019a8c7035b4b94efe1d263c139a, type: 2}
   soundDatabase: {fileID: 11400000, guid: 04ca2a3ac0ae11943b42ce95f966c1e6, type: 2}
+  musicDatabase: {fileID: 11400000, guid: ff55e06892a994145853d789a8828442, type: 2}
 --- !u!1 &573077865
 GameObject:
   m_ObjectHideFlags: 0

@@ -128,6 +128,20 @@ public class MultiplayerEntryUI : SingletonMonobehaviour<MultiplayerEntryUI>
     #region Buttons
     public void OnHostPressed()
     {
+        // Reset any selected join target
+        ResetSelection();
+
+        // Stop discovery before becoming host
+        if (discovery != null)
+        {
+            discovery.StopDiscovery();
+        }
+
+        Invoke(nameof(StartHostingDelayed), 0.5f);
+    }
+
+    private void StartHostingDelayed()
+    {
         NetworkManager.singleton.StartHost();
     }
 
@@ -149,17 +163,21 @@ public class MultiplayerEntryUI : SingletonMonobehaviour<MultiplayerEntryUI>
 
     public void OnRefreshPressed()
     {
-        discovery.StopDiscovery();
-        discovery.StartDiscovery();
+        // Reset any selected join target
+        ResetSelection();
+
+        if (discovery != null) discovery.StopDiscovery();
 
         ClearFoundGames();
-        ResetSelection();
 
         if (discovery != null) discovery.StartDiscovery();
     }
 
     public void ExitMultiplayerEntry()
     {
+        // Reset any selected join target
+        ResetSelection();
+
         // IMPORTANT: delegate close to MainMenuUI
         MainMenuUI.Instance.ExitMultiplayerEntry();
     }

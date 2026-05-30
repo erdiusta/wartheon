@@ -11,8 +11,8 @@ public class ProjectilePatternNetwork : NetworkBehaviour
         projectilePattern = GetComponent<ProjectilePattern>();
     }
 
-    [Command(requiresAuthority = false)]
-    public void CmdDestroyProjectilePattern()
+    [Server]
+    public void Server_DestroyProjectilePattern()
     {
         if (GetComponentInChildren<Projectile>() == null)
         {

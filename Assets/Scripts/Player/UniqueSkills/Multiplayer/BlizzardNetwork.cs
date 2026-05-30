@@ -90,6 +90,8 @@ public class BlizzardNetwork : NetworkBehaviour
         Enemy affectedEnemy = collision.GetComponent<Enemy>();
         Player affectedPlayer = collision.GetComponent<Player>();
 
+        IHealthAuthority healthAuthority;
+
         if (affectedPlayer != null)
         {
             if (affectedPlayer.playerDetails.playerCharacterIndex != Character.Mycara) return;
@@ -99,7 +101,8 @@ public class BlizzardNetwork : NetworkBehaviour
             // Apply effect
             if (affectedPlayer.health.GetCurrentHealth() <= affectedPlayer.health.GetMaximumHealth() / 2)
             {
-                affectedPlayer.health.AddHealth(4);
+                healthAuthority = HealthAuthorityResolver.GetAuthority(affectedPlayer.gameObject);
+                healthAuthority.ApplyDamage(-4, default);
             }
 
             // Update last affected time
@@ -144,6 +147,16 @@ public class BlizzardNetwork : NetworkBehaviour
             DamageContext ctx = new DamageContext { owner = DamageOwner.Player, source = DamageSourceType.Projectile };
             ReceiveProjectileDamage receiveProjectileDamage = affectedEnemy.GetComponent<ReceiveProjectileDamage>();
             receiveProjectileDamage.TakeProjectileDamage(inflictedDamage, ctx);
+
+            // Check if player levels-after killing the enemy
+            int levelBeforeKillingEnemy = owner.currentLevel;
+
+            healthAuthority = HealthAuthorityResolver.GetAuthority(affectedEnemy.gameObject);
+
+            if (healthAuthority.CurrentHealth <= 0)
+            {
+                owner.NetAuth.Server_ExpGain(owner.NetAuth.netIdentity, levelBeforeKillingEnemy, affectedEnemy.enemyNetwork.netIdentity);
+            }
 
             // Update last affected time
             affectedEnemies[affectedEnemy] = Time.time;

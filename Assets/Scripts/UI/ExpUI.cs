@@ -46,12 +46,16 @@ public class ExpUI : MonoBehaviour
 
     private void StaticEventHandler_OnLevelUp()
     {
+        if (player == null || !player.IsLocal) return;
+
         UpdateExpBar();
         UpdateLevelText();
     }
 
     private void StaticEventHandler_OnExpGained()
     {
+        if (player == null || !player.IsLocal) return;
+
         UpdateExpBar();
     }
 

@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -110,6 +111,19 @@ public class SeismicSlam : MonoBehaviour
                             DamageContext ctx = new DamageContext { owner = DamageOwner.Player, source = DamageSourceType.Projectile };
                             ReceiveMeleeDamage receiveMeleeDamage = enemy.GetComponent<ReceiveMeleeDamage>();
                             receiveMeleeDamage.TakeMeleeDamage(player.seismicSlamDamage, ctx);
+
+                            if (NetworkServer.active)
+                            {
+                                IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(enemy.gameObject);
+
+                                // Check if player levels-after killing the enemy
+                                int levelBeforeKillingEnemy = player.currentLevel;
+
+                                if (healthAuthority.CurrentHealth <= 0)
+                                {
+                                    player.NetAuth.Server_ExpGain(player.NetAuth.netIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork.netIdentity);
+                                }
+                            }
                         }
                     }
                 }

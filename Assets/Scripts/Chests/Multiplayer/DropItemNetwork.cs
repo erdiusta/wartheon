@@ -163,6 +163,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
     {
         // If chest item contains primary passive drop or nothing, cancel the transaction
         if (!hasWeaponDrop && !hasSecondaryPassiveDrop) return;
+        if (hasPrimaryPassiveDrop) return;
 
         animator.SetBool(Settings.hovered, true);
 

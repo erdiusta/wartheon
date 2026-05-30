@@ -99,7 +99,8 @@ public class AbsoluteZeroNetwork : NetworkBehaviour
             // Apply effect
             if (affectedPlayer.health.GetCurrentHealth() <= affectedPlayer.health.GetMaximumHealth() / 2)
             {
-                affectedPlayer.health.AddHealth(4);
+                IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(affectedPlayer.gameObject);
+                healthAuthority.ApplyDamage(-4, default);
             }
 
             // Update last affected time

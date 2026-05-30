@@ -252,10 +252,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 #region Multiplayer Initialization
     public void NotifyLocalPlayerReady(Player player)
     {
-        localPlayer = player;
-
         // MP-Only Setup
         ClientEnterGameplay(player);
+
+        StartCoroutine(FinalizeLoadingSequence()); // Hide loading scene
     }
 
     /// <summary>
@@ -627,13 +627,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         }
     }
 
-    IEnumerator FinalizeLoadingSequence()
+    IEnumerator FinalizeLoadingSequence(float fadeDuration = 0.5f)
     {
-        yield return new WaitForSecondsRealtime(0.5f); // Let things settle
+        yield return new WaitForSecondsRealtime(3f); // Let things settle
 
         if (LoadingManager.Instance != null)
         {
-            LoadingManager.Instance.HideLoadingScreen();
+            LoadingManager.Instance.HideLoadingScreen(fadeDuration);
         }
     }
 

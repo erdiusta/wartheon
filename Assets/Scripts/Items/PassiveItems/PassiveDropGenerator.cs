@@ -26,10 +26,13 @@ public static class PassiveDropGenerator
         if (isPrimaryPassive)
         {
             passiveItem.passiveStats.passiveItemSlotName = PassiveItemSlotName.None;
+            passiveItem.passiveStats.passiveItemType = passiveItemDetails.passiveItemType;
         }
         else
         {
             passiveItem.passiveStats.passiveItemSlotName = passiveItemDetails.passiveItemSlotName;
+            passiveItem.passiveStats.passiveItemType = passiveItemDetails.passiveItemType;
+
             passiveItem.passiveStats.baseUniqueRolled = passiveItemDetails.baseUniqueModifier;
             passiveItem.passiveStats.baseTypeRolled = passiveItemDetails.baseTypeModifier;
 

@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 
 public class BladeDash : MonoBehaviour
@@ -49,6 +50,19 @@ public class BladeDash : MonoBehaviour
                     DamageContext ctx = new DamageContext { dealerPosition = player.rb2D.position, receiverPosition = currentEnemy.rb2D.position };
                     ReceiveMeleeDamage receiveMeleeDamage = collision.GetComponent<ReceiveMeleeDamage>();
                     receiveMeleeDamage.TakeMeleeDamage(inflictedDamage, ctx);
+
+                    if (NetworkServer.active)
+                    {
+                        IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(currentEnemy.gameObject);
+
+                        // Check if player levels-after killing the enemy
+                        int levelBeforeKillingEnemy = player.currentLevel;
+
+                        if (healthAuthority.CurrentHealth <= 0)
+                        {
+                            player.NetAuth.Server_ExpGain(player.NetAuth.netIdentity, levelBeforeKillingEnemy, currentEnemy.enemyNetwork.netIdentity);
+                        }
+                    }
                 }
             }
         }

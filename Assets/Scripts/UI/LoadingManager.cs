@@ -99,6 +99,19 @@ public class LoadingManager : MonoBehaviour
         }
     }
 
+    public void ShowLoadingScreen()
+    {
+        StopAllCoroutines();
+
+        loadingScreen.SetActive(true);
+        loadingCanvasGroup.alpha = 1f;
+
+        _currentProgress = 0f;
+        _targetProgress = 1f;
+
+        maskTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, minWidth);
+    }
+
     // Replace string parameter with int (scene index)
     public IEnumerator LoadGameScene(int sceneBuildIndex)
     {
@@ -125,9 +138,9 @@ public class LoadingManager : MonoBehaviour
         yield return StartCoroutine(FadeOutLoadingScreen());
     }
 
-    public void HideLoadingScreen()
+    public void HideLoadingScreen(float fadeDuration = 0.5f)
     {
-        StartCoroutine(FadeOutLoadingScreen());
+        StartCoroutine(FadeOutLoadingScreen(fadeDuration));
     }
 
     IEnumerator FadeOutLoadingScreen(float fadeDuration = 0.5f)

@@ -691,7 +691,7 @@ public class SylvarokAINetwork : EnemyAINetwork, IMutualBossBehaviour
 
             if (minion.health.hasDied) continue;
 
-            DestroyUtility.Destroy(minion.gameObject, false, minion.health.LastDamageDealerNetId);
+            DestroyUtility.Destroy(minion.gameObject, false, 0);
         }
 
         summonedMinions.Clear();

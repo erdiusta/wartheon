@@ -25,6 +25,8 @@ public class Projectile : MonoBehaviour, IFireable
 
     public ProjectileDetailsSO projectileDetails;
 
+    NetworkIdentity ownerNetworkIdentity;
+
     Material projectileMaterial;
     Player player;
     Player targetPlayer;
@@ -218,6 +220,8 @@ public class Projectile : MonoBehaviour, IFireable
             if (NetworkServer.active) NetworkServer.spawned.TryGetValue(ownerNetId, out ownerIdentity);
             else NetworkClient.spawned.TryGetValue(ownerNetId, out ownerIdentity);
 
+            ownerNetworkIdentity = ownerIdentity;
+
             if (ownerIdentity != null)
             {
                 Player ownerPlayer = ownerIdentity.GetComponent<Player>();
@@ -347,68 +351,58 @@ public class Projectile : MonoBehaviour, IFireable
     private void Update()
     {
         if (isMultiplayer && !initializationCompleted) return;
-
         if (projectileDetails == null) return; // Don't update until projectile details are populated
 
-        // Life time time reduces over time
-        lifeTimeCountdownTimer -= Time.deltaTime;
-
-        if (projectileDetails != null && projectileDetails.hasLifeTime && lifeTimeCountdownTimer < 0)
+        if (NetworkServer.active || (!NetworkServer.active && !NetworkClient.active))
         {
-            DestroyProjectile(isMultiplayer);
-        }
+            // Life time time reduces over time
+            lifeTimeCountdownTimer -= Time.deltaTime;
 
-        if (updateGuidedMissleTimer > 0f) updateGuidedMissleTimer -= Time.deltaTime;
-
-        // Projectile charge effect
-        if (projectileChargeTimer > 0f)
-        {
-            projectileChargeTimer -= Time.deltaTime;
-            return;
-        }
-        else if (!isProjectileMaterialSet)
-        {
-            SetProjectileMaterial(projectileMaterial);
-            isProjectileMaterialSet = true;
-        }
-
-        if (isGrappleHook)
-        {
-            player.playersGrapple = this;
-
-            if (player.isHuntersReachActive && player.springJoint2D.enabled)
+            if (projectileDetails != null && projectileDetails.hasLifeTime && lifeTimeCountdownTimer < 0)
             {
-                InputManager.dodgeRollDisabled = true;
+                DestroyProjectile(isMultiplayer);
+            }
 
-                Vector2 playerPos = player.GetPlayerPosition();
-                Vector2 hookPos = player.springJoint2D.connectedAnchor;
+            if (updateGuidedMissleTimer > 0f) updateGuidedMissleTimer -= Time.deltaTime;
 
-                float dist = Vector2.Distance(playerPos, hookPos);
+            // Projectile charge effect
+            if (projectileChargeTimer > 0f)
+            {
+                projectileChargeTimer -= Time.deltaTime;
+                return;
+            }
+            else if (!isProjectileMaterialSet)
+            {
+                SetProjectileMaterial(projectileMaterial);
+                isProjectileMaterialSet = true;
+            }
 
-                if (dist <= 2f) // Lowered threshold
+            if (isGrappleHook)
+            {
+                player.playersGrapple = this;
+
+                if (player.isHuntersReachActive && player.springJoint2D.enabled)
                 {
-                    ReleaseGrapple(isMultiplayer);
-                }
-            }
+                    InputManager.dodgeRollDisabled = true;
 
-            if (!isGrappleReleased)
-            {
-                UpdateGrappleHook(isMultiplayer);
+                    Vector2 playerPos = player.GetPlayerPosition();
+                    Vector2 hookPos = player.springJoint2D.connectedAnchor;
+
+                    float dist = Vector2.Distance(playerPos, hookPos);
+
+                    if (dist <= 2f) // Lowered threshold
+                    {
+                        ReleaseGrapple(isMultiplayer);
+                    }
+                }
+
+                if (!isGrappleReleased) UpdateGrappleHook(isMultiplayer);
             }
-        }
-        else if (isLaserBeam)
-        {
-            UpdateLaser(isMultiplayer);
-        }
-        else
-        {
-            if (isGuided && target != null)
-            {
-                MoveGuidedProjectile(isMultiplayer);
-            }
+            else if (isLaserBeam) UpdateLaser(isMultiplayer);
             else
             {
-                MoveStandardProjectile(isMultiplayer);
+                if (isGuided && target != null) MoveGuidedProjectile(isMultiplayer);
+                else MoveStandardProjectile(isMultiplayer);
             }
         }
     }
@@ -593,8 +587,8 @@ public class Projectile : MonoBehaviour, IFireable
     {
         if (isMultiplayer)
         {
-            if (projectileNetwork != null) projectileNetwork.CmdDestroyProjectile();
-            else if (projectilePatternNetwork != null) projectilePatternNetwork.CmdDestroyProjectilePattern();
+            if (projectileNetwork != null) projectileNetwork.Server_DestroyProjectile();
+            else if (projectilePatternNetwork != null) projectilePatternNetwork.Server_DestroyProjectilePattern();
         }
         else
         {
@@ -1045,6 +1039,8 @@ public class Projectile : MonoBehaviour, IFireable
 
                 if (collision.collider.GetComponent<Enemy>() != null)
                 {
+                    IHealthAuthority enemyHealthAuthority = HealthAuthorityResolver.GetAuthority(enemy.gameObject);
+
                     if (enemy.enemyDetails.hasShield)
                     {
                         int diceRoll = Random.Range(0, 100);
@@ -1064,7 +1060,7 @@ public class Projectile : MonoBehaviour, IFireable
                             // Deal Damage To Collision Object
                             DealDamage(collision.collider, ref inflictedDamage);
 
-                            if (enemy.health.GetCurrentHealth() > 0)
+                            if (enemyHealthAuthority.CurrentHealth > 0)
                             {
                                 if (isArrowOfTheSeven)
                                 {
@@ -1102,6 +1098,18 @@ public class Projectile : MonoBehaviour, IFireable
                                     CheckBlindStatusOnEnemy(enemy);
                                 }
                             }
+                            else
+                            {
+                                Player damageDealerPlayer = ownerNetworkIdentity.GetComponent<Player>();
+
+                                // Check if player levels-after killing the enemy
+                                int levelBeforeKillingEnemy = damageDealerPlayer.currentLevel;
+
+                                if (enemyHealthAuthority.CurrentHealth <= 0)
+                                {
+                                    damageDealerPlayer.NetAuth.Server_ExpGain(ownerNetworkIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork.netIdentity);
+                                }
+                            }
                         }
                     }
                     else
@@ -1109,7 +1117,7 @@ public class Projectile : MonoBehaviour, IFireable
                         // Deal Damage To Collision Object
                         DealDamage(collision.collider, ref inflictedDamage);
 
-                        if (enemy.health.GetCurrentHealth() > 0)
+                        if (enemyHealthAuthority.CurrentHealth > 0)
                         {
                             if (isArrowOfTheSeven)
                             {
@@ -1145,6 +1153,18 @@ public class Projectile : MonoBehaviour, IFireable
                                 CheckCurseStatusOnEnemy(enemy);
                                 CheckFearStatusOnEnemy(enemy);
                                 CheckBlindStatusOnEnemy(enemy);
+                            }
+                        }
+                        else
+                        {
+                            Player damageDealerPlayer = ownerNetworkIdentity.GetComponent<Player>();
+
+                            // Check if player levels-after killing the enemy
+                            int levelBeforeKillingEnemy = damageDealerPlayer.currentLevel;
+
+                            if (enemyHealthAuthority.CurrentHealth <= 0)
+                            {
+                                damageDealerPlayer.NetAuth.Server_ExpGain(ownerNetworkIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork.netIdentity);
                             }
                         }
                     }
@@ -2154,13 +2174,6 @@ public class Projectile : MonoBehaviour, IFireable
             // Set Hit Effect
             projectileHitEffect.SetHitEffect(hitEffectDetails.duration, hitEffectDetails.startParticleSize, hitEffectDetails.startParticleSpeed, hitEffectDetails.startLifetime, hitEffectDetails.effectGravity, hitEffectDetails.maxParticleNumber,
                 hitEffectDetails.emissionRate, hitEffectDetails.burstParticleNumber, hitEffectDetails.velocityOverLifetimeMin, hitEffectDetails.velocityOverLifetimeMax);
-
-            //if (NetworkServer.active) // Replicate to clients
-            //{
-            //    int projectileFxId = WartheonDatabase.Instance.GetProjectileHitFxId(hitEffectDetails);
-            //    projectileHitEffect.GetComponent<ProjectileHitEffectNetwork>().RpcInitializeProjectileFX(hitEffectDetails.duration, hitEffectDetails.startParticleSize, hitEffectDetails.startParticleSpeed, hitEffectDetails.startLifetime, 
-            //        hitEffectDetails.effectGravity, hitEffectDetails.maxParticleNumber, hitEffectDetails.emissionRate, hitEffectDetails.burstParticleNumber, hitEffectDetails.velocityOverLifetimeMin, hitEffectDetails.velocityOverLifetimeMax, projectileFxId);
-            //}
 
             // Set gameobject active (the particle system is set to automatically disable the gameobject once finished)
             projectileHitEffect.gameObject.SetActive(true);

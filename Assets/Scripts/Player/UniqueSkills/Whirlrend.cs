@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 
 public class Whirlend : MonoBehaviour
@@ -16,7 +17,6 @@ public class Whirlend : MonoBehaviour
     {
         circleCollider2D.enabled = false;
     }
-
 
     private void Start()
     {
@@ -65,6 +65,19 @@ public class Whirlend : MonoBehaviour
                         };
 
                         playerContactDamage.TakeContactDamage((int)(player.whirlrendDamage * playerDamageModifier), ctx);
+
+                        if (NetworkServer.active)
+                        {
+                            IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(enemy.gameObject);
+
+                            // Check if player levels-after killing the enemy
+                            int levelBeforeKillingEnemy = player.currentLevel;
+
+                            if (healthAuthority.CurrentHealth <= 0)
+                            {
+                                player.NetAuth.Server_ExpGain(player.NetAuth.netIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork.netIdentity);
+                            }
+                        }          
                     }
 
                     if (!enemy.enemyDetails.hasKnockbackResistance && enemy.health.currentHealth > 0)

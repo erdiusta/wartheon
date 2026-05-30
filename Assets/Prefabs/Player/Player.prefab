@@ -2791,9 +2791,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 1.2147505
-    width: 0.37362638
-    height: 0.37337312
+    y: 1.2190889
+    width: 0.36707318
+    height: 0.36727223
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 40
@@ -3074,7 +3074,6 @@ GameObject:
   - component: {fileID: -721413433142595097}
   - component: {fileID: 4129974003213523600}
   - component: {fileID: 448431427010442839}
-  - component: {fileID: -9133217020520152176}
   - component: {fileID: 6815216415085289844}
   - component: {fileID: 6237763269965026576}
   - component: {fileID: 8750277059502281644}
@@ -3137,7 +3136,6 @@ MonoBehaviour:
   fxAnimatorPlayed: 0
   damageTaken: 0
   hasDied: 0
-  LastDamageDealerNetId: 0
   spriteRenderer: {fileID: 0}
   isImmuneAfterHit: 0
   immunityTime: 0
@@ -3494,7 +3492,6 @@ MonoBehaviour:
   playerInventoryNetwork: {fileID: 0}
   keyCount: 0
   previousSetIndex: 1
-  branchMastery: {fileID: 0}
   weaponMastery: {fileID: 0}
   activeDropItem: {fileID: 0}
   playersAllActiveUniqueSkills: []
@@ -4156,26 +4153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33964304c5784b145b0637b968810e33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-9133217020520152176
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4770697194666701406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee12bde76e7bd534ea348da50dbb363f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  swordMasteryPoints: 0
-  axeMasteryPoints: 0
-  hammerMasteryPoints: 0
-  spearMasteryPoints: 0
-  daggerMasteryPoints: 0
-  bowMasteryPoints: 0
-  crossbowMasteryPoints: 0
-  staffMasteryPoints: 0
 --- !u!114 &6815216415085289844
 MonoBehaviour:
   m_ObjectHideFlags: 0

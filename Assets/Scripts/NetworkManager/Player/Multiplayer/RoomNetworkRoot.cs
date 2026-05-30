@@ -50,6 +50,19 @@ public class RoomNetworkRoot : NetworkBehaviour
         instantiatedRoom.UnlockDoors(Settings.doorUnlockDelay);
     }
 
+    [Server]
+    public void Server_RefreshMusic()
+    {
+        RpcRefreshMusic();
+    }
+
+    [ClientRpc]
+    private void RpcRefreshMusic()
+    {
+        MusicTrackSO music = WartheonDatabase.Instance.GetMusic(GameSessionManager.Instance.selectedDungeonLevelIndex, MusicType.Ambient);
+        MusicManager.Instance.PlayMusic(music);
+    }
+
     IEnumerator DelayedBuild()
     {
         float timeout = 5f;
@@ -94,6 +107,8 @@ public class RoomNetworkRoot : NetworkBehaviour
                 //player.health.AddShield(5);
             }
         }
+
+        MusicManager.Instance.RefreshMusicMP(roomNetData);
 
         entryDirection = (transform.position - collision.transform.position).normalized;
 

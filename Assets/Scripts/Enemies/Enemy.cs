@@ -1,3 +1,4 @@
+using Mirror;
 using Pathfinding;
 using System;
 using System.Collections;
@@ -63,7 +64,6 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
     [HideInInspector] public Health health;
     [HideInInspector] public HealthEvent healthEvent;
     [HideInInspector] public DropOnDestroy dropOnDestroy;
-    [HideInInspector] public DropOnDestroyNetwork dropOnDestroyNetwork;
     [HideInInspector] public MoveStatus moveStatus = MoveStatus.Idle;
     [HideInInspector] public HealthStatus healthStatus = HealthStatus.Normal;
     [HideInInspector] public ArmorStatus armorStatus = ArmorStatus.Normal;
@@ -161,7 +161,6 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
         movementToPosition = GetComponent<MovementToPosition>();
         knockback = GetComponent<Knockback>();
         dropOnDestroy = GetComponent<DropOnDestroy>();
-        dropOnDestroyNetwork = GetComponent<DropOnDestroyNetwork>();
         statusManager = GetComponent<StatusManager>();
         damageDisplay = GetComponent<DamageDisplay>();
         aiDestinationSetter = GetComponent<AIDestinationSetter>();
@@ -175,29 +174,14 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
 
     private void OnEnable()
     {
-        healthEvent.OnHealthChanged += HealthEvent_OnHealthLost;
         healthEvent.GetSlow += HealthEvent_GetSlow;
-
         healthEvent.GetBlind += HealthEvent_GetBlind;
     }
 
     private void OnDisable()
     {
-        healthEvent.OnHealthChanged -= HealthEvent_OnHealthLost;
         healthEvent.GetSlow -= HealthEvent_GetSlow;
-
         healthEvent.GetBlind -= HealthEvent_GetBlind;
-    }
-
-    /// <summary>
-    /// Handle health lost event
-    /// </summary>
-    private void HealthEvent_OnHealthLost(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
-    {
-        if (healthEventArgs.healthAmount <= 0)
-        {
-            EnemyDestroyed();
-        }
     }
 
     private void HealthEvent_GetSlow(HealthEvent healthEvent)
@@ -251,15 +235,6 @@ public class Enemy : MonoBehaviour, IEnemyCombatData, IEnemyMovementData
                 health.healthAuthority.IsDamageable = true;
             }
         }
-    }
-
-    /// <summary>
-    /// Enemy destroyed
-    /// </summary>
-    private void EnemyDestroyed()
-    {
-        DestroyedEvent destroyedEvent = GetComponent<DestroyedEvent>();
-        DestroyUtility.Destroy(gameObject, playerDied: false, health.LastDamageDealerNetId);
     }
 
     /// <summary>

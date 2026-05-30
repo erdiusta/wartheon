@@ -20,7 +20,6 @@ public class Health : MonoBehaviour
     [HideInInspector] public bool fxAnimatorPlayed;
     [HideInInspector] public bool damageTaken;
     [HideInInspector] public bool hasDied = false;
-    [HideInInspector] public uint LastDamageDealerNetId;
     [HideInInspector] public SpriteRenderer spriteRenderer;
     [HideInInspector] public bool isImmuneAfterHit;
     [HideInInspector] public float immunityTime = 0f;
@@ -251,7 +250,7 @@ public class Health : MonoBehaviour
         }
         else
         {
-            if (NetworkClient.active && (playerReady || enemy != null))
+            if (playerReady || enemy != null)
             {
                 DeathCheck();
             }
@@ -280,12 +279,14 @@ public class Health : MonoBehaviour
                 // Enemy death
                 enemy.dropOnDestroy.DropProcess();
 
-                DestroyUtility.Destroy(enemy.gameObject, playerDied: false, enemy.health.LastDamageDealerNetId);
+                enemy.enemyNetwork.CmdEnemyDied(enemy.enemyNetwork.lastDamageDealerNetId);
             }
             else if (dummy != null)
             {
+                uint netId = enemy.enemyNetwork != null ? enemy.enemyNetwork.lastDamageDealerNetId : 0;
+
                 // Decoy death
-                DestroyUtility.Destroy(dummy.gameObject, playerDied: false, dummy.health.LastDamageDealerNetId);
+                DestroyUtility.Destroy(dummy.gameObject, playerDied: false, netId);
             }
         }
     }
@@ -343,11 +344,6 @@ public class Health : MonoBehaviour
             }
             else
             {
-                if (ctx.dealerNetId != 0)
-                {
-                    LastDamageDealerNetId = ctx.dealerNetId;
-                }
-
                 currentHealth = Mathf.Clamp(currentHealth - damageAmount, 0, maximumHealth);
             }
 

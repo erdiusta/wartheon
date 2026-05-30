@@ -8,5 +8,4 @@ public struct DamageContext
     public Vector2 dealerPosition;
     public Vector2 receiverPosition;
     public bool bypassImmunity;
-    public uint dealerNetId;
 }

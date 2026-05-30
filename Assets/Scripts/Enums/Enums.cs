@@ -933,3 +933,12 @@ public enum SoundName
     VenomancerToxicPool,
     Whirlrend
 }
+
+public enum MusicType
+{
+    None,
+    Ambient,
+    Combat,
+    Shop,
+    Boss
+}

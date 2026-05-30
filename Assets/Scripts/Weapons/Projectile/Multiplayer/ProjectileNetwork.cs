@@ -36,8 +36,8 @@ public class ProjectileNetwork : NetworkBehaviour
             fallingFromSkies: false, projectileCounter - 1, projectilePerShot, projectileIndex, ownerNetId,  targetNetId, null);
     }
 
-    [Command(requiresAuthority = false)]
-    public void CmdDestroyProjectile()
+    [Server]
+    public void Server_DestroyProjectile()
     {
         if(GetComponent<Projectile>() == null)
         {

@@ -11,6 +11,10 @@ public class MusicManager : SingletonMonobehaviour<MusicManager>
 
     public int musicVolume = 10;
 
+    MusicType currentMusicType;
+    int currentLevel = -1;
+    bool hasMusicPlaying;
+
     protected override void Awake()
     {
         base.Awake();
@@ -42,6 +46,45 @@ public class MusicManager : SingletonMonobehaviour<MusicManager>
     {
         // Play music track
         StartCoroutine(PlayMusicRoutine(musicTrack, fadeOutTime, fadeInTime));
+    }
+
+    public void RefreshMusicMP(RoomNetData room)
+    {
+        if (room == null) return;
+
+        MusicType targetMusicType = DetermineMusicType(room);
+        int level = GameSessionManager.Instance.selectedDungeonLevelIndex;
+
+        if (hasMusicPlaying && targetMusicType == currentMusicType && level == currentLevel) return;
+
+        currentMusicType = targetMusicType;
+        currentLevel = level;
+        hasMusicPlaying = true;
+
+        MusicTrackSO music = WartheonDatabase.Instance.GetMusic(level, targetMusicType);
+
+        PlayMusic(music);
+    }
+
+    MusicType DetermineMusicType(RoomNetData room)
+    {
+        if (room.isShopRoom) return MusicType.Shop;
+
+        if (room.isBossRoom)
+        {
+            if (room.isClearedOfEnemies) return MusicType.Ambient;
+
+            return MusicType.Boss;
+        }
+
+        if (room.isCombatRoom)
+        {
+            if (room.isClearedOfEnemies) return MusicType.Ambient;
+
+            return MusicType.Combat;
+        }
+
+        return MusicType.Ambient;
     }
 
     /// <summary>

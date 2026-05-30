@@ -77,7 +77,7 @@ public static class ServerMeleeCombat
                         NetworkSoundManager.Instance.ServerPlaySound(SoundName.SwordImpact, damageDealerPlayer.transform.position);
 
                         DamageContext ctx = new DamageContext { source = DamageSourceType.Melee, dealerPosition = damageDealerPlayer.transform.position, 
-                            receiverPosition = collider.transform.position, hand = hand, dealerNetId = damageDealerPlayer.NetAuth.netId };
+                            receiverPosition = collider.transform.position, hand = hand };
                         receiveMeleeDamage.TakeMeleeDamage(100, ctx);
 
                         continue;
@@ -123,8 +123,10 @@ public static class ServerMeleeCombat
 
                                 if (enemy.health != null)
                                 {
+                                    enemy.enemyNetwork.lastDamageDealerNetId = damageDealerPlayer.NetAuth.netId;
+
                                     DamageContext ctxShieldBash = new DamageContext { source = DamageSourceType.Melee, dealerPosition = damageDealerPlayer.transform.position, 
-                                        receiverPosition = enemy.health.transform.position, dealerNetId = damageDealerPlayer.NetAuth.netId };
+                                        receiverPosition = enemy.health.transform.position};
                                     receiveMeleeDamage.TakeMeleeDamage(inflictedDamage, ctxShieldBash);
                                 }
                             }
@@ -177,9 +179,25 @@ public static class ServerMeleeCombat
 
                         bool bypass = hand == MeleeHand.OffHand; // only bypass for off-hand hits
 
+                        if(enemy != null) enemy.enemyNetwork.lastDamageDealerNetId = damageDealerPlayer.NetAuth.netId;
+
                         DamageContext ctx = new DamageContext { source = DamageSourceType.Melee, dealerPosition = damageDealerPlayer.transform.position, 
-                            receiverPosition = enemy.transform.position, hand = hand, bypassImmunity = bypass, dealerNetId = damageDealerPlayer.NetAuth.netId };
+                            receiverPosition = enemy.transform.position, hand = hand, bypassImmunity = bypass};
+
                         receiveMeleeDamage.TakeMeleeDamage(inflictedDamage, ctx);
+
+                        // EXP GAIN
+                        if (enemy != null)
+                        {
+                            // Check if player levels-after killing the enemy
+                            int levelBeforeKillingEnemy = damageDealerPlayer.currentLevel;
+                            IHealthAuthority enemyHealthAuthority = HealthAuthorityResolver.GetAuthority(enemy.gameObject);
+
+                            if (enemyHealthAuthority.CurrentHealth <= 0)
+                            {
+                                damageDealerPlayer.NetAuth.Server_ExpGain(damageDealerPlayer.NetAuth.netIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork.netIdentity);
+                            }
+                        }
 
                         if (damageDealerPlayer.isTriadExecutionActive) damageDealerPlayer.triadExecutionCounter++;
 
@@ -222,8 +240,10 @@ public static class ServerMeleeCombat
                         enemy.healthEvent.CallDodgeEvent();
                         enemyHealth.PostHitImmunity(true);
 
+                        enemy.enemyNetwork.lastDamageDealerNetId = damageDealerPlayer.NetAuth.netId;
+
                         DamageContext ctx = new DamageContext { source = DamageSourceType.Melee, dealerPosition = damageDealerPlayer.transform.position, 
-                            receiverPosition = enemyHealth.transform.position, hand = hand, dealerNetId = damageDealerPlayer.NetAuth.netId };
+                            receiverPosition = enemyHealth.transform.position, hand = hand};
                         receiveMeleeDamage.TakeMeleeDamage(0, ctx);
 
                         // Knockback
@@ -501,7 +521,6 @@ public static class ServerMeleeCombat
 
         return criticalHitHappened;
     }
-
 
     /// <summary>
     /// Check bleeding status

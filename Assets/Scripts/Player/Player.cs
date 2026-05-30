@@ -42,7 +42,6 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(CoinsAndShards))]
 [RequireComponent(typeof(StatusManager))]
 [RequireComponent(typeof(SpecialMoveEvent))]
-[RequireComponent(typeof(BranchMastery))]
 [RequireComponent(typeof(WeaponMastery))]
 #endregion
 [DisallowMultipleComponent]
@@ -130,7 +129,6 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public int keyCount = 0;
     [HideInInspector] public int previousSetIndex = 1;
-    [HideInInspector] public BranchMastery branchMastery;
     [HideInInspector] public WeaponMastery weaponMastery;
     [HideInInspector] public DropItem activeDropItem;
 
@@ -497,7 +495,6 @@ public class Player : MonoBehaviour
         movementByForce = GetComponent<MovementByForce>();
         movementToPositionEvent = GetComponent<MovementToPositionEvent>();
         specialMoveEvent = GetComponent<SpecialMoveEvent>();
-        branchMastery = GetComponent<BranchMastery>();
         weaponMastery = GetComponent<WeaponMastery>();
         damageTracker = GetComponent<DamageTracker>();
         mainHandWeaponAnchorTransform = transform.GetChild(0);

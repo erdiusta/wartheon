@@ -150,6 +150,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         // If chest item contains primary passive drop or nothing, cancel the transaction
         if (!hasWeaponDrop && !hasSecondaryPassiveDrop) return;
+        if (hasPrimaryPassiveDrop) return;
 
         animator.SetBool(Settings.hovered, true);
 

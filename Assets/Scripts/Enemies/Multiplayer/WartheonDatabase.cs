@@ -8,6 +8,7 @@ public class WartheonDatabase : SingletonMonobehaviour<WartheonDatabase>
     [SerializeField] WeaponDatabaseSO weaponDatabase;
     [SerializeField] PassiveItemDatabaseSO passiveItemDatabase;
     [SerializeField] SoundDatabaseSO soundDatabase;
+    [SerializeField] MusicDatabaseSO musicDatabase;
 
     protected override void Awake()
     {
@@ -19,6 +20,7 @@ public class WartheonDatabase : SingletonMonobehaviour<WartheonDatabase>
         weaponDatabase.Initialize();
         passiveItemDatabase.Initialize();
         soundDatabase.Initialize();
+        musicDatabase.Initialize();
     }
 
     public WeaponDetailsSO GetWeaponDetails(WeaponTitle title)
@@ -46,13 +48,13 @@ public class WartheonDatabase : SingletonMonobehaviour<WartheonDatabase>
         return projectileDatabase.GetProjectileId(details);
     }
 
-    public int GetProjectileHitFxId(ProjectileHitEffectSO details)
-    {
-        return projectileHitFxDatabase.GetProjectileHitFxId(details);
-    }
-
     public SoundEffectSO GetSound(SoundName soundName)
     {
         return soundDatabase.GetSound(soundName);
+    }
+
+    public MusicTrackSO GetMusic(int level, MusicType musicType)
+    {
+        return musicDatabase.GetMusic(level, musicType);
     }
 }

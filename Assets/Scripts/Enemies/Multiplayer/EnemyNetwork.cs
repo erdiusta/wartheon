@@ -73,7 +73,6 @@ public class EnemyNetwork : NetworkBehaviour, IEnemyCombatData, IEnemyMovementDa
     public float MaxBaseMoveSpeed => maxBaseMoveSpeed;
 
     public MoveStatus MoveStatus { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
     #endregion
 
     Enemy enemy;
@@ -89,6 +88,7 @@ public class EnemyNetwork : NetworkBehaviour, IEnemyCombatData, IEnemyMovementDa
     [SyncVar] public EnemyBehaviour enemyBehaviour;
     [SyncVar] public EnemyCategory enemyCategory;
     [SyncVar] public float maxBaseMoveSpeed;
+    [SyncVar] public uint lastDamageDealerNetId;
 
     [Header("RESISTANCE DETAILS")]
     [SyncVar] public float physicalResistance;
@@ -255,6 +255,12 @@ public class EnemyNetwork : NetworkBehaviour, IEnemyCombatData, IEnemyMovementDa
         enemy.currentMoveSpeed = MaxBaseMoveSpeed + enemy.additionalSpeedModifier - enemy.speedReducer;
         enemy.aiRigidbody2D.canMove = true;
         enemy.aiRigidbody2D.speed = enemy.currentMoveSpeed;
+    }
+
+    [Server]
+    public void CmdEnemyDied(uint damageDealerNetId)
+    {
+        DestroyUtility.Destroy(gameObject, false, damageDealerNetId);
     }
 
     [ClientRpc]
