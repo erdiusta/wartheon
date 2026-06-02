@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-Turkish (tr)
+  m_EditorClassIdentifier: 
+  m_GroupName: Localization-String-Tables-Turkish (tr)
+  m_GUID: 23277e71a37e3224ea0891fe94755b88
+  m_SerializeEntries:
+  - m_GUID: 07339bb1e1bab9d479e1e152c6e33dae
+    m_Address: EnemyDescription_tr
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-tr
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1105871cc1d3fe344bc6e2fff2b1247c
+    m_Address: Multiplayer_tr
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-tr
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7032a3bb730d57540808d6721eaa7c1c
+    m_Address: SinglePlayer_tr
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-tr
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d0804cf7c0ec3b40af354b6e1d605b8
+    m_Address: MainMenu_tr
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-tr
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 3ead0042ae979b44b8b3e2fc1b3a223e, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: b512e79c1b405364b9b233dac9a26fd3, type: 2}
+    - {fileID: 11400000, guid: 4e0bb8cbb0f01e948abe0c5581ed8c94, type: 2}

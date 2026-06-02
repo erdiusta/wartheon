@@ -275,6 +275,8 @@ public class PlayerControl : MonoBehaviour
     {
         gameState = !NetworkServer.active && !NetworkClient.active ? GameManager.Instance.gameState : GameSessionManager.Instance.gameState;
 
+        if (InputManager.SceneTransitionLocked) return;
+
         switch (gameState)
         {
             // While playing the level handle the tab key for the dungeon overview map
@@ -289,8 +291,10 @@ public class PlayerControl : MonoBehaviour
                         return;
                     }
 
+                    if (InputManager.pauseDisabled) return;
+
                     // Single Player
-                    if(!NetworkServer.active && !NetworkClient.active)
+                    if (!NetworkServer.active && !NetworkClient.active)
                     {
                         GameManager.Instance.ServerTogglePause_SP();                  
                     }
@@ -329,6 +333,8 @@ public class PlayerControl : MonoBehaviour
                         return;
                     }
 
+                    if (InputManager.pauseDisabled) return;
+
                     // Single Player
                     if (!NetworkServer.active && !NetworkClient.active)
                     {
@@ -342,6 +348,8 @@ public class PlayerControl : MonoBehaviour
                 break;
 
             case GameState.gamePaused:
+                if (InputManager.pauseDisabled) return;
+
                 if (InputManager.Instance.pause.action.WasPressedThisFrame())
                 {
                     // Single Player
@@ -363,6 +371,7 @@ public class PlayerControl : MonoBehaviour
     private void HandleBookState()
     {
         #region Animation Phase
+        if (InputManager.SceneTransitionLocked) return;
         if (GameManager.Instance.pauseMenu.activeSelf) return;
 
         if (InputManager.TutorialEnabled) GameManager.Instance.bookView.GetComponent<Animator>().updateMode = AnimatorUpdateMode.Normal;

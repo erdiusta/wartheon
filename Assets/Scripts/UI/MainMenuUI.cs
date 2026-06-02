@@ -1,4 +1,5 @@
 using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,6 +8,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Localization.Settings;
+using System.Linq;
 
 public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 {
@@ -47,6 +50,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     [Space(10)]
     [Header("Game")]
+    [SerializeField] TMP_Dropdown languageDropdown;
     [SerializeField] Toggle dynamicCameraToggle;
     [SerializeField] Image dynamicCameraCheckmarkImage;
 
@@ -115,6 +119,8 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
 
     void Start()
     {
+        RefreshLocalizedTexts();
+
         actions = InputManager.Instance.actions;
 
         // Initialize and categorize resolutions
@@ -179,6 +185,9 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
             OnResolutionDropdownChanged(highestIndex, true); // make sure Hz list is also updated
         }
 
+        // Populate language options
+        PopulateLanguageDropdown();
+
         // For first launch default dynamiceCameraFollowToggle is false
         dynamicCameraToggle.isOn = false;
 
@@ -202,6 +211,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         screenModeDropdown.onValueChanged.AddListener(SetScreenMode);
         musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeSliderChanged);
         soundVolumeSlider.onValueChanged.AddListener(OnSoundVolumeSliderChanged);
+        languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
         dynamicCameraToggle.onValueChanged.AddListener(OnDynamicCameraFollowToggleChanged);
     }
   
@@ -491,6 +501,48 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         SoundEffectManager.Instance.SetVolume((int)newValue);
     }
 
+    private void PopulateLanguageDropdown()
+    {
+        languageDropdown.ClearOptions();
+
+        List<string> languageOptions = Enum.GetNames(typeof(Language)).ToList();
+        languageDropdown.AddOptions(languageOptions);
+    }
+
+    private void OnLanguageChanged(int languageIndex)
+    {
+        Language selectedLanguage = (Language)languageIndex;
+
+        switch (selectedLanguage)
+        {
+            case Language.English:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("en");
+                break;
+            case Language.German:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("de");
+                break;
+            case Language.French:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("fr");
+                break;
+            case Language.Spanish:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("es");
+                break;
+            case Language.Portuguese:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("pt");
+                break;
+            case Language.Turkish:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("tr");
+                break;
+            default:
+                break;
+        }
+
+        //LocalizationManager.RefreshAllTexts();
+
+        RefreshLocalizedTexts();
+        LocalizationManager.LanguageChanged?.Invoke(selectedLanguage);
+    }
+
     public void OpenKeyboardControls()
     {
         // Save player prefs
@@ -550,7 +602,6 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         ActivateAllPrimaryMainMenuButtons();
         EventSystem.current.SetSelectedGameObject(controlsButton.gameObject);
     }
-
 
     public void ReturnToControlsMenu()
     {
@@ -622,6 +673,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         PlayerPrefs.SetFloat("MusicVolume", musicVolumeSlider.value);
         PlayerPrefs.SetFloat("SoundVolume", soundVolumeSlider.value);
         // Game
+        PlayerPrefs.SetInt("Language", languageDropdown.value);
         PlayerPrefs.SetInt("DynamicCamera", dynamicCameraToggle.isOn ? 1 : 0);
         // CONTROLS
         var rebinds = actions.SaveBindingOverridesAsJson();
@@ -700,7 +752,22 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
         }
 
         // GAME
-        // Load Dynamic amera toggle
+        if (PlayerPrefs.HasKey("Language"))
+        {
+            int savedLanguage = PlayerPrefs.GetInt("Language");
+            languageDropdown.value = savedLanguage;
+            OnLanguageChanged(savedLanguage);
+        }
+        else
+        {
+            languageDropdown.value = (int)Language.English;
+            OnLanguageChanged((int)Language.English);
+        }
+
+        // Load Language
+        languageDropdown.RefreshShownValue();
+
+        // Load Dynamic camera toggle
         if (PlayerPrefs.HasKey("DynamicCamera"))
         {
             bool dynamicCamera = PlayerPrefs.GetInt("DynamicCamera") == 1;
@@ -715,6 +782,18 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
             var rebinds = PlayerPrefs.GetString("Rebinds");
             if (!string.IsNullOrEmpty(rebinds)) actions.LoadBindingOverridesFromJson(rebinds);
         }
+    }
+
+    private async void RefreshLocalizedTexts()
+    {
+        await LocalizationSettings.InitializationOperation.Task;
+
+        singlePlayerButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.GetText("MainMenu", "MENU_SINGLE_PLAYER");
+        multiplayerButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.GetText("MainMenu", "MENU_MULTIPLAYER");
+        controlsButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.GetText("MainMenu", "MENU_CONTROLS");  
+        settingsButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.GetText("MainMenu", "MENU_SETTINGS");
+        profileButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.GetText("MainMenu", "MENU_PROFILE");
+        quitButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.GetText("MainMenu", "MENU_QUIT");
     }
 
     public IEnumerator HandleReturnFromCharacterScene()

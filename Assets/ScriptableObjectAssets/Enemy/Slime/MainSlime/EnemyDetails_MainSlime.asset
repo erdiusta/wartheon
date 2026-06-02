@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_MainSlime
   m_EditorClassIdentifier: 
   enemyName: Main Slime
-  enemyDetails: Sticky. It Can Poison The Player. 30% Earth Elemental Bias.
+  enemyDetails: Sticky. It Can Poison The Player.
   enemyCategory: 28
   enemyPrefab: {fileID: 7183228443647751644, guid: 1bdfacacb77d0034da5411a570f35dab, type: 3}
   enemyType: 0

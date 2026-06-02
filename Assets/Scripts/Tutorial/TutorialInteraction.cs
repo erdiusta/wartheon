@@ -233,6 +233,8 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
         switch (currentTutorialPhase)
         {
             case TutorialPhase.TutorialIntro:
+                GameManager.Instance.GetCurrentRoom().instantiatedRoom.LockDoors();
+
                 StartDialogue(dialogues[0]);
                 break;
             case TutorialPhase.Move:
@@ -265,6 +267,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 dropItem.gameObject.SetActive(true);
 
                 dropItem.hasWeaponDrop = true;
+                dropItem.dropCompleted = true;
                 dropItem.Initialize(weapon, weaponDetails.weaponFrontSprite, dropItem.transform.position, null, true);
                 break;
             case TutorialPhase.AimAndFire:
@@ -325,6 +328,9 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
             case TutorialPhase.Combat:
                 isCheckPlayed = false;
 
+                IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(player.gameObject);
+                healthAuthority.IsDamageable = false;
+
                 keyboardBinding = InputManager.Instance.attack.action.GetBindingDisplayString(InputBinding.MaskByGroup("Keyboard&Mouse"));
                 gamepadBinding = InputManager.Instance.attack.action.GetBindingDisplayString(InputBinding.MaskByGroup("Gamepad"));
 
@@ -346,9 +352,12 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
 
                 dropItem = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<DropItem>(true);
                 dropItem.gameObject.SetActive(true);
+                dropItem.dropCompleted = true;
+                dropItem.dropSourceType = DropSourceType.Enemy;
 
                 // Initialize drop
                 PassiveItem passiveItem = new PassiveItem(GameResources.Instance.healthPassiveItem.rarity);
+                passiveItem.passiveStats.passiveItemType = GameResources.Instance.healthPassiveItem.passiveItemType;
 
                 dropItem.hasPrimaryPassiveDrop = true;
                 dropItem.Initialize(passiveItem, GameResources.Instance.healthPassiveItem.passiveItemSprite, dropItem.transform.position, null, true);
@@ -365,9 +374,12 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
 
                 dropItem = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<DropItem>(true);
                 dropItem.gameObject.SetActive(true);
+                dropItem.dropCompleted = true;
+                dropItem.dropSourceType = DropSourceType.Enemy;
 
                 // Initialize drop
                 PassiveItem secondPassiveItem = new PassiveItem(GameResources.Instance.coinPassiveItem.rarity);
+                secondPassiveItem.passiveStats.passiveItemType = GameResources.Instance.coinPassiveItem.passiveItemType;
 
                 dropItem.hasPrimaryPassiveDrop = true;
                 dropItem.Initialize(secondPassiveItem, GameResources.Instance.coinPassiveItem.passiveItemSprite, dropItem.transform.position, null, true);
@@ -449,6 +461,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
 
                 dropItem = GameManager.Instance.GetCurrentRoom().instantiatedRoom.GetComponentInChildren<DropItem>(true);
                 dropItem.gameObject.SetActive(true);
+                dropItem.dropCompleted = true;
 
                 // Initialize drop
                 passiveItem = PassiveDropGenerator.CreateRolledInstance(GameResources.Instance.secondaryPassiveItem, rng);
@@ -634,8 +647,6 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
                 // It is handled in BookUI.cs
                 break;
             case TutorialPhase.FinishTutorial:
-                InputManager.TutorialEnabled = false;
-
                 Invoke(nameof(PassTutorialProcess), 1f);
 
                 if (!isFading)
@@ -670,13 +681,17 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
 
         yield return new WaitForSeconds(2f);
 
+        if (currentTutorialPhase == TutorialPhase.FinishTutorial) yield break;
+
         questImage.sprite = questNotCompletedSprite;
         questText.text = string.Empty;
 
         currentTutorialPhase++;
         currentTutorialProcess = TutorialProcess.QuestDisplayed;
 
-        StartCoroutine(DialogueTextProcess());
+        //if(currentTutorialPhase == TutorialPhase.MinimapCheck) currentTutorialPhase = TutorialPhase.OtherCollectionsPage;
+
+        yield return StartCoroutine(DialogueTextProcess());
     }
 
     /// <summary>
@@ -684,6 +699,8 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
     /// </summary>
     private IEnumerator TutorialCompleted()
     {
+        InputManager.SceneTransitionLocked = true;
+
         // Disable player
         player.DisablePlayer();
 
@@ -693,9 +710,9 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
         // Tutorial finished
         string upperName = player.playerDetails.playerCharacterName.ToUpper(CultureInfo.InvariantCulture);
 
-        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + upperName + "! YOU COMPLETED TUTORIAL.", Color.green, 5f, true));
+        yield return StartCoroutine(DisplayMessageRoutine("WELL DONE " + upperName + "! YOU COMPLETED TUTORIAL.", Color.green, 3f, true));
 
-        yield return StartCoroutine(DisplayMessageRoutine("NOW IT'S TIME TO BEGIN YOUR JOURNEY.", Color.green, 1.5f, true));
+        yield return StartCoroutine(DisplayMessageRoutine("NOW IT'S TIME TO BEGIN YOUR JOURNEY.", Color.green, 2f, true));
 
         FinishTutorialStartGame(); // It's time to return to the main menu
     }
@@ -739,8 +756,10 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
 
     private void FinishTutorialStartGame()
     {
+        InputManager.TutorialEnabled = false;
+
         // Get current character safely
-        Character currentCharacter = Character.Caelion; // default
+            Character currentCharacter = Character.Caelion; // default
 
         if (player != null && player.playerDetails != null)
         {
@@ -753,12 +772,12 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
         // Safe loading call
         if (LoadingManager.SafeInstance != null)
         {
-            LoadingManager.SafeInstance.StartCoroutine(LoadingManager.SafeInstance.LoadGameScene(3));
+            LoadingManager.SafeInstance.StartCoroutine(LoadingManager.SafeInstance.LoadGameScene(2));
         }
         else
         {
             Debug.LogError("LoadingManager instance missing! Loading directly...");
-            SceneManager.LoadScene(3);
+            SceneManager.LoadScene(2);
         }
     }
 
@@ -768,7 +787,7 @@ public class TutorialInteraction : SingletonMonobehaviour<TutorialInteraction>
     public IEnumerator Fade(float startFadeAlpha, float targetFadeAlpha, float fadeSeconds, Color backgroundColor)
     {
         isFading = true;
-        Image image = canvasGroup.GetComponent<Image>();
+        Image image = canvasGroup.GetComponentInChildren<Image>();
         image.color = backgroundColor;
 
         float elapsed = 0f;

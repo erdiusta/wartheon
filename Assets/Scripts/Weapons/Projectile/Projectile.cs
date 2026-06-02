@@ -1100,14 +1100,14 @@ public class Projectile : MonoBehaviour, IFireable
                             }
                             else
                             {
-                                Player damageDealerPlayer = ownerNetworkIdentity.GetComponent<Player>();
-
-                                // Check if player levels-after killing the enemy
-                                int levelBeforeKillingEnemy = damageDealerPlayer.currentLevel;
-
-                                if (enemyHealthAuthority.CurrentHealth <= 0)
+                                if (enemyHealthAuthority.CurrentHealth <= 0 && NetworkServer.active)
                                 {
-                                    damageDealerPlayer.NetAuth.Server_ExpGain(ownerNetworkIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork.netIdentity);
+                                    Player damageDealerPlayer = ownerNetworkIdentity.GetComponent<Player>();
+
+                                    // Check if player levels-after killing the enemy
+                                    int levelBeforeKillingEnemy = damageDealerPlayer.currentLevel;
+
+                                    damageDealerPlayer?.NetAuth.Server_ExpGain(ownerNetworkIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork?.netIdentity);
                                 }
                             }
                         }
@@ -1157,14 +1157,14 @@ public class Projectile : MonoBehaviour, IFireable
                         }
                         else
                         {
-                            Player damageDealerPlayer = ownerNetworkIdentity.GetComponent<Player>();
-
-                            // Check if player levels-after killing the enemy
-                            int levelBeforeKillingEnemy = damageDealerPlayer.currentLevel;
-
-                            if (enemyHealthAuthority.CurrentHealth <= 0)
+                            if (enemyHealthAuthority.CurrentHealth <= 0 && NetworkServer.active)
                             {
-                                damageDealerPlayer.NetAuth.Server_ExpGain(ownerNetworkIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork.netIdentity);
+                                Player damageDealerPlayer = ownerNetworkIdentity.GetComponent<Player>();
+
+                                // Check if player levels-after killing the enemy
+                                int levelBeforeKillingEnemy = damageDealerPlayer.currentLevel;
+
+                                damageDealerPlayer?.NetAuth.Server_ExpGain(ownerNetworkIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork?.netIdentity);
                             }
                         }
                     }

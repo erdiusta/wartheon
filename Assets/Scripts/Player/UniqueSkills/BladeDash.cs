@@ -60,7 +60,9 @@ public class BladeDash : MonoBehaviour
 
                         if (healthAuthority.CurrentHealth <= 0)
                         {
-                            player.NetAuth.Server_ExpGain(player.NetAuth.netIdentity, levelBeforeKillingEnemy, currentEnemy.enemyNetwork.netIdentity);
+                            if (!NetworkServer.active && !NetworkClient.active) return;
+
+                            player?.NetAuth.Server_ExpGain(player.NetAuth.netIdentity, levelBeforeKillingEnemy, currentEnemy.enemyNetwork?.netIdentity);
                         }
                     }
                 }

@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Beholder
   m_EditorClassIdentifier: 
   enemyName: Beholder
-  enemyDetails: A Levitating Monstrosity. Beware Eye. Beam Can Stun and Blind. Air
-    Elemental Bias.
+  enemyDetails: 'A Levitating Monstrosity. Beware Eye. Beam Can Stun and Blind. '
   enemyCategory: 29
   enemyPrefab: {fileID: 7183228443647751644, guid: 0b3efa271d8b32a479ad2a79ed18246f, type: 3}
   enemyType: 0

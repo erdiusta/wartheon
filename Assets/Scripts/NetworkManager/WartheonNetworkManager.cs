@@ -1,4 +1,5 @@
 using Mirror;
+using Mirror.Discovery;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,6 +31,14 @@ public class WartheonNetworkManager : NetworkManager
         DontDestroyOnLoad(gameObject);
     }
 
+    public override void Start()
+    {
+        base.Start();
+
+        if (SteamManager.Initialized) Settings.Backend = MultiplayerBackend.Steam;
+        else Settings.Backend = MultiplayerBackend.Lan;
+    }
+
     // Starts at the lobby phase (Main Menu Scene)
     public override void OnStartServer()
     {
@@ -52,7 +61,17 @@ public class WartheonNetworkManager : NetworkManager
     {
         base.OnStartHost();
         GamePhase.IsInLobby = true;
-        networkDiscovery?.AdvertiseServer();
+
+        switch (Settings.Backend)
+        {
+            case MultiplayerBackend.Lan:
+                networkDiscovery?.AdvertiseServer();
+                break;
+            case MultiplayerBackend.Steam:
+                break;
+            default:
+                break;
+        }
     }
 
     // It should start at lobby phase after players are added (Main Menu Scene)
@@ -123,7 +142,16 @@ public class WartheonNetworkManager : NetworkManager
 
     public override void OnStopHost()
     {
-        if (networkDiscovery != null) networkDiscovery.StopDiscovery();
+        switch (Settings.Backend)
+        {
+            case MultiplayerBackend.Lan:
+                if (networkDiscovery != null) networkDiscovery.StopDiscovery();
+                break;
+            case MultiplayerBackend.Steam:
+                break;
+            default:
+                break;
+        }
 
         characterLocks.Clear();
 

@@ -181,4 +181,8 @@ public static class Settings
     #region CONTACT DAMAGE PARAMETERS
     public const float contactDamageCollisionResetDelay = 0.2f;
     #endregion
+
+    #region NETWORK SETTINGS
+    public static MultiplayerBackend Backend;
+    #endregion
 }

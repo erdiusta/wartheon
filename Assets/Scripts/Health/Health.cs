@@ -48,7 +48,7 @@ public class Health : MonoBehaviour
 
     private void Awake()
     {
-        healthAuthority = GetComponent<IHealthAuthority>();
+        healthAuthority = HealthAuthorityResolver.GetAuthority(gameObject);
         healthEvent = GetComponent<HealthEvent>();
         flashManager = GetComponent<FlashManager>();
         enemy = GetComponent<Enemy>();
@@ -279,11 +279,12 @@ public class Health : MonoBehaviour
                 // Enemy death
                 enemy.dropOnDestroy.DropProcess();
 
-                enemy.enemyNetwork.CmdEnemyDied(enemy.enemyNetwork.lastDamageDealerNetId);
+                if(!NetworkServer.active && !NetworkClient.active) DestroyUtility.Destroy(enemy.gameObject, playerDied: false, 0);
+                else if (NetworkServer.active) enemy.enemyNetwork.Server_EnemyDied(enemy.enemyNetwork.lastDamageDealerNetId);
             }
             else if (dummy != null)
             {
-                uint netId = enemy.enemyNetwork != null ? enemy.enemyNetwork.lastDamageDealerNetId : 0;
+                uint netId = 0;
 
                 // Decoy death
                 DestroyUtility.Destroy(dummy.gameObject, playerDied: false, netId);
@@ -310,6 +311,8 @@ public class Health : MonoBehaviour
         {
             if (player != null)
             {
+                if (InputManager.TutorialEnabled) return;
+
                 // Apply to shield first
                 if (currentShield > 0)
                 {

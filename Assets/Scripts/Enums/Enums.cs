@@ -30,6 +30,16 @@ public enum TutorialProcess
     QuestPassed
 }
 
+public enum Language
+{
+    English,
+    German,
+    French,
+    Spanish,
+    Portuguese,
+    Turkish,
+}
+
 public enum TooltipSource
 {
     None,
@@ -941,4 +951,10 @@ public enum MusicType
     Combat,
     Shop,
     Boss
+}
+
+public enum MultiplayerBackend
+{
+    Lan,
+    Steam
 }

@@ -16,11 +16,15 @@ public class CameraManager : MonoBehaviour
     public DungeonMap dungeonMap;
     public Camera dungeonOverviewCamera;
 
+    AudioListener audioListener;
+
     Player player;
 
     private void Awake()
     {
         player = GetComponentInParent<Player>();
+
+        audioListener = GetComponent<AudioListener>();
 
         // Hard off for everyone by default
         gameplayCamera.gameObject.SetActive(false);
@@ -34,7 +38,7 @@ public class CameraManager : MonoBehaviour
         minimapCamera?.gameObject.SetActive(true);
         dungeonOverviewCamera?.gameObject.SetActive(false);
 
-        if (onStart) gameplayCamera.GetComponentInChildren<AudioListener>().enabled = true;
+        if (onStart) audioListener.enabled = true;
 
         if (player.IsLocal) gameplayCinemachine.Priority = 15;
     }

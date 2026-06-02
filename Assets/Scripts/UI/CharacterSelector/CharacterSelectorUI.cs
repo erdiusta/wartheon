@@ -1,6 +1,8 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -14,15 +16,20 @@ public class CharacterSelectorUI : MonoBehaviour
 
     [Space(10)]
     [Header("CHARACTER DETAIL POPUPS")]
-    [Space(10)]
     [SerializeField] GameObject[] characterDetailsPopups;
 
     [Space(10)]
     [Header("TUTORIAL")]
-    [Space(10)]
     [SerializeField] Toggle tutorialToggle;
     [SerializeField] Image tutorialToggleCheckmarkImage;
     [SerializeField] SoundEffectSO buttonClickSound;
+
+    [Space(10)]
+    [Header("TEXTS")]
+    [SerializeField] TMP_Text backButtonText;
+    [SerializeField] TMP_Text startJourneyText;
+    [SerializeField] TMP_Text tutorialText;
+    [SerializeField] TMP_Text selectCharacterText;
 
     [SerializeField] float selectionCooldown = 0.15f;
     float lastSelectionTime;
@@ -47,6 +54,10 @@ public class CharacterSelectorUI : MonoBehaviour
     }
     void OnEnable()
     {
+        LocalizationManager.LanguageChanged += OnLanguageChanged;
+
+        RefreshLocalizedTexts();
+
         // Delay selection until the next frame to ensure UI is ready
         StartCoroutine(SetFirstSelected());
 
@@ -64,6 +75,8 @@ public class CharacterSelectorUI : MonoBehaviour
 
     private void OnDisable()
     {
+        LocalizationManager.LanguageChanged -= OnLanguageChanged;
+
         StaticEventHandler.OnCharacterButtonSelected -= StaticEventHandler_OnCharacterButtonSelected;
         StaticEventHandler.OnCharacterButtonDeselected -= StaticEventHandler_OnCharacterButtonDeselected;
 
@@ -184,6 +197,19 @@ public class CharacterSelectorUI : MonoBehaviour
         PlayerPrefs.Save();
     }
     #endregion
+
+    private void OnLanguageChanged(Language language)
+    {
+        RefreshLocalizedTexts();
+    }
+
+    private void RefreshLocalizedTexts()
+    {
+        backButtonText.text = LocalizationSettings.StringDatabase.GetLocalizedString("SinglePlayer", "SINGLEPLAYER_BACK");
+        startJourneyText.text = LocalizationSettings.StringDatabase.GetLocalizedString("SinglePlayer", "SINGLEPLAYER_START_JOURNEY");
+        tutorialText.text = LocalizationSettings.StringDatabase.GetLocalizedString("SinglePlayer", "SINGLEPLAYER_PLAY_TUTORIAL");
+        selectCharacterText.text = LocalizationSettings.StringDatabase.GetLocalizedString("SinglePlayer", "SINGLEPLAYER_SELECT");
+    }
 
     #region Helpers
     private void SetStartButtonState(bool enabled)

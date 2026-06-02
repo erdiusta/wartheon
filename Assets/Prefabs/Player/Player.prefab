@@ -967,7 +967,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6719382211919318480, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
+  - {fileID: -4077494058723842204, guid: ee99826a11b13ff4ea65d452955c0982, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1011,8 +1011,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
-  m_sharedMaterial: {fileID: -6719382211919318480, guid: 7af9355d703ea8449a4f38331a41446d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ee99826a11b13ff4ea65d452955c0982, type: 2}
+  m_sharedMaterial: {fileID: -4077494058723842204, guid: ee99826a11b13ff4ea65d452955c0982, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2740,7 +2740,6 @@ GameObject:
   - component: {fileID: 1685972761179437279}
   - component: {fileID: 7400904241070551064}
   - component: {fileID: 2907059240818603119}
-  - component: {fileID: 2034069898099566365}
   m_Layer: 0
   m_Name: GameplayCamera
   m_TagString: Untagged
@@ -2791,9 +2790,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 1.2190889
-    width: 0.36707318
-    height: 0.36727223
+    y: 1.2533039
+    width: 0.34076828
+    height: 0.34072134
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 40
@@ -2930,14 +2929,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8388608
   m_MaxRayIntersections: 0
---- !u!81 &2034069898099566365
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4642173910953537333}
-  m_Enabled: 0
 --- !u!1 &4671886437323162194
 GameObject:
   m_ObjectHideFlags: 0
@@ -7286,6 +7277,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2688925638332031142}
   - component: {fileID: 197416560542622473}
+  - component: {fileID: 2016871946645135321}
   m_Layer: 11
   m_Name: CameraContainer
   m_TagString: Untagged
@@ -7330,6 +7322,14 @@ MonoBehaviour:
   minimapCamera: {fileID: 8684041010029388737}
   dungeonMap: {fileID: 580008088454470861}
   dungeonOverviewCamera: {fileID: 7142542702889402936}
+--- !u!81 &2016871946645135321
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8888410251971304310}
+  m_Enabled: 0
 --- !u!1 &8917760658433298555
 GameObject:
   m_ObjectHideFlags: 0

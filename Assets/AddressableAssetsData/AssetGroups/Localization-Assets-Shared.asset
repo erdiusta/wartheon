@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-Assets-Shared
+  m_EditorClassIdentifier: 
+  m_GroupName: Localization-Assets-Shared
+  m_GUID: d2619bc51a8059d4581d4c7051b21800
+  m_SerializeEntries:
+  - m_GUID: 56ba8a05c5fb88c47b502ddcba2a2228
+    m_Address: Assets/Localization/StringTables/MainMenu/Multiplayer/Multiplayer
+      Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c3e7b0a6ce9ea746930365e41027e7b
+    m_Address: Assets/Localization/StringTables/MainMenu/SinglePlayer/SinglePlayer
+      Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dabe71744b3ca5a4189b6a1b89977993
+    m_Address: Assets/Localization/StringTables/MainMenu/MainMenu Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb25ba9167107754bb13e51ad4e80db6
+    m_Address: Assets/Localization/StringTables/EnemyDescription Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 3ead0042ae979b44b8b3e2fc1b3a223e, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6a36d48619c29a54c931059512ca3739, type: 2}
+    - {fileID: 11400000, guid: f8f2db46913285c408f8f6b6b94cbac3, type: 2}

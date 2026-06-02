@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
   m_Name: EnemyDetails_Pixie
   m_EditorClassIdentifier: 
-  guid: 2cbd6d377518c9f40a413406b99618ad
-  previousEnemyPrefab: {fileID: 7183228443647751644, guid: 3cdebe92cd4c4324b9f42091fda92059, type: 3}
   enemyName: Pixie
-  enemyDetails: A Defiled Fairy Firing Quick Projectiles. Air Elemental Bias.
+  enemyDetails: 'A Defiled Fairy Firing Quick Projectiles. '
   enemyCategory: 9
   enemyPrefab: {fileID: 7183228443647751644, guid: 3cdebe92cd4c4324b9f42091fda92059, type: 3}
   enemyType: 0
@@ -35,12 +33,7 @@ MonoBehaviour:
   elementalForgeRate: 0.2
   enemyMinionDetails: {fileID: 0}
   physicalResistance: 0
-  fireResistance: 0
-  waterResistance: 0
-  airResistance: 0
-  earthResistance: 0
-  lightResistance: 0
-  darkResistance: 0
+  magicResistance: 0
   hasShield: 0
   deflectChance: 0
   isImmuneToBleeding: 0
@@ -88,9 +81,7 @@ MonoBehaviour:
   healthDrainChance: 0
   hasBlindDamage: 0
   blindChance: 0
-  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
-  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 0.88713354, g: 0.9622642, b: 0.013616921, a: 0}
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
@@ -116,8 +107,6 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: 54942af4fdbfd3f48a462feac71fa4cd, type: 2}
     minDamageAmount: 11
     maxDamageAmount: 15
-  isImmuneAfterHit: 1
-  hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
   primaryPassiveItemsByLevelList:

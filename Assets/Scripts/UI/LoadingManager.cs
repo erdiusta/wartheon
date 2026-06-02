@@ -6,6 +6,8 @@ public class LoadingManager : MonoBehaviour
 {
     public static LoadingManager Instance { get; private set; }
 
+    public static bool IsSceneTransitioning;
+
     [HideInInspector] public float maxWidth = 120f;
     [HideInInspector] public float minWidth = 0f;
 
@@ -43,6 +45,8 @@ public class LoadingManager : MonoBehaviour
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        IsSceneTransitioning = true;
     }
 
     private void OnDisable()
@@ -66,6 +70,8 @@ public class LoadingManager : MonoBehaviour
         loadingScreen.SetActive(false);
         _currentProgress = 0f;
         _targetProgress = 0f;
+
+        IsSceneTransitioning = false;
     }
 
     public static LoadingManager SafeInstance
@@ -154,5 +160,7 @@ public class LoadingManager : MonoBehaviour
         }
         loadingCanvasGroup.alpha = 0f;
         loadingScreen.SetActive(false);
+
+        InputManager.SceneTransitionLocked = false;
     }
 }

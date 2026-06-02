@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Skeleton
   m_EditorClassIdentifier: 
   enemyName: Skeleton
-  enemyDetails: Basic Undead Creature. It Can Block The Attacks. 20% Light Elemental
-    Bias.
+  enemyDetails: 'Basic Undead Creature. It Can Block The Attacks. '
   enemyCategory: 11
   enemyPrefab: {fileID: 7183228443647751644, guid: fb4b93be95ba7c8469687f705f0f473f, type: 3}
   enemyType: 0

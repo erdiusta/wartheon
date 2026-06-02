@@ -258,7 +258,7 @@ public class EnemyNetwork : NetworkBehaviour, IEnemyCombatData, IEnemyMovementDa
     }
 
     [Server]
-    public void CmdEnemyDied(uint damageDealerNetId)
+    public void Server_EnemyDied(uint damageDealerNetId)
     {
         DestroyUtility.Destroy(gameObject, false, damageDealerNetId);
     }

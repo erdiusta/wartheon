@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-Chinese (Simplified) (zh)
+  m_EditorClassIdentifier: 
+  m_GroupName: Localization-String-Tables-Chinese (Simplified) (zh)
+  m_GUID: 294694f5a4938d1468b2dd14effe5c99
+  m_SerializeEntries:
+  - m_GUID: 8794bb976df8c1e4ea4ac03f3f586d63
+    m_Address: Multiplayer_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8919c6e26d668c644877f7dce714fa0a
+    m_Address: MainMenu_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a4cc0e68f2887374d9009cb26f76a412
+    m_Address: EnemyDescription_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3e84c8f21fa566439226c200af842c5
+    m_Address: SinglePlayer_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 3ead0042ae979b44b8b3e2fc1b3a223e, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: f56a20fa5ad8dba4ca8d87b4076d0499, type: 2}
+    - {fileID: 11400000, guid: 9c3ab071042e4bd4d818d29504177b34, type: 2}

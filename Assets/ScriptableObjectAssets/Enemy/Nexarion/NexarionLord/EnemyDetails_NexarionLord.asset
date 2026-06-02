@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_NexarionLord
   m_EditorClassIdentifier: 
   enemyName: Nexarion Lord
-  enemyDetails: Superior Demonic Creature With Firing Multiple  Projectiles.
+  enemyDetails: Superior Demonic Creature With Firing Multiple Projectiles.
   enemyCategory: 8
   enemyPrefab: {fileID: 7183228443647751644, guid: 3865642d8490b1346a1d710d848e76a0, type: 3}
   enemyType: 0

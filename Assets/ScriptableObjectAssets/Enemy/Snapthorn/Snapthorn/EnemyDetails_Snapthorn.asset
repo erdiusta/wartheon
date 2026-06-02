@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Snapthorn
   m_EditorClassIdentifier: 
   enemyName: Snapthorn
-  enemyDetails: 'A Carnivorous Plant. Can Poison and Acid. Earth elemental bias. '
+  enemyDetails: A Carnivorous Plant. Can Poison and Acid.
   enemyCategory: 14
   enemyPrefab: {fileID: 7183228443647751644, guid: 451cdb7fa4a7d1646b7279af87360a89, type: 3}
   enemyType: 0

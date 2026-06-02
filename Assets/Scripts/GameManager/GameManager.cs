@@ -108,7 +108,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     // Gameplay UI
     public GameplayUI gameplayUI;
-    public GameObject buttonBuildButton;
 
     // Pop-ups
     public GameObject warningPopUp;
@@ -436,7 +435,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         levelUpPanel.GetComponentInChildren<Animator>().SetTrigger(Settings.zoomIn);
         levelUpPanelTimer = 0f;
 
-        buttonBuildButton.SetActive(true);
     }
 
     public void ClickOpenCharacterBuild()
@@ -714,11 +712,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         HandleGameState();
 
         HandleLevelUpPanel();
-
-        if (localPlayer.currentSkillPoints == 0)
-        {
-            buttonBuildButton.SetActive(false);
-        }
 
         Enemy detectedBoss = null;
 
@@ -1707,10 +1700,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
                 healthValue = Mathf.Max(0, healthValue);
 
-                IHealthAuthority healthAuthority;
-
-                if (!NetworkServer.active && !NetworkClient.active) healthAuthority = enemy.GetComponent<LocalHealthAuthority>();
-                else healthAuthority = enemy.GetComponent<NetworkHealthAuthority>();
+                IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(enemy.gameObject);
 
                 int enemyMaxHealth = healthAuthority.MaxHealth;
                 float targetScaleValue = healthValue / enemyMaxHealth;

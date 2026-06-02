@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_CrimsonWing
   m_EditorClassIdentifier: 
   enemyName: Crimson Wing
-  enemyDetails: 'More Bloody Variation of Ordinary Bat. Can Blind. Dark Elemental
-    Bias. '
+  enemyDetails: More Bloody Variation of Ordinary Bat. Can Blind.
   enemyCategory: 2
   enemyPrefab: {fileID: 7183228443647751644, guid: f35c15bbc40f5c7428b1cd097f84b66e, type: 3}
   enemyType: 0

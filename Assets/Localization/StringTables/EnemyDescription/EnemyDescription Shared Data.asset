@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: EnemyDescription Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: EnemyDescription
+  m_TableCollectionNameGuidString: fb25ba9167107754bb13e51ad4e80db6
+  m_Entries:
+  - m_Id: 29247115264
+    m_Key: ENEMY_AIR_ELEMENTAL_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36377432064
+    m_Key: ENEMY_BAT_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38512332800
+    m_Key: ENEMY_CRIMSON_WING_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 40353632256
+    m_Key: ENEMY_BEHOLDER_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41838415872
+    m_Key: ENEMY_BLIGHTPUMP_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43641966592
+    m_Key: ENEMY_CROCLODYTE_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 47127433216
+    m_Key: ENEMY_EARTH_ELEMENTAL_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 52143820800
+    m_Key: ENEMY_FIRE_ELEMENTAL_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 54001897472
+    m_Key: ENEMY_EMBERCLAW_IMP_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 201993719808
+    m_Key: ENEMY_STORMSPARK_IMP_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 205407883264
+    m_Key: ENEMY_SYLVAROK_MINION_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 205961531392
+    m_Key: ENEMY_ICE_NEXARION_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 206544539648
+    m_Key: ENEMY_NEXARION_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 207182073856
+    m_Key: ENEMY_NEXARION_LORD_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 207819608064
+    m_Key: ENEMY_PIXIE_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 208486502400
+    m_Key: ENEMY_SPRITE_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 209077899264
+    m_Key: ENEMY_SKELETON_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 209690267648
+    m_Key: ENEMY_MAIN_SLIME_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210277470208
+    m_Key: ENEMY_MINION_SLIME_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210906615808
+    m_Key: ENEMY_VIPER_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 218972262400
+    m_Key: ENEMY_RED_VIPER_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 220306051072
+    m_Key: ENEMY_SNAPTHORN_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 574108176384
+    m_Key: ENEMY_RAVAGEVINE_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 575819452416
+    m_Key: ENEMY_SPIDER_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 576498929664
+    m_Key: ENEMY_BLACK_WIDOW_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 577199378432
+    m_Key: ENEMY_WATER_ELEMENTAL_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 578088570880
+    m_Key: ENEMY_WIGHT_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 721873506304
+    m_Key: ENEMY_WRAITH_DESC
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 6718208070067683615
+  references:
+    version: 2
+    RefIds:
+    - rid: 6718208070067683615
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1780217585235

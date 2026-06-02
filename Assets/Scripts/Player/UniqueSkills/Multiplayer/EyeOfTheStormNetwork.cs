@@ -130,8 +130,12 @@ public class EyeOfTheStormNetwork : NetworkBehaviour
 
         if (healthAuthority.CurrentHealth <= 0)
         {
-            owner.NetAuth.Server_ExpGain(owner.NetAuth.netIdentity, levelBeforeKillingEnemy, affectedEnemy.enemyNetwork.netIdentity);
+            if (!NetworkServer.active && !NetworkClient.active) goto jumpExp;
+
+            owner?.NetAuth.Server_ExpGain(owner.NetAuth.netIdentity, levelBeforeKillingEnemy, affectedEnemy.enemyNetwork?.netIdentity);
         }
+
+    jumpExp:
 
         affectedEnemies[affectedEnemy] = Time.time;
     }

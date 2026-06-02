@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "EnemyDetails_", menuName = "Scriptable Objects/Enemy/Enemy Details")]
@@ -14,6 +13,7 @@ public class EnemyDetailsSO : ScriptableObject
     [Tooltip("The name of the enemy")]
     #endregion
     public string enemyName;
+    [TextArea(6,15)]
     #region Tooltip
     [Tooltip("The name details of the enemy")]
     #endregion

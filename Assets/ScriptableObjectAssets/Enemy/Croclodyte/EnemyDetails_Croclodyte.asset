@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Croclodyte
   m_EditorClassIdentifier: 
   enemyName: Croclodyte
-  enemyDetails: Subterrenean creature with sharp claws and teeth. Can Stun. Dark
-    Bias.
+  enemyDetails: 'Subterrenean creature with sharp claws and teeth. Can Stun. '
   enemyCategory: 3
   enemyPrefab: {fileID: 7183228443647751644, guid: b8f69e81a25e9d540a8085ebdd8c842e, type: 3}
   enemyType: 0

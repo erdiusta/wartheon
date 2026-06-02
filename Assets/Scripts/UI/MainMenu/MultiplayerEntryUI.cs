@@ -1,8 +1,10 @@
-using System.Collections.Generic;
 using Mirror;
 using Mirror.Discovery;
+using Steamworks;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 public class MultiplayerEntryUI : SingletonMonobehaviour<MultiplayerEntryUI>
@@ -15,8 +17,13 @@ public class MultiplayerEntryUI : SingletonMonobehaviour<MultiplayerEntryUI>
     [SerializeField] Button joinButton;
     [SerializeField] CanvasGroup joinButtonCanvasGroup;
 
-    [Header("Texts")]
+    [Header("Texts")]   
     [SerializeField] TMP_Text welcomeText;
+    [SerializeField] TMP_Text headerText;
+    [SerializeField] TMP_Text backText;
+    [SerializeField] TMP_Text hostText;
+    [SerializeField] TMP_Text joinText;
+    [SerializeField] TMP_Text refreshText;
 
     const float JOIN_ENABLED_ALPHA = 1f;
     const float JOIN_DISABLED_ALPHA = 0.45f;
@@ -34,33 +41,48 @@ public class MultiplayerEntryUI : SingletonMonobehaviour<MultiplayerEntryUI>
         base.Awake();
 
         discovery = WartheonNetworkManager.Instance.networkDiscovery;
-
-        if (discovery == null)
-        {
-            Debug.LogError("WartheonNetworkDiscovery not found in scene!");
-        }
     }
 
     private void OnEnable()
     {
-        if (PlayerProfile.IsValid) welcomeText.text = $"Welcome {PlayerProfile.DisplayName}! Finding Games...";
+        LocalizationManager.LanguageChanged += OnLanguageChanged;
+
+        RefreshLocalizedTexts();
 
         ClearFoundGames();
         ResetSelection();
 
-        if (!NetworkServer.active)
+        switch (Settings.Backend)
         {
-            discovery.OnServerFound.AddListener(OnServerFound);
-            discovery.StartDiscovery();
+            case MultiplayerBackend.Lan:
+                if (!NetworkServer.active)
+                {
+                    if (discovery != null)
+                    {
+                        discovery.OnServerFound.AddListener(OnServerFound);
+                        discovery.StartDiscovery();
+                    }
+                }
+                break;
+            case MultiplayerBackend.Steam:
+                RefreshSteamLobbies();
+                break;
+            default:
+                break;
         }
     }
 
     private void OnDisable()
     {
+        LocalizationManager.LanguageChanged += OnLanguageChanged;
+
         if (!NetworkServer.active)
         {
-            discovery.OnServerFound.RemoveListener(OnServerFound);
-            discovery.StopDiscovery();
+            if (discovery != null)
+            {
+                discovery.OnServerFound.RemoveListener(OnServerFound);
+                discovery.StopDiscovery();
+            }
         }
     }
     #endregion
@@ -83,14 +105,16 @@ public class MultiplayerEntryUI : SingletonMonobehaviour<MultiplayerEntryUI>
     #endregion
 
     #region Session List
-    private void ClearFoundGames()
+    public void ClearFoundGames()
     {
         foreach (Transform child in foundGamesContent) 
         {
             Destroy(child.gameObject);
         }
 
-        discoveredServers.Clear();
+        if(discoveredServers != null) discoveredServers.Clear();
+
+        ResetSelection();
     }
 
     private void ResetSelection()
@@ -99,11 +123,20 @@ public class MultiplayerEntryUI : SingletonMonobehaviour<MultiplayerEntryUI>
         UpdateJoinButtonState(false);
     }
 
+    // LAN
     public void AddSession(string title, string info, bool joinable, ServerResponse response)
     {
         SessionEntryUI entry = Instantiate(sessionEntryPrefab, foundGamesContent);
         entry.Initialize(title, info, joinable);
         entry.BindResponse(response);
+    }
+
+    // STEAM
+    public void AddSteamSession(string title, string info, bool joinable, CSteamID lobbyId)
+    {
+        SessionEntryUI entry = Instantiate(sessionEntryPrefab, foundGamesContent);
+        entry.Initialize(title, info, joinable);
+        entry.BindSteamLobby(lobbyId);
     }
     #endregion
 
@@ -137,28 +170,47 @@ public class MultiplayerEntryUI : SingletonMonobehaviour<MultiplayerEntryUI>
             discovery.StopDiscovery();
         }
 
-        Invoke(nameof(StartHostingDelayed), 0.5f);
-    }
-
-    private void StartHostingDelayed()
-    {
-        NetworkManager.singleton.StartHost();
+        switch (Settings.Backend)
+        {
+            case MultiplayerBackend.Lan:
+                NetworkManager.singleton.StartHost();
+                break;
+            case MultiplayerBackend.Steam:
+                SteamLobbyManager.Instance.CreateLobby();
+                break;
+            default:
+                break;
+        }
     }
 
     public void OnJoinPressed()
     {
         if (selectedSession == null || !selectedSession.isJoinable) return;
 
-        if (!selectedSession.HasResponse)
+        switch (Settings.Backend)
         {
-            Debug.LogError("Selected session has no ServerResponse bound.");
-            return;
+            case MultiplayerBackend.Lan:
+                if (!selectedSession.HasResponse)
+                {
+                    Debug.LogError("Selected session has no ServerResponse bound.");
+                    return;
+                }
+
+                NetworkManager.singleton.networkAddress = "127.0.0.1";
+                NetworkManager.singleton.StartClient();
+                break;
+            case MultiplayerBackend.Steam:
+                if (!selectedSession.HasSteamLobby)
+                {
+                    Debug.LogError("Selected session has no Steam Lobby bound.");
+                    return;
+                }
+
+                SteamLobbyManager.Instance.JoinLobby(selectedSession.SteamLobbyID);
+                break;
+            default:
+                break;
         }
-
-        //NetworkManager.singleton.StartClient(selectedSession.BoundResponse.uri);
-
-        NetworkManager.singleton.networkAddress = "127.0.0.1";
-        NetworkManager.singleton.StartClient();
     }
 
     public void OnRefreshPressed()
@@ -166,11 +218,45 @@ public class MultiplayerEntryUI : SingletonMonobehaviour<MultiplayerEntryUI>
         // Reset any selected join target
         ResetSelection();
 
-        if (discovery != null) discovery.StopDiscovery();
+        switch (Settings.Backend)
+        {
+            case MultiplayerBackend.Lan:
+                if (discovery != null) discovery.StopDiscovery();
+                ClearFoundGames();
+                if (discovery != null) discovery.StartDiscovery();
+                break;
+            case MultiplayerBackend.Steam:
+                ClearFoundGames();
+                RefreshSteamLobbies();
+                break;
+            default:
+                break;
+        }
+    }
 
-        ClearFoundGames();
+    private void OnLanguageChanged(Language language)
+    {
+        RefreshLocalizedTexts();
+    }
 
-        if (discovery != null) discovery.StartDiscovery();
+    private void RefreshLocalizedTexts()
+    {
+        if (PlayerProfile.IsValid)
+        {
+            welcomeText.text = LocalizationSettings.StringDatabase.GetLocalizedString("Multiplayer", "MULTIPLAYER_WELCOME",
+                arguments: new object[] { new { PlayerName = PlayerProfile.DisplayName } });
+        }
+
+        headerText.text = LocalizationSettings.StringDatabase.GetLocalizedString("Multiplayer", "MULTIPLAYER_MULTIPLAYER");
+        backText.text = LocalizationSettings.StringDatabase.GetLocalizedString("Multiplayer", "MULTIPLAYER_BACK");
+        hostText.text = LocalizationSettings.StringDatabase.GetLocalizedString("Multiplayer", "MULTIPLAYER_HOST");
+        joinText.text = LocalizationSettings.StringDatabase.GetLocalizedString("Multiplayer", "MULTIPLAYER_JOIN");
+        refreshText.text = LocalizationSettings.StringDatabase.GetLocalizedString("Multiplayer", "MULTIPLAYER_REFRESH");
+    }
+
+    public void RefreshSteamLobbies()
+    {
+        SteamLobbyManager.Instance.RefreshLobbies();
     }
 
     public void ExitMultiplayerEntry()

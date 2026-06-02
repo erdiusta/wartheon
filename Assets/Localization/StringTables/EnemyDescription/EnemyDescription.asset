@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: EnemyDescription
+  m_EditorClassIdentifier: 
+  m_SharedTableData: {fileID: 11400000, guid: fb25ba9167107754bb13e51ad4e80db6, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: a4cc0e68f2887374d9009cb26f76a412, type: 2}
+  - {fileID: 11400000, guid: 27296a804d6d0dc4eaa46ea894b5f29d, type: 2}
+  - {fileID: 11400000, guid: 456824bca9f74104996dc390f491dd60, type: 2}
+  - {fileID: 11400000, guid: c7db239bdc7ea68429bc536b26a05df4, type: 2}
+  - {fileID: 11400000, guid: a2eb5de07c0ae8343bdefe27b791741f, type: 2}
+  - {fileID: 11400000, guid: dd41045d7829c684591a7962ae22273d, type: 2}
+  - {fileID: 11400000, guid: 85267ae381fb0ac4fb4961fd1ae17c0b, type: 2}
+  - {fileID: 11400000, guid: 07339bb1e1bab9d479e1e152c6e33dae, type: 2}
+  m_Extensions: []
+  m_Group: String Table
+  references:
+    version: 2
+    RefIds: []

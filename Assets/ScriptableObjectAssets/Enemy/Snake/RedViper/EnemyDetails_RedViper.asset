@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_RedViper
   m_EditorClassIdentifier: 
   enemyName: Red Viper
-  enemyDetails: Stronger Version of Viper.  Can Posion and Curse.
+  enemyDetails: Stronger Version of Viper. Can Posion and Curse.
   enemyCategory: 13
   enemyPrefab: {fileID: 7183228443647751644, guid: d16cb3bd4aa0ee44089ddf7671f2d61a, type: 3}
   enemyType: 0

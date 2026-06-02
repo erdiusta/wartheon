@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Mirror.Discovery;
+using Steamworks;
 
 public class SessionEntryUI : MonoBehaviour
 {
@@ -13,6 +14,16 @@ public class SessionEntryUI : MonoBehaviour
     public bool isJoinable { get; private set; }
     public ServerResponse BoundResponse { get; private set; }
     public bool HasResponse { get; private set; }
+
+    // STEAM
+    public CSteamID SteamLobbyID { get; private set; }
+    public bool HasSteamLobby { get; private set; }
+
+    public void BindSteamLobby(CSteamID lobbyId)
+    {
+        SteamLobbyID = lobbyId;
+        HasSteamLobby = true;
+    }
 
     public void Initialize(string title, string info, bool joinable)
     {

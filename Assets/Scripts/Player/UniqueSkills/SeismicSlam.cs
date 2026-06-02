@@ -121,7 +121,7 @@ public class SeismicSlam : MonoBehaviour
 
                                 if (healthAuthority.CurrentHealth <= 0)
                                 {
-                                    player.NetAuth.Server_ExpGain(player.NetAuth.netIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork.netIdentity);
+                                    player?.NetAuth.Server_ExpGain(player.NetAuth.netIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork?.netIdentity);
                                 }
                             }
                         }

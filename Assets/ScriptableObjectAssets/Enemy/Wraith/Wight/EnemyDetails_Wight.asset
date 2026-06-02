@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Wight
   m_EditorClassIdentifier: 
   enemyName: Wight
-  enemyDetails: Undead. Can Curse. Light Elemental Bias.
+  enemyDetails: Undead. Can Curse.
   enemyCategory: 18
   enemyPrefab: {fileID: 7183228443647751644, guid: b97145c398bcdd942ad02f278a54b393, type: 3}
   enemyType: 0

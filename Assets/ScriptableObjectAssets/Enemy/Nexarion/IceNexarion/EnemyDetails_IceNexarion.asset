@@ -12,11 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
   m_Name: EnemyDetails_IceNexarion
   m_EditorClassIdentifier: 
-  guid: ac348e832c119834bb367f3f6589fdbb
-  previousEnemyPrefab: {fileID: 7183228443647751644, guid: bb2ec961eef45f141b2dd2d6c7e7b2d6, type: 3}
   enemyName: Ice Nexarion
   enemyDetails: A Demonic Creature With Firing Multiple Ice Projectiles. Can Freeze.
-    Water Elemental Bias.
   enemyCategory: 34
   enemyPrefab: {fileID: 7183228443647751644, guid: bb2ec961eef45f141b2dd2d6c7e7b2d6, type: 3}
   enemyType: 0
@@ -36,12 +33,7 @@ MonoBehaviour:
   elementalForgeRate: 0
   enemyMinionDetails: {fileID: 0}
   physicalResistance: 0
-  fireResistance: -0.1
-  waterResistance: 0.2
-  airResistance: 0
-  earthResistance: 0
-  lightResistance: 0
-  darkResistance: 0
+  magicResistance: 0
   hasShield: 0
   deflectChance: 0
   isImmuneToBleeding: 0
@@ -89,9 +81,7 @@ MonoBehaviour:
   healthDrainChance: 0
   hasBlindDamage: 0
   blindChance: 0
-  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2.5
-  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 2.8784673, g: 0.2579758, b: 0.39025292, a: 0}
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
@@ -117,8 +107,6 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: c3413b0ad50f98a4ba7edfccd5230ccf, type: 2}
     minDamageAmount: 14
     maxDamageAmount: 19
-  isImmuneAfterHit: 1
-  hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
   primaryPassiveItemsByLevelList:

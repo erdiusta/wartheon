@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Multiplayer_es
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: es
+  m_SharedData: {fileID: 11400000, guid: 56ba8a05c5fb88c47b502ddcba2a2228, type: 2}
+  m_Metadata:
+    m_Items:
+    - rid: 106885763574530162
+  m_TableData:
+  - m_Id: 7566757888
+    m_Localized: Multijugador
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81927573504
+    m_Localized: Volver
+    m_Metadata:
+      m_Items: []
+  - m_Id: 110792773632
+    m_Localized: Crear partida
+    m_Metadata:
+      m_Items: []
+  - m_Id: 142732398592
+    m_Localized: Actualizar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 173946408960
+    m_Localized: Unirse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3168859820032
+    m_Localized: "\xA1Bienvenido de nuevo, {PlayerName}! Buscando partidas..."
+    m_Metadata:
+      m_Items:
+      - rid: 106885763574530162
+  references:
+    version: 2
+    RefIds:
+    - rid: 106885763574530162
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 3168859820032

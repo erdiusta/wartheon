@@ -195,7 +195,7 @@ public static class ServerMeleeCombat
 
                             if (enemyHealthAuthority.CurrentHealth <= 0)
                             {
-                                damageDealerPlayer.NetAuth.Server_ExpGain(damageDealerPlayer.NetAuth.netIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork.netIdentity);
+                                damageDealerPlayer?.NetAuth.Server_ExpGain(damageDealerPlayer.NetAuth.netIdentity, levelBeforeKillingEnemy, enemy.enemyNetwork?.netIdentity);
                             }
                         }
 

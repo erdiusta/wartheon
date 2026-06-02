@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: SinglePlayer Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: SinglePlayer
+  m_TableCollectionNameGuidString: 9c3e7b0a6ce9ea746930365e41027e7b
+  m_Entries:
+  - m_Id: 15200391168
+    m_Key: SINGLEPLAYER_BACK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 156309360640
+    m_Key: SINGLEPLAYER_START_JOURNEY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 211825168384
+    m_Key: SINGLEPLAYER_PLAY_TUTORIAL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270797082624
+    m_Key: SINGLEPLAYER_SELECT
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 106885763574530134
+  references:
+    version: 2
+    RefIds:
+    - rid: 106885763574530134
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1780335483454

@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
   m_Name: EnemyDetails_Sprite
   m_EditorClassIdentifier: 
-  guid: 7aa412ee6da8d0e45a512e28444b322f
-  previousEnemyPrefab: {fileID: 7183228443647751644, guid: d74ea718e8c9891418f5804ac317edcb, type: 3}
   enemyName: Sprite
-  enemyDetails: A Water Variation and Stronger Version of Pixie. Can blind and stun.
+  enemyDetails: 'A Water Variation and Stronger Version of Pixie. '
   enemyCategory: 10
   enemyPrefab: {fileID: 7183228443647751644, guid: d74ea718e8c9891418f5804ac317edcb, type: 3}
   enemyType: 0
@@ -35,12 +33,7 @@ MonoBehaviour:
   elementalForgeRate: 0.2
   enemyMinionDetails: {fileID: 0}
   physicalResistance: 0
-  fireResistance: 0
-  waterResistance: 0
-  airResistance: 0
-  earthResistance: 0
-  lightResistance: 0
-  darkResistance: 0
+  magicResistance: 0
   hasShield: 0
   deflectChance: 0
   isImmuneToBleeding: 0
@@ -88,9 +81,7 @@ MonoBehaviour:
   healthDrainChance: 0
   hasBlindDamage: 1
   blindChance: 0.1
-  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
-  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 0.88713354, g: 0.9622642, b: 0.013616921, a: 0}
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
@@ -116,8 +107,6 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: c3413b0ad50f98a4ba7edfccd5230ccf, type: 2}
     minDamageAmount: 16
     maxDamageAmount: 20
-  isImmuneAfterHit: 1
-  hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
   primaryPassiveItemsByLevelList:

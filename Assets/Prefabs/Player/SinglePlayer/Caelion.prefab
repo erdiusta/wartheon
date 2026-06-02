@@ -1094,6 +1094,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6379600830697570183, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6379600830697570183, guid: 404b0e325b696c743ae9df4ebb65e813, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}

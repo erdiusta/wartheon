@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Blightpump
   m_EditorClassIdentifier: 
   enemyName: Blightpump
-  enemyDetails: Horrifying Pumpkin. Can Curse. Earth Elemental Bias.
+  enemyDetails: 'Horrifying Pumpkin. Can Curse. '
   enemyCategory: 30
   enemyPrefab: {fileID: 7183228443647751644, guid: bab7df63f2c5b9b408bc54ee8951a129, type: 3}
   enemyType: 0

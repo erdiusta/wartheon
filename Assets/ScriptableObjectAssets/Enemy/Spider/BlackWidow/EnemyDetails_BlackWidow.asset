@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_BlackWidow
   m_EditorClassIdentifier: 
   enemyName: Black Widow
-  enemyDetails: Stronger than Spider. Can Poison. Earth Elemental Bias.
+  enemyDetails: Stronger than Spider. Can Poison.
   enemyCategory: 17
   enemyPrefab: {fileID: 7183228443647751644, guid: d45f52343d7aff846a5fc9a6d45cc9f4, type: 3}
   enemyType: 0

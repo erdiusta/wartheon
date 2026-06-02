@@ -7,7 +7,9 @@ public class InputManager : SingletonMonobehaviour<InputManager>
 {
     public static int cachedLevelIndex = 1;
 
-    public static bool GameplayInputEnabled { get; private set; }
+    public static bool GameplayInputEnabled { get; set; }
+
+    public static bool SceneTransitionLocked;
 
     public static bool TutorialEnabled
     {
@@ -27,6 +29,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
                 specialSkillTwoDisabled = true;
                 specialSkillThreeDisabled = true;
                 switchDisabled = true;
+                pauseDisabled = true;
             }
             else
             {
@@ -40,6 +43,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
                 specialSkillTwoDisabled = false;
                 specialSkillThreeDisabled = false;
                 switchDisabled = false;
+                pauseDisabled = false;
             }
         }
     }
@@ -58,6 +62,7 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     public static bool specialSkillTwoDisabled;
     public static bool specialSkillThreeDisabled;
     public static bool switchDisabled;
+    public static bool pauseDisabled;
 
     static InputDevice currentDevice;
     public InputActionAsset actions;
@@ -104,16 +109,6 @@ public class InputManager : SingletonMonobehaviour<InputManager>
     protected override void Awake()
     {
         base.Awake();
-    }
-
-    private void OnEnable()
-    {
-        tooltip.action.performed += OnShowTooltipPerformed;
-    }
-
-    private void OnDisable()
-    {
-        tooltip.action.performed -= OnShowTooltipPerformed;
     }
 
     private void Update()
@@ -172,37 +167,6 @@ public class InputManager : SingletonMonobehaviour<InputManager>
                 currentDevice = Gamepad.current;
             }
         }
-    }
-
-    public void OnShowTooltipPerformed(InputAction.CallbackContext context)
-    {
-        //if (!context.performed) return;
-
-        //if (EventSystem.current.currentSelectedGameObject == null) return;
-
-        //Slot currentSlot = EventSystem.current.currentSelectedGameObject.GetComponent<Slot>();
-
-        //if (currentSlot != null && currentSlot.equippedTransform.childCount > 0)
-        //{
-        //    if (currentSlot.tooltipRect != null)
-        //    {
-        //        bool isActive = currentSlot.tooltipRect.gameObject.activeSelf;
-
-        //        // Toggle tooltip
-        //        currentSlot.tooltipRect.gameObject.SetActive(!isActive);
-
-        //        if (!isActive)
-        //        {
-        //            currentSlot.UpdateTooltipPanelInfo();
-        //            Slot.currentOpenTooltip = currentSlot.tooltipRect.gameObject;
-        //        }
-        //        else
-        //        {
-        //            if (Slot.currentOpenTooltip == currentSlot.tooltipRect)
-        //                Slot.currentOpenTooltip = null;
-        //        }
-        //    }
-        //}
     }
 
     public bool AnyNonTooltipInputPressed()

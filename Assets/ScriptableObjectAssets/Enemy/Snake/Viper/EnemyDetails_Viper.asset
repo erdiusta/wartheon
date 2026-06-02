@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Viper
   m_EditorClassIdentifier: 
   enemyName: Viper
-  enemyDetails: A Basic Venomous Snake. Earth Elemental Bias.
+  enemyDetails: A Basic Venomous Snake.
   enemyCategory: 12
   enemyPrefab: {fileID: 7183228443647751644, guid: 904881d400f1631449a2d444c2338eb7, type: 3}
   enemyType: 0

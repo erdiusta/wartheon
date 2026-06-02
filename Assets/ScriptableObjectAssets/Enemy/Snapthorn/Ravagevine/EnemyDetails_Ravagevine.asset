@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_Ravagevine
   m_EditorClassIdentifier: 
   enemyName: Ravagevine
-  enemyDetails: A Carnivorous Plant. Stronger than Snapthorn. Earth elemental bias.
-    Can Poison and Acid.
+  enemyDetails: A Carnivorous Plant. Stronger than Snapthorn.  Can Poison and Acid.
   enemyCategory: 15
   enemyPrefab: {fileID: 7183228443647751644, guid: b88660872eecf66428c001321949e06c, type: 3}
   enemyType: 0

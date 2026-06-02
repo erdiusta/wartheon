@@ -4050,6 +4050,7 @@ Transform:
   - {fileID: 8745834850824341161}
   - {fileID: 4004782066121772485}
   - {fileID: 3500401469860301189}
+  - {fileID: 4653125101229353185}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &675014890003861297
@@ -4110,6 +4111,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10123fe5dbb5d2c42948fb98a697ab0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  roomNetData:
+    roomId: 
+    templateId: 
+    roomCombatState: 0
+    lowerBounds: {x: 0, y: 0}
+    upperBounds: {x: 0, y: 0}
+    templateLowerBounds: {x: 0, y: 0}
+    templateUpperBounds: {x: 0, y: 0}
+    spawnPositions: []
+    enemiesByLevel: []
+    enemySpawnParameters: []
+    doorways: []
+    isPositioned: 0
+    isShopRoom: 0
+    isCombatRoom: 0
+    isChestRoom: 0
+    isBossRoom: 0
+    isBossFoyer: 0
+    isEntrance: 0
+    isCorridor: 0
+    isCorridorEW: 0
+    isCorridorNS: 0
+    isLit: 0
+    isClearedOfEnemies: 0
+    isPreviouslyVisited: 0
+    shopRoomGoodsCreated: 0
+    currentBossCategory: 0
+    bossSpawned: 0
+  isMultiplayer: 0
   grid: {fileID: 0}
   groundTilemap: {fileID: 0}
   decoration1Tilemap: {fileID: 0}
@@ -4122,6 +4153,7 @@ MonoBehaviour:
   roomColliderBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  enemySpawner: {fileID: 0}
   environmentGameObject: {fileID: 539270169103656000}
   roomObstaclesList: []
   northMask: {fileID: 1139374382413556517}
@@ -10772,6 +10804,52 @@ TilemapRenderer:
   m_Mode: 0
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
+--- !u!1 &6330349765920412523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4653125101229353185}
+  - component: {fileID: 5379369776593693947}
+  m_Layer: 13
+  m_Name: EnemySpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4653125101229353185
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6330349765920412523}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3715206211872746492}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5379369776593693947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6330349765920412523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a516fffa867304f479f60dec649ab1ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bossEnemyName: 0
+  instantiatedRoom: {fileID: 0}
 --- !u!1 &8055467234330930971
 GameObject:
   m_ObjectHideFlags: 0

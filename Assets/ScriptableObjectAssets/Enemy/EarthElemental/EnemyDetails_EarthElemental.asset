@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDetails_EarthElemental
   m_EditorClassIdentifier: 
   enemyName: Earth Elemental
-  enemyDetails: Element from nature. Can Poison.
+  enemyDetails: Element from nature.
   enemyCategory: 32
   enemyPrefab: {fileID: 7183228443647751644, guid: 35b4fb0bcd9176a46a3de4f0d120b1be, type: 3}
   enemyType: 0
