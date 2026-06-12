@@ -15,9 +15,56 @@ MonoBehaviour:
   m_GroupName: Localization-Assets-Shared
   m_GUID: d2619bc51a8059d4581d4c7051b21800
   m_SerializeEntries:
+  - m_GUID: 0698a343fccb6d2488741873da8f3dbc
+    m_Address: Assets/Localization/StringTables/UniqueSkills/Nymara/New Table Shared
+      Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0b4fd6cc96f1a0e48aa5d1bd5ecc5c44
+    m_Address: Assets/Localization/StringTables/UniqueSkills/Nyveran/New Table 1
+      Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 13e06ddf14422114db18d0d4b9e7e1a9
+    m_Address: Assets/Localization/StringTables/PauseMenu/PauseMenu Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2a04ad1c3a7b46948893168896b80bf0
+    m_Address: Assets/Localization/StringTables/UniqueSkills/Morven/New Table Shared
+      Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a0b3aff9f220ff49afcb8ed25627f61
+    m_Address: Assets/Localization/StringTables/UniqueSkills/Karnag/New Table Shared
+      Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4833fe000c0b5a646be22b3791eab17a
+    m_Address: Assets/Localization/StringTables/MainMenu/Controls/Controls Shared
+      Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f517eaeed0482147a85684a25637be6
+    m_Address: Assets/Localization/StringTables/UniqueSkills/Nyxa/New Table Shared
+      Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 56ba8a05c5fb88c47b502ddcba2a2228
     m_Address: Assets/Localization/StringTables/MainMenu/Multiplayer/Multiplayer
       Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58172971b4a2de34982bf28b61e3323a
+    m_Address: Assets/Localization/StringTables/MainMenu/Settings/Settings Shared
+      Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -27,13 +74,37 @@ MonoBehaviour:
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a213e99987d26c442b433735450272f2
+    m_Address: Assets/Localization/StringTables/UniqueSkills/Caelion/UniqueSkillsCaelion
+      Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dabe71744b3ca5a4189b6a1b89977993
     m_Address: Assets/Localization/StringTables/MainMenu/MainMenu Shared Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e4bf09c1df701f44884d5c56838f2380
+    m_Address: Assets/Localization/StringTables/MainMenu/Multiplayer/MultiplayerLobby/MultiplayerLobby
+      Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9674d2f8c57a484aa869b86776621e5
+    m_Address: Assets/Localization/StringTables/UniqueSkills/Kynara/New Table Shared
+      Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fb25ba9167107754bb13e51ad4e80db6
     m_Address: Assets/Localization/StringTables/EnemyDescription Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fdef0f421e4db53409e7cbc7e9cf49a9
+    m_Address: Assets/Localization/StringTables/UniqueSkills/Mycara/New Table Shared
+      Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

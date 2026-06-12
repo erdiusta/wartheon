@@ -1526,7 +1526,8 @@ MonoBehaviour:
     isClearedOfEnemies: 0
     isPreviouslyVisited: 0
     shopRoomGoodsCreated: 0
-    isRoomReady: 0
+    currentBossCategory: 0
+    bossSpawned: 0
   isMultiplayer: 0
   grid: {fileID: 0}
   groundTilemap: {fileID: 0}
@@ -1540,6 +1541,7 @@ MonoBehaviour:
   roomColliderBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  enemySpawner: {fileID: 0}
   environmentGameObject: {fileID: 539270169103656000}
   roomObstaclesList: []
   northMask: {fileID: 6551256375862825736}
@@ -18164,6 +18166,10 @@ PrefabInstance:
     - target: {fileID: 5693136729584463025, guid: d15b41537ffdebd4a8c0e40707db6f19, type: 3}
       propertyPath: m_Name
       value: PracticeDummy
+      objectReference: {fileID: 0}
+    - target: {fileID: 5974726485221923512, guid: d15b41537ffdebd4a8c0e40707db6f19, type: 3}
+      propertyPath: m_fontAsset
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8488949779595396650, guid: d15b41537ffdebd4a8c0e40707db6f19, type: 3}
       propertyPath: m_LocalPosition.x

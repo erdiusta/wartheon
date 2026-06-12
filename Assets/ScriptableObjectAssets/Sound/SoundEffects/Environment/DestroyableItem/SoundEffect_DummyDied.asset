@@ -16,7 +16,8 @@ MonoBehaviour:
   soundName: 0
   soundPrefab: {fileID: 5744890745976271322, guid: 351b222aa5235c74c9db158d597ceb5e, type: 3}
   soundPrefabMP: {fileID: 5744890745976271322, guid: e2969d6382294e24c89e231883f8a14b, type: 3}
-  soundEffectClips: []
+  soundEffectClips:
+  - {fileID: 8300000, guid: c950486349a5ccb4fa41204a4120cf9a, type: 3}
   soundEffectPitchRandomVariationMin: 0.7
   soundEffectPitchRandomVariationMax: 1
   soundEffectVolume: 0.6

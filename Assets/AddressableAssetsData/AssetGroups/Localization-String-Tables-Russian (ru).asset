@@ -15,8 +15,80 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-Russian (ru)
   m_GUID: e5a4d30b44bd1d94d889c3ed6328da49
   m_SerializeEntries:
+  - m_GUID: 0ccac82d7ca8a8c4fba521a55320460e
+    m_Address: UniqueSkillsMycara_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2062d38de892c254d877fe5ef9a751d5
+    m_Address: UniqueSkillsMorven_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2966fa9fb2a47184099c21bc0a0730c0
+    m_Address: MultiplayerLobby_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2bd7e50e7ca24f4469681344d9d11790
+    m_Address: Controls_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 379bfa48edb0b444197146841cad309e
+    m_Address: UniqueSkillsCaelion_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5289c4c8c40b9d644bef5b7b70329040
+    m_Address: UniqueSkillsNymara_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5726b3b647b54f3418fd36424412f203
+    m_Address: Settings_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5fc467064362cea4aa71988e14bc0af8
+    m_Address: UniqueSkillsNyveran_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 68507e406b63dbe47a87e86f5fea217c
     m_Address: Multiplayer_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82e2f6125b992b04388999c696294e07
+    m_Address: UniqueSkillsKynara_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8552f970d2e106d41a056ef0ba5265e0
+    m_Address: UniqueSkillsKarnag_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9436eb58dfae5741a2d8d61ca557812
+    m_Address: PauseMenu_ru
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d4e5f584c86082b49a8b7a7d94bad0c3
+    m_Address: UniqueSkillsNyxa_ru
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-ru

@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Settings_tr
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: tr
+  m_SharedData: {fileID: 11400000, guid: 58172971b4a2de34982bf28b61e3323a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 12914495488
+    m_Localized: Ayarlar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 828253638656
+    m_Localized: "G\xF6r\xFCnt\xFC"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 884692193280
+    m_Localized: Ekran Modu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 937808859136
+    m_Localized: Dikey Senkronizasyon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 981215711232
+    m_Localized: "Yenileme H\u0131z\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1033183137792
+    m_Localized: Ses
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1075948261376
+    m_Localized: "M\xFCzik Sesi"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1131036250112
+    m_Localized: Ses Efektleri
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154629210112
+    m_Localized: Oyun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1193019674624
+    m_Localized: Dil
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1234430038016
+    m_Localized: Dinamik Kamera Takibi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1314482524160
+    m_Localized: Geri
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8924061470720
+    m_Localized: "Son \u0130\u015Fleme"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9960960528384
+    m_Localized: "\xC7\xF6z\xFCn\xFCrl\xFCk"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16094895247360
+    m_Localized: "\u0130smini Gir"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16201925496832
+    m_Localized: Tamam
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

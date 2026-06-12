@@ -1174,13 +1174,4 @@ public class EnemyAI : MonoBehaviour
         enemy.aiRigidbody2D.canMove = true;
         enemy.aiRigidbody2D.speed = enemy.currentMoveSpeed;
     }
-
-    #region Validation
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(enemyDetails), enemyDetails);
-    }
-#endif
-    #endregion Validation
 }

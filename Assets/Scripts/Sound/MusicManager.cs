@@ -13,7 +13,8 @@ public class MusicManager : SingletonMonobehaviour<MusicManager>
 
     MusicType currentMusicType;
     int currentLevel = -1;
-    bool hasMusicPlaying;
+
+    [HideInInspector] public bool hasMusicPlaying;
 
     protected override void Awake()
     {

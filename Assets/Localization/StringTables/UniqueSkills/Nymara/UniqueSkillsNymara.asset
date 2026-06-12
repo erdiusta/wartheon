@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: UniqueSkillsNymara
+  m_EditorClassIdentifier: 
+  m_SharedTableData: {fileID: 11400000, guid: 0698a343fccb6d2488741873da8f3dbc, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: 8d63c2abc5328c04b9afa9239a079bb9, type: 2}
+  - {fileID: 11400000, guid: 297ef32f32ff6c94a8eafad1aa2cc5fc, type: 2}
+  - {fileID: 11400000, guid: 7df15d85a639fbb4c9fe3e765ef7790d, type: 2}
+  - {fileID: 11400000, guid: 8d664b8668ebc4f4cbbc3aa4992de40c, type: 2}
+  - {fileID: 11400000, guid: 8d5e9e2f047c7044dbf85bad603bb77d, type: 2}
+  - {fileID: 11400000, guid: 5289c4c8c40b9d644bef5b7b70329040, type: 2}
+  - {fileID: 11400000, guid: 111cabcb26563ab49b14eea1dcaf830b, type: 2}
+  - {fileID: 11400000, guid: 938bc3d84f4670a4eadf5390357ede5c, type: 2}
+  m_Extensions: []
+  m_Group: String Table
+  references:
+    version: 2
+    RefIds: []

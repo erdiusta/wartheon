@@ -1064,7 +1064,7 @@ public class MeleeAttackMainHand : MonoBehaviour
 
         if (!shieldBash && !isBloodDrain && !isCullTheMeek && !isSheerCold && !isDontBlink)
         {
-            weapon.weaponStats.onCooldown = true;
+            if(attackShape == AttackShape.None) player.onCooldown = false;
 
             player.animatePlayer.SetAttackAnimationParameters();
             player.animSync?.CmdPlayAttack(player.LastAim, player.LastAttackdir);
@@ -1217,7 +1217,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (hand == MeleeHand.MainHand) mainHandAttackBlocked = true;
         else if (hand == MeleeHand.OffHand) offHandAttackBlocked = true;
 
-        StartCoroutine(DelayAttack(weapon, hand, shieldBash, isBloodDrain, isCullTheMeek, isSheerCold, isDontBlink, isWhisperSlice));
+        StartCoroutine(DelayAttack(player, weapon, hand, shieldBash, isBloodDrain, isCullTheMeek, isSheerCold, isDontBlink, isWhisperSlice));
 
         if (shieldBash)
         {
@@ -1278,7 +1278,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         receiveMeleeDamage.TakeMeleeDamage(damageDone, ctx);
     }
 
-    IEnumerator DelayAttack(Weapon weapon, MeleeHand hand,bool shieldBash = false, bool bloodDrain = false, bool isCullTheMeek = false, 
+    IEnumerator DelayAttack(Player player, Weapon weapon, MeleeHand hand,bool shieldBash = false, bool bloodDrain = false, bool isCullTheMeek = false, 
         bool isSheerCold = false, bool isDontBlink = false, bool isWhisperSlice = false)
     {
         bool isSpecialMove = shieldBash || bloodDrain || isCullTheMeek || isSheerCold || isDontBlink || isWhisperSlice;
@@ -1286,7 +1286,7 @@ public class MeleeAttackMainHand : MonoBehaviour
         if (isSpecialMove) yield return new WaitForSeconds(1f);
         else yield return new WaitForSeconds(weapon.weaponStats.weaponCooldownDuration * (1 - player.additionalAttackCoolDownModifier));
 
-        weapon.weaponStats.onCooldown = false;
+        player.onCooldown = false;
 
         if (hand == MeleeHand.MainHand) mainHandAttackBlocked = false;
         else if (hand == MeleeHand.OffHand) offHandAttackBlocked = false;

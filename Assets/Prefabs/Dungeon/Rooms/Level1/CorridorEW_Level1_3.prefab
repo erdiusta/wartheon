@@ -1072,7 +1072,8 @@ MonoBehaviour:
     isClearedOfEnemies: 0
     isPreviouslyVisited: 0
     shopRoomGoodsCreated: 0
-    isRoomReady: 0
+    currentBossCategory: 0
+    bossSpawned: 0
   isMultiplayer: 0
   grid: {fileID: 0}
   groundTilemap: {fileID: 0}
@@ -1086,6 +1087,7 @@ MonoBehaviour:
   roomColliderBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  enemySpawner: {fileID: 0}
   environmentGameObject: {fileID: 539270169103656000}
   roomObstaclesList: []
   northMask: {fileID: 0}

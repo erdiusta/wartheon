@@ -15,8 +15,44 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-Spanish (es)
   m_GUID: 4d40a3bb848943445b40d22b666492d5
   m_SerializeEntries:
+  - m_GUID: 111cabcb26563ab49b14eea1dcaf830b
+    m_Address: UniqueSkillsNymara_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1574866cbbf68e2469dafac9fed28e8a
+    m_Address: UniqueSkillsCaelion_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2de55b2b45d385d448fe689b6346203e
+    m_Address: Settings_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41e1e4fdf26174844b8af2c4fed65a33
+    m_Address: UniqueSkillsNyveran_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4deaa132afb6de84996fa85094939796
     m_Address: MainMenu_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 70e630853a1e31b4e9c1c9ffda533688
+    m_Address: UniqueSkillsKynara_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 762473e21d61acd4986bcd31e58955de
+    m_Address: Controls_es
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-es
@@ -27,14 +63,50 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-es
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 803b958eedc1ae348acf4b6affacaabf
+    m_Address: UniqueSkillsNyxa_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 85267ae381fb0ac4fb4961fd1ae17c0b
     m_Address: EnemyDescription_es
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-es
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8588dbb9353286d4b9180ca42d797fca
+    m_Address: UniqueSkillsMycara_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8db00dfbf9269a94a9e2f2d49ee861c3
+    m_Address: UniqueSkillsMorven_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a0575f361bd406b42815c089381ce849
+    m_Address: UniqueSkillsKarnag_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b557ed21d170d84418c7aa8db10ae6e2
+    m_Address: MultiplayerLobby_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d39321ddcef4c7441ae91238630ce1f5
     m_Address: SinglePlayer_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d63f60d804cb5ae45a6fb19a482d98b0
+    m_Address: PauseMenu_es
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-es

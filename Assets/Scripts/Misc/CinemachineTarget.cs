@@ -1,7 +1,9 @@
-using UnityEngine;
-using Unity.Cinemachine;
+using Mirror;
+using Mirror.Examples.BenchmarkIdle;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Cinemachine;
+using UnityEngine;
 
 [RequireComponent(typeof(CinemachineTargetGroup))]
 public class CinemachineTarget : MonoBehaviour
@@ -154,6 +156,10 @@ public class CinemachineTarget : MonoBehaviour
 
     private void StaticEventHandler_OnNPCInteractionStarted(NpcInteractionStartedArgs npcInteractionStartedArgs)
     {
+        uint netID = (!NetworkServer.active && !NetworkClient.active) ? 0 : GameManager.Instance.GetLocalPlayer().NetAuth.netId;
+
+        if (netID != npcInteractionStartedArgs.netId) return;
+
         npcZoomTriggered = true;
 
         // Cache npc vendor object to added cinemachine target reference

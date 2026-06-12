@@ -75,7 +75,7 @@ public class FlameLotusNetwork : NetworkBehaviour
 
         RpcPlayAnimation(undo: true);
 
-        owner.NetAuth.TargetAbsoluteZeroFinished(owner.NetAuth.connectionToClient, slotIndex, ownerNetId);
+        owner.NetAuth.TargetFlameLotusFinished(owner.NetAuth.connectionToClient, slotIndex, ownerNetId);
 
         yield return new WaitForSeconds(0.5f); // animation fade
 

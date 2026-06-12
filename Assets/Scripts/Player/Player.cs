@@ -443,6 +443,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public float additionalBlindChance = 0f;
     [HideInInspector] public float additionalSlowChance = 0f;
 
+    [HideInInspector] public bool onCooldown;
+
     [HideInInspector] public uint netId;
 
     float testAdditionArmor = 0.1f;

@@ -90,7 +90,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
 
         if (player.activeWeapon.GetCurrentOffHandWeapon() != null)
         {
-            if (player.activeWeapon.GetCurrentOffHandWeapon().weaponStats.onCooldown)
+            if (player.onCooldown)
             {
                 cooldownTimer -= Time.deltaTime;
             }
@@ -173,7 +173,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     private void WeaponFired(Weapon weapon)
     {
         //UpdateProjectileText(weapon);
-        UpdateCooldownBar(weapon);
+        UpdateCooldownBar(GameManager.Instance.GetLocalPlayer(), weapon);
     }
 
     /// <summary>
@@ -267,15 +267,17 @@ public class OffHandWeaponStatusUI : MonoBehaviour
     /// <summary>
     /// Update cooldown bar
     /// </summary>
-    void UpdateCooldownBar(Weapon currentWeapon)
+    void UpdateCooldownBar(Player player, Weapon currentWeapon)
     {
-        cooldownRoutine = StartCoroutine(CooldownRoutine(currentWeapon));
+        if (!player.IsLocal) return;
+
+        cooldownRoutine = StartCoroutine(CooldownRoutine(player, currentWeapon));
     }
 
     /// <summary>
     /// Run cooldown routine
     /// </summary>
-    IEnumerator CooldownRoutine(Weapon currentWeapon)
+    IEnumerator CooldownRoutine(Player player, Weapon currentWeapon)
     {
         if (currentWeapon.ItemSlotStatus == ItemSlotStatus.OffHand)
         {
@@ -284,7 +286,7 @@ public class OffHandWeaponStatusUI : MonoBehaviour
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(currentWeapon.weaponStats.weaponTitle);
 
-        while (currentWeapon.weaponStats.onCooldown)
+        while (player.onCooldown)
         {
             // Update cooldown bar
             float barFill = weaponDetails.isMeleeWeapon ? cooldownTimer / 

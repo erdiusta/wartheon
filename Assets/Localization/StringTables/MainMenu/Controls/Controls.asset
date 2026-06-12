@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: Controls
+  m_EditorClassIdentifier: 
+  m_SharedTableData: {fileID: 11400000, guid: 4833fe000c0b5a646be22b3791eab17a, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: ae392666b0fc6734893fb40a095e1d82, type: 2}
+  - {fileID: 11400000, guid: 41df2a9fa77354c408f7c5d65455f05d, type: 2}
+  - {fileID: 11400000, guid: 049f1d15c15ebec45a9f84a4d9ca7132, type: 2}
+  - {fileID: 11400000, guid: 497676f0df806684cae1942d1a476462, type: 2}
+  - {fileID: 11400000, guid: 09a8bc35297574f49a56e854af5249f8, type: 2}
+  - {fileID: 11400000, guid: 2bd7e50e7ca24f4469681344d9d11790, type: 2}
+  - {fileID: 11400000, guid: 762473e21d61acd4986bcd31e58955de, type: 2}
+  - {fileID: 11400000, guid: dd9a7b207bfc6c247bda1a91833fa13e, type: 2}
+  m_Extensions: []
+  m_Group: String Table
+  references:
+    version: 2
+    RefIds: []

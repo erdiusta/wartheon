@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [System.Serializable]
-public struct RoomNetData : IEquatable<RoomNetData>
+public struct RoomNetData
 {
     public string roomId;
     public string templateId;

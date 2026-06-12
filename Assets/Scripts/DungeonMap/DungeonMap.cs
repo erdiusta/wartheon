@@ -65,19 +65,41 @@ public class DungeonMap : MonoBehaviour
 
         if (collider2DArray == null || collider2DArray.Length == 0) return;
 
-        // Check if any of the colliders are a room
-        foreach (Collider2D collider2D in collider2DArray)
+        if (!NetworkServer.active && !NetworkClient.active)
         {
-            if (collider2D.GetComponent<InstantiatedRoom>() != null)
+            // Check if any of the colliders are a room
+            foreach (Collider2D colliderSP in collider2DArray)
             {
-                InstantiatedRoom instantiatedRoom = collider2D.GetComponent<InstantiatedRoom>();
-
-                // If clicked room is clear of enemies and previously visited then move player to the room
-                if (instantiatedRoom.room.isClearedOfEnemies && instantiatedRoom.room.isPreviouslyVisited)
+                if (colliderSP.GetComponent<InstantiatedRoom>() != null)
                 {
-                    // Move player to room
-                    StartCoroutine(MovePlayerToRoom(worldPosition, instantiatedRoom.room));
-                    break;
+                    InstantiatedRoom instantiatedRoom = colliderSP.GetComponent<InstantiatedRoom>();
+
+                    // If clicked room is clear of enemies and previously visited then move player to the room
+                    if (instantiatedRoom.room.isClearedOfEnemies && instantiatedRoom.room.isPreviouslyVisited)
+                    {
+                        // Move player to room
+                        StartCoroutine(MovePlayerToRoom(worldPosition, instantiatedRoom.room, default));
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Check if any of the colliders are a room
+            foreach (Collider2D colliderMP in collider2DArray)
+            {
+                if (colliderMP.GetComponent<RoomNetworkRoot>() != null)
+                {
+                    RoomNetworkRoot roomRoot = colliderMP.GetComponent<RoomNetworkRoot>();
+
+                    // If clicked room is clear of enemies and previously visited then move player to the room
+                    if (roomRoot.roomNetData.isClearedOfEnemies && roomRoot.roomNetData.isPreviouslyVisited)
+                    {
+                        // Move player to room
+                        StartCoroutine(MovePlayerToRoom(worldPosition, null, roomRoot.roomNetData));
+                        break;
+                    }
                 }
             }
         }
@@ -88,10 +110,10 @@ public class DungeonMap : MonoBehaviour
     /// <summary>
     /// Move the player to the selected room
     /// </summary>
-    IEnumerator MovePlayerToRoom(Vector3 worldPosition, Room room)
+    IEnumerator MovePlayerToRoom(Vector3 worldPosition, Room room, RoomNetData roomNetData)
     {
         // Call room changed event
-        StaticEventHandler.CallRoomChangedEvent(room);
+        StaticEventHandler.CallRoomChangedEvent(room, roomNetData);
 
         // Fade out screen to black immediately
         yield return StartCoroutine(GameManager.Instance.Fade(0f, 1f, 0f, Color.black));

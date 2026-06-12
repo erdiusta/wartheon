@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: UniqueSkillsMorven
+  m_EditorClassIdentifier: 
+  m_SharedTableData: {fileID: 11400000, guid: 2a04ad1c3a7b46948893168896b80bf0, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: 41fc9d0045ebd384d9fc53d6c9e55a6f, type: 2}
+  - {fileID: 11400000, guid: dec01efcd45a1ad4699242aa50d2f44c, type: 2}
+  - {fileID: 11400000, guid: badbd7db980174c43b70a79e06186eeb, type: 2}
+  - {fileID: 11400000, guid: c08fe5befd93fe04b8a2299f469a3b69, type: 2}
+  - {fileID: 11400000, guid: d87699f4a2395194ca20d18ccd8fe67f, type: 2}
+  - {fileID: 11400000, guid: 2062d38de892c254d877fe5ef9a751d5, type: 2}
+  - {fileID: 11400000, guid: 8db00dfbf9269a94a9e2f2d49ee861c3, type: 2}
+  - {fileID: 11400000, guid: 50a656fa39c6a664dacd8d2417cafcba, type: 2}
+  m_Extensions: []
+  m_Group: String Table
+  references:
+    version: 2
+    RefIds: []

@@ -40,26 +40,18 @@ public class EnemyVisualNetwork : NetworkBehaviour
         if(!isServer) enemy.rb2D.simulated = false;
     }
 
-    //private void InitEmemyVisual_Client()
-    //{
-    //    if (enemy == null || health == null) return;
-
-    //    health.spriteRenderer = enemy.spriteRendererArray[0];
-
-    //    if (enemyNetwork.isImmuneAfterHit)
-    //    {
-    //        health.isImmuneAfterHit = true;
-    //        health.immunityTime = enemyNetwork.hitImmunityTime;
-    //    }
-    //}
-
     [Server]
     public void ServerInitMaterialize(EnemyDetailsSO details)
     {
         materializeDuration = details.enemyMaterializeTime;
         materalizeColor = details.enemyMaterializeColor;
         isMaterializing = true;
-        enemy.health.healthAuthority.IsDamageable = false;
+
+        IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(enemy.gameObject);
+        healthAuthority.IsDamageable = false;
+        enemy.GetComponent<PolygonCollider2D>().enabled = false;
+        EnableEnemy(false);
+
 
         StartCoroutine(ServerMaterializeRoutine());
     }
@@ -69,9 +61,14 @@ public class EnemyVisualNetwork : NetworkBehaviour
     {
         yield return new WaitForSeconds(materializeDuration);
 
-        enemy.health.healthAuthority.IsDamageable = true;
+        IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(enemy.gameObject);
+        healthAuthority.IsDamageable = true;
+
+        enemy.GetComponent<PolygonCollider2D>().enabled = true;
 
         isMaterializing = false;
+        enemy.initializationCompleted = true;
+        EnableEnemy(true);
     }
 
     private void OnMaterializeChanged(bool oldVal, bool newVal)
@@ -86,18 +83,7 @@ public class EnemyVisualNetwork : NetworkBehaviour
     {
         yield return null;
 
-        EnableEnemy(false);
-
         yield return StartCoroutine(materializeEffect.MaterializeRoutine(materalizeColor, materializeDuration, enemy.spriteRendererArray));
-
-        if (isServer)
-        {
-            enemy.initializationCompleted = true;
-            isMaterializing = false;
-            enemy.health.healthAuthority.IsDamageable = true;
-        }
-
-        EnableEnemy(true);
     }
 
     private void EnableEnemy(bool isEnabled)

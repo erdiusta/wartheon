@@ -98,7 +98,7 @@ public class PlayerNetworkAuthority : NetworkBehaviour
     {
         base.OnStartClient();
 
-
+        InputManager.TutorialEnabled = false;
     }
 
     public override void OnStartLocalPlayer()
@@ -244,17 +244,31 @@ public class PlayerNetworkAuthority : NetworkBehaviour
         {
             StaticEventHandler.CallWeaponDroppedEventForBook(SlotType.WeaponOffHand);
         }
-    }   
-
+    }
 
     [ClientRpc]
-    public void RpcTeleportTo(Vector3 targetPos)
+    public void RpcTeleportTo(Vector3 targetPos, RoomNetData room, uint initiatorNetId)
     {
+        if (netId == initiatorNetId) return;
+
         player.rb2D.linearVelocity = Vector3.zero;
         player.rb2D.angularVelocity = 0f;
         player.rb2D.position = targetPos;
 
         Physics2D.SyncTransforms();
+
+        StartCoroutine(PlayMusicRoutine(room));
+
+        Debug.Log("TELEPORT HAPPENED!");
+    }
+
+    IEnumerator PlayMusicRoutine(RoomNetData room)
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        MusicManager.Instance.hasMusicPlaying = false;
+
+        MusicManager.Instance.RefreshMusicMP(room);
     }
 
     [TargetRpc]
@@ -368,8 +382,27 @@ public class PlayerNetworkAuthority : NetworkBehaviour
     [ClientRpc]
     public void RpcExpGain(NetworkIdentity netIdentity, int levelBeforeKillingEnemy, NetworkIdentity enemyNetIdentity, int enemyExpPoints)
     {
+        if (netIdentity == null)
+        {
+            Debug.LogError("RpcExpGain: netIdentity is null");
+            return;
+        }
+
+        if (enemyNetIdentity == null)
+        {
+            Debug.LogError("RpcExpGain: enemyNetIdentity is null");
+            return;
+        }
+
         Player player = netIdentity.GetComponent<Player>();
         Enemy enemy = enemyNetIdentity.GetComponent<Enemy>();
+
+
+        if (enemy == null)
+        {
+            Debug.LogError("RpcExpGain: enemy is null");
+            return;
+        }
 
         IEnemyCombatData enemyCombatData = enemy.GetComponent<IEnemyCombatData>();
 
@@ -423,6 +456,12 @@ public class PlayerNetworkAuthority : NetworkBehaviour
                 player.manaEvent.CallManaChangedEvent(player.mana.currentMana);
             }
         }
+    }
+
+    [Command]
+    public void CmdNextLevel()
+    {
+        GameSessionManager.Instance.ServerPlayerReadyForNextLevel(netIdentity);
     }
 
     public override void OnStopClient()

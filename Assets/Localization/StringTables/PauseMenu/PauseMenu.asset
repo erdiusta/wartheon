@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: PauseMenu
+  m_EditorClassIdentifier: 
+  m_SharedTableData: {fileID: 11400000, guid: 13e06ddf14422114db18d0d4b9e7e1a9, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: 8ed33fa4280bfc74f9a38c44cd68d3d6, type: 2}
+  - {fileID: 11400000, guid: 6bf40ffaf3fba06478a31550fa3a47ba, type: 2}
+  - {fileID: 11400000, guid: 76c709a1298e88e4ab6f2e28e58fea69, type: 2}
+  - {fileID: 11400000, guid: d404a7f692f9eaa468080cebb5641526, type: 2}
+  - {fileID: 11400000, guid: db64bc177565f1744b664ace3ef8b53e, type: 2}
+  - {fileID: 11400000, guid: b9436eb58dfae5741a2d8d61ca557812, type: 2}
+  - {fileID: 11400000, guid: d63f60d804cb5ae45a6fb19a482d98b0, type: 2}
+  - {fileID: 11400000, guid: 6a956ef73a72cc54e924f3fef2e6b05f, type: 2}
+  m_Extensions: []
+  m_Group: String Table
+  references:
+    version: 2
+    RefIds: []

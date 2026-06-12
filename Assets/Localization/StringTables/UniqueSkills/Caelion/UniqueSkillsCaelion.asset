@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: UniqueSkillsCaelion
+  m_EditorClassIdentifier: 
+  m_SharedTableData: {fileID: 11400000, guid: a213e99987d26c442b433735450272f2, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: a59c42c3628cfe044b7daf95d9b234ef, type: 2}
+  - {fileID: 11400000, guid: 6a556b7960f9b45469a8d48652ee756f, type: 2}
+  - {fileID: 11400000, guid: 910fdd2469e193742bc119823dcfae42, type: 2}
+  - {fileID: 11400000, guid: b8156cdddcc904d40a392ab0ded797ca, type: 2}
+  - {fileID: 11400000, guid: 2c12b96e9ecd79b43892f0a4dd0d765e, type: 2}
+  - {fileID: 11400000, guid: 379bfa48edb0b444197146841cad309e, type: 2}
+  - {fileID: 11400000, guid: 1574866cbbf68e2469dafac9fed28e8a, type: 2}
+  - {fileID: 11400000, guid: 4b903939b0be64d4e98552033a1d68d2, type: 2}
+  m_Extensions: []
+  m_Group: String Table
+  references:
+    version: 2
+    RefIds: []

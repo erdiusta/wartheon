@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Settings_fr
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fr
+  m_SharedData: {fileID: 11400000, guid: 58172971b4a2de34982bf28b61e3323a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 12914495488
+    m_Localized: "Param\xE8tres"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 828253638656
+    m_Localized: "Vid\xE9o"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 884692193280
+    m_Localized: Mode d'affichage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 937808859136
+    m_Localized: Synchronisation verticale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 981215711232
+    m_Localized: "Taux de rafra\xEEchissement"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1033183137792
+    m_Localized: Audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1075948261376
+    m_Localized: Volume de la musique
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1131036250112
+    m_Localized: Volume des effets sonores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154629210112
+    m_Localized: Jeu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1193019674624
+    m_Localized: Langue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1234430038016
+    m_Localized: "Suivi dynamique de la cam\xE9ra"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1314482524160
+    m_Localized: Retour
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8924061470720
+    m_Localized: Post-traitement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9960960528384
+    m_Localized: "R\xE9solution"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16094895247360
+    m_Localized: Entrez votre nom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16201925496832
+    m_Localized: OK
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

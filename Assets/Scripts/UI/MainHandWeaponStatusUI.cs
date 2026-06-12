@@ -1,6 +1,5 @@
 using System.Collections;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -89,7 +88,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
 
         if (player.activeWeapon.GetCurrentMainHandWeapon() != null)
         {
-            if (player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown)
+            if (player.onCooldown)
             {
                 cooldownTimer -= Time.deltaTime;
             }
@@ -151,7 +150,7 @@ public class MainHandWeaponStatusUI : MonoBehaviour
             if (ReferenceEquals(player.activeWeapon.GetCurrentOffHandWeapon(), weapon)) return;
         }
     
-        UpdateCooldownBar(weapon);
+        UpdateCooldownBar(player, weapon);
     }
 
     /// <summary>
@@ -204,22 +203,22 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     /// <summary>
     /// Update cooldown bar
     /// </summary>
-    void UpdateCooldownBar(Weapon currentWeapon)
+    void UpdateCooldownBar(Player player, Weapon currentWeapon)
     {
-        cooldownRoutine = StartCoroutine(CooldownRoutine(currentWeapon));
+        cooldownRoutine = StartCoroutine(CooldownRoutine(player, currentWeapon));
     }
 
     /// <summary>
     /// Run cooldown routine
     /// </summary>
-    IEnumerator CooldownRoutine(Weapon currentWeapon)
+    IEnumerator CooldownRoutine(Player player, Weapon currentWeapon)
     {
         if (currentWeapon.ItemSlotStatus == ItemSlotStatus.MainHand)
         {
             cooldownBarParent.gameObject.SetActive(true);
         }
 
-        while (currentWeapon.weaponStats.onCooldown)
+        while (player.onCooldown)
         {
             float barFill = 0f;
 
@@ -243,16 +242,4 @@ public class MainHandWeaponStatusUI : MonoBehaviour
     {
         weaponImage.sprite = noWeaponSprite;
     }
-
-    #region Validation
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponImage), weaponImage);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(projectileRemainingText), projectileRemainingText);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponNameText), weaponNameText);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(barImage), barImage);
-    }
-#endif
-    #endregion
 }

@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: MultiplayerLobby_tr
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: tr
+  m_SharedData: {fileID: 11400000, guid: e4bf09c1df701f44884d5c56838f2380, type: 2}
+  m_Metadata:
+    m_Items:
+    - rid: 106885829669683296
+  m_TableData:
+  - m_Id: 1363346165760
+    m_Localized: "{PlayerName}'\u0131n  Lobisi"
+    m_Metadata:
+      m_Items:
+      - rid: 106885829669683296
+  - m_Id: 1701507731456
+    m_Localized: "Karakter Se\xE7"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1822815391744
+    m_Localized: Metin gir...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1884337442816
+    m_Localized: "G\xF6nder"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1994026881024
+    m_Localized: "Oyunu Ba\u015Flat"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2066764500992
+    m_Localized: "Lobiden Ayr\u0131l"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12775464341504
+    m_Localized: "Haz\u0131r"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12833177964544
+    m_Localized: "Haz\u0131r De\u011Fil"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15490177273856
+    m_Localized: "Karakter Se\xE7ilmedi"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 106885829669683296
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 1363346165760

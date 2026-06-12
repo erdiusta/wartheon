@@ -1,10 +1,7 @@
 using Mirror;
-using Pathfinding.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -401,7 +398,11 @@ public class PlayerControl : MonoBehaviour
             GameManager.Instance.glossaryBookOpen = false;
 
             // Reset the time scale after the animation is done
-            if (!InputManager.TutorialEnabled) Time.timeScale = 1f;
+            if (!NetworkServer.active && !NetworkClient.active)
+            {
+                if (!InputManager.TutorialEnabled) Time.timeScale = 1f;
+            }
+
             GameManager.Instance.isBookClosing = false;
 
             // Fade in the gameplay UI
@@ -445,7 +446,10 @@ public class PlayerControl : MonoBehaviour
                     // First trigger the animation (it uses UnscaledTime, so it's safe to call here)
                     GameManager.Instance.bookView.GetComponent<Animator>().SetTrigger(Settings.zoomIn);
 
-                    if (!InputManager.TutorialEnabled) Time.timeScale = 0f;
+                    if (!NetworkServer.active && !NetworkClient.active)
+                    {
+                        if (!InputManager.TutorialEnabled) Time.timeScale = 0f;
+                    }
 
                     // Finally, hide gameplay UI
                     GameManager.Instance.gameplayUI.FadeGameplayUI(GameManager.Instance.gameplayUI.canvasGroup, 0f, 0.1f); // Transparent
@@ -474,7 +478,10 @@ public class PlayerControl : MonoBehaviour
                     // First trigger the animation (it uses UnscaledTime, so it's safe to call here)
                     GameManager.Instance.bookView.GetComponent<Animator>().SetTrigger(Settings.zoomIn);
 
-                    if (!InputManager.TutorialEnabled) Time.timeScale = 0f;
+                    if (!NetworkServer.active && !NetworkClient.active)
+                    {
+                        if (!InputManager.TutorialEnabled) Time.timeScale = 0f;
+                    }
 
                     // Finally, hide gameplay UI
                     GameManager.Instance.gameplayUI.FadeGameplayUI(GameManager.Instance.gameplayUI.canvasGroup, 0f, 0.1f); // Transparent
@@ -787,7 +794,7 @@ public class PlayerControl : MonoBehaviour
                 if (mainHand.weaponStats.weaponClass == WeaponClass.Bow || mainHand.weaponStats.weaponClass == WeaponClass.Crossbow ||
                     mainHand.weaponStats.weaponClass == WeaponClass.Staff)
                 {
-                    if (!mainHand.weaponStats.onCooldown)
+                    if (!player.onCooldown)
                     {
                         //player.meleeAttackMainHand.IsAttacking = true;
 
@@ -851,6 +858,8 @@ public class PlayerControl : MonoBehaviour
 
     private void HealthEvent_OnHealthChanged(HealthEvent healthEvent, HealthEventArgs healthEventArgs)
     {
+        if (!player.IsLocal) return;
+
         // Trigger reset prechager mechanism in case a hit taken during the precharge
         player.fireWeaponEvent.CallFireWeaponEvent(false, false, AimDirection.Right, 0f, 0f, Vector3.zero, false, ProjectileKind.Default, default, player.netId, targetNetId: 0, null);
     }
@@ -2014,6 +2023,9 @@ public class PlayerControl : MonoBehaviour
             {
                 Debug.Log("NOT ENOUGH MANA MY LORD!");
             }
+
+            // Reset IsAttacking flag to be safe side after skill is used
+            player.meleeAttackMainHand.IsAttacking = false; 
         }
     }
 

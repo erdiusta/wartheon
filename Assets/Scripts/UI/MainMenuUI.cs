@@ -788,6 +788,7 @@ public class MainMenuUI : SingletonMonobehaviour<MainMenuUI>
     {
         await LocalizationSettings.InitializationOperation.Task;
 
+        // MAIN MENU
         singlePlayerButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.GetText("MainMenu", "MENU_SINGLE_PLAYER");
         multiplayerButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.GetText("MainMenu", "MENU_MULTIPLAYER");
         controlsButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.GetText("MainMenu", "MENU_CONTROLS");  

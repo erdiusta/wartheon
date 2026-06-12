@@ -72,5 +72,5 @@ MonoBehaviour:
     manaReserveCost: 0
     potency: 0
     notes: 
-  currentActiveLevel: 1
+  currentActiveLevel: 3
   startingLevel: 1

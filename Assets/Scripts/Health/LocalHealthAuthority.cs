@@ -18,6 +18,12 @@ public class LocalHealthAuthority: MonoBehaviour, IHealthAuthority
     public void ApplyDamage(int amount, DamageContext ctx)
     {
         health.ApplyDamageInternal(amount, ctx);
-        health.ApplyReplicatedHealth(CurrentHealth, amount, ctx);
+
+        bool isDead = health.IsDead();
+
+        if (!isDead)
+        {
+            health.ApplyReplicatedHealth(CurrentHealth, amount, ctx);
+        }
     }
 }

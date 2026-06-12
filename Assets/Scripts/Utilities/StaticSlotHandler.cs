@@ -383,8 +383,6 @@ public struct MoveResultSP
     public int fromIndex;
     public int toIndex;
     public int setIndex;
-
-    public bool nyveranDualWieldFailed;
 }
 
 public struct MoveResultMP
@@ -397,8 +395,6 @@ public struct MoveResultMP
     public int fromIndex;
     public int toIndex;
     public int setIndex;
-
-    public bool nyveranDualWieldFailed;
 }
 
 public struct SwapResultSP

@@ -148,6 +148,7 @@ public class WartheonNetworkManager : NetworkManager
                 if (networkDiscovery != null) networkDiscovery.StopDiscovery();
                 break;
             case MultiplayerBackend.Steam:
+                SteamLobbyManager.Instance.LeaveCurrentLobby();
                 break;
             default:
                 break;
@@ -155,6 +156,7 @@ public class WartheonNetworkManager : NetworkManager
 
         characterLocks.Clear();
 
+        Debug.Log("ON STOP HOST!");
         base.OnStopHost();
     }
 
@@ -162,7 +164,27 @@ public class WartheonNetworkManager : NetworkManager
     {
         base.OnStopServer();
 
+        Debug.Log("ON STOP SERVER");
         GameSessionState.ResetSession();
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+
+        switch (Settings.Backend)
+        {
+            case MultiplayerBackend.Lan:
+                if (networkDiscovery != null) networkDiscovery.StopDiscovery();
+                break;
+            case MultiplayerBackend.Steam:
+                SteamLobbyManager.Instance.LeaveCurrentLobby();
+                break;
+            default:
+                break;
+        }
+
+        Debug.Log("ON STOP CLIENT");
     }
 
     public override void OnServerDisconnect(NetworkConnectionToClient conn)

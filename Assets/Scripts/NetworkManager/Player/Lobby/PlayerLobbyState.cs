@@ -116,6 +116,22 @@ public class PlayerLobbyState : NetworkBehaviour
     }
 
     [Command]
+    public void CmdSendChatMessage(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message)) return;
+
+        if (message.Length > 200) message = message[..200];
+
+        RpcReceiveChatMessage(playerName, message);
+    }
+
+    [ClientRpc]
+    private void RpcReceiveChatMessage(string sender, string message)
+    {
+        MultiplayerLobbyUI.Instance?.ReceiveChatMessage(sender, message);
+    }
+
+    [Command]
     public void CmdRequestStartGame()
     {
         // Only host can start

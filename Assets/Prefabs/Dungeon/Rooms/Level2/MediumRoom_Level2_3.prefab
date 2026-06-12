@@ -3338,7 +3338,8 @@ MonoBehaviour:
     isClearedOfEnemies: 0
     isPreviouslyVisited: 0
     shopRoomGoodsCreated: 0
-    isRoomReady: 0
+    currentBossCategory: 0
+    bossSpawned: 0
   isMultiplayer: 0
   grid: {fileID: 0}
   groundTilemap: {fileID: 0}
@@ -26365,8 +26366,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a516fffa867304f479f60dec649ab1ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bossEnemy: {fileID: 0}
-  isBossInstantiated: 0
+  bossEnemyName: 0
+  instantiatedRoom: {fileID: 0}
 --- !u!1 &8538092304890282775
 GameObject:
   m_ObjectHideFlags: 0

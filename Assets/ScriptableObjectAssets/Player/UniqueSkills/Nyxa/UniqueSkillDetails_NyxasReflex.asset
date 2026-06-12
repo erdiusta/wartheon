@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Nyxa's Reflex
   activeSkill: 40
+  passiveSkill: 8
   activeUniqueSkillSprite: {fileID: 21300000, guid: 65ec2ccfefdde2a488e46d0f7725417e, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 0}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}

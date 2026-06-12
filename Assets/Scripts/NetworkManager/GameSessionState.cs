@@ -7,7 +7,6 @@ public static class GameSessionState
 
     public static void ResetSession()
     {
-
         WartheonNetworkManager.Instance.connectionToCharacterIndex.Clear();
         WartheonNetworkManager.Instance.characterLocks.Clear();
     }

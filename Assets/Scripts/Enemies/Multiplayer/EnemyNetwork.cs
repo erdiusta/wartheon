@@ -164,6 +164,7 @@ public class EnemyNetwork : NetworkBehaviour, IEnemyCombatData, IEnemyMovementDa
     [Server]
     public void ServerInitialize(EnemyDetailsSO details, int spawnIndex, DungeonLevelSO dungeonLevel)
     {
+        enemy.GetComponent<PolygonCollider2D>().enabled = false;
         PopulateEnemyDataIntoSyncVars(details);
         animSpeed = enemy.currentMoveSpeed / Settings.baseSpeedForEnemyAnimations;
         enemy.EnemyInitialization(details, spawnIndex, dungeonLevel, isMultiplayer: true);

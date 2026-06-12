@@ -45,7 +45,6 @@ public struct WeaponStats
     public bool firingCompletedIfWeaponIsPrecharged;
     public bool firingStoppedPrematurelyIfWeaponIsPrecharged;
     public bool onPrecharge;
-    public bool onCooldown;
     public int activePrice;
     public bool isThrowingAxeWeapon;
 

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Grace Of The Unscarred
   activeSkill: 40
+  passiveSkill: 1
   activeUniqueSkillSprite: {fileID: 21300000, guid: 20702da12a84f354e9eb42450454cc4b, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 0}
   activeUniqueSkillSoundEffectTwo: {fileID: 0}
@@ -29,51 +30,25 @@ MonoBehaviour:
     manaReserveCost: 0
     potency: 0
     notes: 
-  - activeUniqueSkillDetails: 'Removes shield for 5 seconds, increases speed and
-      dealt damage.
-
-
-      Base Attack Damage: 150%
-
-      Base Speed Boost: +2
-
-      Base
-      Mana Cost: 5
-
-      Base Cooldown: Instant
-
-      Base Effective Duration:
-      5'
+  - activeUniqueSkillDetails: +20% to all resistances when not taking damage after
+      8 seconds.
     cooldown: 0
-    effectiveDuration: 5
+    effectiveDuration: 0
     recastCooldown: 0
     recastWindowDuration: 0
     recastRepeatCount: 0
-    manaCost: 5
+    manaCost: 0
     manaReserveCost: 0
     potency: 0
     notes: 
-  - activeUniqueSkillDetails: 'Removes shield for 5 seconds, increases speed and
-      dealt damage.
-
-
-      Base Attack Damage: 160%
-
-      Base Speed Boost: +2
-
-      Base
-      Mana Cost: 5
-
-      Base Cooldown: Instant
-
-      Base Effective Duration:
-      5'
+  - activeUniqueSkillDetails: +20% to all resistances when not taking damage after
+      8 seconds.
     cooldown: 0
-    effectiveDuration: 5
+    effectiveDuration: 0
     recastCooldown: 0
     recastWindowDuration: 0
     recastRepeatCount: 0
-    manaCost: 5
+    manaCost: 0
     manaReserveCost: 0
     potency: 0
     notes: 

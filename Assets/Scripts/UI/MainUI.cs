@@ -113,7 +113,7 @@ public class MainUI : SingletonMonobehaviour<MainUI>
 
     private void Update()
     {
-        if (InputManager.TutorialEnabled)
+        if (!NetworkServer.active && !NetworkClient.active && InputManager.TutorialEnabled)
         {
             if (TutorialInteraction.Instance.currentTutorialPhase == TutorialPhase.MinimapCheck)
             {

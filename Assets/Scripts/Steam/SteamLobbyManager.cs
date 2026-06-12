@@ -25,7 +25,7 @@ public class SteamLobbyManager : SingletonMonobehaviour<SteamLobbyManager>
 
     public void CreateLobby()
     {
-        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, 4);
+        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, 2);
     }
 
     public void JoinLobby(CSteamID lobbyId)
@@ -77,9 +77,20 @@ public class SteamLobbyManager : SingletonMonobehaviour<SteamLobbyManager>
         CSteamID lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
         string hostAddress = SteamMatchmaking.GetLobbyData(lobbyId, "HostAddress");
 
+        CurrentLobbyId = lobbyId;
+
         if (NetworkServer.active) return;
 
         NetworkManager.singleton.networkAddress = hostAddress;
         NetworkManager.singleton.StartClient();
+    }
+
+    public void LeaveCurrentLobby()
+    {
+        if(CurrentLobbyId != CSteamID.Nil)
+        {
+            SteamMatchmaking.LeaveLobby(CurrentLobbyId);
+            CurrentLobbyId = CSteamID.Nil;
+        }
     }
 }

@@ -15,6 +15,42 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-Chinese (Simplified) (zh)
   m_GUID: 294694f5a4938d1468b2dd14effe5c99
   m_SerializeEntries:
+  - m_GUID: 0a4f4ee0be136c0408c4a57add3c8356
+    m_Address: UniqueSkillsKarnag_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41fc9d0045ebd384d9fc53d6c9e55a6f
+    m_Address: UniqueSkillsMorven_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47737a5bb4d24234f8dbce1ad5f9da14
+    m_Address: UniqueSkillsNyveran_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 56d4890c0b78e8743a277454f79b0ecc
+    m_Address: MultiplayerLobby_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 69a44df23208cc04eb2e934c8f327594
+    m_Address: UniqueSkillsKynara_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b1a7b90164813844a9f3fafafd96894
+    m_Address: Settings_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8794bb976df8c1e4ea4ac03f3f586d63
     m_Address: Multiplayer_zh
     m_ReadOnly: 1
@@ -27,14 +63,50 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-zh
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 892d71db201ec69448f549b4e8202e6a
+    m_Address: UniqueSkillsNyxa_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d63c2abc5328c04b9afa9239a079bb9
+    m_Address: UniqueSkillsNymara_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ed33fa4280bfc74f9a38c44cd68d3d6
+    m_Address: PauseMenu_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a4cc0e68f2887374d9009cb26f76a412
     m_Address: EnemyDescription_zh
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-zh
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a59c42c3628cfe044b7daf95d9b234ef
+    m_Address: UniqueSkillsCaelion_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae392666b0fc6734893fb40a095e1d82
+    m_Address: Controls_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b3e84c8f21fa566439226c200af842c5
     m_Address: SinglePlayer_zh
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb0d5f5258a1d314c802d2eaebcb4b38
+    m_Address: UniqueSkillsMycara_zh
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-zh

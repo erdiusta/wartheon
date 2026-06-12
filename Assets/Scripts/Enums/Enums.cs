@@ -85,6 +85,7 @@ public enum GameState
     engagingEnemies,
     engagingBoss,
     levelCompleted,
+    waitingforNextLevel,
     gameWon,
     gameLost,
     gamePaused,
@@ -229,7 +230,7 @@ public enum DamageOwner
     Environment,
 }
 
-public enum ProjectileType
+public enum ProjectileKindProjectileType
 {
     Normal,
     Laser
@@ -731,6 +732,19 @@ public enum ActiveSkill
     BladeDash,
     Shiruken,
     None
+}
+
+public enum PassiveSkill
+{
+    None,
+    GraceOfTheUnscarred,
+    BloodEagle,
+    PhoenixRising,
+    CloakedPrecision,
+    IceborneVitality,
+    ConductiveTouch,
+    DeadeyesQuiver,
+    NyxasReflex
 }
 
 public enum ChainLightningPhase

@@ -15,8 +15,62 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-English (en)
   m_GUID: 3c448ec17efdf314e8d7ea3bc183d0fa
   m_SerializeEntries:
+  - m_GUID: 07037a2a845db8143ad51968fa10028f
+    m_Address: UniqueSkillsNyveran_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 21cf8b9af4174d842862c3ccf1dcf3f2
+    m_Address: UniqueSkillsKynara_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 27296a804d6d0dc4eaa46ea894b5f29d
     m_Address: EnemyDescription_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 297ef32f32ff6c94a8eafad1aa2cc5fc
+    m_Address: UniqueSkillsNymara_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2a6f3c2c705911b47812578c71291ce8
+    m_Address: UniqueSkillsMycara_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41df2a9fa77354c408f7c5d65455f05d
+    m_Address: Controls_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53651b437db4b734d9ac3f210fd3b234
+    m_Address: MultiplayerLobby_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e93465b98f03e244ba42ee1eef021c0
+    m_Address: UniqueSkillsKarnag_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6a556b7960f9b45469a8d48652ee756f
+    m_Address: UniqueSkillsCaelion_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6bf40ffaf3fba06478a31550fa3a47ba
+    m_Address: PauseMenu_en
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-en
@@ -29,6 +83,24 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c7c30c3a13bdf534cac4683862762745
     m_Address: SinglePlayer_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d307ca481061e7847a8b13eaac06899f
+    m_Address: UniqueSkillsNyxa_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dec01efcd45a1ad4699242aa50d2f44c
+    m_Address: UniqueSkillsMorven_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb4914358b41a2d4c94e07fe2350b3e9
+    m_Address: Settings_en
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-en

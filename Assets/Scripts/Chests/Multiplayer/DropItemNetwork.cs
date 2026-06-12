@@ -82,8 +82,14 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
 
     private void OnInitialize(bool oldValue, bool newValue)
     {
-        if (this == null || gameObject == null) return;
         if (!newValue) return;
+
+        StartCoroutine(DelayInitialize());
+    }
+
+    IEnumerator DelayInitialize()
+    {
+        yield return null;
 
         InitializeVisual();
     }
@@ -211,7 +217,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
         TooltipCheck();
 
         // 4 - NPC / COUNTER LOGIC
-        NpcCounterCheck();
+        NpcCounterCheck(player);
 
         // 5 - PRIMARY PASSIVE
         if (IsPrimaryPassive(player)) return;
@@ -308,7 +314,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
         }
     }
 
-    private void NpcCounterCheck()
+    private void NpcCounterCheck(Player player)
     {
         if (currentLocation == DropItemLocation.Counter)
         {
@@ -318,7 +324,8 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
 
             if (npc != null && npc.npcType == NpcType.Gambler)
             {
-                StaticEventHandler.CallNPCInteractionStartedEvent(npc.npcType);
+                uint netID = (!NetworkServer.active && !NetworkClient.active) ? 0 : player.NetAuth.netId;
+                StaticEventHandler.CallNPCInteractionStartedEvent(npc.npcType, netID);
             }
         }
     }
@@ -600,8 +607,6 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
         {
             GameManager.Instance.nearestDropItemNetwork = null;
             isNearestDropItem = false;
-
-            Debug.Log("It is not the nearest item because object is about to be destroyed.");
         }
     }
 
@@ -614,7 +619,7 @@ public class DropItemNetwork : NetworkBehaviour, IPointerEnterHandler, IPointerE
             case Character.Morven:
                 if (weaponClass == WeaponClass.Dagger) return true; break;
             case Character.Nyveran:
-                if (weaponClass == WeaponClass.Dagger || weaponClass == WeaponClass.Bow || weaponClass == WeaponClass.Crossbow) return true; break;
+                if (weaponClass == WeaponClass.Bow || weaponClass == WeaponClass.Crossbow) return true; break;
             case Character.Karnag:
                 if (weaponClass == WeaponClass.Axe) return true; break;
             case Character.Kynara:

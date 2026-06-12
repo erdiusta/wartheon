@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: UniqueSkillsKarnag
+  m_EditorClassIdentifier: 
+  m_SharedTableData: {fileID: 11400000, guid: 3a0b3aff9f220ff49afcb8ed25627f61, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: 0a4f4ee0be136c0408c4a57add3c8356, type: 2}
+  - {fileID: 11400000, guid: 5e93465b98f03e244ba42ee1eef021c0, type: 2}
+  - {fileID: 11400000, guid: 1b0a226f5d2edb84cb800d9cfc996651, type: 2}
+  - {fileID: 11400000, guid: a2f3498b3dbec3f4f952c3a734ebc631, type: 2}
+  - {fileID: 11400000, guid: 93592e2ca9ad6634f996d2df3a492f44, type: 2}
+  - {fileID: 11400000, guid: 8552f970d2e106d41a056ef0ba5265e0, type: 2}
+  - {fileID: 11400000, guid: a0575f361bd406b42815c089381ce849, type: 2}
+  - {fileID: 11400000, guid: 5f348ca1a5be0734ca4196d923c8610b, type: 2}
+  m_Extensions: []
+  m_Group: String Table
+  references:
+    version: 2
+    RefIds: []

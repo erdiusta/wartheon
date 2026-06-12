@@ -69,13 +69,13 @@ public class FireWeapon : MonoBehaviour
         // Decrease cooldown timer.
         fireRateCooldownTimer -= Time.deltaTime;
 
-        if (player != null)
+        if (player != null && player.isInitialized)
         {
             if (activeWeapon.GetCurrentMainHandWeapon() != null)
             {
-                if (fireRateCooldownTimer < 0 && activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown && !activeWeapon.GetCurrentMainHandWeapon().weaponStats.isMeleeWeapon)
+                if (fireRateCooldownTimer < 0 && player.onCooldown && !activeWeapon.GetCurrentMainHandWeapon().weaponStats.isMeleeWeapon)
                 {
-                    activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = false;
+                    player.onCooldown = false;
                 }
             }
         }
@@ -83,9 +83,9 @@ public class FireWeapon : MonoBehaviour
         {
             if (activeWeapon.GetCurrentMainHandWeapon() != null)
             {
-                if (fireRateCooldownTimer < 0 && activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown)
+                if (fireRateCooldownTimer < 0 && player.onCooldown)
                 {
-                    activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = false;
+                    player.onCooldown = false;
                 }
             }
         }
@@ -193,11 +193,12 @@ public class FireWeapon : MonoBehaviour
             }
 
             // Test if weapon is ready to fire
-            if (IsWeaponReadyToFire() || IsShotASpecialSkill(projectileKind, attackContext))
+            if (IsWeaponReadyToFire(projectileKind) || IsShotASpecialSkill(projectileKind, attackContext))
             {
                 FireProjectile(fire, firePreviousFrame, aimAngle, weaponAimAngle, weaponAimDirectionVector, isLaser: false, projectileKind, attackContext, shootPos, ownerNetId, targetNetId, ownerEnemyForSp);
-                ResetCooldownTimer(attackContext.moravellePhase);
-                ResetPrechargeTimer(firePreviousFrame);
+
+                if(!IsShotASpecialSkill(projectileKind, attackContext)) ResetCooldownTimer(attackContext.moravellePhase);
+                if (!IsShotASpecialSkill(projectileKind, attackContext)) ResetPrechargeTimer(firePreviousFrame);
             }
         }
     }
@@ -249,7 +250,7 @@ public class FireWeapon : MonoBehaviour
                 if (activeWeapon.GetCurrentMainHandWeapon() != null)
                 {
                     activeWeapon.GetCurrentMainHandWeapon().weaponStats.firingStoppedPrematurelyIfWeaponIsPrecharged = true;
-                    activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = false;
+                    player.onCooldown = false;
                 }
             }
             //else
@@ -263,7 +264,7 @@ public class FireWeapon : MonoBehaviour
     /// <summary>
     /// Returns true if the weapon is ready to fire, else returns false.
     /// </summary>
-    private bool IsWeaponReadyToFire()
+    private bool IsWeaponReadyToFire(ProjectileKind projectileKind)
     {
         // If the weapon isn't precharged or is cooling down then return false.
         if (firePrechargeTimer > 0f || fireRateCooldownTimer > 0f) return false;
@@ -287,7 +288,7 @@ public class FireWeapon : MonoBehaviour
         if (!playerGrapple)
         {
             ResetCooldownTimer();
-            activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = true;
+            player.onCooldown = true;
             enemy.isFiring = false; // Allow firing again only after the laser ends
         }
     }
@@ -702,7 +703,7 @@ public class FireWeapon : MonoBehaviour
         }
 
         // Set weapon's onCooldown status to true for triggering Weapon status UI
-        activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = !isLaser && !IsShotASpecialSkill(projectileKind, ctx);
+        player.onCooldown = !isLaser && !IsShotASpecialSkill(projectileKind, ctx);
 
         // Call weapon fired event
         weaponFiredEvent.CallWeaponFiredEvent(activeWeapon.GetCurrentMainHandWeapon(), true);
@@ -763,7 +764,7 @@ public class FireWeapon : MonoBehaviour
         // Reset cooldown timer
         if (player != null)
         {
-            player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.onCooldown = false;
+            player.onCooldown = false;
 
             if (!player.activeWeapon.GetCurrentMainHandWeapon().weaponStats.isMeleeWeapon)
             {
@@ -876,8 +877,16 @@ public class FireWeapon : MonoBehaviour
 
             if (weaponDetails.weaponSwingSoundEffect != null)
             {
-                if (isMultiplayer) NetworkSoundManager.Instance.ServerPlaySound(SoundName.ArrowShot, transform.position);
-                else WorldSoundManager.Instance.PlayWorldSound(weaponDetails.weaponSwingSoundEffect, transform.position);
+                if (weaponDetails.weaponClass == WeaponClass.Staff)
+                {
+                    if (isMultiplayer) NetworkSoundManager.Instance.ServerPlaySound(SoundName.StaffFire, transform.position);
+                    else WorldSoundManager.Instance.PlayWorldSound(weaponDetails.weaponSwingSoundEffect, transform.position);
+                }
+                else
+                {
+                    if (isMultiplayer) NetworkSoundManager.Instance.ServerPlaySound(SoundName.ArrowShot, transform.position);
+                    else WorldSoundManager.Instance.PlayWorldSound(weaponDetails.weaponSwingSoundEffect, transform.position);
+                }
             }
         }
     }

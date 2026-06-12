@@ -129,8 +129,6 @@ public class SpecialMoveUI : MonoBehaviour
             activeSkillOneContainer.GetChild(0).GetComponent<Image>().sprite = player.playersAllActiveUniqueSkills[0].activeUniqueSkillSprite;
             activeSkillTwoContainer.GetChild(0).GetComponent<Image>().sprite = player.playersAllActiveUniqueSkills[1].activeUniqueSkillSprite;
             activeSkillThreeContainer.GetChild(0).GetComponent<Image>().sprite = player.playersAllActiveUniqueSkills[2].activeUniqueSkillSprite;
-
-            Debug.LogError("Skill images are not received at all!");
         }
     }
 

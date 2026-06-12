@@ -129,10 +129,15 @@ public class DropOnDestroy : MonoBehaviour
             InstantiatePassiveItem(primaryPassiveItemDetails, seed);
 
             if (!isMultiplayer) dropItem.transform.SetParent(null);
-
+             
             Vector3 spawnPointDeviation = new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0);
+            Vector3 dropPosition = transform.position + spawnPointDeviation;
 
-            if (isMultiplayer) dropItemNetwork.transform.position += spawnPointDeviation;
+            if (isMultiplayer)
+            {
+                NetworkTransformUnreliable nt = dropItemNetwork.GetComponent<NetworkTransformUnreliable>();
+                nt.ServerTeleport(dropPosition, Quaternion.identity);
+            }
             else dropItem.transform.position += spawnPointDeviation;
 
             if (isMultiplayer) dropItemNetwork.passiveStats.passiveItemType = primaryPassiveItemDetails.passiveItemType;
@@ -279,10 +284,10 @@ public class DropOnDestroy : MonoBehaviour
                 dropItemNetwork.hasSecondaryPassiveDrop = true;
                 dropItemNetwork.dropSourceType = DropSourceType.Enemy;
                 passiveItem = PassiveDropGenerator.CreateRolledInstance(passiveItemDetails, rng);
-            }
 
-            NetworkTransformUnreliable nt = dropItemNetwork.GetComponent<NetworkTransformUnreliable>();
-            nt.ServerTeleport(transform.position, Quaternion.identity);
+                NetworkTransformUnreliable nt = dropItemNetwork.GetComponent<NetworkTransformUnreliable>();
+                nt.ServerTeleport(transform.position, Quaternion.identity);
+            }
 
             dropItemNetwork.currentLocation = DropItemLocation.World;
             dropItemNetwork.passiveItemType = passiveItem.passiveStats.passiveItemType;

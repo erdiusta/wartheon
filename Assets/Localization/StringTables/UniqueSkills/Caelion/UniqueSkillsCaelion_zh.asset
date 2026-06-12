@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UniqueSkillsCaelion_zh
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: zh
+  m_SharedData: {fileID: 11400000, guid: a213e99987d26c442b433735450272f2, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 2151552356352
+    m_Localized: "\u65E0\u75D5\u8005\u4E4B\u6069"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153431404544
+    m_Localized: "\u5730\u9707\u731B\u51FB"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2155054600192
+    m_Localized: "\u52C7\u6C14"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2156564549632
+    m_Localized: "\u76FE\u51FB"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2158468763648
+    m_Localized: "\u7A81\u7834\u9632\u7EBF"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3780527755264
+    m_Localized: "\u5B88\u62A4\u8A93\u8A00"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

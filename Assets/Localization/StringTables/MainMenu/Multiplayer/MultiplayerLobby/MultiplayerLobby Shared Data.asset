@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: MultiplayerLobby Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: MultiplayerLobby
+  m_TableCollectionNameGuidString: e4bf09c1df701f44884d5c56838f2380
+  m_Entries:
+  - m_Id: 1363346165760
+    m_Key: MULTIPLAYER_HEADER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1701507731456
+    m_Key: MULTIPLAYER_CHARACTER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1822815391744
+    m_Key: MULTIPLAYER_PLACEHOLDER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1884337442816
+    m_Key: MULTIPLAYER_SEND
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1994026881024
+    m_Key: MULTIPLAYER_START_GAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2066764500992
+    m_Key: MULTIPLAYER_LEAVE_LOBBY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12775464341504
+    m_Key: MULTIPLAYER_READY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12833177964544
+    m_Key: MULTIPLAYER_NOT_READY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15490177273856
+    m_Key: MULTIPLAYER_NO_CHARACTER
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 106885829669683200
+  references:
+    version: 2
+    RefIds:
+    - rid: 106885829669683200
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1780587327235

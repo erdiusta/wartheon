@@ -66,8 +66,6 @@ public class MovementToPosition : MonoBehaviour
             // Exit early if the velocity is almost zero (player stopped)
             if (rb2D.linearVelocity.magnitude < 0.08f) break;
 
-            Debug.Log("Knocbacking and speed is " + rb2D.linearVelocity.magnitude);
-
             timer += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }

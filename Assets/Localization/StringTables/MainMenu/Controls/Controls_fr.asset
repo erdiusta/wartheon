@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Controls_fr
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fr
+  m_SharedData: {fileID: 11400000, guid: 4833fe000c0b5a646be22b3791eab17a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 8594362368
+    m_Localized: "Contr\xF4les\r\n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4007989055488
+    m_Localized: Vue d'ensemble de la carte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3922790158336
+    m_Localized: Glossaire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3853584142336
+    m_Localized: Roulade d'esquive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3790807994368
+    m_Localized: Parade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3721874608128
+    m_Localized: Interaction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1598592094208
+    m_Localized: "Page Comp\xE9tences et Voie Int\xE9rieure"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1480300138496
+    m_Localized: "Changer d'arme pr\xE9c\xE9dente"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1264482226176
+    m_Localized: Changer d'arme suivante
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1238221688832
+    m_Localized: "Attaque sp\xE9ciale 3"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1181971877888
+    m_Localized: "Attaque sp\xE9ciale 2"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1040699330560
+    m_Localized: "Attaque sp\xE9ciale 1"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 953168400384
+    m_Localized: Attaque normale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 548220932096
+    m_Localized: "D\xE9placement"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 507871727616
+    m_Localized: Retour
+    m_Metadata:
+      m_Items: []
+  - m_Id: 290149601280
+    m_Localized: Manette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 123816087552
+    m_Localized: Clavier et souris
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42483438555136
+    m_Localized: "R\xE9initialiser"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42529529761792
+    m_Localized: "Tout r\xE9initialiser"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

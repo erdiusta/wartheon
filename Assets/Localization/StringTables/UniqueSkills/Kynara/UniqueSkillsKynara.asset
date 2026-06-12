@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: UniqueSkillsKynara
+  m_EditorClassIdentifier: 
+  m_SharedTableData: {fileID: 11400000, guid: e9674d2f8c57a484aa869b86776621e5, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: 69a44df23208cc04eb2e934c8f327594, type: 2}
+  - {fileID: 11400000, guid: 21cf8b9af4174d842862c3ccf1dcf3f2, type: 2}
+  - {fileID: 11400000, guid: 99093f76ef868c640a44ed27a54c3607, type: 2}
+  - {fileID: 11400000, guid: 9d450cd9cdb53fa4dad98a0b1514918b, type: 2}
+  - {fileID: 11400000, guid: 62da512a7c6fdf741bee82abe834dea5, type: 2}
+  - {fileID: 11400000, guid: 82e2f6125b992b04388999c696294e07, type: 2}
+  - {fileID: 11400000, guid: 70e630853a1e31b4e9c1c9ffda533688, type: 2}
+  - {fileID: 11400000, guid: 536ac7093f132a747a5600f34809ae6f, type: 2}
+  m_Extensions: []
+  m_Group: String Table
+  references:
+    version: 2
+    RefIds: []

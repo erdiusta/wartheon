@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401472d473fd26f4a9b007d0720ac21b, type: 3}
   m_Name: EnemyDetails_BatTest
   m_EditorClassIdentifier: 
-  guid: c7357dffce6bf3841acd2367c195bfee
-  previousEnemyPrefab: {fileID: 7183228443647751644, guid: 7596f5089d346ce4c8caaed4e5966e33, type: 3}
   enemyName: Bat - Test
-  enemyDetails: 
+  enemyDetails: Test
   enemyCategory: 0
   enemyPrefab: {fileID: 7183228443647751644, guid: 7596f5089d346ce4c8caaed4e5966e33, type: 3}
   enemyType: 0
@@ -35,12 +33,7 @@ MonoBehaviour:
   elementalForgeRate: 0
   enemyMinionDetails: {fileID: 0}
   physicalResistance: 0
-  fireResistance: 0
-  waterResistance: 0
-  airResistance: 0
-  earthResistance: 0
-  lightResistance: 0
-  darkResistance: 0
+  magicResistance: 0
   hasShield: 0
   deflectChance: 0
   isImmuneToBleeding: 0
@@ -88,9 +81,7 @@ MonoBehaviour:
   healthDrainChance: 0
   hasBlindDamage: 0
   blindChance: 0
-  enemyStandardMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   enemyMaterializeTime: 2
-  enemyMaterializeShader: {fileID: -6465566751694194690, guid: c1aa07c5e74928d4f9a9b388e38de80a, type: 3}
   enemyMaterializeColor: {r: 3.987934, g: 0, b: 0.07809851, a: 0}
   suddenDeathSoundEffect: {fileID: 11400000, guid: 0eb68f75b54af4e49a3eb5af798c2a0c, type: 2}
   getHitSoundEffect: {fileID: 11400000, guid: 59e461a879f446a409c7d538265e0882, type: 2}
@@ -113,8 +104,6 @@ MonoBehaviour:
   - dungeonLevel: {fileID: 11400000, guid: 84e49d076b4c7ad4ea4e56be84fe3264, type: 2}
     enemyHealthAmount: 35
   enemyDamageDetailsArray: []
-  isImmuneAfterHit: 1
-  hitImmunityTime: 0.4
   isHealthBarDisplayed: 0
   hasKnockbackResistance: 0
   primaryPassiveItemsByLevelList:

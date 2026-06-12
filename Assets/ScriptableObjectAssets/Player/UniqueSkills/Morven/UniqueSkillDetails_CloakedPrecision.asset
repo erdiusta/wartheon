@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeUniqueSkillName: Cloaked Precision
   activeSkill: 40
+  passiveSkill: 4
   activeUniqueSkillSprite: {fileID: 21300000, guid: 7fc17332675bb9d4388eabb4939c0444, type: 3}
   activeUniqueSkillSoundEffectOne: {fileID: 11400000, guid: 8a7dcf5a060dd3948a083cf594a04bf6, type: 2}
   activeUniqueSkillSoundEffectTwo: {fileID: 11400000, guid: 03826c86544c84b47938552393e9a08b, type: 2}

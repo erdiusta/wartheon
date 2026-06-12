@@ -2,21 +2,26 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 public class MultiplayerLobbyUI : SingletonMonobehaviour<MultiplayerLobbyUI>
 {
-    [Header("Header")]
-    [SerializeField] TMP_Text headerText;
-
     [Header("Buttons")]
     [SerializeField] Button startGameButton;
     [SerializeField] CanvasGroup startButtonCanvasGroup;
     [SerializeField] Button leaveLobbyButton;
 
-    [Header("Chat")]
+    [Header("Texts")]
+    [SerializeField] TMP_Text headerText;
+    [SerializeField] TMP_Text selectYourCharacterText;
     [SerializeField] TMP_InputField chatInput;
+    [SerializeField] TMP_Text chatPlaceholderText;
     [SerializeField] TMP_Text chatLog;
+    [SerializeField] TMP_Text sendText;
+    [SerializeField] TMP_Text startGameText;
+    [SerializeField] TMP_Text leaveLobbyText;
+    [SerializeField] ScrollRect scrollRect;
 
     [Header("Player list")]
     [SerializeField] Transform playerListRoot;
@@ -36,6 +41,18 @@ public class MultiplayerLobbyUI : SingletonMonobehaviour<MultiplayerLobbyUI>
     private void Start()
     {
         chatInput.onSubmit.AddListener(_ => OnChatSubmit());
+    }
+
+    private void OnEnable()
+    {
+        LocalizationManager.LanguageChanged += OnLanguageChanged;
+
+        RefreshLocalizedTexts();
+    }
+
+    private void OnDisable()
+    {
+        LocalizationManager.LanguageChanged -= OnLanguageChanged;
     }
 
     public void Initialize(bool host)
@@ -165,15 +182,27 @@ public class MultiplayerLobbyUI : SingletonMonobehaviour<MultiplayerLobbyUI>
     {
         if (string.IsNullOrWhiteSpace(chatInput.text)) return;
 
-        AppendChatMessage("You", chatInput.text);
+        PlayerLobbyState localPlayer = GetLocalPlayer();
+
+        if (localPlayer != null)
+        {
+            localPlayer.CmdSendChatMessage(chatInput.text);
+        }
 
         chatInput.SetTextWithoutNotify("");
         chatInput.ActivateInputField();
     }
 
-    private void AppendChatMessage(string sender, string message)
+    public void ReceiveChatMessage(string sender, string message)
     {
         chatLog.text += $"{sender}: {message}\n";
+
+        chatLog.ForceMeshUpdate();
+        Canvas.ForceUpdateCanvases();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(chatLog.rectTransform);
+
+        scrollRect.verticalNormalizedPosition = 0f;
     }
     #endregion
 
@@ -247,9 +276,31 @@ public class MultiplayerLobbyUI : SingletonMonobehaviour<MultiplayerLobbyUI>
     }
     #endregion
 
+    private void OnLanguageChanged(Language language)
+    {
+        RefreshLocalizedTexts();
+    }
+
+    private void RefreshLocalizedTexts()
+    {
+        headerText.text = LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_HEADER",
+            arguments: new object[] { new { PlayerName = PlayerProfile.DisplayName } });
+
+        selectYourCharacterText.text = LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_CHARACTER");
+        chatPlaceholderText.text = LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_PLACEHOLDER");
+        sendText.text = LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_SEND");
+        startGameText.text = LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_START_GAME");
+        leaveLobbyText.text = LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_LEAVE_LOBBY");
+    }
+
     public void ExitMultiplayerLobby()
     {
         GameSessionState.ResetSession();
+
+        if (Settings.Backend == MultiplayerBackend.Steam)
+        {
+            SteamLobbyManager.Instance.LeaveCurrentLobby();
+        }
 
         // IMPORTANT: delegate close to MainMenuUI
         MainMenuUI.Instance.ExitMultiplayerLobby();

@@ -329,26 +329,17 @@ public class EnemySpawner : MonoBehaviour
             // Update music for room
             MusicManager.Instance.PlayMusic(instantiatedRoom.room.ambientMusic, 0.2f, 2f);
 
-            // Trigger room enemies defeated event
+            // Trigger room enemies defeated event - For summons
             StaticEventHandler.CallRoomEnemiesDefeatedEvent(instantiatedRoom.room, default, GameManager.Instance.GetLocalPlayer().summonedEnemies);
         }
     }
     #endregion
 
     #region MP - OnRoomChanged
-    public void RoomChangedMP(ref RoomNetData roomNetData)
+    public void RoomChangedMP(RoomNetData roomNetData)
     {
-        //// If player is null add it to dynamicGameObjectsInScene
-        //if (player == null)
-        //{
-        //    player = GameManager.Instance.GetPlayer();
-        //    SceneObjectsManager.dynamicGameObjectsInScene.Add(player.gameObject);
-        //}
-
         currentRoomNetworkRoot = instantiatedRoom.GetComponentInParent<RoomNetworkRoot>();
-
         currentRoomNetData = roomNetData;
-        roomNetData.roomCombatState = RoomCombatState.Engaged;
 
         enemiesSpawnedSoFar = 0;
         currentEnemyCount = 0;
@@ -361,7 +352,10 @@ public class EnemySpawner : MonoBehaviour
         if (currentRoomNetData.isCorridorEW || currentRoomNetData.isCorridorNS || currentRoomNetData.isEntrance) return;
 
         // If the room has already been defeated then return
-        if (currentRoomNetData.isClearedOfEnemies) return;
+        if (currentRoomNetData.roomCombatState == RoomCombatState.Cleared) return;
+
+        currentRoomNetworkRoot.roomNetData = roomNetData;
+        currentRoomNetData = roomNetData;
 
         int dungeonLevelIndex = GameSessionManager.Instance.selectedDungeonLevelIndex + 1;
 
@@ -369,12 +363,12 @@ public class EnemySpawner : MonoBehaviour
         if (!currentRoomNetData.TryGetEnemySpawnParameters(dungeonLevelIndex, out roomEnemySpawnParametersNet))
         {
             // No spawn parameters - room is auto-cleared
-            RoomNetData data = currentRoomNetworkRoot.roomNetData;
-            data.isClearedOfEnemies = true;
-            data.roomCombatState = RoomCombatState.Cleared;
+            roomNetData.roomCombatState = RoomCombatState.Cleared;
+            currentRoomNetworkRoot.roomNetData.roomCombatState = RoomCombatState.Cleared;
+            currentRoomNetData.roomCombatState = RoomCombatState.Cleared;
 
-            currentRoomNetworkRoot.roomNetData = data;
-            currentRoomNetData = currentRoomNetworkRoot.roomNetData;
+            currentRoomNetworkRoot.roomNetData = roomNetData;
+            currentRoomNetData = roomNetData;
 
             return;
         }
@@ -398,16 +392,10 @@ public class EnemySpawner : MonoBehaviour
         {
             if (roomNetData.isBossRoom)
             {
-                //GameSessionManager.Instance.previousGameState = GameState.playingLevel;
-                //GameSessionManager.Instance.gameState = GameState.engagingBoss;
-
                 GameSessionManager.Instance.SetGameState(GameState.engagingBoss);
             }
             else
             {
-                //GameSessionManager.Instance.previousGameState = GameState.playingLevel;
-                //GameSessionManager.Instance.gameState = GameState.engagingEnemies;
-
                 GameSessionManager.Instance.SetGameState(GameState.engagingEnemies);
             }
         }
@@ -571,38 +559,44 @@ public class EnemySpawner : MonoBehaviour
             RoomNetData data = currentRoomNetworkRoot.roomNetData;
             data.isClearedOfEnemies = true;
             data.roomCombatState = RoomCombatState.Cleared;
+            currentRoomNetworkRoot.roomNetData.roomCombatState = RoomCombatState.Cleared;
+            currentRoomNetData.roomCombatState = RoomCombatState.Cleared;
 
             currentRoomNetworkRoot.roomNetData = data;
-            instantiatedRoom.roomNetData = currentRoomNetworkRoot.roomNetData;
-            currentRoomNetData = currentRoomNetworkRoot.roomNetData;
+            instantiatedRoom.roomNetData = data;
+            currentRoomNetData = data;
 
-            currentRoomNetworkRoot.Server_UnlockDoors();
-
-            StaticEventHandler.CallEnemiesClearedEvent();
-
-            // Set game state
-            if (GameSessionManager.Instance.gameState == GameState.engagingEnemies)
-            {
-                GameSessionManager.Instance.SetGameState(GameState.playingLevel);
-            }
-            else if (GameSessionManager.Instance.gameState == GameState.engagingBoss)
-            {
-                // Are there more dungeon levels then
-                if (GameSessionManager.Instance.selectedDungeonLevelIndex < GameSessionManager.Instance.dungeonLevelList.Count - 1)
-                {
-                    GameSessionManager.Instance.SetGameState(GameState.levelCompleted);
-                }
-                else
-                {
-                    GameSessionManager.Instance.SetGameState(GameState.gameWon);
-                }
-            }
-
-            // Trigger room enemies defeated event
-            StaticEventHandler.CallRoomEnemiesDefeatedEventMP(currentRoomNetData, GameSessionManager.Instance.summonedEnemies);
-
-            currentRoomNetworkRoot.Server_RefreshMusic();
+            StartCoroutine(UpdateRoomAfterStateRoutine());
         }
+    }
+
+    IEnumerator UpdateRoomAfterStateRoutine()
+    {
+        yield return null;
+
+        currentRoomNetworkRoot.Server_UnlockDoors();
+
+        StaticEventHandler.CallEnemiesClearedEvent();
+
+        // Set game state
+        if (GameSessionManager.Instance.gameState == GameState.engagingEnemies)
+        {
+            GameSessionManager.Instance.SetGameState(GameState.playingLevel);
+        }
+        else if (GameSessionManager.Instance.gameState == GameState.engagingBoss)
+        {
+            // Are there more dungeon levels then
+            if (GameSessionManager.Instance.selectedDungeonLevelIndex < GameSessionManager.Instance.dungeonLevelList.Count - 1)
+            {
+                GameSessionManager.Instance.SetGameState(GameState.levelCompleted);
+            }
+            else
+            {
+                GameSessionManager.Instance.SetGameState(GameState.gameWon);
+            }
+        }
+
+        currentRoomNetworkRoot.Server_RefreshMusic();
     }
 
     private GameObject InstantiateEnemyPrefab(EnemyCategory category, Vector3 position)

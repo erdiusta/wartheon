@@ -463,7 +463,8 @@ public class EnemyAINetwork : NetworkBehaviour
                                 checkedEnemy.health.AddHealth(30);
                             }
 
-                            checkedEnemy.healAnimator.SetTrigger("heal");
+                            if(checkedEnemy.healAnimator != null) checkedEnemy.healAnimator.SetTrigger("heal");
+
                             SoundEffectManager.Instance.PlaySoundEffect(GameResources.Instance.healSoundEffect);
                             break;
                         }

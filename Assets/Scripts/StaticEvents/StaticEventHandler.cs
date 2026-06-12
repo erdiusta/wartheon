@@ -135,9 +135,9 @@ public static class StaticEventHandler
     // Npc interaction start
     public static event Action<NpcInteractionStartedArgs> OnNPCInteractionStarted;
 
-    public static void CallNPCInteractionStartedEvent(NpcType npcType)
+    public static void CallNPCInteractionStartedEvent(NpcType npcType, uint netId = 0)
     {
-        OnNPCInteractionStarted?.Invoke(new NpcInteractionStartedArgs { npcType = npcType });
+        OnNPCInteractionStarted?.Invoke(new NpcInteractionStartedArgs { npcType = npcType, netId = netId });
     }
 
     // Npc interaction end
@@ -173,14 +173,6 @@ public static class StaticEventHandler
         OnRoomEnemiesDefeated?.Invoke(new RoomEnemiesDefeatedArgs { room = room, data = roomNetData, summonedEnemies = summonedEnemies });
     }
 
-    // Room enemies defeated event
-    public static event Action<RoomEnemiesDefeatedArgs> OnRoomMPEnemiesDefeated;
-
-    public static void CallRoomEnemiesDefeatedEventMP(RoomNetData data, List<GameObject> summonedEnemies)
-    {
-        OnRoomMPEnemiesDefeated?.Invoke(new RoomEnemiesDefeatedArgs { data = data, summonedEnemies = summonedEnemies });
-    }
-
     // Camera shaken event
     public static event Action<CameraShakeArgs> OnCameraShaken;
 
@@ -214,12 +206,18 @@ public static class StaticEventHandler
         OnBuildPageOpened?.Invoke();
     }
 
-    // Book weapon switch event
-    public static event Action OnWeaponSwitched;
+    public static event Action<WeaponAddedToBookArgs> OnWeaponSwitched;
 
-    public static void CallWeaponSwitchedEventForBook()
+    public static void CallWeaponSwitchedEventForBook(Weapon weapon = null)
     {
-        OnWeaponSwitched?.Invoke();
+        OnWeaponSwitched?.Invoke(new WeaponAddedToBookArgs { weapon = weapon});
+    }
+
+    public static event Action<WeaponAddedToBookArgs> OnWeaponSwitchedInventory;
+
+    public static void CallWeaponSwitchedInventoryEventForBook(Weapon weapon = null)
+    {
+        OnWeaponSwitchedInventory?.Invoke(new WeaponAddedToBookArgs { weapon = weapon });
     }
 
     // Gamble completed event
@@ -410,38 +408,6 @@ public static class StaticEventHandler
         OnDecoySpawned?.Invoke(new DecoySpawnedArgs { decoy = decoy });
     }
 
-    // Hourglass added to the room event
-    public static event Action OnHourglassSpawned;
-
-    public static void CallHourglassSpawned()
-    {
-        OnHourglassSpawned?.Invoke();
-    }
-
-    // Hourglass effect wore out
-    public static event Action OnHourglasExpired;
-
-    public static void CallHourglassExpired()
-    {
-        OnHourglasExpired?.Invoke();
-    }
-
-    // Compass enabled
-    public static event Action OnCompassEnabled;
-
-    public static void CallCompassEnabled()
-    {
-        OnCompassEnabled?.Invoke();
-    }
-
-    // Compass disabled
-    public static event Action OnCompassDisabled;
-
-    public static void CallCompassDisabled()
-    {
-        OnCompassDisabled?.Invoke();
-    }
-
     // Level up
     public static event Action OnLevelUp;
 
@@ -564,6 +530,7 @@ public class RoomChangedEventArgs : EventArgs
 public class NpcInteractionStartedArgs : EventArgs
 {
     public NpcType npcType;
+    public uint netId;
 }
 
 public class RoomEnemiesDefeatedArgs : EventArgs

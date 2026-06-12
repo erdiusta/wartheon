@@ -253,7 +253,6 @@ public class PlayerInventory : MonoBehaviour
             fromIndex = fromIndex,
             toIndex = toIndex,
             setIndex = setIndex,
-            nyveranDualWieldFailed = nyveranDualWieldFailed
         };
 
         ExecuteMove(result);
@@ -267,13 +266,6 @@ public class PlayerInventory : MonoBehaviour
 
     void ApplyState(MoveResultSP r)
     {
-        if (r.nyveranDualWieldFailed && player.IsLocal)
-        {
-            // Nyveran can't wield dual dagger or claw
-            StaticLogHandler.LogValidationFailure($"Nyveran can't equip dual-wield.", player.NetAuth.netId, r.item.ItemSlotStatus, r.fromIndex, r.toIndex, r.toSlot);
-            return;
-        }
-
         ItemGeneric item = r.item;
 
         if (item == null) return;
@@ -883,7 +875,7 @@ public class PlayerInventory : MonoBehaviour
     }
     private void Activation(ItemGeneric item, ItemSlotStatus fromStatus, SlotType toSlot, int setIndex)
     {
-        if (!IsWeaponRelevantChange(item, fromStatus, toSlot) || fromStatus == ItemSlotStatus.Inventory) return;
+        if (!IsWeaponRelevantChange(item, fromStatus, toSlot) || (fromStatus == ItemSlotStatus.Inventory && toSlot == SlotType.Inventory)) return;
 
         Weapon main = player.weaponSlotSetArray[setIndex - 1]?[0];
         Weapon off = player.weaponSlotSetArray[setIndex - 1]?[1];

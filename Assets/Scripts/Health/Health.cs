@@ -243,36 +243,27 @@ public class Health : MonoBehaviour
                 burnCoroutine = null;
             }
         }
-
-        if (!NetworkServer.active && !NetworkClient.active) // SP
-        {
-            DeathCheck();
-        }
-        else
-        {
-            if (playerReady || enemy != null)
-            {
-                DeathCheck();
-            }
-        }
     }
 
-    private void DeathCheck()
+    public bool IsDead()
     {
         // Death check
         if (currentHealth <= 0 && !hasDied)
         {
-            hasDied = true;
             fxAnimatorPlayed = true;
 
             if (player != null)
             {
+                hasDied = true;
+
                 // Player death
                 DestroyUtility.Destroy(player.gameObject, playerDied: true, 0);
+
+                return true;
             }
             else if (enemy != null)
             {
-                if (!enemy.initializationCompleted) return;
+                hasDied = true;
 
                 if (player != null && player.resourcefulActive) player.mana.AddMana(4); // Add mana on kill
 
@@ -280,16 +271,27 @@ public class Health : MonoBehaviour
                 enemy.dropOnDestroy.DropProcess();
 
                 if(!NetworkServer.active && !NetworkClient.active) DestroyUtility.Destroy(enemy.gameObject, playerDied: false, 0);
-                else if (NetworkServer.active) enemy.enemyNetwork.Server_EnemyDied(enemy.enemyNetwork.lastDamageDealerNetId);
+                else if (NetworkServer.active)
+                {
+                    enemy.enemyNetwork.Server_EnemyDied(enemy.enemyNetwork.lastDamageDealerNetId);
+                }
+
+                return true;
             }
             else if (dummy != null)
             {
+                hasDied = true;
+
                 uint netId = 0;
 
                 // Decoy death
                 DestroyUtility.Destroy(dummy.gameObject, playerDied: false, netId);
+
+                return true;
             }
         }
+
+        return false;
     }
 
     public void ApplyDamageInternal(int damageAmount, DamageContext ctx)

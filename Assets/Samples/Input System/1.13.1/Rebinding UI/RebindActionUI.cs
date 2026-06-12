@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using TMPro;
-using UnityEngine.UIElements;
+using UnityEngine.Localization.Settings;
 
 ////TODO: localization support
 
@@ -14,6 +14,8 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
     /// </summary>
     public class RebindActionUI : MonoBehaviour
     {
+        public ControlType m_controlType;
+
         /// <summary>
         /// Reference to the action that is to be rebound.
         /// </summary>
@@ -439,15 +441,16 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
 
         protected void OnEnable()
         {
-            if (s_RebindActionUIs == null)
-                s_RebindActionUIs = new List<RebindActionUI>();
+            RefreshLocalizedTexts();
+
+            if (s_RebindActionUIs == null) s_RebindActionUIs = new List<RebindActionUI>();
             s_RebindActionUIs.Add(this);
-            if (s_RebindActionUIs.Count == 1)
-                InputSystem.onActionChange += OnActionChange;
+            if (s_RebindActionUIs.Count == 1) InputSystem.onActionChange += OnActionChange;
         }
 
         protected void OnDisable()
         {
+
             m_RebindOperation?.Dispose();
             m_RebindOperation = null;
 
@@ -457,6 +460,58 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
                 s_RebindActionUIs = null;
                 InputSystem.onActionChange -= OnActionChange;
             }
+        }
+
+        private void RefreshLocalizedTexts()
+        {
+            switch (m_controlType)
+            {
+                case ControlType.Movement:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_MOVEMENT");
+                    break;
+                case ControlType.NormalAttack:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_NORMAL_ATTACK");
+                    break;
+                case ControlType.SpecialAttack1:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_SPECIAL_ATTACK_1");
+                    break;
+                case ControlType.SpecialAttack2:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_SPECIAL_ATTACK_2");
+                    break;
+                case ControlType.SpecialAttack3:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_SPECIAL_ATTACK_3");
+                    break;
+                case ControlType.SwitchWeaponForward:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_SWITCH_WEAPON_FORWARD");
+                    break;
+                case ControlType.SwitchWeaponBack:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_SWITCH_WEAPON_BACK");
+                    break;
+                case ControlType.SkillInnerPath:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_SWITCH_SKILL_INNER_PATH");
+                    break;
+                case ControlType.Interaction:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_INTERACTION");
+                    break;
+                case ControlType.Parry:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_PARRY");
+                    break;
+                case ControlType.DodgeRoll:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_DODGE_ROLL");
+                    break;
+                case ControlType.Glossary:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_GLOSSARY");
+                    break;
+                case ControlType.MapOverview:
+                    m_ActionLabelString = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_MAP_OVERVIEW");
+                    break;
+                default:
+                    break;
+            }
+
+            m_ResetText.text = LocalizationSettings.StringDatabase.GetLocalizedString("Controls", "CONTROLS_RESET");
+
+            UpdateActionLabel();
         }
 
         // When the action system re-resolves bindings, we want to update our UI in response. While this will
@@ -528,6 +583,8 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
         [SerializeField]
         private TextMeshProUGUI m_RebindText;
 
+        [SerializeField] TextMeshProUGUI m_ResetText;
+
         [Tooltip("Event that is triggered when the way the binding is display should be updated. This allows displaying "
             + "bindings in custom ways, e.g. using images instead of text.")]
         [SerializeField]
@@ -586,5 +643,22 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
         public class InteractiveRebindEvent : UnityEvent<RebindActionUI, InputActionRebindingExtensions.RebindingOperation>
         {
         }
+    }
+
+    public enum ControlType
+    {
+        Movement,
+        NormalAttack,
+        SpecialAttack1,
+        SpecialAttack2,
+        SpecialAttack3,
+        SwitchWeaponForward,
+        SwitchWeaponBack,
+        SkillInnerPath,
+        Interaction,
+        Parry,
+        DodgeRoll,
+        Glossary,
+        MapOverview
     }
 }

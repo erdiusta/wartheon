@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 
 public class NPC : MonoBehaviour
@@ -18,7 +19,8 @@ public class NPC : MonoBehaviour
         {
             Player player = collision.GetComponent<Player>();
 
-            StaticEventHandler.CallNPCInteractionStartedEvent(npcType); // NPC vamera trigger event
+            uint netID = (!NetworkServer.active && !NetworkClient.active) ? 0 : player.NetAuth.netId;
+            StaticEventHandler.CallNPCInteractionStartedEvent(npcType, netID); // NPC camera trigger event
         }
     }
 

@@ -14,11 +14,6 @@ public class RoomNetworkRoot : NetworkBehaviour
     Vector2 entryDirection;
     InstantiatedRoom instantiatedRoom;
 
-    public override void OnStartServer()
-    {
-        base.OnStartServer();
-    }
-
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -92,27 +87,25 @@ public class RoomNetworkRoot : NetworkBehaviour
         if (collision is PolygonCollider2D) return;
         if (collision is CapsuleCollider2D) return;
 
-        Player player = GameManager.Instance.GetLocalPlayer();
-        if (player == null || !player.IsLocal) return;
+        Player enteredPlayer = collision.GetComponent<Player>();
+        if (enteredPlayer == null || !enteredPlayer.IsLocal) return;
 
         if (roomNetData.roomId == GameSessionManager.Instance.GetCurrentRoomNetData().roomId) return;
 
         if (!roomNetData.isEntrance)
         {
-            if (player != null && player.IsLocal && player.isBattleReadyActive && !roomNetData.isPreviouslyVisited && roomNetData.isCombatRoom) // Battle Ready Mechanic
+            if (enteredPlayer != null && enteredPlayer.IsLocal && enteredPlayer.isBattleReadyActive && !roomNetData.isPreviouslyVisited && roomNetData.isCombatRoom) // Battle Ready Mechanic
             {
-                IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(player.gameObject);
+                IHealthAuthority healthAuthority = HealthAuthorityResolver.GetAuthority(enteredPlayer.gameObject);
                 healthAuthority.ApplyDamage(-3, default);
 
                 //player.health.AddShield(5);
             }
         }
 
-        MusicManager.Instance.RefreshMusicMP(roomNetData);
-
         entryDirection = (transform.position - collision.transform.position).normalized;
 
-        if(!roomNetData.isEntrance) player.NetAuth.CmdEnteredRoom(roomNetData.roomId, entryDirection); // Entrance is handled by GameSessionManager on transition separately
+        if (!roomNetData.isEntrance) enteredPlayer.NetAuth.CmdEnteredRoom(roomNetData.roomId, entryDirection); // Entrance is handled by GameSessionManager on transition separately
     }
 
     public void BuildVisuals(int randomNum)
@@ -144,7 +137,7 @@ public class RoomNetworkRoot : NetworkBehaviour
         // Instantiate npc object to the shop room
         if (roomNetData.isShopRoom)
         {
-            int npcIndex = 0;
+            int npcIndex;
 
             if (randomNum < 60) npcIndex = 0;
             else if (randomNum < 80) npcIndex = 1;

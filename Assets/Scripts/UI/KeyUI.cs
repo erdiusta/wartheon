@@ -24,6 +24,7 @@ public class KeyUI : MonoBehaviour
         while (player == null || !player.IsLocal)
         {
             player = GameManager.Instance.GetLocalPlayer();
+
             yield return null;
         }
 

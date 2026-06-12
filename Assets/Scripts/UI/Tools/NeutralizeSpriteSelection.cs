@@ -4,13 +4,13 @@ using UnityEngine.UI;
 
 public class NeutralizeSpriteSelection : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
-    Button button;
+    Selectable selectable;
     bool selectedSpriteHighlighted = false;
     bool initialPhase = true;
 
     private void Awake()
     {
-        button = GetComponent<Button>();
+        selectable = GetComponent<Selectable>();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -21,9 +21,9 @@ public class NeutralizeSpriteSelection : MonoBehaviour, IPointerEnterHandler, IP
             // Force the selectedSpriteHighlighted sprite to look like highlighted (sprite1)
             if (!selectedSpriteHighlighted)
             {
-                SpriteState state = button.spriteState;
+                SpriteState state = selectable.spriteState;
                 state.selectedSprite = state.highlightedSprite; // or state.selectedSprite = null;
-                button.spriteState = state;
+                selectable.spriteState = state;
                 selectedSpriteHighlighted = true;
             }
         }
@@ -34,9 +34,9 @@ public class NeutralizeSpriteSelection : MonoBehaviour, IPointerEnterHandler, IP
         // Force the selected sprite to look like normal(sprite0)
         if (selectedSpriteHighlighted)
         {
-            SpriteState state = button.spriteState;
+            SpriteState state = selectable.spriteState;
             state.selectedSprite = state.disabledSprite; // or state.selectedSprite = null;
-            button.spriteState = state;
+            selectable.spriteState = state;
             selectedSpriteHighlighted = false;
         }
     }
@@ -46,9 +46,9 @@ public class NeutralizeSpriteSelection : MonoBehaviour, IPointerEnterHandler, IP
         if (!initialPhase)
         {
             // Force the selectedSpriteHighlighted sprite to look like highlighted (sprite1)
-            SpriteState state = button.spriteState;
+            SpriteState state = selectable.spriteState;
             state.selectedSprite = state.highlightedSprite; // or state.selectedSprite = null;
-            button.spriteState = state;
+            selectable.spriteState = state;
             selectedSpriteHighlighted = true;
         }
     }
@@ -56,9 +56,9 @@ public class NeutralizeSpriteSelection : MonoBehaviour, IPointerEnterHandler, IP
     public void OnDeselect(BaseEventData eventData)
     {
         // Force the selectedSpriteHighlighted sprite to look like highlighted (sprite1)
-        SpriteState state = button.spriteState;
+        SpriteState state = selectable.spriteState;
         state.selectedSprite = state.highlightedSprite; // or state.selectedSprite = null;
-        button.spriteState = state;
+        selectable.spriteState = state;
         selectedSpriteHighlighted = true;
         initialPhase = false;
     }

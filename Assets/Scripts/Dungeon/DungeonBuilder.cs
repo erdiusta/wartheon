@@ -88,6 +88,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             {
                 // Clear dungeon room gameobjects and dungeon room dictionary
                 ClearDungeon();
+
                 dungeonRebuildAttemptsForNodeGraph++;
 
                 // Attempt To Build A Random Dungeon For The Selected room node graph

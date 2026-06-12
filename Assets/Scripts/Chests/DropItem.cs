@@ -434,8 +434,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         player.playerInventory.PickUpProcess(player.playerDetails.playerCharacterIndex, this);
 
-        //DropWeaponPickUpProcess(player, weaponDetails);
-
         return true;
     }
 
@@ -464,8 +462,6 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
 
         player.playerInventory.PickUpProcess(player.playerDetails.playerCharacterIndex, this);
-
-        //DropPassiveItemPickUpProcess(player);
 
         return true;
     }
@@ -692,8 +688,7 @@ public class DropItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             case Character.Morven:
                 if (weaponDetails.weaponClass == WeaponClass.Dagger) return true; break;
             case Character.Nyveran:
-                if (weaponDetails.weaponClass == WeaponClass.Dagger|| weaponDetails.weaponClass == WeaponClass.Bow ||
-                    weaponDetails.weaponClass == WeaponClass.Crossbow) return true; break;
+                if (weaponDetails.weaponClass == WeaponClass.Bow || weaponDetails.weaponClass == WeaponClass.Crossbow) return true; break;
             case Character.Karnag:
                 if (weaponDetails.weaponClass == WeaponClass.Axe) return true; break;
             case Character.Kynara:

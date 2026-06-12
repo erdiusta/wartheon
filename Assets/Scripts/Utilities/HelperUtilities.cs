@@ -417,6 +417,8 @@ public static class HelperUtilities
 
             float sqrDistance = (player.transform.position - fromPosition).sqrMagnitude;
 
+            Debug.Log("Player " + player.name + " stealth is " + player.isStealthActive);
+
             if (sqrDistance < closestSqrDistance && !player.isStealthActive)
             {
                 closestSqrDistance = sqrDistance;

@@ -71,7 +71,7 @@ public class EyeOfTheStormNetwork : NetworkBehaviour
 
         RpcPlayAnimation(undo: true);
 
-        owner.NetAuth.TargetAbsoluteZeroFinished(owner.NetAuth.connectionToClient, slotIndex, ownerNetId);
+        owner.NetAuth.TargetEyeOfTheStormFinished(owner.NetAuth.connectionToClient, slotIndex, ownerNetId);
 
         yield return new WaitForSeconds(0.5f); // animation fade
 

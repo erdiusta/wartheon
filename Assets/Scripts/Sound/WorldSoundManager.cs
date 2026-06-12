@@ -8,7 +8,7 @@ public class WorldSoundManager : SingletonMonobehaviour<WorldSoundManager>
     {
         GameObject soundPrefab = soundEffect.soundPrefab;
 
-        GameObject playingSoundObject = Instantiate(soundPrefab, Vector3.zero, Quaternion.identity);
+        GameObject playingSoundObject = Instantiate(soundPrefab, position, Quaternion.identity);
         SoundEffect sound = playingSoundObject.GetComponent<SoundEffect>();
 
         sound.SetSound(soundEffect, isMultiplayer);

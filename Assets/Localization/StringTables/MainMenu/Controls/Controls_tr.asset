@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Controls_tr
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: tr
+  m_SharedData: {fileID: 11400000, guid: 4833fe000c0b5a646be22b3791eab17a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 8594362368
+    m_Localized: Kontroller
+    m_Metadata:
+      m_Items: []
+  - m_Id: 123816087552
+    m_Localized: Klavye ve Fare
+    m_Metadata:
+      m_Items: []
+  - m_Id: 290149601280
+    m_Localized: Gamepad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 507871727616
+    m_Localized: Geri
+    m_Metadata:
+      m_Items: []
+  - m_Id: 548220932096
+    m_Localized: Hareket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 953168400384
+    m_Localized: "Normal Sald\u0131r\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1040699330560
+    m_Localized: "\xD6zel Sald\u0131r\u0131 1"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1181971877888
+    m_Localized: "\xD6zel Sald\u0131r\u0131 2"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1238221688832
+    m_Localized: "\xD6zel Sald\u0131r\u0131 3"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1264482226176
+    m_Localized: "Sonraki Silaha Ge\xE7"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1480300138496
+    m_Localized: "\xD6nceki Silaha Ge\xE7"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1598592094208
+    m_Localized: "Yetenekler ve \u0130\xE7sel Yol Sayfas\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3721874608128
+    m_Localized: "Etkile\u015Fim"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3790807994368
+    m_Localized: "Savu\u015Fturma"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3853584142336
+    m_Localized: "Takla ile Ka\xE7\u0131nma"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3922790158336
+    m_Localized: "S\xF6zl\xFCk"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4007989055488
+    m_Localized: "Harita Genel Bak\u0131\u015F\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42483438555136
+    m_Localized: "S\u0131f\u0131rla"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42529529761792
+    m_Localized: "T\xFCm\xFCn\xFC S\u0131f\u0131rla"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

@@ -61,8 +61,13 @@ public class NetworkHealthAuthority : NetworkBehaviour, IHealthAuthority
         health.ApplyDamageInternal(amount, ctx);
         currentHealth = health.GetCurrentHealth();
 
-        RpcDamageVisuals(currentHealth, amount, ctx);
-        RpcPlayHitFlash(ctx);
+        bool isDead = health.IsDead();
+
+        if (!isDead)
+        {
+            RpcDamageVisuals(currentHealth, amount, ctx);
+            RpcPlayHitFlash(ctx);
+        }
     }
 
     [ClientRpc]

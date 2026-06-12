@@ -3,10 +3,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class CheatCodeListener : SingletonMonobehaviour<CheatCodeListener>
 {
     string kukuliCheatCode = "KUKULI";
+    string multiCheatCode = "IHUHUHU";
     string ustasoftCheatCode2 = "USTASOFT2";
     string ustasoftCheatCode3 = "USTASOFT3";
     string ustasoftCheatCode4 = "USTASOFT4";
@@ -18,6 +20,8 @@ public class CheatCodeListener : SingletonMonobehaviour<CheatCodeListener>
 
     string[] cheats;
 
+    public Button multiButton;
+
     protected override void Awake()
     {
         base.Awake();
@@ -25,7 +29,7 @@ public class CheatCodeListener : SingletonMonobehaviour<CheatCodeListener>
 
     private void Start()
     {
-        cheats = new string[] { kukuliCheatCode, ustasoftCheatCode2, ustasoftCheatCode3, ustasoftCheatCode4, ustasoftCheatCode5,
+        cheats = new string[] { kukuliCheatCode, multiCheatCode, ustasoftCheatCode2, ustasoftCheatCode3, ustasoftCheatCode4, ustasoftCheatCode5,
             ustasoftCheatCode6, ustasoftCheatCode7, ustasoftCheatCode8};
     }
 
@@ -67,6 +71,11 @@ public class CheatCodeListener : SingletonMonobehaviour<CheatCodeListener>
                                     Debug.Log("SORRY MAN TOO LATE");
                                 }
                             }
+                            else if (cheats[i] == multiCheatCode)
+                            {
+                                multiButton.enabled = true;
+                                multiButton.GetComponent<Image>().color = new Color(1f, 1f, 1f);
+                            }
                             else if (cheats[i] == ustasoftCheatCode2)
                             {
                                 InputManager.cachedLevelIndex = 2;
@@ -101,6 +110,6 @@ public class CheatCodeListener : SingletonMonobehaviour<CheatCodeListener>
                     }
                 }
             }
-        }       
+        }
     }
 }

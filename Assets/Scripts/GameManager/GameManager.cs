@@ -1,4 +1,5 @@
 using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -6,10 +7,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Localization.Settings;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
 
 [DisallowMultipleComponent]
 public class GameManager : SingletonMonobehaviour<GameManager>
@@ -66,6 +69,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     [SerializeField] Slider soundVolumeSlider;
 
     [Header("Game")]
+    [SerializeField] TMP_Dropdown languageDropdown;
     [SerializeField] Toggle dynamicCameraToggle;
     [SerializeField] Image dynamicCameraCheckmarkImage;
 
@@ -304,13 +308,10 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         if (!NetworkServer.active && !NetworkClient.active) return localPlayer;
 
         // Multiplayer
-        foreach (Player p in GameSessionManager.Instance.ServerPlayers)
-        {
-            if (p.IsLocal) return p;
-        }
+        if (localPlayer == null) return null;
 
-        return localPlayer;
-        }
+        return localPlayer.IsLocal ? localPlayer : null;
+    }
 
     private void OnDisable()
     {
@@ -320,9 +321,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void Subscribe()
     {
         if (subscribed) return;
-        subscribed = true;
-
         if (localPlayer == null) return;
+
+        subscribed = true;
 
         if (!NetworkServer.active && !NetworkClient.active)
         {
@@ -335,9 +336,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
         StaticEventHandler.OnRoomEnemiesDefeated += StaticEventHandler_OnRoomEnemiesDefeated;
 
-        StaticEventHandler.OnHourglassSpawned += StaticEventHandler_OnHourglassSpawned;
-        StaticEventHandler.OnHourglasExpired += StaticEventHandler_OnHourglasExpired;
-
         StaticEventHandler.OnNPCInteractionStarted += StaticEventHandler_OnNPCInteractionStarted;
         StaticEventHandler.OnNPCInteractionEnded += StaticEventHandler_OnNPCInteractionEnded;
     }
@@ -346,8 +344,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     {
         if (!subscribed) return;
         subscribed = false;
-
-        if (localPlayer == null) return;
 
         if (!NetworkServer.active && !NetworkClient.active)
         {
@@ -358,14 +354,15 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         StaticEventHandler.OnOverviewCameraToggled -= StaticEventHandler_OnOverviewCameraToggled;
         StaticEventHandler.OnLevelUp -= StaticEventHandler_OnLevelUp;
         StaticEventHandler.OnRoomEnemiesDefeated -= StaticEventHandler_OnRoomEnemiesDefeated;
-        StaticEventHandler.OnHourglassSpawned -= StaticEventHandler_OnHourglassSpawned;
-        StaticEventHandler.OnHourglasExpired -= StaticEventHandler_OnHourglasExpired;
 
         StaticEventHandler.OnNPCInteractionStarted -= StaticEventHandler_OnNPCInteractionStarted;
         StaticEventHandler.OnNPCInteractionEnded -= StaticEventHandler_OnNPCInteractionEnded;
 
-        localPlayer.destroyedEvent.OnDestroyed -= Player_OnDestroyed;
-        localPlayer.healthEvent.GetBlind -= PlayerGetBlind;
+        if (localPlayer != null)
+        {
+            localPlayer.destroyedEvent.OnDestroyed -= Player_OnDestroyed;
+            localPlayer.healthEvent.GetBlind -= PlayerGetBlind;
+        }
     }
 
     private void StaticEventHandler_OnOverviewCameraToggled(OverviewCameraFollowArgs overviewCameraFollowArgs)
@@ -434,7 +431,6 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         levelUpPanel.SetActive(true);
         levelUpPanel.GetComponentInChildren<Animator>().SetTrigger(Settings.zoomIn);
         levelUpPanelTimer = 0f;
-
     }
 
     public void ClickOpenCharacterBuild()
@@ -468,20 +464,12 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         SetDecoy(decoySpawnedArgs.decoy);
     }
 
-    private void StaticEventHandler_OnHourglassSpawned()
-    {
-        vignette.color.value = new Color(0.67f, 0.66f, 0.18f);
-        vignette.intensity.value = 0.7f;
-    }
-
-    private void StaticEventHandler_OnHourglasExpired()
-    {
-        vignette.color.value = new Color(1f, 1f, 1f);
-        vignette.intensity.value = 0f;
-    }
-
     private void StaticEventHandler_OnNPCInteractionStarted(NpcInteractionStartedArgs npcInteractionStartedArgs)
     {
+        uint netID = (!NetworkServer.active && !NetworkClient.active) ? 0 : GetLocalPlayer().NetAuth.netId;
+
+        if (netID != npcInteractionStartedArgs.netId) return;
+
         // Show Letterbox
         topBar.gameObject.SetActive(true);
         bottomBar.gameObject.SetActive(true);
@@ -598,6 +586,9 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         resolutionDropdown.AddOptions(resolutionOptions);
         resolutionDropdown.onValueChanged.AddListener(OnResolutionDropdownChanged);
 
+        // Populate language options
+        PopulateLanguageDropdown();
+
         // Sync toggle with current fullscreen state
         LoadSettingsFromPlayerPrefs();
 
@@ -612,6 +603,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
         vsyncToggle.onValueChanged.AddListener(OnVsyncToggleChanged);
         musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeSliderChanged);
         soundVolumeSlider.onValueChanged.AddListener(OnSoundVolumeSliderChanged);
+        languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
         dynamicCameraToggle.onValueChanged.AddListener(OnDynamicCameraFollowToggleChanged);
 
         // Ensure the volume has a Vignette effect and store a reference to it
@@ -627,7 +619,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     IEnumerator FinalizeLoadingSequence(float fadeDuration = 0.5f)
     {
-        yield return new WaitForSecondsRealtime(3f); // Let things settle
+        yield return new WaitForSecondsRealtime(4f); // Let things settle
 
         if (LoadingManager.Instance != null)
         {
@@ -967,7 +959,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void OpenSettingsMenu()
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         // Clear buttons on pause menu
         Transform buttonContainer = pauseContainer.transform.GetChild(1);
@@ -989,7 +981,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void OpenControlsMenu()
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         // Clear buttons on pause menu
         Transform buttonContainer = pauseContainer.transform.GetChild(1);
@@ -1011,7 +1003,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void OpenKeyboardMouseRebindingsMenu()
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         // Close controls container ui
         controlsContainer.gameObject.SetActive(false);
@@ -1027,7 +1019,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void OpenGamepadRebindingsMenu()
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         // Close controls container ui
         controlsContainer.gameObject.SetActive(false);
@@ -1043,7 +1035,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void ExitFromKeyboardMouseRebindingsMenu(bool escClicked = false)
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         // Close keyboard controls container ui
         keyboardRebindingsContainer.gameObject.SetActive(false);
@@ -1059,7 +1051,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void ExitFromGamepadRebindingsMenu(bool escClicked = false)
     {
-        if(!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         // Close game pad controls container ui
         gamepadRebindingsContainer.gameObject.SetActive(false);
@@ -1094,7 +1086,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void BackFromControlsMenu()
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         // Close controls menu
         controlsContainer.gameObject.SetActive(false); // Disable settings container
@@ -1242,7 +1234,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void SetScreenMode(int modeIndex)
     {
-        //SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         switch (modeIndex)
         {
@@ -1265,7 +1257,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void OnPostProcessingToggleChanged(bool isOn)
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         PostProcessingEnabler.Instance.isOn = isOn;
         UpdatePostProcessingCheckmarkVisibility(isOn);
@@ -1278,7 +1270,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void OnDynamicCameraFollowToggleChanged(bool isOn)
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         InterScenesSingleton.dynamicCameraFollowEnabled = isOn ? true : false;
         StaticEventHandler.CallDynamicCameraToggled(dynamicCameraToggle.isOn);
@@ -1292,7 +1284,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void OnVsyncToggleChanged(bool isOn)
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         QualitySettings.vSyncCount = isOn ? 1 : 0;
         UpdateVysncCheckmarkVisibility(isOn);
@@ -1310,7 +1302,46 @@ public class GameManager : SingletonMonobehaviour<GameManager>
 
     private void OnSoundVolumeSliderChanged(float newValue)
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.SetVolume((int)newValue);
+        SoundEffectManager.Instance.SetVolume((int)newValue);
+    }
+
+    private void PopulateLanguageDropdown()
+    {
+        languageDropdown.ClearOptions();
+
+        List<string> languageOptions = Enum.GetNames(typeof(Language)).ToList();
+        languageDropdown.AddOptions(languageOptions);
+    }
+
+    private void OnLanguageChanged(int languageIndex)
+    {
+        Language selectedLanguage = (Language)languageIndex;
+
+        switch (selectedLanguage)
+        {
+            case Language.English:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("en");
+                break;
+            case Language.German:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("de");
+                break;
+            case Language.French:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("fr");
+                break;
+            case Language.Spanish:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("es");
+                break;
+            case Language.Portuguese:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("pt");
+                break;
+            case Language.Turkish:
+                LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("tr");
+                break;
+            default:
+                break;
+        }
+
+        LocalizationManager.LanguageChanged?.Invoke(selectedLanguage);
     }
 
     /// <summary>
@@ -1318,7 +1349,21 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void QuitGame()
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+
+        GameSessionState.ResetSession();
+
+        // Stop networking properly
+        if (NetworkClient.isConnected)
+        {
+            if (Settings.Backend == MultiplayerBackend.Steam)
+            {
+                SteamLobbyManager.Instance.LeaveCurrentLobby();
+            }
+
+            if (NetworkServer.active) NetworkManager.singleton.StopHost(); // Host case
+            else NetworkManager.singleton.StopClient(); // Client-only case
+        }
 
         SceneManager.LoadScene("MainMenuScene");
     }
@@ -1328,7 +1373,7 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     /// </summary>
     public void ExitGame()
     {
-        if (!NetworkServer.active && !NetworkClient.active) SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
+        SoundEffectManager.Instance.PlaySoundEffect(buttonClickSound);
 
         Application.Quit();
     }
@@ -1614,6 +1659,13 @@ public class GameManager : SingletonMonobehaviour<GameManager>
     private void RestartGame()
     {
         SceneManager.LoadScene("MainMenuScene");
+
+        // Stop networking properly
+        if (NetworkClient.isConnected)
+        {
+            if (NetworkServer.active) NetworkManager.singleton.StopHost(); // Host case
+            else NetworkManager.singleton.StopClient(); // Client-only case
+        }
     }
 
     /// <summary>

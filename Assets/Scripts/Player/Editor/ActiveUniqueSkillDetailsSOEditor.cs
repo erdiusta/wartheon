@@ -8,6 +8,7 @@ public class ActiveUniqueSkillDetailsSOEditorV2 : Editor
     SerializedProperty pName;
     SerializedProperty pDetails;
     SerializedProperty pActiveSkill;
+    SerializedProperty pPassiveSkill;
     SerializedProperty pSprite;
 
     SerializedProperty pSfx1;
@@ -22,6 +23,7 @@ public class ActiveUniqueSkillDetailsSOEditorV2 : Editor
     {
         pName = serializedObject.FindProperty("activeUniqueSkillName");
         pActiveSkill = serializedObject.FindProperty("activeSkill");
+        pPassiveSkill = serializedObject.FindProperty("passiveSkill");
         pSprite = serializedObject.FindProperty("activeUniqueSkillSprite");
 
         pSfx1 = serializedObject.FindProperty("activeUniqueSkillSoundEffectOne");
@@ -61,6 +63,7 @@ public class ActiveUniqueSkillDetailsSOEditorV2 : Editor
     {
         EditorGUILayout.PropertyField(pName, new GUIContent("Name"));
         EditorGUILayout.PropertyField(pActiveSkill, new GUIContent("Active Skill"));
+        EditorGUILayout.PropertyField(pPassiveSkill, new GUIContent("Passive Skill"));
         EditorGUILayout.PropertyField(pSprite, new GUIContent("Sprite"));
     }
 

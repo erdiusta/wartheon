@@ -48,7 +48,7 @@ public class PlayerSkillController : MonoBehaviour
     /// </summary>
     public void SeismicSlamProcess(int skillIndex)
     {
-        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[skillIndex].activeUniqueSkillSoundEffectOne, transform.position);
+        if (player.NetAuth == null) WorldSoundManager.Instance.PlayWorldSound(player.currentlyUsedActiveUniqueSkills[skillIndex].activeUniqueSkillSoundEffectTwo, transform.position);
         else NetworkSoundManager.Instance.CmdPlaySound(SoundName.SeismicSlam, transform.position);
 
         player.animatePlayer.ApplySeismicSlam();

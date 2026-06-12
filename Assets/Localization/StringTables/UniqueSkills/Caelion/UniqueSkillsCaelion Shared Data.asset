@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: UniqueSkillsCaelion Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: UniqueSkillsCaelion
+  m_TableCollectionNameGuidString: a213e99987d26c442b433735450272f2
+  m_Entries:
+  - m_Id: 2151552356352
+    m_Key: UNIQUE_SKILL_P_NAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153431404544
+    m_Key: UNIQUE_SKILL_1_NAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2155054600192
+    m_Key: UNIQUE_SKILL_2_NAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2156564549632
+    m_Key: UNIQUE_SKILL_3_NAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2158468763648
+    m_Key: UNIQUE_SKILL_4_NAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3780527755264
+    m_Key: UNIQUE_SKILL_5_NAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164529532928
+    m_Key: UNIQUE_SKILL_1_1_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2165997539328
+    m_Key: UNIQUE_SKILL_1_2_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2170242174976
+    m_Key: UNIQUE_SKILL_1_3_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2171815038976
+    m_Key: UNIQUE_SKILL_2_1_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2176122589184
+    m_Key: UNIQUE_SKILL_2_2_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2178286850048
+    m_Key: UNIQUE_SKILL_2_3_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2178819526656
+    m_Key: UNIQUE_SKILL_3_1_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2179423506432
+    m_Key: UNIQUE_SKILL_3_2_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2180497248256
+    m_Key: UNIQUE_SKILL_3_3_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2186126004224
+    m_Key: UNIQUE_SKILL_4_1_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2187258466304
+    m_Key: UNIQUE_SKILL_4_2_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2849090277376
+    m_Key: UNIQUE_SKILL_4_3_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2854639341568
+    m_Key: UNIQUE_SKILL_5_1_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2855318818816
+    m_Key: UNIQUE_SKILL_5_2_DETAILS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2856061210624
+    m_Key: UNIQUE_SKILL_5_3_DETAILS
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 106885943363633155
+  references:
+    version: 2
+    RefIds:
+    - rid: 106885943363633155
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1781021446674

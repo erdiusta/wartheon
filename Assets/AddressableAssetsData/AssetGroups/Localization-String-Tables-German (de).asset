@@ -15,6 +15,18 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-German (de)
   m_GUID: 0f30c391f7adf0e4eaa2c75e880d37fd
   m_SerializeEntries:
+  - m_GUID: 0654ef7fab218fc4985bcd8bdde74d56
+    m_Address: UniqueSkillsNyxa_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 497676f0df806684cae1942d1a476462
+    m_Address: Controls_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4eb3e0c2280bda947b3af92d0de23bdc
     m_Address: MainMenu_de
     m_ReadOnly: 1
@@ -33,8 +45,68 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-de
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d664b8668ebc4f4cbbc3aa4992de40c
+    m_Address: UniqueSkillsNymara_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 951144ef4ba93e64db29a379af442e3b
+    m_Address: UniqueSkillsNyveran_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9d450cd9cdb53fa4dad98a0b1514918b
+    m_Address: UniqueSkillsKynara_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a2f3498b3dbec3f4f952c3a734ebc631
+    m_Address: UniqueSkillsKarnag_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b8156cdddcc904d40a392ab0ded797ca
+    m_Address: UniqueSkillsCaelion_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c08fe5befd93fe04b8a2299f469a3b69
+    m_Address: UniqueSkillsMorven_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c7db239bdc7ea68429bc536b26a05df4
     m_Address: EnemyDescription_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca98ee606feea1441a1e97c9ddcc7100
+    m_Address: Settings_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce9e328311bedd1418d64180ba95d10f
+    m_Address: MultiplayerLobby_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf2c552926a9afa47ae3613daa620646
+    m_Address: UniqueSkillsMycara_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d404a7f692f9eaa468080cebb5641526
+    m_Address: PauseMenu_de
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-de

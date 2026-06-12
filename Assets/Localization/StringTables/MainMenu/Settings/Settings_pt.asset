@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Settings_pt
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: pt
+  m_SharedData: {fileID: 11400000, guid: 58172971b4a2de34982bf28b61e3323a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 12914495488
+    m_Localized: "Configura\xE7\xF5es"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 828253638656
+    m_Localized: "V\xEDdeo"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 884692193280
+    m_Localized: Modo de Tela
+    m_Metadata:
+      m_Items: []
+  - m_Id: 937808859136
+    m_Localized: V-Sync
+    m_Metadata:
+      m_Items: []
+  - m_Id: 981215711232
+    m_Localized: "Taxa de Atualiza\xE7\xE3o"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1033183137792
+    m_Localized: "\xC1udio"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1075948261376
+    m_Localized: "Volume da M\xFAsica"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1131036250112
+    m_Localized: Volume dos Efeitos Sonoros
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154629210112
+    m_Localized: Jogo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1193019674624
+    m_Localized: Idioma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1234430038016
+    m_Localized: "Seguimento Din\xE2mico da C\xE2mara"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1314482524160
+    m_Localized: Voltar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8924061470720
+    m_Localized: "P\xF3s-processamento"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9960960528384
+    m_Localized: "Aufl\xF6sung"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16094895247360
+    m_Localized: Digite seu nome
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16201925496832
+    m_Localized: OK
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

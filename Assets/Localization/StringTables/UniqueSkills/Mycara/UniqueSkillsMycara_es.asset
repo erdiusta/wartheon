@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UniqueSkillsMycara_es
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: es
+  m_SharedData: {fileID: 11400000, guid: fdef0f421e4db53409e7cbc7e9cf49a9, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 2151552356352
+    m_Localized: Vitalidad Glacial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153431404544
+    m_Localized: Ventisca
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2155054600192
+    m_Localized: Sello de Mycara
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2156564549632
+    m_Localized: "Fr\xEDo Intenso"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2158468763648
+    m_Localized: Rompehielos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3780527755264
+    m_Localized: Cero Absoluto
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

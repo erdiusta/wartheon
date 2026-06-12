@@ -2,7 +2,6 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -18,6 +17,8 @@ public class GameSessionManager : NetworkBehaviour
     public static event Action<PlayerReadyEventArgs> OnPlayerRegistered;
 
     public List<GameObject> summonedEnemies = new List<GameObject>();
+
+    HashSet<uint> nextLevelReadyPlayers = new();
 
     public void CallPlayerRegisteredEvent(Player player)
     {
@@ -39,6 +40,8 @@ public class GameSessionManager : NetworkBehaviour
     [SyncVar(hook = nameof(OnDungeonBuiltChanged))] 
     bool dungeonBuilt;
     public bool OnDungeonBuilt => dungeonBuilt;
+
+    bool waitingForNextLevelInput;
 
     // ==========================
     // DATA / REFERENCES
@@ -96,6 +99,19 @@ public class GameSessionManager : NetworkBehaviour
         }
 
         Instance = this;
+    }
+
+    private void Update()
+    {
+        if (waitingForNextLevelInput && InputManager.Instance.OKButton.action.WasPressedThisFrame())
+        {
+            Player player = GameManager.Instance.GetLocalPlayer();
+
+            if (player == null) return;
+
+            player.NetAuth.CmdNextLevel();
+            waitingForNextLevelInput = false;
+        }
     }
 
     public override void OnStartServer()
@@ -196,6 +212,7 @@ public class GameSessionManager : NetworkBehaviour
                 SetGameState(GameState.dungeonAndPlayersGenerated);
                 break;
             case GameState.dungeonAndPlayersGenerated:
+                levelTransitionInProgress = false;
                 SetGameState(GameState.playingLevel);
                 break;
             case GameState.playingLevel:
@@ -205,7 +222,9 @@ public class GameSessionManager : NetworkBehaviour
             case GameState.engagingBoss:
                 break;
             case GameState.levelCompleted:
-                StartCoroutine(ServerLevelCompletedRoutine());
+                SetGameState(GameState.waitingforNextLevel);
+                break;
+            case GameState.waitingforNextLevel:
                 break;
             case GameState.gameWon:
                 break;
@@ -242,6 +261,9 @@ public class GameSessionManager : NetworkBehaviour
             case GameState.engagingBoss:
                 break;
             case GameState.levelCompleted:
+                break;
+            case GameState.waitingforNextLevel:
+                waitingForNextLevelInput = true;
                 StartCoroutine(LevelCompletedUI());
                 break;
             case GameState.gameWon:
@@ -273,8 +295,6 @@ public class GameSessionManager : NetworkBehaviour
     [Server]
     private void PlayDungeonLevel()
     {
-        levelTransitionInProgress = true;
-
         //Build dungeon for level
         bool success = DungeonBuilder.Instance.GenerateDungeon(dungeonLevelList[selectedDungeonLevelIndex], tutorialEnabled: false);
 
@@ -309,7 +329,7 @@ public class GameSessionManager : NetworkBehaviour
         yield return new WaitForSeconds(0.1f);
 
         // Spawn players safely
-        SpawnPlayers();
+        yield return StartCoroutine(SpawnPlayerRoutine());
 
         // Allow player transforms/network sync
         yield return null;
@@ -326,22 +346,24 @@ public class GameSessionManager : NetworkBehaviour
         RpcClientGameplayReady(selectedDungeonLevelIndex);
     }
 
+    IEnumerator SpawnPlayerRoutine()
+    {
+        yield return null;
+
+        SpawnPlayers();
+    }
+
     void SpawnPlayers()
     {
-        Vector3 roomCenter = new Vector3((currentRoomNetData.lowerBounds.x + currentRoomNetData.upperBounds.x) * 0.5f, (currentRoomNetData.lowerBounds.y + currentRoomNetData.upperBounds.y) * 0.5f, 0f);
-
-        int index = 0;
+        RoomNetData entranceRoom = FindEntranceRoomNetData();
+        Vector3 roomCenter = new Vector3((entranceRoom.lowerBounds.x + entranceRoom.upperBounds.x) * 0.5f, (entranceRoom.lowerBounds.y + entranceRoom.upperBounds.y) * 0.5f, 0f);
 
         foreach (Player player in ServerPlayers)
         {
             Vector3 spawnPos = roomCenter;
 
-            var nt = player.GetComponent<NetworkTransformReliable>();           
-            nt.ServerTeleport(spawnPos, Quaternion.identity);
-
-            player.transform.localPosition = Vector3.zero; // Fix synced positions between player
-
-            index++;
+            var nt = player.GetComponent<NetworkTransformUnreliable>();           
+            nt.ServerTeleport(roomCenter, Quaternion.identity);
         }
     }
 
@@ -419,7 +441,7 @@ public class GameSessionManager : NetworkBehaviour
         InputManager.Instance.EnableGameplayInput();
 
         // Update music for room
-        MusicTrackSO ambientMusic = WartheonDatabase.Instance.GetMusic(selectedDungeonLevelIndex, MusicType.Ambient);
+        MusicTrackSO ambientMusic = WartheonDatabase.Instance.GetMusic(levelIndex, MusicType.Ambient);
         MusicManager.Instance.PlayMusic(ambientMusic, 0.2f, 2f);
     }
 
@@ -430,9 +452,9 @@ public class GameSessionManager : NetworkBehaviour
 
         DungeonNetworkController.Instance.activeBossNetId = 0;
 
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(1f);
 
-        DestroyEnemies();
+        ClearDungeon();
 
         // Allow enemy despawns to propagate
         yield return null;
@@ -444,7 +466,7 @@ public class GameSessionManager : NetworkBehaviour
         selectedDungeonLevelIndex++;
 
         // Allow despawns to propagate to clients
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(1f);
 
         if (selectedDungeonLevelIndex >= dungeonLevelList.Count)
         {
@@ -452,38 +474,53 @@ public class GameSessionManager : NetworkBehaviour
             yield break;
         }
 
+        yield return null;
+        yield return null;
+
         PlayDungeonLevel();
 
         SetGameState(GameState.dungeonAndPlayersGenerated);
+    }
+
+    /// <summary>
+    /// Clear dungeon room gameobjects
+    /// </summary>
+    private void ClearDungeon()
+    {
+        DestroyEnemies();
+        DestroyItems();
+        DestroyProjectiles();
     }
 
     IEnumerator LevelCompletedUI()
     {
         messageTextTMP.SetText("WELL DONE WARTHEON TEAM! YOU'VE SURVIVED\n\nTHIS DUNGEON LEVEL! PRESS OK FOR NEXT LEVEL!");
 
-        yield return StartCoroutine(GameManager.Instance.Fade(0f, 1f, 1.5f, Color.black));
+        yield return StartCoroutine(GameManager.Instance.Fade(0f, 0.4f, 3f, Color.black));
 
         messageTextTMP.color = Color.yellow;
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
+    }
 
-        CmdRequestNextLevel();
+    [Server]
+    public void ServerPlayerReadyForNextLevel(NetworkIdentity player)
+    {
+        nextLevelReadyPlayers.Add(player.netId);
+
+        if (nextLevelReadyPlayers.Count >= ServerPlayers.Count)
+        {
+            nextLevelReadyPlayers.Clear();
+            StartCoroutine(ServerLevelCompletedRoutine());
+        }
     }
 
     IEnumerator GameWonUI()
     {
         yield return StartCoroutine(GameManager.Instance.Fade(0f, 1f, 2f, Color.black));
 
-        if (isDemo)
-        {
-            messageTextTMP.SetText("WELL DONE TEAM!\nYOU HAVE COMPLETED DEMO!");
-            messageTextTMP.color = Color.green;
-        }
-        else
-        {
-            messageTextTMP.SetText("WELL DONE TEAM!\nYOU HAVE SECURED THE WARTHEON");
-            messageTextTMP.color = Color.green;
-        }
+        messageTextTMP.SetText("WELL DONE TEAM!\nYOU HAVE SECURED THE WARTHEON");
+        messageTextTMP.color = Color.green;
 
         yield return new WaitForSeconds(3f);
 
@@ -510,22 +547,6 @@ public class GameSessionManager : NetworkBehaviour
     // ==========================
     // CLIENT -> SERVER REQUESTS
     // ==========================
-    [Command(requiresAuthority = false)]
-    private void CmdRequestNextLevel()
-    {
-        // Increase index to next level
-        selectedDungeonLevelIndex++;
-
-        if (selectedDungeonLevelIndex >= dungeonLevelList.Count)
-        {
-            SetGameState(GameState.gameWon);
-        }
-        else
-        {
-            SetGameState(GameState.gameStarted);
-        }
-    }
-
     [Command(requiresAuthority = false)]
     private void CmdRequestRestart()
     {
@@ -617,6 +638,39 @@ public class GameSessionManager : NetworkBehaviour
     }
 
     [Server]
+    private void DestroyItems()
+    {
+        DropItemNetwork[] dropItems = FindObjectsByType<DropItemNetwork>(FindObjectsSortMode.None);
+
+        foreach (DropItemNetwork item in dropItems)
+        {
+            if (item == null) continue;
+
+            NetworkServer.Destroy(item.gameObject);
+        }
+
+        Counter counter = FindAnyObjectByType<Counter>();
+
+        if (counter != null)
+        {
+            NetworkServer.Destroy(counter.gameObject);
+        }
+    }
+
+    [Server]
+    private void DestroyProjectiles()
+    {
+        Projectile[] remainingProjectiles = FindObjectsByType<Projectile>(FindObjectsSortMode.None);
+
+        foreach (Projectile proj in remainingProjectiles)
+        {
+            if (proj == null) continue;
+
+            NetworkServer.Destroy(proj.gameObject);
+        }
+    }
+
+    [Server]
     public void SetCurrentRoom(Room room, RoomNetData roomNetData = default)
     {
         previousRoom = currentRoom;
@@ -661,6 +715,18 @@ public class GameSessionManager : NetworkBehaviour
 
             NetworkServer.Destroy(item.gameObject);
         }
+    }
+
+    RoomNetData FindEntranceRoomNetData()
+    {
+        foreach (RoomNetData room in DungeonRuntime.RoomNetDataDict.Values)
+        {
+            if (!room.isEntrance) continue;
+
+            return room;
+        }
+
+        return default;
     }
 }
 

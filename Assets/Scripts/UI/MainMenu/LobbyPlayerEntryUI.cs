@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 public class LobbyPlayerEntryUI : MonoBehaviour
@@ -28,6 +29,16 @@ public class LobbyPlayerEntryUI : MonoBehaviour
         Refresh();
     }
 
+    private void OnEnable()
+    {
+        LocalizationManager.LanguageChanged += OnLanguageChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationManager.LanguageChanged -= OnLanguageChanged;
+    }
+
     public void Refresh()
     {
         if (boundPlayer == null) return;
@@ -43,7 +54,7 @@ public class LobbyPlayerEntryUI : MonoBehaviour
         }
         else
         {
-            characterText.text = "No Character";
+            characterText.text = LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_NO_CHARACTER");
             characterImage.sprite = noSprite;
         }
 
@@ -63,7 +74,24 @@ public class LobbyPlayerEntryUI : MonoBehaviour
             readyToggleCanvasGroup.alpha = 0.4f;
         }
 
-        readyStatusText.text = boundPlayer.isReady ? "Ready" : "Not Ready";
+        readyStatusText.text = boundPlayer.isReady ? LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_READY")
+            : LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_NOT_READY");
+        readyStatusText.color = boundPlayer.isReady ? readyColor : notReadyColor;
+    }
+
+    private void OnLanguageChanged(Language language)
+    {
+        RefreshLocalizedTexts();
+    }
+
+    private void RefreshLocalizedTexts()
+    {
+        // CHARACTER
+        if (boundPlayer.selectedCharacterIndex >= 0) characterText.text = ((Character)boundPlayer.selectedCharacterIndex).ToString();
+        else characterText.text = LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_NO_CHARACTER");
+
+        readyStatusText.text = boundPlayer.isReady ? LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_READY")
+            : LocalizationSettings.StringDatabase.GetLocalizedString("MultiplayerLobby", "MULTIPLAYER_NOT_READY");
         readyStatusText.color = boundPlayer.isReady ? readyColor : notReadyColor;
     }
 

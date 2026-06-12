@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectHandler
@@ -91,8 +92,7 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
     Transform passiveItemFingerSlot;
 
     [Header("INVENTORY ITEM SLOTS")]
-    Transform inventoryParent;
-    Transform inventoryItemSlot;
+    [SerializeField] Transform inventoryParent;
 
     [Space(10)]
     [Header("SKILLS&INNER PATH")]
@@ -100,8 +100,8 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
     [SerializeField] Transform skillDescriptonInnerPanel;
     [SerializeField] Transform skillPointsTransform;
     [SerializeField] Transform innerPathTextContainer;
-    [SerializeField] TMP_Text innerPathTitleText;
-    [SerializeField] TMP_Text innerPathDetailsText;
+    [SerializeField] TMP_Text skillDescriptionText;
+    [SerializeField] TMP_Text skillDetailsText;
 
     // SLOT TRANSFORMS
     Transform mainHandWeaponBackground;
@@ -146,8 +146,6 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
         mainHandWeaponEquipped = mainHandWeaponSlot.GetChild(1);
         offHandWeaponBackground = offHandWeaponSlot.GetChild(0);
         offHandWeaponEquipped = offHandWeaponSlot.GetChild(1);
-
-        inventoryParent = transform.GetChild(1).GetChild(1).GetChild(9).GetChild(0);
     }
 
     private void OnEnable()
@@ -174,8 +172,8 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
         UpdatePlayerStatInfo(player);
         currentAvailableStatPoints.text = player.currentStatPoints.ToString();
 
-        innerPathTitleText.text = string.Empty;
-        innerPathDetailsText.text = string.Empty;
+        skillDescriptionText.text = string.Empty;
+        skillDetailsText.text = string.Empty;
 
         Subscribe();
         SetupStartingWeapons(player);
@@ -215,8 +213,6 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
 
     private void Subscribe()
     {
-        if (player == null || player.consumableEvent == null) return;
-
         StaticEventHandler.OnStatPageOpened += StaticEventHandler_OnStatPageOpened;
         StaticEventHandler.OnBuildPageOpened += StaticEventHandler_OnBuildPageOpened;
 
@@ -224,13 +220,20 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
         StaticEventHandler.OnStatPointChanged += StaticEventHandler_OnStatPointChanged;
 
         // BOOK COIN&SHARD AMOUNT
+        if (player != null && player.consumableEvent != null)
+        {
+            player.consumableEvent.OnCoinCountChanged += ConsumableEvent_OnCoinCountChanged;
+            player.consumableEvent.OnShardCountChanged += ConsumableEvent_OnShardCountChanged;
+        }
+
         player.consumableEvent.OnCoinCountChanged += ConsumableEvent_OnCoinCountChanged;
         player.consumableEvent.OnShardCountChanged += ConsumableEvent_OnShardCountChanged;
 
         // BOOK WEAPON EVENTS
         StaticEventHandler.OnWeaponPickedUp += StaticEventHandler_OnWeaponPickedUp;
+        StaticEventHandler.OnWeaponSwitchedInventory += StaticEventHandler_OnWeaponSwitchedInventory;
         StaticEventHandler.OnWeaponSwitched += StaticEventHandler_OnWeaponSwitched;
-        StaticEventHandler.OnWeaponDropped += StaticEventHandler_OnWeaponDropped;
+        StaticEventHandler.OnWeaponDropped += StaticEventHandler_OnWeaponDropped;        
 
         // BOOK INVENTORY EVENTS
         StaticEventHandler.OnWeaponRemoved += StaticEventHandler_OnWeaponRemoved;
@@ -272,8 +275,6 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
 
     private void Unsubscribe()
     {
-        if (player == null || player.consumableEvent == null) return;
-
         StaticEventHandler.OnStatPageOpened -= StaticEventHandler_OnStatPageOpened;
         StaticEventHandler.OnBuildPageOpened -= StaticEventHandler_OnBuildPageOpened;
 
@@ -281,11 +282,15 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
         StaticEventHandler.OnStatPointChanged -= StaticEventHandler_OnStatPointChanged;
 
         // BOOK COIN&SHARD AMOUNT
-        player.consumableEvent.OnCoinCountChanged -= ConsumableEvent_OnCoinCountChanged;
-        player.consumableEvent.OnShardCountChanged -= ConsumableEvent_OnShardCountChanged;
+        if (player != null && player.consumableEvent != null)
+        {
+            player.consumableEvent.OnCoinCountChanged -= ConsumableEvent_OnCoinCountChanged;
+            player.consumableEvent.OnShardCountChanged -= ConsumableEvent_OnShardCountChanged;
+        }
 
         // BOOK WEAPON EVENTS
         StaticEventHandler.OnWeaponPickedUp -= StaticEventHandler_OnWeaponPickedUp;
+        StaticEventHandler.OnWeaponSwitchedInventory -= StaticEventHandler_OnWeaponSwitchedInventory;
         StaticEventHandler.OnWeaponSwitched -= StaticEventHandler_OnWeaponSwitched;
         StaticEventHandler.OnWeaponDropped -= StaticEventHandler_OnWeaponDropped;
 
@@ -351,27 +356,30 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
 
     private void StaticEventHandler_OnBuildInfoHovered(SkillPointsArgs skillPointsArgs)
     {
-        innerPathTitleText.text = skillPointsArgs.innerPathDetails.innerPathName;
-        innerPathDetailsText.text = skillPointsArgs.innerPathDetails.innerPathDetails;
+        skillDescriptionText.text = skillPointsArgs.innerPathDetails.innerPathName;
+        skillDetailsText.text = skillPointsArgs.innerPathDetails.innerPathDetails;
     }
 
     private void StaticEventHandler_OnBuildInfoUnhovered(SkillPointsArgs skillPointsArgs)
     {
-        innerPathTitleText.text = string.Empty;
-        innerPathDetailsText.text = string.Empty;
+        skillDescriptionText.text = string.Empty;
+        skillDetailsText.text = string.Empty;
     }
 
     private void StaticEventHandler_OnUniqueSkillInfoHovered(SkillPointsArgs skillPointsArgs)
     {
-        innerPathTitleText.text = skillPointsArgs.activeUniqueSkillContainer.activeUniqueSkillName;
-        innerPathDetailsText.text = skillPointsArgs.activeUniqueSkillContainer.levels[skillPointsArgs.activeUniqueSkillContainer.GetCurrentActiveLevel() - 1].
+        //skillDescriptionText.text = skillPointsArgs.activeUniqueSkillContainer.activeUniqueSkillName;
+
+        RefreshLocalizedTexts(player, skillPointsArgs.activeUniqueSkillContainer.activeSkill, skillPointsArgs.activeUniqueSkillContainer.passiveSkill);
+
+        skillDetailsText.text = skillPointsArgs.activeUniqueSkillContainer.levels[skillPointsArgs.activeUniqueSkillContainer.GetCurrentActiveLevel() - 1].
             activeUniqueSkillDetails;
     }
 
     private void StaticEventHandler_OnUniqueSkillInfoUnhovered(SkillPointsArgs skillPointsArgs)
     {
-        innerPathTitleText.text = string.Empty;
-        innerPathDetailsText.text = string.Empty;
+        skillDescriptionText.text = string.Empty;
+        skillDetailsText.text = string.Empty;
     }
 
     private void StaticEventHandler_OnWeaponRemoved(WeaponAddedToBookArgs args)
@@ -450,9 +458,9 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
         }
     }
 
-    private void StaticEventHandler_OnWeaponAddedToInventory(WeaponAddedToBookArgs weaponAddedToBookArgs)
+    private void StaticEventHandler_OnWeaponAddedToInventory(WeaponAddedToBookArgs args)
     {
-        StartCoroutine(InventoryWeaponAddRoutine(weaponAddedToBookArgs.inventoryIndexNumber, weaponAddedToBookArgs.weapon));
+        StartCoroutine(InventoryWeaponAddRoutine(args.inventoryIndexNumber, args.weapon));
     }
 
     IEnumerator InventoryWeaponAddRoutine(int index, Weapon weapon)
@@ -764,7 +772,7 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
         }
     }
 
-    private void StaticEventHandler_OnWeaponSwitched()
+    private void StaticEventHandler_OnWeaponSwitched(WeaponAddedToBookArgs args)
     {
         DisableBackgroundEnableEquippedTransform(true);
         DisableBackgroundEnableEquippedTransform();
@@ -812,9 +820,68 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
         UpdatePlayerStatInfo(player);
     }
 
-    private void StaticEventHandler_OnWeaponDropped(WeaponAddedToBookArgs weaponAddedToBookArgs)
+    private void StaticEventHandler_OnWeaponSwitchedInventory(WeaponAddedToBookArgs args)
     {
-        if (weaponAddedToBookArgs.slotType == SlotType.WeaponOffHand)
+        DisableBackgroundEnableEquippedTransform(true);
+        DisableBackgroundEnableEquippedTransform();
+        EmptyMainHandEquippedSlot();
+        EmptyOffhandEquippedSlot();
+
+        EmptyInventorySlot();
+
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+        {
+            PlaceWeaponIconToMainHand(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0]);
+        }
+        else
+        {
+            EnableBackgroundDisableEquippedTransform();
+        }
+
+        // Off-hand full
+        if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1] != null)
+        {
+            PlaceWeaponIconToOffhand(player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][1]);
+        }
+        // Off-hand empty
+        else
+        {
+            // Off-hand empty and main hand full
+            if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0] != null)
+            {
+                // Off-hand empty and main hand is two-handed weapon
+                if (player.weaponSlotSetArray[player.currentWeaponSlotSetIndex - 1][0].weaponStats.wieldType == WieldType.TwoHanded)
+                {
+                    PlaceLockIcon();
+                }
+                // Off-hand empty and main hand is one-handed weapon
+                else
+                {
+                    EnableBackgroundDisableEquippedTransform(true);
+                }
+            }
+            // Both off-hand and main hands are empty
+            else
+            {
+                EnableBackgroundDisableEquippedTransform(true);
+            }
+        }
+
+        //Inventory
+        for (int i = 0; i < player.playerInventory.inventoryArray.Length; i++)
+        {
+            if (player.playerInventory.inventoryArray[i] != null)
+            {
+                PopulateItemIntoInventorySlot(player.playerInventory.inventoryArray[i], i);
+            }
+        }
+
+        UpdatePlayerStatInfo(player);
+    }
+
+    private void StaticEventHandler_OnWeaponDropped(WeaponAddedToBookArgs args)
+    {
+        if (args.slotType == SlotType.WeaponOffHand)
         {
             DisableBackgroundEnableEquippedTransform(true);
             EmptyOffhandEquippedSlot();
@@ -827,7 +894,7 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
             EnableBackgroundDisableEquippedTransform();
 
             // Remove lock icon
-            if (weaponAddedToBookArgs.weapon != null && weaponAddedToBookArgs.weapon.weaponStats.wieldType == WieldType.TwoHanded)
+            if (args.weapon != null && args.weapon.weaponStats.wieldType == WieldType.TwoHanded)
             {
                 DisableBackgroundEnableEquippedTransform(true);
                 EmptyOffhandEquippedSlot();
@@ -844,6 +911,9 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
         newMainHandWeaponAtSlot.GetComponent<Image>().sprite = weaponDetails.weaponFrontSprite;
+
+        DraggableItem placedDraggableItem = mainHandWeaponEquipped.GetChild(0).GetComponent<DraggableItem>();
+        placedDraggableItem.SetDraggableItem(weapon, mainHandWeaponSlot.GetComponent<Slot>(), placedDraggableItem.GetComponent<Image>().sprite, ItemSlotStatus.MainHand);
     }
 
     private void PlaceWeaponIconToOffhand(Weapon weapon)
@@ -852,6 +922,29 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
 
         WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
         offHandWeaponAtSlot.GetComponent<Image>().sprite = weaponDetails.weaponFrontSprite;
+
+        DraggableItem placedDraggableItem = offHandWeaponEquipped.GetChild(0).GetComponent<DraggableItem>();
+        placedDraggableItem.SetDraggableItem(weapon, offHandWeaponSlot.GetComponent<Slot>(), placedDraggableItem.GetComponent<Image>().sprite, ItemSlotStatus.OffHand);
+    }
+
+    private void PlaceItemGenericToInventory(ItemGeneric item, Transform inventorySlot)
+    {
+        Transform inventoryEquippedSlot = inventorySlot.GetChild(1);
+        GameObject itemGenericAtSlot = Instantiate(GameResources.Instance.bookWeaponSlot, inventoryEquippedSlot);
+
+        if (item is Weapon weapon)
+        {
+            WeaponDetailsSO weaponDetails = WartheonDatabase.Instance.GetWeaponDetails(weapon.weaponStats.weaponTitle);
+            inventoryEquippedSlot.GetComponent<Image>().sprite = weaponDetails.weaponFrontSprite;
+        }
+        else if (item is PassiveItem passive)
+        {
+            PassiveItemDetailsSO passiveDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passive.passiveStats.passiveItemType);
+            inventoryEquippedSlot.GetComponent<Image>().sprite = passiveDetails.passiveItemSprite;
+        }
+
+        DraggableItem placedDraggableItem = itemGenericAtSlot.GetComponent<DraggableItem>();
+        placedDraggableItem.SetDraggableItem(item, inventorySlot.GetComponent<Slot>(), inventoryEquippedSlot.GetComponent<Image>().sprite, ItemSlotStatus.Inventory);
     }
 
     private void EmptyMainHandEquippedSlot()
@@ -867,6 +960,39 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
         for (int i = offHandWeaponEquipped.childCount - 1; i >= 0; i--)
         {
             Destroy(offHandWeaponEquipped.GetChild(i).gameObject);
+        }
+    }
+
+    private void EmptyInventorySlot()
+    {
+        foreach (Transform inventorySlot in inventoryParent)
+        {
+            Transform inventoryItemBackground = inventorySlot.GetChild(0);
+            Transform inventoryItemEquipped = inventorySlot.GetChild(1);
+
+            for (int i = inventoryItemEquipped.childCount - 1; i >= 0; i--)
+            {
+                Destroy(inventoryItemEquipped.GetChild(i).gameObject);
+
+                Debug.Log("One slot is destroyed");
+            }
+
+            inventoryItemBackground.gameObject.SetActive(true);
+            inventoryItemEquipped.gameObject.SetActive(false);
+        }
+    }
+
+    private void PopulateItemIntoInventorySlot(ItemGeneric item, int inventoryIndex)
+    {
+        Transform inventoryItemBackground = inventoryParent.GetChild(inventoryIndex).GetChild(0);
+        Transform inventoryItemEquipped = inventoryParent.GetChild(inventoryIndex).GetChild(1);
+
+        inventoryItemBackground.gameObject.SetActive(false);
+        inventoryItemEquipped.gameObject.SetActive(true);
+
+        if (inventoryItemEquipped.childCount == 0)
+        {
+            PlaceItemGenericToInventory(item, inventoryParent.GetChild(inventoryIndex));
         }
     }
 
@@ -963,23 +1089,29 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
         GameObject passiveItemObject = new GameObject();
 
         Transform passiveItemSlot = GetEquippedSlot(itemSlotName);
-        background = passiveItemSlot.GetChild(0);
-        equipped = passiveItemSlot.GetChild(1);
-        background.gameObject.SetActive(false);
-        equipped.gameObject.SetActive(true);
 
-        // Loop through all child objects and destroy them
-        for (int i = equipped.childCount - 1; i >= 0; i--)
+        if(passiveItemSlot != null)
         {
-            Destroy(equipped.GetChild(i).gameObject);
+            background = passiveItemSlot.GetChild(0);
+            equipped = passiveItemSlot.GetChild(1);
+            background.gameObject.SetActive(false);
+            equipped.gameObject.SetActive(true);
+
+            // Loop through all child objects and destroy them
+            for (int i = equipped.childCount - 1; i >= 0; i--)
+            {
+                Destroy(equipped.GetChild(i).gameObject);
+            }
+
+            PassiveItemDetailsSO passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
+
+            passiveItemObject = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
+            passiveItemObject.GetComponent<Image>().sprite = passiveItemDetails.passiveItemSprite;
+
+
+            DraggableItem placedDraggableItem = equipped.GetComponent<DraggableItem>();
+            placedDraggableItem.SetDraggableItem(passiveItem, passiveItemSlot.GetComponent<Slot>(), equipped.GetComponent<Image>().sprite, ItemSlotStatus.Passive);
         }
-
-        PassiveItemDetailsSO passiveItemDetails = WartheonDatabase.Instance.GetPassiveItemDetails(passiveItem.passiveStats.passiveItemType);
-
-        passiveItemObject = Instantiate(GameResources.Instance.bookWeaponSlot, equipped);
-        passiveItemObject.GetComponent<Image>().sprite = passiveItemDetails.passiveItemSprite;
-
-        UpdatePlayerStatInfo(GameManager.Instance.GetLocalPlayer());
     }
 
     private void StaticEventHandler_OnItemRemovedFromPassiveItemSlot(PassiveItemRemovedFromBookArgs itemRemovedFromBookArgs)
@@ -1255,6 +1387,8 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
 
     private void StaticEventHandler_OnMobUnlocked(MobUnlockArgs mobUnlockArgs)
     {
+        if (beastiaryImageContainer == null) return;
+
         if (!mobUnlockArgs.isBoss)
         {
             for (int i = 0; i < beastiaryImageContainer.childCount; i++)
@@ -1428,6 +1562,169 @@ public class BookUI : SingletonMonobehaviour<BookUI>, ISelectHandler, IDeselectH
         // Recalculate and update book UI after new build unlocked
         player.RecalculateSecondaryStats();
         UpdatePlayerStatInfo(player);
+    }
+
+    private void RefreshLocalizedTexts(Player player, ActiveSkill activeSkill, PassiveSkill passiveSkill)
+    {
+        switch (passiveSkill)
+        {
+            case PassiveSkill.None:
+                break;
+            case PassiveSkill.GraceOfTheUnscarred:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsCaelion", "UNIQUE_SKILL_P_NAME");
+                break;
+            case PassiveSkill.BloodEagle:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKarnag", "UNIQUE_SKILL_P_NAME");
+                break;
+            case PassiveSkill.PhoenixRising:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKynara", "UNIQUE_SKILL_P_NAME");
+                break;
+            case PassiveSkill.CloakedPrecision:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMorven", "UNIQUE_SKILL_P_NAME");
+                break;
+            case PassiveSkill.IceborneVitality:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMycara", "UNIQUE_SKILL_P_NAME");
+                break;
+            case PassiveSkill.ConductiveTouch:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNymara", "UNIQUE_SKILL_P_NAME");
+                break;
+            case PassiveSkill.DeadeyesQuiver:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyveran", "UNIQUE_SKILL_P_NAME");
+                break;
+            case PassiveSkill.NyxasReflex:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyxa", "UNIQUE_SKILL_P_NAME");
+                break;
+            default:
+                break;
+        }
+
+        switch (activeSkill)
+        {
+            case ActiveSkill.SeismicSlam:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsCaelion", "UNIQUE_SKILL_1_NAME");
+                break;
+            case ActiveSkill.Valor:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsCaelion", "UNIQUE_SKILL_2_NAME");
+                break;
+            case ActiveSkill.ShieldBash:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsCaelion", "UNIQUE_SKILL_3_NAME");
+                break;
+            case ActiveSkill.BreakTheLine:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsCaelion", "UNIQUE_SKILL_4_NAME");
+                break;
+            case ActiveSkill.GuardedOath:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsCaelion", "UNIQUE_SKILL_5_NAME");
+                break;
+            case ActiveSkill.UmbralMist:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMorven", "UNIQUE_SKILL_1_NAME");
+                break;
+            case ActiveSkill.Stealth:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMorven", "UNIQUE_SKILL_2_NAME");
+                break;
+            case ActiveSkill.BloodDrain:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMorven", "UNIQUE_SKILL_3_NAME");
+                break;
+            case ActiveSkill.ShadowStep:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMorven", "UNIQUE_SKILL_4_NAME");
+                break;
+            case ActiveSkill.CullTheMeek:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMorven", "UNIQUE_SKILL_5_NAME");
+                break;
+            case ActiveSkill.Penetrate:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyveran", "UNIQUE_SKILL_1_NAME");
+                break;
+            case ActiveSkill.TripleThreat:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyveran", "UNIQUE_SKILL_2_NAME");
+                break;
+            case ActiveSkill.BindingArrow:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyveran", "UNIQUE_SKILL_3_NAME");
+                break;
+            case ActiveSkill.ArrowsOfTheSevenPlagues:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyveran", "UNIQUE_SKILL_4_NAME");
+                break;
+            case ActiveSkill.HuntersReach:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyveran", "UNIQUE_SKILL_5_NAME");
+                break;
+            case ActiveSkill.Blizzard:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMycara", "UNIQUE_SKILL_1_NAME");
+                break;
+            case ActiveSkill.MycarasSeal:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMycara", "UNIQUE_SKILL_2_NAME");
+                break;
+            case ActiveSkill.SheerCold:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMycara", "UNIQUE_SKILL_3_NAME");
+                break;
+            case ActiveSkill.Icebreaker:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMycara", "UNIQUE_SKILL_4_NAME");
+                break;
+            case ActiveSkill.AbsoluteZero:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsMycara", "UNIQUE_SKILL_5_NAME");
+                break;
+            case ActiveSkill.FireBlast:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKynara", "UNIQUE_SKILL_1_NAME");
+                break;
+            case ActiveSkill.MoltenRift:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKynara", "UNIQUE_SKILL_2_NAME");
+                break;
+            case ActiveSkill.FlameLotus:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKynara", "UNIQUE_SKILL_3_NAME");
+                break;
+            case ActiveSkill.KynarasEmbrace:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKynara", "UNIQUE_SKILL_4_NAME");
+                break;
+            case ActiveSkill.BlazingCyclone:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKynara", "UNIQUE_SKILL_5_NAME");
+                break;
+            case ActiveSkill.Rage:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKarnag", "UNIQUE_SKILL_1_NAME");
+                break;
+            case ActiveSkill.Shattercry:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKarnag", "UNIQUE_SKILL_2_NAME");
+                break;
+            case ActiveSkill.AxeThrow:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKarnag", "UNIQUE_SKILL_4_NAME");
+                break;
+            case ActiveSkill.Whirlrend:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKarnag", "UNIQUE_SKILL_3_NAME");
+                break;
+            case ActiveSkill.FeastOfWar:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsKarnag", "UNIQUE_SKILL_5_NAME");
+                break;
+            case ActiveSkill.MistOfDisruption:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNymara", "UNIQUE_SKILL_1_NAME");
+                break;
+            case ActiveSkill.NymarasWindveil:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNymara", "UNIQUE_SKILL_2_NAME");
+                break;
+            case ActiveSkill.ChainLightning:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNymara", "UNIQUE_SKILL_3_NAME");
+                break;
+            case ActiveSkill.EyeOfTheStorm:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNymara", "UNIQUE_SKILL_4_NAME");
+                break;
+            case ActiveSkill.IonicRejuvenation:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNymara", "UNIQUE_SKILL_5_NAME");
+                break;
+            case ActiveSkill.DontBlink:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyxa", "UNIQUE_SKILL_1_NAME");
+                break;
+            case ActiveSkill.VenomousIvy:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyxa", "UNIQUE_SKILL_2_NAME");
+                break;
+            case ActiveSkill.FadeAndFeed:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyxa", "UNIQUE_SKILL_3_NAME");
+                break;
+            case ActiveSkill.BladeDash:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyxa", "UNIQUE_SKILL_4_NAME");
+                break;
+            case ActiveSkill.Shiruken:
+                skillDescriptionText.text = LocalizationSettings.StringDatabase.GetLocalizedString("UniqueSkillsNyxa", "UNIQUE_SKILL_5_NAME");
+                break;
+            case ActiveSkill.None:
+                break;
+            default:
+                break;
+        }
     }
 
     private void StaticEventHandler_OnStatPointChanged()
